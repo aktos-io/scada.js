@@ -3,7 +3,10 @@
   var map, hapi, server, io;
   map = require('prelude-ls').map;
   hapi = require("hapi");
-  server = hapi.createServer(4000);
+  server = new hapi.Server();
+  server.connection({
+    port: 4000
+  });
   io = require('socket.io')(server.listener);
   io.on('connection', function(socket){
     return socket.on("tweet", function(tweet){
@@ -22,6 +25,15 @@
   server.route({
     method: 'GET',
     path: '/{filename*}',
+    handler: {
+      file: function(request){
+        return './public/' + request.params.filename;
+      }
+    }
+  });
+  server.route({
+    method: 'GET',
+    path: '/static/{filename*}',
     handler: {
       file: function(request){
         return './public/' + request.params.filename;

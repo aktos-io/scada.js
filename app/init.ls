@@ -1,4 +1,5 @@
-App = require \app
+require \webpage
+require \ractive-components
+#require \weblib
 
-<- $
-(App!).init!
+console.log "this is init.ls"
