@@ -1,29 +1,19 @@
-# brunch-bare-livescript
-Barebones skeleton for [brunch](http://brunch.io) using [LiveScript](http://gkz.github.com/LiveScript/).
+for production: 
 
-## License
-The MIT license.
+  + start server app via pm2: 
 
-Copyright (c) 2012 George Zahariev 
+    pm2 start process.json 
 
-Copyright (c) 2012 Paul Miller (http://paulmillr.com/)
 
-Copyright (c) 2012 Moviepilot GmbH, 9elements GmbH et al.
+for development, add these: 
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-of the Software, and to permit persons to whom the Software is furnished to do
-so, subject to the following conditions:
+  + start brunch for clientside development: 
+    
+    npm start 
+      
+  + continuously compile livescript server file into js (since we can not run livescript with pm2)
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+    cd server && lsc -cw server
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+    
+    

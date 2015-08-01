@@ -12,7 +12,7 @@
     "node": "~0.6.10 || 0.8 || 0.9"
   },
   "scripts": {
-    "start": "brunch watch --server",
+    "start": "brunch watch",
     "test": "brunch test"
   },
   "dependencies": {
