@@ -1,7 +1,12 @@
 require! {
   'weblib': {
-    mk-realtime-input,  mk-radiobox, test: weblib-test, state-of
-    radiobox-handler, radiobox-listener-handler, connect-enter-to-click
+    mk-realtime-input,
+    mk-radiobox,
+    test: weblib-test,
+    state-of
+    radiobox-handler,
+    radiobox-listener-handler,
+    connect-enter-to-click
     }
 }
 flatten = prelude.flatten
@@ -91,8 +96,9 @@ socket.on 'analog-simulation', (data) ->
   app.set 'analog_input', m.'analog_value'
 
 
-### /RACTIVE
+console.log app
 
+### /RACTIVE
 
 socket.on "connect", ->
   console.log "Connected to the server!"
