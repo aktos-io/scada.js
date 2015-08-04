@@ -27,6 +27,7 @@ map = prelude.map
 zip = prelude.zip
 split = prelude.split
 */
+
 test = ->
   console.log 'weblib library is working!'
 

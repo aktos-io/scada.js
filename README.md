@@ -1,3 +1,13 @@
+# INSTALL
+
+install zmq for node:
+
+sudo apt-get install libzmq3-dev # libzmq 4.x
+sudo npm install -g zmq
+
+
+
+
 for production:
 
   + start server app via pm2:

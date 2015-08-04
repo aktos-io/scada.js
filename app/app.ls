@@ -1,5 +1,5 @@
 require! {
-  'lib/weblib': {
+  './weblib': {
     mk-realtime-input,
     mk-radiobox,
     test: weblib-test,
@@ -44,6 +44,8 @@ module.exports = class App
       x.hello!
 
 
+
+
 class Foo
   ~>
     console.log "this is foo.init!"
@@ -53,20 +55,13 @@ class Foo
 
 
 
-
-/****************   /GLOBAL VARIABLES **********************/
-
-/****************   SEPARATE LIBRARY TEST **********************/
-weblib-test!
-/****************   /SEPARATE LIBRARY TEST **********************/
-
 ### RACTIVE
 app = new Ractive do
-  el: 'container'
   template: '#app'
+  el: 'container'
   data:
     welcome: do
-        message: 'Egedoz Mühendislik'
+        message: 'Aktos Elektronik'
         version: '0.8'
     connected: false
     messages: []
@@ -86,7 +81,6 @@ app = new Ractive do
             state : false
           * pin   : 24
             state : false
-    partials: '{{>test_partial}}'
 
 
   onrender: (options) !->
@@ -95,7 +89,8 @@ app = new Ractive do
       socket.emit 'server-info', {}
       console.log 'ping sent?'
 
-Ractive.partials.test_partial = "uiylemakuyilmekayluikeaylk"
+    console.log 'just rendered...'
+
 
 set-switch-buttons = !->
   $ '.toggle-switch' .each !->
@@ -110,6 +105,7 @@ set-switch-buttons = !->
 app.on 'complete', !->
   set-switch-buttons!
   #dummy-analog-input!
+  console.log "ractive completed?"
 
 dummy-analog-input = ->
   curr = app.get "analog_input"
@@ -118,9 +114,12 @@ dummy-analog-input = ->
   set-timeout dummy-analog-input, 1000
 
 
-socket.on 'analog-simulation', (data) ->
-  m = JSON.parse data
-  console.log "analog simulation data: ", m.'analog_value'
+socket.on 'aktos-message', (data) ->
+  try
+    msg = JSON.parse data
+  catch
+    console.log "can not parse: ", data
+  console.log "analog simulation data: ", msg.'text'
   app.set 'analog_input', m.'analog_value'
 
 
