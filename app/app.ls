@@ -40,16 +40,17 @@ module.exports = class App
       tail = prelude.tail
       console.log tail [1,2,3]
       console.log 'hello world from class App.init!'
-      x = new Foo
-      x.hello!
 
 
-class Foo
+class ActorBase
   ~>
-    console.log "this is foo.init!"
+    console.log "this is actor base!"
+    @x = 'bar'
+    @y = 'baz'
 
-  hello: ->
-    console.log "foo says 'hello'..."
+  test: ->
+    return @x + @y
+
 
 # make a singleton
 class ActorManager
@@ -58,22 +59,33 @@ class ActorManager
     instance ?:= new SingletonClass!
     return instance
 
-  class SingletonClass
+  class SingletonClass extends ActorBase
     ~>
+      super ...
       console.log 'this is private singleton init!'
       @x = 'foo'
 
 
-test = new ActorManager!
-test2 = new ActorManager!
+class Actor extends ActorBase
+  ~>
+    super ...
+    console.log "this is actor!"
 
-console.log 'test: ', test.x
-console.log 'test2: ', test2.x
 
-test.x = 'bar'
 
-console.log 'test: ', test.x
-console.log 'test2: ', test2.x
+test = ActorManager!
+test2 = ActorManager!
+
+console.log test.x, test.y, test.test!
+
+test3 = Actor!
+console.log test3.x, test3.test!
+
+
+test4 = ActorBase!
+console.log test4.x, test4.test!
+
+
 
 
 ### RACTIVE
