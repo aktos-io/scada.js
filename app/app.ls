@@ -44,8 +44,6 @@ module.exports = class App
       x.hello!
 
 
-
-
 class Foo
   ~>
     console.log "this is foo.init!"
@@ -53,6 +51,37 @@ class Foo
   hello: ->
     console.log "foo says 'hello'..."
 
+instance = 'baz'
+console.log 'instance: ', instance
+# make a singleton
+class ActorManager
+  instance = null
+
+  ~>
+    this.x = 'domates'
+
+  class SingletonClass
+    ~>
+      console.log 'this is private singleton init!'
+      @x = 'foo'
+
+  get-singleton: ->
+    instance ?:= new SingletonClass!
+
+
+test = new ActorManager! .get-singleton!
+test2 = new ActorManager! .get-singleton!
+
+console.log 'test: ', test.x
+console.log 'test2: ', test2.x
+
+test.x = 'bar'
+test2.x = 'patates'
+
+console.log 'test: ', test.x
+console.log 'test2: ', test2.x
+
+console.log 'instance: ', instance
 
 
 ### RACTIVE
@@ -135,8 +164,8 @@ set-interval (->
     debug: []
 
   message = JSON.stringify msg
-  console.log msg
-  socket.emit 'aktos-message', message
+  #console.log msg
+  #socket.emit 'aktos-message', message
 
 ), 1000
 
@@ -204,21 +233,6 @@ myplot = $.plot '#placeholder1', graph-data!,
           show: false
 
 
-/*
-get-pie-data = ->
-  return
-    * label: "seri1"
-      data: 1
-    * label: "seri2"
-      data: 2.5
-
-#console.log "pie data: ", get-pie-data!
-pie-plot = $.plot '#pietest', get-pie-data!,
-        series:
-          pie:
-            show: true
-            inner-radius: 0.5
-*/
 update = !->
   myplot.set-data graph-data!
   myplot.draw!

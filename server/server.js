@@ -22,14 +22,11 @@
   io.on('connection', function(socket){
     console.log("new client connected, starting its forwarder...");
     socket.on("aktos-message", function(message){
-      console.log("aktos-message from browser: ", message, 'broadcasting all others');
       socket.broadcast.emit('aktos-message', message);
-      socket.emit('aktos-message', message);
       return pubSock.send(message);
     });
     return subSock.on('message', function(message){
       message = message.toString();
-      console.log('Forwarding zmq message to socket.io: ', message);
       return socket.broadcast.emit('aktos-message', message);
     });
   });

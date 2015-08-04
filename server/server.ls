@@ -25,24 +25,16 @@ io.on 'connection', (socket) ->
   console.log "new client connected, starting its forwarder..."
 
   socket.on "aktos-message", (message) ->
-    console.log "aktos-message from browser: ",
-      message,
-      'broadcasting all others'
+    #console.log "aktos-message from browser: ", message
 
     # broadcast all web clients
     socket.broadcast.emit 'aktos-message', message
-
-    # send to client itself, since same instance may
-    # have more than one copy of the same instance. they
-    # might need to update their state
-    socket.emit 'aktos-message', message
 
     # send to other processes via zeromq
     pub-sock.send message
 
   sub-sock.on 'message', (message) ->
     message = message.to-string!
-    console.log 'Forwarding zmq message to socket.io: ', message
     socket.broadcast.emit 'aktos-message', message
 
 
