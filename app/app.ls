@@ -51,37 +51,29 @@ class Foo
   hello: ->
     console.log "foo says 'hello'..."
 
-instance = 'baz'
-console.log 'instance: ', instance
 # make a singleton
 class ActorManager
   instance = null
-
   ~>
-    this.x = 'domates'
+    instance ?:= new SingletonClass!
+    return instance
 
   class SingletonClass
     ~>
       console.log 'this is private singleton init!'
       @x = 'foo'
 
-  get-singleton: ->
-    instance ?:= new SingletonClass!
 
-
-test = new ActorManager! .get-singleton!
-test2 = new ActorManager! .get-singleton!
+test = new ActorManager!
+test2 = new ActorManager!
 
 console.log 'test: ', test.x
 console.log 'test2: ', test2.x
 
 test.x = 'bar'
-test2.x = 'patates'
 
 console.log 'test: ', test.x
 console.log 'test2: ', test2.x
-
-console.log 'instance: ', instance
 
 
 ### RACTIVE
