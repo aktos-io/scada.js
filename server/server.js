@@ -12,24 +12,15 @@
   subSock = zmq.socket('sub');
   pubSock = zmq.socket('pub');
   pubSock.connect('tcp://127.0.0.1:5012');
-  setInterval(function(){
-    var msg;
-    console.log("interval!");
-    msg = {
-      sender: ['naber'],
-      cls: 'PingMessage',
-      text: 'nabernaber',
-      debug: []
-    };
-    return pubSock.send(JSON.stringify(msg));
-  }, 2000);
   subSock.connect('tcp://127.0.0.1:5013');
   subSock.subscribe('');
   process.on('SIGINT', function(){
     subSock.close();
-    return console.log('subscriber closed!');
+    pubSock.close();
+    return console.log('Received SIGINT, zmq sockets are closed...');
   });
   io.on('connection', function(socket){
+    console.log("new client connected, starting its forwarder...");
     socket.on("aktos-message", function(message){
       console.log("aktos-message from browser: ", message, 'broadcasting all others');
       socket.broadcast.emit('aktos-message', message);
@@ -37,8 +28,9 @@
       return pubSock.send(message);
     });
     return subSock.on('message', function(message){
-      console.log('Forwarding zmq message to socket.io: ', message.toString());
-      return socket.broadcast.emit('aktos-message', message.toString());
+      message = message.toString();
+      console.log('Forwarding zmq message to socket.io: ', message);
+      return socket.broadcast.emit('aktos-message', message);
     });
   });
   server.route({

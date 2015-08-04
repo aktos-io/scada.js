@@ -120,12 +120,25 @@ socket.on 'aktos-message', (data) ->
   catch
     console.log "can not parse: ", data
   console.log "analog simulation data: ", msg.'text'
-  app.set 'analog_input', m.'analog_value'
+  #app.set 'analog_input', m.'analog_value'
 
 
 console.log app
 
 ### /RACTIVE
+
+set-interval (->
+  msg = do
+    cls: \PingMessage
+    text: 'naber from browser'
+    sender: []
+    debug: []
+
+  message = JSON.stringify msg
+  console.log msg
+  socket.emit 'aktos-message', message
+
+), 1000
 
 socket.on "connect", ->
   console.log "Connected to the server!"

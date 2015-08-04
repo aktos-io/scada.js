@@ -8,33 +8,22 @@ io = require 'socket.io' <| server.listener
 sub-sock = zmq.socket 'sub'
 pub-sock = zmq.socket 'pub'
 
+# connect to default broker
 pub-sock.connect 'tcp://127.0.0.1:5012'
-
-set-interval (->
-  console.log "interval!"
-  msg = do
-    sender: [\naber]
-    cls: \PingMessage
-    text: \nabernaber
-    debug: []
-
-  pub-sock.send JSON.stringify msg
-
-  ),
-  2000
-
-
-# zmq subscribe
 sub-sock.connect 'tcp://127.0.0.1:5013'
-sub-sock.subscribe ''  # get all messages
+sub-sock.subscribe ''  # subscribe all messages
 
 process.on 'SIGINT', ->
   sub-sock.close!
-  console.log 'subscriber closed!'
+  pub-sock.close!
+  console.log 'Received SIGINT, zmq sockets are closed...'
 
 
 # Forward socket.io messages to and from zeromq messages
 io.on 'connection', (socket) ->
+  # for every connected socket.io client, do the following:
+  console.log "new client connected, starting its forwarder..."
+
   socket.on "aktos-message", (message) ->
     console.log "aktos-message from browser: ",
       message,
@@ -42,15 +31,19 @@ io.on 'connection', (socket) ->
 
     # broadcast all web clients
     socket.broadcast.emit 'aktos-message', message
+
     # send to client itself, since same instance may
-    # have more than one copy of the same instance
+    # have more than one copy of the same instance. they
+    # might need to update their state
     socket.emit 'aktos-message', message
+
     # send to other processes via zeromq
     pub-sock.send message
 
   sub-sock.on 'message', (message) ->
-    console.log 'Forwarding zmq message to socket.io: ', message.to-string!
-    socket.broadcast.emit 'aktos-message', message.to-string!
+    message = message.to-string!
+    console.log 'Forwarding zmq message to socket.io: ', message
+    socket.broadcast.emit 'aktos-message', message
 
 
 server.route do
