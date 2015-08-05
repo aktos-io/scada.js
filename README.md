@@ -8,7 +8,7 @@ For a quick test:
     lsc server/server.ls &
     cd test_message_sending && python test_message_sending.py
   
-Then open http://localhost:4000 and see if the button at the top toggles in every 4 seconds and in the meanwhile, you can toggle the button and it sends the updates to the python process. 
+Then open [http://localhost:4000](http://localhost:4000) and see if the button at the top toggles in every 4 seconds and in the meanwhile, you can toggle the button and it sends the updates to the python process. 
 
 # INSTALL
 
