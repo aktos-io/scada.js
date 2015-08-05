@@ -45,7 +45,8 @@ aktos-dcs-filter = (msg) ->
 
   if message-history.0
     if message-history.0.1 < treshold
-      console.log "deleting old message", message-history.0
+      console.log "deleting ",
+        now - message-history.0.1," secs old message"
       message-history := tail message-history
 
 
@@ -73,9 +74,10 @@ io.on 'connection', (socket) ->
 
     msg = aktos-dcs-filter msg
     if msg
+      msg.sender ++= [server-id]
       #console.log "forwarding to client: ", msg.sender
-      # TODO: drop short circuit messages!
       socket.broadcast.emit 'aktos-message', msg
+      socket.emit 'aktos-message', msg
 
 
 

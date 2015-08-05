@@ -47,7 +47,7 @@
     console.log("message history: ", messageHistory);
     if (messageHistory[0]) {
       if (messageHistory[0][1] < treshold) {
-        console.log("deleting old message", messageHistory[0]);
+        console.log("deleting ", now - messageHistory[0][1], " secs old message");
         messageHistory = tail(messageHistory);
       }
     }
@@ -67,7 +67,9 @@
       msg = JSON.parse(message);
       msg = aktosDcsFilter(msg);
       if (msg) {
-        return socket.broadcast.emit('aktos-message', msg);
+        msg.sender = msg.sender.concat([serverId]);
+        socket.broadcast.emit('aktos-message', msg);
+        return socket.emit('aktos-message', msg);
       }
     });
   });
