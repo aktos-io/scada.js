@@ -57,7 +57,7 @@ module.exports = class App
     ~>
 
     init: ->
-      
+
 
 # -----------------------------------------------------
 # aktos-dcs livescript
@@ -84,19 +84,7 @@ class ActorManager
     ~>
       super ...
       @actor-list = []
-      @socket = socket
-      # send to server via socket.io
-      @socket.on 'aktos-message', (msg) ~>
-        try
-          @inbox-put msg
-        catch
-          console.log "Problem with receiving message: ", e
-
       console.log "Manager created with id:", @actor-id
-
-    pack: (msg) ->
-      #JSON.stringify msg
-      return msg
 
     register: (actor) ->
       @actor-list = @actor-list ++ [actor]
@@ -108,10 +96,6 @@ class ActorManager
           #console.log "forwarding msg: ", msg
           actor.recv msg
 
-      # send msg to server
-      #message = @pack msg
-      console.log "emitting message: ", msg
-      @socket.emit 'aktos-message', msg
 
 
 class Actor extends ActorBase
@@ -120,7 +104,7 @@ class Actor extends ActorBase
     @mgr = ActorManager!
     @mgr.register this
     @name = name
-    console.log "actor created with id: ", @actor-id
+    console.log "actor \'", @name, "\' created with id: ", @actor-id
 
   send: (msg) ->
     msg = @fill-msg msg
@@ -137,14 +121,48 @@ class Actor extends ActorBase
     msg.sender ?= []
     msg.timestamp ?= Date.now! / 1000 or 0
     msg.msg_id = uuid4!
-    #console.log "filled msg: ", msg
+    console.log "filled msg: ", msg
     return msg
+
+
+class ProxyActor
+  instance = null
+  ~>
+    instance ?:= SingletonClass!
+    return instance
+
+  class SingletonClass extends Actor
+    ~>
+      super ...
+      console.log "Proxy actor is created with id: ", @actor-id
+      @socket = socket
+      # send to server via socket.io
+      @socket.on 'aktos-message', (msg) ~>
+        try
+          @network-rx msg
+        catch
+          console.log "Problem with receiving message: ", e
+
+    network-rx: (msg) ->
+      # receive from server via socket.io
+      # forward message to inner actors
+      @send msg
+
+    fill-msg: (msg) ->
+      msg
+
+    receive: (msg) ->
+      # receive from inner actors, forward to server
+      msg.sender ++= [@actor-id]
+      console.log "emitting message: ", msg
+      @socket.emit 'aktos-message', msg
+
 
 # -----------------------------------------------------
 # end of aktos-dcs livescript
 # -----------------------------------------------------
 
-
+ProxyActor!
 
 
 class TestActor extends Actor
@@ -155,7 +173,7 @@ test1 = TestActor "test1"
 test2 = TestActor "test2"
 test3 = TestActor "test3"
 
-test1.send Message: {text: "test 1 sending"}
+test1.send PingMessage: {text: "test 1 sending"}
 
 class Ponger extends Actor
   ~>
