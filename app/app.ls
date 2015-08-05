@@ -147,58 +147,15 @@ class ProxyActor
 # end of aktos-dcs livescript
 # -----------------------------------------------------
 
-ProxyActor!
-
-
-class TestActor extends Actor
-  ~>
-    super ...
-
-test1 = TestActor "test1"
-test2 = TestActor "test2"
-test3 = TestActor "test3"
-
-test1.send PingMessage: {text: "test 1 sending"}
-
-class Ponger extends Actor
-  ~>
-    super ...
-
-  handle_PongMessage: (msg) ->
-    console.log "this is exactly pong message: ", msg
-
-  receive: (msg) ->
-    #console.log "Ponger received message:" , msg
-    #console.log "Ponger sending PingMessage..."
-    #@send PingMessage: {text: "browser ponger send ping message..."}
-
-ponger = Ponger!
-/*
-set-interval (->
-  test3.send PingMessage: {text: "test 3 sending"}),
-  2000
-*/
-
-### RACTIVE INIT
-app = new Ractive do
-  template: '#app'
-  el: 'container'
-  data:
-    welcome: do
-        message: 'Aktos Elektronik'
-        version: '0.8'
-    connected: false
-    messages: []
-  onrender: (options) !->
-    @set "text", "initial text value"
-    console.log 'just rendered...'
-### /RACTIVE INIT
-
+# aktos widget library
 class SwitchActor extends Actor
   (pin-name)~>
     super ...
     @listener-functions = []
     @pin-name = pin-name
+
+    # update io on init
+    @send UpdateIoMessage: {}
 
   add-listener: (func) ->
       @listener-functions ++= [func]
@@ -214,13 +171,37 @@ class SwitchActor extends Actor
       pin_name: @pin-name
       val: val
 
+# Create the actor which will connect to the server
+ProxyActor!
+
+### RACTIVE INIT
+app = new Ractive do
+  template: '#app'
+  el: 'container'
+  data:
+    connected: false
+  onrender: (options) !->
+    @set "text", "initial text value"
+    console.log 'just rendered...'
+### /RACTIVE INIT
+
+
+
 set-switch-buttons = !->
   $ '.toggle-switch' .each !->
-    console.log 'toggle-switch made'
     elem = $ this
     elem-dom = elem.0
     pin-id = elem.prop 'value'
     actor = SwitchActor pin-id
+
+    # make it work without toggle-switch
+    # visualisation
+    elem.change ->
+      actor.send-event this.checked
+    actor.add-listener (msg) ->
+      elem.prop 'checked', msg.val
+
+    # apply toggle-switch visualisation
     s = new ToggleSwitch elem-dom, 'on', 'off'
     actor.add-listener (msg) ->
       console.log "this actor changed", msg.pin_name
@@ -231,6 +212,8 @@ set-switch-buttons = !->
     s.add-listener (state) !->
       actor.send-event state
 
+    console.log 'toggle-switch made'
+
 app.on 'complete', !->
   console.log "ractive completed, post processing other widgets..."
   set-switch-buttons!
@@ -239,20 +222,8 @@ app.on 'complete', !->
 ### /RACTIVE
 
 
-
-
-# ------- switch
-
-
-
 socket.on "connect", !->
   app.set "connected", true
-
-socket.on "tweet", (tweet) !->
-  messages = app.get "messages"
-  messages = [tweet] ++ messages
-  console.log "messages: ", messages
-  app.set "messages", messages
 
 rpi-command-output = (event) !->
   console.log "cmd is: ", cmd, event.context
@@ -260,19 +231,6 @@ rpi-command-output = (event) !->
   socket.emit 'rpi-io-command',
     turn: cmd
     pin: event.context.pin
-
-set-digital-output = (pin-id, state) !->
-  console.log 'set-digital-output: ', pin-id, state
-  socket.emit 'rpi-io-command',
-    turn: state
-    pin: pin-id
-
-
-switch-state-change = (event, state) !->
-  console.log "state: ", state
-
-# wire the events with handlers
-app.on 'rpi-command-output', rpi-command-output
 
 socket.on 'rpi-io-input', (data) !->
   console.log "data from rpi-io-input: ", data
