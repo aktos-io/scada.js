@@ -31,13 +31,14 @@ io.on 'connection', (socket) ->
     socket.broadcast.emit 'aktos-message', message
 
     # send to other processes via zeromq
-    pub-sock.send message
+    pub-sock.send JSON.stringify message
 
   sub-sock.on 'message', (message) ->
     message = message.to-string!
+    msg = JSON.parse message
     #console.log "forwarding to client: ", msg.sender
     # TODO: drop short circuit messages!
-    socket.broadcast.emit 'aktos-message', message
+    socket.broadcast.emit 'aktos-message', msg
 
 
 server.route do

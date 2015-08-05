@@ -85,18 +85,17 @@ class ActorManager
     ~>
       super ...
       @actor-list = []
-
       @socket = socket
       # send to server via socket.io
-      @socket.on 'aktos-message', (message) ~>
+      @socket.on 'aktos-message', (msg) ~>
         try
-          msg = JSON.parse message
           @inbox-put msg
         catch
           console.log "Problem with receiving message: ", e
 
     pack: (msg) ->
-      JSON.stringify msg
+      #JSON.stringify msg
+      return msg
 
     register: (actor) ->
       @actor-list = @actor-list ++ [actor]
@@ -108,9 +107,9 @@ class ActorManager
           actor.recv msg
 
       # send msg to server
-      message = JSON.stringify msg
-      console.log "emitting message: ", message
-      @socket.emit 'aktos-message', message
+      #message = @pack msg
+      console.log "emitting message: ", msg
+      @socket.emit 'aktos-message', msg
 
 class Actor extends ActorBase
   (name) ~>
@@ -125,9 +124,12 @@ class Actor extends ActorBase
     msg.sender ++= [@actor-id]
     @mgr.inbox-put msg
 
+  copy-msg: (msg) ->
+    JSON.parse JSON.stringify msg
+
   fill-msg: (msg) ->
     cls = Object.keys msg .0
-    msg = JSON.parse JSON.stringify msg[cls]
+    msg = @copy-msg msg[cls]
     msg.cls = cls
     msg.sender ?= []
     msg.timestamp ?= Date.now! / 1000 or 0

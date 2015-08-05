@@ -24,11 +24,13 @@
     socket.on("aktos-message", function(message){
       console.log("aktos-message from browser: ", message);
       socket.broadcast.emit('aktos-message', message);
-      return pubSock.send(message);
+      return pubSock.send(JSON.stringify(message));
     });
     return subSock.on('message', function(message){
+      var msg;
       message = message.toString();
-      return socket.broadcast.emit('aktos-message', message);
+      msg = JSON.parse(message);
+      return socket.broadcast.emit('aktos-message', msg);
     });
   });
   server.route({
