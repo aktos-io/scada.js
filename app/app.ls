@@ -39,11 +39,18 @@ class ActorBase
   ~>
     @actor-id = uuid4!
 
+    console.log 'name:', @name, this['receive']
+
   receive: (msg) ->
     #console.log @name, " received: ", msg.text
 
   recv: (msg) ->
     @receive msg
+    try
+      this['handle_' + msg.cls] msg
+    catch
+      #console.log "problem in handler: ", e
+
 
 
 # make a singleton
@@ -159,8 +166,11 @@ class Ponger extends Actor
   ~>
     super ...
 
+  handle_PongMessage: (msg) ->
+    console.log "this is exactly pong message: ", msg
+
   receive: (msg) ->
-    console.log "Ponger received message:" , msg
+    #console.log "Ponger received message:" , msg
     #console.log "Ponger sending PingMessage..."
     #@send PingMessage: {text: "browser ponger send ping message..."}
 
@@ -213,22 +223,12 @@ set-switch-buttons = !->
       set-digital-output pin-id, state
 
 app.on 'complete', !->
+  console.log "ractive completed, post processing other widgets..."
   set-switch-buttons!
   #dummy-analog-input!
-  console.log "ractive completed?"
-
-dummy-analog-input = ->
-  curr = app.get "analog_input"
-  curr = curr + 1
-  app.set "analog_input", curr
-  set-timeout dummy-analog-input, 1000
-
-
-  #app.set 'analog_input', m.'analog_value'
 
 
 console.log app
-
 ### /RACTIVE
 
 
