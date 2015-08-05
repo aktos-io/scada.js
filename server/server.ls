@@ -25,7 +25,7 @@ io.on 'connection', (socket) ->
   console.log "new client connected, starting its forwarder..."
 
   socket.on "aktos-message", (message) ->
-    #console.log "aktos-message from browser: ", message
+    console.log "aktos-message from browser: ", message
 
     # broadcast all web clients
     socket.broadcast.emit 'aktos-message', message
@@ -35,6 +35,8 @@ io.on 'connection', (socket) ->
 
   sub-sock.on 'message', (message) ->
     message = message.to-string!
+    #console.log "forwarding to client: ", msg.sender
+    # TODO: drop short circuit messages!
     socket.broadcast.emit 'aktos-message', message
 
 

@@ -23,6 +23,7 @@ split = prelude.split
 union = prelude.union
 
 
+
 /* initialize socket.io connections */
 url = window.location.href
 arr = url.split "/"
@@ -33,15 +34,30 @@ socketio-path = join '/' socketio-path
 #console.log 'socket.io path: ' + socketio-path
 socket = io.connect addr_port, path: socketio-path
 
+/*
+socket.on "connect", ->
+  console.log "Connected to the server!"
 
+
+  set-interval (->
+    msg = do
+      cls: \PingMessage
+      text: 'naber from browser'
+      sender: []
+      debug: []
+
+    message = JSON.stringify msg
+    #console.log msg
+    socket.emit 'aktos-message', message
+
+  ), 1000
+*/
 
 module.exports = class App
     ~>
 
     init: ->
-      console.log tail [1,2,3]
       console.log 'hello world from class App.init!'
-
 
 # -----------------------------------------------------
 # aktos-dcs livescript
@@ -57,11 +73,12 @@ class ActorBase
     @receive msg
 
 
+
 # make a singleton
 class ActorManager
   instance = null
   ~>
-    instance ?:= new SingletonClass!
+    instance ?:= SingletonClass!
     return instance
 
   class SingletonClass extends ActorBase
@@ -69,12 +86,14 @@ class ActorManager
       super ...
       @actor-list = []
 
+      @socket = socket
       # send to server via socket.io
-      socket.on 'aktos-message', (data) ->
+      @socket.on 'aktos-message', (message) ~>
         try
-          msg = JSON.parse data
+          msg = JSON.parse message
+          @inbox-put msg
         catch
-          console.log "can not parse: ", data
+          console.log "Problem with receiving message: ", e
 
     pack: (msg) ->
       JSON.stringify msg
@@ -88,6 +107,11 @@ class ActorManager
           #console.log "forwarding msg: ", msg
           actor.recv msg
 
+      # send msg to server
+      message = JSON.stringify msg
+      console.log "emitting message: ", message
+      @socket.emit 'aktos-message', message
+
 class Actor extends ActorBase
   (name) ~>
     super ...
@@ -100,8 +124,6 @@ class Actor extends ActorBase
     msg = @fill-msg msg
     msg.sender ++= [@actor-id]
     @mgr.inbox-put msg
-
-
 
   fill-msg: (msg) ->
     cls = Object.keys msg .0
@@ -126,8 +148,22 @@ test2 = TestActor "test2"
 test3 = TestActor "test3"
 
 test1.send Message: {text: "test 1 sending"}
-test2.send TestMessage: {text: "test 2 sending"}
-test3.send TestMessage: {text: "test 3 sending"}
+test2.send PingMessage: {text: "test 2 sending"}
+
+class Ponger extends Actor
+  ~>
+    super ...
+
+  receive: (msg) ->
+    console.log "received message, sending PingMessage", msg
+    @send PingMessage: {text: "browser ponger send ping message..."}
+
+ponger = Ponger!
+/*
+set-interval (->
+  test3.send PingMessage: {text: "test 3 sending"}),
+  2000
+*/
 
 ### RACTIVE
 app = new Ractive do
@@ -159,10 +195,6 @@ app = new Ractive do
 
   onrender: (options) !->
     @set "text", "initial text value"
-    @on 'ping', !->
-      socket.emit 'server-info', {}
-      console.log 'ping sent?'
-
     console.log 'just rendered...'
 
 
@@ -195,21 +227,7 @@ console.log app
 
 ### /RACTIVE
 
-set-interval (->
-  msg = do
-    cls: \PingMessage
-    text: 'naber from browser'
-    sender: []
-    debug: []
 
-  message = JSON.stringify msg
-  #console.log msg
-  #socket.emit 'aktos-message', message
-
-), 1000
-
-socket.on "connect", ->
-  console.log "Connected to the server!"
 
 
 /****************   CHAT INPUT   **********************/

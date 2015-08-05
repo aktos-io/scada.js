@@ -22,6 +22,7 @@
   io.on('connection', function(socket){
     console.log("new client connected, starting its forwarder...");
     socket.on("aktos-message", function(message){
+      console.log("aktos-message from browser: ", message);
       socket.broadcast.emit('aktos-message', message);
       return pubSock.send(message);
     });
