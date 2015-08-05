@@ -9,6 +9,7 @@ require! {
     connect-enter-to-click
     }
 }
+
 flatten = prelude.flatten
 initial = prelude.initial
 drop = prelude.drop
@@ -19,6 +20,7 @@ head = prelude.head
 map = prelude.map
 zip = prelude.zip
 split = prelude.split
+union = prelude.union
 
 
 /* initialize socket.io connections */
@@ -37,19 +39,22 @@ module.exports = class App
     ~>
 
     init: ->
-      tail = prelude.tail
       console.log tail [1,2,3]
       console.log 'hello world from class App.init!'
 
 
+# -----------------------------------------------------
+# aktos-dcs livescript
+# -----------------------------------------------------
 class ActorBase
   ~>
-    console.log "this is actor base!"
-    @x = 'bar'
-    @y = 'baz'
+    @actor-id = uuid4!
 
-  test: ->
-    return @x + @y
+  receive: (msg) ->
+    console.log @name, " received: ", msg.text
+
+  recv: (msg) ->
+    @receive msg
 
 
 # make a singleton
@@ -62,31 +67,67 @@ class ActorManager
   class SingletonClass extends ActorBase
     ~>
       super ...
-      console.log 'this is private singleton init!'
-      @x = 'foo'
+      @actor-list = []
 
+      # send to server via socket.io
+      socket.on 'aktos-message', (data) ->
+        try
+          msg = JSON.parse data
+        catch
+          console.log "can not parse: ", data
+
+    pack: (msg) ->
+      JSON.stringify msg
+
+    register: (actor) ->
+      @actor-list = @actor-list ++ [actor]
+
+    inbox-put: (msg) ->
+      for actor in @actor-list
+        if actor.actor-id not in msg.sender
+          #console.log "forwarding msg: ", msg
+          actor.recv msg
 
 class Actor extends ActorBase
+  (name) ~>
+    super ...
+    @mgr = ActorManager!
+    @mgr.register this
+    @name = name
+    console.log "actor created with id: ", @actor-id
+
+  send: (msg) ->
+    msg = @fill-msg msg
+    msg.sender ++= [@actor-id]
+    @mgr.inbox-put msg
+
+
+
+  fill-msg: (msg) ->
+    cls = Object.keys msg .0
+    msg = JSON.parse JSON.stringify msg[cls]
+    msg.cls = cls
+    msg.sender ?= []
+    msg.timestamp ?= Date.now! / 1000 or 0
+    msg.msg_id = uuid4!
+    #console.log "filled msg: ", msg
+    return msg
+
+# -----------------------------------------------------
+# end of aktos-dcs livescript
+# -----------------------------------------------------
+
+class TestActor extends Actor
   ~>
     super ...
-    console.log "this is actor!"
 
+test1 = TestActor "test1"
+test2 = TestActor "test2"
+test3 = TestActor "test3"
 
-
-test = ActorManager!
-test2 = ActorManager!
-
-console.log test.x, test.y, test.test!
-
-test3 = Actor!
-console.log test3.x, test3.test!
-
-
-test4 = ActorBase!
-console.log test4.x, test4.test!
-
-
-
+test1.send Message: {text: "test 1 sending"}
+test2.send TestMessage: {text: "test 2 sending"}
+test3.send TestMessage: {text: "test 3 sending"}
 
 ### RACTIVE
 app = new Ractive do
@@ -147,12 +188,6 @@ dummy-analog-input = ->
   set-timeout dummy-analog-input, 1000
 
 
-socket.on 'aktos-message', (data) ->
-  try
-    msg = JSON.parse data
-  catch
-    console.log "can not parse: ", data
-  console.log "analog simulation data: ", msg.'text'
   #app.set 'analog_input', m.'analog_value'
 
 
