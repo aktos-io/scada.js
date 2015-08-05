@@ -1,4 +1,4 @@
-public
+#public
 node_modules
 *.kate-swp
 vendor-src
