@@ -32,7 +32,7 @@ aktos-dcs-filter = (msg) ->
 
   if msg.msg_id in [i.0 for i in message-history]
     # drop duplicate message
-    console.log "dropping duplicate message: ", msg
+    console.log "dropping duplicate message: ", msg.msg_id
     return null
 
   now = Date.now! / 1000 or 0

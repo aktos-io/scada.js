@@ -39,8 +39,6 @@ class ActorBase
   ~>
     @actor-id = uuid4!
 
-    console.log 'name:', @name, this['receive']
-
   receive: (msg) ->
     #console.log @name, " received: ", msg.text
 
@@ -191,44 +189,53 @@ app = new Ractive do
         version: '0.8'
     connected: false
     messages: []
-    analog_input: 'UNKNOWN'
-    io_button:
-      * type: 'output'
-        pins:
-          * pin   : 17
-            state : false
-          * pin   : 27
-            state : false
-          * pin   : 22
-            state : false
-      * type: 'input'
-        pins:
-          * pin   : 25
-            state : false
-          * pin   : 24
-            state : false
   onrender: (options) !->
     @set "text", "initial text value"
     console.log 'just rendered...'
 ### /RACTIVE INIT
+
+class SwitchActor extends Actor
+  (pin-name)~>
+    super ...
+    @listener-functions = []
+    @pin-name = pin-name
+
+  add-listener: (func) ->
+      @listener-functions ++= [func]
+
+  handle_IoMessage: (msg) ->
+    #console.log "switch actor got IoMessage: ", msg
+    if msg.pin_name is @pin-name
+      for func in @listener-functions
+        func msg
+
+  send-event: (val) ->
+    @send IoMessage: do
+      pin_name: @pin-name
+      val: val
 
 set-switch-buttons = !->
   $ '.toggle-switch' .each !->
     console.log 'toggle-switch made'
     elem = $ this
     elem-dom = elem.0
-    pin-id = parse-int (elem.prop 'value')
+    pin-id = elem.prop 'value'
+    actor = SwitchActor pin-id
     s = new ToggleSwitch elem-dom, 'on', 'off'
+    actor.add-listener (msg) ->
+      console.log "this actor changed", msg.pin_name
+      if msg.val
+        s.on!
+      else
+        s.off!
     s.add-listener (state) !->
-      set-digital-output pin-id, state
+      actor.send-event state
 
 app.on 'complete', !->
   console.log "ractive completed, post processing other widgets..."
   set-switch-buttons!
   #dummy-analog-input!
 
-
-console.log app
 ### /RACTIVE
 
 

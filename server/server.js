@@ -37,7 +37,7 @@
       }
       return results$;
     }()))) {
-      console.log("dropping duplicate message: ", msg);
+      console.log("dropping duplicate message: ", msg.msg_id);
       return null;
     }
     now = Date.now() / 1000 || 0;
