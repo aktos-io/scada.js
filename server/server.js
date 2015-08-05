@@ -19,7 +19,7 @@
     pubSock.close();
     return console.log('Received SIGINT, zmq sockets are closed...');
   });
-  serverId = "aaaaaaaaaaaaaaaa-server-aaaaaaaaaaaaaaa";
+  serverId = "server-ls--give-a-unique-id-here!";
   messageHistory = [];
   aktosDcsFilter = function(msg){
     var i, now, timeout, treshold;

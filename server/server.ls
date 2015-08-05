@@ -18,8 +18,7 @@ process.on 'SIGINT', ->
   pub-sock.close!
   console.log 'Received SIGINT, zmq sockets are closed...'
 
-
-server-id = "aaaaaaaaaaaaaaaa-server-aaaaaaaaaaaaaaa"
+server-id = "server-ls--give-a-unique-id-here!"
 message-history = []  # msg_id, timestamp
 
 aktos-dcs-filter = (msg) ->
@@ -48,8 +47,6 @@ aktos-dcs-filter = (msg) ->
       console.log "deleting ",
         now - message-history.0.1," secs old message"
       message-history := tail message-history
-
-
   return msg
 
 # Forward socket.io messages to and from zeromq messages
@@ -79,8 +76,6 @@ io.on 'connection', (socket) ->
       socket.broadcast.emit 'aktos-message', msg
       socket.emit 'aktos-message', msg
 
-
-
 server.route do
   method: 'GET'
   path: '/'
@@ -100,9 +95,6 @@ server.route do
   handler:
     file: (request) ->
       return './public/' + request.params.filename
-
-
-
 
 #a = require './app/lib/weblib.ls'
 #a.test!
