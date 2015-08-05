@@ -1,4 +1,4 @@
-{map} = require 'prelude-ls'
+{map, filter, tail} = require 'prelude-ls'
 hapi = require "hapi"
 zmq = require 'zmq'
 
@@ -19,26 +19,64 @@ process.on 'SIGINT', ->
   console.log 'Received SIGINT, zmq sockets are closed...'
 
 
+server-id = "aaaaaaaaaaaaaaaa-server-aaaaaaaaaaaaaaa"
+message-history = []  # msg_id, timestamp
+
+aktos-dcs-filter = (msg) ->
+  if server-id in msg.sender
+    # drop short circuit message
+    return null
+
+  if msg.cls == 'ProxyActorMessage'
+    # drop control message
+    return null
+
+  if msg.msg_id in [i.0 for i in message-history]
+    # drop duplicate message
+    console.log "dropping duplicate message: ", msg
+    return null
+
+  now = Date.now! / 1000 or 0
+  timeout = 10_s
+  treshold = now - timeout
+
+  message-history ++= [[msg.msg_id, msg.timestamp]]
+  console.log "message history: ", message-history
+
+  if message-history.0
+    if message-history.0.1 < treshold
+      console.log "deleting old message", message-history.0
+      message-history := tail message-history
+
+
+  return msg
+
 # Forward socket.io messages to and from zeromq messages
 io.on 'connection', (socket) ->
   # for every connected socket.io client, do the following:
   console.log "new client connected, starting its forwarder..."
 
-  socket.on "aktos-message", (message) ->
-    console.log "aktos-message from browser: ", message
+  socket.on "aktos-message", (msg) ->
+    console.log "aktos-message from browser: ", msg
+    # append server-id to message.sender list
+    msg.sender ++= [server-id]
 
     # broadcast all web clients
-    socket.broadcast.emit 'aktos-message', message
+    socket.broadcast.emit 'aktos-message', msg
 
     # send to other processes via zeromq
-    pub-sock.send JSON.stringify message
+    pub-sock.send JSON.stringify msg
 
   sub-sock.on 'message', (message) ->
     message = message.to-string!
     msg = JSON.parse message
-    #console.log "forwarding to client: ", msg.sender
-    # TODO: drop short circuit messages!
-    socket.broadcast.emit 'aktos-message', msg
+
+    msg = aktos-dcs-filter msg
+    if msg
+      #console.log "forwarding to client: ", msg.sender
+      # TODO: drop short circuit messages!
+      socket.broadcast.emit 'aktos-message', msg
+
 
 
 server.route do

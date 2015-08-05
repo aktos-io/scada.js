@@ -57,7 +57,7 @@ module.exports = class App
     ~>
 
     init: ->
-      console.log 'hello world from class App.init!'
+      
 
 # -----------------------------------------------------
 # aktos-dcs livescript
@@ -71,7 +71,6 @@ class ActorBase
 
   recv: (msg) ->
     @receive msg
-
 
 
 # make a singleton
@@ -93,6 +92,8 @@ class ActorManager
         catch
           console.log "Problem with receiving message: ", e
 
+      console.log "Manager created with id:", @actor-id
+
     pack: (msg) ->
       #JSON.stringify msg
       return msg
@@ -101,6 +102,7 @@ class ActorManager
       @actor-list = @actor-list ++ [actor]
 
     inbox-put: (msg) ->
+      msg.sender ++= [@actor-id]
       for actor in @actor-list
         if actor.actor-id not in msg.sender
           #console.log "forwarding msg: ", msg
@@ -110,6 +112,7 @@ class ActorManager
       #message = @pack msg
       console.log "emitting message: ", msg
       @socket.emit 'aktos-message', msg
+
 
 class Actor extends ActorBase
   (name) ~>
@@ -141,6 +144,9 @@ class Actor extends ActorBase
 # end of aktos-dcs livescript
 # -----------------------------------------------------
 
+
+
+
 class TestActor extends Actor
   ~>
     super ...
@@ -150,15 +156,15 @@ test2 = TestActor "test2"
 test3 = TestActor "test3"
 
 test1.send Message: {text: "test 1 sending"}
-test2.send PingMessage: {text: "test 2 sending"}
 
 class Ponger extends Actor
   ~>
     super ...
 
   receive: (msg) ->
-    console.log "received message, sending PingMessage", msg
-    @send PingMessage: {text: "browser ponger send ping message..."}
+    console.log "Ponger received message:" , msg
+    #console.log "Ponger sending PingMessage..."
+    #@send PingMessage: {text: "browser ponger send ping message..."}
 
 ponger = Ponger!
 /*
