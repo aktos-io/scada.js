@@ -40,12 +40,12 @@ aktos-dcs-filter = (msg) ->
   treshold = now - timeout
 
   message-history ++= [[msg.msg_id, msg.timestamp]]
-  console.log "message history: ", message-history
+  #console.log "message history: ", message-history
 
   if message-history.0
     if message-history.0.1 < treshold
-      console.log "deleting ",
-        now - message-history.0.1," secs old message"
+      #console.log "deleting ",
+      #  now - message-history.0.1," secs old message"
       message-history := tail message-history
   return msg
 
@@ -55,7 +55,7 @@ io.on 'connection', (socket) ->
   console.log "new client connected, starting its forwarder..."
 
   socket.on "aktos-message", (msg) ->
-    console.log "aktos-message from browser: ", msg
+    #console.log "aktos-message from browser: ", msg
     # append server-id to message.sender list
     msg.sender ++= [server-id]
 

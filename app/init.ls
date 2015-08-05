@@ -1,6 +1,1 @@
-
-
-App = require \app
-
-<- $
-(App!).init!
+require \app

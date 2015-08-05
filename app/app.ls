@@ -22,8 +22,6 @@ zip = prelude.zip
 split = prelude.split
 union = prelude.union
 
-
-
 /* initialize socket.io connections */
 url = window.location.href
 arr = url.split "/"
@@ -34,31 +32,6 @@ socketio-path = join '/' socketio-path
 #console.log 'socket.io path: ' + socketio-path
 socket = io.connect addr_port, path: socketio-path
 
-/*
-socket.on "connect", ->
-  console.log "Connected to the server!"
-
-
-  set-interval (->
-    msg = do
-      cls: \PingMessage
-      text: 'naber from browser'
-      sender: []
-      debug: []
-
-    message = JSON.stringify msg
-    #console.log msg
-    socket.emit 'aktos-message', message
-
-  ), 1000
-*/
-
-module.exports = class App
-    ~>
-
-    init: ->
-
-
 # -----------------------------------------------------
 # aktos-dcs livescript
 # -----------------------------------------------------
@@ -67,7 +40,7 @@ class ActorBase
     @actor-id = uuid4!
 
   receive: (msg) ->
-    console.log @name, " received: ", msg.text
+    #console.log @name, " received: ", msg.text
 
   recv: (msg) ->
     @receive msg
@@ -84,7 +57,7 @@ class ActorManager
     ~>
       super ...
       @actor-list = []
-      console.log "Manager created with id:", @actor-id
+      #console.log "Manager created with id:", @actor-id
 
     register: (actor) ->
       @actor-list = @actor-list ++ [actor]
@@ -97,14 +70,13 @@ class ActorManager
           actor.recv msg
 
 
-
 class Actor extends ActorBase
   (name) ~>
     super ...
     @mgr = ActorManager!
     @mgr.register this
     @name = name
-    console.log "actor \'", @name, "\' created with id: ", @actor-id
+    #console.log "actor \'", @name, "\' created with id: ", @actor-id
 
   send: (msg) ->
     msg = @fill-msg msg
@@ -121,7 +93,7 @@ class Actor extends ActorBase
     msg.sender ?= []
     msg.timestamp ?= Date.now! / 1000 or 0
     msg.msg_id = uuid4!
-    console.log "filled msg: ", msg
+    #console.log "filled msg: ", msg
     return msg
 
 
@@ -134,7 +106,7 @@ class ProxyActor
   class SingletonClass extends Actor
     ~>
       super ...
-      console.log "Proxy actor is created with id: ", @actor-id
+      #console.log "Proxy actor is created with id: ", @actor-id
       @socket = socket
       # send to server via socket.io
       @socket.on 'aktos-message', (msg) ~>
@@ -142,6 +114,15 @@ class ProxyActor
           @network-rx msg
         catch
           console.log "Problem with receiving message: ", e
+
+      @connected = false
+      @socket.on "connect", !~>
+        @connected = true
+        #console.log "proxy actor says: connected=", @connected
+
+      @socket.on "disconnect", !~>
+        @connected = false
+        #console.log "proxy actor says: connected=", @connected
 
     network-rx: (msg) ->
       # receive from server via socket.io
@@ -154,9 +135,8 @@ class ProxyActor
     receive: (msg) ->
       # receive from inner actors, forward to server
       msg.sender ++= [@actor-id]
-      console.log "emitting message: ", msg
+      #console.log "emitting message: ", msg
       @socket.emit 'aktos-message', msg
-
 
 # -----------------------------------------------------
 # end of aktos-dcs livescript
@@ -191,7 +171,7 @@ set-interval (->
   2000
 */
 
-### RACTIVE
+### RACTIVE INIT
 app = new Ractive do
   template: '#app'
   el: 'container'
@@ -217,12 +197,10 @@ app = new Ractive do
             state : false
           * pin   : 24
             state : false
-
-
   onrender: (options) !->
     @set "text", "initial text value"
     console.log 'just rendered...'
-
+### /RACTIVE INIT
 
 set-switch-buttons = !->
   $ '.toggle-switch' .each !->
@@ -255,106 +233,6 @@ console.log app
 
 
 
-
-/****************   CHAT INPUT   **********************/
-chat-value = 0
-
-socket.on "tweet", (tweet) ->
-  #console.log "tweet from:", tweet.user
-  #console.log "contents:", tweet.text
-  $ '#messages' .prepend do
-    $ '<li>' .text tweet.user + ' says: ' + tweet.text
-
-  chat-value := parse-int tweet.text
-
-
-$ '#submitbutton'
-  .click !->
-    console.log 'tweet should be sent...'
-    socket.emit 'tweet',
-      user: 'chat'
-      text: $ '#m' .val!
-    new-value = parse-int do
-      $ '#m' .val!
-
-    chat-value := new-value
-    $ '#m' .val ''
-
-connect-enter-to-click '#m', '#submitbutton'
-
-/****************   /CHAT INPUT   **********************/
-
-/****************   GRAPH   **********************/
-data = []
-getRandomData = ->
-  totalPoints = 300
-  if data.length > 0 then
-    data := tail data
-  while data.length < total-points
-    data.push chat-value
-  # Zip the generated y values with the x values
-  return zip [i for i from 0 to data.length] data
-
-# Set up the control widget
-updateInterval = 30
-
-graph-data = ->
-  return
-    * label: 'test'
-      data: get-random-data!
-      color: 'red'
-    * label: 'test2'
-      data: get-random-data!
-
-myplot = $.plot '#placeholder1', graph-data!,
-        series:
-          shadowSize: 0   # Drawing is faster without shadows
-        yaxis:
-          min: 0,
-          max: 100
-        xaxis:
-          show: false
-
-
-update = !->
-  myplot.set-data graph-data!
-  myplot.draw!
-
-  #pie-plot.set-data get-pie-data!
-  #pie-plot.draw!
-
-  setTimeout update, updateInterval
-
-update!
-/****************   /GRAPH   **********************/
-
-
-/****************   REALTIME INPUT   **********************/
-
-realtime-input-changed3 = (elem) ->
-  !->
-    socket.emit 'tweet',
-      user: elem.attr 'id'
-      text: elem.val!
-
-mk-realtime-input '.realtime-input', 500, realtime-input-changed3, socket
-
-$ '.radiobox' .each ->
-  group = $ this
-  group-id = '#' + (group.attr 'id')
-  mk-radiobox group-id, radiobox-handler, radiobox-listener-handler, socket
-  #console.log 'radiobox ' + group-id + ' created.'
-
-/****************   /REALTIME INPUT   **********************/
-
-/*************** RPI-CLIENT *********************/
-$ '#rpi-command' .click ->
-  cmd = ($ '#rpi-command').is ':checked'
-  cmd-str = if cmd is true then 'turn on' else 'turn off'
-  socket.emit 'tweet',
-    user: 'command checkbox'
-    text: cmd-str
-/*************** /RPI-CLIENT *********************/
 
 # ------- switch
 

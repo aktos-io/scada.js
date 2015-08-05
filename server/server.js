@@ -44,10 +44,8 @@
     timeout = 10;
     treshold = now - timeout;
     messageHistory = messageHistory.concat([[msg.msg_id, msg.timestamp]]);
-    console.log("message history: ", messageHistory);
     if (messageHistory[0]) {
       if (messageHistory[0][1] < treshold) {
-        console.log("deleting ", now - messageHistory[0][1], " secs old message");
         messageHistory = tail(messageHistory);
       }
     }
@@ -56,7 +54,6 @@
   io.on('connection', function(socket){
     console.log("new client connected, starting its forwarder...");
     socket.on("aktos-message", function(msg){
-      console.log("aktos-message from browser: ", msg);
       msg.sender = msg.sender.concat([serverId]);
       socket.broadcast.emit('aktos-message', msg);
       return pubSock.send(JSON.stringify(msg));
