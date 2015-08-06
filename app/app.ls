@@ -163,7 +163,7 @@ class SwitchActor extends Actor
     super ...
     @listener-functions = []
     @pin-name = String pin-name
-
+    
     # update io on init
     @send UpdateIoMessage: {}
 
@@ -177,6 +177,7 @@ class SwitchActor extends Actor
         func msg
 
   send-event: (val) ->
+    #console.log "sending event: ", @pin-name, val
     @send IoMessage: do
       pin_name: @pin-name
       val: val
@@ -224,37 +225,38 @@ set-switch-buttons = !->
 set-push-buttons = ->
   $ '.push-button' .each ->
     jq-elem = $ this
-    dom-elem = jq-elem.0
     pin-name = jq-elem.data 'pin-name'
     actor = SwitchActor pin-name
-    jq-elem.mousedown ->
-      console.log pin-name, "pressed! "
+    jq-elem.on 'mousedown touchstart' ->
       actor.send-event on
       jq-elem.on 'mouseleave', ->
         actor.send-event off
-
-    jq-elem.mouseup ->
-      console.log pin-name, "released! "
+    jq-elem.on 'mouseup touchend touchcancel touchmove' ->
       actor.send-event off
-
+      jq-elem.off 'mouseleave'
 
     actor.add-listener (msg) ->
-      console.log "push button got message: ", msg
+      #console.log "push button got message: ", msg
       if msg.val
         jq-elem.add-class 'button-active-state'
       else
         jq-elem.remove-class 'button-active-state'
       # disable mouseout event for the external events
-      jq-elem.off 'mouseleave'
 
-
-
-
+set-status-leds = ->
+  $ '.status-led' .each ->
+    jq-elem = $ this
+    pin-name = jq-elem.data 'pin-name'
+    actor = SwitchActor pin-name
+    actor.add-listener (msg) ->
+      console.log "push button got message: ", msg
+    console.log jq-elem
 
 app.on 'complete', !->
   console.log "ractive completed, post processing other widgets..."
   set-switch-buttons!
   set-push-buttons!
+  set-status-leds!
   #dummy-analog-input!
 
 ### /RACTIVE

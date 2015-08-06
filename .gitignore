@@ -3,3 +3,4 @@
 node_modules
 *.kate-swp
 vendor-src
+.idea
