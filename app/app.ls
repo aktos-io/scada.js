@@ -146,13 +146,23 @@ class ProxyActor
 # -----------------------------------------------------
 # end of aktos-dcs livescript
 # -----------------------------------------------------
+/*
 
 # aktos widget library
+
+## basic types:
+
+toggle-switch: toggles on every tap or click
+push-button : toggles while clicking or tapping
+status-led : readonly of toggle-switch or push-button
+
+*/
+
 class SwitchActor extends Actor
   (pin-name)~>
     super ...
     @listener-functions = []
-    @pin-name = pin-name
+    @pin-name = String pin-name
 
     # update io on init
     @send UpdateIoMessage: {}
@@ -185,8 +195,6 @@ app = new Ractive do
     console.log 'just rendered...'
 ### /RACTIVE INIT
 
-
-
 set-switch-buttons = !->
   $ '.toggle-switch' .each !->
     elem = $ this
@@ -204,7 +212,6 @@ set-switch-buttons = !->
     # apply toggle-switch visualisation
     s = new ToggleSwitch elem-dom, 'on', 'off'
     actor.add-listener (msg) ->
-      console.log "this actor changed", msg.pin_name
       if msg.val
         s.on!
       else
@@ -214,9 +221,40 @@ set-switch-buttons = !->
 
     console.log 'toggle-switch made'
 
+set-push-buttons = ->
+  $ '.push-button' .each ->
+    jq-elem = $ this
+    dom-elem = jq-elem.0
+    pin-name = jq-elem.data 'pin-name'
+    actor = SwitchActor pin-name
+    jq-elem.mousedown ->
+      console.log pin-name, "pressed! "
+      actor.send-event on
+      jq-elem.on 'mouseleave', ->
+        actor.send-event off
+
+    jq-elem.mouseup ->
+      console.log pin-name, "released! "
+      actor.send-event off
+
+
+    actor.add-listener (msg) ->
+      console.log "push button got message: ", msg
+      if msg.val
+        jq-elem.add-class 'button-active-state'
+      else
+        jq-elem.remove-class 'button-active-state'
+      # disable mouseout event for the external events
+      jq-elem.off 'mouseleave'
+
+
+
+
+
 app.on 'complete', !->
   console.log "ractive completed, post processing other widgets..."
   set-switch-buttons!
+  set-push-buttons!
   #dummy-analog-input!
 
 ### /RACTIVE
@@ -224,21 +262,6 @@ app.on 'complete', !->
 
 socket.on "connect", !->
   app.set "connected", true
-
-rpi-command-output = (event) !->
-  console.log "cmd is: ", cmd, event.context
-  cmd = $ event.original.target .is ':checked'
-  socket.emit 'rpi-io-command',
-    turn: cmd
-    pin: event.context.pin
-
-socket.on 'rpi-io-input', (data) !->
-  console.log "data from rpi-io-input: ", data
-  io_button = app.get 'io_button'
-  for i in io_button.1.pins
-    if data.'gpio-pin-number' is i.pin
-      i.state = data.state
-  app.set 'io_button', io_button
 
 socket.on 'disconnect', !->
   console.log 'disconnected...'
