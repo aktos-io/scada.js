@@ -17,7 +17,8 @@
   process.on('SIGINT', function(){
     subSock.close();
     pubSock.close();
-    return console.log('Received SIGINT, zmq sockets are closed...');
+    console.log('Received SIGINT, zmq sockets are closed...');
+    return process.exit(0);
   });
   serverId = "server-ls--give-a-unique-id-here!";
   messageHistory = [];
@@ -37,7 +38,6 @@
       }
       return results$;
     }()))) {
-      console.log("dropping duplicate message: ", msg.msg_id);
       return null;
     }
     now = Date.now() / 1000 || 0;

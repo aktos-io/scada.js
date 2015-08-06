@@ -17,6 +17,7 @@ process.on 'SIGINT', ->
   sub-sock.close!
   pub-sock.close!
   console.log 'Received SIGINT, zmq sockets are closed...'
+  process.exit 0 
 
 server-id = "server-ls--give-a-unique-id-here!"
 message-history = []  # msg_id, timestamp
@@ -32,7 +33,7 @@ aktos-dcs-filter = (msg) ->
 
   if msg.msg_id in [i.0 for i in message-history]
     # drop duplicate message
-    console.log "dropping duplicate message: ", msg.msg_id
+    #console.log "dropping duplicate message: ", msg.msg_id
     return null
 
   now = Date.now! / 1000 or 0
