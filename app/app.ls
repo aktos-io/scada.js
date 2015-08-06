@@ -163,7 +163,7 @@ class SwitchActor extends Actor
     super ...
     @listener-functions = []
     @pin-name = String pin-name
-    
+
     # update io on init
     @send UpdateIoMessage: {}
 
@@ -228,10 +228,13 @@ set-push-buttons = ->
     pin-name = jq-elem.data 'pin-name'
     actor = SwitchActor pin-name
     jq-elem.on 'mousedown touchstart' ->
+      jq-elem.add-class 'button-active-state'
       actor.send-event on
       jq-elem.on 'mouseleave', ->
+        jq-elem.remove-class 'button-active-state'
         actor.send-event off
     jq-elem.on 'mouseup touchend touchcancel touchmove' ->
+      jq-elem.remove-class 'button-active-state'
       actor.send-event off
       jq-elem.off 'mouseleave'
 
