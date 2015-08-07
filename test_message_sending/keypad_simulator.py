@@ -18,7 +18,7 @@ class KeypadSimulator(Actor):
             print "sending analog-1 value"
             self.send(IoMessage(pin_name="analog-1", val=i))
             i += 1
-            sleep(1)
+            sleep(2)
 
 
 
