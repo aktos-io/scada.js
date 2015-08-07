@@ -3,7 +3,7 @@
       "apps" : [{
         "name"        : "server",
         "script"      : "server/server.ls",
-        "watch"       : "server/",
+        "watch"       : "server/server.ls",
         "log_date_format"  : "YYYY-MM-DD HH:mm Z",
       }]
     }
