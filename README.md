@@ -19,28 +19,38 @@ Then open [http://localhost:4000](http://localhost:4000) and see if the button c
 
 # INSTALL
 
+* install brunch.io
+
+    npm install -g brunch
+
+* install pm2, the process manager
+
+    npm install -g pm2
+
 * install [aktos-dcs](https://github.com/ceremcem/aktos-dcs)
+
+    see https://github.com/ceremcem/aktos-dcs/blob/master/README.md#install
+
 * install libzmq for node.zmq:
 
     sudo apt-get install libzmq3-dev # for libzmq 4.x
 
-* install dependencies
+* install other dependencies
 
     npm install
 
 
+# Development
+
 start development:
 
-  + start server.ls via pm2:
+  npm start
 
-      pm2 start process.json
-      pm2 logs
+optional: in order to see server.ls logs:
 
-  + start brunch:
-
-      brunch watch
+  npm run show-logs
 
 
-In order to build production code:
+optional: In order to build production code:
 
   make production

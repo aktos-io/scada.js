@@ -12,8 +12,11 @@
     "node": "~0.6.10 || 0.8 || 0.9"
   },
   "scripts": {
-    "start": "brunch watch",
-    "test": "brunch test"
+    "start": "npm run start-server & sleep 2 && npm run brunch",
+    "test": "brunch test",
+    "start-server": "pm2 start pm2-config.json",
+    "brunch": "brunch watch",
+    "show-logs": "pm2 logs"
   },
   "dependencies": {
     "LiveScript-brunch": ">= 1.0 < 1.5",
