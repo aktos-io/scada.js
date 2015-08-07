@@ -189,11 +189,6 @@ ProxyActor!
 app = new Ractive do
   template: '#app'
   el: 'container'
-  data:
-    connected: false
-  onrender: (options) !->
-    @set "text", "initial text value"
-    console.log 'just rendered...'
 ### /RACTIVE INIT
 
 set-switch-buttons = !->
@@ -213,6 +208,8 @@ set-switch-buttons = !->
     # apply toggle-switch visualisation
     s = new ToggleSwitch elem-dom, 'on', 'off'
     actor.add-listener (msg) ->
+      # prevent switch callback call on
+      # external events. only change visual status.
       tmp = s.f-callback
       s.f-callback = null
       if msg.val
@@ -225,7 +222,7 @@ set-switch-buttons = !->
     s.add-listener (state) !->
       actor.send-event state
 
-    console.log 'toggle-switch made'
+    #console.log 'toggle-switch made'
 
 set-push-buttons = ->
   #
@@ -253,7 +250,6 @@ set-push-buttons = ->
         jq-elem.add-class 'button-active-state'
       else
         jq-elem.remove-class 'button-active-state'
-      # disable mouseout event for the external events
 
 set-status-leds = ->
   $ '.status-led' .each ->
@@ -261,14 +257,8 @@ set-status-leds = ->
     pin-name = jq-elem.data 'pin-name'
     actor = SwitchActor pin-name
     actor.add-listener (msg) ->
-      console.log "push button got message: ", msg
-    console.log jq-elem
-    ractive-node = Ractive.get-node-info jq-elem.get 0
-    ractive-data = app.get ractive-node.\keypath
-    ractive-data.\state = false
-    ractive-node.\ractive .set ractive-data
-    ractive-node.\ractive .update-model!
-
+      ractive-node = Ractive.get-node-info jq-elem.get 0
+      app.set ractive-node.\keypath + '.state', msg.val
 
 app.on 'complete', !->
   console.log "ractive completed, post processing other widgets..."

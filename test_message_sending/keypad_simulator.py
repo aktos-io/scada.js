@@ -3,10 +3,6 @@ from aktos_dcs import *
 class KeypadSimulator(Actor):
     def handle_IoMessage(self, msg):
         print "keypad simulator got io message:", msg.pin_name, msg.val
-        if msg.pin_name in ["1", "2", "3"]:
-            print "got message: ", msg.pin_name, msg.val
-            self.send(KeypadMessage(key=msg.pin_name, val=msg.val))
-
         try:
             source, number = msg.pin_name.split('-')
             assert source == 'button'
