@@ -2,28 +2,36 @@
 
 For a quick test:
 
-    sudo npm install -g livescript
-    git clone https://github.com/ceremcem/aktos-dcs  # needed by test_message_sending.py
+    git clone https://github.com/ceremcem/aktos-dcs
     git clone https://github.com/ceremcem/aktos-dcs-webui-example/
+    # run aktos-dcs/TESTS.md/#4 to see if installation is OK.  
     cd aktos-dcs-webui-example/
-    lsc server/server.ls &
-    python test_message_sending/keypad_simulator.py
+    npm install
+    + open a terminal and type:
 
-Then open [http://localhost:4000](http://localhost:4000) and see if the button at the top toggles in every 4 seconds and in the meanwhile, you can toggle the button and it sends the updates to the python process.
+        node production/server.js
+
+    + open another terminal and type:
+
+        python test_message_sending/keypad_simulator.py
+
+Then open [http://localhost:4000](http://localhost:4000) and see if the button clicks are sent to python process and analog display is changing.
 
 # INSTALL
 
-install zmq for node:
+* install [aktos-dcs](https://github.com/ceremcem/aktos-dcs)
+* install libzmq for node.zmq:
 
-sudo apt-get install libzmq3-dev # for libzmq 4.x
-sudo npm install -g zmq
+    sudo apt-get install libzmq3-dev # for libzmq 4.x
 
+* install dependencies
 
+    npm install
 
 
 start development:
 
-  + start server app via pm2:
+  + start server.ls via pm2:
 
       pm2 start process.json
       pm2 logs

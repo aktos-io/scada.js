@@ -21,6 +21,7 @@
     "css-brunch": ">= 1.0 < 1.5",
     "javascript-brunch": ">= 1.0 < 1.5",
     "less-brunch": ">= 1.0 < 1.5",
+    "livescript": "^1.4.0",
     "socket.io": "^1.3.6",
     "uglify-js-brunch": ">= 1.0 < 1.5"
   },
