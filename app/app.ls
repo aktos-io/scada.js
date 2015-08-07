@@ -29,7 +29,7 @@ addr_port = arr.0 + "//" + arr.2
 socketio-path = [''] ++ (initial (drop 3, arr)) ++ ['socket.io']
 socketio-path = join '/' socketio-path
 ## debug
-#console.log 'socket.io path: ' + socketio-path
+console.log 'socket.io path: ' + socketio-path
 socket = io.connect addr_port, path: socketio-path
 
 # -----------------------------------------------------
@@ -185,11 +185,15 @@ class SwitchActor extends Actor
 # Create the actor which will connect to the server
 ProxyActor!
 
+Ractive.DEBUG = /unminified/.test !->
+  /*unminified*/
+
 ### RACTIVE INIT
 app = new Ractive do
   template: '#app'
   el: 'container'
 ### /RACTIVE INIT
+
 
 set-switch-buttons = !->
   $ '.toggle-switch' .each !->
@@ -274,13 +278,13 @@ set-analog-displays = ->
   $ \.analog-display .each ->
     jq-elem = $ this
     channel-name = get-ractive-variable jq-elem, 'channel'
-    console.log "this is channel name: ", channel-name
+    #console.log "this is channel name: ", channel-name
     actor = SwitchActor channel-name
     actor.add-listener (msg) ->
       set-ractive-variable jq-elem, 'value', msg.val
 
 app.on 'complete', !->
-  console.log "ractive completed, post processing other widgets..."
+  #console.log "ractive completed, post processing other widgets..."
   set-switch-buttons!
   set-push-buttons!
   set-status-leds!

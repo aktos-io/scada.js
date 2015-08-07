@@ -13,10 +13,14 @@
   pubSock = zmq.socket('pub');
   pubSock.connect('tcp://127.0.0.1:5012');
   subSock.connect('tcp://127.0.0.1:5013');
+  pubSock['lingerPeriod'] = 0;
+  pubSock['highWaterMark'] = 2;
   subSock.subscribe('');
   process.on('SIGINT', function(){
     subSock.close();
     pubSock.close();
+    subSock.term();
+    pubSock.term();
     console.log('Received SIGINT, zmq sockets are closed...');
     return process.exit(0);
   });
@@ -55,18 +59,17 @@
     console.log("new client connected, starting its forwarder...");
     socket.on("aktos-message", function(msg){
       msg.sender = msg.sender.concat([serverId]);
-      socket.broadcast.emit('aktos-message', msg);
-      return pubSock.send(JSON.stringify(msg));
+      io.emit('aktos-message', msg);
+      pubSock.send(JSON.stringify(msg));
     });
-    return subSock.on('message', function(message){
+    subSock.on('message', function(message){
       var msg;
       message = message.toString();
       msg = JSON.parse(message);
       msg = aktosDcsFilter(msg);
       if (msg) {
         msg.sender = msg.sender.concat([serverId]);
-        socket.broadcast.emit('aktos-message', msg);
-        return socket.emit('aktos-message', msg);
+        io.emit('aktos-message', msg);
       }
     });
   });

@@ -11,13 +11,19 @@ pub-sock = zmq.socket 'pub'
 # connect to default broker
 pub-sock.connect 'tcp://127.0.0.1:5012'
 sub-sock.connect 'tcp://127.0.0.1:5013'
+
+pub-sock['lingerPeriod'] = 0
+pub-sock['highWaterMark'] = 2
 sub-sock.subscribe ''  # subscribe all messages
 
 process.on 'SIGINT', ->
   sub-sock.close!
   pub-sock.close!
+  sub-sock.term!
+  pub-sock.term!
+
   console.log 'Received SIGINT, zmq sockets are closed...'
-  process.exit 0 
+  process.exit 0
 
 server-id = "server-ls--give-a-unique-id-here!"
 message-history = []  # msg_id, timestamp
@@ -51,22 +57,23 @@ aktos-dcs-filter = (msg) ->
   return msg
 
 # Forward socket.io messages to and from zeromq messages
-io.on 'connection', (socket) ->
+io.on 'connection', (socket) !->
   # for every connected socket.io client, do the following:
   console.log "new client connected, starting its forwarder..."
 
-  socket.on "aktos-message", (msg) ->
+  socket.on "aktos-message", (msg) !->
     #console.log "aktos-message from browser: ", msg
     # append server-id to message.sender list
     msg.sender ++= [server-id]
 
     # broadcast all web clients
-    socket.broadcast.emit 'aktos-message', msg
+    #socket.broadcast.emit 'aktos-message', msg
+    io.emit 'aktos-message', msg
 
     # send to other processes via zeromq
     pub-sock.send JSON.stringify msg
 
-  sub-sock.on 'message', (message) ->
+  sub-sock.on 'message', (message) !->
     message = message.to-string!
     msg = JSON.parse message
 
@@ -74,8 +81,9 @@ io.on 'connection', (socket) ->
     if msg
       msg.sender ++= [server-id]
       #console.log "forwarding to client: ", msg.sender
-      socket.broadcast.emit 'aktos-message', msg
-      socket.emit 'aktos-message', msg
+      #socket.broadcast.emit 'aktos-message', msg
+      io.emit 'aktos-message', msg
+
 
 server.route do
   method: 'GET'
