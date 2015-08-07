@@ -1,10 +1,11 @@
 {map, filter, tail} = require 'prelude-ls'
-hapi = require "hapi"
+Hapi = require "hapi"
 zmq = require 'zmq'
 
-server = new hapi.Server!
+server = new Hapi.Server!
 server.connection {port: 4000}
-io = require 'socket.io' <| server.listener
+SocketIO = require 'socket.io'
+io = SocketIO.listen server.listener
 sub-sock = zmq.socket 'sub'
 pub-sock = zmq.socket 'pub'
 
@@ -68,21 +69,27 @@ io.on 'connection', (socket) !->
 
     # broadcast all web clients
     #socket.broadcast.emit 'aktos-message', msg
-    io.emit 'aktos-message', msg
+    io.sockets.emit 'aktos-message', msg
 
     # send to other processes via zeromq
     pub-sock.send JSON.stringify msg
 
-  sub-sock.on 'message', (message) !->
-    message = message.to-string!
-    msg = JSON.parse message
+  socket.on 'event', (data) ->
+    #console.log "event: ", data
 
-    msg = aktos-dcs-filter msg
-    if msg
-      msg.sender ++= [server-id]
-      #console.log "forwarding to client: ", msg.sender
-      #socket.broadcast.emit 'aktos-message', msg
-      io.emit 'aktos-message', msg
+  socket.on 'disconnect', ->
+    #console.log "a client disconnected"
+
+sub-sock.on 'message', (message) !->
+  message = message.to-string!
+  msg = JSON.parse message
+
+  msg = aktos-dcs-filter msg
+  if msg
+    msg.sender ++= [server-id]
+    #console.log "forwarding to client: ", msg.sender
+    #socket.broadcast.emit 'aktos-message', msg
+    io.sockets.emit 'aktos-message', msg
 
 
 server.route do

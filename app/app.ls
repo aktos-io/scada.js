@@ -28,9 +28,11 @@ arr = url.split "/"
 addr_port = arr.0 + "//" + arr.2
 socketio-path = [''] ++ (initial (drop 3, arr)) ++ ['socket.io']
 socketio-path = join '/' socketio-path
-## debug
-console.log 'socket.io path: ' + socketio-path
 socket = io.connect addr_port, path: socketio-path
+## debug
+#console.log 'socket.io path: ', addr_port,  socketio-path
+#console.log "socket.io socket: ", socket
+
 
 # -----------------------------------------------------
 # aktos-dcs livescript
@@ -182,6 +184,20 @@ class SwitchActor extends Actor
       pin_name: @pin-name
       val: val
 
+get-ractive-variable = (jq-elem, ractive-variable) ->
+  ractive-node = Ractive.get-node-info jq-elem.get 0
+  value = (app.get ractive-node.\keypath)[ractive-variable]
+  #console.log "ractive value: ", value
+  return value
+
+set-ractive-variable = (jq-elem, ractive-variable, value) ->
+  ractive-node = Ractive.get-node-info jq-elem.get 0
+  app.set ractive-node.\keypath + '.' + ractive-variable, value
+
+# ---------------------------------------------------
+# END OF LIBRARY FUNCTIONS
+# ---------------------------------------------------
+
 # Create the actor which will connect to the server
 ProxyActor!
 
@@ -235,7 +251,8 @@ set-push-buttons = ->
   #
   $ '.push-button' .each ->
     jq-elem = $ this
-    pin-name = jq-elem.data 'pin-name'
+    #pin-name = jq-elem.data 'pin-name'
+    pin-name = get-ractive-variable jq-elem, 'pin_name'
     actor = SwitchActor pin-name
     jq-elem.on 'mousedown touchstart' ->
       jq-elem.add-class 'button-active-state'
@@ -258,30 +275,20 @@ set-push-buttons = ->
 set-status-leds = ->
   $ '.status-led' .each ->
     jq-elem = $ this
-    pin-name = jq-elem.data 'pin-name'
+    #pin-name = jq-elem.data 'pin-name'
+    pin-name = get-ractive-variable jq-elem, 'pin_name'
     actor = SwitchActor pin-name
     actor.add-listener (msg) ->
-      ractive-node = Ractive.get-node-info jq-elem.get 0
-      app.set ractive-node.\keypath + '.state', msg.val
-
-get-ractive-variable = (jq-elem, ractive-variable) ->
-  ractive-node = Ractive.get-node-info jq-elem.get 0
-  value = (app.get ractive-node.\keypath)[ractive-variable]
-  #console.log "ractive value: ", value
-  return value
-
-set-ractive-variable = (jq-elem, ractive-variable, value) ->
-  ractive-node = Ractive.get-node-info jq-elem.get 0
-  app.set ractive-node.\keypath + '.' + ractive-variable, value
+      set-ractive-variable jq-elem, 'val', msg.val
 
 set-analog-displays = ->
   $ \.analog-display .each ->
     jq-elem = $ this
-    channel-name = get-ractive-variable jq-elem, 'channel'
+    channel-name = get-ractive-variable jq-elem, 'pin_name'
     #console.log "this is channel name: ", channel-name
     actor = SwitchActor channel-name
     actor.add-listener (msg) ->
-      set-ractive-variable jq-elem, 'value', msg.val
+      set-ractive-variable jq-elem, 'val', msg.val
 
 app.on 'complete', !->
   #console.log "ractive completed, post processing other widgets..."
