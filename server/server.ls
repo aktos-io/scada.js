@@ -3,9 +3,8 @@ Hapi = require "hapi"
 zmq = require 'zmq'
 
 server = new Hapi.Server!
-server.connection {port: 4000}
-SocketIO = require 'socket.io'
-io = SocketIO.listen server.listener
+server.connection port: 4000
+io = require 'socket.io' .listen server.listener
 sub-sock = zmq.socket 'sub'
 pub-sock = zmq.socket 'pub'
 
