@@ -39,3 +39,8 @@ start development:
   + start brunch:
 
       brunch watch
+
+
+In order to build production code:
+
+  make production
