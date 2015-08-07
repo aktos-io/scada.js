@@ -63,8 +63,6 @@
       io.sockets.emit('aktos-message', msg);
       pubSock.send(JSON.stringify(msg));
     });
-    socket.on('event', function(data){});
-    socket.on('disconnect', function(){});
   });
   subSock.on('message', function(message){
     var msg;

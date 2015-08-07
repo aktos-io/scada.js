@@ -64,21 +64,15 @@ io.on 'connection', (socket) !->
 
   socket.on "aktos-message", (msg) !->
     #console.log "aktos-message from browser: ", msg
+
     # append server-id to message.sender list
     msg.sender ++= [server-id]
 
     # broadcast all web clients
-    #socket.broadcast.emit 'aktos-message', msg
     io.sockets.emit 'aktos-message', msg
 
     # send to other processes via zeromq
     pub-sock.send JSON.stringify msg
-
-  socket.on 'event', (data) ->
-    #console.log "event: ", data
-
-  socket.on 'disconnect', ->
-    #console.log "a client disconnected"
 
 sub-sock.on 'message', (message) !->
   message = message.to-string!
@@ -88,7 +82,6 @@ sub-sock.on 'message', (message) !->
   if msg
     msg.sender ++= [server-id]
     #console.log "forwarding to client: ", msg.sender
-    #socket.broadcast.emit 'aktos-message', msg
     io.sockets.emit 'aktos-message', msg
 
 
