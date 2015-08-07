@@ -1,5 +1,6 @@
 from aktos_dcs import *
 
+
 class KeypadSimulator(Actor):
     def handle_IoMessage(self, msg):
         print "keypad simulator got io message:", msg.pin_name, msg.val
@@ -10,6 +11,14 @@ class KeypadSimulator(Actor):
             self.send(KeypadMessage(key=number, val=msg.val))
         except:
             pass
+
+    def action(self):
+        i = 0
+        while True:
+            print "sending analog-1 value"
+            self.send(IoMessage(pin_name="analog-1", val=i))
+            i += 1
+            sleep(1)
 
 
 

@@ -260,13 +260,31 @@ set-status-leds = ->
       ractive-node = Ractive.get-node-info jq-elem.get 0
       app.set ractive-node.\keypath + '.state', msg.val
 
+get-ractive-variable = (jq-elem, ractive-variable) ->
+  ractive-node = Ractive.get-node-info jq-elem.get 0
+  value = (app.get ractive-node.\keypath)[ractive-variable]
+  #console.log "ractive value: ", value
+  return value
+
+set-ractive-variable = (jq-elem, ractive-variable, value) ->
+  ractive-node = Ractive.get-node-info jq-elem.get 0
+  app.set ractive-node.\keypath + '.' + ractive-variable, value
+
+set-analog-displays = ->
+  $ \.analog-display .each ->
+    jq-elem = $ this
+    channel-name = get-ractive-variable jq-elem, 'channel'
+    console.log "this is channel name: ", channel-name
+    actor = SwitchActor channel-name
+    actor.add-listener (msg) ->
+      set-ractive-variable jq-elem, 'value', msg.val
+
 app.on 'complete', !->
   console.log "ractive completed, post processing other widgets..."
   set-switch-buttons!
   set-push-buttons!
   set-status-leds!
-  #dummy-analog-input!
-
+  set-analog-displays!
 ### /RACTIVE
 
 
