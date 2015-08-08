@@ -1,10 +1,10 @@
 #header1 {
-  background-color: white;
   background-image: url('../img/header.png');
   background-repeat: no-repeat;
   background-size:contain;
-  height:200px;
+  height:400px;
   width: 100%;
+  background-position: center;
 }
 #connection_status {
   font-size: 1.5em;

@@ -239,13 +239,24 @@ set-push-buttons = ->
     elem = $ this
     actor = elem.data \actor
 
-    elem.on 'mousedown touchstart' ->
+    # desktop support
+    elem.on 'mousedown' ->
       actor.gui-event on
       elem.on 'mouseleave', ->
         actor.gui-event off
-    elem.on 'mouseup touchend touchcancel touchmove' ->
+    elem.on 'mouseup' ->
       actor.gui-event off
       elem.off 'mouseleave'
+
+    # touch support
+    elem.on 'touchstart' (e) ->
+      actor.gui-event on
+      elem.touchleave ->
+        actor.gui-event off
+      e.stop-propagation!
+    elem.on 'touchend' (e) ->
+      actor.gui-event off
+
 
     actor.add-callback (msg) ->
       #console.log "push button got message: ", msg
@@ -298,7 +309,8 @@ make-jq-mobile-connections = !->
 
     $ \.push-button .each ->
       elem = $ this
-      elem.data \actor .add-callback (msg) ->
+      actor = elem.data \actor
+      actor.add-callback (msg) ->
         #console.log "push button got message: ", msg.val
         if msg.val
           elem.add-class 'ui-btn-active'
