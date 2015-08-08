@@ -94,16 +94,11 @@ server.route do
   method: 'GET'
   path: '/{filename*}'
   handler:
-    file: (request) ->
-      return './public/' + request.params.filename
-
-server.route do
-  method: 'GET'
-  path: '/static/{filename*}'
-  handler:
-    file: (request) ->
-      return './public/' + request.params.filename
-
+    directory:
+      path: 'public'
+      listing: 'true'
+      index: ['index.html']
+          
 #a = require './app/lib/weblib.ls'
 #a.test!
 

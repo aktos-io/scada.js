@@ -1,0 +1,26 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/nodejs', '/usr/bin/npm', 'run', 'brunch' ]
+2 info using npm@1.4.21
+3 info using node@v0.10.38
+4 verbose run-script [ 'prebrunch', 'brunch', 'postbrunch' ]
+5 info prebrunch @0.0.1
+6 info brunch @0.0.1
+7 verbose unsafe-perm in lifecycle true
+8 info @0.0.1 Failed to exec brunch script
+9 error @0.0.1 brunch: `brunch watch`
+9 error Exit status 8
+10 error Failed at the @0.0.1 brunch script.
+10 error This is most likely a problem with the  package,
+10 error not with npm itself.
+10 error Tell the author that this fails on your system:
+10 error     brunch watch
+10 error You can get their info via:
+10 error     npm owner ls
+10 error There is likely additional logging output above.
+11 error System Linux 4.1.2
+12 error command "/usr/bin/nodejs" "/usr/bin/npm" "run" "brunch"
+13 error cwd /home/ceremcem/cca-dcs-projects/aktos-dcs-webui-example
+14 error node -v v0.10.38
+15 error npm -v 1.4.21
+16 error code ELIFECYCLE
+17 verbose exit [ 1, true ]

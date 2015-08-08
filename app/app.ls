@@ -184,14 +184,14 @@ class SwitchActor extends Actor
       pin_name: @pin-name
       val: val
 
-get-ractive-variable = (jq-elem, ractive-variable) ->
-  ractive-node = Ractive.get-node-info jq-elem.get 0
+get-ractive-variable = (jquery-elem, ractive-variable) ->
+  ractive-node = Ractive.get-node-info jquery-elem.get 0
   value = (app.get ractive-node.\keypath)[ractive-variable]
   #console.log "ractive value: ", value
   return value
 
-set-ractive-variable = (jq-elem, ractive-variable, value) ->
-  ractive-node = Ractive.get-node-info jq-elem.get 0
+set-ractive-variable = (jquery-elem, ractive-variable, value) ->
+  ractive-node = Ractive.get-node-info jquery-elem.get 0
   app.set ractive-node.\keypath + '.' + ractive-variable, value
 
 # ---------------------------------------------------
@@ -210,13 +210,18 @@ app = new Ractive do
   el: 'container'
 ### /RACTIVE INIT
 
+set-switch-actors = !->
+  $ '.switch-actor' .each !->
+    elem = $ this
+    pin-name = get-ractive-variable elem, 'pin_name'
+    actor = SwitchActor pin-name
+    elem.data \actor, actor
+
 
 set-switch-buttons = !->
-  $ '.toggle-switch' .each !->
+  $ '.switch-button' .each !->
     elem = $ this
-    elem-dom = elem.0
-    pin-id = elem.prop 'value'
-    actor = SwitchActor pin-id
+    actor = elem.data \actor
 
     # make it work without toggle-switch
     # visualisation
@@ -225,6 +230,7 @@ set-switch-buttons = !->
     actor.add-listener (msg) ->
       elem.prop 'checked', msg.val
 
+    /*
     # apply toggle-switch visualisation
     s = new ToggleSwitch elem-dom, 'on', 'off'
     actor.add-listener (msg) ->
@@ -241,8 +247,26 @@ set-switch-buttons = !->
 
     s.add-listener (state) !->
       actor.send-event state
+    */
 
     #console.log 'toggle-switch made'
+
+do-switch-button-jq-mobile-settings = !->
+  $ \document .ready ->
+    $ '.ui-checkbox' .each !->
+      elem = $ this
+      actor = elem.children \.switch-actor .data \actor
+
+      jq-button = elem.children \.ui-btn
+      actor.add-listener (msg) ->
+        if msg.val
+          jq-button.add-class 'ui-checkbox-on'
+          jq-button.add-class 'ui-btn-active'
+          jq-button.remove-class 'ui-checkbox-off'
+        else
+          jq-button.remove-class 'ui-checkbox-on'
+          jq-button.remove-class 'ui-btn-active'
+          jq-button.add-class 'ui-checkbox-off'
 
 set-push-buttons = ->
   #
@@ -250,49 +274,49 @@ set-push-buttons = ->
   #       fix this.
   #
   $ '.push-button' .each ->
-    jq-elem = $ this
-    #pin-name = jq-elem.data 'pin-name'
-    pin-name = get-ractive-variable jq-elem, 'pin_name'
-    actor = SwitchActor pin-name
-    jq-elem.on 'mousedown touchstart' ->
-      jq-elem.add-class 'button-active-state'
+    elem = $ this
+    actor = elem.data \actor
+
+    elem.on 'mousedown touchstart' ->
+      elem.add-class 'button-active-state'
       actor.send-event on
-      jq-elem.on 'mouseleave', ->
-        jq-elem.remove-class 'button-active-state'
+      elem.on 'mouseleave', ->
+        elem.remove-class 'button-active-state'
         actor.send-event off
-    jq-elem.on 'mouseup touchend touchcancel touchmove' ->
-      jq-elem.remove-class 'button-active-state'
+    elem.on 'mouseup touchend touchcancel touchmove' ->
+      elem.remove-class 'button-active-state'
       actor.send-event off
-      jq-elem.off 'mouseleave'
+      elem.off 'mouseleave'
 
     actor.add-listener (msg) ->
       #console.log "push button got message: ", msg
       if msg.val
-        jq-elem.add-class 'button-active-state'
+        elem.add-class 'button-active-state'
       else
-        jq-elem.remove-class 'button-active-state'
+        elem.remove-class 'button-active-state'
 
 set-status-leds = ->
   $ '.status-led' .each ->
-    jq-elem = $ this
-    #pin-name = jq-elem.data 'pin-name'
-    pin-name = get-ractive-variable jq-elem, 'pin_name'
-    actor = SwitchActor pin-name
+    elem = $ this
+    actor = elem.data \actor
     actor.add-listener (msg) ->
-      set-ractive-variable jq-elem, 'val', msg.val
+      set-ractive-variable elem, 'val', msg.val
 
 set-analog-displays = ->
   $ \.analog-display .each ->
-    jq-elem = $ this
-    channel-name = get-ractive-variable jq-elem, 'pin_name'
+    elem = $ this
+    channel-name = get-ractive-variable elem, 'pin_name'
     #console.log "this is channel name: ", channel-name
     actor = SwitchActor channel-name
     actor.add-listener (msg) ->
-      set-ractive-variable jq-elem, 'val', msg.val
+      set-ractive-variable elem, 'val', msg.val
 
 app.on 'complete', !->
   #console.log "ractive completed, post processing other widgets..."
+  set-switch-actors!
+
   set-switch-buttons!
+  do-switch-button-jq-mobile-settings!
   set-push-buttons!
   set-status-leds!
   set-analog-displays!

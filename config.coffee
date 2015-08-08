@@ -19,9 +19,10 @@ exports.config =
       joinTo:
         'stylesheets/app.css': /^(app|vendor)/
         'test/stylesheets/test.css': /^test/
-      order:
-        before: ['vendor/styles/normalize-1.0.1.css']
-        after: ['vendor/styles/helpers.css']
+      order: {}
+      #before: ['vendor/styles/normalize-1.0.1.css']
+      #after: ['vendor/styles/helpers.css']
+      
 
     templates:
       joinTo: 'javascripts/app.js'

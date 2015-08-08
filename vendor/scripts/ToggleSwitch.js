@@ -1,1 +1,0 @@
-../../vendor-src/toggle-switch/ToggleSwitch.js
