@@ -217,7 +217,6 @@ set-switch-actors = !->
     actor = SwitchActor pin-name
     elem.data \actor, actor
 
-
 set-switch-buttons = !->
   $ '.switch-button' .each !->
     elem = $ this
@@ -229,44 +228,6 @@ set-switch-buttons = !->
       actor.send-event this.checked
     actor.add-listener (msg) ->
       elem.prop 'checked', msg.val
-
-    /*
-    # apply toggle-switch visualisation
-    s = new ToggleSwitch elem-dom, 'on', 'off'
-    actor.add-listener (msg) ->
-      # prevent switch callback call on
-      # external events. only change visual status.
-      tmp = s.f-callback
-      s.f-callback = null
-      if msg.val
-        s.on!
-      else
-        s.off!
-      s.f-callback = tmp
-      tmp = null
-
-    s.add-listener (state) !->
-      actor.send-event state
-    */
-
-    #console.log 'toggle-switch made'
-
-do-switch-button-jq-mobile-settings = !->
-  $ \document .ready ->
-    $ '.ui-checkbox' .each !->
-      elem = $ this
-      actor = elem.children \.switch-actor .data \actor
-
-      jq-button = elem.children \.ui-btn
-      actor.add-listener (msg) ->
-        if msg.val
-          jq-button.add-class 'ui-checkbox-on'
-          jq-button.add-class 'ui-btn-active'
-          jq-button.remove-class 'ui-checkbox-off'
-        else
-          jq-button.remove-class 'ui-checkbox-on'
-          jq-button.remove-class 'ui-btn-active'
-          jq-button.add-class 'ui-checkbox-off'
 
 set-push-buttons = ->
   #
@@ -311,15 +272,71 @@ set-analog-displays = ->
     actor.add-listener (msg) ->
       set-ractive-variable elem, 'val', msg.val
 
+make-jq-mobile-connections = !->
+  $ \document .ready ->
+    $ '.ui-checkbox' .each !->
+      elem = $ this
+      actor = elem.children \.switch-actor .data \actor
+
+      jq-button = elem.children \.ui-btn
+      actor.add-listener (msg) ->
+        if msg.val
+          jq-button.add-class 'ui-checkbox-on'
+          jq-button.add-class 'ui-btn-active'
+          jq-button.remove-class 'ui-checkbox-off'
+        else
+          jq-button.remove-class 'ui-checkbox-on'
+          jq-button.remove-class 'ui-btn-active'
+          jq-button.add-class 'ui-checkbox-off'
+
+    $ \.ui-flipswitch .each ->
+      elem = $ this
+      actor = elem.children \.switch-actor .data \actor
+      actor.add-listener (msg) ->
+        if msg.val
+          elem.add-class 'ui-flipswitch-active'
+        else
+          elem.remove-class 'ui-flipswitch-active'
+
+
+make-toggle-switch-visualisation = ->
+  $ \.toggle-switch .each !->
+    elem = $ this
+    actor = elem.data \actor
+
+    s = new ToggleSwitch elem.get 0, 'on', 'off'
+    actor.add-listener (msg) ->
+      # prevent switch callback call on
+      # external events. only change visual status.
+      tmp = s.f-callback
+      s.f-callback = null
+      if msg.val
+        s.on!
+      else
+        s.off!
+      s.f-callback = tmp
+      tmp = null
+
+    s.add-listener (state) !->
+      actor.send-event state
+
+
+
 app.on 'complete', !->
   #console.log "ractive completed, post processing other widgets..."
+  # create actors
   set-switch-actors!
 
+  # make bare widgets work
   set-switch-buttons!
-  do-switch-button-jq-mobile-settings!
   set-push-buttons!
   set-status-leds!
   set-analog-displays!
+
+  # make extra visualization settings
+  make-jq-mobile-connections!
+  #make-toggle-switch-visualisation!
+
 ### /RACTIVE
 
 
