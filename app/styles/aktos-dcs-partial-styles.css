@@ -1,0 +1,13 @@
+.push-button {
+  border-radius: 6px;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  color: red; 
+}
+.button-active-state {
+  background-color: #293f50;
+}

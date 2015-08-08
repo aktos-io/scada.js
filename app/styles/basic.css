@@ -1,0 +1,14 @@
+<style type="text/css">
+    #header1 {
+      background-color: white;
+      background-image: url('img/header.png');
+      background-repeat: no-repeat;
+      background-size:contain;
+      height:200px;
+      width: 100%;
+    }
+    #connection_status {
+      font-size: 1.5em;
+      padding: 1.5em;
+    }
+  </style>

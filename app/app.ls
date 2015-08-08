@@ -321,7 +321,6 @@ make-toggle-switch-visualisation = ->
       actor.send-event state
 
 
-
 app.on 'complete', !->
   #console.log "ractive completed, post processing other widgets..."
   # create actors
