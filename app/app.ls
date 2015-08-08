@@ -163,26 +163,35 @@ status-led : readonly of toggle-switch or push-button
 class SwitchActor extends Actor
   (pin-name)~>
     super ...
-    @listener-functions = []
+    @callback-functions = []
     @pin-name = String pin-name
 
     # update io on init
     @send UpdateIoMessage: {}
 
-  add-listener: (func) ->
-      @listener-functions ++= [func]
+  add-callback: (func) ->
+      @callback-functions ++= [func]
 
   handle_IoMessage: (msg) ->
     #console.log "switch actor got IoMessage: ", msg
     if msg.pin_name is @pin-name
-      for func in @listener-functions
-        func msg
+      @fire-callbacks msg
 
-  send-event: (val) ->
-    #console.log "sending event: ", @pin-name, val
+  fire-callbacks: (msg) ->
+    #console.log "fire-callbacks called!", msg
+    for func in @callback-functions
+      func msg
+
+  gui-event: (val) ->
+    #console.log "gui event called!", val
+    @fire-callbacks @fill-msg GuiMessage: do
+      pin_name: @pin-name
+      val: val
+
     @send IoMessage: do
       pin_name: @pin-name
       val: val
+
 
 get-ractive-variable = (jquery-elem, ractive-variable) ->
   ractive-node = Ractive.get-node-info jquery-elem.get 0
@@ -201,14 +210,14 @@ set-ractive-variable = (jquery-elem, ractive-variable, value) ->
 # Create the actor which will connect to the server
 ProxyActor!
 
+# Set Ractive.DEBUG to false when minified:
 Ractive.DEBUG = /unminified/.test !->
   /*unminified*/
 
-### RACTIVE INIT
+# Initialize Ractive instance
 app = new Ractive do
   template: '#app'
   el: 'container'
-### /RACTIVE INIT
 
 set-switch-actors = !->
   $ '.switch-actor' .each !->
@@ -225,8 +234,8 @@ set-switch-buttons = !->
     # make it work without toggle-switch
     # visualisation
     elem.change ->
-      actor.send-event this.checked
-    actor.add-listener (msg) ->
+      actor.gui-event this.checked
+    actor.add-callback (msg) ->
       elem.prop 'checked', msg.val
 
 set-push-buttons = ->
@@ -239,17 +248,14 @@ set-push-buttons = ->
     actor = elem.data \actor
 
     elem.on 'mousedown touchstart' ->
-      elem.add-class 'button-active-state'
-      actor.send-event on
+      actor.gui-event on
       elem.on 'mouseleave', ->
-        elem.remove-class 'button-active-state'
-        actor.send-event off
+        actor.gui-event off
     elem.on 'mouseup touchend touchcancel touchmove' ->
-      elem.remove-class 'button-active-state'
-      actor.send-event off
+      actor.gui-event off
       elem.off 'mouseleave'
 
-    actor.add-listener (msg) ->
+    actor.add-callback (msg) ->
       #console.log "push button got message: ", msg
       if msg.val
         elem.add-class 'button-active-state'
@@ -260,7 +266,7 @@ set-status-leds = ->
   $ '.status-led' .each ->
     elem = $ this
     actor = elem.data \actor
-    actor.add-listener (msg) ->
+    actor.add-callback (msg) ->
       set-ractive-variable elem, 'val', msg.val
 
 set-analog-displays = ->
@@ -269,7 +275,7 @@ set-analog-displays = ->
     channel-name = get-ractive-variable elem, 'pin_name'
     #console.log "this is channel name: ", channel-name
     actor = SwitchActor channel-name
-    actor.add-listener (msg) ->
+    actor.add-callback (msg) ->
       set-ractive-variable elem, 'val', msg.val
 
 make-jq-mobile-connections = !->
@@ -279,7 +285,7 @@ make-jq-mobile-connections = !->
       actor = elem.children \.switch-actor .data \actor
 
       jq-button = elem.children \.ui-btn
-      actor.add-listener (msg) ->
+      actor.add-callback (msg) ->
         if msg.val
           jq-button.add-class 'ui-checkbox-on'
           jq-button.add-class 'ui-btn-active'
@@ -292,11 +298,27 @@ make-jq-mobile-connections = !->
     $ \.ui-flipswitch .each ->
       elem = $ this
       actor = elem.children \.switch-actor .data \actor
-      actor.add-listener (msg) ->
+      actor.add-callback (msg) ->
         if msg.val
           elem.add-class 'ui-flipswitch-active'
         else
           elem.remove-class 'ui-flipswitch-active'
+
+    $ \.push-button .each ->
+      elem = $ this
+      elem.data \actor .add-callback (msg) ->
+        #console.log "push button got message: ", msg.val
+        if msg.val
+          elem.add-class 'ui-btn-active'
+        else
+          elem.remove-class 'ui-btn-active'
+
+      $ this .disable-selection = ->
+        this .attr \unselectable, \on
+             .css \user-select, \none
+             .on \selectstart, false
+
+
 
 
 make-toggle-switch-visualisation = ->
@@ -305,7 +327,7 @@ make-toggle-switch-visualisation = ->
     actor = elem.data \actor
 
     s = new ToggleSwitch elem.get 0, 'on', 'off'
-    actor.add-listener (msg) ->
+    actor.add-callback (msg) ->
       # prevent switch callback call on
       # external events. only change visual status.
       tmp = s.f-callback
@@ -335,8 +357,6 @@ app.on 'complete', !->
   # make extra visualization settings
   make-jq-mobile-connections!
   #make-toggle-switch-visualisation!
-
-### /RACTIVE
 
 
 socket.on "connect", !->
