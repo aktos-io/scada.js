@@ -19,7 +19,7 @@
     "show-logs": "pm2 logs"
   },
   "dependencies": {
-    "LiveScript-brunch": ">= 1.0 < 1.5",
+    "livescript-brunch": "git://github.com/brunch/LiveScript-brunch.git",
     "clean-css-brunch": ">= 1.0 < 1.5",
     "css-brunch": ">= 1.0 < 1.5",
     "javascript-brunch": ">= 1.0 < 1.5",

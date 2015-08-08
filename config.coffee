@@ -12,7 +12,7 @@ exports.config =
         # even if they aren't specified in order.before.
         before: [
           'vendor/scripts/jquery-1.11.js',
-          'vendor/scripts/flot/jquery.flot.js',
+          'vendor/scripts/flot/jquery.flot.js'
         ]
 
     stylesheets:
@@ -21,7 +21,3 @@ exports.config =
         'test/stylesheets/test.css': /^test/
       order: {}
       #after: ['app/styles/aktos-dcs-partial-styles.css']
-
-
-    templates:
-      joinTo: 'javascripts/app.js'

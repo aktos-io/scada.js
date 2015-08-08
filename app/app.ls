@@ -1,27 +1,19 @@
+
 require! {
-  './weblib': {
-    mk-realtime-input,
-    mk-radiobox,
-    test: weblib-test,
-    state-of
-    radiobox-handler,
-    radiobox-listener-handler,
-    connect-enter-to-click
-    }
+  './prelude': {
+    flatten,
+    initial,
+    drop,
+    join,
+    concat,
+    tail,
+    head,
+    map,
+    zip,
+    split,
+    union
+  }
 }
-
-flatten = prelude.flatten
-initial = prelude.initial
-drop = prelude.drop
-join = prelude.join
-concat = prelude.concat
-tail = prelude.tail
-head = prelude.head
-map = prelude.map
-zip = prelude.zip
-split = prelude.split
-union = prelude.union
-
 /* initialize socket.io connections */
 url = window.location.href
 arr = url.split "/"
@@ -313,11 +305,12 @@ make-jq-mobile-connections = !->
         else
           elem.remove-class 'ui-btn-active'
 
-      $ this .disable-selection = ->
-        this .attr \unselectable, \on
-             .css \user-select, \none
-             .on \selectstart, false
-
+      elem.disable-selection!
+      elem.onselectstart = ->
+        false
+      elem.unselectable = "on"
+      elem.css '-moz-user-select', 'none'
+      elem.css '-webkit-user-select', 'none'
 
 
 
