@@ -2,5 +2,5 @@
 public
 node_modules
 *.kate-swp
-vendor-src
+vendor-*
 .idea

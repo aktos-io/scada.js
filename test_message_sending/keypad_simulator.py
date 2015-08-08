@@ -18,11 +18,11 @@ class KeypadSimulator(Actor):
             print "sending analog-1 value"
             self.send(IoMessage(pin_name="analog-1", val=i))
             i += 1
-            sleep(2)
+            sleep(1)
 
 
 
 
-ProxyActor(brokers="192.168.2.116:5012:5013")
+ProxyActor(brokers="192.168.2.116:5012:5013 10.0.10.4:5012:5013")
 KeypadSimulator()
 wait_all()
