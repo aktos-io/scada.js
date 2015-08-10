@@ -67,13 +67,14 @@ io.on 'connection', (socket) !->
     # append server-id to message.sender list
     msg.sender ++= [server-id]
 
-    # broadcast all web clients
-    io.sockets.emit 'aktos-message', msg
+    # broadcast all web clients excluding sender
+    socket.broadcast.emit 'aktos-message', msg
 
     # send to other processes via zeromq
     pub-sock.send JSON.stringify msg
 
 sub-sock.on 'message', (message) !->
+  console.log "aktos message from network,"
   message = message.to-string!
   msg = JSON.parse message
 
@@ -98,7 +99,7 @@ server.route do
       path: 'public'
       listing: 'true'
       index: ['index.html']
-          
+
 #a = require './app/lib/weblib.ls'
 #a.test!
 

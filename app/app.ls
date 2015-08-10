@@ -106,6 +106,7 @@ class ProxyActor
     ~>
       super ...
       #console.log "Proxy actor is created with id: ", @actor-id
+
       @socket = socket
       # send to server via socket.io
       @socket.on 'aktos-message', (msg) ~>
@@ -123,6 +124,11 @@ class ProxyActor
         @connected = false
         #console.log "proxy actor says: connected=", @connected
 
+      # update io on init
+      @network-tx do
+        cls: \UpdateIoMessage
+        sender: @actor-id
+
     network-rx: (msg) ->
       # receive from server via socket.io
       # forward message to inner actors
@@ -132,6 +138,9 @@ class ProxyActor
       msg
 
     receive: (msg) ->
+      @network-tx msg
+
+    network-tx: (msg) ->
       # receive from inner actors, forward to server
       msg.sender ++= [@actor-id]
       #console.log "emitting message: ", msg
@@ -157,9 +166,6 @@ class SwitchActor extends Actor
     super ...
     @callback-functions = []
     @pin-name = String pin-name
-
-    # update io on init
-    @send UpdateIoMessage: {}
 
   add-callback: (func) ->
       @callback-functions ++= [func]
@@ -270,6 +276,7 @@ set-status-leds = ->
     elem = $ this
     actor = elem.data \actor
     actor.add-callback (msg) ->
+      #console.log "status led: ", actor.pin-name, msg.val
       set-ractive-variable elem, 'val', msg.val
 
 set-analog-displays = ->
