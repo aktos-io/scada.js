@@ -360,14 +360,14 @@ make-jq-mobile-connections = !->
 
     # jQuery Sliders
     set-sliders2 = !->
-      $ '.slider input' .each !->
-        elem = $ this
-        actor = elem.data \actor
-
-        console.log "set-sliders2 run!"
-        elem.on \slidechange, ->
+      $ '.slider' .each !->
+        elem = $ this .find 'input'
+        actor = $ this .data \actor
+        elem.on \change, ->
           #console.log "event, ui: ", anchor
-          console.log elem
+          actor.gui-event elem.val!
+        actor.add-callback (msg)->
+          elem.val msg.val .slider \refresh
 
     set-sliders2!
 

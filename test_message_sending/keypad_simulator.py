@@ -12,11 +12,14 @@ class KeypadSimulator(Actor):
         except:
             pass
 
+        if msg.pin_name == "test-slider":
+            print "slider value changed to: ", msg.val
+
     def action(self):
         i = 0
         while True:
             print "sending analog-1 value"
-            self.send(IoMessage(pin_name="analog-1", val=i))
+            self.send(IoMessage(pin_name="test_slider", val=i))
             i += 1
             sleep(1)
             break
