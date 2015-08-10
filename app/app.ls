@@ -333,33 +333,6 @@ make-jq-mobile-connections = !->
 
     # jQuery Sliders
     set-sliders = !->
-      $ \.slider .each !->
-        elem = $ this
-        actor = elem.data \actor
-
-        slider = elem.find \input
-
-        slider.on \change, ->
-          #console.log "event, ui: ", anchor
-          console.log slider.prop \value
-
-        set-slider-value = (val) ->
-          slider.prop \value, val
-
-          moving-part = elem.find \a
-          moving-part.prop \aria-valuenow, val
-          moving-part.prop \aria-valuetext, val
-          moving-part.prop \title, val
-          moving-part.css 'left', String val + '%'
-
-        set-slider-value 23
-
-    #set-sliders!
-
-
-
-    # jQuery Sliders
-    set-sliders2 = !->
       $ '.slider' .each !->
         elem = $ this .find 'input'
         actor = $ this .data \actor
@@ -369,7 +342,7 @@ make-jq-mobile-connections = !->
         actor.add-callback (msg)->
           elem.val msg.val .slider \refresh
 
-    set-sliders2!
+    set-sliders!
 
 
 make-toggle-switch-visualisation = ->
