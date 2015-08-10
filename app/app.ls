@@ -127,7 +127,7 @@ class ProxyActor
       # update io on init
       @network-tx do
         cls: \UpdateIoMessage
-        sender: @actor-id
+        sender: [@actor-id]
 
     network-rx: (msg) ->
       # receive from server via socket.io
@@ -331,6 +331,45 @@ make-jq-mobile-connections = !->
       elem.css '-moz-user-select', 'none'
       elem.css '-webkit-user-select', 'none'
 
+    # jQuery Sliders
+    set-sliders = !->
+      $ \.slider .each !->
+        elem = $ this
+        actor = elem.data \actor
+
+        slider = elem.find \input
+
+        slider.on \change, ->
+          #console.log "event, ui: ", anchor
+          console.log slider.prop \value
+
+        set-slider-value = (val) ->
+          slider.prop \value, val
+
+          moving-part = elem.find \a
+          moving-part.prop \aria-valuenow, val
+          moving-part.prop \aria-valuetext, val
+          moving-part.prop \title, val
+          moving-part.css 'left', String val + '%'
+
+        set-slider-value 23
+
+    #set-sliders!
+
+
+
+    # jQuery Sliders
+    set-sliders2 = !->
+      $ '.slider input' .each !->
+        elem = $ this
+        actor = elem.data \actor
+
+        console.log "set-sliders2 run!"
+        elem.on \slidechange, ->
+          #console.log "event, ui: ", anchor
+          console.log elem
+
+    set-sliders2!
 
 
 make-toggle-switch-visualisation = ->
@@ -359,16 +398,16 @@ app.on 'complete', !->
   #console.log "ractive completed, post processing other widgets..."
   # create actors
   set-switch-actors!
-
   # make bare widgets work
   set-switch-buttons!
   set-push-buttons!
   set-status-leds!
   set-analog-displays!
-
+  # DO JQUERY SETTINGS IN THAT FUNCTION!
   # make extra visualization settings
   make-jq-mobile-connections!
   #make-toggle-switch-visualisation!
+
 
 
 socket.on "connect", !->
