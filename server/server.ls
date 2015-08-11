@@ -1,6 +1,7 @@
 {map, filter, tail} = require 'prelude-ls'
 Hapi = require "hapi"
 zmq = require 'zmq'
+msgpack = require 'msgpack-js'
 
 server = new Hapi.Server!
 server.connection port: 4000
@@ -9,8 +10,10 @@ sub-sock = zmq.socket 'sub'
 pub-sock = zmq.socket 'pub'
 
 # connect to default broker
-pub-sock.connect 'tcp://127.0.0.1:5012'
-sub-sock.connect 'tcp://127.0.0.1:5013'
+#pub-sock.connect 'tcp://127.0.0.1:5012'
+#sub-sock.connect 'tcp://127.0.0.1:5013'
+pub-sock.connect 'tcp://10.0.10.4:5012'
+sub-sock.connect 'tcp://10.0.10.4:5013'
 
 pub-sock['lingerPeriod'] = 0
 pub-sock['highWaterMark'] = 2
@@ -24,6 +27,17 @@ process.on 'SIGINT', ->
 
   console.log 'Received SIGINT, zmq sockets are closed...'
   process.exit 0
+
+pack = (msg)->
+  #console.log "pack: ", msg
+  msgpack.encode(msg)
+
+unpack = (message) ->
+  msgpack.decode(message)
+
+
+test = {'naber': 'iyidir'}
+console.log "msgpack: ", unpack pack test
 
 server-id = "server-ls--give-a-unique-id-here!"
 message-history = []  # msg_id, timestamp
@@ -71,18 +85,20 @@ io.on 'connection', (socket) !->
     socket.broadcast.emit 'aktos-message', msg
 
     # send to other processes via zeromq
-    pub-sock.send JSON.stringify msg
+    pub-sock.send pack msg
 
 sub-sock.on 'message', (message) !->
-  console.log "aktos message from network,"
-  message = message.to-string!
-  msg = JSON.parse message
+  #console.log "aktos message from network "
+  #message = message.to-string!
+  try
+    msg = unpack message
+    #console.log "aktos message from network: ", msg
 
-  msg = aktos-dcs-filter msg
-  if msg
-    msg.sender ++= [server-id]
-    #console.log "forwarding to client: ", msg.sender
-    io.sockets.emit 'aktos-message', msg
+    msg = aktos-dcs-filter msg
+    if msg
+      msg.sender ++= [server-id]
+      #console.log "forwarding to client: ", msg.sender
+      io.sockets.emit 'aktos-message', msg
 
 
 server.route do

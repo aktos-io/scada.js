@@ -19,12 +19,13 @@
     "show-logs": "pm2 logs"
   },
   "dependencies": {
-    "livescript-brunch": "git://github.com/brunch/LiveScript-brunch.git",
     "clean-css-brunch": ">= 1.0 < 1.5",
     "css-brunch": ">= 1.0 < 1.5",
     "javascript-brunch": ">= 1.0 < 1.5",
     "less-brunch": ">= 1.0 < 1.5",
     "livescript": "^1.4.0",
+    "livescript-brunch": "git://github.com/brunch/LiveScript-brunch.git",
+    "msgpack-js": "^0.3.0",
     "socket.io": "^1.3.6",
     "uglify-js-brunch": ">= 1.0 < 1.5"
   },
