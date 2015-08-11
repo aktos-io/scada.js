@@ -138,7 +138,7 @@ class ProxyActor
         #console.log "proxy actor says: connected=", @connected
 
       # update io on init
-      @network-tx envelp UpdateIoMessage: {}
+      @network-tx envelp UpdateIoMessage: {}, @get-msg-id!
 
     network-rx: (msg) ->
       # receive from server via socket.io
