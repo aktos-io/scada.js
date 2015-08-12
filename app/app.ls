@@ -143,6 +143,7 @@ class ProxyActor
     network-rx: (msg) ->
       # receive from server via socket.io
       # forward message to inner actors
+      console.log 'proxy received: ', msg
       @send_raw msg
 
     receive: (msg) ->

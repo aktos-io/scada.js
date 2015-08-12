@@ -1,7 +1,7 @@
 {map, filter, tail} = require 'prelude-ls'
 Hapi = require "hapi"
 zmq = require 'zmq'
-msgpack = require 'msgpack-js'
+#msgpack = require 'msgpack-js'
 
 server = new Hapi.Server!
 server.connection port: 4000
@@ -22,22 +22,18 @@ sub-sock.subscribe ''  # subscribe all messages
 process.on 'SIGINT', ->
   sub-sock.close!
   pub-sock.close!
-  sub-sock.term!
-  pub-sock.term!
 
   console.log 'Received SIGINT, zmq sockets are closed...'
   process.exit 0
 
 pack = (msg)->
   #console.log "pack: ", msg
-  msgpack.encode(msg)
+  #msgpack.encode(msg)
+  JSON.stringify msg
 
 unpack = (message) ->
-  msgpack.decode(message)
-
-
-test = {'naber': 'iyidir'}
-console.log "msgpack: ", unpack pack test
+  #msgpack.decode(message)
+  JSON.parse message
 
 server-id = "server-ls--give-a-unique-id-here!"
 message-history = []  # msg_id, timestamp
@@ -97,7 +93,7 @@ sub-sock.on 'message', (message) !->
     msg = aktos-dcs-filter msg
     if msg
       msg.sender ++= [server-id]
-      #console.log "forwarding to client: ", msg.sender
+      console.log "forwarding to client: ", msg.sender
       io.sockets.emit 'aktos-message', msg
 
 
