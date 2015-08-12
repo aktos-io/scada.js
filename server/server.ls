@@ -9,15 +9,22 @@ io = require 'socket.io' .listen server.listener
 sub-sock = zmq.socket 'sub'
 pub-sock = zmq.socket 'pub'
 
-# connect to default broker
-#pub-sock.connect 'tcp://127.0.0.1:5012'
-#sub-sock.connect 'tcp://127.0.0.1:5013'
-pub-sock.connect 'tcp://10.0.10.4:5012'
-sub-sock.connect 'tcp://10.0.10.4:5013'
+# connection ip
+broker-ip = '127.0.0.1'
 
-pub-sock['lingerPeriod'] = 0
-pub-sock['highWaterMark'] = 2
+
+# make zmq settings BEFORE connect/bind: 
+#pub-sock['lingerPeriod'] = 0
+#pub-sock['highWaterMark'] = 1
+
+pub-sock.setsockopt zmq.ZMQ_SNDHWM, 1
+pub-sock.setsockopt zmq.ZMQ_LINGER, 0
+
 sub-sock.subscribe ''  # subscribe all messages
+
+# make zmq connections 
+pub-sock.connect 'tcp://' + broker-ip + ':5012'
+sub-sock.connect 'tcp://' + broker-ip + ':5013'
 
 process.on 'SIGINT', ->
   sub-sock.close!
@@ -44,7 +51,7 @@ aktos-dcs-filter = (msg) ->
     console.log "dropping short circuit message", msg
     return null
 
-  if msg.cls == 'ProxyActorMessage'
+  if 'ProxyActorMessage' of msg.payload
     # drop control message
     console.log "dropping control message", msg
     return null
@@ -87,16 +94,13 @@ io.on 'connection', (socket) !->
     pub-sock.send pack msg
 
 sub-sock.on 'message', (message) !->
-  #console.log "aktos message from network "
-  #message = message.to-string!
+  #console.log "aktos message from network ", message.to-string!
   try
     msg = unpack message
-    #console.log "aktos message from network: ", msg
-
     msg = aktos-dcs-filter msg
     if msg
       msg.sender ++= [server-id]
-      console.log "forwarding to client: ", msg.msg_id
+      console.log "forwarding msg to clients, msg_id: ", msg.msg_id
       io.sockets.emit 'aktos-message', msg
 
 

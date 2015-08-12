@@ -143,6 +143,7 @@ class ProxyActor
     network-rx: (msg) ->
       # receive from server via socket.io
       # forward message to inner actors
+      console.log "proxy actor got network message: ", msg
       @send_raw msg
 
     receive: (msg) ->
@@ -180,9 +181,9 @@ class SwitchActor extends Actor
       @callback-functions ++= [func]
 
   handle_IoMessage: (msg) ->
-    console.log "switch actor got IoMessage: ", msg
     msg-body = get-msg-body msg
     if msg-body.pin_name is @pin-name
+      #console.log "switch actor got IoMessage: ", msg
       @fire-callbacks msg-body
 
   fire-callbacks: (msg) ->
