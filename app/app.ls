@@ -91,7 +91,7 @@ class Actor extends ActorBase
     super ...
     @mgr = ActorManager!
     @mgr.register this
-    @name = name
+    @actor-name = name
     #console.log "actor \'", @name, "\' created with id: ", @actor-id
     @msg-serial-number = 0
 
@@ -105,7 +105,7 @@ class Actor extends ActorBase
 
 
   get-msg-id: ->
-    msg-id = @actor-id + String @msg-serial-number
+    msg-id = @actor-id + '.' + String @msg-serial-number
     @msg-serial-number += 1
     return msg-id
 
@@ -143,7 +143,6 @@ class ProxyActor
     network-rx: (msg) ->
       # receive from server via socket.io
       # forward message to inner actors
-      console.log 'proxy received: ', msg
       @send_raw msg
 
     receive: (msg) ->
@@ -175,12 +174,13 @@ class SwitchActor extends Actor
     super ...
     @callback-functions = []
     @pin-name = String pin-name
+    @actor-name = @pin-name
 
   add-callback: (func) ->
       @callback-functions ++= [func]
 
   handle_IoMessage: (msg) ->
-    #console.log "switch actor got IoMessage: ", msg
+    console.log "switch actor got IoMessage: ", msg
     msg-body = get-msg-body msg
     if msg-body.pin_name is @pin-name
       @fire-callbacks msg-body

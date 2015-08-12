@@ -41,29 +41,29 @@ message-history = []  # msg_id, timestamp
 aktos-dcs-filter = (msg) ->
   if server-id in msg.sender
     # drop short circuit message
+    console.log "dropping short circuit message", msg
     return null
 
   if msg.cls == 'ProxyActorMessage'
     # drop control message
+    console.log "dropping control message", msg
     return null
 
   if msg.msg_id in [i.0 for i in message-history]
     # drop duplicate message
-    #console.log "dropping duplicate message: ", msg.msg_id
+    console.log "dropping duplicate message: ", msg.msg_id
     return null
 
-  now = Date.now! / 1000 or 0
-  timeout = 10_s
-  treshold = now - timeout
 
   message-history ++= [[msg.msg_id, msg.timestamp]]
   #console.log "message history: ", message-history
 
-  if message-history.0
-    if message-history.0.1 < treshold
-      #console.log "deleting ",
-      #  now - message-history.0.1," secs old message"
-      message-history := tail message-history
+  now = Date.now! / 1000 or 0
+  timeout = 10_s
+  console.log "msg history before: ", message-history.length
+  message-history = [r for r in message-history when r.1 > now - timeout]
+  console.log "msg history after: ", message-history.length
+
   return msg
 
 # Forward socket.io messages to and from zeromq messages
