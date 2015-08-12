@@ -61,7 +61,7 @@ aktos-dcs-filter = (msg) ->
   now = Date.now! / 1000 or 0
   timeout = 10_s
   console.log "msg history before: ", message-history.length
-  message-history = [r for r in message-history when r.1 > now - timeout]
+  message-history := [r for r in message-history when r.1 > now - timeout]
   console.log "msg history after: ", message-history.length
 
   return msg
@@ -93,8 +93,9 @@ sub-sock.on 'message', (message) !->
     msg = aktos-dcs-filter msg
     if msg
       msg.sender ++= [server-id]
-      console.log "forwarding to client: ", msg.sender
+      console.log "forwarding to client: ", msg.msg_id
       io.sockets.emit 'aktos-message', msg
+
 
 
 server.route do
