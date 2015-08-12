@@ -10,10 +10,12 @@ sub-sock = zmq.socket 'sub'
 pub-sock = zmq.socket 'pub'
 
 # connection ip
-broker-ip = '127.0.0.1'
+#broker-ip = '127.0.0.1'
+broker-ip = '10.0.10.4'
 
 
-# make zmq settings BEFORE connect/bind: 
+
+# make zmq settings BEFORE connect/bind:
 #pub-sock['lingerPeriod'] = 0
 #pub-sock['highWaterMark'] = 1
 
@@ -22,7 +24,7 @@ pub-sock.setsockopt zmq.ZMQ_LINGER, 0
 
 sub-sock.subscribe ''  # subscribe all messages
 
-# make zmq connections 
+# make zmq connections
 pub-sock.connect 'tcp://' + broker-ip + ':5012'
 sub-sock.connect 'tcp://' + broker-ip + ':5013'
 
