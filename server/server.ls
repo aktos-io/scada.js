@@ -58,13 +58,16 @@ aktos-dcs-filter = (msg) ->
   message-history ++= [[msg.msg_id, msg.timestamp]]
   #console.log "message history: ", message-history
 
+  return msg
+
+cleanup-msg-history = ->
   now = Date.now! / 1000 or 0
   timeout = 10_s
-  console.log "msg history before: ", message-history.length
+  #console.log "msg history before: ", message-history.length
   message-history := [r for r in message-history when r.1 > now - timeout]
-  console.log "msg history after: ", message-history.length
+  #console.log "msg history after: ", message-history.length
 
-  return msg
+set-interval cleanup-msg-history, 10000_ms
 
 # Forward socket.io messages to and from zeromq messages
 io.on 'connection', (socket) !->
