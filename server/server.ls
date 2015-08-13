@@ -13,12 +13,7 @@ pub-sock = zmq.socket 'pub'
 #broker-ip = '127.0.0.1'
 broker-ip = '10.0.10.4'
 
-
-
 # make zmq settings BEFORE connect/bind:
-#pub-sock['lingerPeriod'] = 0
-#pub-sock['highWaterMark'] = 1
-
 pub-sock.setsockopt zmq.ZMQ_SNDHWM, 1
 pub-sock.setsockopt zmq.ZMQ_LINGER, 0
 
@@ -34,6 +29,7 @@ process.on 'SIGINT', ->
 
   console.log 'Received SIGINT, zmq sockets are closed...'
   process.exit 0
+
 
 pack = (msg)->
   #console.log "pack: ", msg
@@ -104,8 +100,6 @@ sub-sock.on 'message', (message) !->
       msg.sender ++= [server-id]
       console.log "forwarding msg to clients, msg_id: ", msg.msg_id
       io.sockets.emit 'aktos-message', msg
-
-
 
 server.route do
   method: 'GET'

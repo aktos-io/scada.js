@@ -128,17 +128,16 @@ class ProxyActor
         catch
           console.log "Problem with receiving message: ", e
 
-      @connected = false
       @socket.on "connect", !~>
-        @connected = true
         #console.log "proxy actor says: connected=", @connected
+        # update io on init
+        @network-tx envelp UpdateIoMessage: {}, @get-msg-id!
+        @send Connected: {}
 
       @socket.on "disconnect", !~>
-        @connected = false
         #console.log "proxy actor says: connected=", @connected
+        @send Disconnected: {}
 
-      # update io on init
-      @network-tx envelp UpdateIoMessage: {}, @get-msg-id!
 
     network-rx: (msg) ->
       # receive from server via socket.io
