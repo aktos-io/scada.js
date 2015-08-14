@@ -2,22 +2,22 @@
 
 * install [aktos-dcs](https://github.com/ceremcem/aktos-dcs)
 
-        cd test-folder
-        git clone https://github.com/ceremcem/aktos-dcs
-        # follow [installation notes](https://github.com/ceremcem/aktos-dcs/blob/master/README.md#install)
+  * `cd test-folder`
+  * `git clone https://github.com/ceremcem/aktos-dcs`
+  * follow [installation notes](https://github.com/ceremcem/aktos-dcs/blob/master/README.md#install)
 
 * install global dependencies: 
 
-        npm install -g livescript brunch pm2
+  * `npm install -g livescript brunch pm2`
+  * install libzmq-4.x
         
-        # install libzmq-4.x
-        sudo apt-get install libzmq3-dev  # or install from source
+          sudo apt-get install libzmq3-dev  # or install from source
 
 * clone this project and install rest of the dependencies
 
-        cd test-folder
-        git clone https://github.com/ceremcem/aktos-dcs-webui-example
-        npm install
+  * `cd test-folder`
+  * `git clone https://github.com/ceremcem/aktos-dcs-webui-example`
+  * `npm install`
 
 # Quick start
 
