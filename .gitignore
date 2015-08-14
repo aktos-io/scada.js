@@ -1,5 +1,5 @@
 *.pyc
-public
+production
 node_modules
 *.kate-swp
 vendor-*

@@ -46,7 +46,7 @@ message-history = []  # msg_id, timestamp
 aktos-dcs-filter = (msg) ->
   if server-id in msg.sender
     # drop short circuit message
-    console.log "dropping short circuit message", msg
+    console.log "dropping short circuit message", msg.payload
     return null
 
   if 'ProxyActorMessage' of msg.payload
@@ -98,7 +98,7 @@ sub-sock.on 'message', (message) !->
     msg = aktos-dcs-filter msg
     if msg
       msg.sender ++= [server-id]
-      console.log "forwarding msg to clients, msg_id: ", msg.msg_id
+      #console.log "forwarding msg to clients, msg_id: ", msg.msg_id
       io.sockets.emit 'aktos-message', msg
 
 server.route do
