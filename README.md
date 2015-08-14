@@ -1,19 +1,29 @@
-# Quick Run
+# INSTALL
 
-For a quick test with minimal installation:
+* install [aktos-dcs](https://github.com/ceremcem/aktos-dcs)
 
-* `git clone https://github.com/ceremcem/aktos-dcs`
-* `git clone https://github.com/ceremcem/aktos-dcs-webui-example/`
-    
-        check aktos-dcs/TESTS.md/#4 to verify if your installation is OK.  
+        cd test-folder
+        git clone https://github.com/ceremcem/aktos-dcs
+        # follow [installation notes](https://github.com/ceremcem/aktos-dcs/blob/master/README.md#install)
 
-* `cd aktos-dcs-webui-example/`
+* install global dependencies: 
 
+        npm install -g livescript brunch pm2
+        
+        # install libzmq-4.x
+        sudo apt-get install libzmq3-dev  # or install from source
+
+* clone this project and install rest of the dependencies
+
+        cd test-folder
+        git clone https://github.com/ceremcem/aktos-dcs-webui-example
         npm install
-    
+
+# Quick start
+
 * open a terminal and type:
 
-        node production/server.js
+        npm start
 
 * open another terminal and type:
 
@@ -21,31 +31,8 @@ For a quick test with minimal installation:
 
 Then open [http://localhost:4000](http://localhost:4000) and see if the button clicks are sent to python process and analog display is changing.
 
-# INSTALL
 
-* install brunch.io
-
-        npm install -g brunch
-
-* install pm2, the process manager
-
-        npm install -g pm2
-
-* install [aktos-dcs](https://github.com/ceremcem/aktos-dcs/blob/master/README.md#install)
-* install libzmq for node.zmq:
-
-        sudo apt-get install libzmq3-dev # for libzmq 4.x
-
-* install other dependencies
-
-        npm install
-
-
-# Development
-
-start development:
-
-    npm start
+# Optional 
 
 optional: in order to see server.ls logs:
 
