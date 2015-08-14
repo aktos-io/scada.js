@@ -19,10 +19,10 @@ class KeypadSimulator(Actor):
         i = 0
         while True:
             print "sending analog-1 value"
-            self.send(IoMessage(pin_name="test_slider", val=i))
+            self.send({'IoMessage':{'pin_name':'analog-1', 'val':i}})
             i += 1
             sleep(1)
-            break
+            
 
 
 ProxyActor(brokers="10.0.10.4:5012:5013")
