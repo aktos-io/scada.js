@@ -14,19 +14,23 @@
   "scripts": {
     "start": "npm run start-server & sleep 2 && npm run brunch",
     "test": "brunch test",
-    "start-server": "pm2 start pm2-config.json",
+    "server": "pm2 start server/server.ls --interpreter=lsc --watch",
     "brunch": "brunch watch",
     "show-logs": "pm2 logs"
   },
   "dependencies": {
-    "livescript-brunch": "git://github.com/brunch/LiveScript-brunch.git",
     "clean-css-brunch": ">= 1.0 < 1.5",
     "css-brunch": ">= 1.0 < 1.5",
+    "hapi": "^8.8.1",
     "javascript-brunch": ">= 1.0 < 1.5",
     "less-brunch": ">= 1.0 < 1.5",
     "livescript": "^1.4.0",
+    "livescript-brunch": "git://github.com/brunch/LiveScript-brunch.git",
+    "msgpack-js": "^0.3.0",
+    "prelude-ls": "^1.1.2",
     "socket.io": "^1.3.6",
-    "uglify-js-brunch": ">= 1.0 < 1.5"
+    "uglify-js-brunch": ">= 1.0 < 1.5",
+    "zmq": "^2.12.0"
   },
   "devDependencies": {
     "chai": "1.2.0",

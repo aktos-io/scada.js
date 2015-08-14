@@ -55,3 +55,7 @@ optional: in order to see server.ls logs:
 optional: In order to build production code:
 
     make production
+
+# Troubleshoot
+
+If client does not receive messages, see: http://stackoverflow.com/a/31792905/1952991

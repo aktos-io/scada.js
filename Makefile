@@ -11,3 +11,6 @@ production: clean
 
 clean:
 	rm -r $(PRODUCTION_FOLDER) 2> /dev/null & true
+
+new-client:
+	firefox -new-tab -url http://localhost:4000

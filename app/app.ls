@@ -29,6 +29,21 @@ socket = io.connect addr_port, path: socketio-path
 # -----------------------------------------------------
 # aktos-dcs livescript
 # -----------------------------------------------------
+envelp = (msg, msg-id) ->
+  msg-raw = do
+    sender: []
+    timestamp: Date.now! / 1000
+    msg_id: msg-id  # {{.actor_id}}.{{serial}}
+    payload: msg
+  return msg-raw
+
+get-msg-body = (msg) ->
+  subject = [subj for subj of msg.payload][0]
+  #console.log "subject, ", subject
+  return msg.payload[subject]
+
+
+
 class ActorBase
   ~>
     @actor-id = uuid4!
@@ -39,7 +54,9 @@ class ActorBase
   recv: (msg) ->
     @receive msg
     try
-      this['handle_' + msg.cls] msg
+      subjects = [subj for subj of msg.payload]
+      for subject in subjects
+        this['handle_' + subject] msg
     catch
       #console.log "problem in handler: ", e
 
@@ -74,27 +91,23 @@ class Actor extends ActorBase
     super ...
     @mgr = ActorManager!
     @mgr.register this
-    @name = name
+    @actor-name = name
     #console.log "actor \'", @name, "\' created with id: ", @actor-id
+    @msg-serial-number = 0
 
   send: (msg) ->
-    msg = @fill-msg msg
-    msg.sender ++= [@actor-id]
-    @mgr.inbox-put msg
+    msg = envelp msg, @get-msg-id!
+    @send_raw msg
 
-  copy-msg: (msg) ->
-    JSON.parse JSON.stringify msg
+  send_raw: (msg_raw) ->
+    msg_raw.sender ++= [@actor-id]
+    @mgr.inbox-put msg_raw
 
-  fill-msg: (msg) ->
-    cls = Object.keys msg .0
-    msg = @copy-msg msg[cls]
-    msg.cls = cls
-    msg.sender ?= []
-    msg.timestamp ?= Date.now! / 1000 or 0
-    msg.msg_id = uuid4!
-    #console.log "filled msg: ", msg
-    return msg
 
+  get-msg-id: ->
+    msg-id = @actor-id + '.' + String @msg-serial-number
+    @msg-serial-number += 1
+    return msg-id
 
 class ProxyActor
   instance = null
@@ -115,27 +128,22 @@ class ProxyActor
         catch
           console.log "Problem with receiving message: ", e
 
-      @connected = false
       @socket.on "connect", !~>
-        @connected = true
         #console.log "proxy actor says: connected=", @connected
+        # update io on init
+        @network-tx envelp UpdateIoMessage: {}, @get-msg-id!
+        @send Connected: {}
 
       @socket.on "disconnect", !~>
-        @connected = false
         #console.log "proxy actor says: connected=", @connected
+        @send Disconnected: {}
 
-      # update io on init
-      @network-tx do
-        cls: \UpdateIoMessage
-        sender: [@actor-id]
 
     network-rx: (msg) ->
       # receive from server via socket.io
       # forward message to inner actors
-      @send msg
-
-    fill-msg: (msg) ->
-      msg
+      console.log "proxy actor got network message: ", msg
+      @send_raw msg
 
     receive: (msg) ->
       @network-tx msg
@@ -166,14 +174,16 @@ class SwitchActor extends Actor
     super ...
     @callback-functions = []
     @pin-name = String pin-name
+    @actor-name = @pin-name
 
   add-callback: (func) ->
       @callback-functions ++= [func]
 
   handle_IoMessage: (msg) ->
-    #console.log "switch actor got IoMessage: ", msg
-    if msg.pin_name is @pin-name
-      @fire-callbacks msg
+    msg-body = get-msg-body msg
+    if msg-body.pin_name is @pin-name
+      #console.log "switch actor got IoMessage: ", msg
+      @fire-callbacks msg-body
 
   fire-callbacks: (msg) ->
     #console.log "fire-callbacks called!", msg
@@ -182,7 +192,7 @@ class SwitchActor extends Actor
 
   gui-event: (val) ->
     #console.log "gui event called!", val
-    @fire-callbacks @fill-msg GuiMessage: do
+    @fire-callbacks do
       pin_name: @pin-name
       val: val
 
@@ -337,7 +347,7 @@ make-jq-mobile-connections = !->
         elem = $ this .find 'input'
         actor = $ this .data \actor
         elem.on \change, ->
-          #console.log "event, ui: ", anchor
+          #console.log "elem.val: ", elem.val!
           actor.gui-event elem.val!
         actor.add-callback (msg)->
           elem.val msg.val .slider \refresh
