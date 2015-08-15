@@ -17,9 +17,12 @@
 
   * `cd test-folder`
   * `git clone https://github.com/ceremcem/aktos-dcs-webui-example`
+  * `cd aktos-dcs-webui-example`
   * `npm install`
 
 # Quick start
+
+While in `aktos-dcs-webui-example` directory, 
 
 * open a terminal and type:
 
