@@ -12,7 +12,7 @@
     "node": "~0.6.10 || 0.8 || 0.9"
   },
   "scripts": {
-    "start": "npm run start-server & sleep 2 && npm run brunch",
+    "start": "npm run server & sleep 2 && npm run brunch",
     "test": "brunch test",
     "server": "pm2 start server/server.ls --interpreter=lsc --watch",
     "brunch": "brunch watch",
