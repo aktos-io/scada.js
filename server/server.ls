@@ -3,6 +3,17 @@ Hapi = require "hapi"
 zmq = require 'zmq'
 #msgpack = require 'msgpack-js'
 
+if (parse-int zmq.version.0) < 4
+  console.log "ERROR: "
+  console.log "ERROR: "
+  console.log "ERROR: libzmq version can not be lower than 4.x"
+  console.log "ERROR: current version is: ", zmq.version
+  console.log "ERROR: Exiting... "
+  console.log "ERROR: "
+  console.log "ERROR: "
+  process.exit 1
+
+
 server = new Hapi.Server!
 server.connection port: 4000
 io = require 'socket.io' .listen server.listener
@@ -92,9 +103,10 @@ io.on 'connection', (socket) !->
     pub-sock.send pack msg
 
 sub-sock.on 'message', (message) !->
-  #console.log "aktos message from network ", message.to-string!
+  #console.log "aktos message from network ", message.to-string![\msg_id]
   try
     msg = unpack message
+    #console.log "zeromq sub received message: ", msg.msg_id
     msg = aktos-dcs-filter msg
     if msg
       msg.sender ++= [server-id]

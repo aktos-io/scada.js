@@ -8,7 +8,7 @@ class KeypadSimulator(Actor):
             source, number = msg.pin_name.split('-')
             assert source == 'button'
             print "sending button press: ", number, msg.val
-            self.send(KeypadMessage(key=number, val=msg.val))
+            #self.send(KeypadMessage(key=number, val=msg.val))
         except:
             pass
 
@@ -20,11 +20,12 @@ class KeypadSimulator(Actor):
         while True:
             print "sending analog-1 value"
             self.send({'IoMessage':{'pin_name':'analog-1', 'val':i}})
+            self.send({'IoMessage':{'pin_name':'analog-2', 'val':i*10}})
             i += 1
             sleep(1)
-            
 
 
-ProxyActor(brokers="10.0.10.4:5012:5013")
+
+ProxyActor()
 KeypadSimulator()
 wait_all()
