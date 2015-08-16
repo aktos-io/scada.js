@@ -3,17 +3,18 @@ from aktos_dcs import *
 
 class KeypadSimulator(Actor):
     def handle_IoMessage(self, msg):
-        print "keypad simulator got io message:", msg.pin_name, msg.val
+        msg = msg_body(msg)
+        print "keypad simulator got io message:", msg['pin_name'], msg['val']
         try:
             source, number = msg.pin_name.split('-')
             assert source == 'button'
-            print "sending button press: ", number, msg.val
-            #self.send(KeypadMessage(key=number, val=msg.val))
+            print "sending button press: ", number, msg['val']
+            self.send({'KeypadMessage': {'key': number, 'val': msg['val']}})
         except:
             pass
 
-        if msg.pin_name == "test-slider":
-            print "slider value changed to: ", msg.val
+        if msg['pin_name'] == "test-slider":
+            print "slider value changed to: ", msg['val']
 
     def action(self):
         i = 0
