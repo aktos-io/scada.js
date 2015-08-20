@@ -388,6 +388,9 @@ make-jq-mobile-widgets = !->
     
     # inherit status leds
     set-status-leds!
+    
+    # inherit analog displays
+    set-analog-displays!
 
 
 make-jq-page-settings = ->
