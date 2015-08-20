@@ -250,6 +250,8 @@ set-switch-actors = !->
     actor.ractive-node = elem
     elem.data \actor, actor
 
+
+# basic widgets 
 set-switch-buttons = !->
   $ '.switch-button' .each !->
     elem = $ this
@@ -314,51 +316,65 @@ set-analog-displays = ->
     actor.add-callback (msg) ->
       set-ractive-variable elem, 'val', msg.val
 
-make-jq-mobile-connections = !->
-  $ \document .ready ->
-    $ '.ui-checkbox' .each !->
-      elem = $ this
-      actor = elem.children \.switch-actor .data \actor
+make-basic-widgets = -> 
+  set-switch-buttons!
+  set-push-buttons!
+  set-status-leds!
+  set-analog-displays!
 
-      jq-button = elem.children \.ui-btn
-      actor.add-callback (msg) ->
-        if msg.val
-          jq-button.add-class 'ui-checkbox-on'
-          jq-button.add-class 'ui-btn-active'
-          jq-button.remove-class 'ui-checkbox-off'
-        else
-          jq-button.remove-class 'ui-checkbox-on'
-          jq-button.remove-class 'ui-btn-active'
-          jq-button.add-class 'ui-checkbox-off'
+# create jq mobile widgets 
+make-jq-mobile-widgets = !->
+  console.log "mobile connections being done..."
+  $ document .ready ->
+    #console.log "document ready!"
 
-    $ \.ui-flipswitch .each ->
-      elem = $ this
-      actor = elem.children \.switch-actor .data \actor
-      actor.add-callback (msg) ->
-        if msg.val
-          elem.add-class 'ui-flipswitch-active'
-        else
-          elem.remove-class 'ui-flipswitch-active'
+    # jq-flipswitch-v2
+    make-jq-flipswitch-v2 = -> 
+      $ \.switch-button .each ->
+        console.log "switch-button created"
+        elem = $ this
+        actor = elem.data \actor
+        
+        actor.add-callback (msg) ->
+          #console.log "switch-button got message", msg
+          if msg.val
+            elem.val \on .flipswitch \refresh
+          else
+            elem.val \off .flipswitch \refresh
+            
+        elem.on \change, (event) -> 
+          #console.log "switch button changed: ", elem.val!        
+          actor.gui-event (elem.val! == \on)
+    
+    make-jq-flipswitch-v2!
+        
+    # jq-push-button
+    make-jq-push-button = -> 
+      set-push-buttons!  # inherit basic button settings
+      $ \.push-button .each ->
+        console.log "found push-button!"
+        elem = $ this
+        actor = elem.data \actor
+        actor.add-callback (msg) ->
+          #console.log "push button got message: ", msg.val
+          if msg.val
+            elem.add-class 'ui-btn-active'
+          else
+            elem.remove-class 'ui-btn-active'
 
-    $ \.push-button .each ->
-      elem = $ this
-      actor = elem.data \actor
-      actor.add-callback (msg) ->
-        #console.log "push button got message: ", msg.val
-        if msg.val
-          elem.add-class 'ui-btn-active'
-        else
-          elem.remove-class 'ui-btn-active'
+        # while long pressing on touch devices, 
+        # no "select text" dialog should be fired: 
+        elem.disable-selection!
+        elem.onselectstart = ->
+          false
+        elem.unselectable = "on"
+        elem.css '-moz-user-select', 'none'
+        elem.css '-webkit-user-select', 'none'
+    
+    make-jq-push-button!
 
-      elem.disable-selection!
-      elem.onselectstart = ->
-        false
-      elem.unselectable = "on"
-      elem.css '-moz-user-select', 'none'
-      elem.css '-webkit-user-select', 'none'
-
-    # jQuery Sliders
-    set-sliders = !->
+    # slider
+    make-slider = !->
       $ '.slider' .each !->
         elem = $ this .find 'input'
         actor = $ this .data \actor
@@ -368,7 +384,10 @@ make-jq-mobile-connections = !->
         actor.add-callback (msg)->
           elem.val msg.val .slider \refresh
 
-    set-sliders!
+    make-slider!
+    
+    # inherit status leds
+    set-status-leds!
 
 
 make-jq-page-settings = ->
@@ -490,21 +509,21 @@ make-toggle-switch-visualisation = ->
     s.add-listener (state) !->
       actor.send-event state
 
+  
 
 app.on 'complete', !->
   #console.log "ractive completed, post processing other widgets..."
-  # create actors
-  set-switch-actors!
-  # make bare widgets work
-  set-switch-buttons!
-  set-push-buttons!
-  set-status-leds!
-  set-analog-displays!
-  # DO JQUERY SETTINGS IN THAT FUNCTION!
-  # make extra visualization settings
-  make-jq-mobile-connections!
-  #make-toggle-switch-visualisation!
 
-  make-jq-page-settings!
+  # create actors for every widget
+  set-switch-actors!
+
+  # create basic widgets
+  #make-basic-widgets!
+
+  # create jquery mobile widgets 
+  make-jq-mobile-widgets!
+
+  # set jquery mobile page behaviour
+  #make-jq-page-settings!
 
 
