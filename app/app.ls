@@ -179,6 +179,9 @@ get-ractive-variable = (jquery-elem, ractive-variable) ->
 
 set-ractive-variable = (jquery-elem, ractive-variable, value) ->
   ractive-node = Ractive.get-node-info jquery-elem.get 0
+  if not ractive-node.\keypath
+    console.log "ERROR: NO KEYPATH FOUND FOR RACTIVE NODE: ", jquery-elem
+    
   app.set ractive-node.\keypath + '.' + ractive-variable, value
 
 
@@ -190,8 +193,6 @@ class SwitchActor extends Actor
     @pin-name = String pin-name
     @actor-name = @pin-name
     @ractive-node = null  # the jQuery element
-    @on-connected = null
-    @on-disconnected = null
     @connected = false
 
   add-callback: (func) ->
@@ -507,10 +508,3 @@ app.on 'complete', !->
   make-jq-page-settings!
 
 
-
-socket.on "connect", !->
-  app.set "connected", true
-
-socket.on 'disconnect', !->
-  console.log 'disconnected...'
-  app.set 'connected', false
