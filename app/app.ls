@@ -382,14 +382,16 @@ make-jq-mobile-widgets = !->
     # slider
     make-slider = !->
       $ '.slider' .each !->
-        elem = $ this .find 'input'
         actor = $ this .data \actor
+        elem = $ this .find \.slider-input
+        elem.slider!
+        console.log "slider created!", elem
         elem.on \change, ->
-          #console.log "slider elem.val: ", elem.val!
+          console.log "slider elem.val: ", elem.val!
           actor.gui-event elem.val!
           
         actor.add-callback (msg)->
-          #console.log "slider changed: ", msg.val 
+          console.log "slider changed: ", msg.val 
           elem.val msg.val .slider \refresh
 
     make-slider!
@@ -523,18 +525,19 @@ make-toggle-switch-visualisation = ->
   
 
 app.on 'complete', !->
-  #console.log "ractive completed, post processing other widgets..."
+  $ document .ready ->
+    #console.log "ractive completed, post processing other widgets..."
 
-  # create actors for every widget
-  set-switch-actors!
+    # create actors for every widget
+    set-switch-actors!
 
-  # create basic widgets
-  #make-basic-widgets!
+    # create basic widgets
+    #make-basic-widgets!
 
-  # create jquery mobile widgets 
-  make-jq-mobile-widgets!
+    # create jquery mobile widgets 
+    make-jq-mobile-widgets!
 
-  # set jquery mobile page behaviour
-  #make-jq-page-settings!
+    # set jquery mobile page behaviour
+    #make-jq-page-settings!
 
 
