@@ -385,9 +385,11 @@ make-jq-mobile-widgets = !->
         elem = $ this .find 'input'
         actor = $ this .data \actor
         elem.on \change, ->
-          #console.log "elem.val: ", elem.val!
+          #console.log "slider elem.val: ", elem.val!
           actor.gui-event elem.val!
+          
         actor.add-callback (msg)->
+          #console.log "slider changed: ", msg.val 
           elem.val msg.val .slider \refresh
 
     make-slider!
