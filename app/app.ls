@@ -291,7 +291,6 @@ set-push-buttons = ->
     elem.on 'touchend' (e) ->
       actor.gui-event off
 
-
     actor.add-callback (msg) ->
       #console.log "push button got message: ", msg
       if msg.val
@@ -334,18 +333,24 @@ make-jq-mobile-widgets = !->
         console.log "switch-button created"
         elem = $ this
         actor = elem.data \actor
+
+        send-gui-event = (event) -> 
+          #console.log "jq-flipswitch-2 sending msg: ", elem.val!        
+          actor.gui-event (elem.val! == \on)
+
+        elem.on \change, send-gui-event
         
         actor.add-callback (msg) ->
           #console.log "switch-button got message", msg
+          elem.unbind \change
+          
           if msg.val
             elem.val \on .flipswitch \refresh
           else
             elem.val \off .flipswitch \refresh
-            
-        elem.on \change, (event) -> 
-          #console.log "switch button changed: ", elem.val!        
-          actor.gui-event (elem.val! == \on)
-    
+          
+          elem.bind \change, send-gui-event 
+          
     make-jq-flipswitch-v2!
         
     # jq-push-button
@@ -355,13 +360,14 @@ make-jq-mobile-widgets = !->
         console.log "found push-button!"
         elem = $ this
         actor = elem.data \actor
+        
         actor.add-callback (msg) ->
-          #console.log "push button got message: ", msg.val
+          #console.log "jq-push-button got message: ", msg.val
           if msg.val
             elem.add-class 'ui-btn-active'
           else
             elem.remove-class 'ui-btn-active'
-
+          
         # while long pressing on touch devices, 
         # no "select text" dialog should be fired: 
         elem.disable-selection!
