@@ -191,7 +191,11 @@ class SwitchActor extends Actor
     super ...
     @callback-functions = []
     @pin-name = String pin-name
-    @actor-name = @pin-name
+    if pin-name
+      @actor-name = @pin-name
+    else
+      @actor-name = @actor-id
+      console.log "actor is created with this name: ", @actor-name
     @ractive-node = null  # the jQuery element
     @connected = false
 
@@ -249,7 +253,7 @@ set-switch-actors = !->
     actor = SwitchActor pin-name
     actor.ractive-node = elem
     elem.data \actor, actor
-
+    
 
 # basic widgets 
 set-switch-buttons = !->
@@ -382,18 +386,37 @@ make-jq-mobile-widgets = !->
     # slider
     make-slider = !->
       $ '.slider' .each !->
-        actor = $ this .data \actor
-        elem = $ this .find \.slider-input
-        elem.slider!
-        console.log "slider created!", elem
-        elem.on \change, ->
-          console.log "slider elem.val: ", elem.val!
-          actor.gui-event elem.val!
+        elem = $ this 
+        actor = elem.data \actor
+        
+        console.log "this slider actor found: ", actor 
+        #debugger 
+        
+        slider = elem.find \.jq-slider 
+        slider.slider!
+        console.log "slider created!", slider
+        
+        curr_val = slider.attr \value
+        slider.val curr_val .slider \refresh 
+        #console.log "current value: ", curr_val
+        
+        input = elem.find \.jq-slider-input
+        
+        input.on \change -> 
+          val = get-ractive-variable elem, \val
+          actor.gui-event val
+          
+        
+        slider.on \change ->
+          console.log "slider val: ", slider.val!
+          actor.gui-event slider.val!
           
         actor.add-callback (msg)->
           console.log "slider changed: ", msg.val 
-          elem.val msg.val .slider \refresh
-
+          slider.val msg.val .slider \refresh
+          set-ractive-variable elem, \val, msg.val 
+        
+        
     make-slider!
     
     # inherit status leds
