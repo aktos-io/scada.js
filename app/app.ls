@@ -20,7 +20,10 @@ arr = url.split "/"
 addr_port = arr.0 + "//" + arr.2
 socketio-path = [''] ++ (initial (drop 3, arr)) ++ ['socket.io']
 socketio-path = join '/' socketio-path
-socket = io.connect addr_port, path: socketio-path
+socket = io.connect do 
+  'port': addr_port
+  'path': socketio-path
+  
 ## debug
 #console.log 'socket.io path: ', addr_port,  socketio-path
 #console.log "socket.io socket: ", socket
@@ -251,12 +254,18 @@ class SwitchActor extends Actor
 # END OF LIBRARY FUNCTIONS
 # ---------------------------------------------------
 
-# Create the actor which will connect to the server
-ProxyActor!
 
 # Set Ractive.DEBUG to false when minified:
 Ractive.DEBUG = /unminified/.test !->
   /*unminified*/
+
+app = new Ractive do
+  el: 'container'
+  template: '#app'
+
+
+# Create the actor which will connect to the server
+ProxyActor!
 
 
 set-switch-actors = !->
@@ -558,11 +567,8 @@ make-toggle-switch-visualisation = ->
       actor.send-event state
 
 
-app = new Ractive do
-  el: 'container'
-  template: '#app'
-
 app.on 'complete', !->
+  #$ '#debug' .append '<p>app.complete started...</p>'
   $ document .ready ->
     #console.log "ractive completed, post processing other widgets..."
 
@@ -574,8 +580,13 @@ app.on 'complete', !->
 
     # create jquery mobile widgets 
     make-jq-mobile-widgets!
+    
+    #$ \#debug .append '<p>app.complete ended...</p>'
 
     # set jquery mobile page behaviour
     #make-jq-page-settings!
+    
+    #console.log "app.complete ended..."
+    
 
 

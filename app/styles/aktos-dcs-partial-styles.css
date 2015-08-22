@@ -11,3 +11,13 @@
 .button-active-state {
   background-color: #293f50;
 }
+
+
+.jq-slider-input {
+  float: left; 
+  width: 60px; 
+  position: relative; 
+  top: -14px; 
+}
+.jq-slider-container {
+}
