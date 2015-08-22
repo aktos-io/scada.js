@@ -128,17 +128,22 @@ class ProxyActor
         catch
           console.log "Problem with receiving message: ", e
 
+      @connected = false 
       @socket.on "connect", !~>
         #console.log "proxy actor says: connected"
         # update io on init
+        @connected = true
         @network-tx envelp UpdateIoMessage: {}, @get-msg-id!
-        @send Connection: {connected: true}
+        @send ConnectionStatus: {connected: @connected}
 
       @socket.on "disconnect", !~>
         #console.log "proxy actor says: disconnected"
-        @send Connection: {connected: false}
-
-
+        @connected = false 
+        @send ConnectionStatus: {connected: @connected}
+        
+    handle_UpdateConnectionStatus: (msg) -> 
+      @send ConnectionStatus: {connected: @connected}
+      
     network-rx: (msg) ->
       # receive from server via socket.io
       # forward message to inner actors
@@ -195,7 +200,7 @@ class SwitchActor extends Actor
       @actor-name = @pin-name
     else
       @actor-name = @actor-id
-      console.log "actor is created with this name: ", @actor-name
+      console.log "actor is created with this random name: ", @actor-name
     @ractive-node = null  # the jQuery element
     @connected = false
 
@@ -208,13 +213,25 @@ class SwitchActor extends Actor
       #console.log "switch actor got IoMessage: ", msg
       @fire-callbacks msg-body
 
-  handle_Connection: (msg) ->
+  handle_ConnectionStatus: (msg) ->
     # TODO: TEST THIS CIRCULAR REFERENCE IF IT COUSES
     # MEMORY LEAK OR NOT
     @connected = get-msg-body msg .connected
     #console.log "connection status changed: ", @connected
+    @refresh-connected-variable! 
+    
+  refresh-connected-variable: -> 
     if @ractive-node
+      #console.log "setting {{connected}}: ", @connected
       set-ractive-variable @ractive-node, 'connected', @connected
+    else
+      console.log "ractive node is empty! actor: ", this 
+    
+  set-node: (node) -> 
+    #console.log "setting #{this.actor-name} -> ", node
+    @ractive-node = node
+    
+    @send UpdateConnectionStatus: {}
 
   fire-callbacks: (msg) ->
     #console.log "fire-callbacks called!", msg
@@ -251,9 +268,8 @@ set-switch-actors = !->
     elem = $ this
     pin-name = get-ractive-variable elem, 'pin_name'
     actor = SwitchActor pin-name
-    actor.ractive-node = elem
+    actor.set-node elem
     elem.data \actor, actor
-    
 
 # basic widgets 
 set-switch-buttons = !->
@@ -334,12 +350,12 @@ make-jq-mobile-widgets = !->
     # jq-flipswitch-v2
     make-jq-flipswitch-v2 = -> 
       $ \.switch-button .each ->
-        console.log "switch-button created"
+        #console.log "switch-button created"
         elem = $ this
         actor = elem.data \actor
 
         send-gui-event = (event) -> 
-          console.log "jq-flipswitch-2 sending msg: ", elem.val!        
+          #console.log "jq-flipswitch-2 sending msg: ", elem.val!        
           actor.gui-event (elem.val! == \on)
 
         elem.on \change, send-gui-event
@@ -361,7 +377,7 @@ make-jq-mobile-widgets = !->
     make-jq-push-button = -> 
       set-push-buttons!  # inherit basic button settings
       $ \.push-button .each ->
-        console.log "found push-button!"
+        #console.log "found push-button!"
         elem = $ this
         actor = elem.data \actor
         
@@ -389,12 +405,12 @@ make-jq-mobile-widgets = !->
         elem = $ this 
         actor = elem.data \actor
         
-        console.log "this slider actor found: ", actor 
+        #console.log "this slider actor found: ", actor 
         #debugger 
         
         slider = elem.find \.jq-slider 
         slider.slider!
-        console.log "slider created!", slider
+        #console.log "slider created!", slider
         
         curr_val = slider.attr \value
         slider.val curr_val .slider \refresh 
@@ -408,11 +424,11 @@ make-jq-mobile-widgets = !->
           
         
         slider.on \change ->
-          console.log "slider val: ", slider.val!
+          #console.log "slider val: ", slider.val!
           actor.gui-event slider.val!
           
         actor.add-callback (msg)->
-          console.log "slider changed: ", msg.val 
+          #console.log "slider changed: ", msg.val 
           slider.val msg.val .slider \refresh
           set-ractive-variable elem, \val, msg.val 
         
