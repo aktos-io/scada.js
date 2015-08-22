@@ -515,6 +515,7 @@ app.on 'complete', !->
     # set jquery mobile page behaviour
     #make-jq-page-settings!
     
+    window.location = '#home-page'
     #console.log "app.complete ended..."
     
 
