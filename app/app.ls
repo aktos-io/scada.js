@@ -339,7 +339,7 @@ make-jq-mobile-widgets = !->
         actor = elem.data \actor
 
         send-gui-event = (event) -> 
-          #console.log "jq-flipswitch-2 sending msg: ", elem.val!        
+          console.log "jq-flipswitch-2 sending msg: ", elem.val!        
           actor.gui-event (elem.val! == \on)
 
         elem.on \change, send-gui-event
@@ -349,9 +349,9 @@ make-jq-mobile-widgets = !->
           elem.unbind \change
           
           if msg.val
-            elem.val \on .flipswitch \refresh
+            elem.val \on .slider \refresh
           else
-            elem.val \off .flipswitch \refresh
+            elem.val \off .slider \refresh
           
           elem.bind \change, send-gui-event 
           
