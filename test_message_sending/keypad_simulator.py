@@ -1,5 +1,5 @@
 from aktos_dcs import *
-
+from aktos_dcs_lib import * 
 
 class KeypadSimulator(Actor):
     def handle_IoMessage(self, msg):
@@ -21,5 +21,14 @@ class KeypadSimulator(Actor):
 
 
 ProxyActor()
+
+virtual_inputs = {
+    'slider-1': None, 
+    'slider-2': None, 
+}
+
+for pin_name, pin_number in virtual_inputs.items():
+    VirtualIoActor(pin_name=pin_name, pin_number=pin_number)
+
 KeypadSimulator()
 wait_all()
