@@ -258,10 +258,6 @@ ProxyActor!
 Ractive.DEBUG = /unminified/.test !->
   /*unminified*/
 
-# Initialize Ractive instance
-app = new Ractive do
-  template: '#app'
-  el: 'container'
 
 set-switch-actors = !->
   $ '.switch-actor' .each !->
@@ -561,7 +557,10 @@ make-toggle-switch-visualisation = ->
     s.add-listener (state) !->
       actor.send-event state
 
-  
+
+app = new Ractive do
+  el: 'container'
+  template: '#app'
 
 app.on 'complete', !->
   $ document .ready ->
