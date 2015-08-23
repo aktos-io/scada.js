@@ -536,17 +536,20 @@ make-line-graph-widget = ->
     data = []
     total-points = 300 
     
+    y-max = 1000
+    y-min = 0 
+    
     push-random-data = -> 
       if data.length > 0
         data := tail data 
         
       while data.length < total-points
         
-        prev = if data.length > 0 then last data else 50
+        prev = if data.length > 0 then last data else y-max / 2
 
-        y = prev + Math.random! * 10 - 5        
-        y = 0 if y < 0
-        y = 100 if y > 100 
+        y = prev + Math.random! * 10  - 5
+        y = y-min if y < y-min
+        y = y-max if y > y-max 
         
         data.push y 
         
@@ -570,8 +573,8 @@ make-line-graph-widget = ->
       series: 
         shadow-size: 0 
       yaxis: 
-        min: 0 
-        max: 100 
+        min: y-min
+        max: y-max
       xaxis:
         show: false 
     
@@ -582,17 +585,17 @@ make-line-graph-widget = ->
     
     update = -> 
       #push-random-data!
-      #push-graph-data 44
+      push-graph-data last data
       plot.set-data get-graph-data!
       plot.draw!
       set-timeout update, update-interval 
       
-    #update!
+    update!
 
     actor.add-callback (msg) -> 
       console.log "line-graph got new value: #{msg.val}"
       push-graph-data msg.val
-      refresh!
+      #refresh!
 
 make-graph-widgets = -> 
   make-line-graph-widget!
