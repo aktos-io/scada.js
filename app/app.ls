@@ -11,7 +11,8 @@ require! {
     map,
     zip,
     split,
-    union
+    union,
+    last
   }
 }
 
@@ -242,32 +243,6 @@ class SwitchActor extends Actor
 # ---------------------------------------------------
 
 
-# Set Ractive.DEBUG to false when minified:
-Ractive.DEBUG = /unminified/.test !->
-  /*unminified*/
-
-app = new Ractive do
-  el: 'container'
-  template: '#app'
-
-/* initialize socket.io connections */
-url = window.location.href
-arr = url.split "/"
-addr_port = arr.0 + "//" + arr.2
-socketio-path = [''] ++ (initial (drop 3, arr)) ++ ['socket.io']
-socketio-path = join '/' socketio-path
-socket = io.connect do 
-  'port': addr_port
-  'path': socketio-path
-  
-## debug
-#console.log 'socket.io path: ', addr_port,  socketio-path
-#console.log "socket.io socket: ", socket
-
-# Create the actor which will connect to the server
-ProxyActor!
-
-
 set-switch-actors = !->
   $ '.switch-actor' .each !->
     elem = $ this
@@ -480,7 +455,6 @@ make-toggle-switch-visualisation = ->
       actor.send-event state
       
 jquery-mobile-specific = -> 
-
   set-project-buttons-height = (height) -> 
     $ \.project-buttons .each -> 
       $ this .height height
@@ -494,29 +468,345 @@ jquery-mobile-specific = ->
     make-windows-size-work!
   
   make-windows-size-work!
+  
+  
+
+make-line-graph-widget = -> 
+
+  $ \.line-graph .each ->
+    elem = $ this 
+    pin-name = get-ractive-variable elem, \pin_name 
+    actor = SwitchActor pin-name
+    
+    
+    console.log "this is graph widget: ", elem, actor.actor-name
+    
+    /*
+    data = []
+    push-graph-data = (new-point) ->
+      totalPoints = 300
+      console.log "data lenght: ", data.length
+      if data.length > 0 then
+        data := tail data
+      while data.length < total-points 
+        data.push new-point
+        
+    get-graph-data = ->
+      # Zip the generated y values with the x values
+      zipped = zip [0 to data.length] data
+      #console.log "zipped: ", zipped
+      return [zipped]
+              
+    graph-options = do 
+      series: 
+        shadowSize: 0   # Drawing is faster without shadows
+      yaxis: 
+        min: 0,
+        max: 500
+      xaxis: 
+        show: false
+    
+    graph-data = -> 
+      return do
+        * label: 'test'
+          data: get-graph-data!
+          color: 'white'
+        * label: 'test2'
+          data: get-graph-data!
+          color: 'red'
+
+    push-graph-data 123
+    
+    myplot = $.plot '#placeholder', graph-data!, graph-options 
+    #myplot.setup-grid!
+    
+    update-chart = -> 
+      #console.log "updating chart...", get-graph-data!
+      myplot.set-data graph-data! 
+      myplot.draw!
+      setTimeout update-chart, 30
+      
+    update-chart!
+      
+    actor.add-callback (msg) -> 
+      console.log "line-graph got new value: #{msg.val}"
+      #push-graph-data msg.val
+    */
+    #$ -> 
+    data = []
+    total-points = 300 
+    
+    push-random-data = -> 
+      if data.length > 0
+        data := tail data 
+        
+      while data.length < total-points
+        
+        prev = if data.length > 0 then last data else 50
+
+        y = prev + Math.random! * 10 - 5        
+        y = 0 if y < 0
+        y = 100 if y > 100 
+        
+        data.push y 
+        
+    get-graph-data = -> 
+      return [zip [0 to total-points] data]
+      
+    #console.log "random data: ", get-random-data! 
+
+    push-graph-data = (new-point) ->
+      totalPoints = 300
+      if data.length > 0 then
+        data := tail data
+      while data.length < total-points 
+        data.push new-point
+
+    
+    update-interval = 30 
+    
+    push-random-data!
+    plot = $.plot '#placeholder', get-graph-data!, do 
+      series: 
+        shadow-size: 0 
+      yaxis: 
+        min: 0 
+        max: 100 
+      xaxis:
+        show: false 
+    
+    refresh = -> 
+      plot.set-data get-graph-data!
+      plot.draw!
+    
+    
+    update = -> 
+      #push-random-data!
+      #push-graph-data 44
+      plot.set-data get-graph-data!
+      plot.draw!
+      set-timeout update, update-interval 
+      
+    #update!
+
+    actor.add-callback (msg) -> 
+      console.log "line-graph got new value: #{msg.val}"
+      push-graph-data msg.val
+      refresh!
+
+make-graph-widgets = -> 
+  make-line-graph-widget!
+
+# Set Ractive.DEBUG to false when minified:
+Ractive.DEBUG = /unminified/.test !->
+  /*unminified*/
+
+app = new Ractive do
+  el: 'container'
+  template: '#app'
+
+/* initialize socket.io connections */
+url = window.location.href
+arr = url.split "/"
+addr_port = arr.0 + "//" + arr.2
+socketio-path = [''] ++ (initial (drop 3, arr)) ++ ['socket.io']
+socketio-path = join '/' socketio-path
+socket = io.connect do 
+  'port': addr_port
+  'path': socketio-path
+  
+## debug
+#console.log 'socket.io path: ', addr_port,  socketio-path
+#console.log "socket.io socket: ", socket
+
+# Create the actor which will connect to the server
+ProxyActor!
+
+
 
 app.on 'complete', !->
   #$ '#debug' .append '<p>app.complete started...</p>'
+  #console.log "ractive completed, post processing other widgets..."
+
+  # create actors for every widget
+  set-switch-actors!
+
+  # create basic widgets
+  #make-basic-widgets!
+
   $ document .ready ->
-    #console.log "ractive completed, post processing other widgets..."
-
-    # create actors for every widget
-    set-switch-actors!
-
-    # create basic widgets
-    #make-basic-widgets!
-
     # create jquery mobile widgets 
     make-jq-mobile-widgets!
     jquery-mobile-specific!
-    
-    #$ \#debug .append '<p>app.complete ended...</p>'
-
     # set jquery mobile page behaviour
     #make-jq-page-settings!
-    
+  
+  # graph widgets
+  make-graph-widgets!
+  
+  #$ \#debug .append '<p>app.complete ended...</p>'
+  
+  #console.log "window.location: ", window.location
+  if not window.location.hash
     window.location = '#home-page'
-    #console.log "app.complete ended..."
+  #console.log "app.complete ended..."
+  
+  /*
+  $ -> 
+    data = []
+    total-points = 300 
     
+    get-random-data = -> 
+      if data.length > 0
+        data := tail data 
+        
+      while data.length < total-points
+        
+        prev = if data.length > 0 then last data else 50
+ 
+        y = prev + Math.random! * 10 - 5        
+        y = 0 if y < 0
+        y = 100 if y > 100 
+        
+        #console.log "random data: (y) = #prev"
+        data.push y 
+      return [zip [0 to total-points] data]
+        
+    console.log "random data: ", get-random-data! 
+    
+    update-interval = 30 
+    
+    plot = $.plot '#placeholder', get-random-data!, do 
+      series: 
+        shadow-size: 0 
+      yaxis: 
+        min: 0 
+        max: 100 
+      xaxis:
+        show: false 
+    
+    update = -> 
+      plot.set-data get-random-data!
+      plot.draw!
+      set-timeout update, update-interval 
+      
+    update!
+  */
+  
+  /*
+  $ (->
+    data = []
+    getRandomData = ->
+      data := data.slice 1 if data.length > 0
+      while data.length < totalPoints
+        prev = if data.length > 0 then last data else 50
+        y = prev + Math.random! * 10 - 5
+        if y < 0 then y = 0 else if y > 100 then y = 100
+        data.push y
+
+      serie = zip [0 to data.length] data
+      return [serie]
+      
+    update = ->
+      plot.setData getRandomData!
+      plot.draw!
+      setTimeout update, updateInterval
+    data = []
+    totalPoints = 300
+    console.log 'random data: orig: ', getRandomData!
+    updateInterval = 30
+    plot = $.plot '#placeholder', getRandomData!, {
+      series: {shadowSize: 0}
+      yaxis: {
+        min: 0
+        max: 100
+      }
+      xaxis: {show: false}
+    }
+    update!)
+  */
+           
+  /*
+  ``
+    $(function() {
+
+              // We use an inline data source in the example, usually data would
+              // be fetched from a server
+
+              var data = [],
+                      totalPoints = 300;
+
+              function getRandomData() {
+
+                      if (data.length > 0)
+                              data = data.slice(1);
+
+                      // Do a random walk
+
+                      while (data.length < totalPoints) {
+
+                              var prev = data.length > 0 ? data[data.length - 1] : 50,
+                                      y = prev + Math.random() * 10 - 5;
+
+                              if (y < 0) {
+                                      y = 0;
+                              } else if (y > 100) {
+                                      y = 100;
+                              }
+
+                              data.push(y);
+                      }
+
+                      // Zip the generated y values with the x values
+
+                      var res = [];
+                      for (var i = 0; i < data.length; ++i) {
+                              res.push([i, data[i]])
+                      }
+
+                      return res;
+              }
+                      
+              console.log("random data: orig: ", getRandomData()); 
+
+              // Set up the control widget
+
+              var updateInterval = 30;
+
+              var plot = $.plot("#placeholder", [ getRandomData() ], {
+                      series: {
+                              shadowSize: 0   // Drawing is faster without shadows
+                      },
+                      yaxis: {
+                              min: 0,
+                              max: 100
+                      },
+                      xaxis: {
+                              show: false
+                      }
+              });
+
+              function update() {
+
+                      plot.setData([getRandomData()]);
+
+                      // Since the axes don't change, we don't need to call plot.setupGrid()
+
+                      plot.draw();
+                      setTimeout(update, updateInterval);
+              }
+
+              update();
+
+      });
+
+  ``
+  */
+  
+
+
+
+
+
 
 

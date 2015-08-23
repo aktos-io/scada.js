@@ -21,3 +21,8 @@
 }
 .jq-slider-container {
 }
+
+.line-graph {
+  width: 200px; 
+  height: 100px; 
+}

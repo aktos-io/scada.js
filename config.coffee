@@ -12,7 +12,7 @@ exports.config =
         # even if they aren't specified in order.before.
         before: [
           'vendor/scripts/jquery-1.11.js',
-          'vendor/scripts/flot/jquery.flot.js'
+          'vendor/flot.min/jquery.flot.min.js'
         ]
 
     stylesheets:
