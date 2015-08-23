@@ -576,7 +576,8 @@ make-line-graph-widget = ->
         min: y-min
         max: y-max
       xaxis:
-        show: false 
+        show: false
+            
     
     refresh = -> 
       plot.set-data get-graph-data!
@@ -587,6 +588,8 @@ make-line-graph-widget = ->
       #push-random-data!
       push-graph-data last data
       plot.set-data get-graph-data!
+      plot.resize!
+      plot.setup-grid!
       plot.draw!
       set-timeout update, update-interval 
       
