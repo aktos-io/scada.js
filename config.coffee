@@ -24,7 +24,16 @@ exports.config =
       
   plugins:
     jadeStatic:
+      #compileDebug: true
       locals: {}                    # Locals passed to the template
-      formatPath: (path) -> path.match(/^app(\/|\\)static(\/|\\)(.+)\.jade$/)[3]
+      formatPath: (path) -> 
+        console.log "path is: ", path
+        try
+          path.match(/^app(\/|\\)static(\/|\\)(.+)\.jade$/)[3]
+        catch 
+          return 'ignore'
+          
       extension: '.html'            # Extension of compiled templates
       pretty: true                  # Any other Jade API option
+        
+        

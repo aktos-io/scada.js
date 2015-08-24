@@ -30,39 +30,15 @@ block content
         .col-sm-4.home-col-padding
           | "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
           | "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-        // column
         .col-sm-4.home-col-padding
           | "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
           | "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-        // column
         .col-sm-4.home-col-padding
           | "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
           | "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-        // column
-      // row
-    // content
-    | {{!
-    .ui-content
-      .ui-grid-b
-        .ui-block-a
-          | "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-          | "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-        // column 1
-        .ui-block-b
-          | "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-          | "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-        // column 2
-        .ui-block-c
-          | "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-          | "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-        // column 3
-      // 3 column grid
-    // content
-    | }}
     | {{>connection-status {}}}
-  // home page
-  | {{! ----------- projects page -------------------- }}
-  | {{! ---------------------------------------------- }}
+
+  //- projects page
   #projects(data-role='page', data-theme='b')
     | {{>nav-bar {active_button: 'projects'}}}
     .ui-grid-b(data-theme='b')
@@ -112,15 +88,12 @@ block content
         | src: 'projects/kku-nukleer-fizik-lab/proje-kapak.jpg',
         | label: 'Gama-Gama Korelasyon Deney Otomasyonu'}
         | }}
-    // project list
-  // page projects
-  | {{! ----------- products page -------------------- }}
-  | {{! ---------------------------------------------- }}
+  
+  //- products page 
   #products(data-role='page', data-theme='b')
     | {{>nav-bar {active_button: 'products'}}}
-  // page products
-  | {{! ----------- demos page ----------------------- }}
-  | {{! ---------------------------------------------- }}
+  
+  //- demos page 
   #demos(data-role='page', data-theme='b')
     | {{>nav-bar {active_button: 'demos'}}}
     h2  Delphi simulation 
@@ -152,18 +125,18 @@ block content
     |         {{>slider {pin_name:"slider-1", val: 45}}}
     |         {{>slider {pin_name:"slider-1", val: 45}}}
     |         {{>slider {pin_name:"slider-1", val: 45}}}
-    h2  Input Output Test 
+    h2  Analog display 
     fieldset(data-role='controlgroup', data-type='horizontal')
       | {{>analog-display {pin_name: 'analog-1'}}}
       | {{>analog-display {pin_name: 'analog-2'}}}
       | {{>analog-display {pin_name: 'analog-3'}}}
-    |         {{>connection-status {}}}
-  // demo page
-  | {{! ----------- contact page --------------------- }}
-  | {{! ---------------------------------------------- }}
+    
+    | {{>connection-status {}}}
+
+  //- contact page 
   #contact-page(data-role='page', data-theme='b')
     | {{>nav-bar {active_button: 'contact-page'}}}
-    h2 İLETİŞİM
+    h2 İLETİŞİMimiz bizim
     .content
       dl.dl-horizontal
         dt
@@ -177,29 +150,13 @@ block content
         dt
           .hidden-desktop
             a(data-role='button', href='geo:38.393927,27.036649')
-              | {{! 
-              | Enlem
-              | 38°23′38″N (38.393927)
-              | Boylam
-              | 27°2′12″E (27.036649)
-              | }}
               img(src='img/icons/64x64/pin.png')
-          // hidden desktop
           .visible-desktop
             a(data-role='button', href='#')
-              | {{! 
-              | Enlem
-              | 38°23′38″N (38.393927)
-              | Boylam
-              | 27°2′12″E (27.036649)
-              | }}
               img(src='img/icons/64x64/pin.png')
-          // visible desktop
         dd(style='padding: 2em;')
           div
             | DEÜ Tıp Fakültesi Kampüsü DEPARK Teknoloji Geliştirme Bölgesi Ofis: P2/E Balçova İzmir
           .hidden-phone(style='padding-top: 2em;')
-            img(style='background-image: url(http://static-maps.yandex.ru/1.x/?lang=en-US&ll=-73.7638,42.6564&z=13&l=map&size=600,300);', src='http://static-maps.yandex.ru/1.x/?lang=en-US&ll=-73.7638,42.6564&z=13&l=map&size=600,300', alt='Yandex Map of -73.7638,42.6564')
-          // hidden phone
-    // bootstrap content
-  // contact page
+            img(style='background-image: url(https://static-maps.yandex.ru/1.x/?lang=en-US&ll=-73.7638,42.6564&z=13&l=map&size=600,300);', src='https://static-maps.yandex.ru/1.x/?lang=en-US&ll=-73.7638,42.6564&z=13&l=map&size=600,300', alt='Yandex Map of -73.7638,42.6564')
+  

@@ -20,6 +20,11 @@ body {
   padding: 2em; 
 }
 
+.project-buttons {
+    height:33vw;
+    margin:0.5%;
+}
+
 
 .nav-glyphish-example .ui-btn { padding-top: 40px !important; }
 .nav-glyphish-example .ui-btn:after { width: 30px!important; height: 30px!important; margin-left: -15px !important; box-shadow: none!important; -moz-box-shadow: none!important; -webkit-box-shadow: none!important; -webkit-border-radius: 0 !important; border-radius: 0 !important; }
