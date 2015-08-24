@@ -465,9 +465,9 @@ jquery-mobile-specific = ->
     set-project-buttons-height window-width/3.1
 
   $ window .resize -> 
-    make-windows-size-work!
+    #make-windows-size-work!
   
-  make-windows-size-work!
+  #make-windows-size-work!
   
   
 
@@ -481,31 +481,7 @@ make-line-graph-widget = ->
     
     console.log "this is graph widget: ", elem, actor.actor-name
     
-    /*
-    data = []
-    push-graph-data = (new-point) ->
-      totalPoints = 300
-      console.log "data lenght: ", data.length
-      if data.length > 0 then
-        data := tail data
-      while data.length < total-points 
-        data.push new-point
-        
-    get-graph-data = ->
-      # Zip the generated y values with the x values
-      zipped = zip [0 to data.length] data
-      #console.log "zipped: ", zipped
-      return [zipped]
-              
-    graph-options = do 
-      series: 
-        shadowSize: 0   # Drawing is faster without shadows
-      yaxis: 
-        min: 0,
-        max: 500
-      xaxis: 
-        show: false
-    
+    /*    
     graph-data = -> 
       return do
         * label: 'test'
@@ -515,24 +491,7 @@ make-line-graph-widget = ->
           data: get-graph-data!
           color: 'red'
 
-    push-graph-data 123
-    
-    myplot = $.plot '#placeholder', graph-data!, graph-options 
-    #myplot.setup-grid!
-    
-    update-chart = -> 
-      #console.log "updating chart...", get-graph-data!
-      myplot.set-data graph-data! 
-      myplot.draw!
-      setTimeout update-chart, 30
-      
-    update-chart!
-      
-    actor.add-callback (msg) -> 
-      console.log "line-graph got new value: #{msg.val}"
-      #push-graph-data msg.val
     */
-    #$ -> 
     data = []
     total-points = 300 
     
@@ -657,162 +616,3 @@ app.on 'complete', !->
     window.location = '#home-page'
   #console.log "app.complete ended..."
   
-  /*
-  $ -> 
-    data = []
-    total-points = 300 
-    
-    get-random-data = -> 
-      if data.length > 0
-        data := tail data 
-        
-      while data.length < total-points
-        
-        prev = if data.length > 0 then last data else 50
- 
-        y = prev + Math.random! * 10 - 5        
-        y = 0 if y < 0
-        y = 100 if y > 100 
-        
-        #console.log "random data: (y) = #prev"
-        data.push y 
-      return [zip [0 to total-points] data]
-        
-    console.log "random data: ", get-random-data! 
-    
-    update-interval = 30 
-    
-    plot = $.plot '#placeholder', get-random-data!, do 
-      series: 
-        shadow-size: 0 
-      yaxis: 
-        min: 0 
-        max: 100 
-      xaxis:
-        show: false 
-    
-    update = -> 
-      plot.set-data get-random-data!
-      plot.draw!
-      set-timeout update, update-interval 
-      
-    update!
-  */
-  
-  /*
-  $ (->
-    data = []
-    getRandomData = ->
-      data := data.slice 1 if data.length > 0
-      while data.length < totalPoints
-        prev = if data.length > 0 then last data else 50
-        y = prev + Math.random! * 10 - 5
-        if y < 0 then y = 0 else if y > 100 then y = 100
-        data.push y
-
-      serie = zip [0 to data.length] data
-      return [serie]
-      
-    update = ->
-      plot.setData getRandomData!
-      plot.draw!
-      setTimeout update, updateInterval
-    data = []
-    totalPoints = 300
-    console.log 'random data: orig: ', getRandomData!
-    updateInterval = 30
-    plot = $.plot '#placeholder', getRandomData!, {
-      series: {shadowSize: 0}
-      yaxis: {
-        min: 0
-        max: 100
-      }
-      xaxis: {show: false}
-    }
-    update!)
-  */
-           
-  /*
-  ``
-    $(function() {
-
-              // We use an inline data source in the example, usually data would
-              // be fetched from a server
-
-              var data = [],
-                      totalPoints = 300;
-
-              function getRandomData() {
-
-                      if (data.length > 0)
-                              data = data.slice(1);
-
-                      // Do a random walk
-
-                      while (data.length < totalPoints) {
-
-                              var prev = data.length > 0 ? data[data.length - 1] : 50,
-                                      y = prev + Math.random() * 10 - 5;
-
-                              if (y < 0) {
-                                      y = 0;
-                              } else if (y > 100) {
-                                      y = 100;
-                              }
-
-                              data.push(y);
-                      }
-
-                      // Zip the generated y values with the x values
-
-                      var res = [];
-                      for (var i = 0; i < data.length; ++i) {
-                              res.push([i, data[i]])
-                      }
-
-                      return res;
-              }
-                      
-              console.log("random data: orig: ", getRandomData()); 
-
-              // Set up the control widget
-
-              var updateInterval = 30;
-
-              var plot = $.plot("#placeholder", [ getRandomData() ], {
-                      series: {
-                              shadowSize: 0   // Drawing is faster without shadows
-                      },
-                      yaxis: {
-                              min: 0,
-                              max: 100
-                      },
-                      xaxis: {
-                              show: false
-                      }
-              });
-
-              function update() {
-
-                      plot.setData([getRandomData()]);
-
-                      // Since the axes don't change, we don't need to call plot.setupGrid()
-
-                      plot.draw();
-                      setTimeout(update, updateInterval);
-              }
-
-              update();
-
-      });
-
-  ``
-  */
-  
-
-
-
-
-
-
-
