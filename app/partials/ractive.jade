@@ -1,4 +1,4 @@
-include ./mixins.jade
+include ../templates/mixins.jade
 
 +partial('iyidir')
   div.
@@ -55,7 +55,7 @@ include ./mixins.jade
       src="img/light-bulb-icon-{{ .val? 'on' : 'off' }}-64.png"
       alt="{{ .val? 'on' : 'off' }}"
       )      
-      | {{ .pin_name }}
+    | {{ .pin_name }}
 
 +partial('switch-list')
   | <span class="switch-actor"></span>

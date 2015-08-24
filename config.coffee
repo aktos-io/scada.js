@@ -31,7 +31,7 @@ exports.config =
         try
           path.match(/^app(\/|\\)static(\/|\\)(.+)\.jade$/)[3]
         catch 
-          return 'ignore'
+          return false
           
       extension: '.html'            # Extension of compiled templates
       pretty: true                  # Any other Jade API option
