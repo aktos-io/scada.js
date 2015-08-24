@@ -1,12 +1,12 @@
 
-extends ./brunch.jade
+extends ../templates/brunch.jade
 
 block title
   title aktos webui
 
 block content  
-  include ./mixins.jade
-  include ./ractive.jade
+  include ../templates/mixins.jade
+  include ../partials/ractive.jade
     
   +partial('projects-buttons')
     a(

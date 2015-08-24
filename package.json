@@ -22,7 +22,7 @@
     "clean-css-brunch": ">= 1.0 < 1.5",
     "css-brunch": ">= 1.0 < 1.5",
     "hapi": "^8.8.1",
-    "jade-static-brunch": "^1.8.1",
+    "jade-static-brunch": "git://github.com/ceremcem/jade-static-brunch.git",
     "javascript-brunch": ">= 1.0 < 1.5",
     "less-brunch": ">= 1.0 < 1.5",
     "livescript": "^1.4.0",
