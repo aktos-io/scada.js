@@ -34,6 +34,6 @@ exports.config =
           return false
           
       extension: '.html'            # Extension of compiled templates
-      pretty: true                  # Any other Jade API option
+      pretty: false                  # Any other Jade API option
         
         

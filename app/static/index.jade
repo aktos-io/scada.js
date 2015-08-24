@@ -97,15 +97,24 @@ block content
   #demos(data-role='page', data-theme='b')
     | {{>nav-bar {active_button: 'demos'}}}
     
-    // div(data-role="collapsible-set", data-theme="b")
-
+    .row
+      .col-md-offset-3.col-md-6.col-md-offset-3
+        p(style="padding: 3em"). 
+          Bu sayfada <b>aktos-scada</b>'da kullanılan 
+          görsel nesnelerin örnekleri bulunur. 
+    
     div(data-role="collapsible")
       h3 Test Pin
-      fieldset(data-role='controlgroup', data-type='horizontal')
-        | {{>push-button {pin_name: 'test-pin', label: 'TEST PIN'}}}
-        | {{>switch-button {pin_name: 'test-pin', label: 'TEST PIN'}}}
-        | {{>status-led {pin_name: 'test-pin'}}}
-    
+      
+      .row
+        .col-md-offset-1.col-md-2
+          div
+            | {{>push-button {pin_name: 'test-pin', label: 'TEST PIN'}}}
+          div
+            | {{>switch-button {pin_name: 'test-pin', label: 'TEST PIN'}}}
+        .col-md-9
+          | {{>status-led {pin_name: 'test-pin'}}}
+
     div(data-role="collapsible")
       h3  Delphi simulation 
       fieldset(data-role='controlgroup', data-type='horizontal')
@@ -145,7 +154,7 @@ block content
       fieldset(data-role='controlgroup', data-type='horizontal')
         | {{>analog-display {pin_name: 'analog-1'}}}
         | {{>analog-display {pin_name: 'analog-2'}}}
-        | {{>analog-display {pin_name: 'analog-3'}}}
+        | {{>analog-display {pin_name: 'slider-2'}}}
     
     | {{>connection-status {}}}
 
