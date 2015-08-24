@@ -21,3 +21,10 @@ exports.config =
         'test/stylesheets/test.css': /^test/
       order: {}
       #after: ['app/styles/aktos-dcs-partial-styles.css']
+      
+  plugins:
+    jadeStatic:
+      locals: {}                    # Locals passed to the template
+      formatPath: (path) -> path.match(/^app(\/|\\)static(\/|\\)(.+)\.jade$/)[3]
+      extension: '.html'            # Extension of compiled templates
+      pretty: true                  # Any other Jade API option
