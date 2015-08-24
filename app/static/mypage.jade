@@ -1,0 +1,13 @@
+
+extends ./brunch.jade
+
+block title
+  title aktos webui
+
+block content  
+  include ./mixins.jade
+  include ./ractive.jade
+  
+  +partial('naber')
+    div='{{ .pin_name }}'
+
