@@ -1,20 +1,23 @@
 mixin if(name)
-  != '{{#' + name + '}}'
+  != '\n{{#' + name + '}}\n'
   block
-  != '{{/' + name + '}}'
+  != '\n{{/' + name + '}}\n'
 
 mixin unless(name)
+
   != '{{^' + name + '}}'
   block
   != '{{/' + name + '}}'
 
 mixin each(name)
-  != '{{#' + name + '}}'
+
+  != '\n{{#' + name + '}}\n'
   block
-  != '{{/' + name + '}}'
+  != '\n{{/' + name + '}}\n'
   
 mixin partial(name)
-  != '{{#partial ' + name + '}}'
+
+  != '\n{{#partial ' + name + '}}\n'
   block
-  != '{{/partial}}'
+  != '\n{{/partial}}\n'
   

@@ -16,4 +16,104 @@ include ./mixins.jade
     class='switch-actor push-button'
     type='button'
     ) {{ .label }}
+
++partial('jq-push-button')
+  button(
+    class="switch-actor push-button"
+    style="{{ .connected? '' : 'border: 1px solid red' }}"
+    type="button") {{ .label }}
+
++partial('push-button')
+  | {{!>push-button-0}}
+  | {{>jq-push-button}}
     
++partial('nav-bar')
+  |   <div data-role="navbar" class="nav-glyphish-example" data-grid="d">
+  |          <ul>
+  |              <li><a {{>jq-persist {active: .active_button, this_page: "home-page"}}}  href="#home-page" id="home" data-icon="custom" data-transition="none">Ana Sayfa</a></li>
+  |              <li><a {{>jq-persist {active: .active_button, this_page: "projects"}}} href="#projects" id="project" data-icon="custom" data-transition="none">Projeler</a></li>
+  |              <li><a {{>jq-persist {active: .active_button, this_page: "products"}}} href="#products" id="product" data-icon="custom" data-transition="none">Ürünler</a></li>
+  |              <li><a {{>jq-persist {active: .active_button, this_page: "demos"}}} href="#demos" id="demo" data-icon="custom" data-transition="none">Demo</a></li>
+  |              <li><a {{>jq-persist {active: .active_button, this_page: "contact-page"}}} href="#contact-page" id="contact" data-icon="custom" data-transition="none">İletişim</a></li>
+  |          </ul>
+  |        </div>
+     
++partial('connection-status')
+  |  <div  data-role="footer" data-tap-toggle="false" data-position="fixed" class="switch-actor connection-status"
+  |    style='background-color: {{ .connected ? "yellowgreen" : "lightgray" }}'>
+  |    <p>{{.connected? "connected..." : "connecting..." }}</p>
+  |  </div>
+
++partial('status-led')
+ div(
+  class="switch-actor status-led"
+  style="display: inline-block"
+  ) 
+  label
+    img(
+      style="width: 100px; height: 100px;"
+      src="img/light-bulb-icon-{{ .val? 'on' : 'off' }}-64.png"
+      alt="{{ .val? 'on' : 'off' }}"
+      )      
+      | {{ .pin_name }}
+
++partial('switch-list')
+  | <span class="switch-actor"></span>
+  | <p> before loop: {{ connected? 'connected...': 'disconnected...' }}</p>
+  | {{#my_list}}
+  |   <p> looping: {{ connected? 'connected...': 'disconnected...' }}</p>
+  | {{/my_list}}
+
++partial('switch-button-basic')
+  div(
+    style="display: inline-block; margin: 10px"
+    ) 
+    input(
+      class="switch-actor switch-button"
+      type="checkbox" 
+      data-pin-name="{{ .pin_name }}"
+      )
+
++partial('jq-flipswitch-v2')
+  select(
+    class="switch-actor switch-button"
+    data-role="slider"
+    data-pin-name="{{ .pin_name }}"
+    )
+    option(value="off") Off
+    option(value="on") On
+
+
++partial('switch-button')
+  | {{!>switch-button-basic}}
+  | {{!>jq-flipswitch}}
+  | {{>jq-flipswitch-v2}}
+
+
++partial('line-graph')
+  #placeholder(class="line-graph")
+
+
++partial('slider')
+  div(class="slider switch-actor")
+    div(class="jq-slider-input") 
+      input(value="{{ .val }}")
+    div(
+      class="jq-slider-container jq-slider" 
+      value="{{ .val }}" 
+      min="0" 
+      max="1000" 
+      data-highlight="true"
+      )
+  br
+
++partial('analog-display')
+  button(
+    style="padding: 1em; border: 1px solid white"
+    class="switch-actor analog-display"
+    )
+    | {{ .val == null ? ' ??? ' : .val }}
+
++partial('jq-persist')
+  |  {{ active == this_page ? 'class="ui-btn-active ui-state-persist"' : '' }}
+  
