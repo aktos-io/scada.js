@@ -12,7 +12,7 @@ class KeypadSimulator(Actor):
     def action(self):
         i = 0
         while True:
-            print "sending analog-1 value"
+            print "sending analog-1 value: ", time.time()
             self.send({'IoMessage':{'pin_name':'analog-1', 'val':i}})
             self.send({'IoMessage':{'pin_name':'analog-2', 'val':i*10}})
             i += 1
