@@ -1,6 +1,7 @@
 {map, filter, tail} = require 'prelude-ls'
 Hapi = require "hapi"
 zmq = require 'zmq'
+short-id = require \shortid
 #msgpack = require 'msgpack-js'
 
 if (parse-int zmq.version.0) < 4
@@ -51,7 +52,9 @@ unpack = (message) ->
   #msgpack.decode(message)
   JSON.parse message
 
-server-id = "server-ls--give-a-unique-id-here!"
+server-id = short-id.generate!
+console.log "server is created with following id: #server-id"
+
 message-history = []  # msg_id, timestamp
 
 aktos-dcs-filter = (msg) ->
