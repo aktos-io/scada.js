@@ -468,3 +468,7 @@ app.on 'complete', !->
     window.location = '#home-page'
   #console.log "app.complete ended..."
   
+shortid = require \shortid
+console.log "shortid: ", shortid.generate!
+
+  

@@ -14,13 +14,19 @@ class KeypadSimulator(Actor):
         while True:
             print "sending analog-1 value: ", time.time()
             self.send({'IoMessage':{'pin_name':'analog-1', 'val':i}})
+            sleep(0.01)
             self.send({'IoMessage':{'pin_name':'analog-2', 'val':i*10}})
             i += 1
             sleep(1)
 
 
+class Monitor(Actor):
+    def handle_IoMessage(self, msg):
+        msg = msg_body(msg)
+        print "monitor got io message:", msg['pin_name'], msg['val']
 
-ProxyActor()
+
+ProxyActor(brokers="192.168.2.151:5012:5013")
 
 virtual_inputs = {
     'slider-1': None, 
@@ -30,5 +36,6 @@ virtual_inputs = {
 for pin_name, pin_number in virtual_inputs.items():
     VirtualIoActor(pin_name=pin_name, pin_number=pin_number)
 
-KeypadSimulator()
+#KeypadSimulator()
+Monitor()
 wait_all()
