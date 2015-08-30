@@ -8,7 +8,7 @@
 
 * install global dependencies: 
 
-  * `npm install -g livescript brunch pm2`
+  * as root: `npm install -g livescript brunch pm2`
   * install libzmq-4.x
         
           sudo apt-get install libzmq3-dev  # or install from source
@@ -16,13 +16,13 @@
 * clone this project and install rest of the dependencies
 
   * `cd test-folder`
-  * `git clone https://github.com/ceremcem/aktos-dcs-webui-example`
-  * `cd aktos-dcs-webui-example`
-  * `npm install`
+  * clone or download this project
+  * open terminal in project directory 
+  * as normal user: `npm install`
 
 # Quick start
 
-While in `aktos-dcs-webui-example` directory, 
+While in project directory, 
 
 * open a terminal and type:
 
@@ -46,6 +46,4 @@ optional: In order to build production code:
 
     make production
 
-# Troubleshoot
 
-If client does not receive messages, see: http://stackoverflow.com/a/31792905/1952991
