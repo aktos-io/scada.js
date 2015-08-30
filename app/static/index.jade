@@ -125,6 +125,18 @@ block content
           | {{>status-led {pin_name: 'test-pin'}}}
 
     div(data-role="collapsible")
+      h3 Canbu Raspberry
+      
+      .row
+        .col-md-2
+          div
+            | {{>push-button {pin_name: 'green-led', label: 'TEST PIN'}}}
+          div
+            | {{>switch-button {pin_name: 'test-pin', label: 'TEST PIN'}}}
+        .col-md-9
+          | {{>status-led {pin_name: 'test-pin'}}}
+
+    div(data-role="collapsible")
       h3  Delphi simulation 
       fieldset(data-role='controlgroup', data-type='horizontal')
         | {{>switch-button {pin_name: 'forward-limit', label: 'F-limit'}}}
