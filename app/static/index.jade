@@ -2,7 +2,7 @@
 extends ../templates/brunch-layout.jade
 
 block title
-  title aktos webui2
+  title aktos webui
 
 block content  
   include ../templates/mixins.jade
@@ -25,6 +25,9 @@ block content
   #home-page(data-role='page', data-theme='b')
     | {{>nav-bar {active_button: 'home-page'}}}
     #header1
+    
+    | {{>test-widget {label: 'my test label'}}}
+    
     .content
       .row
         .col-sm-4.home-col-padding
