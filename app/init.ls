@@ -1,1 +1,1 @@
-require \app
+require 'static/app'

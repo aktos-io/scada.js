@@ -29,7 +29,9 @@ exports.config =
       formatPath: (path) -> 
         console.log "path is: ", path
         try
-          path.match(/^app(\/|\\)static(\/|\\)(.+)\.jade$/)[3]
+          p = path.match(/^app(\/|\\)static(\/|\\)([^\\]+)\.jade$/)
+          console.log "path match: ", p
+          return p[3]
         catch 
           return 'ignore-this-file'
           
