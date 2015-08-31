@@ -22,10 +22,12 @@ require! {
     get-msg-body,
     Actor,
     ProxyActor,
+    RactivePartial,
   }
 }
   
 require '../partials/test-widget'
+require '../partials/textbox'
 
 # aktos widget library
 
@@ -469,6 +471,9 @@ app.on 'complete', !->
   if not window.location.hash
     window.location = '#home-page'
   #console.log "app.complete ended..."
+  
+  console.log "ractive partials are being initialize..."
+  RactivePartial! .init!
   
 #shortid = require 'modules/shortid/index'
 #console.log "shortid: ", shortid

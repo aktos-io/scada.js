@@ -25,9 +25,7 @@ block content
   #home-page(data-role='page', data-theme='b')
     | {{>nav-bar {active_button: 'home-page'}}}
     #header1
-    
-    | {{>test-widget {label: 'my test label'}}}
-    
+        
     .content
       .row
         .col-sm-4.home-col-padding
@@ -104,7 +102,7 @@ block content
   //- demos page 
   #demos(data-role='page', data-theme='b')
     | {{>nav-bar {active_button: 'demos'}}}
-    
+
     h2(class="text-center")
       :md 
         **aktos-scada** Demo
@@ -114,7 +112,17 @@ block content
         :md
           Bu sayfada **aktos-scada**'da kullanılan 
           görsel nesnelerin örnekleri bulunur. 
-              
+
+
+    h2 Textbox
+    div.
+      {{>textbox {pin_name: 'test-textbox', val: 'my test data for textbox'}}}
+
+          
+    h2 test widget
+    div.
+      {{>test-widget {label: 'my test label'}}}
+
     div(data-role="collapsible")
       h3 Test Pin
       
