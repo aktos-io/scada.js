@@ -1,6 +1,6 @@
 
 require! {
-  './prelude': {
+  '../prelude': {
     flatten,
     initial,
     drop,

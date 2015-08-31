@@ -1,51 +1,13 @@
-# INSTALL
+File structure: 
+---------------
 
-* install [aktos-dcs](https://github.com/ceremcem/aktos-dcs)
+* init.ls : entry point
 
-  * `cd test-folder`
-  * `git clone https://github.com/ceremcem/aktos-dcs`
-  * follow [installation notes](https://github.com/ceremcem/aktos-dcs/blob/master/README.md#install)
+* static: Application specific files (*.jade, *.ls, *.css, ...)
 
-* install global dependencies: 
+* modules: js modules
 
-  * `npm install -g livescript brunch pm2`
-  * install libzmq-4.x
-        
-          sudo apt-get install libzmq3-dev  # or install from source
+* templates: jade specific templates which are intended to be reused
 
-* clone this project and install rest of the dependencies
+* partials: partials for ractive (*.jade, *.ls, *.css, ...)
 
-  * `cd test-folder`
-  * `git clone https://github.com/ceremcem/aktos-dcs-webui-example`
-  * `cd aktos-dcs-webui-example`
-  * `npm install`
-
-# Quick start
-
-While in `aktos-dcs-webui-example` directory, 
-
-* open a terminal and type:
-
-        npm start
-
-* open another terminal and type:
-
-        python test_message_sending/keypad_simulator.py
-
-Then open [http://localhost:4000](http://localhost:4000) and see if the button clicks are sent to python process and analog display is changing.
-
-
-# Optional 
-
-optional: in order to see server.ls logs:
-
-    npm run show-logs
-
-
-optional: In order to build production code:
-
-    make production
-
-# Troubleshoot
-
-If client does not receive messages, see: http://stackoverflow.com/a/31792905/1952991

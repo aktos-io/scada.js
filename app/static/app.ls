@@ -1,6 +1,8 @@
 
+a = require 'modules/prelude'
+
 require! {
-  './prelude': {
+  '../modules/prelude': {
     flatten,
     initial,
     drop,
@@ -16,14 +18,17 @@ require! {
   }
 }
 
+
 require! {
-  'aktos-dcs': {
+  '../modules/aktos-dcs': {
     envelp,
     get-msg-body,
     Actor,
     ProxyActor,
   }
 }
+  
+require 'partials/test-widget'
 
 # aktos widget library
 
@@ -468,6 +473,6 @@ app.on 'complete', !->
     window.location = '#home-page'
   #console.log "app.complete ended..."
   
-shortid = require 'shortid'
-console.log "shortid: ", shortid
+#shortid = require 'modules/shortid/index'
+#console.log "shortid: ", shortid
   
