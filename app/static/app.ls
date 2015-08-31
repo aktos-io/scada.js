@@ -1,6 +1,3 @@
-
-a = require 'modules/prelude'
-
 require! {
   '../modules/prelude': {
     flatten,
@@ -28,7 +25,7 @@ require! {
   }
 }
   
-require 'partials/test-widget'
+require '../partials/test-widget'
 
 # aktos widget library
 
