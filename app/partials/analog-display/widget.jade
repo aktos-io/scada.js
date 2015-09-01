@@ -1,0 +1,8 @@
+include ../../templates/mixins.jade
+
++partial('analog-display')
+  button(
+    style="padding: 1em; border: 1px solid white"
+    class="switch-actor analog-display"
+    )
+    | {{ .val == null ? ' ??? ' : .val }}

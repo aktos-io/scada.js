@@ -6,6 +6,8 @@ include ./status-led/widget.jade
 include ./push-button/widget.jade
 include ./switch-button/widget.jade
 include ./jq-flipswitch-v2/widget.jade
+include ./slider/widget.jade
+include ./analog-display/widget.jade
     
 +partial('nav-bar')
   | <div data-role="navbar" class="nav-glyphish-example" data-grid="d">
@@ -32,41 +34,14 @@ include ./jq-flipswitch-v2/widget.jade
   |   <p> looping: {{ connected? 'connected...': 'disconnected...' }}</p>
   | {{/my_list}}
 
-+partial('switch-button-basic')
-  div(
-    style="display: inline-block; margin: 10px"
-    ) 
-    input(
-      class="switch-actor switch-button"
-      type="checkbox" 
-      data-pin-name="{{ .pin_name }}"
-      )
-
 
 
 +partial('line-graph')
   #placeholder(class="line-graph")
 
 
-+partial('slider')
-  div(class="slider switch-actor")
-    div(class="jq-slider-input") 
-      input(value="{{ .val }}")
-    div(
-      class="jq-slider-container jq-slider" 
-      value="{{ .val }}" 
-      min="0" 
-      max="1000" 
-      data-highlight="true"
-      )
-  br
 
-+partial('analog-display')
-  button(
-    style="padding: 1em; border: 1px solid white"
-    class="switch-actor analog-display"
-    )
-    | {{ .val == null ? ' ??? ' : .val }}
+
 
 +partial('jq-persist')
   |  {{ active == this_page ? 'class="ui-btn-active ui-state-persist"' : '' }}

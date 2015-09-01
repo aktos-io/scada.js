@@ -1,0 +1,12 @@
+include ../../templates/mixins.jade
+
++partial('switch-button-basic')
+  div(
+    style="display: inline-block; margin: 10px"
+    ) 
+    input(
+      class="switch-actor switch-button"
+      type="checkbox" 
+      data-pin-name="{{ .pin_name }}"
+      )
+
