@@ -1,6 +1,7 @@
 include ../templates/mixins.jade
 include ./test-widget/widget.jade
 include ./textbox/widget.jade
+include ./status-led/widget.jade
     
 +partial('push-button-0')
   //-
@@ -44,18 +45,6 @@ include ./textbox/widget.jade
   |    <p>{{.connected? "connected..." : "connecting..." }}</p>
   |  </div>
 
-+partial('status-led')
- div(
-  class="switch-actor status-led"
-  style="display: inline-block"
-  ) 
-  label
-    img(
-      style="width: 100px; height: 100px;"
-      src="img/light-bulb-icon-{{ .val? 'on' : 'off' }}-64.png"
-      alt="{{ .val? 'on' : 'off' }}"
-      )      
-    | {{ .pin_name }}
 
 +partial('switch-list')
   | <span class="switch-actor"></span>
