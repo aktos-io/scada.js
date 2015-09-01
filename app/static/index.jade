@@ -1,4 +1,3 @@
-
 extends ../templates/brunch-layout.jade
 
 block title
@@ -7,88 +6,12 @@ block title
 block content  
   include ../templates/mixins.jade
   include ../partials/ractive-partials.jade
-    
-  +partial('projects-buttons')
-    a(
-      data-role="button" 
-      href="{{ .addr? addr: '#' }}" 
-      data-shadow="false" 
-      data-theme="none"
-      )
-      img(
-        class="project-buttons" 
-        src="{{ .src }}"
-      )
-      p(style="margin: auto")
-      | {{ .label }}
       
-  #home-page(data-role='page', data-theme='b')
-    | {{>nav-bar {active_button: 'home-page'}}}
-    #header1
-        
-    .content
-      .row
-        .col-sm-4.home-col-padding
-          | "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-          | "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-        .col-sm-4.home-col-padding
-          | "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-          | "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-        .col-sm-4.home-col-padding
-          | "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-          | "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-    | {{>connection-status {}}}
-
-  //- projects page
-  #projects(data-role='page', data-theme='b')
-    | {{>nav-bar {active_button: 'projects'}}}
-    .ui-grid-b(data-theme='b')
-      .ui-block-a
-        | {{>projects-buttons {
-        | src: 'projects/akhisar-atiksu/proje-kapak.jpg',
-        | label: 'Akhisar Atıksu Arıtma',
-        | addr: 'naber'}
-        | }}
-      .ui-block-b
-        | {{>projects-buttons {
-        | src: 'projects/doganbey-atiksu/tesis-ustten.jpg',
-        | label: 'Doğanbey Atıksu Arıtma'}
-        | }}
-      .ui-block-c
-        | {{>projects-buttons {
-        | src: 'projects/delphi-kablo-zirhi-soyma/proje-kapak.jpg',
-        | label: 'Delphi Otomativ (İzmir)'}
-        | }}
-      .ui-block-a
-        | {{>projects-buttons {
-        | src: 'projects/hms-telemetri/proje-kapak.jpg',
-        | label: 'HMS Üretim Takip'}
-        | }}
-      .ui-block-b
-        | {{>projects-buttons {
-        | src: 'projects/iski/scada.jpg',
-        | label: 'İski Terfi İstasyonu'}
-        | }}
-      .ui-block-c
-        | {{>projects-buttons {
-        | src: 'projects/lintek-newtech-cep-otomati/cep-otomati-onden-1.jpg',
-        | label: 'Newtech Cep Otomatı'}
-        | }}
-      .ui-block-a
-        | {{>projects-buttons {
-        | src: 'projects/versis-asfalt-plenti/proje-kapak.jpg',
-        | label: 'Versis Asfalt Plenti'}
-        | }}
-      .ui-block-b
-        | {{>projects-buttons {
-        | src: 'projects/serel/proje-kapak.jpg',
-        | label: 'Serel Seramik Üretim Takip'}
-        | }}
-      .ui-block-c
-        | {{>projects-buttons {
-        | src: 'projects/kku-nukleer-fizik-lab/proje-kapak.jpg',
-        | label: 'Gama-Gama Korelasyon Deney Otomasyonu'}
-        | }}
+  include ./pages/home-page.jade
+  include ./pages/projects.jade
+  include ./pages/products.jade
+  include ./pages/demos.jade
+  include ./pages/contact-page.jade
   
   //- products page 
   #products(data-role='page', data-theme='b')
