@@ -1,0 +1,16 @@
+include ../../templates/mixins.jade
+    
++partial('slider')
+  div(class="slider switch-actor")
+    div(class="jq-slider-input") 
+      input(value="{{ .val }}")
+    div(
+      class="jq-slider-container jq-slider" 
+      value="{{ .val }}" 
+      min="0" 
+      max="1000" 
+      data-highlight="true"
+      )
+  br
+  
+  

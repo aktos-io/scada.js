@@ -34,6 +34,8 @@ require '../partials/test-widget'
 require '../partials/textbox'
 require '../partials/status-led'
 require '../partials/push-button'
+require '../partials/slider'
+require '../partials/analog-display'
 
 # aktos widget library
 
@@ -49,116 +51,6 @@ set-switch-actors = !->
     actor = SwitchActor pin-name
     actor.set-node elem
     elem.data \actor, actor
-
-# basic widgets 
-set-switch-buttons = !->
-  $ '.switch-button' .each !->
-    elem = $ this
-    actor = elem.data \actor
-
-    # make it work without toggle-switch
-    # visualisation
-    elem.change ->
-      actor.gui-event this.checked
-    actor.add-callback (msg) ->
-      elem.prop 'checked', msg.val
-
-set-analog-displays = ->
-  $ \.analog-display .each ->
-    elem = $ this
-    channel-name = get-ractive-var  elem, 'pin_name'
-    #console.log "this is channel name: ", channel-name
-    actor = SwitchActor channel-name
-    actor.add-callback (msg) ->
-      set-ractive-var  elem, 'val', msg.val
-
-make-basic-widgets = -> 
-  set-switch-buttons!
-  set-analog-displays!
-
-# create jq mobile widgets 
-make-jq-mobile-widgets = !->
-  #console.log "mobile connections are being done..."
-  $ document .ready ->
-    #console.log "document ready!"
-
-    # jq-flipswitch-v2
-    make-jq-flipswitch-v2 = -> 
-      $ \.switch-button .each ->
-        #console.log "switch-button created"
-        elem = $ this
-        actor = elem.data \actor
-
-        send-gui-event = (event) -> 
-          #console.log "jq-flipswitch-2 sending msg: ", elem.val!        
-          actor.gui-event (elem.val! == \on)
-
-        elem.on \change, send-gui-event
-        
-        actor.add-callback (msg) ->
-          #console.log "switch-button got message", msg
-          elem.unbind \change
-          
-          if msg.val
-            elem.val \on .slider \refresh
-          else
-            elem.val \off .slider \refresh
-          
-          elem.bind \change, send-gui-event 
-          
-    make-jq-flipswitch-v2!
-        
-
-    # slider
-    make-slider = !->
-      $ '.slider' .each !->
-        elem = $ this 
-        actor = elem.data \actor
-        
-        #console.log "this slider actor found: ", actor 
-        #debugger 
-        
-        slider = elem.find \.jq-slider 
-        slider.slider!
-        #console.log "slider created!", slider
-        
-        curr_val = slider.attr \value
-        slider.val curr_val .slider \refresh 
-        #console.log "current value: ", curr_val
-        
-        input = elem.find \.jq-slider-input
-        
-        input.on \change -> 
-          val = get-ractive-var  elem, \val
-          actor.gui-event val
-          
-        
-        slider.on \change ->
-          #console.log "slider val: ", slider.val!
-          actor.gui-event slider.val!
-          
-        actor.add-callback (msg)->
-          #console.log "slider changed: ", msg.val 
-          slider.val msg.val .slider \refresh
-          set-ractive-var  elem, \val, msg.val 
-        
-        
-    make-slider!
-        
-    # inherit analog displays
-    set-analog-displays!
-
-
-make-jq-page-settings = ->
-  navnext = (page) ->
-    $.mobile.navigate page
-
-  navprev = (page) ->
-    $.mobile.navigate page
-
-  $ window .on \swipe, (event) ->
-    navnext \#foo
-    #$.mobile.change-page \#foo
 
 
       
@@ -296,17 +188,10 @@ app.on 'complete', !->
   # create actors for every widget
   set-switch-actors!
 
-  # create basic widgets
-  #make-basic-widgets!
-
   $ document .ready ->
-    # create jquery mobile widgets 
     console.log "document is ready..."
-    make-jq-mobile-widgets!
     jquery-mobile-specific!
-    RactivePartial!init-for-document-ready!
-    # set jquery mobile page behaviour
-    #make-jq-page-settings!
+    RactivePartial! .init-for-document-ready!
   
   # graph widgets
   make-graph-widgets!
