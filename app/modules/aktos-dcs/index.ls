@@ -22,6 +22,7 @@ require! {
 }
   
 module.exports = {
-  envelp, get-msg-body, Actor, ProxyActor, RactivePartial, 
-  get-ractive-var, set-ractive-var, 
+  envelp, get-msg-body, Actor, ProxyActor, 
+  RactivePartial, get-ractive-var, set-ractive-var, 
+  SwitchActor,
 }

@@ -1,8 +1,9 @@
 {Actor} = require './aktos-dcs'
-{get-ractive-variable, set-ractive-variable} = require './widgets'
+{get-ractive-var, set-ractive-var} = require './widgets'
+
 
 class SwitchActor extends Actor
-  (pin-name)~>
+  (pin-name, app)~>
     super ...
     @callback-functions = []
     @pin-name = String pin-name
@@ -10,9 +11,9 @@ class SwitchActor extends Actor
       @actor-name = @pin-name
     else
       @actor-name = @actor-id
-      console.log "WARNING: actor is created with this random name: ", @actor-name
+      console.log "actor is created with this random name: ", @actor-name
     @ractive-node = null  # the jQuery element
-    @ractive-app = null 
+    @ractive-app = app
     @connected = false
 
   add-callback: (func) ->
@@ -34,13 +35,12 @@ class SwitchActor extends Actor
   refresh-connected-variable: -> 
     if @ractive-node
       #console.log "setting {{connected}}: ", @connected
-      set-ractive-variable @ractive-app, @ractive-node, 'connected', @connected
+      set-ractive-var @ractive-app, @ractive-node, 'connected', @connected
     else
       console.log "ractive node is empty! actor: ", this 
     
-  set-node: (app, node) -> 
-    #console.log "setting node: #{this.actor-name} -> ", node, "app: ", app
-    @ractive-app = app
+  set-node: (node) -> 
+    #console.log "setting #{this.actor-name} -> ", node
     @ractive-node = node
     
     @send UpdateConnectionStatus: {}
@@ -56,10 +56,9 @@ class SwitchActor extends Actor
       pin_name: @pin-name
       val: val
 
-    @send IoMessage: 
+    @send IoMessage: do
       pin_name: @pin-name
       val: val
-      
       
 module.exports = {
   SwitchActor, 
