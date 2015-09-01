@@ -8,6 +8,7 @@ include ./switch-button/widget.jade
 include ./jq-flipswitch-v2/widget.jade
 include ./slider/widget.jade
 include ./analog-display/widget.jade
+include ./line-graph/widget.jade
     
 +partial('nav-bar')
   | <div data-role="navbar" class="nav-glyphish-example" data-grid="d">
@@ -33,15 +34,6 @@ include ./analog-display/widget.jade
   | {{#my_list}}
   |   <p> looping: {{ connected? 'connected...': 'disconnected...' }}</p>
   | {{/my_list}}
-
-
-
-+partial('line-graph')
-  #placeholder(class="line-graph")
-
-
-
-
 
 +partial('jq-persist')
   |  {{ active == this_page ? 'class="ui-btn-active ui-state-persist"' : '' }}
