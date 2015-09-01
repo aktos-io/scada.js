@@ -9,10 +9,20 @@ require! {
 }
   
 RactivePartial! .register -> 
-  console.log "this is textbox widget"
+  #console.log "this is textbox widget"
   $ \.textbox .each -> 
     elem = $ this
     actor = elem.data \actor
+
+    pin_name = get-ractive-var RactiveApp!get!, elem, 'pin_name'
+    
+    console.log "pin name of textbox: #pin_name"    
+    
+    keypath = (Ractive.get-node-info elem.get 0).\keypath
+    console.log "keypath: ", keypath
+    
     actor.add-callback (msg) ->
-      console.log "textbox partial got message: ", msg.val
-      set-ractive-var RactiveApp!get!, elem, 'val', msg.val
+
+      #debugger
+      RactiveApp!get!set (keypath + '.text'), msg.val
+      

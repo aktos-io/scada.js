@@ -120,7 +120,7 @@ make-basic-widgets = ->
 
 # create jq mobile widgets 
 make-jq-mobile-widgets = !->
-  console.log "mobile connections being done..."
+  #console.log "mobile connections are being done..."
   $ document .ready ->
     #console.log "document ready!"
 
@@ -276,7 +276,7 @@ make-line-graph-widget = ->
     actor = SwitchActor pin-name
     
     
-    console.log "this is graph widget: ", elem, actor.actor-name
+    #console.log "this is graph widget: ", elem, actor.actor-name
     
     /*    
     graph-data = -> 
@@ -390,6 +390,7 @@ app.on 'complete', !->
 
   $ document .ready ->
     # create jquery mobile widgets 
+    console.log "document is ready..."
     make-jq-mobile-widgets!
     jquery-mobile-specific!
     # set jquery mobile page behaviour
@@ -405,8 +406,12 @@ app.on 'complete', !->
     window.location = '#home-page'
   #console.log "app.complete ended..."
   
-  console.log "ractive partials are being initialize..."
   RactivePartial! .init!
+  
+  console.log "ractive app completed..."
+    
+  #console.log "app.get: ", app.get ($ '#my-textbox' .get 0)
+  #console.log "get node info: ", Ractive.get-node-info ($ '#aaa' .get 0)
   
 #shortid = require 'modules/shortid/index'
 #console.log "shortid: ", shortid
