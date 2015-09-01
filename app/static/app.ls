@@ -26,6 +26,7 @@ require! {
     get-ractive-var, 
     set-ractive-var, 
     SwitchActor,
+    RactiveApp, 
   }
 }
   
@@ -43,7 +44,7 @@ set-switch-actors = !->
   $ '.switch-actor' .each !->
     elem = $ this
     pin-name = get-ractive-var app, elem, 'pin_name'
-    actor = SwitchActor pin-name, app
+    actor = SwitchActor pin-name
     actor.set-node elem
     elem.data \actor, actor
 
@@ -107,7 +108,7 @@ set-analog-displays = ->
     elem = $ this
     channel-name = get-ractive-var app,  elem, 'pin_name'
     #console.log "this is channel name: ", channel-name
-    actor = SwitchActor channel-name, app
+    actor = SwitchActor channel-name
     actor.add-callback (msg) ->
       set-ractive-var app,  elem, 'val', msg.val
 
@@ -272,7 +273,7 @@ make-line-graph-widget = ->
   $ \.line-graph .each ->
     elem = $ this 
     pin-name = get-ractive-var app,  elem, \pin_name 
-    actor = SwitchActor pin-name, app
+    actor = SwitchActor pin-name
     
     
     console.log "this is graph widget: ", elem, actor.actor-name
@@ -366,7 +367,8 @@ app = new Ractive do
   el: 'container'
   template: '#app'
 
-  
+RactiveApp!set app
+
 ## debug
 #console.log 'socket.io path: ', addr_port,  socketio-path
 #console.log "socket.io socket: ", socket

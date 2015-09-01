@@ -10,12 +10,13 @@ require! {
   './widgets': {
     get-ractive-var, 
     set-ractive-var, 
+    RactiveApp,
   }
 }
 
 
 class SwitchActor extends Actor
-  (pin-name, app)~>
+  (pin-name)~>
     super ...
     @callback-functions = []
     @pin-name = String pin-name
@@ -25,7 +26,6 @@ class SwitchActor extends Actor
       @actor-name = @actor-id
       console.log "actor is created with this random name: ", @actor-name
     @ractive-node = null  # the jQuery element
-    @ractive-app = app
     @connected = false
 
   add-callback: (func) ->
@@ -47,7 +47,7 @@ class SwitchActor extends Actor
   refresh-connected-variable: -> 
     if @ractive-node
       #console.log "setting {{connected}}: ", @connected
-      set-ractive-var @ractive-app, @ractive-node, 'connected', @connected
+      set-ractive-var RactiveApp!get!, @ractive-node, 'connected', @connected
     else
       console.log "ractive node is empty! actor: ", this 
     

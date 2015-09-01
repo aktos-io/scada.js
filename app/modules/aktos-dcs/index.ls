@@ -12,6 +12,7 @@ require! {
     RactivePartial,
     get-ractive-var,
     set-ractive-var, 
+    RactiveApp,
   }
 }
   
@@ -23,6 +24,6 @@ require! {
   
 module.exports = {
   envelp, get-msg-body, Actor, ProxyActor, 
-  RactivePartial, get-ractive-var, set-ractive-var, 
+  RactivePartial, get-ractive-var, set-ractive-var, RactiveApp, 
   SwitchActor,
 }
