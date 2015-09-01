@@ -15,7 +15,7 @@ class RactivePartial
       @widget-inits ++= [widget-init]
 
     init: ->
-      console.log "initializing ractive partials..."
+      #console.log "initializing ractive partials..."
       for func in @widget-inits
         #console.log "widget init: ", func
         func!
@@ -32,6 +32,7 @@ set-ractive-var = (app, jquery-elem, ractive-variable, value) ->
     console.log "ERROR: NO KEYPATH FOUND FOR RACTIVE NODE: ", jquery-elem
     
   app.set ractive-node.\keypath + '.' + ractive-variable, value
+  #console.log "setting keypath: ", ractive-node.\keypath
   
 class RactiveApp
   instance = null

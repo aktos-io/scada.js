@@ -49,7 +49,7 @@ class SwitchActor extends Actor
       #console.log "setting {{connected}}: ", @connected
       set-ractive-var RactiveApp!get!, @ractive-node, 'connected', @connected
     else
-      console.log "ractive node is empty! actor: ", this 
+      console.log "Can not refresh {{connected}} var: node is empty!", this 
     
   set-node: (node) -> 
     #console.log "setting #{this.actor-name} -> ", node

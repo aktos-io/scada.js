@@ -113,10 +113,13 @@ block content
           Bu sayfada **aktos-scada**'da kullanılan 
           görsel nesnelerin örnekleri bulunur. 
 
-
+          
+    p.
+      {{ foo }}
+      
     h2 Textbox
     div.
-      {{>textbox {pin_name: 'test-pin', val: 'my test data for textbox'}}}
+      {{>textbox {pin_name: 'test-pin', val: 'textbox val', text: 'textbox text'}}}
 
           
     h2 test widget
@@ -141,7 +144,7 @@ block content
       .row
         .col-md-2
           div
-            | {{>push-button {pin_name: 'green-led', label: 'TEST PIN'}}}
+            | {{>push-button {pin_name: 'green-led', label: 'Green Led'}}}
           div
             | {{>switch-button {pin_name: 'test-pin', label: 'TEST PIN'}}}
         .col-md-9
