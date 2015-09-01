@@ -32,6 +32,7 @@ require! {
   
 require '../partials/test-widget'
 require '../partials/textbox'
+require '../partials/status-led'
 
 # aktos widget library
 
@@ -96,13 +97,8 @@ set-push-buttons = ->
         elem.remove-class 'button-active-state'
 
 set-status-leds = ->
-  $ '.status-led' .each ->
-    elem = $ this
-    actor = elem.data \actor
-    actor.add-callback (msg) ->
-      #console.log "status led: ", actor.pin-name, msg.val
-      set-ractive-var elem, 'val', msg.val
-
+  console.log "really??"
+  
 set-analog-displays = ->
   $ \.analog-display .each ->
     elem = $ this

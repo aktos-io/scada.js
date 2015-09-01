@@ -1,0 +1,14 @@
+include ../../templates/mixins.jade
+    
++partial('status-led')
+ div(
+  class="switch-actor status-led"
+  style="display: inline-block"
+  ) 
+  label
+    img(
+      style="width: 100px; height: 100px;"
+      src="img/light-bulb-icon-{{ .val? 'on' : 'off' }}-64.png"
+      alt="{{ .val? 'on' : 'off' }}"
+      )      
+    | {{ .pin_name }}
