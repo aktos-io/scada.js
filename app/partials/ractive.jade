@@ -2,31 +2,7 @@ include ../templates/mixins.jade
 include ./test-widget/widget.jade
 include ./textbox/widget.jade
 include ./status-led/widget.jade
-    
-+partial('push-button-0')
-  //-
-    pin_name    : ....
-    label       : ...
-    val         : ...
-    
-  button(
-    style='width: 100px; height: 50px'
-    class='switch-actor push-button'
-    type='button'
-    )
-    | {{ .label }}
-
-+partial('jq-push-button')
-  button(
-    class="switch-actor push-button"
-    style="{{ .connected? '' : 'border: 1px solid red' }}"
-    type="button"
-    ) 
-    | {{ .label }}
-
-+partial('push-button')
-  | {{!>push-button-0}}
-  | {{>jq-push-button}}
+include ./push-button/widget.jade
     
 +partial('nav-bar')
   | <div data-role="navbar" class="nav-glyphish-example" data-grid="d">
