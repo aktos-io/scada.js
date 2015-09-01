@@ -10,9 +10,18 @@ require! {
 require! {
   './widgets': {
     RactivePartial,
+    get-ractive-var,
+    set-ractive-var, 
+  }
+}
+  
+require! {
+  './aktos-dcs-lib': {
+    SwitchActor
   }
 }
   
 module.exports = {
-  envelp, get-msg-body, Actor, ProxyActor, RactivePartial
+  envelp, get-msg-body, Actor, ProxyActor, RactivePartial, 
+  get-ractive-var, set-ractive-var, 
 }
