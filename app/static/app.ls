@@ -33,6 +33,7 @@ require! {
 require '../partials/test-widget'
 require '../partials/textbox'
 require '../partials/status-led'
+require '../partials/push-button'
 
 # aktos widget library
 
@@ -62,43 +63,6 @@ set-switch-buttons = !->
     actor.add-callback (msg) ->
       elem.prop 'checked', msg.val
 
-set-push-buttons = ->
-  #
-  # TODO: tapping works as doubleclick (two press and release)
-  #       fix this.
-  #
-  $ '.push-button' .each ->
-    elem = $ this
-    actor = elem.data \actor
-
-    # desktop support
-    elem.on 'mousedown' ->
-      actor.gui-event on
-      elem.on 'mouseleave', ->
-        actor.gui-event off
-    elem.on 'mouseup' ->
-      actor.gui-event off
-      elem.off 'mouseleave'
-
-    # touch support
-    elem.on 'touchstart' (e) ->
-      actor.gui-event on
-      elem.touchleave ->
-        actor.gui-event off
-      e.stop-propagation!
-    elem.on 'touchend' (e) ->
-      actor.gui-event off
-
-    actor.add-callback (msg) ->
-      #console.log "push button got message: ", msg
-      if msg.val
-        elem.add-class 'button-active-state'
-      else
-        elem.remove-class 'button-active-state'
-
-set-status-leds = ->
-  console.log "really??"
-  
 set-analog-displays = ->
   $ \.analog-display .each ->
     elem = $ this
@@ -110,8 +74,6 @@ set-analog-displays = ->
 
 make-basic-widgets = -> 
   set-switch-buttons!
-  set-push-buttons!
-  set-status-leds!
   set-analog-displays!
 
 # create jq mobile widgets 
@@ -148,7 +110,6 @@ make-jq-mobile-widgets = !->
         
     # jq-push-button
     make-jq-push-button = -> 
-      set-push-buttons!  # inherit basic button settings
       $ \.push-button .each ->
         #console.log "found push-button!"
         elem = $ this
@@ -207,10 +168,7 @@ make-jq-mobile-widgets = !->
         
         
     make-slider!
-    
-    # inherit status leds
-    set-status-leds!
-    
+        
     # inherit analog displays
     set-analog-displays!
 
