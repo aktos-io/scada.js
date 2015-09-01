@@ -23,6 +23,8 @@ require! {
     Actor,
     ProxyActor,
     RactivePartial,
+    get-ractive-var, 
+    set-ractive-var, 
   }
 }
   
@@ -30,6 +32,7 @@ require '../partials/test-widget'
 require '../partials/textbox'
 
 # aktos widget library
+
 
 
 get-ractive-variable = (jquery-elem, ractive-variable) ->
@@ -79,7 +82,7 @@ class SwitchActor extends Actor
   refresh-connected-variable: -> 
     if @ractive-node
       #console.log "setting {{connected}}: ", @connected
-      set-ractive-variable @ractive-node, 'connected', @connected
+      set-ractive-var app, @ractive-node, 'connected', @connected
     else
       console.log "ractive node is empty! actor: ", this 
     
@@ -111,7 +114,7 @@ class SwitchActor extends Actor
 set-switch-actors = !->
   $ '.switch-actor' .each !->
     elem = $ this
-    pin-name = get-ractive-variable elem, 'pin_name'
+    pin-name = get-ractive-var app, elem, 'pin_name'
     actor = SwitchActor pin-name
     actor.set-node elem
     elem.data \actor, actor
@@ -169,7 +172,7 @@ set-status-leds = ->
     actor = elem.data \actor
     actor.add-callback (msg) ->
       #console.log "status led: ", actor.pin-name, msg.val
-      set-ractive-variable elem, 'val', msg.val
+      set-ractive-var app, elem, 'val', msg.val
 
 set-analog-displays = ->
   $ \.analog-display .each ->
