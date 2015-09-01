@@ -20,19 +20,22 @@ class RactivePartial
         #console.log "widget init: ", func
         func!
 
-get-ractive-var = (app, jquery-elem, ractive-variable) -->
+get-ractive-var = (jquery-elem, ractive-variable) -->
+  app = RactiveApp!get!
   ractive-node = Ractive.get-node-info jquery-elem.get 0
   value = (app.get ractive-node.\keypath)[ractive-variable]
   #console.log "ractive value: ", value
   return value
 
-set-ractive-var = (app, jquery-elem, ractive-variable, value) -->
+set-ractive-var = (jquery-elem, ractive-variable, value) -->
+  app = RactiveApp!get!
   ractive-node = Ractive.get-node-info jquery-elem.get 0
+  
   if not ractive-node.\keypath
     console.log "ERROR: NO KEYPATH FOUND FOR RACTIVE NODE: ", jquery-elem
-    
-  app.set ractive-node.\keypath + '.' + ractive-variable, value
-  #console.log "setting keypath: ", ractive-node.\keypath
+  else  
+    app.set ractive-node.\keypath + '.' + ractive-variable, value
+    #console.log "setting keypath: ", ractive-node.\keypath
   
 class RactiveApp
   instance = null
