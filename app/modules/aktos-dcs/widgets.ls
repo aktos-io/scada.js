@@ -9,17 +9,29 @@ class RactivePartial
     ~>
       #super ...
       @widget-inits = []
+      @inits-for-document-ready = []
 
     register: (widget-init) ->
       #console.log "new widget registered: ", widget-init
       @widget-inits ++= [widget-init]
+
+    register-for-document-ready: (widget-init) ->
+      #console.log "new widget registered: ", widget-init
+      @inits-for-document-ready ++= [widget-init]
 
     init: ->
       #console.log "initializing ractive partials..."
       for func in @widget-inits
         #console.log "widget init: ", func
         func!
-
+        
+    init-for-document-ready: ->   
+      #console.log "initializing ractive partials..."
+      for func in @inits-for-document-ready
+        #console.log "widget init: ", func
+        func!
+        
+        
 get-ractive-var = (jquery-elem, ractive-variable) -->
   app = RactiveApp!get!
   ractive-node = Ractive.get-node-info jquery-elem.get 0
