@@ -2,8 +2,6 @@ include ../../templates/mixins.jade
     
 +partial('textbox')
   .switch-actor.textbox
-    textarea. 
-      {{ .val }}
-      
-    p. 
-      {{ .val }}
+    textarea(
+      value="{{ .val }}"
+    )
