@@ -13,16 +13,14 @@ RactivePartial! .register ->
   $ \.textbox .each -> 
     elem = $ this
     actor = elem.data \actor
+    
+    get-widget-var = get-ractive-var RactiveApp!get!, elem 
+    set-widget-var = set-ractive-var RactiveApp!get!, elem
 
-    pin_name = get-ractive-var RactiveApp!get!, elem, 'pin_name'
+    pin_name = get-widget-var 'pin_name'
     
     console.log "pin name of textbox: #pin_name"    
     
-    keypath = (Ractive.get-node-info elem.get 0).\keypath
-    console.log "keypath: ", keypath
-    
     actor.add-callback (msg) ->
-
-      #debugger
-      RactiveApp!get!set (keypath + '.text'), msg.val
+      set-widget-var 'text', msg.val
       
