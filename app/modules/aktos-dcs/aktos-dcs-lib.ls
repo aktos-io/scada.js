@@ -1,5 +1,17 @@
-{Actor} = require './aktos-dcs'
-{get-ractive-var, set-ractive-var} = require './widgets'
+require! {
+  './aktos-dcs': {
+    envelp,
+    get-msg-body,
+    Actor,
+  }
+}
+  
+require! {
+  './widgets': {
+    get-ractive-var, 
+    set-ractive-var, 
+  }
+}
 
 
 class SwitchActor extends Actor

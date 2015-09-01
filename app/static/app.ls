@@ -25,6 +25,7 @@ require! {
     RactivePartial,
     get-ractive-var, 
     set-ractive-var, 
+    SwitchActor,
   }
 }
   
@@ -33,79 +34,6 @@ require '../partials/textbox'
 
 # aktos widget library
 
-
-/*
-get-ractive-var app,  = (jquery-elem, ractive-var app, ) ->
-  ractive-node = Ractive.get-node-info jquery-elem.get 0
-  value = (app.get ractive-node.\keypath)[ractive-var app, ]
-  #console.log "ractive value: ", value
-  return value
-
-set-ractive-var app,  = (jquery-elem, ractive-var app, , value) ->
-  ractive-node = Ractive.get-node-info jquery-elem.get 0
-  if not ractive-node.\keypath
-    console.log "ERROR: NO KEYPATH FOUND FOR RACTIVE NODE: ", jquery-elem
-    
-  app.set ractive-node.\keypath + '.' + ractive-var app, , value
-
-*/
-
-class SwitchActor extends Actor
-  (pin-name)~>
-    super ...
-    @callback-functions = []
-    @pin-name = String pin-name
-    if pin-name
-      @actor-name = @pin-name
-    else
-      @actor-name = @actor-id
-      console.log "actor is created with this random name: ", @actor-name
-    @ractive-node = null  # the jQuery element
-    @connected = false
-
-  add-callback: (func) ->
-      @callback-functions ++= [func]
-
-  handle_IoMessage: (msg) ->
-    msg-body = get-msg-body msg
-    if msg-body.pin_name is @pin-name
-      #console.log "switch actor got IoMessage: ", msg
-      @fire-callbacks msg-body
-
-  handle_ConnectionStatus: (msg) ->
-    # TODO: TEST THIS CIRCULAR REFERENCE IF IT COUSES
-    # MEMORY LEAK OR NOT
-    @connected = get-msg-body msg .connected
-    #console.log "connection status changed: ", @connected
-    @refresh-connected-variable! 
-    
-  refresh-connected-variable: -> 
-    if @ractive-node
-      #console.log "setting {{connected}}: ", @connected
-      set-ractive-var app, @ractive-node, 'connected', @connected
-    else
-      console.log "ractive node is empty! actor: ", this 
-    
-  set-node: (node) -> 
-    #console.log "setting #{this.actor-name} -> ", node
-    @ractive-node = node
-    
-    @send UpdateConnectionStatus: {}
-
-  fire-callbacks: (msg) ->
-    #console.log "fire-callbacks called!", msg
-    for func in @callback-functions
-      func msg
-
-  gui-event: (val) ->
-    #console.log "gui event called!", val
-    @fire-callbacks do
-      pin_name: @pin-name
-      val: val
-
-    @send IoMessage: do
-      pin_name: @pin-name
-      val: val
 # ---------------------------------------------------
 # END OF LIBRARY FUNCTIONS
 # ---------------------------------------------------
@@ -115,7 +43,7 @@ set-switch-actors = !->
   $ '.switch-actor' .each !->
     elem = $ this
     pin-name = get-ractive-var app, elem, 'pin_name'
-    actor = SwitchActor pin-name
+    actor = SwitchActor pin-name, app
     actor.set-node elem
     elem.data \actor, actor
 
@@ -179,7 +107,7 @@ set-analog-displays = ->
     elem = $ this
     channel-name = get-ractive-var app,  elem, 'pin_name'
     #console.log "this is channel name: ", channel-name
-    actor = SwitchActor channel-name
+    actor = SwitchActor channel-name, app
     actor.add-callback (msg) ->
       set-ractive-var app,  elem, 'val', msg.val
 
@@ -344,7 +272,7 @@ make-line-graph-widget = ->
   $ \.line-graph .each ->
     elem = $ this 
     pin-name = get-ractive-var app,  elem, \pin_name 
-    actor = SwitchActor pin-name
+    actor = SwitchActor pin-name, app
     
     
     console.log "this is graph widget: ", elem, actor.actor-name
