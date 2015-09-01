@@ -34,21 +34,21 @@ require '../partials/textbox'
 # aktos widget library
 
 
-
-get-ractive-variable = (jquery-elem, ractive-variable) ->
+/*
+get-ractive-var app,  = (jquery-elem, ractive-var app, ) ->
   ractive-node = Ractive.get-node-info jquery-elem.get 0
-  value = (app.get ractive-node.\keypath)[ractive-variable]
+  value = (app.get ractive-node.\keypath)[ractive-var app, ]
   #console.log "ractive value: ", value
   return value
 
-set-ractive-variable = (jquery-elem, ractive-variable, value) ->
+set-ractive-var app,  = (jquery-elem, ractive-var app, , value) ->
   ractive-node = Ractive.get-node-info jquery-elem.get 0
   if not ractive-node.\keypath
     console.log "ERROR: NO KEYPATH FOUND FOR RACTIVE NODE: ", jquery-elem
     
-  app.set ractive-node.\keypath + '.' + ractive-variable, value
+  app.set ractive-node.\keypath + '.' + ractive-var app, , value
 
-
+*/
 
 class SwitchActor extends Actor
   (pin-name)~>
@@ -177,11 +177,11 @@ set-status-leds = ->
 set-analog-displays = ->
   $ \.analog-display .each ->
     elem = $ this
-    channel-name = get-ractive-variable elem, 'pin_name'
+    channel-name = get-ractive-var app,  elem, 'pin_name'
     #console.log "this is channel name: ", channel-name
     actor = SwitchActor channel-name
     actor.add-callback (msg) ->
-      set-ractive-variable elem, 'val', msg.val
+      set-ractive-var app,  elem, 'val', msg.val
 
 make-basic-widgets = -> 
   set-switch-buttons!
@@ -267,7 +267,7 @@ make-jq-mobile-widgets = !->
         input = elem.find \.jq-slider-input
         
         input.on \change -> 
-          val = get-ractive-variable elem, \val
+          val = get-ractive-var app,  elem, \val
           actor.gui-event val
           
         
@@ -278,7 +278,7 @@ make-jq-mobile-widgets = !->
         actor.add-callback (msg)->
           #console.log "slider changed: ", msg.val 
           slider.val msg.val .slider \refresh
-          set-ractive-variable elem, \val, msg.val 
+          set-ractive-var app,  elem, \val, msg.val 
         
         
     make-slider!
@@ -343,7 +343,7 @@ make-line-graph-widget = ->
 
   $ \.line-graph .each ->
     elem = $ this 
-    pin-name = get-ractive-variable elem, \pin_name 
+    pin-name = get-ractive-var app,  elem, \pin_name 
     actor = SwitchActor pin-name
     
     
