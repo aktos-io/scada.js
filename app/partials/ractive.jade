@@ -1,8 +1,11 @@
 include ../templates/mixins.jade
+
 include ./test-widget/widget.jade
 include ./textbox/widget.jade
 include ./status-led/widget.jade
 include ./push-button/widget.jade
+include ./switch-button/widget.jade
+include ./jq-flipswitch-v2/widget.jade
     
 +partial('nav-bar')
   | <div data-role="navbar" class="nav-glyphish-example" data-grid="d">
@@ -39,20 +42,6 @@ include ./push-button/widget.jade
       data-pin-name="{{ .pin_name }}"
       )
 
-+partial('jq-flipswitch-v2')
-  select(
-    class="switch-actor switch-button"
-    data-role="slider"
-    data-pin-name="{{ .pin_name }}"
-    )
-    option(value="off") Off
-    option(value="on") On
-
-
-+partial('switch-button')
-  | {{!>switch-button-basic}}
-  | {{!>jq-flipswitch}}
-  | {{>jq-flipswitch-v2}}
 
 
 +partial('line-graph')
