@@ -12,9 +12,7 @@ RactivePartial! .register ->
   $ \.textbox .each -> 
     elem = $ this
     actor = elem.data \actor
-    get-widget-var = get-ractive-var elem 
-    set-widget-var = set-ractive-var elem
 
     actor.add-callback (msg) ->
-      set-widget-var 'val', msg.val
+      actor.set-ractive-var 'val', msg.val
       

@@ -49,7 +49,7 @@ class SwitchActor extends Actor
   refresh-connected-variable: -> 
     if @ractive-node
       #console.log "setting {{connected}}: ", @connected
-      set-ractive-var @ractive-node, 'connected', @connected
+      @set-ractive-var 'connected', @connected
     else
       console.log "Can not refresh {{connected}} var: node is empty!", this 
     
