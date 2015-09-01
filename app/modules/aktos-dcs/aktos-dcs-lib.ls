@@ -27,6 +27,8 @@ class SwitchActor extends Actor
       console.log "actor is created with this random name: ", @actor-name
     @ractive-node = null  # the jQuery element
     @connected = false
+    @set-ractive-var = null
+    @get-ractive-var = null
 
   add-callback: (func) ->
       @callback-functions ++= [func]
@@ -47,14 +49,15 @@ class SwitchActor extends Actor
   refresh-connected-variable: -> 
     if @ractive-node
       #console.log "setting {{connected}}: ", @connected
-      set-ractive-var RactiveApp!get!, @ractive-node, 'connected', @connected
+      set-ractive-var @ractive-node, 'connected', @connected
     else
       console.log "Can not refresh {{connected}} var: node is empty!", this 
     
   set-node: (node) -> 
     #console.log "setting #{this.actor-name} -> ", node
     @ractive-node = node
-    
+    @set-ractive-var = set-ractive-var node 
+    @get-ractive-var = get-ractive-var node
     @send UpdateConnectionStatus: {}
 
   fire-callbacks: (msg) ->

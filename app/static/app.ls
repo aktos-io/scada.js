@@ -43,7 +43,7 @@ require '../partials/textbox'
 set-switch-actors = !->
   $ '.switch-actor' .each !->
     elem = $ this
-    pin-name = get-ractive-var app, elem, 'pin_name'
+    pin-name = get-ractive-var elem, 'pin_name'
     actor = SwitchActor pin-name
     actor.set-node elem
     elem.data \actor, actor
@@ -101,16 +101,16 @@ set-status-leds = ->
     actor = elem.data \actor
     actor.add-callback (msg) ->
       #console.log "status led: ", actor.pin-name, msg.val
-      set-ractive-var app, elem, 'val', msg.val
+      set-ractive-var elem, 'val', msg.val
 
 set-analog-displays = ->
   $ \.analog-display .each ->
     elem = $ this
-    channel-name = get-ractive-var app,  elem, 'pin_name'
+    channel-name = get-ractive-var  elem, 'pin_name'
     #console.log "this is channel name: ", channel-name
     actor = SwitchActor channel-name
     actor.add-callback (msg) ->
-      set-ractive-var app,  elem, 'val', msg.val
+      set-ractive-var  elem, 'val', msg.val
 
 make-basic-widgets = -> 
   set-switch-buttons!
@@ -196,7 +196,7 @@ make-jq-mobile-widgets = !->
         input = elem.find \.jq-slider-input
         
         input.on \change -> 
-          val = get-ractive-var app,  elem, \val
+          val = get-ractive-var  elem, \val
           actor.gui-event val
           
         
@@ -207,7 +207,7 @@ make-jq-mobile-widgets = !->
         actor.add-callback (msg)->
           #console.log "slider changed: ", msg.val 
           slider.val msg.val .slider \refresh
-          set-ractive-var app,  elem, \val, msg.val 
+          set-ractive-var  elem, \val, msg.val 
         
         
     make-slider!
@@ -272,7 +272,7 @@ make-line-graph-widget = ->
 
   $ \.line-graph .each ->
     elem = $ this 
-    pin-name = get-ractive-var app,  elem, \pin_name 
+    pin-name = get-ractive-var  elem, \pin_name 
     actor = SwitchActor pin-name
     
     
