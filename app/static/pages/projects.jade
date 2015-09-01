@@ -1,0 +1,50 @@
+//- projects page
+#projects(data-role='page', data-theme='b')
+  | {{>nav-bar {active_button: 'projects'}}}
+  .ui-grid-b(data-theme='b')
+    .ui-block-a
+      | {{>projects-buttons {
+      | src: 'projects/akhisar-atiksu/proje-kapak.jpg',
+      | label: 'Akhisar Atıksu Arıtma',
+      | addr: 'naber'}
+      | }}
+    .ui-block-b
+      | {{>projects-buttons {
+      | src: 'projects/doganbey-atiksu/tesis-ustten.jpg',
+      | label: 'Doğanbey Atıksu Arıtma'}
+      | }}
+    .ui-block-c
+      | {{>projects-buttons {
+      | src: 'projects/delphi-kablo-zirhi-soyma/proje-kapak.jpg',
+      | label: 'Delphi Otomativ (İzmir)'}
+      | }}
+    .ui-block-a
+      | {{>projects-buttons {
+      | src: 'projects/hms-telemetri/proje-kapak.jpg',
+      | label: 'HMS Üretim Takip'}
+      | }}
+    .ui-block-b
+      | {{>projects-buttons {
+      | src: 'projects/iski/scada.jpg',
+      | label: 'İski Terfi İstasyonu'}
+      | }}
+    .ui-block-c
+      | {{>projects-buttons {
+      | src: 'projects/lintek-newtech-cep-otomati/cep-otomati-onden-1.jpg',
+      | label: 'Newtech Cep Otomatı'}
+      | }}
+    .ui-block-a
+      | {{>projects-buttons {
+      | src: 'projects/versis-asfalt-plenti/proje-kapak.jpg',
+      | label: 'Versis Asfalt Plenti'}
+      | }}
+    .ui-block-b
+      | {{>projects-buttons {
+      | src: 'projects/serel/proje-kapak.jpg',
+      | label: 'Serel Seramik Üretim Takip'}
+      | }}
+    .ui-block-c
+      | {{>projects-buttons {
+      | src: 'projects/kku-nukleer-fizik-lab/proje-kapak.jpg',
+      | label: 'Gama-Gama Korelasyon Deney Otomasyonu'}
+      | }}
