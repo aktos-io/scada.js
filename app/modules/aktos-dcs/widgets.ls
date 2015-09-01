@@ -32,7 +32,26 @@ set-ractive-var = (app, jquery-elem, ractive-variable, value) ->
     console.log "ERROR: NO KEYPATH FOUND FOR RACTIVE NODE: ", jquery-elem
     
   app.set ractive-node.\keypath + '.' + ractive-variable, value
+  
+class RactiveApp
+  instance = null
+  ~>
+    instance ?:= SingletonClass!
+    return instance
+
+  class SingletonClass
+    ~>
+      #super ...
+      @ractive-app = null
+
+    set: (ractive-app) ->
+      #console.log "new widget registered: ", widget-init
+      @ractive-app = ractive-app
+      
+    get: -> 
+      @ractive-app
+
 
 module.exports = {
-  RactivePartial, get-ractive-var, set-ractive-var
+  RactivePartial, get-ractive-var, set-ractive-var, RactiveApp
 }
