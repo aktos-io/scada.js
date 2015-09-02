@@ -11,13 +11,6 @@ require! {
   
 # include widgets' initialize codes 
 require '../partials/ractive-partials'
-require '../partials/test-widget'
-require '../partials/textbox'
-require '../partials/status-led'
-require '../partials/push-button'
-require '../partials/slider'
-require '../partials/analog-display'
-require '../partials/line-graph'
 
 set-switch-actors = !->
   $ '.switch-actor' .each !->
