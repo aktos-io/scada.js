@@ -12,6 +12,7 @@ RactivePartial! .register ->
     # make it work without toggle-switch
     # visualisation
     elem.change ->
+      console.log "switch button changed: ", this.checked
       actor.gui-event this.checked
     actor.add-callback (msg) ->
       elem.prop 'checked', msg.val
