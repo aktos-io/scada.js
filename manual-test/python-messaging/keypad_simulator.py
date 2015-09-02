@@ -36,6 +36,6 @@ virtual_inputs = {
 for pin_name, pin_number in virtual_inputs.items():
     VirtualIoActor(pin_name=pin_name, pin_number=pin_number)
 
-#KeypadSimulator()
+KeypadSimulator()
 Monitor()
 wait_all()
