@@ -1,3 +1,23 @@
+# File Structure
+
++ **app**:  application specific directory, see brunch.io
+ + **static**: applicaction specific jade/livescript/css... files 
+ + **modules**: modules intended to be reused
+ + **partials**: ractive partials that will be rendered into index.html
+ + **assets**: contains files/folders which will be copied into $(PROJECT)/public directory
+ + **templates**: jade layouts, mixins, etc. 
+ + **styles**: stylesheet files
++ **vendor**: 3rd party library files, see brunch.io
++ **public**: compiled files for web server, see brunch.io
++ **server**: server application
++ **test**: test codes, see brunch.io
++ **manual-tests**: projects to test aktos-dcs infrastructure
++ **disabled**: disabled modules, partials, 3rd party libraries etc. 
++ **config.coffee**: configuration file for brunch.io
++ **package.json**: dependencies and package information file for Node.js
++ **Makefile**: includes some quick operation commands (clearer than package.json/scripts block)
++ **.kateproject**: Kate - our default IDE - project directory database file
+
 # INSTALL
 
 * install [aktos-dcs](https://github.com/ceremcem/aktos-dcs)
