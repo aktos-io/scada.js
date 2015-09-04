@@ -14,3 +14,6 @@ clean:
 
 new-client:
 	firefox -new-tab -url http://localhost:4000
+
+run-ide:
+	( kate .kateproject & 2> /dev/null )
