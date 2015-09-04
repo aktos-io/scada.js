@@ -15,3 +15,5 @@ require './line-graph'
 require './switch-button-basic'
 require './switch-button'
 require './jq-flipswitch-v2'
+
+require './thermometer'
