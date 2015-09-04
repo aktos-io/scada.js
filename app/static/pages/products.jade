@@ -2,7 +2,11 @@
 #products(data-role='page', data-theme='b')
   | {{>nav-bar {active_button: 'products'}}}
   
-  .row
-    .col-md-8
-      include:md ../README.md
-
+  a(
+    href="#test-popup"
+    data-rel="popup"
+    ).
+    test popup link 
+    
+  #test-popup(data-role='popup').
+    bu nedir ya
