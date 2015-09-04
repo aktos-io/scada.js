@@ -6,3 +6,4 @@ node_modules
 vendor-*
 .idea
 app/assets/demos
+disabled

@@ -38,18 +38,43 @@ include ./line-graph/widget.jade
 +partial('jq-persist')
   |  {{ active == this_page ? 'class="ui-btn-active ui-state-persist"' : '' }}
   
-    
+
+style.
+  .project-buttons {
+    background-size:   cover;                      /* <------ */
+    background-repeat: no-repeat;
+    background-position: center center;            /* optionally, center the image */
+    height:33vw;
+    margin:0.5%;
+    background-color: red; 
+    padding: 2.5%;
+  }
+  .project-buttons p {
+  }
+  
 +partial('projects-buttons')
-  a(
+  a.project-buttons(
+    style="background-image: url({{ .src }});" 
     data-role="button" 
     href="{{ .addr? addr: '#' }}" 
     data-shadow="false" 
     data-theme="none"
     )
-    img(
-      class="project-buttons" 
-      src="{{ .src }}"
+    p(style="margin: auto") {{ .label }}
+   
+   
+style.
+  .demo-buttons {
+    border: 1px solid white; 
+  }
+  .demo-buttons img {
+    float: left;
+    padding: 5px; 
+  }
+
++partial('demo-buttons')
+  a.demo-buttons(
+    href="{{ .addr? addr : '#' }}" 
     )
-    p(style="margin: auto")
+    img(src="{{ .src ? .src : 'images/icons-png/gear-black.png' }}")
     | {{ .label }}
-    
