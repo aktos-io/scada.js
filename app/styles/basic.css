@@ -25,7 +25,7 @@ body {
     margin:0.5%;
 }
 
-body {
+.scada {
   -webkit-user-select: none;
      -moz-user-select: -moz-none;
       -ms-user-select: none;

@@ -13,85 +13,85 @@
         Bu sayfada **aktos-scada**'da kullanılan 
         görsel nesnelerin örnekleri bulunur. 
 
-        
-  p.
-    {{ foo }}
-    
-  h2 Textbox
-  div.
-    {{>textbox {pin_name: 'test-pin', val: 'test value'}}}
-
-        
-  h2 test widget
-  div.
-    {{>test-widget {label: 'my test label'}}}
-
-  div(data-role="collapsible")
-    h3 Test Pin
-    
-    .row
-      .col-md-2
-        div
-          | {{>push-button {pin_name: 'test-pin', label: 'TEST PIN'}}}
-        div
-          | {{>switch-button {pin_name: 'test-pin', label: 'TEST PIN'}}}
-      .col-md-9
-        | {{>status-led {pin_name: 'test-pin'}}}
-
-  div(data-role="collapsible")
-    h3 Canbu Raspberry
-    
-    .row
-      .col-md-2
-        div
-          | {{>push-button {pin_name: 'green-led', label: 'Green Led'}}}
-        div
-          | {{>switch-button {pin_name: 'test-pin', label: 'TEST PIN'}}}
-      .col-md-9
-        | {{>status-led {pin_name: 'test-pin'}}}
-
-  div(data-role="collapsible")
-    h3  Delphi simulation 
-    fieldset(data-role='controlgroup', data-type='horizontal')
-      | {{>switch-button {pin_name: 'forward-limit', label: 'F-limit'}}}
-      | {{>switch-button {pin_name: 'backwards-limit', label: 'B-limit'}}}
-    fieldset(data-role='controlgroup', data-type='horizontal')
-      | {{>push-button {pin_name: 'move-forward', label: 'Forward'}}}
-      | {{>push-button {pin_name: 'move-backwards', label: 'Backwards'}}}
-      | {{>push-button {pin_name: 'forward-limit', label: 'F-limit'}}}
-      | {{>push-button {pin_name: 'backwards-limit', label: 'B-limit'}}}
-    fieldset(data-role='controlgroup', data-type='horizontal')
-      | {{>status-led {pin_name: 'piston.enab'}}}
-      | {{>status-led {pin_name: 'piston.dir'}}}
-  
-  div(data-role="collapsible")
-    h3  Test looping 
-    | {{>switch-list {my_list: ["hello", "world"], connected: true}}}
-
-  div(data-role="collapsible")            
-    h3 Graph
-    .ui-grid-a(style='height: 300px')
-      .ui-block-a(style='height: 100%')
-        | {{>line-graph {pin_name: 'slider-2'}}}
-      .ui-block-b
-        | {{>slider {pin_name:"slider-2", val: 25}}}
-        
-  div(data-role="collapsible")            
-    h3 Slider 
-    .div.
-      {{>analog-display {pin_name: 'slider-1'}}}
+  .scada
+    p.
+      {{ foo }}
       
-      {{>slider {pin_name:"slider-2", val: 25}}}
-      {{>slider {pin_name:"slider-1", val: 45}}}
-      {{>slider {pin_name:"slider-1", val: 45}}}
-      {{>slider {pin_name:"slider-1", val: 45}}}
-      {{>slider {pin_name:"slider-1", val: 45}}}
-  
-  div(data-role="collapsible")            
-    h3  Analog display 
-    fieldset(data-role='controlgroup', data-type='horizontal')
-      | {{>analog-display {pin_name: 'analog-1'}}}
-      | {{>analog-display {pin_name: 'analog-2'}}}
-      | {{>analog-display {pin_name: 'slider-2'}}}
-  
-  | {{>connection-status {}}}
+    h2 Textbox
+    div.
+      {{>textbox {pin_name: 'test-pin', val: 'test value'}}}
+
+          
+    h2 test widget
+    div.
+      {{>test-widget {label: 'my test label'}}}
+
+    div(data-role="collapsible")
+      h3 Test Pin
+      
+      .row
+        .col-md-2
+          div
+            | {{>push-button {pin_name: 'test-pin', label: 'TEST PIN'}}}
+          div
+            | {{>switch-button {pin_name: 'test-pin', label: 'TEST PIN'}}}
+        .col-md-9
+          | {{>status-led {pin_name: 'test-pin'}}}
+
+    div(data-role="collapsible")
+      h3 Canbu Raspberry
+      
+      .row
+        .col-md-2
+          div
+            | {{>push-button {pin_name: 'green-led', label: 'Green Led'}}}
+          div
+            | {{>switch-button {pin_name: 'test-pin', label: 'TEST PIN'}}}
+        .col-md-9
+          | {{>status-led {pin_name: 'test-pin'}}}
+
+    div(data-role="collapsible")
+      h3  Delphi simulation 
+      fieldset(data-role='controlgroup', data-type='horizontal')
+        | {{>switch-button {pin_name: 'forward-limit', label: 'F-limit'}}}
+        | {{>switch-button {pin_name: 'backwards-limit', label: 'B-limit'}}}
+      fieldset(data-role='controlgroup', data-type='horizontal')
+        | {{>push-button {pin_name: 'move-forward', label: 'Forward'}}}
+        | {{>push-button {pin_name: 'move-backwards', label: 'Backwards'}}}
+        | {{>push-button {pin_name: 'forward-limit', label: 'F-limit'}}}
+        | {{>push-button {pin_name: 'backwards-limit', label: 'B-limit'}}}
+      fieldset(data-role='controlgroup', data-type='horizontal')
+        | {{>status-led {pin_name: 'piston.enab'}}}
+        | {{>status-led {pin_name: 'piston.dir'}}}
+    
+    div(data-role="collapsible")
+      h3  Test looping 
+      | {{>switch-list {my_list: ["hello", "world"], connected: true}}}
+
+    div(data-role="collapsible")            
+      h3 Graph
+      .ui-grid-a(style='height: 300px')
+        .ui-block-a(style='height: 100%')
+          | {{>line-graph {pin_name: 'slider-2'}}}
+        .ui-block-b
+          | {{>slider {pin_name:"slider-2", val: 25}}}
+          
+    div(data-role="collapsible")            
+      h3 Slider 
+      .div.
+        {{>analog-display {pin_name: 'slider-1'}}}
+        
+        {{>slider {pin_name:"slider-2", val: 25}}}
+        {{>slider {pin_name:"slider-1", val: 45}}}
+        {{>slider {pin_name:"slider-1", val: 45}}}
+        {{>slider {pin_name:"slider-1", val: 45}}}
+        {{>slider {pin_name:"slider-1", val: 45}}}
+    
+    div(data-role="collapsible")            
+      h3  Analog display 
+      fieldset(data-role='controlgroup', data-type='horizontal')
+        | {{>analog-display {pin_name: 'analog-1'}}}
+        | {{>analog-display {pin_name: 'analog-2'}}}
+        | {{>analog-display {pin_name: 'slider-2'}}}
+    
+    | {{>connection-status {}}}
