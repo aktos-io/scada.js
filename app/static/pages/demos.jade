@@ -79,6 +79,8 @@
   div(data-role="collapsible")            
     h3 Slider 
     .div.
+      {{>analog-display {pin_name: 'slider-1'}}}
+      
       {{>slider {pin_name:"slider-2", val: 25}}}
       {{>slider {pin_name:"slider-1", val: 45}}}
       {{>slider {pin_name:"slider-1", val: 45}}}

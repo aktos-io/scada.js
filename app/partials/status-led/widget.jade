@@ -7,8 +7,8 @@ include ../../templates/mixins.jade
   ) 
   label
     img(
-      style="width: 100px; height: 100px;"
       src="img/light-bulb-icon-{{ .val? 'on' : 'off' }}-64.png"
       alt="{{ .val? 'on' : 'off' }}"
+      ondragstart="return false; "
       )      
     | {{ .pin_name }}

@@ -30,7 +30,7 @@ exports.config =
         console.log "path is: ", path
         try
           p = path.match(/^app(\/|\\)static(\/|\\)([^\\]+)\.jade$/)
-          console.log "path match: ", p
+          #console.log "path match: ", p
           return p[3]
         catch 
           return 'ignore-this-file'
