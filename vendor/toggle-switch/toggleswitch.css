@@ -20,10 +20,10 @@
 }
 
 .ts-track, .ts-track .ts-switch-container {
-	-webkit-transition: all 0.25s ease-in-out;
-    -moz-transition: all 0.25s ease-in-out;
-    -o-transition: all 0.25s ease-in-out;
-    transition: all 0.25s ease-in-out;
+	-webkit-transition: all 0.05s ease-in-out;
+    -moz-transition: all 0.05s ease-in-out;
+    -o-transition: all 0.05s ease-in-out;
+    transition: all 0.05s ease-in-out;
 }
 
 .ts-track.no-transition, .ts-track.no-transition .ts-switch-container {

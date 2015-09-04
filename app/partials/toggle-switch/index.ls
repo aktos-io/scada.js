@@ -9,10 +9,11 @@ RactivePartial! .register ->
     elem = $ this
     actor = elem.data \actor
 
-    s = new ToggleSwitch elem.get 0, 'on', 'off'
+    s = new ToggleSwitch (elem.get 0), 'on', 'off'
     actor.add-callback (msg) ->
       # prevent switch callback call on
       # external events. only change visual status.
+      console.log "toggle-switch status changed externally: ", msg.val
       tmp = s.f-callback
       s.f-callback = null
       if msg.val
@@ -23,4 +24,5 @@ RactivePartial! .register ->
       tmp = null
 
     s.add-listener (state) !->
-      actor.send-event state
+      console.log "this toggle-switch is changed: #state"
+      actor.gui-event state
