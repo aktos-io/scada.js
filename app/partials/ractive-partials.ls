@@ -1,17 +1,11 @@
 require './test-widget'
-
 require './textbox'
-
-require './status-led'
-
-require './push-button'
-
 require './slider'
-
+require './status-led'
 require './analog-display'
-
 require './line-graph'
-
 require './switch-button-basic'
 require './switch-button'
 require './jq-flipswitch-v2'
+require './toggle-switch'
+require './push-button'
