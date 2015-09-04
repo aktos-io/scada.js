@@ -26,7 +26,16 @@ class Monitor(Actor):
         print "monitor got io message:", msg['pin_name'], msg['val']
 
 
-ProxyActor(brokers="192.168.2.151:5012:5013")
+class Test3(Actor):
+    def action(self):
+        value = 0
+        while True:
+            self.send({'IoMessage': {'pin_name': 'slider-1', 'val': value}})
+            value += 1
+            sleep(1)
+
+
+ProxyActor()
 
 virtual_inputs = {
     'slider-1': None, 
@@ -36,6 +45,7 @@ virtual_inputs = {
 for pin_name, pin_number in virtual_inputs.items():
     VirtualIoActor(pin_name=pin_name, pin_number=pin_number)
 
-KeypadSimulator()
+#KeypadSimulator()
 Monitor()
+#Test3()
 wait_all()
