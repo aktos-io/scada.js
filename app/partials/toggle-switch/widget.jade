@@ -1,11 +1,11 @@
 include ../../templates/mixins.jade
 
-+partial('toggle-button')
++partial('toggle-switch')
   div(
     style="display: inline-block; margin: 10px"
     ) 
     input(
-      class="switch-actor toggle-button"
+      class="switch-actor toggle-switch small"
       type="checkbox" 
       data-pin-name="{{ .pin_name }}"
       )

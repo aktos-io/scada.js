@@ -21,7 +21,7 @@ set-switch-actors = !->
     elem.data \actor, actor
   
 # Set Ractive.DEBUG to false when minified:
-Ractive.DEBUG = /unminified/.test !->/*unminified*/
+Ractive.DEBUG = /unminified/.test !-> /*unminified*/
 
 app = new Ractive do
   el: 'container'
@@ -46,5 +46,9 @@ app.on 'complete', !->
     RactivePartial! .init-for-document-ready!
     
   console.log "ractive app completed..."
+  
+# TODO: remove this
+# workaround for seamless page refresh
+$ '#reload' .click -> location.reload!
     
   
