@@ -1,7 +1,20 @@
-* add javascript code in app.ls
+# Creating a widget
 
-    require '../partials/textbox'
+Easiest way to create a widget is copy and modify a current one.
+Then you need to do the followings: 
 
-* add jade code in ractive.jade
+* create a widget with the following layout: 
 
-    include ./textbox/index.jade
+  * index.ls (or index.js) : contains javascript for the widget
+  * widget.jade : contains widget html
+  * widget.css: contains widget style
+
+* register livescript/javascript code in ractive-partials.ls
+
+    require './textbox'
+
+* register jade code in ractive-partials.jade
+
+    include ./textbox/widget.jade
+
+    
