@@ -1,12 +1,16 @@
 .panel.panel-primary
   .panel-heading
+    h3.panel-title Knobs
+  .panel-body
+    .row.
+      {{>knob {}}}
+
+
+.panel.panel-primary
+  .panel-heading
     h3.panel-title Buttons
   .panel-body
     .row
-      .col-md-2.
-        {{>switch-button-basic {pin_name: 'test-pin'}}}
-      .col-md-2.
-        {{>jq-checkbox {pin_name: 'test-pin', label: 'Test pin'}}}
       .col-md-2.
         {{>toggle-switch {pin_name: 'test-pin'}}}
       .col-md-2.
@@ -66,6 +70,7 @@
       {{>thermometer {pin_name: 'slider-1'}}}
       {{>thermometer {pin_name: 'slider-2'}}}
       {{>thermometer {pin_name: 'slider-3'}}}
+
 
 .panel.panel-primary
   .panel-heading

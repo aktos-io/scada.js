@@ -9,6 +9,9 @@ require './b-stacked-progress'
 require './jq-flipswitch-v2'
 require './jq-checkbox'
 
+# k
+require './knob'
+
 # l
 require './line-graph'
 
