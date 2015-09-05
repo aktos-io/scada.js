@@ -12,8 +12,7 @@
               data-toggle="dropdown"
               href="#"
               ) Demo Sayfaları
-          
-          li
+              
             ul.dropdown-menu
               li
                 a(href="#") 
@@ -23,7 +22,7 @@
 
             
       .col-md-offset-1.col-md-8.col-md-offset-1.col-xs-8        
-
+      
         .row(style="margin: 2em;")
           h2(class="text-center")
             :md 
@@ -33,7 +32,8 @@
             :md
               Bu sayfada **aktos-scada**'da kullanılan 
               görsel nesnelerin örnekleri bulunur. 
-                
+    .row
+      .col-md-offset-1.col-md-10.col-md-offset-1
         include demos-showcase.jade
             
     | {{>connection-status {}}}
