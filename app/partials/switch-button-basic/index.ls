@@ -5,12 +5,10 @@ require! {
 }
   
 RactivePartial! .register ->
-  $ '.switch-button' .each !->
+  $ '.switch-button-basic' .each !->
     elem = $ this
     actor = elem.data \actor
 
-    # make it work without toggle-switch
-    # visualisation
     elem.change ->
       console.log "switch button changed: ", this.checked
       actor.gui-event this.checked
