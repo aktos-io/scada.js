@@ -1,14 +1,21 @@
-require './test-widget'
-require './textbox'
-require './slider'
-require './status-led'
 require './analog-display'
-require './line-graph'
-require './switch-button-basic'
-require './switch-button'
-require './jq-flipswitch-v2'
-require './toggle-switch'
-require './push-button'
+
 require './b-progress-bar'
 require './b-stacked-progress'
+
+require './jq-flipswitch-v2'
+require './jq-checkbox'
+
+require './line-graph'
+
+require './push-button'
+
+require './switch-button-basic'
+require './switch-button'
+require './slider'
+require './status-led'
+
 require './thermometer'
+require './toggle-switch'
+require './test-widget'
+require './textbox'
