@@ -47,8 +47,24 @@ app.on 'complete', !->
     
   console.log "ractive app completed..."
   
+  test = SwitchActor 'test-actor'
+  test.send IoMessage:
+    pin_name: \test-table
+    table_data:
+      * <[ bir iki üç dört beş ]>
+      * <[ 1bir 1iki 1üç 1dört 1beş ]>
+      * <[ 2bir 2iki 2üç 2dört 2beş ]>
+      
+  test.send IoMessage:
+    pin_name: 'test-pin'
+    val: on
+      
+  
 # TODO: remove this
 # workaround for seamless page refresh
 $ '#reload' .click -> location.reload!
+
+
+
     
   
