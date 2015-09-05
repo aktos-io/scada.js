@@ -30,7 +30,7 @@ include ../templates/mixins.jade
   
 
 style.
-  .project-buttons {
+  .project-buttons111 {
     background-size:   cover;                      /* <------ */
     background-repeat: no-repeat;
     background-position: center center;            /* optionally, center the image */
@@ -39,19 +39,27 @@ style.
     background-color: red; 
     padding: 2.5%;
   }
-  .project-buttons p {
+  
+  .well {
+    background: #333; 
+    border-color: #337ab7;
+  }
+  .project-buttons {
+    margin: 1em;
   }
   
 +partial('projects-buttons')
-  a.project-buttons(
-    style="background-image: url({{ .src }});" 
-    data-role="button" 
-    href="{{ .addr? addr: '#' }}" 
-    data-shadow="false" 
-    data-theme="none"
-    )
-    p(style="margin: auto") {{ .label }}
-   
+  .project-buttons.well
+    a(
+      href="{{ .addr? addr: '#' }}" 
+      )
+      img.thumbnail.img-responsive(src="{{ .src }}")
+      span {{ .label }}
+    span. 
+      lumikeaylu uylimekau ieaui
+      ea uyliekalu auyieak uie a 
+
+  
    
 style.
   .demo-buttons {

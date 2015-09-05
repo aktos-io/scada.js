@@ -6,7 +6,7 @@ include ../../templates/mixins.jade
     aria-valuenow="{{ .val }}"
     aria-valuemin="0"
     aria-valuemax="100"
-    style="width: {{ .val/.total }}%; background:   {{#if .color === ''}} darken(#428bca, 6.5%) {{elseif .color === 'red' }} #d9534f {{elseif .color === 'orange' }} #f0ad4e {{elseif .color === 'green' }} #5cb85c {{elseif .color === 'blue' }} #5bc0de {{else}} .color {{/if}};"
+    style="width: {{ .val/.total }}%; background:   {{#if .color === ''}} #337ab7 {{elseif .color === 'red' }} #d9534f {{elseif .color === 'orange' }} #f0ad4e {{elseif .color === 'green' }} #5cb85c {{elseif .color === 'blue' }} #5bc0de {{else}} .color {{/if}};"
     )
     b {{ .val }}%
 
