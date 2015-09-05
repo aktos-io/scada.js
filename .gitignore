@@ -7,3 +7,4 @@ vendor-*
 .idea
 app/assets/demos
 disabled
+**/orig--no-sync
