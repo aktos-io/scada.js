@@ -36,7 +36,8 @@ body {
 
 
 input,
-textarea {
+textarea,
+table {
      -moz-user-select: text;
 }
 

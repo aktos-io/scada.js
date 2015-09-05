@@ -2,15 +2,14 @@ include ../../templates/mixins.jade
     
     
 +partial('table-row')
-  .row.
+  tr.
     {{#each row_data:j}}
-      <span>{{ row_data[j] }} ---------- </span>
+      <th> {{ row_data[j] }} </th>
     {{/each}}
 
 +partial('table')
-  div this is table widget
-  .switch-actor.table.
-    {{#each table_data:i}}
-      {{>table-row {row_data: table_data[i]}}}
-      <p> ================================== </p>
-    {{/each}}
+  table.switch-actor.table
+    tbody.
+      {{#each table_data:i}}
+        {{>table-row {row_data: table_data[i]}}}
+      {{/each}}
