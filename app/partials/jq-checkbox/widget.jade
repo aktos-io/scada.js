@@ -1,0 +1,11 @@
+include ../../templates/mixins.jade
+
++partial('jq-checkbox')
+  .switch-actor.jq-checkbox 
+    label
+      input.jq-checkbox__input(
+        name="{{ .pin_name }}" 
+        type="checkbox"
+        )
+      | {{ .label }}
+ 

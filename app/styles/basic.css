@@ -20,10 +20,7 @@ body {
   padding: 2em; 
 }
 
-.project-buttons {
-    height:33vw;
-    margin:0.5%;
-}
+
 
 .scada {
   -webkit-user-select: none;
@@ -32,6 +29,8 @@ body {
           user-select: none;
 -webkit-touch-callout: none;
     -khtml-user-select: none;
+    
+    overflow: hidden; 
 
 }
 

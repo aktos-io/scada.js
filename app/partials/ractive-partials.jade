@@ -1,56 +1,33 @@
-include ../templates/mixins.jade
+// a
+include ./analog-display/widget.jade
 
+// b 
+include ./b-progress-bar/widget.jade
+include ./b-stacked-progress/widget.jade
+
+// j
+include ./jq-flipswitch-v2/widget.jade
+include ./jq-checkbox/widget.jade
+
+// l
+include ./line-graph/widget.jade
+
+// p 
+include ./push-button/widget.jade
+
+// s
+include ./slider/widget.jade
+include ./status-led/widget.jade
+include ./switch-button/widget.jade
+include ./switch-button-basic/widget.jade
+
+// t
 include ./test-widget/widget.jade
 include ./textbox/widget.jade
-include ./status-led/widget.jade
-include ./push-button/widget.jade
-include ./switch-button/widget.jade
-include ./jq-flipswitch-v2/widget.jade
-include ./slider/widget.jade
-include ./analog-display/widget.jade
-include ./line-graph/widget.jade
 include ./thermometer/widget.jade
-    
-+partial('nav-bar')
-  | <div data-role="navbar" class="nav-glyphish-example" data-grid="d">
-  |   <ul>
-  |     <li><a {{>jq-persist {active: .active_button, this_page: "home-page"}}}  href="#home-page" id="home" data-icon="custom" data-transition="none">Ana Sayfa</a></li>
-  |     <li><a {{>jq-persist {active: .active_button, this_page: "projects"}}} href="#projects" id="project" data-icon="custom" data-transition="none">Projeler</a></li>
-  |     <li><a {{>jq-persist {active: .active_button, this_page: "products"}}} href="#products" id="product" data-icon="custom" data-transition="none">Ürünler</a></li>
-  |     <li><a {{>jq-persist {active: .active_button, this_page: "demos"}}} href="#demos" id="demo" data-icon="custom" data-transition="none">Demo</a></li>
-  |     <li><a {{>jq-persist {active: .active_button, this_page: "contact-page"}}} href="#contact-page" id="contact" data-icon="custom" data-transition="none">İletişim</a></li>
-  |   </ul>
-  | </div>
-       
-+partial('connection-status')
-  |  <div  data-role="footer" data-tap-toggle="false" data-position="fixed" class="switch-actor connection-status"
-  |    style='background-color: {{ .connected ? "yellowgreen" : "lightgray" }}'>
-  |    <p>{{.connected? "connected..." : "connecting..." }}</p>
-  |  </div>
+include ./toggle-switch/widget.jade
 
 
-+partial('switch-list')
-  | <span class="switch-actor"></span>
-  | <p> before loop: {{ connected? 'connected...': 'disconnected...' }}</p>
-  | {{#my_list}}
-  |   <p> looping: {{ connected? 'connected...': 'disconnected...' }}</p>
-  | {{/my_list}}
+//- ----------------------------
 
-+partial('jq-persist')
-  |  {{ active == this_page ? 'class="ui-btn-active ui-state-persist"' : '' }}
-  
-    
-+partial('projects-buttons')
-  a(
-    data-role="button" 
-    href="{{ .addr? addr: '#' }}" 
-    data-shadow="false" 
-    data-theme="none"
-    )
-    img(
-      class="project-buttons" 
-      src="{{ .src }}"
-    )
-    p(style="margin: auto")
-    | {{ .label }}
-    
+include ./other-partials.jade

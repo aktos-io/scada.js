@@ -1,0 +1,78 @@
+include ../templates/mixins.jade
+
++partial('nav-bar')
+  | <div data-role="navbar" class="nav-glyphish-example" data-grid="d">
+  |   <ul>
+  |     <li><a {{>jq-persist {active: .active_button, this_page: "home-page"}}}  href="#home-page" id="home" data-icon="custom" data-transition="none">Ana Sayfa</a></li>
+  |     <li><a {{>jq-persist {active: .active_button, this_page: "projects"}}} href="#projects" id="project" data-icon="custom" data-transition="none">Projeler</a></li>
+  |     <li><a {{>jq-persist {active: .active_button, this_page: "products"}}} href="#products" id="product" data-icon="custom" data-transition="none">Ürünler</a></li>
+  |     <li><a {{>jq-persist {active: .active_button, this_page: "demos"}}} href="#demos" id="demo" data-icon="custom" data-transition="none">Demo</a></li>
+  |     <li><a {{>jq-persist {active: .active_button, this_page: "contact-page"}}} href="#contact-page" id="contact" data-icon="custom" data-transition="none">İletişim</a></li>
+  |   </ul>
+  | </div>
+       
++partial('connection-status')
+  |  <div  data-role="footer" data-tap-toggle="false" data-position="fixed" class="switch-actor connection-status"
+  |    style='background-color: {{ .connected ? "yellowgreen" : "lightgray" }}'>
+  |    <p>{{.connected? "connected..." : "connecting..." }}</p>
+  |  </div>
+
+
++partial('switch-list')
+  | <span class="switch-actor"></span>
+  | <p> before loop: {{ connected? 'connected...': 'disconnected...' }}</p>
+  | {{#my_list}}
+  |   <p> looping: {{ connected? 'connected...': 'disconnected...' }}</p>
+  | {{/my_list}}
+
++partial('jq-persist')
+  |  {{ active == this_page ? 'class="ui-btn-active ui-state-persist"' : '' }}
+  
+
+style.
+  .project-buttons111 {
+    background-size:   cover;                      /* <------ */
+    background-repeat: no-repeat;
+    background-position: center center;            /* optionally, center the image */
+    height:33vw;
+    margin:0.5%;
+    background-color: red; 
+    padding: 2.5%;
+  }
+  
+  .well {
+    background: #333; 
+    border-color: #337ab7;
+  }
+  .project-buttons {
+    margin: 1em;
+  }
+  
++partial('projects-buttons')
+  .project-buttons.well
+    a(
+      href="{{ .addr? addr: '#' }}" 
+      )
+      img.thumbnail.img-responsive(src="{{ .src }}")
+      span {{ .label }}
+    span. 
+      lumikeaylu uylimekau ieaui
+      ea uyliekalu auyieak uie a 
+
+  
+   
+style.
+  .demo-buttons {
+    border: 1px solid white; 
+  }
+  .demo-buttons img {
+    float: left;
+    padding: 5px; 
+  }
+
++partial('demo-buttons')
+  a.demo-buttons(
+    href="{{ .addr? addr : '#' }}" 
+    )
+    img(src="{{ .src ? .src : 'images/icons-png/gear-black.png' }}")
+    | {{ .label }}
