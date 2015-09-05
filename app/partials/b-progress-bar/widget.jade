@@ -1,0 +1,14 @@
+include ../../templates/mixins.jade
+    
++partial('b-progress-bar')
+  .switch-actor.b-progress-bar
+    .progress
+      .progress-bar.progress-bar-striped(
+        role="progressbar"
+        aria-valuenow="{{ .val }}"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        style="width: {{ .val }}%"
+        )
+        span.sr-only {{ .val }}% Complete
+      
