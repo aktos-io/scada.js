@@ -1,0 +1,22 @@
+include ../../templates/mixins.jade
+
++partial('b-stacked-progress-element')
+  .progress-bar.switch-actor.b-progress-bar(
+    role="progressbar"
+    aria-valuenow="{{ .val }}"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    style="width: {{ .val/.total }}%; background:   {{#if .color === ''}} #337ab7 {{elseif .color === 'red' }} #d9534f {{elseif .color === 'orange' }} #f0ad4e {{elseif .color === 'green' }} #5cb85c {{elseif .color === 'blue' }} #5bc0de {{else}} .color {{/if}};"
+    )
+    b {{ .val }}%
+
++partial('b-stacked-progress')
+  .switch-actor.b-stacked-progress.progress
+    | {{#each pin_names:i}}
+    |   {{>b-stacked-progress-element 
+    |      {pin_name: pin_names[i][0], 
+    |      val: 15, 
+    |      color: pin_names[i][1], 
+    |      total: pin_names.length
+    |    }}}
+    | {{/each}}
