@@ -1,19 +1,28 @@
-.row. 
-  {{>toggle-switch {pin_name: 'test-pin'}}}
-  {{>push-button {pin_name: 'test-pin', label: 'TEST PIN'}}}
-  {{>switch-button {pin_name: 'test-pin', label: 'TEST PIN'}}}
-  {{>status-led {pin_name: 'test-pin'}}}
+.row
+  .col-md-2.
+    {{>toggle-switch {pin_name: 'test-pin'}}}
+  .col-md-2.
+    {{>switch-button {pin_name: 'test-pin', label: 'TEST PIN'}}}
+  .col-md-2.
+    {{>push-button {pin_name: 'test-pin', label: 'TEST PIN'}}}
+  .col-md-2.
+    {{>status-led {pin_name: 'test-pin'}}}
   
 .row
+  .col-md-12.
+    {{>slider {pin_name:"slider-2", val: 45}}}
+
+.row
   .col-md-6.
-    {{>slider {pin_name:"slider-2", val: 25}}}
+    {{>slider {pin_name:"slider-1", val: 25}}}
     
   .col-md-6.
     {{>analog-display {pin_name: 'slider-1'}}}
-
+    
 .row
-  .col-md-12.
-    {{>slider {pin_name:"slider-1", val: 45}}}
+  .col-md-3.
+    {{>b-progress-bar {pin_name: 'slider-1', val: 55}}}
+
       
 
 .row
