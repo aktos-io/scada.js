@@ -44,6 +44,11 @@ app.on 'complete', !->
   $ document .ready ->
     console.log "document is ready..."
     RactivePartial! .init-for-document-ready!
+
+    test.send IoMessage:
+      pin_name: 'test-pin'
+      val: on
+
     
   console.log "ractive app completed..."
   
@@ -55,9 +60,6 @@ app.on 'complete', !->
       * <[ 1bir 1iki 1üç 1dört 1beş ]>
       * <[ 2bir 2iki 2üç 2dört 2beş ]>
       
-  test.send IoMessage:
-    pin_name: 'test-pin'
-    val: on
       
   
 # TODO: remove this

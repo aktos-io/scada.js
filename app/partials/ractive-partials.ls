@@ -15,6 +15,9 @@ require './knob'
 # l
 require './line-graph'
 
+# n
+require './numeric-keyboard'
+
 # p
 require './push-button'
 
