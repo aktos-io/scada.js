@@ -29,15 +29,21 @@
     {{>slider {pin_name:"slider-1", val: 25}}}
     {{>slider {pin_name:"slider-2", val: 25}}}
     {{>slider {pin_name:"slider-3", val: 25}}}
+    {{>slider {pin_name:"slider-4", val: 25}}}
+    {{>slider {pin_name:"slider-5", val: 25}}}
 
     {{>b-stacked-progress 
       {pin_names: [ 
           ['slider-1', 'red'], 
-          ['slider-2', 'blue'], 
-          ['slider-3', 'green']
+          ['slider-2', ''], 
+          ['slider-3', 'green'],
+          ['slider-4', 'blue'],
+          ['slider-5', 'orange']
         ]
       }
     }}
+    
+
 
 .row
   .col-md-6
