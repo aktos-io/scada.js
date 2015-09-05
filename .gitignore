@@ -8,3 +8,4 @@ vendor-*
 app/assets/demos
 disabled
 **/orig--no-sync
+.kateproject.d
