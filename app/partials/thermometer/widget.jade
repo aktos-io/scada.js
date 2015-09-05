@@ -1,0 +1,9 @@
+include ../../templates/mixins.jade
+    
++partial('thermometer')
+    div.
+        <div class="thermometer switch-actor" >
+        <p> termometrenin id'si:  {{ .actor_id }} </p>
+        <canvas id='{{ .actor_id }}' width="90" height="230">[No canvas support]</canvas>
+
+        </div>
