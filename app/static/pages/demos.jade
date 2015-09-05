@@ -3,25 +3,34 @@
 #demos(data-role='page', data-theme='b')
   .scada
     | {{>nav-bar {active_button: 'demos'}}}
+    input#reload
+
+    .div.
+      <div class="btn-group">
+        <button type="button" class="btn btn-primary">Apple</button>
+        <button type="button" class="btn btn-primary">Samsung</button>
+        <button type="button" class="btn btn-primary">Sony</button>
+      </div>
+
+    .btn-group
+      button.btn.btn-success(type="button") Demo Sayfaları
+      button.btn.btn-success.dropdown-toggle(
+        data-toggle="dropdown"
+        type="button"
+        aria-expanded="false"
+        )
+        span.caret
+      ul.dropdown-menu
+        li
+          a(href="#") 
+            span Kablo zırhı kesme makinesi
 
     .row
-      .col-md-2.col-xs-4
-        ul.nav.nav-tabs
-          li.active
-            a.dropdown-toggle(
-              data-toggle="dropdown"
-              href="#"
-              ) Demo Sayfaları
-              
-            ul.dropdown-menu
-              li
-                a(href="#") 
-                  span.glyphicon.glyphicon-envelope
-                  span Kablo zırhı kesme makinesi
+      .col-md-3.col-xs-4
 
 
             
-      .col-md-offset-1.col-md-8.col-md-offset-1.col-xs-8        
+      .col-md-offset-1.col-md-7.col-md-offset-1.col-xs-8        
       
         .row(style="margin: 2em;")
           h2(class="text-center")
