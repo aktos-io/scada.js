@@ -40,10 +40,15 @@ class ActorBase
 
   recv: (msg) ->
     @receive msg
+    
+    
     try
       subjects = [subj for subj of msg.payload]
       for subject in subjects
-        this['handle_' + subject] msg
+        try
+          this['handle_' + subject] msg
+        catch
+          @receive msg
     catch
       #console.log "problem in handler: ", e
 
@@ -125,10 +130,7 @@ class ProxyActor
       # send to server via socket.io
       @socket.on 'aktos-message', (msg) ~>
         try
-          if \ProxyActorMessage of msg.payload
-            @handle_ProxyActorMessage msg
-          else
-            @network-rx msg
+          @network-rx msg
         catch
           console.log "Problem with receiving message: ", e
 
@@ -140,29 +142,11 @@ class ProxyActor
         @network-tx (envelp UpdateIoMessage: {}, @get-msg-id!)
         @send ConnectionStatus: {connected: @connected}
         
-        # TODO: Remove this block
-        # authentication by address-parameter
-        @send-auth-msg 'invalid-passwd'
-
       @socket.on "disconnect", !~>
         #console.log "proxy actor says: disconnected"
         @connected = false 
         @send ConnectionStatus: {connected: @connected}
-        
-    send-auth-msg: (secret) ->
-      # authentication
-      ctrl-msg = ProxyActorMessage:
-        client_secret: secret
-          
-      @network-tx (envelp ctrl-msg, @get-msg-id!)
-        
-    handle_ProxyActorMessage: (msg) -> 
-      msg = get-msg-body msg
-      console.log "ProxyActor got control message: ", msg
-      if \token of msg
-        @token = msg.token
-        console.log "ProxyActor got token: ", @token
-    
+            
     handle_UpdateConnectionStatus: (msg) -> 
       @send ConnectionStatus: {connected: @connected}
       

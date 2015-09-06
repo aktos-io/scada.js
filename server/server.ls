@@ -108,7 +108,7 @@ user-db =
     name: 'Tuğrul KUKUL'
     secret: 'tk12345'
 
-handle-client-handshake = (msg, socket) -> 
+handle-auth-message = (msg, socket) -> 
   msg-body = get-msg-body msg
   console.log "server got control message: ", get-msg-body msg
   
@@ -123,7 +123,7 @@ handle-client-handshake = (msg, socket) ->
       
   console.log 'client data is: ', client-data
     
-  token-msg = ProxyActorMessage: 
+  token-msg = AuthMessage: 
     token: 'this token is signed by server for this specific client'
     client_data: client-data
     
@@ -142,8 +142,8 @@ io.on 'connection', (socket) !->
   socket.on "aktos-message", (msg) !->
     #console.log "aktos-message from browser: ", msg
     
-    if \ProxyActorMessage of msg.payload
-      handle-client-handshake msg, socket
+    if \AuthMessage of msg.payload
+      handle-auth-message msg, socket
       
     else
       # append server-id to message.sender list
