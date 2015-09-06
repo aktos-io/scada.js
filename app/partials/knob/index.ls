@@ -96,12 +96,13 @@ RactivePartial! .register ->
   console.log "KNOB"
   $ \.knob .each -> 
     elem = $ this 
-    
-    elem.knob!
     actor = elem.data \actor
-    
+ 
     actor.add-callback (msg)->
-      console.log "knob value changed: ", msg.val 
+      console.log "knob value will be changed to: ", msg.val 
       actor.set-ractive-var msg.val
+      elem.val msg.val
+        .trigger \change
+
 
  

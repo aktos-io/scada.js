@@ -3,11 +3,9 @@
     h3.panel-title Knobs
   .panel-body
     .row.
-      {{>knob {pin_name: 'slider-1'}}}
-    .row.
-      {{>knob {pin_name: 'slider-2'}}}
-    .row.
-      {{>knob {pin_name: 'slider-3'}}}
+      {{>circular-progress {}}}
+      {{>slider {pin_name:"slider-1", val: 25}}}
+
 
 
 .panel.panel-primary
