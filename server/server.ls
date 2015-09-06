@@ -94,12 +94,41 @@ cleanup-msg-history = ->
 
 set-interval cleanup-msg-history, 10000_ms
 
+user-db = 
+  * id: 1
+    username: 'ceremcem'
+    name: 'Cerem Cem ASLAN'
+    secret: 'cca12345'
+  * id: 2
+    username: 'mesut'
+    name: 'Mesut EVİN'
+    secret: 'me12345'
+  * id: 3
+    username: 'tugrul'
+    name: 'Tuğrul KUKUL'
+    secret: 'tk12345'
+
 handle-client-handshake = (msg, socket) -> 
+  msg-body = get-msg-body msg
   console.log "server got control message: ", get-msg-body msg
   
+  client-secret = msg-body.client_secret
+  
+  client-data = [user for user in user-db when client-secret == user.secret]
+  
+  client-data = if client-data.0 then 
+    client-data.0
+  else
+    name: "Misafir"
+      
+  console.log 'client data is: ', client-data
+    
   token-msg = ProxyActorMessage: 
     token: 'this token is signed by server for this specific client'
-  
+    client_data: client-data
+    
+  console.log "sending token-msg: ", token-msg
+    
   token-msg = envelp token-msg, 0
   token-msg.sender ++= [server-id] 
   socket.emit 'aktos-message', token-msg 

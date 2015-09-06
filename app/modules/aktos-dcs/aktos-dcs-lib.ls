@@ -56,6 +56,7 @@ class SwitchActor extends Actor
   set-node: (node) -> 
     #console.log "setting #{this.actor-name} -> ", node
     @ractive-node = node
+    @node = node
     @set-ractive-var = set-ractive-var node 
     @get-ractive-var = get-ractive-var node
     @send UpdateConnectionStatus: {}
@@ -75,6 +76,13 @@ class SwitchActor extends Actor
       pin_name: @pin-name
       val: val
       
+class WidgetActor extends SwitchActor
+  (jq-node)~>
+    pin-name = get-ractive-var jq-node, 'pin_name'
+    super pin-name
+    @set-node jq-node
+
+      
 module.exports = {
-  SwitchActor, 
+  SwitchActor, WidgetActor
 }

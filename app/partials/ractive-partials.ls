@@ -14,6 +14,7 @@ require './knob'
 
 # l
 require './line-graph'
+require './login'
 
 # n
 require './numeric-keyboard'

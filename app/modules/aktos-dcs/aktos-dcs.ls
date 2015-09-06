@@ -140,8 +140,9 @@ class ProxyActor
         @network-tx (envelp UpdateIoMessage: {}, @get-msg-id!)
         @send ConnectionStatus: {connected: @connected}
         
-        # authentication
-        @send-auth-msg 'unauthorized-user-secret'
+        # TODO: Remove this block
+        # authentication by address-parameter
+        @send-auth-msg 'invalid-passwd'
 
       @socket.on "disconnect", !~>
         #console.log "proxy actor says: disconnected"
