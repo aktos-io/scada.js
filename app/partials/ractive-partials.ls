@@ -26,6 +26,7 @@ require './switch-button-basic'
 require './switch-button'
 require './slider'
 require './status-led'
+require './sevensegment'
 
 # t
 require './thermometer'

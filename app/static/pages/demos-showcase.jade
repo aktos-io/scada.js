@@ -1,11 +1,17 @@
 .panel.panel-primary
   .panel-heading
-    h3.panel-title Circular-Progress and Knobs
+    h3.panel-title SevenSegment
   .panel-body
     .row.
-      {{>circular-progress {}}}
+      {{>sevensegment {pin_name: 'slider1'}}}
 
-
+.panel.panel-primary
+  .panel-heading
+    h3.panel-title Circular-Progress and Knobs
+  .panel-body
+    .row
+      .col-md-2.
+        {{>circular-progress {}}}
 
 .panel.panel-primary
   .panel-heading
