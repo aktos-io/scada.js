@@ -3,6 +3,12 @@ Hapi = require "hapi"
 zmq = require 'zmq'
 short-id = require \shortid
 #msgpack = require 'msgpack-js'
+require! {
+  './modules/aktos-dcs': {
+    envelp, 
+    get-msg-body,
+  }
+}
 
 if (parse-int zmq.version.0) < 4
   console.log "ERROR: "
@@ -88,22 +94,37 @@ cleanup-msg-history = ->
 
 set-interval cleanup-msg-history, 10000_ms
 
+handle-client-handshake = (msg, socket) -> 
+  console.log "server got control message: ", get-msg-body msg
+  
+  token-msg = ProxyActorMessage: 
+    token: 'this token is signed by server for this specific client'
+  
+  token-msg = envelp token-msg, 0
+  token-msg.sender ++= [server-id] 
+  socket.emit 'aktos-message', token-msg 
+
 # Forward socket.io messages to and from zeromq messages
 io.on 'connection', (socket) !->
   # for every connected socket.io client, do the following:
   console.log "new client connected, starting its forwarder..."
+  
 
   socket.on "aktos-message", (msg) !->
     #console.log "aktos-message from browser: ", msg
+    
+    if \ProxyActorMessage of msg.payload
+      handle-client-handshake msg, socket
+      
+    else
+      # append server-id to message.sender list
+      msg.sender ++= [server-id]
 
-    # append server-id to message.sender list
-    msg.sender ++= [server-id]
+      # broadcast all web clients excluding sender
+      socket.broadcast.emit 'aktos-message', msg
 
-    # broadcast all web clients excluding sender
-    socket.broadcast.emit 'aktos-message', msg
-
-    # send to other processes via zeromq
-    pub-sock.send pack msg
+      # send to other processes via zeromq
+      pub-sock.send pack msg
 
 sub-sock.on 'message', (message) !->
   #console.log "aktos message from network ", message.to-string![\msg_id]
