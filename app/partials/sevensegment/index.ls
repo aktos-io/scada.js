@@ -1,18 +1,23 @@
 require! {
   '../../modules/aktos-dcs': {
     RactivePartial,
-    get-ractive-var, 
-    set-ractive-var,
-    SwitchActor,
+    WidgetActor,
   }
 }
   
 RactivePartial! .register ->
   $ \.sevenSeg .each ->
-    elem = $ this
-    actor = elem.data \actor
-    elem.sevenSeg do
+    actor = WidgetActor $ this
+    
+    display = actor.node
+    display.seven-seg do
+      digits: 3
       value: 8
+      
+    actor.add-callback (msg) -> 
+      console.log "seven segment display got message: ", msg
+      display.seven-seg value: msg.val
+
 
   $ \.medsevenSegArray .sevenSeg do
     digits: 5
@@ -20,6 +25,3 @@ RactivePartial! .register ->
     colorOff: "#003200" 
     colorOn: "Lime"
     slant: 10
-
-
-  
