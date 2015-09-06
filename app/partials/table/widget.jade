@@ -8,7 +8,7 @@ include ../../templates/mixins.jade
     {{/each}}
 
 +partial('table')
-  table.switch-actor.table
+  table.table
     tbody.
       {{#each table_data:i}}
         {{>table-row {row_data: table_data[i]}}}

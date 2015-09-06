@@ -1,13 +1,14 @@
 require! {
   '../../modules/aktos-dcs': {
     RactivePartial,
+    WidgetActor,
   }
 }
   
 RactivePartial! .register ->
   $ '.b-progress-bar' .each !->
     elem = $ this 
-    actor = elem.data \actor
+    actor = WidgetActor elem
     
     actor.add-callback (msg)->
       #console.log "slider changed: ", msg.val 

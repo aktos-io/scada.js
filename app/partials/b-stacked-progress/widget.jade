@@ -1,7 +1,7 @@
 include ../../templates/mixins.jade
 
 +partial('b-stacked-progress-element')
-  .progress-bar.switch-actor.b-progress-bar(
+  .progress-bar.b-progress-bar(
     role="progressbar"
     aria-valuenow="{{ .val }}"
     aria-valuemin="0"
@@ -11,7 +11,7 @@ include ../../templates/mixins.jade
     b {{ .val }}%
 
 +partial('b-stacked-progress')
-  .switch-actor.b-stacked-progress.progress
+  .b-stacked-progress.progress
     | {{#each pin_names:i}}
     |   {{>b-stacked-progress-element 
     |      {pin_name: pin_names[i][0], 

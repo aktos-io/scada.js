@@ -1,6 +1,7 @@
 require! {
   '../../modules/aktos-dcs': {
     RactivePartial,
+    WidgetActor,
   }
 }
 
@@ -8,7 +9,7 @@ RactivePartial!register ->
   $ \.numeric-keyboard .each ->
     #console.log "switch-button created"
     elem = $ this
-    actor = elem.data \actor
+    actor = WidgetActor elem
 
     layout =       
       * <[ 1 2 3 a  ]>
