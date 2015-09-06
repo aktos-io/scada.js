@@ -28,7 +28,7 @@ RactivePartial! .register-for-document-ready ->
       
     
     slider.on \change ->
-      #console.log "slider val: ", slider.val!
+      console.log "slider val: ", slider.val!
       actor.gui-event slider.val!
       
     actor.add-callback (msg)->

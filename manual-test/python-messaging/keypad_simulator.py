@@ -13,7 +13,7 @@ class KeypadSimulator(Actor):
         i = 0
         while True:
             print "sending analog-1 value: ", time.time()
-            self.send({'IoMessage':{'pin_name':'analog-1', 'val':i}})
+            self.send({'IoMessage':{'pin_name':'mesut', 'val':i}})
             sleep(0.01)
             self.send({'IoMessage':{'pin_name':'analog-2', 'val':i*10}})
             i += 1
@@ -45,7 +45,7 @@ virtual_inputs = {
 for pin_name, pin_number in virtual_inputs.items():
     VirtualIoActor(pin_name=pin_name, pin_number=pin_number)
 
-#KeypadSimulator()
-Monitor()
+KeypadSimulator()
+#Monitor()
 #Test3()
 wait_all()

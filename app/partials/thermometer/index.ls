@@ -27,4 +27,4 @@ RactivePartial! .register ->
     #TODO:see the differences grow and draw function.  
     actor.add-callback (msg) ->
       therm[\value] = if msg.val <= therm.\max then msg.val else therm.\max
-      therm.draw!
+      therm.grow!

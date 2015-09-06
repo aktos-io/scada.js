@@ -16,7 +16,7 @@ RactivePartial! .register ->
 
   $ \.medsevenSegArray .sevenSeg do
     digits: 5
-    value: 12.3
+    value: 12.34
     colorOff: "#003200" 
     colorOn: "Lime"
     slant: 10

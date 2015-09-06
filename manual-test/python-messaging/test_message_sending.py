@@ -8,10 +8,10 @@ class Test(Actor):
         pprint(msg)
 
     def action(self):
-        val = False 
+        val = False
         while True: 
             print "sending val: ", val
-            self.send(IoMessage(pin_name='5', val=val))
+            self.send(IoMessage(pin_name='mesut', val=val))
             val = not val
             sleep(4)
 
