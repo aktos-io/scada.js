@@ -19,17 +19,17 @@ require! {
 
 
 envelp = (msg, msg-id) ->
-  msg-raw = do
+  msg-raw =
     sender: []
     timestamp: Date.now! / 1000
     msg_id: msg-id  # {{.actor_id}}.{{serial}}
     payload: msg
-  return msg-raw
 
 get-msg-body = (msg) ->
   subject = [subj for subj of msg.payload][0]
   #console.log "subject, ", subject
   return msg.payload[subject]
+
 
 class ActorBase
   ~>
@@ -40,10 +40,15 @@ class ActorBase
 
   recv: (msg) ->
     @receive msg
+    
+    
     try
       subjects = [subj for subj of msg.payload]
       for subject in subjects
-        this['handle_' + subject] msg
+        try
+          this['handle_' + subject] msg
+        catch
+          @receive msg
     catch
       #console.log "problem in handler: ", e
 
@@ -98,22 +103,6 @@ class Actor extends ActorBase
 
 
 
-
-
-/* initialize socket.io connections */
-url = window.location.href
-arr = url.split "/"
-addr_port = arr.0 + "//" + arr.2
-socketio-path = [''] ++ (initial (drop 3, arr)) ++ ['socket.io']
-socketio-path = join '/' socketio-path
-socket = io.connect do 
-  'port': addr_port
-  'path': socketio-path
-
-
-
-
-
 class ProxyActor
   instance = null
   ~>
@@ -124,6 +113,18 @@ class ProxyActor
     ~>
       super ...
       #console.log "Proxy actor is created with id: ", @actor-id
+      
+      @token = null
+
+      /* initialize socket.io connections */
+      url = window.location.href
+      arr = url.split "/"
+      addr_port = arr.0 + "//" + arr.2
+      socketio-path = [''] ++ (initial (drop 3, arr)) ++ ['socket.io']
+      socketio-path = join '/' socketio-path
+      socket = io.connect do 
+        port: addr_port
+        path: socketio-path
 
       @socket = socket
       # send to server via socket.io
@@ -138,14 +139,14 @@ class ProxyActor
         #console.log "proxy actor says: connected"
         # update io on init
         @connected = true
-        @network-tx envelp UpdateIoMessage: {}, @get-msg-id!
+        @network-tx (envelp UpdateIoMessage: {}, @get-msg-id!)
         @send ConnectionStatus: {connected: @connected}
-
+        
       @socket.on "disconnect", !~>
         #console.log "proxy actor says: disconnected"
         @connected = false 
         @send ConnectionStatus: {connected: @connected}
-        
+            
     handle_UpdateConnectionStatus: (msg) -> 
       @send ConnectionStatus: {connected: @connected}
       
@@ -161,6 +162,7 @@ class ProxyActor
     network-tx: (msg) ->
       # receive from inner actors, forward to server
       msg.sender ++= [@actor-id]
+      msg.token = @token
       #console.log "emitting message: ", msg
       @socket.emit 'aktos-message', msg
 

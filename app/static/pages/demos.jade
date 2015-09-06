@@ -3,35 +3,54 @@
 #demos(data-role='page', data-theme='b')
   .scada
     | {{>nav-bar {active_button: 'demos'}}}
-
-    .row
-      .col-md-2.col-xs-4
-        ul.nav.nav-tabs
-          li.active
-            a.dropdown-toggle(
-              data-toggle="dropdown"
-              href="#"
-              ) Demo Sayfaları
-              
-            ul.dropdown-menu
-              li
-                a(href="#") 
-                  span.glyphicon.glyphicon-envelope
-                  span Kablo zırhı kesme makinesi
-
-
-            
-      .col-md-offset-1.col-md-8.col-md-offset-1.col-xs-8        
+    input#reload
+    
+    .row.vcenter(style="padding: 6em;")
+      .col-md-offset-2.col-md-4
+        h2
+          :md 
+            **aktos-scada** Demo
       
-        .row(style="margin: 2em;")
-          h2(class="text-center")
-            :md 
-              **aktos-scada** Demo
+        a(
+          href="#demo-popup-menu"
+          data-rel="popup"
+          data-role="button"
+          data-inline="true"
+          data-transition="none"
+          data-icon="gear"
+          data-theme="e"
+          ).
+          Canlı SCADA örnekleri ->
+          
+        div(
+          id="demo-popup-menu"
+          data-role="popup"
+          data-theme="d"
+          )
+          ul(
+            data-role="listview"
+            data-inset="true"
+            style="min-width:210px;" 
+            data-theme="d"
+            )
+            li
+              a(href="#") proje 1 
+            li
+              a(href="#") proje 2 
+            li
+              a(href="#") proje 3 
+            li
+              a(href="#") proje 4 
+            li
+              a(href="#") proje 5 
+
+      .col-md-4.col-md-offset-2
+        :md
+          Bu sayfada **aktos-scada**'da kullanılan 
+          görsel nesnelerin örnekleri bulunur. 
         
-          .col-md-offset-3.col-md-6.col-md-offset-3
-            :md
-              Bu sayfada **aktos-scada**'da kullanılan 
-              görsel nesnelerin örnekleri bulunur. 
+              
+
     .row
       .col-md-offset-1.col-md-10.col-md-offset-1
         include demos-showcase.jade

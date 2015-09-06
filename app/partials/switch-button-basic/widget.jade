@@ -4,9 +4,11 @@ include ../../templates/mixins.jade
   div(
     style="display: inline-block; margin: 10px"
     ) 
-    input(
-      class="switch-actor switch-button-basic"
-      type="checkbox" 
-      data-pin-name="{{ .pin_name }}"
-      )
+    label 
+      input(
+        class="switch-actor switch-button-basic"
+        type="checkbox" 
+        data-role="none"
+        )
+      span(style="padding: 5px")    {{ .label }}
 

@@ -1,6 +1,10 @@
 require! {
   '../../modules/aktos-dcs': {
+    ProxyActor,
     RactivePartial,
+    get-ractive-var, 
+    set-ractive-var, 
+    SwitchActor,
   }
 }
   
@@ -11,7 +15,10 @@ RactivePartial! .register ->
   #
   $ '.push-button' .each ->
     elem = $ this
-    actor = elem.data \actor
+    pin-name = get-ractive-var elem, 'pin_name'
+    actor = SwitchActor pin-name
+    actor.set-node elem
+    elem.data \actor, actor
 
     # desktop support
     elem.on 'mousedown' ->

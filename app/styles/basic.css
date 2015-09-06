@@ -36,8 +36,16 @@ body {
 
 
 input,
-textarea {
+textarea,
+table {
      -moz-user-select: text;
+}
+
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
 }
 
 
