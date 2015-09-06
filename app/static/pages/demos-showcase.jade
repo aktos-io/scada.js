@@ -35,7 +35,10 @@
     h3.panel-title SevenSegment
   .panel-body
     .row.
-      {{>sevensegment {pin_name: 'segment-slider'}}}
+      {{>seven-segment {pin_name: 'segment-slider', type: 'classic', format: '##'}}}
+      {{>seven-segment {pin_name: 'segment-slider', type: 'multimeter', format: '#######.##'}}}
+      {{>seven-segment {pin_name: 'segment-slider', type: 'speed', format: '####.#'}}}
+      {{>seven-segment {pin_name: 'segment-slider', type: 'basic', format: '##.###'}}}
       {{>slider {pin_name:"segment-slider", val: 45} }}
 
 .panel.panel-primary

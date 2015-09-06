@@ -1,13 +1,4 @@
-.sevenSeg
-  {
-    padding: 0.5em; 
-    height: 100px; 
-    width: 100px;
-  }
-  
-.medsevenSegArray
+.seven-segment
   {
     padding: 0.25em;
-    height: 50px;
-    width: 200px;
   }

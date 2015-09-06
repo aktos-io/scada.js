@@ -6,13 +6,45 @@ require! {
 }
   
 RactivePartial! .register ->
-  $ \.sevenSeg .each ->
+  $ \.seven-segment .each ->
     actor = WidgetActor $ this
     
     display = actor.node
-    display.seven-seg do
+    
+    type = actor.get-ractive-var 'type'
+    format = actor.get-ractive-var 'format'
+    
+    params = 
       digits: 3
-      value: 8
+      value: 15
+      
+    f = format.split '.'
+    format-int = f.0
+    digits = format-int.length
+    
+    format-prec = 0
+    if f.length > 1 
+      format-prec = f.1
+      digits += format-prec.length
+    console.log "total digits for #type : #digits"
+    
+    params.digits = digits
+    
+    height = 50px
+    
+    
+    width = height * 0.75 * digits
+    display.css \width, width
+    display.css \height, height
+    console.log "height: #height setting width: #width"
+      
+    if type is \multimeter
+      params.color-on = "yellow"
+    else if type is \basic
+      params.value = 47
+        
+    
+    display.seven-seg params
       
     actor.add-callback (msg) -> 
       console.log "seven segment display got message: ", msg

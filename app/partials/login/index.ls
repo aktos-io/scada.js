@@ -18,15 +18,12 @@ class AuthActor extends WidgetActor
     
   handle_AuthMessage: (msg) -> 
     msg-body = get-msg-body msg
-    console.log "AuthActor got control message: ", msg-body
+    #console.log "AuthActor got control message: ", msg-body
     if \token of msg-body
       @token = msg-body.token
-      console.log "AuthActor got token: ", @token
+      #console.log "AuthActor got token: ", @token
 
     @fire-callbacks msg-body
-      
-  receive: (msg) -> 
-    console.log "authactor got message: ", msg
     
   handle_IoMessage: (msg) ->
   
