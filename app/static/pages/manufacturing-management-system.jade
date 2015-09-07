@@ -2,17 +2,17 @@
   p Naber
   a(href='#mms-1') Sayfa-1
   a(href='#mms-2') Sayfa-2
-  .row
-    .col-sm-offset-3.col-sm-4
-      //- #mesut
-      div.
-        <div data-toolbar="hide-option" class="btn-toolbar btn-toolbar-primary"><i class="fa fa-cog"></i></div>
-      div.
-        <div id="transport-options" class="hidden">
-          <a href="#"><i class="fa fa-plane"></i></a>
-          <a href="#"><i class="fa fa-car"></i></a>
-          <a href="#"><i class="fa fa-bicycle"></i></a>
-        </div>
+  div.vcenter.
+    {{>toolbar {buttons: [
+      '#naber fa-car', 
+      '#naber1 fa-car', 
+      '#naber2', 
+      '#naber3', 
+      '#naber4', 
+      '#naber5 fa-car', 
+      '#naber6 fa-car', 
+      '#iyidir fa-plane' 
+      ], icon: 'fa-cog'} }}
       
 #mms-1(data-role='page', data-theme='b')
   p İyidir

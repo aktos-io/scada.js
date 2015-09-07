@@ -6,6 +6,7 @@ require! {
     set-ractive-var, 
     SwitchActor,
     RactiveApp, 
+    IoActor,
   }
 }
   
@@ -19,6 +20,8 @@ set-switch-actors = !->
     actor = SwitchActor pin-name
     actor.set-node elem
     elem.data \actor, actor
+    
+    console.log 'BU NASIL TEMIZLIK KARDEŞIM!!!'
   
 # Set Ractive.DEBUG to false when minified:
 Ractive.DEBUG = /unminified/.test !-> /*unminified*/
@@ -31,19 +34,6 @@ RactiveApp!set app
 
 # Create the actor which will connect to the server
 ProxyActor!
-
-RactivePartial! .register-for-document-ready ->
-
-  $ '.toolbar-icons a' .on \click, (event) ->
-    event.preventDefault!
-    
-  $ 'div[data-toolbar="hide-option"]' .toolbar do
-    content: '#transport-options',
-    position: 'top',
-    style: 'primary',
-    event: 'click',
-    hideOnClick: true
-    
 
 app.on 'complete', !->
   #console.log "window.location: ", window.location
