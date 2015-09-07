@@ -1,13 +1,13 @@
 require! {
   '../../modules/aktos-dcs': {
     RactivePartial,
-    WidgetActor,
+    IoActor,
   }
 }
   
 RactivePartial! .register ->
   $ \.seven-segment .each ->
-    actor = WidgetActor $ this
+    actor = IoActor $ this
     
     display = actor.node
     
@@ -47,8 +47,14 @@ RactivePartial! .register ->
     display.seven-seg params
       
     actor.add-callback (msg) -> 
-      console.log "seven segment display got message: ", msg
-      display.seven-seg value: msg.val
+      console.log "seven segment display got message: ", msg.val
+      
+      value = if String msg.val .length <= digits then 
+        msg.val 
+      else
+        '-' * digits 
+        
+      display.seven-seg value: value
 
 
   $ \.medsevenSegArray .sevenSeg do
