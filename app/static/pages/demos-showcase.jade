@@ -120,6 +120,14 @@
 
 .panel.panel-primary
   .panel-heading
+    h3.panel-title Ofisteki Termometreler
+  .panel-body
+    .row. 
+      {{>thermometer {pin_name: 'therm-1'} }}
+      {{>thermometer {pin_name: 'therm-2'} }}
+
+.panel.panel-primary
+  .panel-heading
     h3.panel-title Kullanıcı girişleri
   .panel-body
     .row
