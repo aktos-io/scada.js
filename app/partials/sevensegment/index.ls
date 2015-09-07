@@ -5,6 +5,7 @@ require! {
   }
 }
   
+  
 RactivePartial! .register ->
   $ \.seven-segment .each ->
     actor = IoActor $ this
@@ -22,7 +23,7 @@ RactivePartial! .register ->
     format-int = f.0
     digits = format-int.length
     
-    format-prec = 0
+    format-prec = ''
     if f.length > 1 
       format-prec = f.1
       digits += format-prec.length
@@ -39,20 +40,61 @@ RactivePartial! .register ->
     console.log "height: #height setting width: #width"
       
     if type is \multimeter
-      params.color-on = "yellow"
+      params = $.extend params, do
+          color-off: "#003200" 
+          color-on: "Lime"
+
     else if type is \basic
-      params.value = 47
+      params = $.extend params, do
+        value: 47
         
     
     display.seven-seg params
+    
+    prec-len = format-prec.length
       
     actor.add-callback (msg) -> 
       console.log "seven segment display got message: ", msg.val
+
+      value = parse-int msg.val
+
+      # round
+      i = 10**prec-len
+      value = (Math.round (value * i)) / i 
+      console.log "rounded value: i, value, prec-len ", i, value, prec-len
+
+      if prec-len > 0
+        v = String value .split '.'
+        v-int = v.0
+        
+        v-prec = '0'
+
+        if v.1
+          v-prec = v.1
+          
+        if v-prec.length < prec-len
+          missing-zero-count = prec-len - v-prec.length
+          v-prec = v-prec + ('0' * missing-zero-count)
+          
+        value = v-int + '.' + v-prec
+      else 
+        value = String value 
       
-      value = if String msg.val .length <= digits then 
-        msg.val 
+      v-str = String value .split '.'
+      v-str-len = v-str.0.length 
+      if v-str.1 
+        v-str-len += v-str.1.length 
+        
+      if prec-len == 0 
+        console.log "length: ", v-str, value 
+        
+      value = if v-str-len <= digits then 
+        value
       else
         '-' * digits 
+        
+      
+        
         
       display.seven-seg value: value
 
