@@ -20,11 +20,13 @@ require! {
   './aktos-dcs-lib': {
     SwitchActor,
     WidgetActor,
+    IoActor, 
+    AuthActor, 
   }
 }
   
 module.exports = {
   envelp, get-msg-body, Actor, ProxyActor, 
   RactivePartial, get-ractive-var, set-ractive-var, RactiveApp, 
-  SwitchActor, WidgetActor, 
+  SwitchActor, WidgetActor, IoActor, AuthActor, 
 }

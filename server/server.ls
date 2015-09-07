@@ -137,6 +137,8 @@ handle-auth-message = (msg, socket) ->
 io.on 'connection', (socket) !->
   # for every connected socket.io client, do the following:
   console.log "new client connected, starting its forwarder..."
+  console.log "+--> Connected to server with id: ", socket.id
+
   
 
   socket.on "aktos-message", (msg) !->
