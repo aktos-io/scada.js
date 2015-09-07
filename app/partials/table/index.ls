@@ -1,7 +1,7 @@
 require! {
   '../../modules/aktos-dcs': {
     RactivePartial,
-    WidgetActor,
+    IoActor,
   }
 }
 
@@ -9,7 +9,7 @@ RactivePartial! .register ->
   $ \.table .each ->
     #console.log "switch-button created"
     elem = $ this
-    actor = WidgetActor elem
+    actor = IoActor elem
     
     actor.add-callback (msg) ->
       console.log "table got message", msg

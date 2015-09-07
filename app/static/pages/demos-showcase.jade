@@ -137,6 +137,18 @@
 
 .panel.panel-primary
   .panel-heading
+    h3.panel-title Ofisteki Termometreler
+  .panel-body
+    .row
+      .col-sm-6.
+        {{>thermometer {pin_name: 'therm-1'} }}
+        {{>seven-segment {pin_name: 'therm-1', type: 'speed', format: '###.###'}}}
+      .col-sm-6.
+        {{>thermometer {pin_name: 'therm-2'} }}
+        {{>seven-segment {pin_name: 'therm-2', type: 'speed', format: '###.##'}}}
+      
+.panel.panel-primary
+  .panel-heading
     h3.panel-title Kullanıcı girişleri
   .panel-body
     .row
