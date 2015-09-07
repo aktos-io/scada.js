@@ -1,13 +1,14 @@
 require! {
   '../../modules/aktos-dcs': {
     RactivePartial,
+    WidgetActor,
   }
 }
   
 RactivePartial! .register-for-document-ready ->
   $ '.slider' .each !->
     elem = $ this 
-    actor = elem.data \actor
+    actor = WidgetActor elem
     
     #console.log "this slider actor found: ", actor 
     #debugger 

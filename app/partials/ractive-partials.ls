@@ -8,6 +8,9 @@ require './b-stacked-progress'
 # c
 require './circular-progress'
 
+# g
+require './gauge'
+
 # j
 require './jq-flipswitch-v2'
 require './jq-checkbox'

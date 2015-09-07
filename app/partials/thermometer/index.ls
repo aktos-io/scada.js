@@ -1,6 +1,7 @@
 require! {
   '../../modules/aktos-dcs': {
     RactivePartial,
+    WidgetActor,
   }
 }
   
@@ -9,7 +10,7 @@ RactivePartial! .register ->
   $ \.thermometer .each !-> 
   
     elem = $ this
-    actor = elem.data \actor
+    actor = WidgetActor elem
     
     element-id = actor.actor-id
     actor.set-ractive-var 'actor_id', element-id

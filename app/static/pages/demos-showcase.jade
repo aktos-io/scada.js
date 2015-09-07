@@ -1,5 +1,22 @@
 .panel.panel-primary
   .panel-heading
+    h3.panel-title Göstergeler
+  .panel-body
+    .row
+      .col-sm-4.
+        {{>gauge {pin_name: 'gauge-slider', type: 'ping'} }}
+      .col-sm-4.
+        {{>gauge {pin_name: 'gauge-slider', type: 'upload'} }}
+      .col-sm-4.
+        {{>gauge {pin_name: 'gauge-slider', type: 'download'} }}
+    .row
+      {{>gauge {pin_name: 'gauge-slider', type: 'speed'} }}     
+      {{>slider {pin_name:"gauge-slider", val: 45} }}
+
+    
+
+.panel.panel-primary
+  .panel-heading
     h3.panel-title Giriş Formu
   .panel-body.
     Test şifreleri: 

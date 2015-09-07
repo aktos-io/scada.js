@@ -1,13 +1,14 @@
 require! {
   '../../modules/aktos-dcs': {
     RactivePartial,
+    WidgetActor,
   }
 }
   
 RactivePartial! .register ->
   $ '.switch-button-basic' .each !->
     elem = $ this
-    actor = elem.data \actor
+    actor = WidgetActor elem
 
     elem.change ->
       console.log "switch button changed: ", this.checked
