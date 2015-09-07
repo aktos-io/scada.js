@@ -1,7 +1,7 @@
 require! {
   '../../modules/aktos-dcs': {
     RactivePartial,
-    WidgetActor,
+    IoActor,
   }
 }
 
@@ -9,7 +9,7 @@ RactivePartial! .register-for-document-ready ->
   $ \.switch-button .each ->
     #console.log "switch-button created"
     elem = $ this
-    actor = WidgetActor elem
+    actor = IoActor elem
 
     send-gui-event = (event) -> 
       #console.log "jq-flipswitch-2 sending msg: ", elem.val!        

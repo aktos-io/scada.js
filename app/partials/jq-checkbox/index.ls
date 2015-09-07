@@ -1,14 +1,14 @@
 require! {
   '../../modules/aktos-dcs': {
     RactivePartial,
-    WidgetActor,
+    IoActor,
   }
 }
   
 RactivePartial! .register ->
   $ '.jq-checkbox' .each !->
     elem = $ this
-    actor = WidgetActor elem
+    actor = IoActor elem
     
     input = elem.find \.jq-checkbox__input
 
