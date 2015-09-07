@@ -1,31 +1,9 @@
 require! {
   '../../modules/aktos-dcs': {
     RactivePartial,
-    WidgetActor,
-    get-msg-body,
+    AuthActor,
   }
 }
-  
-class AuthActor extends WidgetActor
-  ~>
-    super ...
-    
-  send-auth-msg: (secret) ->
-    # authentication
-    auth-msg = AuthMessage:
-      client_secret: secret
-    @send auth-msg
-    
-  handle_AuthMessage: (msg) -> 
-    msg-body = get-msg-body msg
-    #console.log "AuthActor got control message: ", msg-body
-    if \token of msg-body
-      @token = msg-body.token
-      #console.log "AuthActor got token: ", @token
-
-    @fire-callbacks msg-body
-    
-  handle_IoMessage: (msg) ->
   
 
 

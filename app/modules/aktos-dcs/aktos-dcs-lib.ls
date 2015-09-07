@@ -51,7 +51,7 @@ class SwitchActor extends Actor
       #console.log "setting {{connected}}: ", @connected
       @set-ractive-var 'connected', @connected
     else
-      #console.log "Can not refresh {{connected}} var: node is empty!", this 
+      console.log "Can not refresh {{connected}} var: node is empty!", this 
     
   set-node: (node) -> 
     #console.log "setting #{this.actor-name} -> ", node
@@ -76,13 +76,38 @@ class SwitchActor extends Actor
       pin_name: @pin-name
       val: val
       
-class WidgetActor extends SwitchActor
+class IoActor extends SwitchActor
   (jq-node)~>
     pin-name = get-ractive-var jq-node, 'pin_name'
     super pin-name
     @set-node jq-node
+    
+class WidgetActor extends IoActor
+  ~>
+    super ...
 
-      
+class AuthActor extends IoActor
+  ~>
+    super ...
+    
+  send-auth-msg: (secret) ->
+    # authentication
+    auth-msg = AuthMessage:
+      client_secret: secret
+    @send auth-msg
+    
+  handle_AuthMessage: (msg) -> 
+    msg-body = get-msg-body msg
+    #console.log "AuthActor got control message: ", msg-body
+    if \token of msg-body
+      @token = msg-body.token
+      #console.log "AuthActor got token: ", @token
+
+    @fire-callbacks msg-body
+    
+  handle_IoMessage: (msg) ->
+  
+
 module.exports = {
-  SwitchActor, WidgetActor
+  SwitchActor, WidgetActor, IoActor, AuthActor, 
 }

@@ -137,6 +137,7 @@ class ProxyActor
       @connected = false 
       @socket.on "connect", !~>
         #console.log "proxy actor says: connected"
+        console.log "Connected to server with id: ", @socket.io.engine.id
         # update io on init
         @connected = true
         @network-tx (envelp UpdateIoMessage: {}, @get-msg-id!)
