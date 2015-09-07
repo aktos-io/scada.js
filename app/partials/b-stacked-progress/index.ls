@@ -1,14 +1,14 @@
 require! {
   '../../modules/aktos-dcs': {
     RactivePartial,
-    WidgetActor,
+    IoActor,
   }
 }
   
 RactivePartial! .register ->
   $ '.b-stacked-progress' .each !->
     elem = $ this 
-    actor = WidgetActor elem
+    actor = IoActor elem
     
     actor.add-callback (msg)->
       #console.log "slider changed: ", msg.val 

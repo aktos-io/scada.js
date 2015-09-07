@@ -54,27 +54,28 @@ RactivePartial! .register ->
     prec-len = format-prec.length
       
     actor.add-callback (msg) -> 
-      console.log "seven segment display got message: ", msg.val
+      #console.log "seven segment display got message: ", msg.val
 
-      value = parse-int msg.val
+      value = parse-float msg.val
 
       # round
       i = 10**prec-len
-      value = (Math.round (value * i)) / i 
-      console.log "rounded value: i, value, prec-len ", i, value, prec-len
+      value = (Math.round value * i) / i 
+      #console.log "rounded value: i, value, prec-len ", msg.val, value, prec-len, i
 
       if prec-len > 0
         v = String value .split '.'
         v-int = v.0
         
-        v-prec = '0'
-
+        v-prec = ''
         if v.1
           v-prec = v.1
           
+        #console.log 'prec-len ... : ', v, String value, prec-len, v-int, v-prec
+        
         if v-prec.length < prec-len
-          missing-zero-count = prec-len - v-prec.length
-          v-prec = v-prec + ('0' * missing-zero-count)
+          missing-zero = prec-len - v-prec.length
+          v-prec = v-prec + ('0' * missing-zero)
           
         value = v-int + '.' + v-prec
       else 
@@ -85,23 +86,9 @@ RactivePartial! .register ->
       if v-str.1 
         v-str-len += v-str.1.length 
         
-      if prec-len == 0 
-        console.log "length: ", v-str, value 
-        
       value = if v-str-len <= digits then 
         value
       else
         '-' * digits 
         
-      
-        
-        
       display.seven-seg value: value
-
-
-  $ \.medsevenSegArray .sevenSeg do
-    digits: 5
-    value: 12.34
-    colorOff: "#003200" 
-    colorOn: "Lime"
-    slant: 10

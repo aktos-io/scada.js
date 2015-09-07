@@ -1,14 +1,14 @@
 require! {
   '../../modules/aktos-dcs': {
     RactivePartial,
-    WidgetActor,
+    IoActor,
   }
 }
   
 RactivePartial! .register ->
   $ \.toggle-switch .each !->
     elem = $ this
-    actor = WidgetActor elem
+    actor = IoActor elem
 
     s = new ToggleSwitch (elem.get 0), 'on', 'off'
     actor.add-callback (msg) ->

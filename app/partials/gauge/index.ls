@@ -1,7 +1,7 @@
 require! {
   '../../modules/aktos-dcs': {
     RactivePartial,
-    WidgetActor,
+    IoActor,
   }
 }
   
@@ -9,7 +9,7 @@ RactivePartial! .register ->
   $ \.gauge .each ->
     
     elem = $ this
-    actor = WidgetActor elem
+    actor = IoActor elem
     
     element-id = actor.actor-id
     console.log "göstergeler test" + element-id
