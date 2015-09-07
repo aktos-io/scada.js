@@ -33,7 +33,7 @@ require './switch-button-basic'
 require './switch-button'
 require './slider'
 require './status-led'
-require './sevensegment'
+require './seven-segment'
 
 # t
 require './thermometer'
