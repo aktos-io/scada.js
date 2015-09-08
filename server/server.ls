@@ -94,6 +94,17 @@ cleanup-msg-history = ->
 
 set-interval cleanup-msg-history, 10000_ms
 
+mjpeg-camera = require \mjpeg-camera 
+camera = new mjpeg-camera do
+  name: 'backdoor'
+  url: 'http://localhost:8080/?action=stream'
+    
+camera.on \data, (frame) -> 
+  io.emit \frame, frame.data.to-string \base64
+
+camera.start!
+
+
 user-db = 
   * id: 1
     username: 'ceremcem'

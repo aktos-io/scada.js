@@ -22,19 +22,19 @@ Then you need to do the followings:
 
 * choose a widget name with lowercase and separated with a dash ('-') if multiword.
 
-    your-widget
+        your-widget
     
 * folder name of the partial SHOULD use the same widget name
 
-    partials/your-widget/...
+        partials/your-widget/...
     
 * Parent CSS class in HTML SHOULD use the same widget name
 
-    <div class="your-widget ...
+        <div class="your-widget ...
     
 * Consequently, your jQuery loop SHOULD use the same name
 
-    $ \your-widget .each -> 
-      # initialize your widget 
-      ...
+        $ \your-widget .each -> 
+          # initialize your widget 
+          ...
       
