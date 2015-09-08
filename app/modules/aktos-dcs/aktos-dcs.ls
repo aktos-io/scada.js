@@ -125,7 +125,11 @@ class ProxyActor
       socket = io.connect do 
         port: addr_port
         path: socketio-path
-
+      
+      
+      socket.on \frame, (frame) -> 
+        $ \#video-frame .attr \src, ('data:image/jpg;base64,' + frame)
+      
       @socket = socket
       # send to server via socket.io
       @socket.on 'aktos-message', (msg) ~>
