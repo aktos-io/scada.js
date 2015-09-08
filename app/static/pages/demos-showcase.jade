@@ -12,9 +12,15 @@
     h3.panel-title Toolbars
   .panel-body
     .row
-      .col-sm-4.
-        p Buraya Toolbar Gelecek
-        
+      .col-sm-offset-4.col-sm-4
+        div.
+          {{>toolbar {buttons: [
+            '#link1 fa-car', 
+            '#link2 fa-heart', 
+            '#link3', 
+            '#link4 fa-car', 
+            '#link5 fa-plane' 
+            ], icon: 'fa-cog'} }}        
 
 .panel.panel-primary
   .panel-heading
