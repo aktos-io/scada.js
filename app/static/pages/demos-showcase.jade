@@ -1,10 +1,21 @@
 .panel.panel-primary
   .panel-heading
+    h3.panel-title Spinbox
+  .panel-body
+    .row
+      .col-sm-4.
+        {{>spinbox {pin_name: "spinbox-test", val: 35} }}
+        {{>slider {pin_name: "spinbox-test"} }}
+
+.panel.panel-primary
+  .panel-heading
     h3.panel-title Toolbars
   .panel-body
     .row
       .col-sm-4.
         p Buraya Toolbar Gelecek
+        
+
 .panel.panel-primary
   .panel-heading
     h3.panel-title Göstergeler
@@ -16,7 +27,7 @@
         {{>gauge {pin_name: 'gauge-slider', type: 'upload'} }}
       .col-sm-4.
         {{>gauge {pin_name: 'gauge-slider', type: 'download'} }}
-    .row
+    .row.
       {{>gauge {pin_name: 'gauge-slider', type: 'speed'} }}     
       {{>slider {pin_name:"gauge-slider", val: 45} }}
 

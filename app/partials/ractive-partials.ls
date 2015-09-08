@@ -34,6 +34,7 @@ require './switch-button'
 require './slider'
 require './status-led'
 require './sevensegment'
+require './spinbox'
 
 # t
 require './thermometer'

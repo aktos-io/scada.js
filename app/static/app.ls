@@ -47,8 +47,7 @@ app.on 'complete', !->
   $ document .ready ->
     console.log "document is ready..."
     RactivePartial! .init-for-document-ready!
-    
-
+        
     test.send IoMessage:
       pin_name: 'test-pin'
       val: on
