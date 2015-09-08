@@ -34,6 +34,7 @@ require './switch-button'
 require './slider'
 require './status-led'
 require './seven-segment'
+require './spinbox'
 
 # t
 require './thermometer'
@@ -41,3 +42,4 @@ require './toggle-switch'
 require './test-widget'
 require './textbox'
 require './table'
+require './toolbar'

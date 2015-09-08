@@ -1,0 +1,5 @@
+include ../../templates/mixins.jade
+    
++partial('spinbox')
+  .spinbox.
+    <input class='spinbox__data-input' type="text" data-role="spinbox" data-theme="b" data-options='{"type":"horizontal"}' value="{{ .val }}" min="0" max="100" />

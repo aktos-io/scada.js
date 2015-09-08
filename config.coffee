@@ -19,8 +19,10 @@ exports.config =
       joinTo:
         'stylesheets/app.css': /^(app|vendor)/
         'test/stylesheets/test.css': /^test/
-      order: {}
-      #after: ['app/styles/aktos-dcs-partial-styles.css']
+      order:
+        after: [
+          'vendor/toolbar/toolbar-bootstrap3.fix.css', 
+        ]
       
   plugins:
     jadeStatic:

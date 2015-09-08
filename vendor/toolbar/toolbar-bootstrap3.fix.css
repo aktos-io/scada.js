@@ -1,0 +1,11 @@
+
+.btn-toolbar{
+    width: 35px;
+    height: 35px;
+    line-height: 2px;
+}
+
+.tool-item{
+      width: 35px;
+      height: 100%;
+}

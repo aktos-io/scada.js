@@ -6,6 +6,7 @@ require! {
     set-ractive-var, 
     SwitchActor,
     RactiveApp, 
+    IoActor,
   }
 }
   
@@ -19,6 +20,8 @@ set-switch-actors = !->
     actor = SwitchActor pin-name
     actor.set-node elem
     elem.data \actor, actor
+    
+    console.log 'BU NASIL TEMIZLIK KARDEŞIM!!!'
   
 # Set Ractive.DEBUG to false when minified:
 Ractive.DEBUG = /unminified/.test !-> /*unminified*/
@@ -36,7 +39,7 @@ app.on 'complete', !->
   #console.log "window.location: ", window.location
   if not window.location.hash
     window.location = '#home-page'
-
+   
   # create actors and init widgets
   set-switch-actors!
   RactivePartial! .init!
@@ -44,7 +47,7 @@ app.on 'complete', !->
   $ document .ready ->
     console.log "document is ready..."
     RactivePartial! .init-for-document-ready!
-
+        
     test.send IoMessage:
       pin_name: 'test-pin'
       val: on
