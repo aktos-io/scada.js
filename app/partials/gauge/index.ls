@@ -18,8 +18,8 @@ RactivePartial! .register ->
     type = actor.get-ractive-var \type
     
     params = 
-      width: 300
-      height: 300
+      width: 200
+      height: 200
       renderTo: element-id
       glow: true
       highlights: do
@@ -48,14 +48,10 @@ RactivePartial! .register ->
       params.title = \Upload
       params.strokeTicks = false
     else if type is \download
-      params.width = 200
-      params.height = 200
       params.highlights = false
       params.units = \Mbps
       params.title = \Download
     else if type is \ping
-      params.width = 300
-      params.height = 300
       params.glow = false
       params.units = \ms
       params.title = \Ping

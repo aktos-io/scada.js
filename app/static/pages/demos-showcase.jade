@@ -21,14 +21,15 @@
     h3.panel-title Göstergeler
   .panel-body
     .row
-      .col-sm-4.
+      .col-sm-3.
         {{>gauge {pin_name: 'gauge-slider', type: 'ping'} }}
-      .col-sm-4.
+      .col-sm-3.
         {{>gauge {pin_name: 'gauge-slider', type: 'upload'} }}
-      .col-sm-4.
+      .col-sm-3.
         {{>gauge {pin_name: 'gauge-slider', type: 'download'} }}
+      .col-sm-3.
+        {{>gauge {pin_name: 'gauge-slider', type: 'speed'} }}     
     .row.
-      {{>gauge {pin_name: 'gauge-slider', type: 'speed'} }}     
       {{>slider {pin_name:"gauge-slider", val: 45} }}
 
     
