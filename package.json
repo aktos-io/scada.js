@@ -28,6 +28,7 @@
     "livescript": "^1.4.0",
     "livescript-brunch": "git://github.com/brunch/LiveScript-brunch.git",
     "markdown-js": "0.0.3",
+    "mjpeg-camera": "^1.5.8",
     "msgpack-js": "^0.3.0",
     "prelude-ls": "^1.1.2",
     "shortid": "^2.2.2",
