@@ -17,6 +17,7 @@ RactivePartial! .register ->
     
     type = actor.get-ractive-var \type
     
+    # common parameters
     params = 
       width: 200
       height: 200
@@ -44,50 +45,57 @@ RactivePartial! .register ->
         title: \green
     
     if type is \upload
-      params.units = \Mbps
-      params.title = \Upload
-      params.strokeTicks = false
+      params : $.extend params, do
+        units : \Mbps
+        title : \Upload
+        strokeTicks : false
     else if type is \download
-      params.highlights = false
-      params.units = \Mbps
-      params.title = \Download
+      params : $.extend params, do
+        highlights : false
+        units : \Mbps
+        title : \Download
     else if type is \ping
-      params.glow = false
-      params.units = \ms
-      params.title = \Ping
-      params.max-value = 1000
-      params.major-ticks = ['0','100','200','300','400','500','600','700','800','900','1000']
-      params.highlights = false
-      params.value-format = { int : 4, dec : 1 }
-      params.colors.needle = { start : 'lightgreen', end : 'navy' }
-      params.colors.plate = \lightyellow
-      params.colors.title = \green
-      params.colors.units = \lightgreen
-      params.colors.major-ticks = \darkgreen
-      params.colors.minor-ticks = \lightgreen
-      params.colors.numbers = \darkgreen
-      params.animation.delay = 25
-      params.animation.duration = 500
-      params.animation.fn = \elastic
+      params : $.extend params, do
+        glow : false
+        units : \ms
+        title : \Ping
+        max-value : 1000
+        major-ticks : ['0','100','200','300','400','500','600','700','800','900','1000']
+        highlights : false
+        value-format : { int : 4, dec : 1 }
+        colors: do
+          needle : { start : 'lightgreen', end : 'navy' }
+          plate : \lightyellow
+          title : \green
+          units : \lightgreen
+          major-ticks : \darkgreen
+          minor-ticks : \lightgreen
+          numbers : \darkgreen
+        animation: do
+          delay : 25
+          duration : 500
+          fn : \elastic
     else if type is \speed
-      params.units = \Kmh
-      params.min-value = 0
-      params.max-value = 220
-      params.major-ticks = ['0','20','40','60','80','100','120','140','160','180','200','220']
-      params.minor-ticks = 2
-      params.highlights = [
-        { from : 0,   to : 50, color : 'rgba(0,   255, 0, .15)' },
-        { from : 50, to : 100, color : 'rgba(255, 255, 0, .15)' },
-        { from : 100, to : 150, color : 'rgba(255, 30,  0, .25)' },
-        { from : 150, to : 200, color : 'rgba(255, 0,  225, .25)' },
-        { from : 200, to : 220, color : 'rgba(0, 0,  255, .25)' }]
-      params.colors.needle = { start : 'rgba(240, 128, 128, 1)', end : 'rgba(255, 160, 122, .9)' }
-      params.colors.plate = \#222
-      params.colors.title = \#fff
-      params.colors.units = \#ccc
-      params.colors.numbers = \#eee
-      params.colors.major-ticks = \#f5f5f5
-      params.colors.minor-ticks = \#ddd
+      params : $.extend params, do
+        units : \Kmh
+        min-value : 0
+        max-value : 220
+        major-ticks : ['0','20','40','60','80','100','120','140','160','180','200','220']
+        minor-ticks : 2
+        highlights : 
+          * { from : 0,   to : 50, color : 'rgba(0,   255, 0, .15)' }
+          * { from : 50, to : 100, color : 'rgba(255, 255, 0, .15)' }
+          * { from : 100, to : 150, color : 'rgba(255, 30,  0, .25)' }
+          * { from : 150, to : 200, color : 'rgba(255, 0,  225, .25)' }
+          * { from : 200, to : 220, color : 'rgba(0, 0,  255, .25)' }
+        colors: do
+          needle : { start : 'rgba(240, 128, 128, 1)', end : 'rgba(255, 160, 122, .9)' }
+          plate : \#222
+          title : \#fff
+          units : \#ccc
+          numbers : \#eee
+          major-ticks : \#f5f5f5
+          minor-ticks : \#ddd
       
 
       
