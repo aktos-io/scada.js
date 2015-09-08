@@ -78,9 +78,15 @@ class SwitchActor extends Actor
       
 class IoActor extends SwitchActor
   (jq-node)~>
+  
+    possible-actor = jq-node.data \actor
+    if possible-actor 
+      return possible-actor 
+    
     pin-name = get-ractive-var jq-node, 'pin_name'
     super pin-name
     @set-node jq-node
+    jq-node.data \actor, this 
     
 class WidgetActor extends IoActor
   ~>
