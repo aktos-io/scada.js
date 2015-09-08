@@ -85,11 +85,17 @@
 
 .panel.panel-primary
   .panel-heading
-    h3.panel-title Circular-Progress and Knobs
+    h3.panel-title Circular-Progress
   .panel-body
     .row
       .col-md-2.
-        {{>circular-progress {}}}
+        {{>circular-progress {pin_name: 'progress-slider'} }}
+      .col-md-2.
+        {{>circular-progress {pin_name: 'progress-slider',color: 'green'} }}
+      .col-md-2.  
+        {{>circular-progress {pin_name: 'progress-slider', color: 'red blue yellow'} }}
+    .row.
+      {{>slider {pin_name:"progress-slider", val: 45} }}
 
 .panel.panel-primary
   .panel-heading

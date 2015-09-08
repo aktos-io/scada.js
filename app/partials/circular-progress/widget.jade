@@ -1,11 +1,7 @@
 include ../../templates/mixins.jade
     
 +partial('circular-progress')
-  div.
-    <div id="circle" class="circle1"></div>
-    <div id="circle" class="circle2">
-      <strong></strong>
-    </div>
-    <div id="circle" class="circle3">
-      <strong></strong>
-    </div>
+  .circular-progress
+    strong {{ .val ? .val : '---' }}
+      i {{ .val ? '%' : '' }}
+    
