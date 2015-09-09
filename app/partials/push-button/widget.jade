@@ -16,6 +16,7 @@ include ../../templates/mixins.jade
 +partial('jq-push-button')
   button(
     class="push-button"
+    data-iconpos="{{ .iconpos }}"
     data-icon="{{ .icon }}"
     style="{{ .connected? '' : 'border: 1px dashed red' }}"
     type="button"
