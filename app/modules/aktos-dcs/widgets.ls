@@ -48,6 +48,8 @@ set-ractive-var = (jquery-elem, ractive-variable, value) -->
   else  
     app.set ractive-node.\keypath + '.' + ractive-variable, value
     #console.log "setting keypath: ", ractive-node.\keypath
+    #console.log "setting keypath: ", ractive-node
+    #console.log "set-ractive-var: ", app.nodes
   
 class RactiveApp
   instance = null

@@ -34,6 +34,7 @@ get-msg-body = (msg) ->
 class ActorBase
   ~>
     @actor-id = uuid4!
+    #console.log "ACTOR CREATED: ", @actor-id
 
   receive: (msg) ->
     #console.log @name, " received: ", msg.text

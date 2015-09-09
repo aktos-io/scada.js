@@ -11,19 +11,9 @@ include ../templates/mixins.jade
   |   </ul>
   | </div>
        
-+partial('connection-status')
-  |  <div  data-role="footer" data-tap-toggle="false" data-position="fixed" class="switch-actor connection-status"
-  |    style='background-color: {{ .connected ? "yellowgreen" : "lightgray" }}'>
-  |    <p>{{.connected? "connected..." : "connecting..." }}</p>
-  |  </div>
-
 
 +partial('switch-list')
-  | <span class="switch-actor"></span>
-  | <p> before loop: {{ connected? 'connected...': 'disconnected...' }}</p>
-  | {{#my_list}}
-  |   <p> looping: {{ connected? 'connected...': 'disconnected...' }}</p>
-  | {{/my_list}}
+  .switch-list
 
 +partial('jq-persist')
   |  {{ active == this_page ? 'class="ui-btn-active ui-state-persist"' : '' }}

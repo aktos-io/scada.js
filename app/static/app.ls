@@ -2,26 +2,13 @@ require! {
   '../modules/aktos-dcs': {
     ProxyActor,
     RactivePartial,
-    get-ractive-var, 
-    set-ractive-var, 
     SwitchActor,
     RactiveApp, 
-    IoActor,
   }
 }
   
 # include widgets' initialize codes 
 require '../partials/ractive-partials'
-
-set-switch-actors = !->
-  $ '.switch-actor' .each !->
-    elem = $ this
-    pin-name = get-ractive-var elem, 'pin_name'
-    actor = SwitchActor pin-name
-    actor.set-node elem
-    elem.data \actor, actor
-    
-    console.log 'BU NASIL TEMIZLIK KARDEŞIM!!!'
   
 # Set Ractive.DEBUG to false when minified:
 Ractive.DEBUG = /unminified/.test !-> /*unminified*/
@@ -41,7 +28,6 @@ app.on 'complete', !->
     window.location = '#home-page'
    
   # create actors and init widgets
-  set-switch-actors!
   RactivePartial! .init!
 
   $ document .ready ->
@@ -62,6 +48,23 @@ app.on 'complete', !->
       * <[ bir iki üç dört beş ]>
       * <[ 1bir 1iki 1üç 1dört 1beş ]>
       * <[ 2bir 2iki 2üç 2dört 2beş ]>
+      
+  test2 = SwitchActor \gauge-slider
+  
+  i = 0
+  j = +1
+  up = -> 
+    test2.gui-event i
+    if i >= 100 
+      j := -1 
+    if i <= 0 
+      j := +1
+    i := i + j
+    set-timeout up, 10
+    
+  #set-timeout up, 5000
+    
+  
       
       
   

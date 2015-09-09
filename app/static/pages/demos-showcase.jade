@@ -1,3 +1,52 @@
+.panel.panel-danger
+  .panel-heading
+    h3.panel-title Performans testi
+  .panel-body
+    .row
+      .col-sm-3.
+        {{>gauge {pin_name: 'gauge-slider',  type: 'ping'} }}
+      .col-sm-3.
+        {{>gauge {pin_name: 'gauge-slider',  type: 'upload'} }}
+      .col-sm-3.
+        {{>gauge {pin_name: 'gauge-slider',  type: 'download'} }}
+      .col-sm-3.
+        {{>gauge {pin_name: 'gauge-slider',  type: 'speed'} }}     
+    .row.
+      {{>slider {pin_name: 'gauge-slider',  val: 45} }}
+
+    .row
+      .col-sm-4.
+        {{>spinbox {pin_name: 'gauge-slider',  val: 35} }}
+        {{>slider {pin_name: "spinbox-test"} }}
+
+    .row.
+      {{>seven-segment {pin_name: 'gauge-slider',  format: '##'}}}
+      {{>seven-segment {pin_name: 'gauge-slider',  format: '#######.##'}}}
+      {{>seven-segment {pin_name: 'gauge-slider',  format: '####.#'}}}
+      {{>seven-segment {pin_name: 'gauge-slider',  format: '##.###'}}}
+      {{>slider {pin_name: 'gauge-slider',  val: 45} }}
+
+    
+    .row. 
+      this will work wrong: 
+      
+      {{>thermometer {pin_name: 'gauge-slider'} }}
+      {{>thermometer {pin_name: 'gauge-slider'} }}
+      {{>thermometer {pin_name: 'gauge-slider'} }}
+      {{>thermometer {pin_name: 'gauge-slider'} }}
+      {{>thermometer {pin_name: 'gauge-slider'} }}
+    
+    .row. 
+      this will work correctly: 
+      
+      {{>thermometer {pin_name: 'gauge-slider', random: 'abc1'} }}
+      {{>thermometer {pin_name: 'gauge-slider', random: 'abc2'} }}
+      {{>thermometer {pin_name: 'gauge-slider', random: 'abc3'} }}
+      {{>thermometer {pin_name: 'gauge-slider', random: 'abc4'} }}
+      {{>thermometer {pin_name: 'gauge-slider', random: 'abc5'} }}
+      {{>thermometer {pin_name: 'gauge-slider', random: 'abc6'} }}
+      
+
 .panel.panel-primary
   .panel-heading
     h3.panel-title Spinbox

@@ -8,6 +8,7 @@ require './b-stacked-progress'
 
 # c
 require './circular-progress'
+require './connection-status'
 
 # g
 require './gauge'
@@ -15,9 +16,7 @@ require './gauge'
 # j
 require './jq-flipswitch-v2'
 require './jq-checkbox'
-
-# k
-require './knob'
+require './jq-slider'
 
 # l
 require './line-graph'

@@ -17,14 +17,14 @@ require! {
 
 class SwitchActor extends Actor
   (pin-name)~>
-    super ...
+    super!
     @callback-functions = []
     @pin-name = String pin-name
     if pin-name
       @actor-name = @pin-name
     else
       @actor-name = @actor-id
-      console.log "actor is created with this random name: ", @actor-name
+      #console.log "actor is created with this random name: ", @actor-name
     @ractive-node = null  # the jQuery element
     @connected = false
     @set-ractive-var = null
@@ -78,14 +78,19 @@ class SwitchActor extends Actor
       
 class IoActor extends SwitchActor
   (jq-node)~>
-  
-    possible-actor = jq-node.data \actor
-    if possible-actor 
-      return possible-actor 
+    saved-actor = jq-node.data \actor
+    if saved-actor
+      #console.log "this actor created before? because current actor-id: ", saved-actor.actor-id
+      return saved-actor
     
     pin-name = get-ractive-var jq-node, 'pin_name'
     super pin-name
     @set-node jq-node
+    set-ractive-var jq-node, 'actor_id', @actor-id
+    set-ractive-var jq-node, 'debug', true
+    
+    # save this actor in node's data-actor attribute for
+    # further usages
     jq-node.data \actor, this 
     
 class WidgetActor extends IoActor

@@ -1,16 +1,5 @@
 include ../../templates/mixins.jade
     
 +partial('slider')
-  div(class="slider")
-    div(class="jq-slider-input") 
-      input(value="{{ .val }}")
-    div(
-      class="jq-slider-container jq-slider" 
-      value="{{ .val }}" 
-      min="0" 
-      max="100" 
-      data-highlight="true"
-      )
-  br
-  
+  | {{!>jq-slider}}
   

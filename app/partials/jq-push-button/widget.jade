@@ -1,0 +1,9 @@
+include ../../templates/mixins.jade
+
++partial('jq-push-button')
+  button(
+    class="jq-push-button"
+    style="{{ .connected? '' : 'border: 1px dashed red' }}"
+    type="button"
+    ) 
+    | {{ .label }}
