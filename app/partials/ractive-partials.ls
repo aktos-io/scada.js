@@ -1,5 +1,6 @@
 # a
 require './analog-display'
+require './arrow-keys'
 
 # b 
 require './b-progress-bar'

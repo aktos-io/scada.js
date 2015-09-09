@@ -113,9 +113,11 @@
       .col-md-2.
         {{>push-button {pin_name: 'test-pin', label: 'TEST PIN'} }}
       .col-md-2.
-        {{>push-button {pin_name: 'test-pin', label: 'Delete', icon: 'delete'} }}
-      .col-md-2.
         {{>status-led {pin_name: 'test-pin'} }}
+    .row
+      .col-sm-offset-4.col-sm-4.
+        {{>arrow-keys {} }}
+        
 .panel.panel-primary
   .panel-heading
     h3.panel-title Sliders
