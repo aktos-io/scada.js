@@ -17,3 +17,7 @@ new-client:
 
 run-ide:
 	@kate .kateproject 2>/dev/null &
+run-brunch:
+	@brunch b && brunch w
+run-server:
+	lsc server/server.ls
