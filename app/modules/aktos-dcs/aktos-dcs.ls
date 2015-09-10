@@ -70,12 +70,9 @@ class ActorManager
       #console.log "Manager created with id:", @actor-id
 
     register: (actor, subscriptions) ->
-      if not subscriptions
+      if empty subscriptions
         @actor-list = @actor-list ++ [actor]
         
-        obj = actor 
-        meths = [key for key in Object.getOwnPropertyNames(obj) when typeof! obj[key] is 'Function']
-        console.log "actor registered: ", meths
       else
         # use subscriptions
         # Subscription format: [MessageSubject, keypath, value]
@@ -96,23 +93,35 @@ class ActorManager
       if not empty @subs-actor-list
         forward-counter = 0 
         msg-body = get-msg-body msg
-        for [actor, [subj, key, val]] in @subs-actor-list 
-        
-          if subj of msg.payload 
-            # if subject matches
-            try 
-              if msg-body[key] is val 
-                actor.recv msg 
-                forward-counter += 1
+        for [actor, subs] in @subs-actor-list 
+          for [subj, key, val] in subs 
+            if subj of msg.payload 
+              # if subject matches
+              try 
+                if msg-body[key] is val 
+                  actor.recv msg 
+                  forward-counter += 1
                 
         console.log "total forwards 2: ", forward-counter
           
 
 
 class Actor extends ActorBase
-  (name, subs) ~>
-    super ...
+  (name) ~>
+    super!
     @mgr = ActorManager!
+    
+    methods = [key for key of Object.getPrototypeOf this when typeof! this[key] is \Function ]        
+    subj = [s.split \handle_ .1 for s in methods when s.match /^handle_.+/]
+    #console.log "this actor has the following subjects: ", subj, name
+    
+    subs = []
+    if name 
+      for s in subj
+        subs ++= [[s, \pin_name, name]]
+      
+    console.log "subscriptions: ", subs 
+      
     @mgr.register this, subs 
     @actor-name = name
     #console.log "actor \'", @name, "\' created with id: ", @actor-id
