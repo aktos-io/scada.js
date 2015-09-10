@@ -23,13 +23,19 @@ class RactivePartial
       #console.log "initializing ractive partials..."
       for func in @widget-inits
         #console.log "widget init: ", func
-        func!
-        
+        try
+          func!
+        catch 
+          console.log "ERROR ON RactivePartial INIT: #e"
+          
     init-for-document-ready: ->   
       #console.log "initializing ractive partials..."
       for func in @inits-for-document-ready
         #console.log "widget init: ", func
-        func!
+        try
+          func!
+        catch 
+          console.log "ERROR ON RactivePartial INIT: #e"
         
         
 get-ractive-var = (jquery-elem, ractive-variable) -->

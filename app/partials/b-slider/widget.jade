@@ -1,5 +1,16 @@
 include ../../templates/mixins.jade
     
-+partial('thermometer')
-  .thermometer.
-    <canvas id='{{ .actor_id }}' width="90" height="230">[No canvas support]</canvas>
++partial('b-slider')
+  .b-slider.
+    <input 
+      type="text" 
+      class="b-slider__input span2" 
+      value="{{ .val }}" 
+      data-slider-min="-20" 
+      data-slider-max="20" 
+      data-slider-step="1" 
+      data-slider-value="-14" 
+      data-slider-orientation="vertical" 
+      data-slider-selection="after"
+      data-slider-tooltip="hide"
+      />

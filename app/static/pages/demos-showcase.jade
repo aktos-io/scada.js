@@ -14,10 +14,13 @@
     .row.
       {{>slider {pin_name: 'gauge-slider',  val: 45} }}
 
-    .row
-      .col-sm-4.
-        {{>spinbox {pin_name: 'gauge-slider',  val: 35} }}
-        {{>slider {pin_name: "spinbox-test"} }}
+    .row.
+      {{>spinbox {pin_name: 'gauge-slider',  val: 35} }}
+      {{>spinbox {pin_name: 'gauge-slider',  val: 35} }}
+      {{>spinbox {pin_name: 'gauge-slider',  val: 35} }}
+      {{>spinbox {pin_name: 'gauge-slider',  val: 35} }}
+      {{>spinbox {pin_name: 'gauge-slider',  val: 35} }}
+      {{>spinbox {pin_name: 'gauge-slider',  val: 35} }}
 
     .row.
       {{>seven-segment {pin_name: 'gauge-slider',  format: '##'}}}
@@ -27,8 +30,7 @@
       {{>slider {pin_name: 'gauge-slider',  val: 45} }}
 
     
-    .row. 
-      
+    .row.       
       {{>thermometer {pin_name: 'gauge-slider'} }}
       {{>thermometer {pin_name: 'gauge-slider'} }}
       {{>thermometer {pin_name: 'gauge-slider'} }}
@@ -37,6 +39,16 @@
     
       
 
+.panel.panel-primary
+  .panel-heading
+    h3.panel-title Bootstrap Slider
+  .panel-body
+    .row.
+      {{>b-slider {pin_name: "bootstrap-slider", val: 35} }}
+      {{>b-slider {pin_name: "bootstrap-slider", val: 45} }}
+      {{>b-slider {pin_name: "bootstrap-slider", val: 55} }}
+
+      
 .panel.panel-primary
   .panel-heading
     h3.panel-title Spinbox
@@ -67,13 +79,13 @@
   .panel-body
     .row
       .col-sm-3.
-        {{>gauge {pin_name: 'gauge-slider', type: 'ping'} }}
+        {{>analog-display {pin_name: 'gauge-slider', type: 'ping'} }}
       .col-sm-3.
-        {{>gauge {pin_name: 'gauge-slider', type: 'upload'} }}
+        {{>analog-display {pin_name: 'gauge-slider', type: 'upload'} }}
       .col-sm-3.
-        {{>gauge {pin_name: 'gauge-slider', type: 'download'} }}
+        {{>analog-display {pin_name: 'gauge-slider', type: 'download'} }}
       .col-sm-3.
-        {{>gauge {pin_name: 'gauge-slider', type: 'speed'} }}     
+        {{>analog-display {pin_name: 'gauge-slider', type: 'speed'} }}     
     .row.
       {{>slider {pin_name:"gauge-slider", val: 45} }}
 
@@ -116,10 +128,10 @@
     h3.panel-title SevenSegment
   .panel-body
     .row.
-      {{>seven-segment {pin_name: 'segment-slider', type: 'classic', format: '##'}}}
-      {{>seven-segment {pin_name: 'segment-slider', type: 'multimeter', format: '#######.##'}}}
-      {{>seven-segment {pin_name: 'segment-slider', type: 'speed', format: '####.#'}}}
-      {{>seven-segment {pin_name: 'segment-slider', type: 'basic', format: '##.###'}}}
+      {{>analog-display {pin_name: 'segment-slider', type: 'classic', format: '##'}}}
+      {{>analog-display {pin_name: 'segment-slider', type: 'multimeter', format: '#######.##'}}}
+      {{>analog-display {pin_name: 'segment-slider', type: 'speed', format: '####.#'}}}
+      {{>analog-display {pin_name: 'segment-slider', type: 'basic', format: '##.###'}}}
       {{>slider {pin_name:"segment-slider", val: 45} }}
 
 .panel.panel-primary
@@ -205,9 +217,9 @@
     h3.panel-title Sensörler
   .panel-body
     .row. 
-      {{>thermometer {pin_name: 'slider-1'} }}
-      {{>thermometer {pin_name: 'slider-2'} }}
-      {{>thermometer {pin_name: 'slider-3'} }}
+      {{>analog-display {pin_name: 'slider-1'} }}
+      {{>analog-display {pin_name: 'slider-2'} }}
+      {{>analog-display {pin_name: 'slider-3'} }}
 
 .panel.panel-primary
   .panel-heading
@@ -215,11 +227,11 @@
   .panel-body
     .row
       .col-sm-6.
-        {{>thermometer {pin_name: 'therm-1'} }}
-        {{>seven-segment {pin_name: 'therm-1', type: 'speed', format: '###.###'}}}
+        {{>analog-display {pin_name: 'therm-1'} }}
+        {{>analog-display {pin_name: 'therm-1', type: 'speed', format: '###.###'}}}
       .col-sm-6.
-        {{>thermometer {pin_name: 'therm-2'} }}
-        {{>seven-segment {pin_name: 'therm-2', type: 'speed', format: '###.##'}}}
+        {{>analog-display {pin_name: 'therm-2'} }}
+        {{>analog-display {pin_name: 'therm-2', type: 'speed', format: '###.##'}}}
       
 .panel.panel-primary
   .panel-heading

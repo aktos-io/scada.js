@@ -20,7 +20,7 @@ app = new Ractive do
 RactiveApp!set app
 
 # Create the actor which will connect to the server
-ProxyActor!
+proxy-actor = ProxyActor!
 
 app.on 'complete', !->
   #console.log "window.location: ", window.location
@@ -30,17 +30,28 @@ app.on 'complete', !->
   # create actors and init widgets
   RactivePartial! .init!
 
+  # debugging purposes
+  #test = SwitchActor 'test-actor'
+
   $ document .ready ->
     console.log "document is ready..."
     RactivePartial! .init-for-document-ready!
         
+    # debug 
+    /*
     test.send IoMessage:
       pin_name: 'test-pin'
       val: on
+    */
 
-    
+  
+  # Update all I/O on init
+  proxy-actor.update-connection-status!
+  
   console.log "ractive app completed..."
   
+  /*
+  console.log "Testing sending data to table from app.ls"
   test = SwitchActor 'test-actor'
   test.send IoMessage:
     pin_name: \test-table
@@ -48,6 +59,10 @@ app.on 'complete', !->
       * <[ bir iki üç dört beş ]>
       * <[ 1bir 1iki 1üç 1dört 1beş ]>
       * <[ 2bir 2iki 2üç 2dört 2beş ]>
+  */
+  
+  /*
+  console.log "Performance testing via gauge-slider pin"
       
   test2 = SwitchActor \gauge-slider
   
@@ -64,7 +79,7 @@ app.on 'complete', !->
     
   #set-timeout up, 5000
     
-  
+  */
       
       
   

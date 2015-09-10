@@ -17,7 +17,8 @@ require! {
 
 class SwitchActor extends Actor
   (pin-name)~>
-    super!
+    #super pin-name, [\IoMessage, \pin_name, pin-name]
+    super pin-name
     @callback-functions = []
     @pin-name = String pin-name
     if pin-name
@@ -42,7 +43,7 @@ class SwitchActor extends Actor
   handle_ConnectionStatus: (msg) ->
     # TODO: TEST THIS CIRCULAR REFERENCE IF IT COUSES
     # MEMORY LEAK OR NOT
-    @connected = get-msg-body msg .connected
+    @connected = (get-msg-body msg).connected
     #console.log "connection status changed: ", @connected
     @refresh-connected-variable! 
     
@@ -59,7 +60,6 @@ class SwitchActor extends Actor
     @node = node
     @set-ractive-var = set-ractive-var node 
     @get-ractive-var = get-ractive-var node
-    @send UpdateConnectionStatus: {}
 
   fire-callbacks: (msg) ->
     #console.log "fire-callbacks called!", msg

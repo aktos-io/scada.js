@@ -12,7 +12,8 @@ require! {
     zip,
     split,
     union,
-    last
+    last, 
+    empty,
   }
 }
 
@@ -65,25 +66,54 @@ class ActorManager
     ~>
       super ...
       @actor-list = []
+      @subs-actor-list = []
       #console.log "Manager created with id:", @actor-id
 
-    register: (actor) ->
-      @actor-list = @actor-list ++ [actor]
+    register: (actor, subscriptions) ->
+      if not subscriptions
+        @actor-list = @actor-list ++ [actor]
+        
+        obj = actor 
+        meths = [key for key in Object.getOwnPropertyNames(obj) when typeof! obj[key] is 'Function']
+        console.log "actor registered: ", meths
+      else
+        # use subscriptions
+        # Subscription format: [MessageSubject, keypath, value]
+        # 
+        #     eg. ['IoMessage', 'pin_name', 'slider-pin']
+        # 
+        @subs-actor-list ++= [[actor, subscriptions]]
 
     inbox-put: (msg) ->
-      msg.sender ++= [@actor-id]
-      fire-list = []
+      #msg.sender ++= [@actor-id] performance optimization:
+      msg.sender = []  # don't use sender information
+      console.log "total actors to forward msg: ", @actor-list.length
       for actor in @actor-list
         if actor.actor-id not in msg.sender
           #console.log "forwarding msg: ", msg
           actor.recv msg
+      
+      if not empty @subs-actor-list
+        forward-counter = 0 
+        msg-body = get-msg-body msg
+        for [actor, [subj, key, val]] in @subs-actor-list 
+        
+          if subj of msg.payload 
+            # if subject matches
+            try 
+              if msg-body[key] is val 
+                actor.recv msg 
+                forward-counter += 1
+                
+        console.log "total forwards 2: ", forward-counter
+          
 
 
 class Actor extends ActorBase
-  (name) ~>
+  (name, subs) ~>
     super ...
     @mgr = ActorManager!
-    @mgr.register this
+    @mgr.register this, subs 
     @actor-name = name
     #console.log "actor \'", @name, "\' created with id: ", @actor-id
     @msg-serial-number = 0
@@ -117,6 +147,7 @@ class ProxyActor
       #console.log "Proxy actor is created with id: ", @actor-id
       
       @token = null
+      @connection-listener = (self, connect-str) -> 
 
       /* initialize socket.io connections */
       url = window.location.href
@@ -129,6 +160,7 @@ class ProxyActor
         path: socketio-path
       
       
+      # TODO: erase this, since it's very app specific
       socket.on \frame, (frame) -> 
         $ \#video-frame .attr \src, ('data:image/jpg;base64,' + frame)
       
@@ -142,19 +174,20 @@ class ProxyActor
 
       @connected = false 
       @socket.on "connect", !~>
-        #console.log "proxy actor says: connected"
+        console.log "proxy actor says: connected"
         console.log "Connected to server with id: ", @socket.io.engine.id
-        # update io on init
         @connected = true
-        @network-tx (envelp UpdateIoMessage: {}, @get-msg-id!)
-        @send ConnectionStatus: {connected: @connected}
+        @update-connection-status!
         
       @socket.on "disconnect", !~>
-        #console.log "proxy actor says: disconnected"
+        console.log "proxy actor says: disconnected"
         @connected = false 
-        @send ConnectionStatus: {connected: @connected}
-            
+        @update-connection-status!
+        
     handle_UpdateConnectionStatus: (msg) -> 
+      @update-connection-status!
+      
+    update-connection-status: -> 
       @send ConnectionStatus: {connected: @connected}
       
     network-rx: (msg) ->
@@ -164,9 +197,12 @@ class ProxyActor
       @send_raw msg
 
     receive: (msg) ->
-      @network-tx msg
+      @network-tx-raw msg
 
-    network-tx: (msg) ->
+    network-tx: (msg) -> 
+      @network-tx-raw (envelp msg, @get-msg-id!)
+
+    network-tx-raw: (msg) ->
       # receive from inner actors, forward to server
       msg.sender ++= [@actor-id]
       msg.token = @token

@@ -6,26 +6,16 @@ require! {
 }
   
 RactivePartial! .register ->
-  console.log "meleba"
-  $ \.thermometer .each !-> 
-  
-    elem = $ this
-    actor = IoActor elem
+  $ \.b-slider .each !->   
+    actor = IoActor $ this 
     
-    element-id = actor.actor-id
-    actor.set-ractive-var 'actor_id', element-id
-    
-    therm = new RGraph.Thermometer do
-      id: element-id
-      min: 0
-      max: 100
-      value: 55
-      options: do
-        scale: {visible: on}
-        gutter: {left: 25}
-    .grow!
-    
-    #TODO:see the differences grow and draw function.  
+    slider = actor.node.find \b-slider__input
+    slider.bss_slider!
+        
     actor.add-callback (msg) ->
-      therm[\value] = if msg.val <= therm.\max then msg.val else therm.\max
-      therm.grow!
+      slider \setValue, msg.val
+      
+    /*
+    slider.slide -> 
+      actor.gui-event slider.slider \getValue
+    */
