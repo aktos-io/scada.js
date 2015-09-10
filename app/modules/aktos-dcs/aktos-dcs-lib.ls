@@ -87,7 +87,7 @@ class IoActor extends SwitchActor
     super pin-name
     @set-node jq-node
     set-ractive-var jq-node, 'actor_id', @actor-id
-    set-ractive-var jq-node, 'debug', true
+    set-ractive-var jq-node, 'debug', false
     
     # save this actor in node's data-actor attribute for
     # further usages

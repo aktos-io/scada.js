@@ -72,6 +72,7 @@ class ActorManager
 
     inbox-put: (msg) ->
       msg.sender ++= [@actor-id]
+      fire-list = []
       for actor in @actor-list
         if actor.actor-id not in msg.sender
           #console.log "forwarding msg: ", msg

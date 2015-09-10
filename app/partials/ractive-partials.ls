@@ -17,6 +17,7 @@ require './gauge'
 require './jq-flipswitch-v2'
 require './jq-checkbox'
 require './jq-slider'
+require './jq-push-button'
 
 # l
 require './line-graph'
