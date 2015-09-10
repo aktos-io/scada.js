@@ -1,3 +1,7 @@
+# Overview
+
+This webui is intended to be both a part of [aktos-dcs](https://github.com/ceremcem/aktos-dcs) project as its SCADA infrastructure and the official website of [aktos-elektronik](https://aktos-elektronik.com), The Open Source Telemetry and Automation Systems Company, Turkey. 
+
 # File Structure
 
 + **app**:  application specific directory, see brunch.io
