@@ -1,0 +1,11 @@
+.jq-slider .ui-input-text {
+  height: 50px; 
+  padding: 10px; 
+  position: relative; 
+  top: -10px; 
+}
+
+.jq-slider .ui-slider-track {
+  position: relative; 
+  top: -50px;
+}

@@ -10,7 +10,7 @@ RactivePartial! .register-for-document-ready ->
   $ '.jq-push-button' .each ->
     #console.log "found push-button!"
     actor = IoActor $ this
-    elem = actor.node 
+    elem = actor.node.find \.jq-push-button__button
 
     # desktop support
     elem.on 'mousedown' ->
@@ -31,7 +31,7 @@ RactivePartial! .register-for-document-ready ->
       actor.gui-event off
     
     actor.add-callback (msg) ->
-      #console.log "jq-push-button got message: ", msg.val
+      console.log "jq-push-button got message: ", msg.val
       if msg.val
         elem.add-class 'ui-btn-active'
       else
