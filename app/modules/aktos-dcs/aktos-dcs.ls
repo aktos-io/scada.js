@@ -14,8 +14,11 @@ require! {
     union,
     last, 
     empty,
+    keys,
   }
 }
+  
+{RactiveApp} = require './widgets'
 
 
 
@@ -42,12 +45,11 @@ class ActorBase
 
   recv: (msg) ->
     @receive msg
-    
-    
     try
       subjects = [subj for subj of msg.payload]
       for subject in subjects
         try
+          #console.log "trying to call handle_#subject()"
           this['handle_' + subject] msg
         catch
           @receive msg
@@ -66,51 +68,54 @@ class ActorManager
     ~>
       super ...
       @actor-list = []
-      @subs-actor-list = []
+      @subs-min-list = {}  # 'topic': [list of actors subscribed this topic]
       #console.log "Manager created with id:", @actor-id
 
-    register: (actor, subscriptions) ->
-      if empty subscriptions
+    register: (actor, subs) ->
+      if empty subs
         @actor-list = @actor-list ++ [actor]
-        
+        console.log "actor subscribed all topics"
       else
         # use subscriptions
-        # Subscription format: [MessageSubject, keypath, value]
+        # Subscription format: [\subscribe-msg-1, \subscribe-msg-2, ...]
         # 
-        #     eg. ['IoMessage', 'pin_name', 'slider-pin']
-        # 
-        @subs-actor-list ++= [[actor, subscriptions]]
+        for topic in subs 
+          try
+            @subs-min-list[topic] ++= [actor]
+          catch
+            @subs-min-list[topic] = [actor]
+        
+        console.log "actor subscribed with following topics: ", subs
+        #console.log "actors subscribed so far: ", @subs-min-list
 
     inbox-put: (msg) ->
-      #msg.sender ++= [@actor-id] performance optimization:
-      msg.sender = []  # don't use sender information
-      console.log "total actors to forward msg: ", @actor-list.length
+      @distribute-msg msg
+    
+    distribute-msg: (msg) -> 
+      msg.sender ++= [@actor-id]  
       for actor in @actor-list
         if actor.actor-id not in msg.sender
           #console.log "forwarding msg: ", msg
           actor.recv msg
-      
-      if not empty @subs-actor-list
-        forward-counter = 0 
-        msg-body = get-msg-body msg
-        for [actor, subs] in @subs-actor-list 
-          for [subj, key, val] in subs 
-            if subj of msg.payload 
-              # if subject matches
-              try 
-                if msg-body[key] is val 
-                  actor.recv msg 
-                  forward-counter += 1
-                
-        console.log "total forwards 2: ", forward-counter
+       
+      try
+        msg-related-with = join \. [(head keys msg.payload), \pin_name, ((get-msg-body msg).pin_name)]
+        #console.log "actors will get message: ", @subs-min-list[msg-related-with]
+        for actor in @subs-min-list[msg-related-with]
+          #console.log "actor will get msg: ", actor
+          actor.recv msg
           
-
-
+        console.log "forwarded msg count: #{@actor-list.length} -- #{@subs-min-list[msg-related-with].length}"
+      
+      
 class Actor extends ActorBase
   (name) ~>
     super!
     @mgr = ActorManager!
     
+    # register message types which are used in this 
+    # class with `handle_Subject` format
+    #
     methods = [key for key of Object.getPrototypeOf this when typeof! this[key] is \Function ]        
     subj = [s.split \handle_ .1 for s in methods when s.match /^handle_.+/]
     #console.log "this actor has the following subjects: ", subj, name
@@ -118,15 +123,15 @@ class Actor extends ActorBase
     subs = []
     if name 
       for s in subj
-        subs ++= [[s, \pin_name, name]]
+        subs ++= [join \. [s, \pin_name, name]]
       
-    console.log "subscriptions: ", subs 
+    #console.log "actor will subscribe following topics: ", subs 
       
     @mgr.register this, subs 
     @actor-name = name
     #console.log "actor \'", @name, "\' created with id: ", @actor-id
     @msg-serial-number = 0
-
+    
   send: (msg) ->
     msg = envelp msg, @get-msg-id!
     @send_raw msg
@@ -202,7 +207,7 @@ class ProxyActor
     network-rx: (msg) ->
       # receive from server via socket.io
       # forward message to inner actors
-      #console.log "proxy actor got network message: ", msg
+      console.log "proxy actor got network message: ", msg
       @send_raw msg
 
     receive: (msg) ->

@@ -11,6 +11,7 @@ require! {
     get-ractive-var, 
     set-ractive-var, 
     RactiveApp,
+    get-keypath,
   }
 }
 
@@ -76,6 +77,9 @@ class SwitchActor extends Actor
       pin_name: @pin-name
       val: val
       
+  get-keypath: ->
+    get-keypath @node 
+      
 class IoActor extends SwitchActor
   (jq-node)~>
     saved-actor = jq-node.data \actor
@@ -83,6 +87,7 @@ class IoActor extends SwitchActor
       #console.log "this actor created before? because current actor-id: ", saved-actor.actor-id
       return saved-actor
     
+
     pin-name = get-ractive-var jq-node, 'pin_name'
     super pin-name
     @set-node jq-node
