@@ -79,7 +79,8 @@ class ActorManager
           catch
             @subs-min-list[topic] = [actor]
         
-        console.log "actor subscribed with following topics: ", subs
+        if \AuthMessage in subs 
+          console.log "actor subscribed with following topics: ", subs
         #console.log "actors subscribed so far: ", @subs-min-list
       catch
         @actor-list = @actor-list ++ [actor]
@@ -121,8 +122,6 @@ class Actor extends ActorBase
     # class with `handle_Subject` format
     #
     
-    console.log "actor will subscribe following topics: ", @subscriptions 
-    @mgr.register this, @subscriptions 
       
     @actor-name = name
     #console.log "actor \'", @name, "\' created with id: ", @actor-id
@@ -133,6 +132,9 @@ class Actor extends ActorBase
     subj = [s.split \handle_ .1 for s in methods when s.match /^handle_.+/]
     #console.log "this actor has the following subjects: ", subj, name
     
+  register: -> 
+    #console.log "actor will subscribe following topics: ", @subscriptions 
+    @mgr.register this, @subscriptions 
     
   send: (msg) ->
     msg = envelp msg, @get-msg-id!
@@ -160,6 +162,7 @@ class ProxyActor
   class SingletonClass extends Actor
     ~>
       super ...
+      @register!
       #console.log "Proxy actor is created with id: ", @actor-id
       
       @token = null
