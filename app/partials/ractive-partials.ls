@@ -5,7 +5,7 @@ require './arrow-keys'
 # b 
 require './b-progress-bar'
 require './b-stacked-progress'
-#require './b-slider'
+require './b-slider'
 
 # c
 require './circular-progress'
@@ -37,6 +37,7 @@ require './slider'
 require './status-led'
 require './seven-segment'
 require './spinbox'
+require './simple-display'
 
 # t
 require './thermometer'
