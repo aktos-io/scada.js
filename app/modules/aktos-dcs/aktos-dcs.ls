@@ -105,7 +105,7 @@ class ActorManager
           #console.log "actor will get msg: ", actor
           actor.recv msg
           
-        console.log "forwarded msg count: #{@actor-list.length} -- #{@subs-min-list[msg-related-with].length}"
+        #console.log "forwarded msg count: #{@actor-list.length} -- #{@subs-min-list[msg-related-with].length}"
       
       
 class Actor extends ActorBase

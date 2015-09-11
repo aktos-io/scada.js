@@ -16,6 +16,8 @@ Ractive.DEBUG = /unminified/.test !-> /*unminified*/
 app = new Ractive do
   el: 'container'
   template: '#app'
+  data: 
+    abc: 123
 
 RactiveApp!set app
 
@@ -62,6 +64,7 @@ app.on 'complete', !->
   */
   
   /*
+  
   console.log "Performance testing via gauge-slider pin"
       
   test2 = SwitchActor \gauge-slider
@@ -70,14 +73,31 @@ app.on 'complete', !->
   j = +1
   up = -> 
     test2.gui-event i
+    #app.set \abc, i
     if i >= 100 
       j := -1 
     if i <= 0 
       j := +1
     i := i + j
-    set-timeout up, 10
+    set-timeout up, 1000
     
-  #set-timeout up, 5000
+  set-timeout up, 2000
+  
+  test3 = SwitchActor \gauge-slider2
+  
+  k = 0
+  l = +1
+  up2 = -> 
+    test3.gui-event k
+    #app.set \abc, k
+    if k >= 100 
+      l := -1 
+    if k <= 0 
+      l := +1
+    k := k + l
+    set-timeout up2, 1000
+    
+  set-timeout up2, 2000
     
   */
       

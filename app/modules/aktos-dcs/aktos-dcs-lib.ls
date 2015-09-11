@@ -80,27 +80,27 @@ class SwitchActor extends Actor
   get-keypath: ->
     get-keypath @node 
       
+      
 class IoActor extends SwitchActor
   (jq-node)~>
     saved-actor = jq-node.data \actor
     if saved-actor
       #console.log "this actor created before? because current actor-id: ", saved-actor.actor-id
       return saved-actor
-    
-
     pin-name = get-ractive-var jq-node, 'pin_name'
     super pin-name
     @set-node jq-node
     set-ractive-var jq-node, 'actor_id', @actor-id
     set-ractive-var jq-node, 'debug', false
-    
     # save this actor in node's data-actor attribute for
     # further usages
     jq-node.data \actor, this 
     
+    
 class WidgetActor extends IoActor
   ~>
     super ...
+
 
 class AuthActor extends IoActor
   ~>
