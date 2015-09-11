@@ -21,7 +21,8 @@ exports.config =
         'test/stylesheets/test.css': /^test/
       order:
         after: [
-          'vendor/toolbar/toolbar-bootstrap3.fix.css', 
+          /^app/,
+          'vendor/toolbar/toolbar-bootstrap3.fix.css'
         ]
       
   plugins:
