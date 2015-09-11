@@ -2,8 +2,8 @@ include ../../templates/mixins.jade
 
 +partial('jq-push-button')
   .jq-push-button
-    button.jq-push-button__button.ui-focus(
+    button.jq-push-button__button.no-shadow(
       style="{{ .connected? '' : 'border: 1px dashed red' }}"
       type="button"
       ) 
-      | {{ .label }} {{ .connected }}
+      | {{ .label }}

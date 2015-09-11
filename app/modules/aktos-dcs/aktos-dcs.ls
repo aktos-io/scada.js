@@ -72,13 +72,7 @@ class ActorManager
       #console.log "Manager created with id:", @actor-id
 
     register: (actor, subs) ->
-      if empty subs
-        @actor-list = @actor-list ++ [actor]
-        console.log "actor subscribed all topics"
-      else
-        # use subscriptions
-        # Subscription format: [\subscribe-msg-1, \subscribe-msg-2, ...]
-        # 
+      try
         for topic in subs 
           try
             @subs-min-list[topic] ++= [actor]
@@ -87,25 +81,35 @@ class ActorManager
         
         console.log "actor subscribed with following topics: ", subs
         #console.log "actors subscribed so far: ", @subs-min-list
+      catch
+        @actor-list = @actor-list ++ [actor]
+        console.log "actor subscribed all topics"
 
     inbox-put: (msg) ->
       @distribute-msg msg
     
     distribute-msg: (msg) -> 
       msg.sender ++= [@actor-id]  
+      # distribute subscribe-all messages 
       for actor in @actor-list
         if actor.actor-id not in msg.sender
           #console.log "forwarding msg: ", msg
           actor.recv msg
-       
-      try
-        msg-related-with = join \. [(head keys msg.payload), \pin_name, ((get-msg-body msg).pin_name)]
-        #console.log "actors will get message: ", @subs-min-list[msg-related-with]
-        for actor in @subs-min-list[msg-related-with]
+      console.log "forwarded msg count: all: #{@actor-list.length}"
+      
+      # distribute subscribed messages 
+      for msg-topic in keys msg.payload
+      
+        # TODO: do this automatically, this is a workaround!
+        if msg-topic is \IoMessage
+          msg-topic = join \. [msg-topic, \pin_name, (get-msg-body msg).pin_name]
+
+        #console.log "actors will get message: ", @subs-min-list[msg-topic]
+        for actor in @subs-min-list[msg-topic]
           #console.log "actor will get msg: ", actor
           actor.recv msg
-          
-        #console.log "forwarded msg count: #{@actor-list.length} -- #{@subs-min-list[msg-related-with].length}"
+        
+        console.log "forwarded msg count: Subsc: #{@subs-min-list[msg-topic].length}"
       
       
 class Actor extends ActorBase
@@ -116,21 +120,19 @@ class Actor extends ActorBase
     # register message types which are used in this 
     # class with `handle_Subject` format
     #
+    
+    console.log "actor will subscribe following topics: ", @subscriptions 
+    @mgr.register this, @subscriptions 
+      
+    @actor-name = name
+    #console.log "actor \'", @name, "\' created with id: ", @actor-id
+    @msg-serial-number = 0
+    
+  list-handle-funcs: -> 
     methods = [key for key of Object.getPrototypeOf this when typeof! this[key] is \Function ]        
     subj = [s.split \handle_ .1 for s in methods when s.match /^handle_.+/]
     #console.log "this actor has the following subjects: ", subj, name
     
-    subs = []
-    if name 
-      for s in subj
-        subs ++= [join \. [s, \pin_name, name]]
-      
-    #console.log "actor will subscribe following topics: ", subs 
-      
-    @mgr.register this, subs 
-    @actor-name = name
-    #console.log "actor \'", @name, "\' created with id: ", @actor-id
-    @msg-serial-number = 0
     
   send: (msg) ->
     msg = envelp msg, @get-msg-id!

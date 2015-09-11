@@ -11,10 +11,7 @@ body {
    */
   background-position: center;
 }
-.connection-status { 
-  margin: 0; 
-  padding: 0.001em;
-}
+
 
 .home-col-padding {
   padding: 2em; 
@@ -34,13 +31,11 @@ body {
 
 }
 
-
-input,
-textarea,
-table {
-     -moz-user-select: text;
+.no-shadow {
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
 }
-
 
 .vcenter {
     display: inline-block;

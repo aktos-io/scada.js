@@ -18,8 +18,11 @@ require! {
 
 class SwitchActor extends Actor
   (pin-name)~>
-    #super pin-name, [\IoMessage, \pin_name, pin-name]
-    super pin-name
+    @subscriptions = 
+      * \IoMessage.pin_name. + pin-name
+      * \ConnectionStatus
+    
+    super pin-name 
     @callback-functions = []
     @pin-name = String pin-name
     if pin-name
@@ -104,6 +107,7 @@ class WidgetActor extends IoActor
 
 class AuthActor extends IoActor
   ~>
+    @subscriptions = ['AuthMessage']
     super ...
     
   send-auth-msg: (secret) ->

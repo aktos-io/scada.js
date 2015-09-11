@@ -17,21 +17,26 @@ RactivePartial! .register-for-document-ready ->
       actor.gui-event on
       elem.on 'mouseleave', ->
         actor.gui-event off
+        elem.remove-class \ui-focus
     elem.on 'mouseup' ->
       actor.gui-event off
       elem.off 'mouseleave'
+      elem.remove-class \ui-focus
 
     # touch support
     elem.on 'touchstart' (e) ->
       actor.gui-event on
       elem.touchleave ->
         actor.gui-event off
+        elem.remove-class \ui-focus
+
       e.stop-propagation!
     elem.on 'touchend' (e) ->
       actor.gui-event off
-    
+      elem.remove-class \ui-focus
+
     actor.add-callback (msg) ->
-      console.log "jq-push-button got message: ", msg.val
+      #console.log "jq-push-button got message: ", msg.val
       if msg.val
         elem.add-class 'ui-btn-active'
       else
