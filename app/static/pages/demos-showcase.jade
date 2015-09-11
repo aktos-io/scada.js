@@ -1,11 +1,11 @@
-.panel.panel-danger
+.panel.panel-primary
   .panel-heading
-    h3.panel-title Performans testi
+    h3.panel-title Basit göstergeler 
   .panel-body
     .row.
     
       {{#partial test_0}}
-      {{>simple-display {pin_name: 'gauge-slider'} }}
+      {{>simple-display {pin_name: 'gauge-slider1'} }}
       {{/partial}}
 
       {{#partial test}}
@@ -55,11 +55,9 @@
       {{>test}}
       
       {{>simple-display {pin_name: 'gauge-slider2'} }}
+      {{>slider {pin_name: 'gauge-slider1'} }}
+      {{>slider {pin_name: 'gauge-slider2'} }}
       
-      {{>login-input {} }}
-
-      {{>login-info {} }}
-
 .panel.panel-danger
   .panel-heading
     h3.panel-title Performans testi
@@ -144,16 +142,16 @@
 .panel.panel-primary
   .panel-heading
     h3.panel-title Giriş Formu
-  .panel-body.
-    Test şifreleri: 
-    
-      * cca12345
-      * me12345
-      * tk12345
+  .panel-body
+    :md
+      Test şifreleri: 
       
-    {{>login-input {} }}
-    ------------------------
-    {{>login-info {} }}
+        * cca12345
+        * me12345
+        * tk12345
+    div
+      div Login input: {{>login-input {} }}
+      div Login status {{>login-info {} }}
     
     
 .panel.panel-primary

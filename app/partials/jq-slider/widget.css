@@ -1,3 +1,6 @@
+.jq-slider {
+  padding: 10px; 
+}
 .jq-slider .ui-input-text {
   height: 50px; 
   padding: 10px; 

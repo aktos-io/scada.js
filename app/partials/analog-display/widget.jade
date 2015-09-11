@@ -3,4 +3,4 @@ include ../../templates/mixins.jade
 +partial('analog-display')
   button.analog-display(
     )
-    | {{ .val == null ? ' ??? ' : .val }}
+    | {{ .val == null ? '---' : .val }}
