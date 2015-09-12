@@ -14,10 +14,13 @@ RactivePartial! .register ->
     
     type = actor.get-ractive-var 'type'
     format = actor.get-ractive-var 'format'
+    if not format
+      format = "###"
     
     params = 
       digits: 3
       value: 15
+
       
     f = format.split '.'
     format-int = f.0
@@ -27,7 +30,7 @@ RactivePartial! .register ->
     if f.length > 1 
       format-prec = f.1
       digits += format-prec.length
-    console.log "total digits for #type : #digits"
+    #console.log "total digits for #type : #digits"
     
     params.digits = digits
     
@@ -37,7 +40,7 @@ RactivePartial! .register ->
     width = height * 0.75 * digits
     display.css \width, width
     display.css \height, height
-    console.log "height: #height setting width: #width"
+    #console.log "height: #height setting width: #width"
       
     if type is \multimeter
       params = $.extend params, do

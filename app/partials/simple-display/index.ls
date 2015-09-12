@@ -6,7 +6,7 @@ require! {
 }
   
 RactivePartial! .register ->
-  $ \.analog-display .each ->
+  $ \.simple-display .each ->
     actor = IoActor $ this 
     elem = actor.node
     actor.add-callback (msg) ->

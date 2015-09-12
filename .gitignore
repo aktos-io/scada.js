@@ -6,6 +6,6 @@ node_modules
 vendor-*
 .idea
 app/assets/demos
-disabled
+disabled/*
 **/orig--no-sync
 .kateproject.d

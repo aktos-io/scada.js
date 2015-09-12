@@ -5,18 +5,14 @@ require! {
   }
 }
   
-RactivePartial! .register ->
-  console.log "meleba"
+RactivePartial! .register-for-document-ready ->
   $ \.thermometer .each !-> 
-  
-    elem = $ this
-    actor = IoActor elem
+    actor = IoActor $ this 
     
-    element-id = actor.actor-id
-    actor.set-ractive-var 'actor_id', element-id
+    #console.log "new thermometer created with id: ", actor.actor-id
     
     therm = new RGraph.Thermometer do
-      id: element-id
+      id: actor.actor-id
       min: 0
       max: 100
       value: 55
@@ -27,5 +23,17 @@ RactivePartial! .register ->
     
     #TODO:see the differences grow and draw function.  
     actor.add-callback (msg) ->
-      therm[\value] = if msg.val <= therm.\max then msg.val else therm.\max
+      therm[\value] = if msg.val <= therm.\max then 
+        msg.val 
+      else 
+        therm.\max
+
       therm.grow!
+
+/*
+RactivePartial! .register-for-document-ready ->
+  $ \.thermometer .each !-> 
+    actor = IoActor $ this 
+    
+    console.log "dummy plugin in thermometer.ls: ", actor.actor-id
+*/

@@ -1,5 +1,6 @@
 include ../../templates/mixins.jade
 
 +partial('line-graph')
-  #placeholder(class="line-graph")
+  .line-graph.
+    <div class="line-graph__graph" id="{{ .actor_id }}" /> 
 

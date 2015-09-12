@@ -29,7 +29,7 @@ pub-sock = zmq.socket 'pub'
 
 # connection ip
 broker-ip = '127.0.0.1'
-#broker-ip = '10.0.10.2'
+#broker-ip = '10.0.10.176'
 
 # make zmq settings BEFORE connect/bind:
 pub-sock.setsockopt zmq.ZMQ_SNDHWM, 1
@@ -143,6 +143,19 @@ handle-auth-message = (msg, socket) ->
   token-msg = envelp token-msg, 0
   token-msg.sender ++= [server-id] 
   socket.emit 'aktos-message', token-msg 
+  
+  
+connected-user-count = 0
+
+handle_UpdateIoMessage = (msg, socket) ->   
+  conn-msg = IoMessage: 
+    pin_name: 'online-users'
+    val: connected-user-count
+  conn-msg = envelp conn-msg, 1230
+  conn-msg.sender ++= [server-id] 
+  io.sockets.emit 'aktos-message', conn-msg 
+  console.log "Notifying total user count: #{connected-user-count}", conn-msg
+  
 
 # Forward socket.io messages to and from zeromq messages
 io.on 'connection', (socket) !->
@@ -150,7 +163,16 @@ io.on 'connection', (socket) !->
   console.log "new client connected, starting its forwarder..."
   console.log "+--> Connected to server with id: ", socket.id
 
+  # track online users
+  connected-user-count := connected-user-count + 1
+  console.log "Total online user count: #{connected-user-count}"
   
+  socket.on \disconnect, -> 
+    connected-user-count := connected-user-count - 1
+
+    console.log "Total online user count: #{connected-user-count}"
+    handle_UpdateIoMessage {}, socket
+
 
   socket.on "aktos-message", (msg) !->
     #console.log "aktos-message from browser: ", msg
@@ -159,6 +181,9 @@ io.on 'connection', (socket) !->
       handle-auth-message msg, socket
       
     else
+      if \UpdateIoMessage of msg.payload 
+        handle_UpdateIoMessage msg, socket
+    
       # append server-id to message.sender list
       msg.sender ++= [server-id]
 
@@ -167,6 +192,8 @@ io.on 'connection', (socket) !->
 
       # send to other processes via zeromq
       pub-sock.send pack msg
+
+
 
 sub-sock.on 'message', (message) !->
   #console.log "aktos message from network ", message.to-string![\msg_id]

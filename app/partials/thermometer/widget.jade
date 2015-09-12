@@ -3,3 +3,6 @@ include ../../templates/mixins.jade
 +partial('thermometer')
   .thermometer.
     <canvas id='{{ .actor_id }}' width="90" height="230">[No canvas support]</canvas>
+    {{#if .debug}}
+      <p>actor id: {{ .actor_id }} </p>
+    {{/if}}

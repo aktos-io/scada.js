@@ -1,5 +1,123 @@
 .panel.panel-primary
   .panel-heading
+    h3.panel-title Grafik 
+  .panel-body
+    .row.
+      {{>online-users {pin_name: 'online-users'} }}
+      {{!>slider {pin_name: 'online-users'} }}
+
+.panel.panel-primary
+  .panel-heading
+    h3.panel-title Grafik 
+  .panel-body
+    .row.
+      {{>line-graph {pin_name: 'line-graph-1'} }}
+      {{>slider {pin_name: 'line-graph-1'} }}
+    .row.
+      {{>line-graph {pin_name: 'line-graph-2'} }}
+      {{>slider {pin_name: 'line-graph-2'} }}
+
+.panel.panel-primary
+  .panel-heading
+    h3.panel-title Basit göstergeler 
+  .panel-body
+    .row.
+    
+      {{#partial test_0}}
+      {{>simple-display {pin_name: 'gauge-slider1'} }}
+      {{/partial}}
+
+      {{#partial test}}
+        {{>test_0}}
+        {{>test_0}}
+        {{>test_0}}
+
+
+      {{/partial}}
+
+      {{#partial test2}}
+      {{>test}}
+      {{>test}}
+      {{>test}}
+      {{>test}}
+      {{>test}}
+      {{>test}}
+      {{>test}}
+      {{>test}}
+      {{>test}}
+      {{>test}}
+      {{>test}}
+      {{>test}}
+      {{>test}}
+      {{>test}}
+      {{>test}}
+      {{>test}}
+      {{/partial}}
+      
+      {{#partial test3}}
+      {{>test2}}
+      {{>test2}}
+      {{>test2}}
+      {{>test2}}
+      {{>test2}}
+      {{>test2}}
+      {{>test2}}
+      {{>test2}}
+      {{>test2}}
+      {{>test2}}
+      {{>test2}}
+      {{>test2}}
+      {{>test2}}
+      {{/partial}}
+      
+        
+      {{>test}}
+      
+      {{>simple-display {pin_name: 'gauge-slider2'} }}
+      {{>slider {pin_name: 'gauge-slider1'} }}
+      {{>slider {pin_name: 'gauge-slider2'} }}
+      
+.panel.panel-danger
+  .panel-heading
+    h3.panel-title Performans testi
+  .panel-body
+    .row
+      .col-sm-3.
+        {{>gauge {pin_name: 'gauge-slider',  type: 'ping'} }}
+      .col-sm-3.
+        {{>gauge {pin_name: 'gauge-slider',  type: 'upload'} }}
+      .col-sm-3.
+        {{>gauge {pin_name: 'gauge-slider',  type: 'download'} }}
+      .col-sm-3.
+        {{>gauge {pin_name: 'gauge-slider',  type: 'speed'} }}     
+    .row.
+      {{>slider {pin_name: 'gauge-slider',  val: 45} }}
+
+    .row
+      .col-sm-4.
+        {{>spinbox {pin_name: 'gauge-slider',  val: 35} }}
+        {{>slider {pin_name: "spinbox-test"} }}
+
+    .row.
+      {{>seven-segment {pin_name: 'gauge-slider',  format: '##'}}}
+      {{>seven-segment {pin_name: 'gauge-slider',  format: '#######.##'}}}
+      {{>seven-segment {pin_name: 'gauge-slider',  format: '####.#'}}}
+      {{>seven-segment {pin_name: 'gauge-slider',  format: '##.###'}}}
+      {{>slider {pin_name: 'gauge-slider',  val: 45} }}
+
+    
+    .row. 
+      
+      {{>thermometer {pin_name: 'gauge-slider'} }}
+      {{>thermometer {pin_name: 'gauge-slider'} }}
+      {{>thermometer {pin_name: 'gauge-slider'} }}
+      {{>thermometer {pin_name: 'gauge-slider'} }}
+      {{>thermometer {pin_name: 'gauge-slider'} }}
+    
+      
+
+.panel.panel-primary
+  .panel-heading
     h3.panel-title Spinbox
   .panel-body
     .row
@@ -43,16 +161,16 @@
 .panel.panel-primary
   .panel-heading
     h3.panel-title Giriş Formu
-  .panel-body.
-    Test şifreleri: 
-    
-      * cca12345
-      * me12345
-      * tk12345
+  .panel-body
+    :md
+      Test şifreleri: 
       
-    {{>login-input {} }}
-    ------------------------
-    {{>login-info {} }}
+        * cca12345
+        * me12345
+        * tk12345
+    div
+      div Login input: {{>login-input {} }}
+      div Login status {{>login-info {} }}
     
     
 .panel.panel-primary
@@ -91,9 +209,9 @@
       .col-md-2.
         {{>circular-progress {pin_name: 'progress-slider'} }}
       .col-md-2.
-        {{>circular-progress {pin_name: 'progress-slider',color: 'green'} }}
+        {{>circular-progress {pin_name: 'progress-slider',color: 'yellowgreen green'} }}
       .col-md-2.  
-        {{>circular-progress {pin_name: 'progress-slider', color: 'red blue yellow'} }}
+        {{>circular-progress {pin_name: 'progress-slider', color: 'white orange'} }}
     .row.
       {{>slider {pin_name:"progress-slider", val: 45} }}
 
@@ -215,7 +333,7 @@ div(data-role="collapsible")
   h3 Graph
   .ui-grid-a(style='height: 300px')
     .ui-block-a(style='height: 100%')
-      | {{>line-graph {pin_name: 'slider-2'} }}
+      | {{>line-graph {pin_name: 'line-graph-1'} }}
     .ui-block-b
       | {{>slider {pin_name:"slider-2", val: 25} }}
       
