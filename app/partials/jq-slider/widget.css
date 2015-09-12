@@ -1,9 +1,14 @@
-.jq-slider__input {
-  float: left;
-  width: 60px;
-  position: relative;
-  top: -14px;
+.jq-slider {
+  padding: 10px; 
 }
-.jq-slider__container {
+.jq-slider .ui-input-text {
+  height: 50px; 
+  padding: 10px; 
+  position: relative; 
+  top: -10px; 
 }
 
+.jq-slider .ui-slider-track {
+  position: relative; 
+  top: -50px;
+}

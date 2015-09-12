@@ -8,8 +8,10 @@ require! {
 RactivePartial!register ->
   $ \.numeric-keyboard .each ->
     #console.log "switch-button created"
-    elem = $ this
-    actor = IoActor elem
+    actor = IoActor $ this 
+    
+    elem = actor.node.find \table 
+    elem.add-class \ui-corner-all
 
     layout =       
       * <[ 1 2 3 a  ]>

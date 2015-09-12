@@ -11,7 +11,7 @@ RactivePartial! .register ->
         
     actor.add-callback (msg) ->
       actor.set-ractive-var \val, msg.val
-      console.log "this is original spinbox: ", actor.actor-id
+      #console.log "this is original spinbox: ", actor.actor-id
           
     input = actor.node.find \.spinbox__data-input
     input.on \change, ->

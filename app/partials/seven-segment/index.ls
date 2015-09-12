@@ -14,10 +14,13 @@ RactivePartial! .register ->
     
     type = actor.get-ractive-var 'type'
     format = actor.get-ractive-var 'format'
+    if not format
+      format = "###"
     
     params = 
       digits: 3
       value: 15
+
       
     f = format.split '.'
     format-int = f.0

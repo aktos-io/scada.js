@@ -11,7 +11,7 @@ exports.config =
         # Files in `vendor` directories are compiled before other files
         # even if they aren't specified in order.before.
         before: [
-          'vendor/scripts/jquery-1.11.js',
+          'vendor/base-libraries/jquery-1.11.js',
           'vendor/flot.min/jquery.flot.min.js'
         ]
 
@@ -21,7 +21,8 @@ exports.config =
         'test/stylesheets/test.css': /^test/
       order:
         after: [
-          'vendor/toolbar/toolbar-bootstrap3.fix.css', 
+          /^app/,
+          'vendor/toolbar/toolbar-bootstrap3.fix.css'
         ]
       
   plugins:

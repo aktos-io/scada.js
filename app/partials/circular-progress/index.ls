@@ -17,7 +17,6 @@ require! {
 */
 
 RactivePartial! .register ->
-  console.log "Circular-Progress"
   $ \.circular-progress .each ->
     
     actor = IoActor $ this

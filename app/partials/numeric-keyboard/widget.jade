@@ -8,8 +8,9 @@ include ../../templates/mixins.jade
     {{/each}}
 
 +partial('numeric-keyboard')
-  table.numeric-keyboard
-    tbody.
-      {{#each keyboard_data:i}}
-        {{>numeric-keyboard-row {keyboard_row_data: keyboard_data[i]} }}
-      {{/each}}
+  .numeric-keyboard
+    table 
+      tbody.
+        {{#each keyboard_data:i}}
+          {{>numeric-keyboard-row {keyboard_row_data: keyboard_data[i]} }}
+        {{/each}}

@@ -12,9 +12,13 @@ require! {
     zip,
     split,
     union,
-    last
+    last, 
+    empty,
+    keys,
   }
 }
+  
+{RactiveApp} = require './widgets'
 
 
 
@@ -24,6 +28,7 @@ envelp = (msg, msg-id) ->
     timestamp: Date.now! / 1000
     msg_id: msg-id  # {{.actor_id}}.{{serial}}
     payload: msg
+    token: ''
 
 get-msg-body = (msg) ->
   subject = [subj for subj of msg.payload][0]
@@ -41,12 +46,11 @@ class ActorBase
 
   recv: (msg) ->
     @receive msg
-    
-    
     try
       subjects = [subj for subj of msg.payload]
       for subject in subjects
         try
+          #console.log "trying to call handle_#subject()"
           this['handle_' + subject] msg
         catch
           @receive msg
@@ -65,32 +69,87 @@ class ActorManager
     ~>
       super ...
       @actor-list = []
+      @subs-min-list = {}  # 'topic': [list of actors subscribed this topic]
       #console.log "Manager created with id:", @actor-id
 
-    register: (actor) ->
-      @actor-list = @actor-list ++ [actor]
+    register: (actor, subs) ->
+      try
+        for topic in subs 
+          try
+            @subs-min-list[topic] ++= [actor]
+          catch
+            @subs-min-list[topic] = [actor]
+        
+        #console.log "actor subscribed with following topics: ", subs
+        #console.log "actors subscribed so far: ", @subs-min-list
+      catch
+        @actor-list = @actor-list ++ [actor]
+        #console.log "actor subscribed all topics"
 
     inbox-put: (msg) ->
-      msg.sender ++= [@actor-id]
-      fire-list = []
+      @distribute-msg msg
+    
+    distribute-msg: (msg) -> 
+      msg.sender ++= [@actor-id]  
+      # distribute subscribe-all messages 
       for actor in @actor-list
         if actor.actor-id not in msg.sender
           #console.log "forwarding msg: ", msg
           actor.recv msg
+      #console.log "forwarded msg count: all: #{@actor-list.length}"
+    
+      # distribute subscribed messages
+      for msg-subject in keys msg.payload
+          msg-topic = msg-subject 
+          try
+            # TODO: do this automatically, this is a workaround!
+            if msg-subject is \IoMessage
+              #console.log "ActorManager: Special message: IoMessage! msg: ", msg
+              msg-topic = join \. [msg-subject, \pin_name, (get-msg-body msg).pin_name]
+          catch 
+            console.log "problem in creating msg-topic: ", msg
 
+          if @subs-min-list[msg-topic]?
 
+            try
+              #console.log "actors will get message: topic: #{msg-topic} ", @subs-min-list[msg-topic]
+              for actor in @subs-min-list[msg-topic]
+                #console.log "actor will get msg: ", actor
+                actor.recv msg
+            catch
+              console.log "Error forwarding message: ", actor, msg
+            
+            #console.log "forwarded msg count: Subsc: #{@subs-min-list[msg-topic].length}"
+      
 class Actor extends ActorBase
   (name) ~>
-    super ...
+    super!
     @mgr = ActorManager!
-    @mgr.register this
+    
+    # register message types which are used in this 
+    # class with `handle_Subject` format
+    #
+    
+      
     @actor-name = name
     #console.log "actor \'", @name, "\' created with id: ", @actor-id
     @msg-serial-number = 0
-
+    
+  list-handle-funcs: -> 
+    methods = [key for key of Object.getPrototypeOf this when typeof! this[key] is \Function ]        
+    subj = [s.split \handle_ .1 for s in methods when s.match /^handle_.+/]
+    #console.log "this actor has the following subjects: ", subj, name
+    
+  register: -> 
+    #console.log "actor will subscribe following topics: ", @subscriptions 
+    @mgr.register this, @subscriptions 
+    
   send: (msg) ->
-    msg = envelp msg, @get-msg-id!
-    @send_raw msg
+    try
+      msg-env = envelp msg, @get-msg-id!
+      @send_raw msg-env
+    catch
+      console.log "Error: Actor: sending message failed. msg: ", msg, "enveloped: ", msg-env
 
   send_raw: (msg_raw) ->
     msg_raw.sender ++= [@actor-id]
@@ -114,9 +173,11 @@ class ProxyActor
   class SingletonClass extends Actor
     ~>
       super ...
+      @register!
       #console.log "Proxy actor is created with id: ", @actor-id
       
       @token = null
+      @connection-listener = (self, connect-str) -> 
 
       /* initialize socket.io connections */
       url = window.location.href
@@ -129,6 +190,7 @@ class ProxyActor
         path: socketio-path
       
       
+      # TODO: erase this, since it's very app specific
       socket.on \frame, (frame) -> 
         $ \#video-frame .attr \src, ('data:image/jpg;base64,' + frame)
       
@@ -142,19 +204,20 @@ class ProxyActor
 
       @connected = false 
       @socket.on "connect", !~>
-        #console.log "proxy actor says: connected"
+        console.log "proxy actor says: connected"
         console.log "Connected to server with id: ", @socket.io.engine.id
-        # update io on init
         @connected = true
-        @network-tx (envelp UpdateIoMessage: {}, @get-msg-id!)
-        @send ConnectionStatus: {connected: @connected}
+        @update-connection-status!
         
       @socket.on "disconnect", !~>
-        #console.log "proxy actor says: disconnected"
+        console.log "proxy actor says: disconnected"
         @connected = false 
-        @send ConnectionStatus: {connected: @connected}
-            
+        @update-connection-status!
+        
     handle_UpdateConnectionStatus: (msg) -> 
+      @update-connection-status!
+      
+    update-connection-status: -> 
       @send ConnectionStatus: {connected: @connected}
       
     network-rx: (msg) ->
@@ -164,9 +227,12 @@ class ProxyActor
       @send_raw msg
 
     receive: (msg) ->
-      @network-tx msg
+      @network-tx-raw msg
 
-    network-tx: (msg) ->
+    network-tx: (msg) -> 
+      @network-tx-raw (envelp msg, @get-msg-id!)
+
+    network-tx-raw: (msg) ->
       # receive from inner actors, forward to server
       msg.sender ++= [@actor-id]
       msg.token = @token

@@ -10,18 +10,14 @@ RactivePartial! .register ->
     
     elem = $ this
     actor = IoActor elem
-    
-    element-id = actor.actor-id
-    console.log "göstergeler test" + element-id
-    actor.set-ractive-var 'actor_id', element-id
-    
+        
     type = actor.get-ractive-var \type
     
     # common parameters
     params = 
       width: 200
       height: 200
-      renderTo: element-id
+      renderTo: actor.actor-id
       glow: true
       highlights: do
         [
@@ -98,9 +94,6 @@ RactivePartial! .register ->
           minor-ticks : \#ddd
       
 
-      
-
-    
     gauge = new Gauge params
     
     gauge.draw!

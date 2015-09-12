@@ -11,13 +11,21 @@ require! {
     get-ractive-var, 
     set-ractive-var, 
     RactiveApp,
+    get-keypath,
   }
 }
 
 
 class SwitchActor extends Actor
   (pin-name)~>
-    super!
+    super pin-name 
+    
+    if pin-name
+      @subscriptions = 
+        * \IoMessage.pin_name. + pin-name
+        * \ConnectionStatus
+      
+    @register!
     @callback-functions = []
     @pin-name = String pin-name
     if pin-name
@@ -42,7 +50,7 @@ class SwitchActor extends Actor
   handle_ConnectionStatus: (msg) ->
     # TODO: TEST THIS CIRCULAR REFERENCE IF IT COUSES
     # MEMORY LEAK OR NOT
-    @connected = get-msg-body msg .connected
+    @connected = (get-msg-body msg).connected
     #console.log "connection status changed: ", @connected
     @refresh-connected-variable! 
     
@@ -59,7 +67,6 @@ class SwitchActor extends Actor
     @node = node
     @set-ractive-var = set-ractive-var node 
     @get-ractive-var = get-ractive-var node
-    @send UpdateConnectionStatus: {}
 
   fire-callbacks: (msg) ->
     #console.log "fire-callbacks called!", msg
@@ -76,30 +83,36 @@ class SwitchActor extends Actor
       pin_name: @pin-name
       val: val
       
+  get-keypath: ->
+    get-keypath @node 
+      
+      
 class IoActor extends SwitchActor
   (jq-node)~>
     saved-actor = jq-node.data \actor
     if saved-actor
       #console.log "this actor created before? because current actor-id: ", saved-actor.actor-id
       return saved-actor
-    
     pin-name = get-ractive-var jq-node, 'pin_name'
     super pin-name
     @set-node jq-node
     set-ractive-var jq-node, 'actor_id', @actor-id
     set-ractive-var jq-node, 'debug', false
-    
     # save this actor in node's data-actor attribute for
     # further usages
     jq-node.data \actor, this 
+    
     
 class WidgetActor extends IoActor
   ~>
     super ...
 
+
 class AuthActor extends IoActor
   ~>
     super ...
+    @subscriptions = ['AuthMessage']
+    @register!
     
   send-auth-msg: (secret) ->
     # authentication

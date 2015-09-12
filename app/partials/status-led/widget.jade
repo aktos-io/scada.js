@@ -1,8 +1,8 @@
 include ../../templates/mixins.jade
     
 +partial('status-led')
- div(
-  class="status-led"
+ .status-led.draggable(
+  id="{{ .actor_id }}"
   style="display: inline-block"
   ) 
   label
@@ -11,4 +11,4 @@ include ../../templates/mixins.jade
       alt="{{ .val? 'on' : 'off' }}"
       ondragstart="return false; "
       )      
-    | {{ .pin_name }}
+    | {{ .pin_name }} {{ .wid }}

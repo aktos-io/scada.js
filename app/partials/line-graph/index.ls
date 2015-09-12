@@ -1,9 +1,7 @@
 require! {
   '../../modules/aktos-dcs': {
     RactivePartial,
-    get-ractive-var, 
-    SwitchActor, 
-    set-ractive-var,
+    IoActor, 
   }
 }
   
@@ -27,9 +25,9 @@ require! {
   
 RactivePartial! .register ->
   $ \.line-graph .each ->
-    elem = $ this 
-    pin-name = get-ractive-var  elem, \pin_name 
-    actor = SwitchActor pin-name
+    actor = IoActor $ this 
+    
+    elem = actor.node.find \.line-graph__graph
     
     
     #console.log "this is graph widget: ", elem, actor.actor-name
@@ -48,7 +46,7 @@ RactivePartial! .register ->
     data = []
     total-points = 300 
     
-    y-max = 1000
+    y-max = 100
     y-min = 0 
     
     push-random-data = -> 
@@ -81,7 +79,7 @@ RactivePartial! .register ->
     update-interval = 30 
     
     push-random-data!
-    plot = $.plot '#placeholder', get-graph-data!, do 
+    plot = $.plot ('#' + actor.actor-id), get-graph-data!, do 
       series: 
         shadow-size: 0 
       yaxis: 

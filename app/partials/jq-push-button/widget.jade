@@ -1,8 +1,9 @@
 include ../../templates/mixins.jade
 
 +partial('jq-push-button')
-  button.jq-push-button.ui-focus(
-    style="{{ .connected? '' : 'border: 1px dashed red' }}"
-    type="button"
-    ) 
-    | {{ .label }}
+  .jq-push-button.draggable
+    button.jq-push-button__button.no-shadow(
+      style="{{ .connected? '' : 'border: 1px dashed red' }}"
+      type="button"
+      ) 
+      | {{ .label ? .label : .pin_name }} {{ .wid }}
