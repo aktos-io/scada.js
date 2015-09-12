@@ -143,8 +143,20 @@ handle-auth-message = (msg, socket) ->
   token-msg = envelp token-msg, 0
   token-msg.sender ++= [server-id] 
   socket.emit 'aktos-message', token-msg 
-
+  
+  
 connected-user-count = 0
+
+handle_UpdateIoMessage = (msg, socket) ->   
+  conn-msg = IoMessage: 
+    pin_name: 'online-users'
+    val: connected-user-count
+  conn-msg = envelp conn-msg, 1230
+  conn-msg.sender ++= [server-id] 
+  io.sockets.emit 'aktos-message', conn-msg 
+  console.log "Notifying total user count: #{connected-user-count}", conn-msg
+  
+
 # Forward socket.io messages to and from zeromq messages
 io.on 'connection', (socket) !->
   # for every connected socket.io client, do the following:
@@ -154,27 +166,12 @@ io.on 'connection', (socket) !->
   # track online users
   connected-user-count := connected-user-count + 1
   console.log "Total online user count: #{connected-user-count}"
-
-  conn-msg = IoMessage: 
-    pin_name: 'online-users'
-    val: connected-user-count
-  conn-msg = envelp conn-msg, 0
-  conn-msg.sender ++= [server-id] 
-  socket.broadcast.emit 'aktos-message', conn-msg 
-
-  
   
   socket.on \disconnect, -> 
     connected-user-count := connected-user-count - 1
 
     console.log "Total online user count: #{connected-user-count}"
-    conn-msg = IoMessage: 
-      pin_name: 'online-users'
-      val: connected-user-count
-    conn-msg = envelp conn-msg, 0
-    conn-msg.sender ++= [server-id] 
-    socket.broadcast.emit 'aktos-message', conn-msg 
-
+    handle_UpdateIoMessage {}, socket
 
 
   socket.on "aktos-message", (msg) !->
@@ -184,6 +181,9 @@ io.on 'connection', (socket) !->
       handle-auth-message msg, socket
       
     else
+      if \UpdateIoMessage of msg.payload 
+        handle_UpdateIoMessage msg, socket
+    
       # append server-id to message.sender list
       msg.sender ++= [server-id]
 
