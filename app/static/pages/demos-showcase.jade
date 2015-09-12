@@ -1,6 +1,17 @@
 .panel.panel-primary
   .panel-heading
-    h3.panel-title Grafik 
+    h3.panel-title Scada çizim alanı 
+  .panel-body(style="min-height: 500px; min-width: 100%")
+    .row(style="height: 100%").
+      naber?
+      
+      {{>push-button {pin_name: 'test-pin'} }}
+      {{>status-led {pin_name: 'test-pin'} }}
+
+
+.panel.panel-primary
+  .panel-heading
+    h3.panel-title Bağlı kullanıcı sayısı
   .panel-body
     .row.
       {{>online-users {pin_name: 'online-users'} }}
