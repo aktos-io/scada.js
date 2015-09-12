@@ -6,4 +6,4 @@ include ../../templates/mixins.jade
       style="{{ .connected? '' : 'border: 1px dashed red' }}"
       type="button"
       ) 
-      | {{ .label ? .label : .pin_name }}
+      | {{ .label ? .label : .pin_name }} {{ .wid }}

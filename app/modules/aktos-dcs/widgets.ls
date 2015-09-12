@@ -10,14 +10,11 @@ class RactivePartial
       #super ...
       @widget-inits = []
       @inits-for-document-ready = []
+      @inits-for-dynamic-pos = []
 
     register: (widget-init) ->
       #console.log "new widget registered: ", widget-init
       @widget-inits ++= [widget-init]
-
-    register-for-document-ready: (widget-init) ->
-      #console.log "new widget registered: ", widget-init
-      @inits-for-document-ready ++= [widget-init]
 
     init: ->
       #console.log "initializing ractive partials..."
@@ -27,6 +24,12 @@ class RactivePartial
           func!
         catch 
           console.log "ERROR ON RactivePartial INIT: #e"
+
+
+    register-for-document-ready: (widget-init) ->
+      #console.log "new widget registered: ", widget-init
+      @inits-for-document-ready ++= [widget-init]
+
           
     init-for-document-ready: ->   
       #console.log "initializing ractive partials..."
@@ -36,6 +39,19 @@ class RactivePartial
           func!
         catch 
           console.log "ERROR ON RactivePartial INIT: #e"
+        
+    register-for-dynamic-pos: (widget-init) ->
+      #console.log "new widget registered: ", widget-init
+      @inits-for-dynamic-pos ++= [widget-init]
+
+          
+    init-for-dynamic-pos: (widget-positions) ->   
+      #console.log "initializing ractive partials..."
+      for func in @inits-for-dynamic-pos
+        try
+          func widget-positions
+        catch 
+          console.log "ERROR ON RactivePartial Dynamic Position INIT: #e"
         
 
 get-keypath = (jq-elem) -> 

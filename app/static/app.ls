@@ -7,6 +7,9 @@ require! {
   }
 }
   
+# get scada layouts 
+{widget-positions} = require './scada-layout'
+
 # include widgets' initialize codes 
 require '../partials/ractive-partials'
   
@@ -16,8 +19,6 @@ Ractive.DEBUG = /unminified/.test !-> /*unminified*/
 app = new Ractive do
   el: 'container'
   template: '#app'
-  data: 
-    abc: 123
 
 RactiveApp!set app
 
@@ -39,6 +40,7 @@ app.on 'complete', !->
     console.log "document is ready..."
     RactivePartial! .init-for-document-ready!
         
+    RactivePartial! .init-for-dynamic-pos widget-positions
     # debug 
     /*
     test.send IoMessage:
@@ -100,6 +102,7 @@ app.on 'complete', !->
   set-timeout up2, 2000
     
   */
+  
   ``
   
 
@@ -148,6 +151,7 @@ interact('.draggable')
   window.dragMoveListener = dragMoveListener;
 
   ``
+  
       
       
   

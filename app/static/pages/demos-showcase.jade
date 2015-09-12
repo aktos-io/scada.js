@@ -1,13 +1,15 @@
 .panel.panel-primary
   .panel-heading
     h3.panel-title Scada çizim alanı 
-  .panel-body(style="min-height: 500px; min-width: 100%")
-    .row(style="height: 100%").
+  .panel-body
+    .row(style="min-height: 500px; min-width: 100%").
       naber?
       
-      {{>push-button {pin_name: 'test-pin'} }}
-      {{>status-led {pin_name: 'test-pin'} }}
-
+      {{>push-button {pin_name: 'test-pin-1', wid: 0} }}
+      {{>switch-button {pin_name: 'test-pin-1', wid: 1} }}
+      {{>status-led {pin_name: 'test-pin-1', wid: 2} }}
+      {{>status-led {pin_name: 'test-pin-1', wid: 3} }}
+      {{>push-button {pin_name: 'test-pin-1', wid: 4} }}
 
 .panel.panel-primary
   .panel-heading
