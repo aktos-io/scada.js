@@ -1,11 +1,12 @@
 include ../../templates/mixins.jade
     
 +partial('jq-flipswitch-v2')
-  label
-    select(
-      data-role="slider"
-      data-pin-name="{{ .pin_name }}"
-      )
-      option(value="off") Off
-      option(value="on") On
-    | {{ .wid }}
+  .jq-flipswitch-v2.draggable
+    label
+      select.jq-flipswitch-v2__switch(
+        data-role="slider"
+        data-pin-name="{{ .pin_name }}"
+        )
+        option(value="off") Off
+        option(value="on") On
+      | {{ .wid }}

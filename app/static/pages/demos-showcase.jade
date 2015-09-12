@@ -1,3 +1,4 @@
+| {{>scada-generate-layout {pin_name: 'scada'} }}
 .panel.panel-primary
   .panel-heading
     h3.panel-title Scada çizim alanı 
@@ -9,7 +10,7 @@
       {{>switch-button {pin_name: 'test-pin-1', wid: 1} }}
       {{>status-led {pin_name: 'test-pin-1', wid: 2} }}
       {{>status-led {pin_name: 'test-pin-1', wid: 3} }}
-      {{>push-button {pin_name: 'test-pin-1', wid: 4} }}
+      {{>line-graph {pin_name: 'test-pin-1', wid: 4} }}
 
 .panel.panel-primary
   .panel-heading

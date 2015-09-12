@@ -1,9 +1,8 @@
 include ../../templates/mixins.jade
     
 +partial('status-led')
- div.draggable(
+ .status-led.draggable(
   id="{{ .actor_id }}"
-  class="status-led"
   style="display: inline-block"
   ) 
   label
