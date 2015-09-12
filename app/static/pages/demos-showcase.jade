@@ -1,3 +1,15 @@
+
+.panel.panel-primary
+  .panel-heading
+    h3.panel-title Grafik 
+  .panel-body
+    .row.
+      {{>line-graph {pin_name: 'line-graph-1'} }}
+      {{>slider {pin_name: 'line-graph-1'} }}
+    .row.
+      {{>line-graph {pin_name: 'line-graph-2'} }}
+      {{>slider {pin_name: 'line-graph-2'} }}
+
 .panel.panel-primary
   .panel-heading
     h3.panel-title Basit göstergeler 
@@ -314,7 +326,7 @@ div(data-role="collapsible")
   h3 Graph
   .ui-grid-a(style='height: 300px')
     .ui-block-a(style='height: 100%')
-      | {{>line-graph {pin_name: 'slider-2'} }}
+      | {{>line-graph {pin_name: 'line-graph-1'} }}
     .ui-block-b
       | {{>slider {pin_name:"slider-2", val: 25} }}
       
