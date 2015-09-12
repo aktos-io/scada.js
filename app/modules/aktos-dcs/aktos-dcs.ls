@@ -28,6 +28,7 @@ envelp = (msg, msg-id) ->
     timestamp: Date.now! / 1000
     msg_id: msg-id  # {{.actor_id}}.{{serial}}
     payload: msg
+    token: ''
 
 get-msg-body = (msg) ->
   subject = [subj for subj of msg.payload][0]
@@ -79,12 +80,11 @@ class ActorManager
           catch
             @subs-min-list[topic] = [actor]
         
-        if \AuthMessage in subs 
-          console.log "actor subscribed with following topics: ", subs
+        #console.log "actor subscribed with following topics: ", subs
         #console.log "actors subscribed so far: ", @subs-min-list
       catch
         @actor-list = @actor-list ++ [actor]
-        console.log "actor subscribed all topics"
+        #console.log "actor subscribed all topics"
 
     inbox-put: (msg) ->
       @distribute-msg msg
@@ -96,22 +96,30 @@ class ActorManager
         if actor.actor-id not in msg.sender
           #console.log "forwarding msg: ", msg
           actor.recv msg
-      console.log "forwarded msg count: all: #{@actor-list.length}"
-      
-      # distribute subscribed messages 
-      for msg-topic in keys msg.payload
-      
-        # TODO: do this automatically, this is a workaround!
-        if msg-topic is \IoMessage
-          msg-topic = join \. [msg-topic, \pin_name, (get-msg-body msg).pin_name]
+      #console.log "forwarded msg count: all: #{@actor-list.length}"
+    
+      # distribute subscribed messages
+      for msg-subject in keys msg.payload
+          msg-topic = msg-subject 
+          try
+            # TODO: do this automatically, this is a workaround!
+            if msg-subject is \IoMessage
+              #console.log "ActorManager: Special message: IoMessage! msg: ", msg
+              msg-topic = join \. [msg-subject, \pin_name, (get-msg-body msg).pin_name]
+          catch 
+            console.log "problem in creating msg-topic: ", msg
 
-        #console.log "actors will get message: ", @subs-min-list[msg-topic]
-        for actor in @subs-min-list[msg-topic]
-          #console.log "actor will get msg: ", actor
-          actor.recv msg
-        
-        console.log "forwarded msg count: Subsc: #{@subs-min-list[msg-topic].length}"
-      
+          if @subs-min-list[msg-topic]?
+
+            try
+              #console.log "actors will get message: topic: #{msg-topic} ", @subs-min-list[msg-topic]
+              for actor in @subs-min-list[msg-topic]
+                #console.log "actor will get msg: ", actor
+                actor.recv msg
+            catch
+              console.log "Error forwarding message: ", actor, msg
+            
+            #console.log "forwarded msg count: Subsc: #{@subs-min-list[msg-topic].length}"
       
 class Actor extends ActorBase
   (name) ~>
@@ -137,8 +145,11 @@ class Actor extends ActorBase
     @mgr.register this, @subscriptions 
     
   send: (msg) ->
-    msg = envelp msg, @get-msg-id!
-    @send_raw msg
+    try
+      msg-env = envelp msg, @get-msg-id!
+      @send_raw msg-env
+    catch
+      console.log "Error: Actor: sending message failed. msg: ", msg, "enveloped: ", msg-env
 
   send_raw: (msg_raw) ->
     msg_raw.sender ++= [@actor-id]

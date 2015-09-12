@@ -19,9 +19,11 @@ require! {
 class SwitchActor extends Actor
   (pin-name)~>
     super pin-name 
-    @subscriptions = 
-      * \IoMessage.pin_name. + pin-name
-      * \ConnectionStatus
+    
+    if pin-name
+      @subscriptions = 
+        * \IoMessage.pin_name. + pin-name
+        * \ConnectionStatus
       
     @register!
     @callback-functions = []
