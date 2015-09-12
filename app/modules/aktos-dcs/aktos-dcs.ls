@@ -223,7 +223,7 @@ class ProxyActor
     network-rx: (msg) ->
       # receive from server via socket.io
       # forward message to inner actors
-      console.log "proxy actor got network message: ", msg
+      #console.log "proxy actor got network message: ", msg
       @send_raw msg
 
     receive: (msg) ->
