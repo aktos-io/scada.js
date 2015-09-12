@@ -5,7 +5,7 @@ include ../../templates/mixins.jade
     <input 
       type="text" 
       class="b-slider__input span2" 
-      value="{{ .val }}" 
+      value="{{ .val ? .val : '---' }}" 
       data-slider-min="-20" 
       data-slider-max="20" 
       data-slider-step="1" 

@@ -1,0 +1,11 @@
+include ../../templates/mixins.jade
+
++partial('jq-checkbox')
+  .jq-checkbox 
+    label
+      input.jq-checkbox__input(
+        type="checkbox"
+        style="display: none"
+        )
+      | {{ .label }}
+ 
