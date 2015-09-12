@@ -1,0 +1,6 @@
+include ../../templates/mixins.jade
+    
++partial('online-users')
+  span.online-users.
+    Online users: {{ .val ? .val : '---' }}
+  

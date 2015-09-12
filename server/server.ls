@@ -144,13 +144,38 @@ handle-auth-message = (msg, socket) ->
   token-msg.sender ++= [server-id] 
   socket.emit 'aktos-message', token-msg 
 
+connected-user-count = 0
 # Forward socket.io messages to and from zeromq messages
 io.on 'connection', (socket) !->
   # for every connected socket.io client, do the following:
   console.log "new client connected, starting its forwarder..."
   console.log "+--> Connected to server with id: ", socket.id
 
+  # track online users
+  connected-user-count := connected-user-count + 1
+  console.log "Total online user count: #{connected-user-count}"
+
+  conn-msg = IoMessage: 
+    pin_name: 'online-users'
+    val: connected-user-count
+  conn-msg = envelp conn-msg, 0
+  conn-msg.sender ++= [server-id] 
+  socket.broadcast.emit 'aktos-message', conn-msg 
+
   
+  
+  socket.on \disconnect, -> 
+    connected-user-count := connected-user-count - 1
+
+    console.log "Total online user count: #{connected-user-count}"
+    conn-msg = IoMessage: 
+      pin_name: 'online-users'
+      val: connected-user-count
+    conn-msg = envelp conn-msg, 0
+    conn-msg.sender ++= [server-id] 
+    socket.broadcast.emit 'aktos-message', conn-msg 
+
+
 
   socket.on "aktos-message", (msg) !->
     #console.log "aktos-message from browser: ", msg
@@ -167,6 +192,8 @@ io.on 'connection', (socket) !->
 
       # send to other processes via zeromq
       pub-sock.send pack msg
+
+
 
 sub-sock.on 'message', (message) !->
   #console.log "aktos message from network ", message.to-string![\msg_id]

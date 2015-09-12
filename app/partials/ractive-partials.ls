@@ -27,6 +27,8 @@ require './login'
 # n
 require './numeric-keyboard'
 
+require './online-users'
+
 # p
 require './push-button'
 
