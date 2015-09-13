@@ -13,6 +13,9 @@ RactivePartial! .register-for-document-ready ->
     #console.log "this slider actor found: ", actor 
     #debugger 
     
+    if (actor.get-ractive-var \wid)? 
+      actor.node.add-class \draggable 
+    
     slider = elem.find \.jq-slider__container 
     slider.slider!
     #console.log "slider created!", slider

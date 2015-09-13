@@ -29,6 +29,9 @@ RactivePartial! .register ->
     
     elem = actor.node.find \.line-graph__graph
     
+    if (actor.get-ractive-var \wid)? 
+      actor.node.add-class \draggable 
+    
     
     #console.log "this is graph widget: ", elem, actor.actor-name
     

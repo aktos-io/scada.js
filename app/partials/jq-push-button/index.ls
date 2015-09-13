@@ -11,6 +11,10 @@ RactivePartial! .register-for-document-ready ->
     #console.log "found push-button!"
     actor = IoActor $ this
     elem = actor.node.find \.jq-push-button__button
+    
+    if (actor.get-ractive-var \wid)? 
+      actor.node.add-class \draggable 
+    
 
     # desktop support
     elem.on 'mousedown' ->

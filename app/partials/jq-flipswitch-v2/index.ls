@@ -12,6 +12,10 @@ RactivePartial! .register-for-document-ready ->
 
     elem = actor.node.find \.jq-flipswitch-v2__switch
     
+    if (actor.get-ractive-var \wid)? 
+      actor.node.add-class \draggable 
+
+    
     send-gui-event = (event) -> 
       #console.log "jq-flipswitch-2 sending msg: ", elem.val!        
       actor.gui-event (elem.val! == \on)
