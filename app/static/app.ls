@@ -118,7 +118,7 @@ app.on 'complete', !->
   interact \.draggable .draggable do
     inertia: true
     restrict: 
-      restriction: \parent 
+      restriction: \.scada-drawing-area
       end-only: true
       element-rect: {top: 0, left: 0, bottom: 1, right: 1}
       
@@ -127,6 +127,24 @@ app.on 'complete', !->
       console.log "moved: x: #{event.dx} y: #{event.dy}"
       
   window.drag-move-listener = drag-move-listener
+
+
+RactivePartial! .register-for-document-ready ->   
+  # lock scada
+  lock = SwitchActor \lock-scada
+  
+  lock.add-callback (msg) -> 
+    if msg.val is true 
+      $ \.draggable .each -> 
+        $ this .remove-class \draggable 
+        $ this .add-class \draggable-locked
+    else
+      $ \.draggable-locked .each -> 
+        $ this .remove-class \draggable-locked 
+        $ this .add-class \draggable
+    
+  # lock scada externally 
+  #SwitchActor \lock-scada .gui-event on
   
   
 # TODO: remove this

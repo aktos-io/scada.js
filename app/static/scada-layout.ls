@@ -1,16 +1,20 @@
 widget-positions = 
-  * wid: 0
-    x: 17
-    y: 50
   * wid: 1
-    x: 311
-    y: 286
+    x: 540
+    y: 72
   * wid: 2
-    x: 39
-    y: 225
-  * wid: 3
     x: 583
-    y: 234
+    y: 89
+  * wid: 3
+    x: 94
+    y: 42
+  * wid: 4
+    x: 216
+    y: -62
+  * wid: 5
+    x: 827
+    y: -311
+
     
 module.exports = {
   widget-positions, 

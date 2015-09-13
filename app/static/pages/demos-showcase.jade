@@ -1,15 +1,28 @@
-| {{>scada-generate-layout {pin_name: 'scada'} }}
+
+
 .panel.panel-primary
   .panel-heading
-    h3.panel-title Scada çizim alanı 
-  .panel-body
-    .row(style="min-height: 500px; min-width: 100%").      
-      {{>push-button {pin_name: 'test-pin-1', wid: 0} }}
-      {{>switch-button {pin_name: 'test-pin-1', wid: 1} }}
-      {{>status-led {pin_name: 'test-pin-1', wid: 2} }}
-      {{>status-led {pin_name: 'test-pin-1', wid: 3} }}
-      {{>line-graph {pin_name: 'test-pin-1', wid: 4} }}
+    h2.panel-title Scada çizim alanı 
+  
+    .row
+      .col-sm-3.
+        {{>scada-generate-layout {pin_name: 'scada'} }}
+      .col-sm-5.
+        {{>jq-checkbox {pin_name: 'lock-scada', label: 'Kilitli (Locked)'} }}
+  
+  .panel-body        
+    .row.scada-drawing-area(style="min-height: 500px; min-width: 100%").      
+      {{>push-button {pin_name: 'scada-test-pin-1', wid: 1} }}
+      {{>status-led {pin_name: 'scada-test-pin-1', wid: 2} }}
 
+      {{>switch-button {pin_name: 'scada-test-pin-2', wid: 3} }}
+      {{>status-led {pin_name: 'scada-test-pin-2', wid: 4} }}
+      
+      {{>line-graph {pin_name: 'scada-test-pin-3', wid: 5} }}
+      
+      <div style="max-width: 300px">
+        {{>slider {pin_name: 'scada-test-pin-3', wid: 6} }}
+      </div>
 .panel.panel-primary
   .panel-heading
     h3.panel-title Bağlı kullanıcı sayısı
