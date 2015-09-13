@@ -103,6 +103,18 @@ app.on 'complete', !->
     
   */
   
+  drag-move-listener = (event) -> 
+    target = event.target
+    x = ((parse-float target.get-attribute \data-x) or 0) + event.dx
+    y = ((parse-float target.get-attribute \data-y) or 0) + event.dy
+    
+    a = 'translate(' + x + 'px, ' + y + 'px)'
+    target.style.webkit-transform = a
+    target.style.transform = a
+    
+    target.set-attribute \data-x, x 
+    target.set-attribute \data-y, y
+  
   interact \.draggable .draggable do
     inertia: true
     restrict: 
@@ -114,19 +126,8 @@ app.on 'complete', !->
     onend: (event) -> 
       console.log "moved: x: #{event.dx} y: #{event.dy}"
       
-  drag-move-listener = (event) -> 
-    target = event.target
-    x = ((parse-float target.get-attribute \data-x) or 0) + event.dx
-    y = ((parse-float target.get-attribute \data-y) or 0) + event.dy
-    
-    a = 'translate(' + x + 'px, ' + y 'px)'
-    target.style.webkit-transform = a
-    target.style.transform = a
-    
-    target.set-attribute \data-x, x 
-    target.set-attribute \data-y, y
-    
   window.drag-move-listener = drag-move-listener
+  
   
 # TODO: remove this
 # workaround for seamless page refresh
