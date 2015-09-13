@@ -1,0 +1,8 @@
+.draggable {
+  border: 1px dashed yellowgreen; 
+  box-sizing: border-box;
+}
+
+.draggable-locked {
+  border: 1px solid transparent; 
+}

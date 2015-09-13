@@ -116,6 +116,14 @@ app.on 'complete', !->
     target.set-attribute \data-y, y
   
   interact \.draggable .draggable do
+    snap: 
+      targets: 
+        * interact.createSnapGrid({ x: 5, y: 5 })
+        ...
+      range: Infinity,
+      relativePoints: 
+        * { x: 0, y: 0 } 
+        ...
     inertia: true
     restrict: 
       restriction: \.scada-drawing-area
@@ -125,9 +133,9 @@ app.on 'complete', !->
     onmove: drag-move-listener
     onend: (event) -> 
       console.log "moved: x: #{event.dx} y: #{event.dy}"
-      
-  window.drag-move-listener = drag-move-listener
-
+    
+  #.resizable edges: { left: yes, right: yes, bottom: yes, top: yes }
+  
 
 RactivePartial! .register-for-document-ready ->   
   # lock scada
