@@ -32,6 +32,8 @@ RactivePartial! .register ->
           layout := layout + "    y: #y" + \\n
       
       console.log "Layout: " + \\n + layout 
+      
+      $ '#layout-output-area' .html layout
           
           
         

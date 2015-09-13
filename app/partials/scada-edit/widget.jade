@@ -2,5 +2,13 @@ include ../../templates/mixins.jade
 
 +partial('scada-generate-layout')
   .scada-generate-layout
-    button(type=button) Generate Layout!
+    a(href="#layout-output", data-rel="popup") 
+      button(type=button) Generate Layout!
     
+    .ui-corner-all.ui-popup.ui-body-a.ui-overlay-shadow(
+      data-role="popup" 
+      id="layout-output" 
+      data-theme="b" 
+      )        
+        h3 Generated layout 
+        textarea(id="layout-output-area")
