@@ -1,4 +1,10 @@
 .jq-flipswitch-v2 {
-  /*max-width: 200px; 
-   */
+  width: auto; 
+  height: auto; 
+}
+
+.jq-flipswitch-v2__switch {
+  width: 100%; 
+  height: 100%;
+  margin: 0; 
 }

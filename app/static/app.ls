@@ -118,7 +118,7 @@ app.on 'complete', !->
   interact \.draggable .draggable do
     snap: 
       targets: 
-        * interact.createSnapGrid({ x: 5, y: 5 })
+        * interact.createSnapGrid({ x: 10, y: 10 })
         ...
       range: Infinity,
       relativePoints: 
