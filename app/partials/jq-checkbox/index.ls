@@ -7,10 +7,12 @@ require! {
   
 RactivePartial! .register ->
   $ '.jq-checkbox' .each !->
-    elem = $ this
-    actor = IoActor elem
+    actor = IoActor $ this 
     
-    input = elem.find \.jq-checkbox__input
+    if (actor.get-ractive-var \wid)? 
+      actor.node.add-class \draggable 
+
+    input = actor.node.find \.jq-checkbox__input
 
     input.change ->
       state = input.is \:checked

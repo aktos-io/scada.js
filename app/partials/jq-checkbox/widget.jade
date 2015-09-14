@@ -1,11 +1,11 @@
 include ../../templates/mixins.jade
 
 +partial('jq-checkbox')
-  .jq-checkbox 
-    label
+  .jq-checkbox
+    label(style="{{ .connected? '' : 'border: 1px dashed red' }}")
       input.jq-checkbox__input(
         type="checkbox"
-        style="display: none"
+        style="display: none;"
         )
-      | {{ .label }}
+      | {{ .label ? .label : .pin_name }}
  

@@ -11,9 +11,10 @@
   .panel-body        
     .row.scada-drawing-area(style="min-height: 500px; min-width: 100%").      
       {{>push-button {pin_name: 'scada-test-pin-1', wid: 1} }}
+      {{>push-button {pin_name: 'test-pin', wid: 7} }}
       {{>status-led {pin_name: 'scada-test-pin-1', wid: 2} }}
 
-      {{>switch-button {pin_name: 'scada-test-pin-2', wid: 3} }}
+      {{>jq-checkbox {pin_name: 'scada-test-pin-2', wid: 3} }}
       {{>status-led {pin_name: 'scada-test-pin-2', wid: 4} }}
       
       {{>line-graph {pin_name: 'scada-test-pin-3', wid: 5} }}
