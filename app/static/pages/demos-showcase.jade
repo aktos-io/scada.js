@@ -1,4 +1,6 @@
-
+.draggable(
+  style="width: 100px; height: 100px"
+  ) naber 
 
 .panel.panel-primary
   .panel-heading
@@ -128,8 +130,8 @@
           {{>slider {pin_name: "spinbox-test"} }}
 
       .row.
-        {{>seven-segment {pin_name: 'gauge-slider',  format: '##'}}}
-        {{>seven-segment {pin_name: 'gauge-slider',  format: '#######.##'}}}
+        {{>seven-segment {pin_name: 'gauge-slider', val: 1.6,  format: '##'}}}
+        {{>seven-segment {pin_name: 'gauge-slider', val: 123.45, format: '#######.##'}}}
         {{>seven-segment {pin_name: 'gauge-slider',  format: '####.#'}}}
         {{>seven-segment {pin_name: 'gauge-slider',  format: '##.###'}}}
         {{>slider {pin_name: 'gauge-slider',  val: 45} }}
@@ -224,23 +226,23 @@
     h3.panel-title SevenSegment
   .panel-body
     .row.
-      {{>seven-segment {pin_name: 'segment-slider', type: 'classic', format: '##'}}}
-      {{>seven-segment {pin_name: 'segment-slider', type: 'multimeter', format: '#######.##'}}}
-      {{>seven-segment {pin_name: 'segment-slider', type: 'speed', format: '####.#'}}}
-      {{>seven-segment {pin_name: 'segment-slider', type: 'basic', format: '##.###'}}}
-      {{>slider {pin_name:"segment-slider", val: 45} }}
+        {{>seven-segment {pin_name: 'gauge-slider', val: 1.6,  format: '##'}}}
+        {{>seven-segment {pin_name: 'gauge-slider', val: 123.45, format: '#######.##', type: 'multimeter'}}}
+        {{>seven-segment {pin_name: 'gauge-slider',  format: '####.#'}}}
+        {{>seven-segment {pin_name: 'gauge-slider',  format: '##.###'}}}
+        {{>slider {pin_name: 'gauge-slider',  val: 45} }}
 
 .panel.panel-primary
   .panel-heading
     h3.panel-title Circular-Progress
   .panel-body
     .row
-      .col-md-2.
+      .col-sm-4.
         {{>circular-progress {pin_name: 'progress-slider'} }}
-      .col-md-2.
-        {{>circular-progress {pin_name: 'progress-slider',color: 'yellowgreen green'} }}
-      .col-md-2.  
-        {{>circular-progress {pin_name: 'progress-slider', color: 'white orange'} }}
+      .col-sm-4.
+        {{>circular-progress {pin_name: 'progress-slider',color: 'yellowgreen green', format: '### °C'} }}
+      .col-sm-4.  
+        {{>circular-progress {pin_name: 'progress-slider', color: 'white orange', format: '### A'} }}
     .row.
       {{>slider {pin_name:"progress-slider", val: 45} }}
 

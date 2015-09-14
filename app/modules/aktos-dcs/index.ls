@@ -25,8 +25,17 @@ require! {
   }
 }
   
+require! {
+  './formatter': {
+    formatter
+  }
+}
+  
+  
+  
 module.exports = {
   envelp, get-msg-body, Actor, ProxyActor, 
   RactivePartial, get-ractive-var, set-ractive-var, RactiveApp, 
   SwitchActor, WidgetActor, IoActor, AuthActor, 
+  formatter,
 }
