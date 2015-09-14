@@ -1,0 +1,16 @@
+include ../../templates/mixins.jade
+
++partial('scada-generate-layout')
+  .scada-generate-layout
+    a(href="#layout-output", data-rel="popup") 
+      button(type=button) Generate Layout!
+    
+    .ui-corner-all.ui-popup.ui-body-a.ui-overlay-shadow(
+      data-role="popup" 
+      id="layout-output" 
+      data-theme="b" 
+      )        
+        h3 Generated layout 
+        :md
+          [--> scada-layout.ls](https://github.com/ceremcem/aktos-website/blob/master/app/static/scada-layout.ls)
+        textarea(id="layout-output-area")

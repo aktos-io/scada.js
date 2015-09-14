@@ -5,10 +5,15 @@ require! {
   }
 }
   
+  
 RactivePartial! .register ->
   $ '.status-led' .each ->
-    elem = $ this
-    actor = IoActor elem
+    actor = IoActor $ this 
+    
+    if (actor.get-ractive-var \wid)? 
+      actor.node.add-class \draggable     
+    
     actor.add-callback (msg) ->
       #console.log "status led: ", actor.pin-name, msg.val
       actor.set-ractive-var 'val', msg.val
+

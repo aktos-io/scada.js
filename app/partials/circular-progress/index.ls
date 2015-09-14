@@ -2,7 +2,7 @@ require! {
   '../../modules/aktos-dcs': {
     RactivePartial,
     IoActor,
-    
+    formatter,
   }
 }
 
@@ -17,18 +17,33 @@ require! {
 */
 
 RactivePartial! .register ->
-  console.log "Circular-Progress"
   $ \.circular-progress .each ->
     
     actor = IoActor $ this
     elem = actor.node
     color = actor.get-ractive-var \color
 
+    format = (actor.get-ractive-var 'format') ? '% ###'
+    widget-formatter = formatter format
+    
+
+    val = actor.get-ractive-var \val
+    display-format = widget-formatter val
+    
+    cp-value = (input) -> 
+      if input/1
+        input/100
+      else
+        0
+
+    actor.set-ractive-var \val, display-format.value
+    actor.set-ractive-var \unit, display-format.unit
+      
     params =
-      value: 0.35
-      size: 100
+      value: cp-value val 
+      size: 120
       animation: false
-      thickness: 10
+      thickness: 12
         
     if not color or color is ''
       color = '#ff1e41 #ff5f43'
@@ -38,32 +53,12 @@ RactivePartial! .register ->
     params = $.extend params, do
       fill: gradient: colors
   
-    
     elem.circle-progress params
     
     actor.add-callback (msg) ->
-      elem.circle-progress \value, (msg.val / 100)
-      actor.set-ractive-var \val, msg.val
+      val = widget-formatter msg.val .value
+      elem.circle-progress \value, cp-value val
+      actor.set-ractive-var \val, val
 
-/*  
-  $ \.circle1 .circle-progress do       
-    value: 0.35
-    size: 80
-    animation: false
-    fill: do
-      gradient: ['#ff1e41', '#ff5f43']
-  
-  $ \.circle2 .circle-progress do
-    value: 0.6
-  .on 'circle-animation-progress', (event, progress) ->
-    $ this .find \strong .html parse-int(100 * progress) + '<i>%</i>'
-  
-  
-  $ \.circle3 .circle-progress do
-    value: 0.75
-    fill: do
-      gradient: [['#0681c4', 0.5], ['#4ac5f8', 0.5]]
-      gradientAngle: Math.PI / 4
-  .on 'circle-animation-progress', (event, progress, step-value) ->
-    $ this .find \strong .text String(step-value.toFixed(2)).substr 1  
-  */
+
+          

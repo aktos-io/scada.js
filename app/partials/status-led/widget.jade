@@ -1,8 +1,8 @@
 include ../../templates/mixins.jade
     
 +partial('status-led')
- div(
-  class="status-led"
+ .status-led(
+  id="{{ .actor_id }}"
   style="display: inline-block"
   ) 
   label

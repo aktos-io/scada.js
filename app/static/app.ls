@@ -7,6 +7,9 @@ require! {
   }
 }
   
+# get scada layouts 
+{widget-positions} = require './scada-layout'
+
 # include widgets' initialize codes 
 require '../partials/ractive-partials'
   
@@ -16,8 +19,6 @@ Ractive.DEBUG = /unminified/.test !-> /*unminified*/
 app = new Ractive do
   el: 'container'
   template: '#app'
-  data: 
-    abc: 123
 
 RactiveApp!set app
 
@@ -39,6 +40,7 @@ app.on 'complete', !->
     console.log "document is ready..."
     RactivePartial! .init-for-document-ready!
         
+    RactivePartial! .init-for-dynamic-pos widget-positions
     # debug 
     /*
     test.send IoMessage:
@@ -100,8 +102,83 @@ app.on 'complete', !->
   set-timeout up2, 2000
     
   */
+  
+  drag-move-listener = (event) -> 
+    target = event.target
+    x = ((parse-float target.get-attribute \data-x) or 0) + event.dx
+    y = ((parse-float target.get-attribute \data-y) or 0) + event.dy
+    
+    a = 'translate(' + x + 'px, ' + y + 'px)'
+    target.style.webkit-transform = a
+    target.style.transform = a
+
+    target.set-attribute \data-x, x 
+    target.set-attribute \data-y, y
+  
+  interact \.draggable .draggable do
+    snap: 
+      targets: 
+        * interact.createSnapGrid({ x: 10, y: 10 })
+        ...
+      range: Infinity,
+      relativePoints: 
+        * { x: 0, y: 0 } 
+        ...
+    inertia: true
+    restrict: 
+      restriction: \.scada-drawing-area
+      end-only: true
+      element-rect: {top: 0, left: 0, bottom: 1, right: 1}
       
-      
+    onmove: drag-move-listener
+    onend: (event) -> 
+      console.log "moved: x: #{event.dx} y: #{event.dy}"
+    
+  .resizable edges: { left: no, right: yes, bottom: yes, top: no }
+  .on \resizemove, (event) -> 
+    target = event.target
+    x = ((parse-float target.get-attribute \data-x) or 0) + event.dx
+    y = ((parse-float target.get-attribute \data-y) or 0) + event.dy
+    
+    # update the element's style
+    target.style.width  = event.rect.width + 'px'
+    target.style.height = event.rect.height + 'px'
+  
+    
+    
+    # translate when resizing from top or left edges
+    x += event.deltaRect.left
+    y += event.deltaRect.top
+    
+    console.log "event.delta-rect: ", event.deltaRect.left, event.delta-rect.right
+    
+    a = 'translate(' + x + 'px, ' + y + 'px)'
+    target.style.webkit-transform = a
+    target.style.transform = a
+    
+    #target.set-attribute \data-x, x 
+    #target.set-attribute \data-y, y
+    
+    console.log "resized: ", event.rect.width + '×' + event.rect.height
+  
+
+RactivePartial! .register-for-document-ready ->   
+  # lock scada
+  lock = SwitchActor \lock-scada
+  
+  lock.add-callback (msg) -> 
+    if msg.val is true 
+      $ \.draggable .each -> 
+        $ this .remove-class \draggable 
+        $ this .add-class \draggable-locked
+    else
+      $ \.draggable-locked .each -> 
+        $ this .remove-class \draggable-locked 
+        $ this .add-class \draggable
+    
+  # lock scada externally 
+  #SwitchActor \lock-scada .gui-event on
+  
   
 # TODO: remove this
 # workaround for seamless page refresh

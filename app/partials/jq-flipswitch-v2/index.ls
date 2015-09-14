@@ -6,11 +6,16 @@ require! {
 }
 
 RactivePartial! .register-for-document-ready ->
-  $ \.switch-button .each ->
+  $ \.jq-flipswitch-v2 .each ->
     #console.log "switch-button created"
-    elem = $ this
-    actor = IoActor elem
+    actor = IoActor $ this 
 
+    elem = actor.node.find \.jq-flipswitch-v2__switch
+    
+    if (actor.get-ractive-var \wid)? 
+      actor.node.add-class \draggable 
+
+    
     send-gui-event = (event) -> 
       #console.log "jq-flipswitch-2 sending msg: ", elem.val!        
       actor.gui-event (elem.val! == \on)

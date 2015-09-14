@@ -1,0 +1,17 @@
+.draggable {
+  border: 1px dashed yellowgreen; 
+  box-sizing: border-box;
+  position: absolute; 
+  top: 0; 
+  left: 0;
+  overflow: hidden; 
+  
+}
+
+.draggable-locked {
+  border: 1px solid transparent; 
+  position: absolute; 
+  top: 0; 
+  left: 0;
+  overflow: hidden; 
+}
