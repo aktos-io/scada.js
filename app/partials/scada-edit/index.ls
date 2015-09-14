@@ -27,17 +27,19 @@ RactivePartial! .register ->
         wid = $ this .attr \data-wid 
         
         if wid?
-          x = $ this .attr \data-x 
-          y = $ this .attr \data-y
+          x = $ this .attr \data-x or 0 
+          y = $ this .attr \data-y or 0 
           
-          x = if x? then x else 0 
-          y = if y? then y else 0 
+          w = $ this .css \width 
+          h = $ this .css \height
           
-          console.log "widget found: #wid, #x, #y", $ this 
+          console.log "widget found: #wid, #x, #y, #w, #h", $ this 
           
           layout := layout + "  * wid: #wid" + \\n
           layout := layout + "    x: #x" + \\n
           layout := layout + "    y: #y" + \\n
+          layout := layout + "    w: #w" + \\n
+          layout := layout + "    h: #h" + \\n
       
       console.log "Layout: " + \\n + layout 
       
@@ -65,6 +67,12 @@ RactivePartial! .register-for-dynamic-pos (wpos) ->
           # set data-* attributes
           widget.attr \data-x, x 
           widget.attr \data-y, y 
+          
+          [width, height] = [db.0.w, db.0.h] 
+          widget.css \width, width
+          widget.css \height, height
+
+
         else
           console.log "status-led: no matching widget position found for wid: #wid", db 
         
