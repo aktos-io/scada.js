@@ -134,7 +134,7 @@ app.on 'complete', !->
     onend: (event) -> 
       console.log "moved: x: #{event.dx} y: #{event.dy}"
     
-  .resizable edges: { left: yes, right: yes, bottom: yes, top: yes }
+  .resizable edges: { left: no, right: yes, bottom: yes, top: no }
   .on \resizemove, (event) -> 
     target = event.target
     x = ((parse-float target.get-attribute \data-x) or 0) + event.dx
@@ -144,6 +144,7 @@ app.on 'complete', !->
     target.style.width  = event.rect.width + 'px'
     target.style.height = event.rect.height + 'px'
   
+    
     
     # translate when resizing from top or left edges
     x += event.deltaRect.left
@@ -157,7 +158,7 @@ app.on 'complete', !->
     
     #target.set-attribute \data-x, x 
     #target.set-attribute \data-y, y
-
+    
     console.log "resized: ", event.rect.width + '×' + event.rect.height
   
 
