@@ -111,7 +111,7 @@ app.on 'complete', !->
     a = 'translate(' + x + 'px, ' + y + 'px)'
     target.style.webkit-transform = a
     target.style.transform = a
-    
+
     target.set-attribute \data-x, x 
     target.set-attribute \data-y, y
   
@@ -134,7 +134,31 @@ app.on 'complete', !->
     onend: (event) -> 
       console.log "moved: x: #{event.dx} y: #{event.dy}"
     
-  #.resizable edges: { left: yes, right: yes, bottom: yes, top: yes }
+  .resizable edges: { left: yes, right: yes, bottom: yes, top: yes }
+  .on \resizemove, (event) -> 
+    target = event.target
+    x = ((parse-float target.get-attribute \data-x) or 0) + event.dx
+    y = ((parse-float target.get-attribute \data-y) or 0) + event.dy
+    
+    # update the element's style
+    target.style.width  = event.rect.width + 'px'
+    target.style.height = event.rect.height + 'px'
+  
+    
+    # translate when resizing from top or left edges
+    x += event.deltaRect.left
+    y += event.deltaRect.top
+    
+    console.log "event.delta-rect: ", event.deltaRect.left, event.delta-rect.right
+    
+    a = 'translate(' + x + 'px, ' + y + 'px)'
+    target.style.webkit-transform = a
+    target.style.transform = a
+    
+    #target.set-attribute \data-x, x 
+    #target.set-attribute \data-y, y
+
+    console.log "resized: ", event.rect.width + '×' + event.rect.height
   
 
 RactivePartial! .register-for-document-ready ->   
