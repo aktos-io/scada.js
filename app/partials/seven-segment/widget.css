@@ -1,5 +1,9 @@
-.seven-segment
-  {
-    margin: 0.25em;
-    border: 3px inset black; 
-  }
+.seven-segment {
+  padding: 0; 
+  margin: 0.25em;
+}
+.seven-segment__display
+{
+  border: 3px inset black; 
+}
+

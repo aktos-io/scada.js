@@ -5,5 +5,7 @@ include ../../templates/mixins.jade
     button.jq-push-button__button.no-shadow(
       style="{{ .connected? '' : 'border: 1px dashed red' }}"
       type="button"
+      data-icon="{{ .icon }}"
+      data-iconpos="{{ .iconpos }}"
       ) 
       | {{ .label ? .label : .pin_name }}

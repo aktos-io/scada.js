@@ -10,11 +10,15 @@ RactivePartial! .register ->
   $ \.seven-segment .each ->
     actor = IoActor $ this
     
-    display = actor.node
+    display = actor.node.find \.seven-segment__display
     
     format = actor.get-ractive-var 'format'
     if not format?
       format = "###"
+      
+    if (actor.get-ractive-var \wid)? 
+      actor.node.add-class \draggable 
+
       
     widget-formatter = formatter format
     display-format = widget-formatter actor.get-ractive-var \val
@@ -27,8 +31,8 @@ RactivePartial! .register ->
     
     height = 50px
     width = height * 0.75 * params.digits
-    display.css \width, width
-    display.css \height, height
+    actor.node.css \width, width
+    actor.node.css \height, height
     #console.log "height: #height setting width: #width"
       
     type = actor.get-ractive-var 'type'
