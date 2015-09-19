@@ -32,7 +32,7 @@ broker-ip = '127.0.0.1'
 #broker-ip = '10.0.10.176'
 
 # make zmq settings BEFORE connect/bind:
-pub-sock.setsockopt zmq.ZMQ_SNDHWM, 1
+pub-sock.setsockopt zmq.ZMQ_SNDHWM, 0  # this change is for issue #20
 pub-sock.setsockopt zmq.ZMQ_LINGER, 0
 
 sub-sock.subscribe ''  # subscribe all messages
