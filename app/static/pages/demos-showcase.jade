@@ -21,7 +21,7 @@
       {{>seven-segment {pin_name: '28D026DF05000010', wid: 20, format: '##.### °C'} }}
       {{>seven-segment {pin_name: '284980DF05000098', wid: 21, format: '##.### °C'} }}
       {{>seven-segment {pin_name: '28EA46DE050000AC', wid: 22, format: '##.### °C'} }}
-
+      {{>status-led {pin_name: '28FFAEDE050000F8', wid: 23} }}
   
 
 .panel.panel-primary.scada-drawing-area
@@ -280,4 +280,3 @@
       fieldset(data-role='controlgroup', data-type='horizontal')
         | {{>status-led {pin_name: 'piston.enab'} }}
         | {{>status-led {pin_name: 'piston.dir'} }}
-
