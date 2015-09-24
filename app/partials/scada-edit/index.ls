@@ -27,13 +27,16 @@ RactivePartial! .register ->
         wid = $ this .attr \data-wid 
         
         if wid?
+          # widget found, get position information 
+          parent-coord = $ this .parents \.scada-drawing-area .position!
+          
           x = $ this .attr \data-x or 0 
           y = $ this .attr \data-y or 0 
           
           w = $ this .css \width 
           h = $ this .css \height
           
-          console.log "widget found: #wid, #x, #y, #w, #h", $ this 
+          console.log "widget found: wid: #wid, x: #x, y: #y, width: #w, height: #h, top: #{parent-coord.top}, left: #{parent-coord.left}", $ this 
           
           layout := layout + "  * wid: #wid" + \\n
           layout := layout + "    x: #x" + \\n

@@ -2,16 +2,16 @@ include ../../templates/mixins.jade
     
     
 +partial('arrow-keys')
-  div
+  .arrow-keys
     tr.
       <th></th>
-      <th> {{>push-button {pin_name: 'arrow-up', label: 'UP', icon: 'arrow-u', iconpos: 'bottom'} }} </th>
+      <th> {{>push-button {pin_name: 'arrow-up', label: ' ', icon: 'arrow-u', iconpos: 'bottom'} }} </th>
       <th></th>
     tr.
-      <th> {{>push-button {pin_name: 'arrow-left', label: 'LEFT', icon: 'arrow-l', iconpos: 'bottom'} }} </th>
-      <th> {{>push-button {pin_name: 'arrow-center', label: 'OK', icon: 'check', iconpos: 'bottom'} }} </th>
-      <th> {{>push-button {pin_name: 'arrow-right', label: 'RIGHT', icon: 'arrow-r', iconpos: 'bottom'} }} </th>
+      <th> {{>push-button {pin_name: 'arrow-left', label: ' ', icon: 'arrow-l', iconpos: 'bottom'} }} </th>
+      <th> {{>push-button {pin_name: 'arrow-center', label: ' ', icon: 'check', iconpos: 'bottom'} }} </th>
+      <th> {{>push-button {pin_name: 'arrow-right', label: ' ', icon: 'arrow-r', iconpos: 'bottom'} }} </th>
     tr.
       <th></th>
-      <th> {{>push-button {pin_name: 'arrow-down', label: 'DOWN', icon: 'arrow-d', iconpos: 'top'} }} </th>
+      <th> {{>push-button {pin_name: 'arrow-down', label: ' ', icon: 'arrow-d', iconpos: 'top'} }} </th>
       <th></th>

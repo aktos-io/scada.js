@@ -1,4 +1,30 @@
-.panel.panel-primary
+.panel.panel-primary.scada-drawing-area
+  .panel-heading
+    h2.panel-title Cici Meze
+    .row
+      .col-sm-3.
+        {{>scada-generate-layout {pin_name: 'scada'} }}
+      .col-sm-5.
+        {{>jq-checkbox {pin_name: 'lock-scada', label: 'Kilitli (Locked)'} }}
+  .panel-body        
+    .row(style="min-height: 500px; min-width: 100%").  
+      {{>seven-segment {pin_name: '286B61DE050000D8', wid: 10, format: '##.### °C'} }}
+      {{>seven-segment {pin_name: '280BFADD05000054', wid: 11, format: '##.### °C'} }}
+      {{>seven-segment {pin_name: '28CE9DDE050000E8', wid: 12, format: '##.### °C'} }}
+      {{>seven-segment {pin_name: '283984DD05000018', wid: 13, format: '##.### °C'} }}
+      {{>seven-segment {pin_name: '28FA9CDF0500009B', wid: 14, format: '##.### °C'} }}
+      {{>seven-segment {pin_name: '284A78DF05000059', wid: 15, format: '##.### °C'} }}
+      {{>seven-segment {pin_name: '285582DD0500003A', wid: 16, format: '##.### °C'} }}
+      {{>seven-segment {pin_name: '284880DF050000AF', wid: 17, format: '##.### °C'} }}
+      {{>seven-segment {pin_name: '287AF0DD05000046', wid: 18, format: '##.### °C'} }}
+      {{>seven-segment {pin_name: '287B43DE050000F8', wid: 19, format: '##.### °C'} }}
+      {{>seven-segment {pin_name: '28D026DF05000010', wid: 20, format: '##.### °C'} }}
+      {{>seven-segment {pin_name: '284980DF05000098', wid: 21, format: '##.### °C'} }}
+      {{>seven-segment {pin_name: '28EA46DE050000AC', wid: 22, format: '##.### °C'} }}
+      {{>status-led {pin_name: '28FFAEDE050000F8', wid: 23} }}
+  
+
+.panel.panel-primary.scada-drawing-area
   .panel-heading
     h2.panel-title Scada çizim alanı 
   
@@ -9,7 +35,7 @@
         {{>jq-checkbox {pin_name: 'lock-scada', label: 'Kilitli (Locked)'} }}
   
   .panel-body        
-    .row.scada-drawing-area(style="min-height: 500px; min-width: 100%").      
+    .row(style="min-height: 500px; min-width: 100%").      
       {{>push-button {pin_name: 'scada-test-pin-1', wid: 1} }}
       {{>push-button {pin_name: 'test-pin', wid: 7} }}
       {{>status-led {pin_name: 'scada-test-pin-1', wid: 2, src: 'light-bulb-icon-64'} }}
@@ -44,108 +70,6 @@
       {{>slider {pin_name: 'line-graph-2'} }}
 
       
-//- This section should be only used for development purposes
-  ################################################################
-  
-  .panel.panel-danger
-    .panel-heading
-      h3.panel-title Basit göstergeler 
-    .panel-body
-      .row.
-      
-        {{#partial test_0}}
-        {{>simple-display {pin_name: 'gauge-slider1'} }}
-        {{/partial}}
-
-        {{#partial test}}
-          {{>test_0}}
-          {{>test_0}}
-          {{>test_0}}
-
-
-        {{/partial}}
-
-        {{#partial test2}}
-        {{>test}}
-        {{>test}}
-        {{>test}}
-        {{>test}}
-        {{>test}}
-        {{>test}}
-        {{>test}}
-        {{>test}}
-        {{>test}}
-        {{>test}}
-        {{>test}}
-        {{>test}}
-        {{>test}}
-        {{>test}}
-        {{>test}}
-        {{>test}}
-        {{/partial}}
-        
-        {{#partial test3}}
-        {{>test2}}
-        {{>test2}}
-        {{>test2}}
-        {{>test2}}
-        {{>test2}}
-        {{>test2}}
-        {{>test2}}
-        {{>test2}}
-        {{>test2}}
-        {{>test2}}
-        {{>test2}}
-        {{>test2}}
-        {{>test2}}
-        {{/partial}}
-        
-          
-        {{>test}}
-        
-        {{>simple-display {pin_name: 'gauge-slider2'} }}
-        {{>slider {pin_name: 'gauge-slider1'} }}
-        {{>slider {pin_name: 'gauge-slider2'} }}
-
-  .panel.panel-danger
-    .panel-heading
-      h3.panel-title Performans testi
-    .panel-body
-      .row
-        .col-sm-3.
-          {{>gauge {pin_name: 'gauge-slider',  type: 'ping'} }}
-        .col-sm-3.
-          {{>gauge {pin_name: 'gauge-slider',  type: 'upload'} }}
-        .col-sm-3.
-          {{>gauge {pin_name: 'gauge-slider',  type: 'download'} }}
-        .col-sm-3.
-          {{>gauge {pin_name: 'gauge-slider',  type: 'speed'} }}     
-      .row.
-        {{>slider {pin_name: 'gauge-slider',  val: 45} }}
-
-      .row
-        .col-sm-4.
-          {{>spinbox {pin_name: 'gauge-slider',  val: 35} }}
-          {{>slider {pin_name: "spinbox-test"} }}
-
-      .row.
-        {{>seven-segment {pin_name: 'gauge-slider', val: 1.6,  format: '##'}}}
-        {{>seven-segment {pin_name: 'gauge-slider', val: 123.45, format: '#######.##'}}}
-        {{>seven-segment {pin_name: 'gauge-slider',  format: '####.#'}}}
-        {{>seven-segment {pin_name: 'gauge-slider',  format: '##.###'}}}
-        {{>slider {pin_name: 'gauge-slider',  val: 45} }}
-
-      
-      .row. 
-        
-        {{>thermometer {pin_name: 'gauge-slider'} }}
-        {{>thermometer {pin_name: 'gauge-slider'} }}
-        {{>thermometer {pin_name: 'gauge-slider'} }}
-        {{>thermometer {pin_name: 'gauge-slider'} }}
-        {{>thermometer {pin_name: 'gauge-slider'} }}
-    
-   ############################################################   
-
 .panel.panel-primary
   .panel-heading
     h3.panel-title Spinbox
@@ -258,18 +182,20 @@
     h3.panel-title Buttons
   .panel-body
     .row
-      .col-md-2.
+      .col-sm-2.
         {{>switch-button-basic {pin_name: 'test-pin', label: 'Test pin'} }}
-      .col-md-2.
+      .col-sm-2.
         {{>jq-checkbox {pin_name: 'test-pin', label: 'Test pin'} }}
-      .col-md-2.
+      .col-sm-2.
         {{>toggle-switch {pin_name: 'test-pin'} }}
-      .col-md-2.
+      .col-sm-2.
         {{>switch-button {pin_name: 'test-pin', label: 'TEST PIN'} }}
-      .col-md-2.
+      .col-sm-2.
         {{>push-button {pin_name: 'test-pin', label: 'TEST PIN'} }}
       .col-md-2.
         {{>status-led {pin_name: 'test-pin', src: 'light-bulb-icon-64'} }}
+      .col-sm-2.
+        {{>status-led {pin_name: 'test-pin'} }}
     .row
       .col-sm-offset-4.col-sm-4.
         {{>arrow-keys {} }}
@@ -365,3 +291,5 @@
         | {{>status-led {pin_name: 'piston.enab', src: 'light-bulb-icon-64'} }}
         | {{>status-led {pin_name: 'piston.dir', src: 'light-bulb-icon-64'} }}
 
+        | {{>status-led {pin_name: 'piston.enab'} }}
+        | {{>status-led {pin_name: 'piston.dir'} }}
