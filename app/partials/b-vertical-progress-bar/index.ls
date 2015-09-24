@@ -6,7 +6,7 @@ require! {
 }
   
 RactivePartial! .register ->
-  $ '.b-progress-bar' .each !->
+  $ '.b-vertical-progress-bar' .each !->
     elem = $ this 
     actor = IoActor elem
 
