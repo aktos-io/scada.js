@@ -49,6 +49,21 @@
       <div style="max-width: 300px">
         {{>slider {pin_name: 'scada-test-pin-3', wid: 6} }}
       </div>
+
+.panel.panel-primary
+  .panel-heading
+    h3.panel-title Notification Boxes
+  .panel-body
+    .row
+      .col-lg-3.col-md-6.
+        {{>b-notification-box {pin_name: 'notification-test'} }}
+        {{>slider {pin_name: 'notification-test'} }}
+
+
+      
+      
+      
+      
 .panel.panel-primary
   .panel-heading
     h3.panel-title Bağlı kullanıcı sayısı
@@ -56,7 +71,7 @@
     .row.
       {{>online-users {pin_name: 'online-users'} }}
       {{!>slider {pin_name: 'online-users'} }}
-      
+
 
 .panel.panel-primary
   .panel-heading
