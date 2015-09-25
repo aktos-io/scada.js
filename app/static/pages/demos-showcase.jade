@@ -61,12 +61,10 @@
         {{>b-notification-box {pin_name: 'online-users', opt: 'green', icon: 'user', label: 'Online'} }}
       .col-lg-3.col-md-6.
         {{>b-notification-box {pin_name: 'notification-test', opt: 'red', label: 'Alert', icon: 'warning'} }}
+      .col-lg-3.col-md-6.
+        {{>b-notification-box {pin_name: 'notification-test', opt: 'yellow'} }}
     .row.
       {{>slider {pin_name: 'notification-test'} }}
-
-
-      
-      
       
       
 .panel.panel-primary
@@ -217,8 +215,20 @@
       .col-sm-2.
         {{>status-led {pin_name: 'test-pin'} }}
     .row
+      .col-lg-3.
+        {{>b-circle-button {pin_name: 'circle-test'} }}
+      .col-lg-3.
+        {{>b-circle-button {pin_name: 'circle-test', icon: 'shield'} }}
+      .col-lg-3.
+        {{>b-circle-button {pin_name: 'circle-test', icon: 'warning'} }}
+      .col-lg-3.
+        {{>b-circle-button {pin_name: 'circle-test', icon: 'signal'} }}
+
+    .row
       .col-sm-offset-4.col-sm-4.
         {{>arrow-keys {} }}
+    
+    
         
 .panel.panel-primary
   .panel-heading
