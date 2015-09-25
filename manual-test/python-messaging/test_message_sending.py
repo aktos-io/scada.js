@@ -8,12 +8,11 @@ class Test(Actor):
         pprint(msg)
 
     def action(self):
-        val = False
-        while True: 
-            print "sending val: ", val
-            self.send(IoMessage(pin_name='mesut', val=val))
-            val = not val
-            sleep(4)
+        value = 0
+        while True:
+            self.send({'IoMessage': {'pin_name': 'gauge-slider', 'val': value}})
+            value += 1
+            sleep(1)
 
 ProxyActor()
 Test()

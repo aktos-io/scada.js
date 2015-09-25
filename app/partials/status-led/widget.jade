@@ -7,7 +7,7 @@ include ../../templates/mixins.jade
   ) 
   label
     img(
-      src="img/light-bulb-icon-{{ .val? 'on' : 'off' }}-64.png"
+      src="img/{{ .src }}-{{ .val? 'on' : 'off' }}.png"
       alt="{{ .val? 'on' : 'off' }}"
       ondragstart="return false; "
       )      
