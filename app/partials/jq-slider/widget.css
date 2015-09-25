@@ -1,11 +1,12 @@
 .jq-slider {
-  padding: 10px; 
+  padding: 10px;
 }
 .jq-slider .ui-input-text {
   height: 50px; 
   padding: 10px; 
   position: relative; 
   top: -10px; 
+  background-color: #505050;
 }
 
 .jq-slider .ui-slider-track {

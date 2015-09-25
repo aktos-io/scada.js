@@ -1,0 +1,25 @@
+
+
+.progress-vertical {
+    position: relative;
+    width: 40px;
+    min-height: 240px;
+    float: left;
+    margin-right: 20px; 
+    background-repeat: repeat-y;
+    transform: rotate(180deg);
+  
+}
+.progress-vertical .progress-bar {
+    width: 40px;
+}
+
+.progressbar-front-text {
+  display: block;
+  width: 100%;
+  font-size: 12px;
+  line-height: 20px;
+  text-align: center;
+  transform: rotate(180deg);
+
+}
