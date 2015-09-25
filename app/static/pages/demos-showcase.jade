@@ -56,8 +56,13 @@
   .panel-body
     .row
       .col-lg-3.col-md-6.
-        {{>b-notification-box {pin_name: 'notification-test'} }}
-        {{>slider {pin_name: 'notification-test'} }}
+        {{>b-notification-box {pin_name: 'notification-test', icon: 'gears', label: 'Testing'} }}
+      .col-lg-3.col-md-6.
+        {{>b-notification-box {pin_name: 'online-users', opt: 'green', icon: 'user', label: 'Online'} }}
+      .col-lg-3.col-md-6.
+        {{>b-notification-box {pin_name: 'notification-test', opt: 'red', label: 'Alert', icon: 'warning'} }}
+    .row.
+      {{>slider {pin_name: 'notification-test'} }}
 
 
       
