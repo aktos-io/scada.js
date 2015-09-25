@@ -290,8 +290,5 @@
         | {{>push-button {pin_name: 'forward-limit', label: 'F-limit'} }}
         | {{>push-button {pin_name: 'backwards-limit', label: 'B-limit'} }}
       fieldset(data-role='controlgroup', data-type='horizontal')
-        | {{>status-led {pin_name: 'piston.enab', src: 'light-bulb-icon-64'} }}
-        | {{>status-led {pin_name: 'piston.dir', src: 'light-bulb-icon-64'} }}
-
         | {{>status-led {pin_name: 'piston.enab'} }}
         | {{>status-led {pin_name: 'piston.dir'} }}
