@@ -1,0 +1,8 @@
+include ../../templates/mixins.jade
+    
++partial('justgage')
+  .justgage.
+    <div class="justgage-gauge" id='{{ .actor_id }}'></div>
+    {{#if .debug}}
+      <p>actor id: {{ .actor_id }} </p>
+    {{/if}}
