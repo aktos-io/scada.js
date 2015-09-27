@@ -1,28 +1,47 @@
 .panel.panel-primary.scada-drawing-area
   .panel-heading
-    h2.panel-title Cici Meze
+    h2.panel-title CM
     .row
       .col-sm-3.
         {{>scada-generate-layout {pin_name: 'scada'} }}
       .col-sm-5.
         {{>jq-checkbox {pin_name: 'lock-scada', label: 'Kilitli (Locked)'} }}
-  .panel-body        
+  .panel-body
+    //- 
+      üretim hazırlık:
+          sıcaklık: 284980DF05000098
+          kapı: 280C6ADE050000EE
+
+      sebze meyve deposu:
+          sıcaklık: 28CE9DDE050000E8
+          kapı: 28619FDD0500009B
+          dış ortam sıcaklık: 284A78DF05000059
+
+      son ürün:
+          sıcaklık: 285582DD0500003A
+          iç kapı: 28FEFDDD0500009C
+          dış kapı: 28E61ADE05000065
+          dış ortam sıcaklık: 280BFADD05000054
+
+      kuru bakliyat:
+          sıcaklık: 28D026DF05000010
+    
     .row(style="min-height: 500px; min-width: 100%").  
-      {{>seven-segment {pin_name: '286B61DE050000D8', wid: 10, format: '##.### °C'} }}
-      {{>seven-segment {pin_name: '280BFADD05000054', wid: 11, format: '##.### °C'} }}
-      {{>seven-segment {pin_name: '28CE9DDE050000E8', wid: 12, format: '##.### °C'} }}
-      {{>seven-segment {pin_name: '283984DD05000018', wid: 13, format: '##.### °C'} }}
-      {{>seven-segment {pin_name: '28FA9CDF0500009B', wid: 14, format: '##.### °C'} }}
-      {{>seven-segment {pin_name: '284A78DF05000059', wid: 15, format: '##.### °C'} }}
-      {{>seven-segment {pin_name: '285582DD0500003A', wid: 16, format: '##.### °C'} }}
-      {{>seven-segment {pin_name: '284880DF050000AF', wid: 17, format: '##.### °C'} }}
-      {{>seven-segment {pin_name: '287AF0DD05000046', wid: 18, format: '##.### °C'} }}
-      {{>seven-segment {pin_name: '287B43DE050000F8', wid: 19, format: '##.### °C'} }}
-      {{>seven-segment {pin_name: '28D026DF05000010', wid: 20, format: '##.### °C'} }}
+      
       {{>seven-segment {pin_name: '284980DF05000098', wid: 21, format: '##.### °C'} }}
-      {{>seven-segment {pin_name: '28EA46DE050000AC', wid: 22, format: '##.### °C'} }}
-      {{>status-led {pin_name: '28FFAEDE050000F8', wid: 23} }}
-  
+      {{>status-led {pin_name: '280C6ADE050000EE', wid: 23} }}
+      
+      {{>seven-segment {pin_name: '28CE9DDE050000E8', wid: 12, format: '##.### °C'} }}
+      {{>status-led {pin_name: '28619FDD0500009B', wid: 24} }}
+      {{>seven-segment {pin_name: '284A78DF05000059', wid: 15, format: '##.### °C'} }}
+      
+      {{>seven-segment {pin_name: '285582DD0500003A', wid: 16, format: '##.### °C'} }}
+      {{>status-led {pin_name: '28FEFDDD0500009C', wid: 25} }}
+      {{>status-led {pin_name: '28E61ADE05000065', wid: 26} }}
+      {{>seven-segment {pin_name: '280BFADD05000054', wid: 11, format: '##.### °C'} }}
+      
+      {{>seven-segment {pin_name: '28D026DF05000010', wid: 20, format: '##.### °C'} }}
+      
 
 .panel.panel-primary.scada-drawing-area
   .panel-heading
@@ -38,8 +57,7 @@
     .row(style="min-height: 500px; min-width: 100%").      
       {{>push-button {pin_name: 'scada-test-pin-1', wid: 1} }}
       {{>push-button {pin_name: 'test-pin', wid: 7} }}
-      {{>status-led {pin_name: 'scada-test-pin-1', wid: 2, src: 'light-bulb-icon-64'} }}
-      {{>status-led {pin_name: 'scada-test-pin-1', wid: 8, src: 'light-bulb-icon-64'} }}
+      {{>status-led {pin_name: 'scada-test-pin-1', wid: 2} }}
 
       {{>jq-checkbox {pin_name: 'scada-test-pin-2', wid: 3} }}
       {{>status-led {pin_name: 'scada-test-pin-2', wid: 4, src: 'light-bulb-icon-64'} }}
