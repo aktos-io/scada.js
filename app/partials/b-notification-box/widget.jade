@@ -1,0 +1,20 @@
+include ../../templates/mixins.jade
+    
++partial('b-notification-box')
+  .b-notification-box
+    div(class="panel panel-{{ .opt ? .opt : 'primary' }}")
+      .panel-heading
+        .row
+          .col-xs-3
+            i(class="fa fa-{{ .icon ? icon : 'comment' }} fa-5x")
+          .col-xs-9.text-right
+            .huge {{ .val ? .val : 26 }}
+            div {{ .label ? .label : 'New Comments!' }}
+      a(href='#')
+        .panel-footer
+          span.pull-left View Details
+          span.pull-right
+            i.fa.fa-arrow-circle-right
+          .clearfix
+            
+    
