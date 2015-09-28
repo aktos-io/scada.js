@@ -1,4 +1,13 @@
-.panel.panel-primary.scada-drawing-area
+style.
+  .cici-meze-scada .panel-body{
+    background-image: url('./projects/cici-meze/scada-background.png');  
+    background-repeat: no-repeat;
+    /*background-size: 100% auto;
+    */
+  }
+  
+
+.panel.panel-primary.scada-drawing-area.cici-meze-scada
   .panel-heading
     h2.panel-title CM
     .row
@@ -29,15 +38,15 @@
     .row(style="min-height: 500px; min-width: 100%").  
       
       {{>seven-segment {pin_name: '284980DF05000098', wid: 21, format: '##.### °C'} }}
-      {{>status-led {pin_name: '280C6ADE050000EE', wid: 23} }}
+      {{>status-led {pin_name: '280C6ADE050000EE', src: 'normally-on-alarm', wid: 23} }}
       
       {{>seven-segment {pin_name: '28CE9DDE050000E8', wid: 12, format: '##.### °C'} }}
-      {{>status-led {pin_name: '28619FDD0500009B', wid: 24} }}
+      {{>status-led {pin_name: '28619FDD0500009B', src: 'normally-on-alarm', wid: 24} }}
       {{>seven-segment {pin_name: '284A78DF05000059', wid: 15, format: '##.### °C'} }}
       
       {{>seven-segment {pin_name: '285582DD0500003A', wid: 16, format: '##.### °C'} }}
-      {{>status-led {pin_name: '28FEFDDD0500009C', wid: 25} }}
-      {{>status-led {pin_name: '28E61ADE05000065', wid: 26} }}
+      {{>status-led {pin_name: '28FEFDDD0500009C', src: 'normally-on-alarm', wid: 25} }}
+      {{>status-led {pin_name: '28E61ADE05000065', src: 'normally-on-alarm', wid: 26} }}
       {{>seven-segment {pin_name: '280BFADD05000054', wid: 11, format: '##.### °C'} }}
       
       {{>seven-segment {pin_name: '28D026DF05000010', wid: 20, format: '##.### °C'} }}
@@ -60,7 +69,7 @@
       {{>status-led {pin_name: 'scada-test-pin-1', wid: 2} }}
 
       {{>jq-checkbox {pin_name: 'scada-test-pin-2', wid: 3} }}
-      {{>status-led {pin_name: 'scada-test-pin-2', wid: 4, src: 'light-bulb-icon-64'} }}
+      {{>status-led {pin_name: 'scada-test-pin-2', wid: 4, src: 'light-bulb'} }}
       
       {{>line-graph {pin_name: 'scada-test-pin-3', wid: 5} }}
       
@@ -237,7 +246,7 @@
       .col-sm-2.
         {{>push-button {pin_name: 'test-pin', label: 'TEST PIN'} }}
       .col-md-2.
-        {{>status-led {pin_name: 'test-pin', src: 'light-bulb-icon-64'} }}
+        {{>status-led {pin_name: 'test-pin', src: 'light-bulb'} }}
       .col-sm-2.
         {{>status-led {pin_name: 'test-pin'} }}
     .row

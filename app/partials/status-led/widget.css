@@ -1,4 +1,4 @@
-.status-led {
-  height: 100px; 
-  width: 100px; 
+.status-led img{
+  height: 100%;
+  width: 100%; 
 }
