@@ -1,9 +1,9 @@
 .seven-segment {
-  padding: 0; 
+  padding: 0;
   margin: 0.25em;
 }
 .seven-segment__display
 {
-  border: 3px inset black; 
+  padding: 0;
+  margin: 0; 
 }
-

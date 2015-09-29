@@ -34,5 +34,5 @@ update-production:
 	brunch b
 	mv server/public server/public.to-remove-2
 	ln -s ../public server
-	rm -r server/public.to-remove-1
-	rm -r server/public.to-remove-2
+	rm -rf server/public.to-remove-1
+	rm -rf server/public.to-remove-2
