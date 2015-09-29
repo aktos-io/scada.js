@@ -162,7 +162,7 @@ app.on 'complete', !->
     console.log "resized: ", event.rect.width + '×' + event.rect.height
 
 
-RactivePartial! .register-for-document-ready ->
+RactivePartial! .register-for-dynamic-pos ->
   # lock scada
   lock = SwitchActor \lock-scada
 
@@ -176,9 +176,21 @@ RactivePartial! .register-for-document-ready ->
         $ this .remove-class \draggable-locked
         $ this .add-class \draggable
 
-  # lock scada externally
-  #SwitchActor \lock-scada .gui-event on
 
+  # lock scada externally
+  SwitchActor \lock-scada .gui-event on
+
+``
+        $(document).on("mobileinit", function () {
+
+          $.mobile.hashListeningEnabled = false;
+
+          $.mobile.pushStateEnabled = false;
+
+          $.mobile.changePage.defaults.changeHash = false;
+
+        });
+``
 
 # TODO: remove this
 # workaround for seamless page refresh

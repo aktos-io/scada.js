@@ -35,10 +35,11 @@ style.
       kuru bakliyat:
           sıcaklık: 28D026DF05000010
     
-    .row(style="min-height: 500px; min-width: 100%").  
+    .row(style="min-height: 500px; min-width: 100%", id="cici-meze-scada" rel="external").  
       
       {{>seven-segment {pin_name: '284980DF05000098', wid: 21, format: '##.### °C'} }}
       {{>status-led {pin_name: '280C6ADE050000EE', src: 'normally-on-alarm', wid: 23} }}
+      
       
       {{>seven-segment {pin_name: '28CE9DDE050000E8', wid: 12, format: '##.### °C'} }}
       {{>status-led {pin_name: '28619FDD0500009B', src: 'normally-on-alarm', wid: 24} }}
@@ -51,6 +52,8 @@ style.
       
       {{>seven-segment {pin_name: '28D026DF05000010', wid: 20, format: '##.### °C'} }}
       
+      {{>b-notification-box {pin_name: 'online-users', opt: 'green', icon: 'user', label: 'Online', wid: 30} }}
+
 
 .panel.panel-primary.scada-drawing-area
   .panel-heading
