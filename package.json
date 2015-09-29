@@ -14,7 +14,7 @@
   "scripts": {
     "start": "npm run server & sleep 2 && npm run brunch",
     "test": "brunch test",
-    "server": "pm2 start server/server.ls --interpreter=lsc --watch --max-memory-restart=160M",
+    "server": "cd server && pm2 start server.ls --interpreter=lsc --watch --ignore-watch='public' --max-memory-restart=160M",
     "brunch": "brunch watch",
     "show-logs": "pm2 logs"
   },
