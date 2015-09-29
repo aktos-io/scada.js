@@ -24,5 +24,15 @@ run-brunch:
 run-server:
 	@lsc server/server.ls
 
-run-server-pm2:
+run-production-server:
 	npm run server
+
+update-production:
+	git pull
+	mv server/public server/public.to-remove-1
+	mv public server
+	brunch b
+	mv server/public server/public.to-remove-2
+	ln -s ../public server
+	rm -r server/public.to-remove-1
+	rm -r server/public.to-remove-2
