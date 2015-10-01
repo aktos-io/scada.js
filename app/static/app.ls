@@ -26,28 +26,14 @@ RactiveApp!set app
 proxy-actor = ProxyActor!
 
 app.on 'complete', !->
-  #console.log "window.location: ", window.location
-  if not window.location.hash
-    window.location = '#home-page'
-
   # create actors and init widgets
   RactivePartial! .init!
-
-  # debugging purposes
-  #test = SwitchActor 'test-actor'
 
   $ document .ready ->
     console.log "document is ready..."
     RactivePartial! .init-for-document-ready!
-
     RactivePartial! .init-for-dynamic-pos widget-positions
-    # debug
-    /*
-    test.send IoMessage:
-      pin_name: 'test-pin'
-      val: on
-    */
-
+    RactivePartial! .init-for-post-ready!
 
   # Update all I/O on init
   proxy-actor.update-connection-status!
@@ -184,7 +170,8 @@ RactivePartial! .register-for-dynamic-pos ->
 handle-navigation = ->
   page = window.location.hash.replace /^#/, '' .split '/'
   console.log "hash changed: #{page}"
-  $ ':mobile-pagecontainer' .pagecontainer 'change', ('#' + page.0)
+  main-section = page.0 ? 'home-page'
+  $ ':mobile-pagecontainer' .pagecontainer 'change', ('#' + main-section)
 
   # try to scroll to anchor, immediately or after page change
   scroll-to-anchor = ->
@@ -200,7 +187,7 @@ handle-navigation = ->
     scroll-to-anchor!
     $ document .off \pageshow
 
-RactivePartial! .register-for-dynamic-pos ->
+RactivePartial! .register-for-post-ready ->
   handle-navigation!
   $ window .on \hashchange, ->
     handle-navigation!
