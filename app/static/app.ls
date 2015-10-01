@@ -200,7 +200,7 @@ handle-navigation = ->
     scroll-to-anchor!
     $ document .off \pageshow
 
-RactivePartial! .register-for-document-ready ->
+RactivePartial! .register-for-dynamic-pos ->
   handle-navigation!
   $ window .on \hashchange, ->
     handle-navigation!
