@@ -33,7 +33,9 @@ app.on 'complete', !->
     console.log "document is ready..."
     RactivePartial! .init-for-document-ready!
     RactivePartial! .init-for-dynamic-pos widget-positions
-    RactivePartial! .init-for-post-ready!
+    set-timeout (->
+      RactivePartial! .init-for-post-ready!
+      ), 1000
 
   # Update all I/O on init
   proxy-actor.update-connection-status!
