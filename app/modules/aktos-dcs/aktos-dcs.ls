@@ -12,12 +12,12 @@ require! {
     zip,
     split,
     union,
-    last, 
+    last,
     empty,
     keys,
   }
 }
-  
+
 {RactiveApp} = require './widgets'
 
 
@@ -74,12 +74,12 @@ class ActorManager
 
     register: (actor, subs) ->
       try
-        for topic in subs 
+        for topic in subs
           try
             @subs-min-list[topic] ++= [actor]
           catch
             @subs-min-list[topic] = [actor]
-        
+
         #console.log "actor subscribed with following topics: ", subs
         #console.log "actors subscribed so far: ", @subs-min-list
       catch
@@ -88,25 +88,25 @@ class ActorManager
 
     inbox-put: (msg) ->
       @distribute-msg msg
-    
-    distribute-msg: (msg) -> 
-      msg.sender ++= [@actor-id]  
-      # distribute subscribe-all messages 
+
+    distribute-msg: (msg) ->
+      msg.sender ++= [@actor-id]
+      # distribute subscribe-all messages
       for actor in @actor-list
         if actor.actor-id not in msg.sender
           #console.log "forwarding msg: ", msg
           actor.recv msg
       #console.log "forwarded msg count: all: #{@actor-list.length}"
-    
+
       # distribute subscribed messages
       for msg-subject in keys msg.payload
-          msg-topic = msg-subject 
+          msg-topic = msg-subject
           try
             # TODO: do this automatically, this is a workaround!
             if msg-subject is \IoMessage
               #console.log "ActorManager: Special message: IoMessage! msg: ", msg
               msg-topic = join \. [msg-subject, \pin_name, (get-msg-body msg).pin_name]
-          catch 
+          catch
             console.log "problem in creating msg-topic: ", msg
 
           if @subs-min-list[msg-topic]?
@@ -118,32 +118,32 @@ class ActorManager
                 actor.recv msg
             catch
               console.log "Error forwarding message: ", actor, msg
-            
+
             #console.log "forwarded msg count: Subsc: #{@subs-min-list[msg-topic].length}"
-      
+
 class Actor extends ActorBase
   (name) ~>
     super!
     @mgr = ActorManager!
-    
-    # register message types which are used in this 
+
+    # register message types which are used in this
     # class with `handle_Subject` format
     #
-    
-      
+
+
     @actor-name = name
     #console.log "actor \'", @name, "\' created with id: ", @actor-id
     @msg-serial-number = 0
-    
-  list-handle-funcs: -> 
-    methods = [key for key of Object.getPrototypeOf this when typeof! this[key] is \Function ]        
+
+  list-handle-funcs: ->
+    methods = [key for key of Object.getPrototypeOf this when typeof! this[key] is \Function ]
     subj = [s.split \handle_ .1 for s in methods when s.match /^handle_.+/]
     #console.log "this actor has the following subjects: ", subj, name
-    
-  register: -> 
-    #console.log "actor will subscribe following topics: ", @subscriptions 
-    @mgr.register this, @subscriptions 
-    
+
+  register: ->
+    #console.log "actor will subscribe following topics: ", @subscriptions
+    @mgr.register this, @subscriptions
+
   send: (msg) ->
     try
       msg-env = envelp msg, @get-msg-id!
@@ -175,25 +175,27 @@ class ProxyActor
       super ...
       @register!
       #console.log "Proxy actor is created with id: ", @actor-id
-      
+
       @token = null
-      @connection-listener = (self, connect-str) -> 
+      @connection-listener = (self, connect-str) ->
 
       /* initialize socket.io connections */
-      url = window.location.href
+      url = String window.location .split '#' .0
       arr = url.split "/"
       addr_port = arr.0 + "//" + arr.2
       socketio-path = [''] ++ (initial (drop 3, arr)) ++ ['socket.io']
       socketio-path = join '/' socketio-path
-      socket = io.connect do 
+      console.log "socket-io path: #{socketio-path}, url: #{url}"
+
+      socket = io.connect do
         port: addr_port
         path: socketio-path
       
-      
+
       # TODO: erase this, since it's very app specific
-      socket.on \frame, (frame) -> 
+      socket.on \frame, (frame) ->
         $ \#video-frame .attr \src, ('data:image/jpg;base64,' + frame)
-      
+
       @socket = socket
       # send to server via socket.io
       @socket.on 'aktos-message', (msg) ~>
@@ -202,24 +204,24 @@ class ProxyActor
         catch
           console.log "Problem with receiving message: ", e
 
-      @connected = false 
+      @connected = false
       @socket.on "connect", !~>
         console.log "proxy actor says: connected"
         console.log "Connected to server with id: ", @socket.io.engine.id
         @connected = true
         @update-connection-status!
-        
+
       @socket.on "disconnect", !~>
         console.log "proxy actor says: disconnected"
-        @connected = false 
+        @connected = false
         @update-connection-status!
-        
-    handle_UpdateConnectionStatus: (msg) -> 
+
+    handle_UpdateConnectionStatus: (msg) ->
       @update-connection-status!
-      
-    update-connection-status: -> 
+
+    update-connection-status: ->
       @send ConnectionStatus: {connected: @connected}
-      
+
     network-rx: (msg) ->
       # receive from server via socket.io
       # forward message to inner actors
@@ -229,7 +231,7 @@ class ProxyActor
     receive: (msg) ->
       @network-tx-raw msg
 
-    network-tx: (msg) -> 
+    network-tx: (msg) ->
       @network-tx-raw (envelp msg, @get-msg-id!)
 
     network-tx-raw: (msg) ->

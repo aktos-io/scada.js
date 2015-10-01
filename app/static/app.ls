@@ -152,7 +152,7 @@ app.on 'complete', !->
 
     console.log "event.delta-rect: ", event.deltaRect.left, event.delta-rect.right
 
-    a = 'translate(' + x + 'px, ' + y + 'px)'
+    a = "translate(#{x}px, #{y}px)"
     target.style.webkit-transform = a
     target.style.transform = a
 
@@ -176,21 +176,27 @@ RactivePartial! .register-for-dynamic-pos ->
         $ this .remove-class \draggable-locked
         $ this .add-class \draggable
 
-
   # lock scada externally
   SwitchActor \lock-scada .gui-event on
 
-``
-        $(document).on("mobileinit", function () {
+# Handle page navigation
+# -----------------------
+$ window .on \hashchange, ->
+  page = window.location.hash.replace /^#/, '' .split '/'
+  console.log "hash changed: #{page}"
+  $ ':mobile-pagecontainer' .pagecontainer 'change', ('#' + page.0)
 
-          $.mobile.hashListeningEnabled = false;
+  # try to scroll to anchor, immediately or after page change
+  scroll-to-anchor = ->
+    try
+      target = $('#' + page.1).offset!top
+      target -= 5px  # give a default margin 
+      #$.mobile.silent-scroll target
+      $ 'html, body' .animate {scroll-top: target}, 500
+    catch
 
-          $.mobile.pushStateEnabled = false;
-
-          $.mobile.changePage.defaults.changeHash = false;
-
-        });
-``
+  scroll-to-anchor!
+  $ document .on \pageshow, scroll-to-anchor
 
 # TODO: remove this
 # workaround for seamless page refresh
