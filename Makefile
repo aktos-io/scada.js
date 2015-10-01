@@ -29,9 +29,9 @@ run-production-server:
 
 update-production:
 	git pull
-	@if [[ ! -d "server/public.to-remove-1" ]]; then \
+	if [ ! -d "server/public.to-remove-1" ]; then \
 		mv server/public server/public.to-remove-1; \
-	  mv public server; \
+		mv public server; \
 	fi;
 	brunch b
 	mv server/public server/public.to-remove-2
