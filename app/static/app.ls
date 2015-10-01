@@ -181,7 +181,7 @@ RactivePartial! .register-for-dynamic-pos ->
 
 # Handle page navigation
 # -----------------------
-$ window .on \hashchange, ->
+handle-navigation = ->
   page = window.location.hash.replace /^#/, '' .split '/'
   console.log "hash changed: #{page}"
   $ ':mobile-pagecontainer' .pagecontainer 'change', ('#' + page.0)
@@ -190,13 +190,20 @@ $ window .on \hashchange, ->
   scroll-to-anchor = ->
     try
       target = $('#' + page.1).offset!top
-      target -= 5px  # give a default margin 
+      target -= 5px  # give a default margin
       #$.mobile.silent-scroll target
       $ 'html, body' .animate {scroll-top: target}, 500
     catch
 
   scroll-to-anchor!
-  $ document .on \pageshow, scroll-to-anchor
+  $ document .on \pageshow, ->
+    scroll-to-anchor!
+    $ document .off \pageshow
+
+RactivePartial! .register-for-document-ready ->
+  handle-navigation!
+  $ window .on \hashchange, ->
+    handle-navigation!
 
 # TODO: remove this
 # workaround for seamless page refresh
