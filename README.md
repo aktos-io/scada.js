@@ -36,6 +36,7 @@ Crossbar.io : https://github.com/crossbario
   * `git clone https://github.com/ceremcem/aktos-dcs`
   * follow [installation notes](https://github.com/ceremcem/aktos-dcs/blob/master/README.md#install)
 
+* install [Node.js](http://nodejs.org/)
 * install global dependencies: 
 
   * as root: `npm install -g livescript brunch pm2`
