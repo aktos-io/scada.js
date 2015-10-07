@@ -19,6 +19,7 @@ run-ide:
 	@#kate .kateproject 2>/dev/null &
 	atom .
 run-brunch:
+	ulimit -n 4096
 	@brunch b && brunch w
 
 run-server:
@@ -33,6 +34,7 @@ update-production:
 		mv server/public server/public.to-remove-1; \
 		mv public server; \
 	fi;
+	ulimit -n 4096
 	brunch b
 	mv server/public server/public.to-remove-2
 	ln -s ../public server
