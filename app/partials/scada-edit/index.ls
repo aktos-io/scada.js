@@ -36,7 +36,7 @@ RactivePartial! .register ->
           w = $ this .css \width
           h = $ this .css \height
 
-          console.log "widget found: wid: #wid, x: #x, y: #y, width: #w, height: #h, top: #{parent-coord.top}, left: #{parent-coord.left}", $ this
+          #console.log "widget found: wid: #wid, x: #x, y: #y, width: #w, height: #h, top: #{parent-coord.top}, left: #{parent-coord.left}", $ this
 
           layout := layout + "  * wid: #wid" + \\n
           layout := layout + "    x: #x" + \\n
@@ -61,7 +61,7 @@ RactivePartial! .register-for-dynamic-pos (wpos) ->
         db = [p for p in wpos when p.wid == wid]
         if not empty db
           [x, y] = [db.0.x, db.0.y]
-          console.log "status-led: this widget's id: #wid position: ", x, y
+          #console.log "dynamic-pos: this widget's id: #wid position: ", x, y
 
           pos = 'translate(' + x + 'px, ' + y + 'px)'
           widget.css \webkitTransform, pos

@@ -165,6 +165,16 @@ style.
         {{>justgage {pin_name:"gauge-slider", val: 45} }}
       
 
+.panel.panel-primary
+  .panel-heading
+    h3.panel-title Göstergeler
+  .panel-body
+    .row
+      .col-sm-3.
+        {{>gauge-coffee {label: 'Üretim Hazırlık', pin_name: 'gauge-slider2', wid: 500, format: '##.# °C', range: '0 to 150', type: 'temp'} }}
+    .row.
+      {{>slider {pin_name:"gauge-slider2", val: 45, range: '0 to 2000'} }}
+
     
 
 .panel.panel-primary
@@ -208,7 +218,7 @@ style.
         {{>seven-segment {pin_name: 'gauge-slider', val: 123.45, format: '#######.##', type: 'multimeter'}}}
         {{>seven-segment {pin_name: 'gauge-slider',  format: '####.#'}}}
         {{>seven-segment {pin_name: 'gauge-slider',  format: '##.###'}}}
-        {{>slider {pin_name: 'gauge-slider',  val: 45} }}
+        {{>slider {pin_name: 'gauge-slider',  val: 0} }}
 
 .panel.panel-primary
   .panel-heading

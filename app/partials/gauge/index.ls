@@ -24,7 +24,6 @@ RactivePartial! .register ->
 
     type = actor.get-ractive-var \type
     range = (actor.get-ractive-var \range) ? '0 to 100'
-    console.log "range is: ", range
     [min, max] = range.split 'to' |> map (.replace /^\s+|\s+$/g, '') |> map (parse-int)
 
     # common parameters
@@ -71,7 +70,7 @@ RactivePartial! .register ->
         glow : false
         units : \ms
         title : \Ping
-        major-ticks : ['0','100','200','300','400','500','600','700','800','900','1000']
+        major-ticks : ['0','10','20','30','40','50','60','70','80','90','100']
         highlights : false
         value-format : { int : 4, dec : 1 }
         colors: do

@@ -56,7 +56,7 @@ block content
         
         .row(style="min-height: 500px; min-width: 100%", rel="external").  
           
-          {{>gauge {pin_name: '284980DF05000098', wid: 200, format: '##.# °C', range: '-1 to 15', type: 'temp'} }}
+          {{>circular-progress {label: 'Üretim Hazırlık', pin_name: '284980DF05000098', wid: 200, format: '##.# °C', range: '-1 to 15'} }}
           {{>status-led {pin_name: '280C6ADE050000EE', src: 'normally-on-alarm', wid: 201} }}
           
           
