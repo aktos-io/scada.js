@@ -1,3 +1,8 @@
 .thermometer {
-  display: inline; 
+  display: inline;
+}
+.thermometer canvas {
+    width: 100%;
+    height: 100%;
+
 }
