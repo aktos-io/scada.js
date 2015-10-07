@@ -89,6 +89,62 @@ widget-positions =
     y: 1064.3999938964844
     w: 298px
     h: 79px
+  * wid: 200
+    x: 661
+    y: 450
+    w: 93px
+    h: 88px
+  * wid: 201
+    x: 730
+    y: 391
+    w: 40px
+    h: 41px
+  * wid: 202
+    x: 441
+    y: 261
+    w: 81px
+    h: 83px
+  * wid: 203
+    x: 510
+    y: 281
+    w: 34px
+    h: 37px
+  * wid: 204
+    x: 580
+    y: 311
+    w: 85px
+    h: 83px
+  * wid: 205
+    x: 149
+    y: 280
+    w: 105px
+    h: 97px
+  * wid: 206
+    x: 320
+    y: 310
+    w: 40px
+    h: 42px
+  * wid: 207
+    x: 60
+    y: 411
+    w: 41px
+    h: 39px
+  * wid: 208
+    x: 300
+    y: 391
+    w: 101px
+    h: 104px
+  * wid: 209
+    x: 300
+    y: 160
+    w: 95px
+    h: 92px
+  * wid: 210
+    x: 910
+    y: 220
+    w: 152px
+    h: 100px
+
 
 
 
