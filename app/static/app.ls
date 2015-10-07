@@ -229,7 +229,9 @@ handle-navigation = ->
     console.log "page is changed to #{main-section} / #{anchor}"
     $ ':mobile-pagecontainer' .pagecontainer 'change', ('#' + main-section)
 
+    # scroll immediately (in the same page)
     scroll-to-anchor anchor
+    # .. and after page chaged
     $ document .on \pageshow, ->
       scroll-to-anchor anchor
       $ document .off \pageshow
@@ -239,6 +241,18 @@ RactivePartial! .register-for-document-ready ->
 
 RactivePartial! .register-for-post-ready ->
   $ window .on \hashchange, ->
+    handle-navigation!
+
+  # modify anchors to point their current pages
+  $ \a .click (e) ->
+    addr = $ this .attr \href
+    console.log "link orig addr: #{addr}"
+    if addr.match /^#[a-zA-Z0-9_]+!?/
+      e.prevent-default!
+      curr-page = window.location.hash.replace /^#/, '' .split '/' .1
+      console.log "click function is called! curr-page: #{curr-page}"
+      window.location.hash = '#' + "/#{curr-page}/#{tail addr}"
+
     handle-navigation!
 
 
