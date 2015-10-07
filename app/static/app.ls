@@ -1,3 +1,21 @@
+
+require! {
+  '../modules/prelude': {
+    flatten,
+    initial,
+    drop,
+    join,
+    concat,
+    tail,
+    head,
+    map,
+    zip,
+    split,
+    last,
+  }
+}
+
+
 require! {
   '../modules/aktos-dcs': {
     ProxyActor,
@@ -171,23 +189,48 @@ RactivePartial! .register-for-dynamic-pos ->
 # -----------------------
 handle-navigation = ->
   page = window.location.hash.replace /^#/, '' .split '/'
+
   console.log "hash changed: #{page}"
-  main-section = page.0 ? 'home-page'
-  $ ':mobile-pagecontainer' .pagecontainer 'change', ('#' + main-section)
 
   # try to scroll to anchor, immediately or after page change
-  scroll-to-anchor = ->
-    try
-      target = $('#' + page.1).offset!top
-      target -= 5px  # give a default margin
-      #$.mobile.silent-scroll target
-      $ 'html, body' .animate {scroll-top: target}, 500
-    catch
+  scroll-to-anchor = (anchor) ->
+    if anchor
+      console.log "navigate to anchor: #{anchor} and last: #{last anchor}"
+      if (last anchor) is '!'
+        # this is popup
+        console.log "this is popup: #{last anchor}"
+        $ ('#' + initial anchor) .popup \open
+      else
+        try
+          target = $('#' + anchor).offset!top
+          target -= 5px  # give a default margin
+          #$.mobile.silent-scroll target
+          $ 'html, body' .animate {scroll-top: target}, 500
+        catch
+          # pass
 
-  scroll-to-anchor!
-  $ document .on \pageshow, ->
-    scroll-to-anchor!
-    $ document .off \pageshow
+  if page.length is 1
+    # example: #abcd
+    # this is a anchor, just navigate to it
+    scroll-to-anchor page.0
+  else
+    #          #/aaaa             : aaaa is page
+    #          #/aaaa/bbbb        : aaaa is page, bbbb is anchor
+
+
+    main-section = if page.1? and page.1.length > 0 then
+      page.1
+    else
+      'home-page'
+    anchor = page.2
+
+    console.log "page is changed to #{main-section} / #{anchor}"
+    $ ':mobile-pagecontainer' .pagecontainer 'change', ('#' + main-section)
+
+    scroll-to-anchor anchor
+    $ document .on \pageshow, ->
+      scroll-to-anchor anchor
+      $ document .off \pageshow
 
 RactivePartial! .register-for-post-ready ->
   handle-navigation!
