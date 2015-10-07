@@ -65,6 +65,7 @@ RactivePartial! .register ->
       params : $.extend params, do
         highlights : false
         units : \°C
+        value-format : { int : 2, dec : 1 }
     else if type is \ping
       params : $.extend params, do
         glow : false
