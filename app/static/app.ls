@@ -197,11 +197,29 @@ handle-navigation = ->
   # try to scroll to anchor, immediately or after page change
   scroll-to-anchor = (anchor) ->
     if anchor
-      console.log "navigate to anchor: #{anchor} and last: #{last anchor}"
-      if (last anchor) is '!'
-        # this is popup
-        console.log "this is popup: #{last anchor}"
-        $ ('#' + initial anchor) .popup \open
+      console.log "navigate to anchor: #{anchor}"
+      if $ ('#' + anchor) .data \role is \popup
+        # this is a popup
+        console.log "this is a popup link!"
+        target = '#' + (anchor.replace /!$/, '')
+        $ target .popup \open
+
+        # remove popup link portion from url on close
+        /*
+        TODO: fix this function. this function makes the popup close on open
+        $ target .on \popupafterclose, (event) ->
+          console.log "the popup is closed! replacing #{anchor} with ''"
+          window.location.hash = window.location.hash.replace anchor, ''
+          $ target .off \popupafterclose
+        */
+        $ document .mouseup (e) ->
+          container = $ target
+          if not container.is e.target and container.has e.target .length is 0
+            #container.hide!
+            console.log "the popup is closed! replacing #{anchor} with ''"
+            window.location.hash = window.location.hash.replace anchor, ''
+
+
       else
         try
           target = $('#' + anchor).offset!top
