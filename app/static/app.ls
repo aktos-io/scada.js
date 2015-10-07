@@ -185,6 +185,8 @@ RactivePartial! .register-for-dynamic-pos ->
   # lock scada externally
   SwitchActor \lock-scada .gui-event on
 
+
+
 # Handle page navigation
 # -----------------------
 handle-navigation = ->
@@ -205,7 +207,7 @@ handle-navigation = ->
           target = $('#' + anchor).offset!top
           target -= 5px  # give a default margin
           #$.mobile.silent-scroll target
-          $ 'html, body' .animate {scroll-top: target}, 500
+          $ 'html, body' .animate {scroll-top: target}, 10
         catch
           # pass
 
@@ -232,10 +234,13 @@ handle-navigation = ->
       scroll-to-anchor anchor
       $ document .off \pageshow
 
-RactivePartial! .register-for-post-ready ->
+RactivePartial! .register-for-document-ready ->
   handle-navigation!
+
+RactivePartial! .register-for-post-ready ->
   $ window .on \hashchange, ->
     handle-navigation!
+
 
 # TODO: remove this
 # workaround for seamless page refresh
