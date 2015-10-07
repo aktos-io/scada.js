@@ -29,12 +29,12 @@ run-production-server:
 	npm run server
 
 update-production:
+	sudo sysctl -w fs.inotify.max_user_watches=100000
 	git pull
 	if [ ! -d "server/public.to-remove-1" ]; then \
 		mv server/public server/public.to-remove-1; \
 		mv public server; \
 	fi;
-	ulimit -n 4096
 	brunch b
 	mv server/public server/public.to-remove-2
 	ln -s ../public server
