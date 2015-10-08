@@ -56,19 +56,19 @@ block content
         
         .row(style="min-height: 500px; min-width: 100%", rel="external").  
           
-          {{>circular-progress {label: 'Üretim Hazırlık', pin_name: '284980DF05000098', wid: 200, format: '##.# °C', range: '-1 to 15'} }}
+          {{>seven-segment {label: 'Üretim Hazırlık', pin_name: '284980DF05000098', wid: 200, format: '##.# °C', range: '-1 to 15'} }}
           {{>status-led {pin_name: '280C6ADE050000EE', src: 'normally-on-alarm', wid: 201} }}
           
           
-          {{>thermometer {pin_name: '28CE9DDE050000E8', wid: 202, format: '##.# °C', range: '-1 to 15', type: 'temp'} }}
+          {{>seven-segment {pin_name: '28CE9DDE050000E8', wid: 202, format: '##.# °C', range: '-1 to 15', type: 'temp'} }}
           {{>status-led {pin_name: '28619FDD0500009B', src: 'normally-on-alarm', wid: 203} }}
-          {{>gauge {pin_name: '284A78DF05000059', wid: 204, format: '##.# °C', range: '10 to 35', type: 'temp'} }}
+          {{>seven-segment {pin_name: '284A78DF05000059', wid: 204, format: '##.# °C', range: '10 to 35', type: 'temp'} }}
           
           {{>seven-segment {pin_name: '285582DD0500003A', wid: 205, format: '##.# °C', range: '-1 to 15', type: 'temp'} }}
           {{>status-led {pin_name: '28FEFDDD0500009C', src: 'normally-on-alarm', wid: 206} }}
           {{>status-led {pin_name: '28E61ADE05000065', src: 'normally-on-alarm', wid: 207} }}
-          {{>gauge {pin_name: '280BFADD05000054', wid: 208, format: '##.# °C', range: '10 to 35', type: 'temp'} }}
+          {{>seven-segment {pin_name: '280BFADD05000054', wid: 208, format: '##.# °C', range: '10 to 35', type: 'temp'} }}
           
-          {{>gauge {pin_name: '28D026DF05000010', wid: 209, format: '##.# °C', range: '10 to 35', type: 'temp'} }}
+          {{>seven-segment {pin_name: '28D026DF05000010', wid: 209, format: '##.# °C', range: '10 to 35', type: 'temp'} }}
           
           {{>b-notification-box {pin_name: 'online-users', opt: 'green', icon: 'user', label: 'Online', wid: 210} }}
