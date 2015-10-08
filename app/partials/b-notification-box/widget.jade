@@ -8,7 +8,7 @@ include ../../templates/mixins.jade
           .col-xs-3
             i(class="fa fa-{{ .icon ? icon : 'comment' }} fa-5x")
           .col-xs-9.text-right
-            .huge {{ .val ? .val : 26 }}
+            .huge {{ .val ? .val : 0 }}
             div {{ .label ? .label : 'New Comments!' }}
       a(href='#')
         .panel-footer
