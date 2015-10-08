@@ -21,6 +21,7 @@
   "dependencies": {
     "clean-css-brunch": ">= 1.0 < 1.5",
     "css-brunch": ">= 1.0 < 1.5",
+    "filequeue": "^0.5.0",
     "hapi": "^8.8.1",
     "jade-static-brunch": "git://github.com/ceremcem/jade-static-brunch.git",
     "javascript-brunch": ">= 1.0 < 1.5",
