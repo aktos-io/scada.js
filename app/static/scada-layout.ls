@@ -90,20 +90,20 @@ widget-positions =
     w: 298px
     h: 79px
   * wid: 200
-    x: 606.5
-    y: 457.5
-    w: 64px
-    h: 33px
+    x: 616.5
+    y: 466.5
+    w: 88px
+    h: 45px
   * wid: 201
     x: 730
     y: 391
     w: 39px
     h: 41px
   * wid: 202
-    x: 445.5
-    y: 286.5
-    w: 61px
-    h: 31px
+    x: 446.5
+    y: 284.5
+    w: 64px
+    h: 40px
   * wid: 203
     x: 520
     y: 289
@@ -111,14 +111,14 @@ widget-positions =
     h: 32px
   * wid: 204
     x: 576.5
-    y: 317.5
-    w: 53px
-    h: 25px
+    y: 315.5
+    w: 67px
+    h: 42px
   * wid: 205
-    x: 166.5
-    y: 325.5
-    w: 76px
-    h: 35px
+    x: 177.5
+    y: 336.5
+    w: 70px
+    h: 40px
   * wid: 206
     x: 320
     y: 310
@@ -127,25 +127,23 @@ widget-positions =
   * wid: 207
     x: 69
     y: 370
-    w: 33px
-    h: 28px
+    w: 29px
+    h: 33px
   * wid: 208
-    x: 286.5
+    x: 276.5
     y: 397.5
-    w: 65px
-    h: 34px
+    w: 79px
+    h: 42px
   * wid: 209
     x: 306.5
     y: 207.5
-    w: 65px
-    h: 33px
+    w: 69px
+    h: 40px
   * wid: 210
     x: 910
     y: 220
     w: 152px
     h: 100px
-
-
 
 
 

@@ -6,6 +6,6 @@ class Monitor(Actor):
         msg = get_msg_body(msg)
         print "monitor got io message:", msg['pin_name'], msg['val']
 
-ProxyActor(brokers="10.0.10.151:5012:5013")
+ProxyActor(proxy_brokers="localhost:9012:9013")
 Monitor()
 wait_all()

@@ -1,9 +1,21 @@
 .seven-segment {
-  padding: 0;
+  padding: 5px;
   margin: 0.25em;
 }
 .seven-segment__display
 {
+  width: 100%;
+  height: 100%;
   padding: 0;
-  margin: 0; 
+  margin: 0px;
+  border: 3px solid black; 
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+
+  /*
+  border: 3px solid rgba(0, 0, 0, .5);
+  -webkit-background-clip: padding-box; /* for Safari *
+  background-clip: padding-box; /* for IE9+, Firefox 4+, Opera, Chrome */
+
+
 }
