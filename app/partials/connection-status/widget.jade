@@ -1,8 +1,7 @@
 include ../../templates/mixins.jade
 
 +partial('connection-status')
-  |  <div  data-role="footer" data-tap-toggle="false" data-position="fixed" class="connection-status"
+  |  <div class="connection-status"
   |    style='background-color: {{ .connected ? "yellowgreen" : "lightgray" }}'>
-  |    <p>{{.connected? "connected..." : "connecting..." }}</p>
+  |    {{.connected? "connected..." : "connecting..." }}
   |  </div>
-

@@ -1,10 +1,4 @@
 style.
-  .scada-page {
-    height: 100%; 
-    width: 100%; 
-    overflow: hidden; 
-    
-  }
   .cici-meze-scada2 .panel-body{
     background-image: url('./projects/cici-meze/scada-background.png');  
     background-repeat: no-repeat;
@@ -12,7 +6,7 @@ style.
     */
   }
 
-#cici-meze.scada-page(data-role='page', data-theme='b')
+#cici-meze.scada-page(data-role='page', data-theme='b', data-scada='true')
   .panel.panel-primary.scada-drawing-area.cici-meze-scada2
     .panel-heading
       h2.panel-title CM
@@ -65,3 +59,5 @@ style.
         {{>seven-segment {pin_name: '28D026DF05000010', wid: 209, format: '##.# °C', range: '10 to 35', type: 'temp'} }}
         
         {{>b-notification-box {pin_name: 'online-users', opt: 'green', icon: 'user', label: 'Online', wid: 210} }}
+
+  | {{>connection-status {}}}

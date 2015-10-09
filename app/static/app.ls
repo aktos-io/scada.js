@@ -274,6 +274,7 @@ RactivePartial! .register-for-post-ready ->
     handle-navigation!
 
 
+
 # TODO: remove this
 # workaround for seamless page refresh
 $ '#reload' .click -> location.reload!
