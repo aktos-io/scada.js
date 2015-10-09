@@ -9,8 +9,9 @@ include ../../templates/mixins.jade
       data-role="popup" 
       id="layout-output-{{ .actor_id }}" 
       data-theme="b"
+      style="max-height: 200px;"
       )        
         h3 Generated layout 
         :md
           [--> scada-layout.ls](https://github.com/ceremcem/aktos-website/blob/master/app/static/scada-layout.ls)
-        div(contenteditable, id="layout-output-area-{{ .actor_id }}", style="max-height: 200px; overflow: scroll; white-space: pre")
+        textarea(rows="14",  cols="20", id="layout-output-area-{{ .actor_id }}", style="max-height: 200px")
