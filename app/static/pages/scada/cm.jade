@@ -1,0 +1,67 @@
+style.
+  .scada-page {
+    height: 100%; 
+    width: 100%; 
+    overflow: hidden; 
+    
+  }
+  .cici-meze-scada2 .panel-body{
+    background-image: url('./projects/cici-meze/scada-background.png');  
+    background-repeat: no-repeat;
+    /*background-size: 100% auto;
+    */
+  }
+
+#cici-meze.scada-page(data-role='page', data-theme='b')
+  .panel.panel-primary.scada-drawing-area.cici-meze-scada2
+    .panel-heading
+      h2.panel-title CM
+      .row
+        .col-sm-3.
+          {{>scada-generate-layout {pin_name: 'scada'} }}
+        .col-sm-5.
+          {{>jq-checkbox {pin_name: 'lock-scada', label: 'Kilitli (Locked)'} }}
+    .panel-body
+      //- 
+        üretim hazırlık:
+            sıcaklık: 284980DF05000098
+            kapı: 280C6ADE050000EE
+
+        sebze meyve deposu:
+            sıcaklık: 28CE9DDE050000E8
+            kapı: 28619FDD0500009B
+            dış ortam sıcaklık: 284A78DF05000059
+
+        son ürün:
+            sıcaklık: 285582DD0500003A
+            iç kapı: 28FEFDDD0500009C
+            dış kapı: 28E61ADE05000065
+            dış ortam sıcaklık: 280BFADD05000054
+
+        kuru bakliyat:
+            sıcaklık: 28D026DF05000010
+      
+      //-
+        last-id: 214
+      .row(style="min-height: 500px; min-width: 100%", rel="external").  
+        {{>label {val: 'Üretim Hazırlık', wid: 211} }}
+        {{>label {val: 'Sebze Meyve Deposu', wid: 212} }}
+        {{>label {val: 'Son Ürün', wid: 213} }}
+        {{>label {val: 'Kuru Bakliyat', wid: 214} }}
+
+        {{>seven-segment {pin_name: '284980DF05000098', wid: 200, format: '##.# °C', range: '-1 to 15'} }}
+        {{>status-led {pin_name: '280C6ADE050000EE', src: 'normally-on-alarm', wid: 201} }}
+        
+        
+        {{>seven-segment {pin_name: '28CE9DDE050000E8', wid: 202, format: '##.# °C', range: '-1 to 15', type: 'temp'} }}
+        {{>status-led {pin_name: '28619FDD0500009B', src: 'normally-on-alarm', wid: 203} }}
+        {{>seven-segment {pin_name: '284A78DF05000059', wid: 204, format: '##.# °C', range: '10 to 35', type: 'temp'} }}
+        
+        {{>seven-segment {pin_name: '285582DD0500003A', wid: 205, format: '##.# °C', range: '-1 to 15', type: 'temp'} }}
+        {{>status-led {pin_name: '28FEFDDD0500009C', src: 'normally-on-alarm', wid: 206} }}
+        {{>status-led {pin_name: '28E61ADE05000065', src: 'normally-on-alarm', wid: 207} }}
+        {{>seven-segment {pin_name: '280BFADD05000054', wid: 208, format: '##.# °C', range: '10 to 35', type: 'temp'} }}
+        
+        {{>seven-segment {pin_name: '28D026DF05000010', wid: 209, format: '##.# °C', range: '10 to 35', type: 'temp'} }}
+        
+        {{>b-notification-box {pin_name: 'online-users', opt: 'green', icon: 'user', label: 'Online', wid: 210} }}

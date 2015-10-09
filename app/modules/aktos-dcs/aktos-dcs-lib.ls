@@ -5,11 +5,11 @@ require! {
     Actor,
   }
 }
-  
+
 require! {
   './widgets': {
-    get-ractive-var, 
-    set-ractive-var, 
+    get-ractive-var,
+    set-ractive-var,
     RactiveApp,
     get-keypath,
   }
@@ -18,21 +18,18 @@ require! {
 
 class SwitchActor extends Actor
   (pin-name)~>
-    super pin-name 
-    
+    super pin-name
+
     if pin-name
-      @subscriptions = 
+      @subscriptions =
         * \IoMessage.pin_name. + pin-name
         * \ConnectionStatus
-      
+
     @register!
     @callback-functions = []
-    @pin-name = String pin-name
-    if pin-name
-      @actor-name = @pin-name
-    else
-      @actor-name = @actor-id
-      #console.log "actor is created with this random name: ", @actor-name
+    @pin-name = (String pin-name) ? @actor-id
+
+    #console.log "actor is created with this random name: ", @actor-name
     @ractive-node = null  # the jQuery element
     @connected = false
     @set-ractive-var = null
@@ -52,20 +49,20 @@ class SwitchActor extends Actor
     # MEMORY LEAK OR NOT
     @connected = (get-msg-body msg).connected
     #console.log "connection status changed: ", @connected
-    @refresh-connected-variable! 
-    
-  refresh-connected-variable: -> 
+    @refresh-connected-variable!
+
+  refresh-connected-variable: ->
     if @ractive-node
       #console.log "setting {{connected}}: ", @connected
       @set-ractive-var 'connected', @connected
     else
-      #console.log "Can not refresh {{connected}} var: node is empty!", this 
-    
-  set-node: (node) -> 
+      #console.log "Can not refresh {{connected}} var: node is empty!", this
+
+  set-node: (node) ->
     #console.log "setting #{this.actor-name} -> ", node
     @ractive-node = node
     @node = node
-    @set-ractive-var = set-ractive-var node 
+    @set-ractive-var = set-ractive-var node
     @get-ractive-var = get-ractive-var node
 
   fire-callbacks: (msg) ->
@@ -82,11 +79,11 @@ class SwitchActor extends Actor
     @send IoMessage: do
       pin_name: @pin-name
       val: val
-      
+
   get-keypath: ->
-    get-keypath @node 
-      
-      
+    get-keypath @node
+
+
 class IoActor extends SwitchActor
   (jq-node)~>
     saved-actor = jq-node.data \actor
@@ -100,9 +97,9 @@ class IoActor extends SwitchActor
     set-ractive-var jq-node, 'debug', false
     # save this actor in node's data-actor attribute for
     # further usages
-    jq-node.data \actor, this 
-    
-    
+    jq-node.data \actor, this
+
+
 class WidgetActor extends IoActor
   ~>
     super ...
@@ -113,14 +110,14 @@ class AuthActor extends IoActor
     super ...
     @subscriptions = ['AuthMessage']
     @register!
-    
+
   send-auth-msg: (secret) ->
     # authentication
     auth-msg = AuthMessage:
       client_secret: secret
     @send auth-msg
-    
-  handle_AuthMessage: (msg) -> 
+
+  handle_AuthMessage: (msg) ->
     msg-body = get-msg-body msg
     #console.log "AuthActor got control message: ", msg-body
     if \token of msg-body
@@ -128,10 +125,10 @@ class AuthActor extends IoActor
       #console.log "AuthActor got token: ", @token
 
     @fire-callbacks msg-body
-    
+
   handle_IoMessage: (msg) ->
-  
+
 
 module.exports = {
-  SwitchActor, WidgetActor, IoActor, AuthActor, 
+  SwitchActor, WidgetActor, IoActor, AuthActor,
 }

@@ -1,0 +1,17 @@
+.label {
+  padding: 5px;
+}
+.label__inner {
+  width: 100%;
+  height: 100%;
+
+  padding: 1em;
+  border: 1px solid white;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  background-color: rgba(50, 50, 50, 0.6);
+
+}
+.label__inner p {
+    font-size: 100%;
+}
