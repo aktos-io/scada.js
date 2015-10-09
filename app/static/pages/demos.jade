@@ -2,7 +2,7 @@
   .scada
     | {{>nav-bar {active_button: 'demos'}}}
 
-    button#reload Click to reload page 
+    // button#reload Click to reload page 
     
     .row.vcenter(style="padding: 6em;")
       .col-md-offset-2.col-md-4
@@ -33,25 +33,15 @@
             data-theme="d"
             )
             li
-              a(href="#") proje 1 
-            li
-              a(href="#") proje 2 
-            li
-              a(href="#") proje 3 
-            li
-              a(href="#") proje 4 
-            li
-              a(href="#") proje 5 
+              a(href="#/cici-meze") Gıda Otomasyonu 
 
       .col-md-4.col-md-offset-2
         :md
           Bu sayfada **aktos-scada**'da kullanılan 
           görsel nesnelerin örnekleri bulunur. 
-        
-              
 
     .row
       .col-md-offset-1.col-md-10.col-md-offset-1
         include demos-showcase.jade
             
-    | {{>connection-status {}}}
+    | {{>connection-status {} }}

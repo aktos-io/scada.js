@@ -1,0 +1,26 @@
+#step-piston(data-role='page', data-theme='b')
+  .panel.panel-primary.scada-drawing-area
+    .panel-heading
+      h2.panel-title Step Piston
+      .row
+        .col-sm-3.
+          {{>scada-generate-layout {pin_name: 'scada'} }}
+        .col-sm-5.
+          {{>jq-checkbox {pin_name: 'lock-scada', label: 'Kilitli (Locked)'} }}
+    .panel-body
+      .row
+        | {{#partial step-piston-limit-switches}}
+        fieldset(data-role='controlgroup', data-type='horizontal')
+          | {{>switch-button {pin_name: 'forward-limit', label: 'F-limit'} }}
+          | {{>switch-button {pin_name: 'backwards-limit', label: 'B-limit'} }}
+        | {{/partial}}
+        | {{>step-piston-limit-switches {wid: 300} }}
+        
+        fieldset(data-role='controlgroup', data-type='horizontal')
+          | {{>push-button {pin_name: 'move-forward', label: 'Forward'} }}
+          | {{>push-button {pin_name: 'move-backwards', label: 'Backwards'} }}
+          | {{>push-button {pin_name: 'forward-limit', label: 'F-limit'} }}
+          | {{>push-button {pin_name: 'backwards-limit', label: 'B-limit'} }}
+        fieldset(data-role='controlgroup', data-type='horizontal')
+          | {{>status-led {pin_name: 'piston.enab'} }}
+          | {{>status-led {pin_name: 'piston.dir'} }}

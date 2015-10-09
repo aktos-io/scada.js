@@ -1,17 +1,25 @@
 
-
+.b-vertical-progress-bar {
+  height: 100%;
+  width: 100%;
+}
 .progress-vertical {
     position: relative;
-    width: 40px;
-    min-height: 240px;
     float: left;
-    margin-right: 20px; 
+    margin-right: 20px;
     background-repeat: repeat-y;
     transform: rotate(180deg);
-  
+    width: 100%;
+    height: 100%;
+
 }
 .progress-vertical .progress-bar {
-    width: 40px;
+    width: 100%;
+    height: 100%;
+}
+.b-vertical-progress-bar__inner {
+  width: 100%;
+  height: 100%;
 }
 
 .progressbar-front-text {

@@ -2,12 +2,13 @@ include ../../templates/mixins.jade
     
 +partial('b-vertical-progress-bar')
   .b-vertical-progress-bar
-    .progress.progress-vertical
-      .progress-bar(
-        role="progressbar"
-        aria-valuenow="{{ .val }}"
-        aria-valuemin="0"
-        aria-valuemax="100"
-        style="height: {{ .val }}%"
-        )
-        span.progressbar-front-text {{ .val }}% Complete
+    .b-vertical-progress-bar__inner
+      .progress.progress-vertical(style="height: 100%;")
+        .progress-bar(
+          role="progressbar"
+          aria-valuenow="{{ .val }}"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          style="height: {{ .val ? .val : 0 }}%"
+          )
+          span.progressbar-front-text {{ .val ? .val : 0 }}%

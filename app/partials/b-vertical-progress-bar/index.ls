@@ -4,12 +4,15 @@ require! {
     IoActor,
   }
 }
-  
+
 RactivePartial! .register ->
   $ '.b-vertical-progress-bar' .each !->
-    elem = $ this 
+    elem = $ this
     actor = IoActor elem
 
+    if (actor.get-ractive-var \wid)?
+      actor.node.add-class \draggable
+
     actor.add-callback (msg)->
-      #console.log "slider changed: ", msg.val 
-      actor.set-ractive-var  \val, msg.val 
+      #console.log "slider changed: ", msg.val
+      actor.set-ractive-var  \val, msg.val

@@ -75,9 +75,15 @@ style.
       
       {{>line-graph {pin_name: 'scada-test-pin-3', wid: 5} }}
       
-      <div style="max-width: 300px">
-        {{>slider {pin_name: 'scada-test-pin-3', wid: 6} }}
-      </div>
+      {{>slider {pin_name: 'scada-test-pin-3', wid: 6} }}
+      
+      {{>thermometer {pin_name: 'scada-test-pin-3', wid: 8} }}
+      
+      {{>b-vertical-progress-bar {pin_name: 'scada-test-pin-4', wid: 9} }}
+      {{>slider {pin_name: 'scada-test-pin-4', wid: 10} }}
+
+      
+      
 
 .panel.panel-primary
   .panel-heading
@@ -156,13 +162,6 @@ style.
         {{>gauge {pin_name: 'gauge-slider', type: 'speed'} }}     
     .row.
       {{>slider {pin_name:"gauge-slider", val: 45} }}
-    .row
-      .col-sm-4.
-        {{>justgage {pin_name:"gauge-slider", val: 45} }}
-      .col-sm-4.
-        {{>justgage {pin_name:"gauge-slider", val: 45} }}
-      .col-sm-4.
-        {{>justgage {pin_name:"gauge-slider", val: 45} }}
       
 
 .panel.panel-primary
@@ -170,10 +169,14 @@ style.
     h3.panel-title Göstergeler
   .panel-body
     .row
-      .col-sm-3.
-        {{>gauge-coffee {label: 'Üretim Hazırlık', pin_name: 'gauge-slider2', wid: 500, format: '##.# °C', range: '0 to 150', type: 'temp'} }}
+      .col-sm-4.
+        {{>justgage {pin_name:"gauge-slider2", val: 45} }}
+      .col-sm-4.
+        {{>justgage {pin_name:"gauge-slider2", val: 45} }}
+      .col-sm-4.
+        {{>justgage {pin_name:"gauge-slider2", val: 45} }}
     .row.
-      {{>slider {pin_name:"gauge-slider2", val: 45, range: '0 to 2000'} }}
+      {{>slider {pin_name:"gauge-slider2", val: 45, range: '0 to 100'} }}
 
     
 
@@ -214,11 +217,11 @@ style.
     h3.panel-title SevenSegment
   .panel-body
     .row.
-        {{>seven-segment {pin_name: 'gauge-slider', val: 1.6,  format: '##'}}}
-        {{>seven-segment {pin_name: 'gauge-slider', val: 123.45, format: '#######.##', type: 'multimeter'}}}
-        {{>seven-segment {pin_name: 'gauge-slider',  format: '####.#'}}}
-        {{>seven-segment {pin_name: 'gauge-slider',  format: '##.###'}}}
-        {{>slider {pin_name: 'gauge-slider',  val: 0} }}
+        {{>seven-segment {pin_name: 'gauge-slider4', val: 1.6,  format: '##'}}}
+        {{>seven-segment {pin_name: 'gauge-slider4', val: 123.45, format: '#######.##', type: 'multimeter'}}}
+        {{>seven-segment {pin_name: 'gauge-slider4',  format: '####.#'}}}
+        {{>seven-segment {pin_name: 'gauge-slider4',  format: '##.###'}}}
+        {{>slider {pin_name: 'gauge-slider4',  val: 0} }}
 
 .panel.panel-primary
   .panel-heading
@@ -239,7 +242,9 @@ style.
     h3.panel-title Sensörler
   .panel-body
     .row. 
+      <div style="width: 100px; height: 200px" >
       {{>thermometer {pin_name: 'therm-var'} }}
+      </div>
       {{>slider {pin_name:"therm-var"} }}
 
 .panel.panel-primary
@@ -300,9 +305,6 @@ style.
       .col-md-3.
         {{>b-vertical-progress-bar {pin_name: 'slider-1', val: 55} }}
         
-        
-        
-
 
 .panel.panel-primary
   .panel-heading
@@ -331,18 +333,6 @@ style.
 
 .panel.panel-primary
   .panel-heading
-    h3.panel-title Ofisteki Termometreler
-  .panel-body
-    .row
-      .col-sm-6.
-        {{>thermometer {pin_name: 'therm-1'} }}
-        {{>seven-segment {pin_name: 'therm-1', type: 'speed', format: '###.###'}}}
-      .col-sm-6.
-        {{>thermometer {pin_name: 'therm-2'} }}
-        {{>seven-segment {pin_name: 'therm-2', type: 'speed', format: '###.##'}}}
-      
-.panel.panel-primary
-  .panel-heading
     h3.panel-title Kullanıcı girişleri
   .panel-body
     .row
@@ -350,22 +340,3 @@ style.
         h2 Textbox
         div.
           {{>textbox {pin_name: 'test-pin', val: 'test value'} }}
-
-
-.panel.panel-primary
-  .panel-heading
-    h3.panel-title Kullanıcı girişleri
-  .panel-body
-    .row
-      h3  Delphi simulation 
-      fieldset(data-role='controlgroup', data-type='horizontal')
-        | {{>switch-button {pin_name: 'forward-limit', label: 'F-limit'} }}
-        | {{>switch-button {pin_name: 'backwards-limit', label: 'B-limit'} }}
-      fieldset(data-role='controlgroup', data-type='horizontal')
-        | {{>push-button {pin_name: 'move-forward', label: 'Forward'} }}
-        | {{>push-button {pin_name: 'move-backwards', label: 'Backwards'} }}
-        | {{>push-button {pin_name: 'forward-limit', label: 'F-limit'} }}
-        | {{>push-button {pin_name: 'backwards-limit', label: 'B-limit'} }}
-      fieldset(data-role='controlgroup', data-type='horizontal')
-        | {{>status-led {pin_name: 'piston.enab'} }}
-        | {{>status-led {pin_name: 'piston.dir'} }}
