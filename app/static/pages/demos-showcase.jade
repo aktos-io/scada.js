@@ -81,6 +81,9 @@ style.
       
       {{>b-vertical-progress-bar {pin_name: 'scada-test-pin-4', wid: 9} }}
       {{>slider {pin_name: 'scada-test-pin-4', wid: 10} }}
+      {{>b-progress-bar {pin_name: 'scada-test-pin-4', wid: 400} }}
+
+      {{>justgage {pin_name: 'scada-test-pin-3', val: 45, wid: 401} }}
 
       
       
@@ -162,22 +165,6 @@ style.
         {{>gauge {pin_name: 'gauge-slider', type: 'speed'} }}     
     .row.
       {{>slider {pin_name:"gauge-slider", val: 45} }}
-      
-
-.panel.panel-primary
-  .panel-heading
-    h3.panel-title Göstergeler
-  .panel-body
-    .row
-      .col-sm-4.
-        {{>justgage {pin_name:"gauge-slider2", val: 45} }}
-      .col-sm-4.
-        {{>justgage {pin_name:"gauge-slider2", val: 45} }}
-      .col-sm-4.
-        {{>justgage {pin_name:"gauge-slider2", val: 45} }}
-    .row.
-      {{>slider {pin_name:"gauge-slider2", val: 45, range: '0 to 100'} }}
-
     
 
 .panel.panel-primary
@@ -239,16 +226,6 @@ style.
 
 .panel.panel-primary
   .panel-heading
-    h3.panel-title Sensörler
-  .panel-body
-    .row. 
-      <div style="width: 100px; height: 200px" >
-      {{>thermometer {pin_name: 'therm-var'} }}
-      </div>
-      {{>slider {pin_name:"therm-var"} }}
-
-.panel.panel-primary
-  .panel-heading
     h3.panel-title Buttons
   .panel-body
     .row
@@ -279,31 +256,6 @@ style.
     .row
       .col-sm-offset-4.col-sm-4.
         {{>arrow-keys {} }}
-    
-    
-        
-.panel.panel-primary
-  .panel-heading
-    h3.panel-title Sliders
-  .panel-body
-    .row
-      .col-md-12.
-        {{>slider {pin_name:"slider-2", val: 45} }}
-
-    .row
-      .col-md-6.
-        {{>slider {pin_name:"slider-1", val: 25} }}
-        
-      .col-md-6.
-        {{>analog-display {pin_name: 'slider-1'} }}
-        
-    .row
-      .col-md-3.
-        {{>b-progress-bar {pin_name: 'slider-1', val: 55} }}
-      .col-md-3.
-        {{>b-vertical-progress-bar {pin_name: 'slider-1', val: 55} }}
-      .col-md-3.
-        {{>b-vertical-progress-bar {pin_name: 'slider-1', val: 55} }}
         
 
 .panel.panel-primary
