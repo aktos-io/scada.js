@@ -96,12 +96,16 @@ RactivePartial! .register-for-post-ready ->
   # modify anchors to point their current pages
   $ \a .click (e) ->
     addr = $ this .attr \href
-    console.log "link orig addr: #{addr}, length: #{addr.length}"
-    if addr.length > 1
-      if addr.match /^#[a-zA-Z0-9_]+!?/
+    if addr.match /^#.*/
+      # this is an internal link
+      console.log "link orig addr: #{addr}, length: #{addr.length}"
+      addr = tail addr
+      if addr.match /^[^\/]+/ or addr is ''
+        # this link refers to an anchor (like #foo)
         e.prevent-default!
         curr-page = window.location.hash.replace /^#/, '' .split '/' .1
-        console.log "click function is called! curr-page: #{curr-page}"
-        window.location.hash = '#' + "/#{curr-page}/#{tail addr}"
+        if curr-page?
+          console.log "click function is called! curr-page: #{curr-page}"
+          window.location.hash = '#' + "/#{curr-page}/#{addr}"
 
-      handle-navigation!
+    handle-navigation!
