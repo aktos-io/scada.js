@@ -1,11 +1,11 @@
 .btn-toolbar {
   background: #364347;
-  width: 20px;
-  height: 20px;
+  width: 100%;
+  margin: 10px !important;
+  height: auto;
   text-align: center;
-  padding: 10px;
-  border-radius: 6px;
-  display: block;
+  /*padding: 10px;
+  */border-radius: 6px;
   transition: none;
 }
 .btn-toolbar > i {

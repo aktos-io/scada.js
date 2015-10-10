@@ -126,8 +126,8 @@ style.
       {{>seven-segment {pin_name: 'test-pin-a1',  format: '####.#', wid: 807}}}
       {{>spinbox {pin_name: "test-pin-a2", val: 35, wid: 808} }}
 
-      {{>circular-progress {pin_name: 'test-pin-a3', wid: 809} }}
-      {{>circular-progress {wid: 810, pin_name: 'test-pin-a3',color: 'yellowgreen green', format: '### °C'} }}
+      {{>circular-progress {pin_name: 'test-pin-a3', wid: 809, color: 'yellowgreen green'} }}
+      {{>circular-progress {wid: 810, pin_name: 'test-pin-a3', format: '### °C'} }}
       {{>slider {pin_name: "test-pin-a3", val: 35, wid: 811} }}
 
       {{>seven-segment {wid: 813, pin_name: 'gauge-slider4', val: 123.45, format: '#######.##', type: 'multimeter'}}}
@@ -155,8 +155,13 @@ style.
   
   //- wid: 900+
   .panel-body  
-    {{>table {wid: 900, pin_name: 'test-table'} }}
-      
+    .row(style="min-height: 500px; min-width: 100%").      
+      {{>table {wid: 900, pin_name: 'test-table'} }}
+      {{>textbox {wid: 901, pin_name: 'test-table', val: 'test value'} }}
+      {{>label {wid: 902, pin_name: 'test-table'}}}
+      {{>label {wid: 903, val: 'Tablo'}}}
+      {{>label {wid: 904, val: 'Kullanıcı Girişi'}}}
+
 
 
 .panel.panel-primary
@@ -189,4 +194,3 @@ style.
       .col-md-6
         h2 Textbox
         div.
-          {{>textbox {pin_name: 'test-pin', val: 'test value'} }}

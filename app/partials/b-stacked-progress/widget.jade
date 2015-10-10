@@ -11,12 +11,13 @@ include ../../templates/mixins.jade
     //- b {{ .val }}%
 
 +partial('b-stacked-progress')
-  .b-stacked-progress.progress
-    | {{#each pin_names:i}}
-    |   {{>b-stacked-progress-element 
-    |      {pin_name: pin_names[i][0], 
-    |      val: 100, 
-    |      color: pin_names[i][1], 
-    |      total: pin_names.length
-    |    }}}
-    | {{/each}}
+  .b-stacked-progress
+    .b-stacked-progress__inner.progress
+      | {{#each pin_names:i}}
+      |   {{>b-stacked-progress-element 
+      |      {pin_name: pin_names[i][0], 
+      |      val: 100, 
+      |      color: pin_names[i][1], 
+      |      total: pin_names.length
+      |    }}}
+      | {{/each}}
