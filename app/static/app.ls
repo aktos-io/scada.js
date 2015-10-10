@@ -118,8 +118,4 @@ RactivePartial!register ->
   set-timeout up2, 2000
 
   */
-
-
-# TODO: remove this
-# workaround for seamless page refresh
-$ '#reload' .click -> location.reload!
+  
