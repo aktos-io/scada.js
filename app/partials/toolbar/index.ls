@@ -4,18 +4,19 @@ require! {
     IoActor,
   }
 }
-  
+
 RactivePartial! .register-for-document-ready ->
   $ '.toolbar-icons a' .on \click, (event) ->
     event.preventDefault!
 
   $ \.toolbar .each ->
-  
-    actor = IoActor $ this 
-    elem = actor.node 
-  
-    actor.set-ractive-var 'actor_id', actor.actor-id
-    
+
+    actor = IoActor $ this
+    elem = actor.node
+
+    if (actor.get-ractive-var \wid)?
+      actor.node.add-class \draggable
+
     tb = elem.find ('#' + actor.actor-id)
       
     tb.toolbar do
@@ -24,5 +25,3 @@ RactivePartial! .register-for-document-ready ->
       style: 'primary',
       event: 'click',
       hideOnClick: true
-      
-      
