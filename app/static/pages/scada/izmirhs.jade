@@ -1,0 +1,27 @@
+#izmirhs(data-role='page', data-theme='b')
+  .panel.panel-primary.scada-drawing-area
+    .panel-heading
+      h2.panel-title İzmir HS Sunum
+      .row
+        .col-sm-3.
+          {{>scada-generate-layout {pin_name: 'scada'} }}
+        .col-sm-5.
+          {{>jq-checkbox {pin_name: 'lock-scada', label: 'Kilitli (Locked)'} }}
+    .panel-body
+      //- wid: 1100+
+      .row(style="min-height: 500px; min-width: 100%", rel="external").  
+        {{>label {wid: 1103, val: 'Test output 1'}}}
+        {{>label {wid: 1104, val: 'Test input 1'}}}
+        
+        {{>push-button {pin_name: 'test-output-1', wid: 1100} }}
+        {{>jq-checkbox {pin_name: 'test-output-1', wid: 1101} }}
+        
+        {{>status-led {pin_name: 'test-input-1', wid: 1102, src: 'computer'} }}
+        {{>status-led {pin_name: 'test-input-1', wid: 1108} }}
+        
+        {{>label {wid: 1107, val: 'Ekran parlaklığı'}}}
+        {{>slider {pin_name: 'izmirhs-brightness', wid: 1105} }}
+
+        {{>b-notification-box {pin_name: 'online-users', opt: 'green', icon: 'user', label: 'Online', wid: 1106} }}
+
+  | {{>connection-status {}}}
