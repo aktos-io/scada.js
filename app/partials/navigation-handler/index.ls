@@ -29,7 +29,7 @@ handle-navigation = ->
 
   # try to scroll to anchor, immediately or after page change
   scroll-to-anchor = (anchor) ->
-    if anchor
+    if anchor? and anchor isnt ''
       console.log "navigate to anchor: #{anchor}"
       if $ ('#' + anchor) .data \role is \popup
         # this is a popup
@@ -51,8 +51,6 @@ handle-navigation = ->
             #container.hide!
             console.log "the popup is closed! replacing #{anchor} with ''"
             window.location.hash = window.location.hash.replace anchor, ''
-
-
       else
         try
           target = $('#' + anchor).offset!top
@@ -92,16 +90,18 @@ RactivePartial! .register-for-document-ready ->
 
 RactivePartial! .register-for-post-ready ->
   $ window .on \hashchange, ->
+    console.log "hash changed, handling navigation..."
     handle-navigation!
 
   # modify anchors to point their current pages
   $ \a .click (e) ->
     addr = $ this .attr \href
-    console.log "link orig addr: #{addr}"
-    if addr.match /^#[a-zA-Z0-9_]+!?/
-      e.prevent-default!
-      curr-page = window.location.hash.replace /^#/, '' .split '/' .1
-      console.log "click function is called! curr-page: #{curr-page}"
-      window.location.hash = '#' + "/#{curr-page}/#{tail addr}"
+    console.log "link orig addr: #{addr}, length: #{addr.length}"
+    if addr.length > 1
+      if addr.match /^#[a-zA-Z0-9_]+!?/
+        e.prevent-default!
+        curr-page = window.location.hash.replace /^#/, '' .split '/' .1
+        console.log "click function is called! curr-page: #{curr-page}"
+        window.location.hash = '#' + "/#{curr-page}/#{tail addr}"
 
-    handle-navigation!
+      handle-navigation!
