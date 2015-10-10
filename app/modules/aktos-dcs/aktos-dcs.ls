@@ -190,7 +190,7 @@ class ProxyActor
       socket = io.connect do
         port: addr_port
         path: socketio-path
-      
+
 
       # TODO: erase this, since it's very app specific
       socket.on \frame, (frame) ->
@@ -221,6 +221,9 @@ class ProxyActor
 
     update-connection-status: ->
       @send ConnectionStatus: {connected: @connected}
+
+    update-io: ->
+      @network-tx UpdateIoMessage: {}
 
     network-rx: (msg) ->
       # receive from server via socket.io
