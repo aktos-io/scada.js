@@ -35,10 +35,10 @@ app.on 'complete', !->
     RactivePartial! .init-for-dynamic-pos widget-positions
     set-timeout (->
       RactivePartial! .init-for-post-ready!
+      # Update all I/O on init
+      proxy-actor.update-connection-status!
       ), 1000
 
-  # Update all I/O on init
-  proxy-actor.update-connection-status!
 
   console.log "ractive app completed..."
 

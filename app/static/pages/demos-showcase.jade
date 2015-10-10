@@ -94,6 +94,32 @@ style.
           ], wid: 403} }}
       {{>slider {pin_name: 'scada-test-pin-5', wid: 404} }}
 
+.panel.panel-primary.scada-drawing-area
+  .panel-heading
+    h2.panel-title Scada çizim alanı 
+  
+    .row
+      .col-sm-3.
+        {{>scada-generate-layout {pin_name: 'scada'} }}
+      .col-sm-5.
+        {{>jq-checkbox {pin_name: 'lock-scada', label: 'Kilitli (Locked)'} }}
+  
+  .panel-body        
+    //- wid: 800+
+    .row(style="min-height: 500px; min-width: 100%").      
+      {{>gauge {pin_name: 'test-pin-a1', type: 'speed', wid: 800} }}     
+      {{>gauge {pin_name: 'test-pin-a1', type: 'download', wid: 801} }}     
+      {{>gauge {pin_name: 'test-pin-a1', type: 'ping', wid: 802} }}     
+      {{>b-notification-box {pin_name: 'test-pin-a2', icon: 'gears', label: 'Testing', wid: 803} }}
+      {{>b-notification-box {pin_name: 'test-pin-a2', opt: 'red', label: 'Alert', icon: 'warning', wid: 804} }}
+      {{>slider {pin_name: 'test-pin-a1', wid: 805} }}
+      {{>slider {pin_name: 'test-pin-a2', wid: 806} }}
+      {{>seven-segment {pin_name: 'test-pin-a1',  format: '####.#', wid: 807}}}
+      {{>spinbox {pin_name: "test-pin-a2", val: 35, wid: 808} }}
+
+      {{>circular-progress {pin_name: 'test-pin-a3', wid: 809} }}
+      {{>circular-progress {wid: 810, pin_name: 'test-pin-a3',color: 'yellowgreen green', format: '### °C'} }}
+      {{>slider {pin_name: "test-pin-a3", val: 35, wid: 811} }}
 
       
 
@@ -128,29 +154,7 @@ style.
   .panel-body
     .row.
       {{>online-users {pin_name: 'online-users'} }}
-      {{!>slider {pin_name: 'online-users'} }}
 
-
-.panel.panel-primary
-  .panel-heading
-    h3.panel-title Grafik 
-  .panel-body
-    .row.
-      {{>line-graph {pin_name: 'line-graph-1'} }}
-      {{>slider {pin_name: 'line-graph-1'} }}
-    .row.
-      {{>line-graph {pin_name: 'line-graph-2'} }}
-      {{>slider {pin_name: 'line-graph-2'} }}
-
-      
-.panel.panel-primary
-  .panel-heading
-    h3.panel-title Spinbox
-  .panel-body
-    .row
-      .col-sm-4.
-        {{>spinbox {pin_name: "spinbox-test", val: 35} }}
-        {{>slider {pin_name: "spinbox-test"} }}
 
 .panel.panel-primary
   .panel-heading
@@ -167,22 +171,6 @@ style.
             '#link5 fa-plane' 
             ], icon: 'fa-cog'} }}        
 
-.panel.panel-primary
-  .panel-heading
-    h3.panel-title Göstergeler
-  .panel-body
-    .row
-      .col-sm-3.
-        {{>gauge {pin_name: 'gauge-slider', type: 'ping'} }}
-      .col-sm-3.
-        {{>gauge {pin_name: 'gauge-slider', type: 'upload'} }}
-      .col-sm-3.
-        {{>gauge {pin_name: 'gauge-slider', type: 'download'} }}
-      .col-sm-3.
-        {{>gauge {pin_name: 'gauge-slider', type: 'speed'} }}     
-    .row.
-      {{>slider {pin_name:"gauge-slider", val: 45} }}
-    
 
 .panel.panel-primary
   .panel-heading
@@ -198,18 +186,6 @@ style.
       div Login input: {{>login-input {} }}
       div Login status {{>login-info {} }}
     
-    
-.panel.panel-primary
-  .panel-heading
-    h3.panel-title Nümerik Klavye
-  .panel-body
-    .row
-      .col-sm-4.
-        {{>numeric-keyboard {} }}
-      .col-sm-4.
-        {{>numeric-keyboard {} }}
-      .col-sm-4.
-        {{>numeric-keyboard {} }}
 
 .panel.panel-primary
   .panel-heading
@@ -226,20 +202,6 @@ style.
         {{>seven-segment {pin_name: 'gauge-slider4',  format: '####.#'}}}
         {{>seven-segment {pin_name: 'gauge-slider4',  format: '##.###'}}}
         {{>slider {pin_name: 'gauge-slider4',  val: 0} }}
-
-.panel.panel-primary
-  .panel-heading
-    h3.panel-title Circular-Progress
-  .panel-body
-    .row
-      .col-sm-4.
-        {{>circular-progress {pin_name: 'progress-slider'} }}
-      .col-sm-4.
-        {{>circular-progress {pin_name: 'progress-slider',color: 'yellowgreen green', format: '### °C'} }}
-      .col-sm-4.  
-        {{>circular-progress {pin_name: 'progress-slider', color: 'white orange', format: '### A'} }}
-    .row.
-      {{>slider {pin_name:"progress-slider", val: 45} }}
 
 .panel.panel-primary
   .panel-heading

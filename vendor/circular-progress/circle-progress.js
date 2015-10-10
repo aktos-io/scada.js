@@ -154,8 +154,12 @@ License: MIT
          */
         initWidget: function() {
             var canvas = this.canvas = this.canvas || $('<canvas>').prependTo(this.el)[0];
-            canvas.width = this.size;
-            canvas.height = this.size;
+            //console.log("canvas parent: ", this.el);
+            canvas.style.width='100%';
+            canvas.style.padding = '10px'; 
+            canvas.style.height='auto';
+            canvas.width  = this.el.width();
+            canvas.height = this.el.height();
             this.ctx = canvas.getContext('2d');
         },
 

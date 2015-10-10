@@ -2,6 +2,7 @@ include ../../templates/mixins.jade
     
 +partial('circular-progress')
   .circular-progress
-    strong {{ .val }}
-      i {{ .val ? .unit : '' }}
+    .circular-progress__inner
+      strong {{ .val }}
+        i {{ .val ? .unit : '' }}
     

@@ -21,8 +21,9 @@ RactivePartial! .register ->
   $ \.circular-progress .each ->
 
     actor = IoActor $ this
-    elem = actor.node
     color = actor.get-ractive-var \color
+
+    elem = actor.node.find \.circular-progress__inner
 
     format = (actor.get-ractive-var 'format') ? '% ###'
     widget-formatter = formatter format
