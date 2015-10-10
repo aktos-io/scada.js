@@ -160,7 +160,6 @@ RactivePartial!register ->
     console.log "resized: ", event.rect.width + '×' + event.rect.height
 
 
-RactivePartial! .register-for-dynamic-pos ->
 RactivePartial! .register-for-post-ready ->
   # lock scada
   lock = SwitchActor \lock-scada

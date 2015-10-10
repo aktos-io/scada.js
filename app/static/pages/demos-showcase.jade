@@ -86,7 +86,14 @@ style.
       {{>justgage {pin_name: 'scada-test-pin-3', val: 45, wid: 401} }}
 
       
-      
+
+.panel.panel-primary
+  .panel-heading
+    h3.panel-title Remote commands
+  .panel-body
+    .row
+      | {{>jq-push-button {pin_name: 'gui-command'} }}
+
 
 .panel.panel-primary
   .panel-heading
