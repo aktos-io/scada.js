@@ -162,35 +162,20 @@ style.
       {{>label {wid: 903, val: 'Tablo'}}}
       {{>label {wid: 904, val: 'Kullanıcı Girişi'}}}
 
-
-
-.panel.panel-primary
-  .panel-heading
-    h3.panel-title Remote commands
-  .panel-body
-    .row
-      | {{>jq-push-button {pin_name: 'gui-command'} }}
-
 .panel.panel-primary
   .panel-heading
     h3.panel-title Giriş Formu
   .panel-body
-    :md
-      Test şifreleri: 
-      
-        * cca12345
-        * me12345
-        * tk12345
-    div
-      div Login input: {{>login-input {} }}
-      div Login status {{>login-info {} }}
-
-
-.panel.panel-primary
-  .panel-heading
-    h3.panel-title Kullanıcı girişleri
-  .panel-body
     .row
-      .col-md-6
-        h2 Textbox
-        div.
+      :md
+        Test şifreleri: 
+        
+          * cca12345
+          * me12345
+          * tk12345
+      div
+        div Login input: {{>login-input {} }}
+        div Login status {{>login-info {} }}
+
+  .row.
+    {{>jq-push-button {wid: 1000, pin_name: 'gui-command', label: 'r'} }}

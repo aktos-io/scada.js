@@ -294,6 +294,11 @@ widget-positions =
     y: 2058.199996948242
     w: 293px
     h: 51px
+  * wid: 1000
+    x: 1119.75
+    y: 2819
+    w: 15px
+    h: 18px
   * wid: 211
     x: 580
     y: 418.3999938964844
@@ -369,6 +374,8 @@ widget-positions =
     y: 220
     w: 152px
     h: 100px
+
+
 
 
 

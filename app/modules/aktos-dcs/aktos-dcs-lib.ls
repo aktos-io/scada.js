@@ -70,7 +70,7 @@ class SwitchActor extends Actor
     for func in @callback-functions
       func msg
 
-  gui-event: (val) ->
+  gui-event-base: (val) ->
     #console.log "gui event called!", val
     @fire-callbacks do
       pin_name: @pin-name
@@ -79,6 +79,9 @@ class SwitchActor extends Actor
     @send IoMessage: do
       pin_name: @pin-name
       val: val
+
+  gui-event: (val) ->
+    @gui-event-base val
 
   get-keypath: ->
     get-keypath @node
@@ -99,6 +102,11 @@ class IoActor extends SwitchActor
     # further usages
     jq-node.data \actor, this
 
+  gui-event: (val) ->
+    if @node.has-class \read-only
+      console.log "not sending msg, this widget is read-only!"
+    else
+      @gui-event-base val
 
 class WidgetActor extends IoActor
   ~>

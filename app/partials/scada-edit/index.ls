@@ -169,10 +169,12 @@ RactivePartial! .register-for-post-ready ->
       $ \.draggable .each ->
         $ this .remove-class \draggable
         $ this .add-class \draggable-locked
+        $ this .remove-class \read-only
     else
       $ \.draggable-locked .each ->
         $ this .remove-class \draggable-locked
         $ this .add-class \draggable
+        $ this .add-class \read-only
 
   # lock scada externally
   SwitchActor \lock-scada .gui-event on
