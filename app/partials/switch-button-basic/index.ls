@@ -4,14 +4,18 @@ require! {
     IoActor,
   }
 }
-  
+
 RactivePartial! .register ->
   $ '.switch-button-basic' .each !->
-    elem = $ this
-    actor = IoActor elem
+    actor = IoActor $ this
 
-    elem.change ->
-      console.log "switch button changed: ", this.checked
-      actor.gui-event this.checked
+    input = actor.node.find \.switch-button-basic__input
+
+    if (actor.get-ractive-var \wid)?
+      actor.node.add-class \draggable
+
+    input.change ->
+      #console.log "switch button changed: ", (input.prop \checked)
+      actor.gui-event input.prop \checked
     actor.add-callback (msg) ->
-      elem.prop 'checked', msg.val
+      input.prop 'checked', msg.val

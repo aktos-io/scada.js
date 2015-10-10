@@ -93,6 +93,15 @@ style.
             ['scada-test-pin-5', 'green']
           ], wid: 403} }}
       {{>slider {pin_name: 'scada-test-pin-5', wid: 404} }}
+      
+      {{>switch-button-basic {wid: 405, pin_name: 'test-pin', label: 'Test pin'} }}
+      {{>switch-button {wid: 408,pin_name: 'test-pin', label: 'TEST PIN'} }}
+      {{>b-circle-button {wid: 409,pin_name: 'circle-test'} }}
+      {{>b-circle-button {wid: 410,pin_name: 'circle-test', icon: 'shield'} }}
+      {{>b-circle-button {wid: 411,pin_name: 'circle-test', icon: 'warning'} }}
+      {{>b-circle-button {wid: 412,pin_name: 'circle-test', icon: 'signal'} }}
+      {{>arrow-keys {wid: 413} }}
+
 
 .panel.panel-primary.scada-drawing-area
   .panel-heading
@@ -121,7 +130,34 @@ style.
       {{>circular-progress {wid: 810, pin_name: 'test-pin-a3',color: 'yellowgreen green', format: '### °C'} }}
       {{>slider {pin_name: "test-pin-a3", val: 35, wid: 811} }}
 
+      {{>seven-segment {wid: 813, pin_name: 'gauge-slider4', val: 123.45, format: '#######.##', type: 'multimeter'}}}
+      {{>seven-segment {wid: 814, pin_name: 'gauge-slider4',  format: '####.#'}}}
+      {{>seven-segment {wid: 815, pin_name: 'gauge-slider4',  format: '##.###'}}}
+      {{>slider {wid: 816, pin_name: 'gauge-slider4',  val: 0} }}
+
+      {{>toolbar {wid: 817, buttons: [
+        '#link1 fa-car', 
+        '#link2 fa-heart', 
+        '#link3', 
+        '#link4 fa-car', 
+        '#link5 fa-plane' 
+        ], icon: 'fa-cog'} }}        
+
+.panel.panel-primary.scada-drawing-area
+  .panel-heading
+    h2.panel-title Scada çizim alanı 
+  
+    .row
+      .col-sm-3.
+        {{>scada-generate-layout {pin_name: 'scada'} }}
+      .col-sm-5.
+        {{>jq-checkbox {pin_name: 'lock-scada', label: 'Kilitli (Locked)'} }}
+  
+  //- wid: 900+
+  .panel-body  
+    {{>table {wid: 900, pin_name: 'test-table'} }}
       
+
 
 .panel.panel-primary
   .panel-heading
@@ -129,48 +165,6 @@ style.
   .panel-body
     .row
       | {{>jq-push-button {pin_name: 'gui-command'} }}
-
-
-.panel.panel-primary
-  .panel-heading
-    h3.panel-title Notification Boxes
-  .panel-body
-    .row
-      .col-lg-3.col-md-6.
-        {{>b-notification-box {pin_name: 'notification-test', icon: 'gears', label: 'Testing'} }}
-      .col-lg-3.col-md-6.
-        {{>b-notification-box {pin_name: 'online-users', opt: 'green', icon: 'user', label: 'Online'} }}
-      .col-lg-3.col-md-6.
-        {{>b-notification-box {pin_name: 'notification-test', opt: 'red', label: 'Alert', icon: 'warning'} }}
-      .col-lg-3.col-md-6.
-        {{>b-notification-box {pin_name: 'notification-test', opt: 'yellow'} }}
-    .row.
-      {{>slider {pin_name: 'notification-test'} }}
-      
-      
-.panel.panel-primary
-  .panel-heading
-    h3.panel-title Bağlı kullanıcı sayısı
-  .panel-body
-    .row.
-      {{>online-users {pin_name: 'online-users'} }}
-
-
-.panel.panel-primary
-  .panel-heading
-    h3.panel-title Toolbars
-  .panel-body
-    .row
-      .col-sm-offset-4.col-sm-4
-        div.
-          {{>toolbar {buttons: [
-            '#link1 fa-car', 
-            '#link2 fa-heart', 
-            '#link3', 
-            '#link4 fa-car', 
-            '#link5 fa-plane' 
-            ], icon: 'fa-cog'} }}        
-
 
 .panel.panel-primary
   .panel-heading
@@ -185,81 +179,6 @@ style.
     div
       div Login input: {{>login-input {} }}
       div Login status {{>login-info {} }}
-    
-
-.panel.panel-primary
-  .panel-heading
-    h3.panel-title Tablo
-  .panel-body.
-    {{>table {pin_name: 'test-table'} }}
-.panel.panel-primary
-  .panel-heading
-    h3.panel-title SevenSegment
-  .panel-body
-    .row.
-        {{>seven-segment {pin_name: 'gauge-slider4', val: 1.6,  format: '##'}}}
-        {{>seven-segment {pin_name: 'gauge-slider4', val: 123.45, format: '#######.##', type: 'multimeter'}}}
-        {{>seven-segment {pin_name: 'gauge-slider4',  format: '####.#'}}}
-        {{>seven-segment {pin_name: 'gauge-slider4',  format: '##.###'}}}
-        {{>slider {pin_name: 'gauge-slider4',  val: 0} }}
-
-.panel.panel-primary
-  .panel-heading
-    h3.panel-title Buttons
-  .panel-body
-    .row
-      .col-sm-2.
-        {{>switch-button-basic {pin_name: 'test-pin', label: 'Test pin'} }}
-      .col-sm-2.
-        {{>jq-checkbox {pin_name: 'test-pin', label: 'Test pin'} }}
-      .col-sm-2.
-        {{>toggle-switch {pin_name: 'test-pin'} }}
-      .col-sm-2.
-        {{>switch-button {pin_name: 'test-pin', label: 'TEST PIN'} }}
-      .col-sm-2.
-        {{>push-button {pin_name: 'test-pin', label: 'TEST PIN'} }}
-      .col-md-2.
-        {{>status-led {pin_name: 'test-pin', src: 'light-bulb'} }}
-      .col-sm-2.
-        {{>status-led {pin_name: 'test-pin'} }}
-    .row
-      .col-lg-3.
-        {{>b-circle-button {pin_name: 'circle-test'} }}
-      .col-lg-3.
-        {{>b-circle-button {pin_name: 'circle-test', icon: 'shield'} }}
-      .col-lg-3.
-        {{>b-circle-button {pin_name: 'circle-test', icon: 'warning'} }}
-      .col-lg-3.
-        {{>b-circle-button {pin_name: 'circle-test', icon: 'signal'} }}
-
-    .row
-      .col-sm-offset-4.col-sm-4.
-        {{>arrow-keys {} }}
-        
-
-.panel.panel-primary
-  .panel-heading
-    h3.panel-title Grafikler
-  .panel-body
-    .row
-      h3 Stacked progress 
-      div. 
-        {{>slider {pin_name:"slider-1", val: 25} }}
-        {{>slider {pin_name:"slider-2", val: 25} }}
-        {{>slider {pin_name:"slider-3", val: 25} }}
-        {{>slider {pin_name:"slider-4", val: 25} }}
-        {{>slider {pin_name:"slider-5", val: 25} }}
-
-        {{>b-stacked-progress 
-          {pin_names: [ 
-              ['slider-1', 'red'], 
-              ['slider-2', ''], 
-              ['slider-3', 'green'],
-              ['slider-4', 'blue'],
-              ['slider-5', 'orange']
-            ]
-          }
-        }}
 
 
 .panel.panel-primary
