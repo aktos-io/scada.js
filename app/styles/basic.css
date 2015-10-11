@@ -1,5 +1,13 @@
 body {
-  margin: 0; 
+  margin: 0;
+}
+
+#home-page {
+  background-image: url('../img/aktos-elektronik/home-page/aktos-arkaplan-site.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center; 
+
 }
 
 #header1 {
@@ -14,7 +22,7 @@ body {
 
 
 .home-col-padding {
-  padding: 2em; 
+  padding: 2em;
 }
 
 
@@ -26,8 +34,8 @@ body {
           user-select: none;
 -webkit-touch-callout: none;
     -khtml-user-select: none;
-    
-    overflow: hidden; 
+
+    overflow: hidden;
 
 }
 
