@@ -65,41 +65,42 @@ style.
         {{>jq-checkbox {pin_name: 'lock-scada', label: 'Kilitli (Locked)'} }}
   
   .panel-body        
-    .row(style="min-height: 500px; min-width: 100%").      
-      {{>push-button {pin_name: 'test-output-1', wid: 1} }}
-      {{>push-button {pin_name: 'test-pin', wid: 7} }}
-      {{>status-led {pin_name: 'test-output-1', wid: 2} }}
+    .row(style="min-height: 500px; min-width: 100%").  
+      {{! push button example }}
+      {{>push-button {pin_name: 'vpin-0', label: 'Virtual pin 0', wid: 1} }}
+      {{>status-led {pin_name: 'vpin-0', wid: 2} }}
       
-      {{>jq-checkbox {pin_name: 'scada-test-pin-2', wid: 3} }}
-      {{>status-led {pin_name: 'scada-test-pin-2', wid: 4, src: 'computer'} }}
+      {{! checkbox example }}
+      {{>jq-checkbox {pin_name: 'vpin-1', wid: 3} }}
+      {{>status-led {pin_name: 'vpin-1', wid: 4, src: 'computer'} }}
       
-      {{>line-graph {pin_name: 'scada-test-pin-3', wid: 5} }}
+      {{! graph example }}
+      {{>line-graph {pin_name: 'vpin-2', wid: 5} }}
+      {{>slider {pin_name: 'vpin-2', wid: 6} }}
       
-      {{>slider {pin_name: 'scada-test-pin-3', wid: 6} }}
+      {{>thermometer {pin_name: 'vpin-2', wid: 8} }}
       
-      {{>thermometer {pin_name: 'scada-test-pin-3', wid: 8} }}
-      
-      {{>b-vertical-progress-bar {pin_name: 'scada-test-pin-4', wid: 9} }}
-      {{>slider {pin_name: 'scada-test-pin-4', wid: 10} }}
-      {{>b-progress-bar {pin_name: 'scada-test-pin-4', wid: 400} }}
+      {{>b-vertical-progress-bar {pin_name: 'vpin-3', wid: 9} }}
+      {{>slider {pin_name: 'vpin-3', wid: 10} }}
+      {{>b-progress-bar {pin_name: 'vpin-3', wid: 400} }}
 
-      {{>justgage {pin_name: 'scada-test-pin-3', val: 45, wid: 401} }}
+      {{>justgage {pin_name: 'vpin-2', val: 45, wid: 401} }}
       {{>numeric-keyboard {wid: 402} }}
       
       {{>b-stacked-progress 
         {pin_names: [ 
-            ['scada-test-pin-3', 'red'], 
-            ['scada-test-pin-4', ''], 
-            ['scada-test-pin-5', 'green']
+            ['vpin-2', 'red'], 
+            ['vpin-3', ''], 
+            ['vpin-4', 'green']
           ], wid: 403} }}
-      {{>slider {pin_name: 'scada-test-pin-5', wid: 404} }}
+      {{>slider {pin_name: 'vpin-4', wid: 404} }}
       
-      {{>switch-button-basic {wid: 405, pin_name: 'test-pin', label: 'Test pin'} }}
-      {{>switch-button {wid: 408,pin_name: 'test-pin', label: 'TEST PIN'} }}
-      {{>b-circle-button {wid: 409,pin_name: 'circle-test'} }}
-      {{>b-circle-button {wid: 410,pin_name: 'circle-test', icon: 'shield'} }}
-      {{>b-circle-button {wid: 411,pin_name: 'circle-test', icon: 'warning'} }}
-      {{>b-circle-button {wid: 412,pin_name: 'circle-test', icon: 'signal'} }}
+      {{>switch-button-basic {wid: 405, pin_name: 'vpin-5', label: 'Test pin'} }}
+      {{>switch-button {wid: 408,pin_name: 'vpin-5', label: 'TEST PIN'} }}
+      {{>b-circle-button {wid: 409,pin_name: 'vpin-6'} }}
+      {{>b-circle-button {wid: 410,pin_name: 'vpin-6', icon: 'shield'} }}
+      {{>b-circle-button {wid: 411,pin_name: 'vpin-6', icon: 'warning'} }}
+      {{>b-circle-button {wid: 412,pin_name: 'vpin-6', icon: 'signal'} }}
       {{>arrow-keys {wid: 413} }}
 
 
@@ -116,24 +117,24 @@ style.
   .panel-body        
     //- wid: 800+
     .row(style="min-height: 500px; min-width: 100%").      
-      {{>gauge {pin_name: 'test-pin-a1', type: 'speed', wid: 800} }}     
-      {{>gauge {pin_name: 'test-pin-a1', type: 'download', wid: 801} }}     
-      {{>gauge {pin_name: 'test-pin-a1', type: 'ping', wid: 802} }}     
-      {{>b-notification-box {pin_name: 'test-pin-a2', icon: 'gears', label: 'Testing', wid: 803} }}
-      {{>b-notification-box {pin_name: 'test-pin-a2', opt: 'red', label: 'Alert', icon: 'warning', wid: 804} }}
-      {{>slider {pin_name: 'test-pin-a1', wid: 805} }}
-      {{>slider {pin_name: 'test-pin-a2', wid: 806} }}
-      {{>seven-segment {pin_name: 'test-pin-a1',  format: '####.#', wid: 807}}}
-      {{>spinbox {pin_name: "test-pin-a2", val: 35, wid: 808} }}
+      {{>gauge {pin_name: 'vpin-7', type: 'speed', wid: 800} }}     
+      {{>gauge {pin_name: 'vpin-7', type: 'download', wid: 801} }}     
+      {{>gauge {pin_name: 'vpin-7', type: 'ping', wid: 802} }}     
+      {{>b-notification-box {pin_name: 'vpin-8', icon: 'gears', label: 'Testing', wid: 803} }}
+      {{>b-notification-box {pin_name: 'vpin-8', opt: 'red', label: 'Alert', icon: 'warning', wid: 804} }}
+      {{>slider {pin_name: 'vpin-7', wid: 805} }}
+      {{>slider {pin_name: 'vpin-8', wid: 806} }}
+      {{>seven-segment {pin_name: 'vpin-7',  format: '####.#', wid: 807}}}
+      {{>spinbox {pin_name: "vpin-8", val: 35, wid: 808} }}
 
-      {{>circular-progress {pin_name: 'test-pin-a3', wid: 809, color: 'yellowgreen green'} }}
-      {{>circular-progress {wid: 810, pin_name: 'test-pin-a3', format: '### °C'} }}
-      {{>slider {pin_name: "test-pin-a3", val: 35, wid: 811} }}
+      {{>circular-progress {pin_name: 'vpin-9', wid: 809, color: 'yellowgreen green'} }}
+      {{>circular-progress {wid: 810, pin_name: 'vpin-9', format: '### °C'} }}
+      {{>slider {pin_name: "vpin-9", val: 35, wid: 811} }}
 
-      {{>seven-segment {wid: 813, pin_name: 'gauge-slider4', val: 123.45, format: '#######.##', type: 'multimeter'}}}
-      {{>seven-segment {wid: 814, pin_name: 'gauge-slider4',  format: '####.#'}}}
-      {{>seven-segment {wid: 815, pin_name: 'gauge-slider4',  format: '##.###'}}}
-      {{>slider {wid: 816, pin_name: 'gauge-slider4',  val: 0} }}
+      {{>seven-segment {wid: 813, pin_name: 'vpin-10', val: 123.45, format: '#######.##', type: 'multimeter'}}}
+      {{>seven-segment {wid: 814, pin_name: 'vpin-10',  format: '####.#'}}}
+      {{>seven-segment {wid: 815, pin_name: 'vpin-10',  format: '##.###'}}}
+      {{>slider {wid: 816, pin_name: 'vpin-10',  val: 0} }}
 
       {{>toolbar {wid: 817, buttons: [
         '#link1 fa-car', 
