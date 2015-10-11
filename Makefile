@@ -21,8 +21,8 @@ run-ide:
 run-brunch:
 	@brunch b && brunch w
 
-run-server:
-	@lsc server/server.ls
+run-development-server:
+	cd server && lsc server.ls
 
 run-production-server:
 	npm run server
