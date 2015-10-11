@@ -23,7 +23,7 @@ require! {
 
 # Handle page navigation
 # -----------------------
-handle-navigation = ->
+handle-navigation = (event) ->
   page = window.location.hash.replace /^#/, '' .split '/'
   console.log "hash changed: #{page}"
 
@@ -35,7 +35,15 @@ handle-navigation = ->
         # this is a popup
         console.log "this is a popup link!"
         target = '#' + (anchor.replace /!$/, '')
-        $ target .popup \open
+        popup-options = {}
+
+        if event?
+          console.log "handle navigation got event: ", event
+          popup-options <<< do
+            x: event.client-x
+            y: event.client-y
+
+        $ target .popup \open, popup-options
 
         # remove popup link portion from url on close
         /*
@@ -107,6 +115,8 @@ RactivePartial! .register-for-post-ready ->
         curr-page = window.location.hash.replace /^#/, '' .split '/' .1
         if curr-page?
           console.log "click function is called! curr-page: #{curr-page}"
-          window.location.hash = '#' + "/#{curr-page}/#{addr}"
+          new-hash = '#' + "/#{curr-page}/#{addr}"
+          #window.location.hash = new-hash
+          history.pushState({}, '', new-hash)
 
-    handle-navigation!
+    handle-navigation e
