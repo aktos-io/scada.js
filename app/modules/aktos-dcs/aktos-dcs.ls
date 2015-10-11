@@ -216,11 +216,15 @@ class ProxyActor
         @connected = false
         @update-connection-status!
 
+      @on-connection-functions = []
+
     handle_UpdateConnectionStatus: (msg) ->
       @update-connection-status!
 
     update-connection-status: ->
       @send ConnectionStatus: {connected: @connected}
+      if @connected
+        @update-io!
 
     update-io: ->
       @network-tx UpdateIoMessage: {}
