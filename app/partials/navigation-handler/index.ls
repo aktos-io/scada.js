@@ -76,7 +76,8 @@ handle-navigation = ->
     anchor = page.2
 
     console.log "page is changed to #{main-section} / #{anchor}"
-    $ ':mobile-pagecontainer' .pagecontainer 'change', ('#' + main-section)
+    $ ':mobile-pagecontainer' .pagecontainer 'change', ('#' + main-section), do
+      transition: \none
 
     # scroll immediately (in the same page)
     scroll-to-anchor anchor
