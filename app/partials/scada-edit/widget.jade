@@ -1,7 +1,7 @@
 include ../../templates/mixins.jade
 
 +partial('scada-generate-layout')
-  .scada-generate-layout
+  .scada-generate-layout(style="max-height: 200px;")
     a(href="#layout-output-{{ .actor_id }}", data-rel="popup") 
       button(type=button) Generate Layout!
     
@@ -9,9 +9,9 @@ include ../../templates/mixins.jade
       data-role="popup" 
       id="layout-output-{{ .actor_id }}" 
       data-theme="b"
-      style="max-height: 200px;"
       )        
         h3 Generated layout 
         :md
           [--> scada-layout.ls](https://github.com/ceremcem/aktos-website/blob/master/app/static/scada-layout.ls)
-        textarea(rows="14",  cols="20", id="layout-output-area-{{ .actor_id }}", style="max-height: 200px")
+        textarea.scada-generate-layout__textarea(
+          id="layout-output-area-{{ .actor_id }}")
