@@ -16,8 +16,13 @@ new-client:
 	@firefox -new-tab -url http://localhost:4000 2>/dev/null &
 
 run-ide:
-	@#kate .kateproject 2>/dev/null &
+	# this is fallback ide
+	echo '{"name": "aktos-webui", "files": [ { "directory": ".",  "recursive": 1 } ]}' > .kateproject
+	@kate .kateproject 2>/dev/null &
+
+run-ide-atom:
 	atom .
+
 run-brunch:
 	@brunch b && brunch w
 

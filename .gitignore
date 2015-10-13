@@ -11,4 +11,5 @@ app/assets/demos
 disabled/*
 **/orig--no-sync
 .kateproject.d
+.kateproject
 npm-debug.log
