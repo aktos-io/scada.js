@@ -249,7 +249,7 @@ server.route do
 
 server.route do
  *  method: 'GET'
-    path: 'img/{f*}'
+    path: '/img/{f*}'
     handler:
       directory:
         path: 'public/img'
@@ -257,7 +257,7 @@ server.route do
         index: ['index.html']
 server.route do
  *  method: 'GET'
-    path: 'images/{f*}'
+    path: '/images/{f*}'
     handler:
       directory:
         path: 'public/images'
@@ -265,7 +265,7 @@ server.route do
         index: ['index.html']
 server.route do
  *  method: 'GET'
-    path: 'javascripts/{f*}'
+    path: '/javascripts/{f*}'
     handler:
       directory:
         path: 'public/javascripts'
@@ -273,7 +273,7 @@ server.route do
         index: ['index.html']
 server.route do
  *  method: 'GET'
-    path: 'pages/{f*}'
+    path: '/pages/{f*}'
     handler:
       directory:
         path: 'public/pages'
@@ -281,7 +281,7 @@ server.route do
         index: ['index.html']
 server.route do
  *  method: 'GET'
-    path: 'stylesheets/{f*}'
+    path: '/stylesheets/{f*}'
     handler:
       directory:
         path: 'public/stylesheets'
@@ -289,7 +289,7 @@ server.route do
         index: ['index.html']
 server.route do
  *  method: 'GET'
-    path: 'fonts/{f*}'
+    path: '/fonts/{f*}'
     handler:
       directory:
         path: 'public/fonts'
@@ -297,7 +297,7 @@ server.route do
         index: ['index.html']
 server.route do
  *  method: 'GET'
-    path: 'projects/{f*}'
+    path: '/projects/{f*}'
     handler:
       directory:
         path: 'public/projects'
