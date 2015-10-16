@@ -17,6 +17,8 @@ Ractive.DEBUG = /unminified/.test !-> /*unminified*/
 app = new Ractive do
   el: 'container'
   template: '#app'
+  data:
+    gms: {}
 
 # Register ractive app in order to use in partials
 RactiveApp!set app
@@ -79,6 +81,19 @@ RactivePartial!register ->
       <[ a1 b1 c1 d1 e1 ]>
       <[ a2 b2 c2 d2 e2 ]>
 
+
+RactivePartial!register ->
+  poll-gms = ->
+    $.ajax do
+      method: "GET"
+      url: "/gms/WebService1.asmx/GetRooms"
+      data-type: 'json'
+      success: (response) ->
+        console.log "got gms data..."
+        app.set \gms, response
+
+  poll-gms!
+  set-interval poll-gms, 30_000ms
 
   /*
 
