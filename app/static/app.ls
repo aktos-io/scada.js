@@ -86,7 +86,7 @@ RactivePartial!register ->
   poll-gms = ->
     $.ajax do
       method: "GET"
-      url: "/gms/WebService1.asmx/GetRooms"
+      url: "gms/WebService1.asmx/GetRooms"
       data-type: 'json'
       success: (response) ->
         console.log "got gms data..."
