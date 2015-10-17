@@ -6,8 +6,8 @@ style.
     */
   }
 
-#cici-meze(data-role='page', data-theme='b')
-  .panel.panel-primary.scada-drawing-area.cici-meze-scada2
+#cici-meze.scada.scada-drawing-area(data-role='page', data-theme='b')
+  .panel.panel-primary.cici-meze-scada2
     .panel-heading
       h2.panel-title CM
       .row
@@ -37,7 +37,7 @@ style.
       
       //-
         last-id: 214
-      .row(style="min-height: 500px; min-width: 100%", rel="external").  
+      div(style="min-height: 500px;").  
         {{>label {val: 'Üretim Hazırlık', wid: 211} }}
         {{>label {val: 'Sebze Meyve Deposu', wid: 212} }}
         {{>label {val: 'Son Ürün', wid: 213} }}
