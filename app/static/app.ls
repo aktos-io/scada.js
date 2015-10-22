@@ -95,6 +95,47 @@ RactivePartial!register ->
   poll-gms!
   set-interval poll-gms, 30_000ms
 
+
+RactivePartial!register ->
+  projects =
+    * label: 'Cici Meze'
+      src: 'projects/akhisar-atiksu/proje-kapak.jpg'
+      addr: '#/cici-meze'
+
+    * label: 'Akhisar Atıksu Arıtma'
+      src: 'projects/akhisar-atiksu/proje-kapak.jpg'
+      addr: '#akhisar-atiksu'
+
+    * label: 'Doğanbey Atıksu Arıtma'
+      src: 'projects/doganbey-atiksu/tesis-ustten.jpg'
+      addr: '#doganbey-atiksu'
+
+    * label: 'Delphi Otomativ (İzmir)'
+      src: 'projects/delphi-kablo-zirhi-soyma/proje-kapak.jpg'
+      addr: '#delphi-otomativ-izmir'
+
+    * src: 'projects/hms-telemetri/proje-kapak.jpg'
+      label: 'HMS Üretim Takip'
+
+    * src: 'projects/iski/scada.jpg'
+      label: 'İski Terfi İstasyonu'
+
+    * src: 'projects/lintek-newtech-cep-otomati/cep-otomati-onden-1.jpg'
+      label: 'Newtech Cep Otomatı'
+
+    * src: 'projects/versis-asfalt-plenti/proje-kapak.jpg'
+      label: 'Versis Asfalt Plenti'
+
+    * src: 'projects/serel/proje-kapak.jpg'
+      label: 'Serel Seramik Üretim Takip'
+
+    * src: 'projects/kku-nukleer-fizik-lab/proje-kapak.jpg'
+      label: 'Gama-Gama Korelasyon Deney Otomasyonu'
+
+  app.set \page.projects, projects
+
+
+
   /*
 
   console.log "Performance testing via gauge-slider pin"

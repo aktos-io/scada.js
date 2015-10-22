@@ -11,59 +11,6 @@ include ../../templates/mixins.jade
     |     <li><a {{>jq-persist {active: .active_button, this_page: "contact-page"}}} href="#/contact-page" id="contact" data-icon="custom" data-transition="none">İletişim</a></li>
     |   </ul>
     | </div>
-       
-
-+partial('switch-list')
-  .switch-list
 
 +partial('jq-persist')
   |  {{ active == this_page ? 'class="ui-btn-active ui-state-persist"' : '' }}
-  
-
-style.
-  .project-buttons111 {
-    background-size:   cover;                      /* <------ */
-    background-repeat: no-repeat;
-    background-position: center center;            /* optionally, center the image */
-    height:33vw;
-    margin:0.5%;
-    background-color: red; 
-    padding: 2.5%;
-  }
-  
-  .well {
-    background: #333; 
-    border-color: #337ab7;
-  }
-  .project-buttons {
-    margin: 1em;
-  }
-  
-+partial('projects-buttons')
-  .project-buttons.well
-    a(
-      href="{{ .addr? addr: '#' }}" 
-      )
-      img.thumbnail.img-responsive(src="{{ .src }}")
-      span {{ .label }}
-    span. 
-      lumikeaylu uylimekau ieaui
-      ea uyliekalu auyieak uie a 
-
-  
-   
-style.
-  .demo-buttons {
-    border: 1px solid white; 
-  }
-  .demo-buttons img {
-    float: left;
-    padding: 5px; 
-  }
-
-+partial('demo-buttons')
-  a.demo-buttons(
-    href="{{ .addr? addr : '#' }}" 
-    )
-    img(src="{{ .src ? .src : 'images/icons-png/gear-black.png' }}")
-    | {{ .label }}

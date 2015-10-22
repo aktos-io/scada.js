@@ -1,50 +1,36 @@
 //- projects page
-#projects(data-role='page', data-theme='b')
-  | {{>nav-bar {active_button: 'projects'}}}
-  .ui-grid-b(data-theme='b')
-    .ui-block-a
-      | {{>projects-buttons {
-      | src: 'projects/akhisar-atiksu/proje-kapak.jpg',
-      | label: 'Akhisar Atıksu Arıtma',
-      | addr: 'naber'}
-      | }}
-    .ui-block-b
-      | {{>projects-buttons {
-      | src: 'projects/doganbey-atiksu/tesis-ustten.jpg',
-      | label: 'Doğanbey Atıksu Arıtma'}
-      | }}
-    .ui-block-c
-      | {{>projects-buttons {
-      | src: 'projects/delphi-kablo-zirhi-soyma/proje-kapak.jpg',
-      | label: 'Delphi Otomativ (İzmir)'}
-      | }}
-    .ui-block-a
-      | {{>projects-buttons {
-      | src: 'projects/hms-telemetri/proje-kapak.jpg',
-      | label: 'HMS Üretim Takip'}
-      | }}
-    .ui-block-b
-      | {{>projects-buttons {
-      | src: 'projects/iski/scada.jpg',
-      | label: 'İski Terfi İstasyonu'}
-      | }}
-    .ui-block-c
-      | {{>projects-buttons {
-      | src: 'projects/lintek-newtech-cep-otomati/cep-otomati-onden-1.jpg',
-      | label: 'Newtech Cep Otomatı'}
-      | }}
-    .ui-block-a
-      | {{>projects-buttons {
-      | src: 'projects/versis-asfalt-plenti/proje-kapak.jpg',
-      | label: 'Versis Asfalt Plenti'}
-      | }}
-    .ui-block-b
-      | {{>projects-buttons {
-      | src: 'projects/serel/proje-kapak.jpg',
-      | label: 'Serel Seramik Üretim Takip'}
-      | }}
-    .ui-block-c
-      | {{>projects-buttons {
-      | src: 'projects/kku-nukleer-fizik-lab/proje-kapak.jpg',
-      | label: 'Gama-Gama Korelasyon Deney Otomasyonu'}
-      | }}
+
+#projects(data-role='page', data-theme='b').
+  {{>nav-bar {active_button: 'projects'}}}
+  {{#each page.projects}}
+    <div style="
+      width: 30em;  
+      height: 30em; 
+      display: inline-block;
+      margin: 5px;
+      padding: 0;
+      ">
+      
+      <a href="{{ .addr ? .addr : '#' }}">
+        <div class="projects__wrapper" style="
+          width: 100%; 
+          height: 100%; 
+          background: url({{.src}}) no-repeat center center ;
+          background-size: cover;
+          position: relative; 
+          ">
+          
+          <div style="
+            background-color: rgba(0, 0, 0, 0.6);
+            position: absolute; 
+            left: 0; 
+            bottom: 0; 
+            color: white; 
+            width: 100%; 
+            padding: 10px; 
+            
+          "> {{.label}} </div>
+        </div>
+      </a>
+    </div>
+  {{/each}}
