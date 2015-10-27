@@ -1,5 +1,11 @@
 body {
-  margin: 0;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.content {
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 #home-page {
@@ -7,7 +13,6 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-
 }
 
 .home-col-padding {
@@ -26,13 +31,3 @@ body {
     vertical-align: middle;
     float: none;
 }
-
-
-.nav-glyphish-example .ui-btn { padding-top: 40px !important; }
-.nav-glyphish-example .ui-btn:after { width: 30px!important; height: 30px!important; margin-left: -15px !important; box-shadow: none!important; -moz-box-shadow: none!important; -webkit-box-shadow: none!important; -webkit-border-radius: 0 !important; border-radius: 0 !important; }
-#home::after { background:  url("../img/icons/32x32/home.png") 50% 50% no-repeat; background-size: 24px 24px; }
-#project::after { background:  url("../img/icons/32x32/tray.png") 50% 50% no-repeat; background-size: 24px 24px;  }
-#product::after { background:  url("../img/icons/32x32/store.png") 50% 50% no-repeat;  background-size: 24px 24px; }
-#demo::after { background:  url("../img/icons/32x32/wave-2.png") 50% 50% no-repeat;  background-size: 24px 24px; }
-#download::after { background:  url("../img/icons/32x32/cloud.png") 50% 50% no-repeat;  background-size: 24px 24px; }
-#contact::after { background:  url("../img/icons/32x32/speech-bubble-left.png") 50% 50% no-repeat;  background-size: 24px 24px; }

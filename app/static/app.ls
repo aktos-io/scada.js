@@ -104,34 +104,34 @@ RactivePartial!register ->
       addr: '#/cici-meze'
 
     * label: 'Akhisar Atıksu Arıtma'
-      src: 'projects/akhisar-atiksu/proje-kapak.jpg'
+      src: 'projects/akhisar-atiksu/proje-kapak-2.jpg'
       addr: '#akhisar-atiksu'
 
     * label: 'Doğanbey Atıksu Arıtma'
-      src: 'projects/doganbey-atiksu/tesis-ustten.jpg'
+      src: 'projects/doganbey-atiksu/proje-kapak-2.jpg'
       addr: '#doganbey-atiksu'
 
     * label: 'Delphi Otomotiv (İzmir)'
-      src: 'projects/delphi-kablo-zirhi-soyma/proje-kapak.jpg'
+      src: 'projects/delphi-kablo-zirhi-soyma/proje-kapak-2.png'
       addr: '#delphi-otomotiv-izmir'
 
-    * src: 'projects/hms-telemetri/proje-kapak.jpg'
-      label: 'HMS Üretim Takip'
+    * label: 'HMS Üretim Takip'
+      src: 'projects/hms-telemetri/proje-kapak-2.jpg'
 
-    * src: 'projects/iski/scada.jpg'
-      label: 'İski Terfi İstasyonu'
+    * label: 'İski Terfi İstasyonu'
+      src: 'projects/iski/scada.jpg'
 
-    * src: 'projects/lintek-newtech-cep-otomati/cep-otomati-onden-1.jpg'
-      label: 'Newtech Cep Otomatı'
+    * label: 'Newtech Cep Otomatı'
+      src: 'projects/lintek-newtech-cep-otomati/proje-kapak-2.jpg'
 
     * src: 'projects/versis-asfalt-plenti/proje-kapak.jpg'
       label: 'Versis Asfalt Plenti'
 
-    * src: 'projects/serel/proje-kapak.jpg'
-      label: 'Serel Seramik Üretim Takip'
+    * label: 'Serel Seramik Üretim Takip'
+      src: 'projects/serel/proje-kapak-2.jpg'
 
-    * src: 'projects/kku-nukleer-fizik-lab/proje-kapak.jpg'
-      label: 'Gama-Gama Korelasyon Deney Otomasyonu'
+    * label: 'Gama-Gama Korelasyon Deney Otomasyonu'
+      src: 'projects/kku-nukleer-fizik-lab/proje-kapak.jpg'
 
   app.set \page.projects, projects
 
@@ -179,6 +179,55 @@ RactivePartial!register ->
 
   app.set \page.home, home
 
+
+RactivePartial!register ->
+  products =
+    * label: 'aktos-dcs'
+      src: 'projects/aktos-dcs/proje-kapak.png'
+      short-desc: """
+        yulimekayl yluimeka yulmiek aylumie aylumikea
+        uileamk yuilekma ui
+        ea
+        uieayluieka yluikema uiekayl
+        """
+
+    * label: 'aktos-ipc'
+      src: 'projects/aktos-ipc/proje-kapak.jpg'
+      short-desc: """
+        yulimekayl yluimeka yulmiek aylumie aylumikea
+        uileamk yuilekma ui
+        ea
+        uieayluieka yluikema uiekayl
+        """
+
+    * label: 'aktos-hmi'
+      src: 'projects/aktos-hmi/tesis-ustten.jpg'
+      short-desc: """
+        yulimekayl yluimeka yulmiek aylumie aylumikea
+        uileamk yuilekma ui
+        ea
+        uieayluieka yluikema uiekayl
+        """
+
+    * label: 'aktos-scada'
+      src: 'projects/aktos-scada/proje-kapak.jpg'
+      short-desc: """
+        yulimekayl yluimeka yulmiek aylumie aylumikea
+        uileamk yuilekma ui
+        ea
+        uieayluieka yluikema uiekayl
+        """
+
+    * label: 'dijital termometre'
+      src: 'projects/dijital-termometre/proje-kapak.jpg'
+
+    * label: 'elektrik sayacı okuyucu'
+      src: 'projects/sayac-otomasyonu/proje-kapak.jpg'
+
+    * label: 'GSM Modem'
+      src: 'projects/dijital-termometre/proje-kapak.jpg'
+
+  app.set \page.products, products
 
   /*
 

@@ -1,4 +1,36 @@
 //- products page 
-#products(data-role='page', data-theme='b')
-  | {{>nav-bar {active_button: 'products'}}}
+#products(data-role='page', data-theme='b', style="padding-bottom: 100px").
+  {{>nav-bar {active_button: 'products'}}}
   
+  {{#each page.products}}
+    <div style="
+      width: 40em;  
+      height: 15em; 
+      display: inline-block;
+      margin: 5px;
+      padding: 0;
+      ">
+      
+      <a href="{{ .addr ? .addr : '#' }}">
+        <div class="projects__wrapper" style="
+          width: 100%; 
+          height: 100%; 
+          background: url({{.src}}) no-repeat center center ;
+          background-size: cover;
+          position: relative; 
+          ">
+          
+          <div style="
+            background-color: rgba(0, 0, 0, 0.8);
+            position: absolute; 
+            left: 0; 
+            bottom: 0; 
+            color: white; 
+            width: 100%; 
+            padding: 3em; 
+            
+          "> {{.label}} </div>
+        </div>
+      </a>
+    </div>
+  {{/each}}
