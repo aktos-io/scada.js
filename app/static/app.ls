@@ -19,6 +19,7 @@ app = new Ractive do
   template: '#app'
   data:
     gms: {}
+    marked: marked
 
 # Register ractive app in order to use in partials
 RactiveApp!set app
@@ -110,9 +111,9 @@ RactivePartial!register ->
       src: 'projects/doganbey-atiksu/tesis-ustten.jpg'
       addr: '#doganbey-atiksu'
 
-    * label: 'Delphi Otomativ (İzmir)'
+    * label: 'Delphi Otomotiv (İzmir)'
       src: 'projects/delphi-kablo-zirhi-soyma/proje-kapak.jpg'
-      addr: '#delphi-otomativ-izmir'
+      addr: '#delphi-otomotiv-izmir'
 
     * src: 'projects/hms-telemetri/proje-kapak.jpg'
       label: 'HMS Üretim Takip'
@@ -134,6 +135,49 @@ RactivePartial!register ->
 
   app.set \page.projects, projects
 
+
+RactivePartial!register ->
+  home =
+    about-us:
+      header: \Hakkımızda
+      body-short: """
+        Yıllar süren saha tecrübeleri neticesinde bir karara vardık: Otomasyon alanındaki işlerin %90'ında telefon açmak yerine güvercinle haberleşiliyor, araba satın alınsa tekerleksiz geliyor, çay içseniz demlik parası isteniyor, uçak tercih edilse 48 saat rötar yapıyor, dava açsanız 70 sene sürüyor.
+
+        "Hayat böyle saçma şeyler için fazla kısa" dedik ve ihtiyacımız olanı kendimiz ürettik.
+        """
+
+      body-rest: """
+        [**A**](#)çık [**K**](#)aynaklı [**T**](#)elemetri ve [**O**](#)tomasyon [**S**](#)istemleri üretiyor ve bunları kullanarak projeler gerçekleştiriyoruz. Odak noktamızda 1000 giriş çıkışın üzerindeki tesis ve sistemlerin otomasyonları ve binlerce mobil/sabit sistemin birbirine internet üzerinden bağlı çalışması gereken sistemler bulunuyor.
+
+        İşlerimizin çoğunda problemleri yazılımla çözeriz. Gerektiğinde elektronik donanım tasarlamak, imal etmek, tersine mühendislik çalışması yapmak ve mekanik donanım imal etmek de faaliyet konumuzun ayrılmaz birer parçasıdır.
+
+        Küçük ve orta ölçekli projeleri müşterinin talep edeceği herhangi bir platformda (Omron, GE Fanuc, Phoenix Contact, Trio Motion, vb...) yapabilmekle birlikte kendi platformumuz olan [aktos-dcs](#/aktos-dcs), [aktos-scada](#/aktos-scada) ve [aktos-io](#/aktos-io) kullanarak yapmayı tercih ederiz.
+
+        Büyük ölçekli projelerde yazılım alt yapısı olarak [aktos-dcs](#/aktos-dcs) ve [aktos-scada](#/aktos-scada) kullanırız. Müşteri, donanım markası konusunda (Aktos, Omron, GE Fanuc, Phoenix Contact, OEM) tercih yapmakta özgürdür.
+        """
+    news:
+      * target-date: "13.09.2015"
+        header: "İzmirHS Dağınık Programlama Eğitimi"
+        body-short: """
+          Kurucularından olduğumuz İzmir Hackerspace'de Dağınık
+          programlama eğitimi verildi.
+          """
+
+      * target-date: "25.09.2015"
+        header: "DEÜ Dağınık Programlama Eğitimi"
+        body-short: """
+          9 Eylül Üniversitesi'nde;
+
+          * dağınık programlama
+          * paralel programlama
+          * realtime web arayüzü hazırlanması
+
+          konularında eğitim verilecektir. Katılım için kayıt:
+          info@aktos-elektronik.com
+
+          """
+
+  app.set \page.home, home
 
 
   /*

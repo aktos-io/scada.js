@@ -10,24 +10,10 @@ body {
 
 }
 
-#header1 {
-  background-image: url('../img/header.png');
-  background-repeat: no-repeat;
-  background-size: contain;
-  height:300px;
-  /*width: 100%;
-   */
-  background-position: center;
-}
-
-
 .home-col-padding {
-  padding: 2em;
+  margin-left: 2em;
+  margin-right: 2em;
 }
-
-
-
-
 
 .no-shadow {
     -moz-box-shadow: none !important;
