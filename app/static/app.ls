@@ -100,7 +100,7 @@ RactivePartial!register ->
 RactivePartial!register ->
   projects =
     * label: 'Cici Meze'
-      src: 'projects/akhisar-atiksu/proje-kapak.jpg'
+      src: 'projects/cici-meze/proje-kapak.jpg'
       addr: '#/cici-meze'
 
     * label: 'Akhisar Atıksu Arıtma'
