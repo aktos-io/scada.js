@@ -183,49 +183,44 @@ RactivePartial!register ->
 RactivePartial!register ->
   products =
     * label: 'aktos-dcs'
-      src: 'projects/aktos-dcs/proje-kapak.png'
+      src: 'projects/aktos-dcs/aktos-dcs-logo-1.1.png'
       short-desc: """
-        yulimekayl yluimeka yulmiek aylumie aylumikea
-        uileamk yuilekma ui
-        ea
-        uieayluieka yluikema uiekayl
+        Otomasyon ve telemetri sistemleri için yazılım altyapısı
         """
+      addr: 'https://github.com/ceremcem/aktos-dcs'
 
     * label: 'aktos-ipc'
       src: 'projects/aktos-ipc/proje-kapak.jpg'
       short-desc: """
-        yulimekayl yluimeka yulmiek aylumie aylumikea
-        uileamk yuilekma ui
-        ea
-        uieayluieka yluikema uiekayl
+        Endüstriyel PC
         """
+
+    * label: 'aktos-scada'
+      src: 'projects/aktos-scada/widgets.png'
+      short-desc: """
+        aktos-dcs uyumlu sistemler için web tabanlı realtime scada uygulaması
+        """
+      addr: 'https://github.com/ceremcem/aktos-website'
+
+    * label: 'dijital termometre'
+      src: 'projects/dijital-termometre/proje-kapak.jpg'
+      short-desc: """
+        sıcaklık takip otomasyonları için endüstriyel dijital termometre
+        """
+
+    * label: 'elektrik sayacı okuyucu'
+      src: 'projects/energy-meter-reader/kapak.jpg'
+
+  /*
+    * label: 'GSM Modem'
+      src: 'projects/aktos-gsm-modem/proje-kapak.jpg'
 
     * label: 'aktos-hmi'
       src: 'projects/aktos-hmi/tesis-ustten.jpg'
       short-desc: """
-        yulimekayl yluimeka yulmiek aylumie aylumikea
-        uileamk yuilekma ui
-        ea
-        uieayluieka yluikema uiekayl
+        Endüstriyel HMI ürünleri
         """
-
-    * label: 'aktos-scada'
-      src: 'projects/aktos-scada/proje-kapak.jpg'
-      short-desc: """
-        yulimekayl yluimeka yulmiek aylumie aylumikea
-        uileamk yuilekma ui
-        ea
-        uieayluieka yluikema uiekayl
-        """
-
-    * label: 'dijital termometre'
-      src: 'projects/dijital-termometre/proje-kapak.jpg'
-
-    * label: 'elektrik sayacı okuyucu'
-      src: 'projects/sayac-otomasyonu/proje-kapak.jpg'
-
-    * label: 'GSM Modem'
-      src: 'projects/dijital-termometre/proje-kapak.jpg'
+    */
 
   app.set \page.products, products
 
