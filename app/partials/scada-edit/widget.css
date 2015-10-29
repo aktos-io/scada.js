@@ -35,17 +35,28 @@
           user-select: none;
 -webkit-touch-callout: none;
     -khtml-user-select: none;
+  margin: 0;
+  padding: 0;
 }
 
 .scada-drawing-area {
   min-width: 500px;
   overflow: auto;
+  margin: 0;
+  padding: 0;
 
 }
 .scada-container {
-  width: 1000px;
-  height: 500px;
+  width: 1366px;
+  min-height: 500px;
   white-space: nowrap;
   display: inline-block;
-  position: relative;
+  position: relative; /* this is extremely important for relative widget positioning */
+  margin: 0;
+  padding: 0;
+}
+
+.scada .panel, .scada .panel-body {
+  padding: 0;
+  margin: 0; 
 }
