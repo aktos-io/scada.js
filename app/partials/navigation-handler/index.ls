@@ -27,14 +27,26 @@ handle-navigation = (event) ->
   page = window.location.hash.replace /^#/, '' .split '/'
   console.log "hash changed: #{page}"
 
+  change-page = (target-id) ->
+    console.log "page is changed to #{target-id}"
+    $ ':mobile-pagecontainer' .pagecontainer 'change', target-id, do
+      transition: \none
+
+
   # try to scroll to anchor, immediately or after page change
   scroll-to-anchor = (anchor) ->
+    # anchor may be
+    #   * simple anchor in page
+    #   * popup
+    #   * subpage
+
     if anchor? and anchor isnt ''
       console.log "navigate to anchor: #{anchor}"
-      if $ ('#' + anchor) .data \role is \popup
+      anchor-str = '#' + anchor
+      if ($ anchor-str .data \role) is \popup
         # this is a popup
-        console.log "this is a popup link!"
-        target = '#' + (anchor.replace /!$/, '')
+        console.log "#{anchor-str} is a popup link!"
+        target = anchor-str.replace /!$/, ''
         popup-options = {}
 
         if event?
@@ -59,6 +71,9 @@ handle-navigation = (event) ->
             #container.hide!
             console.log "the popup is closed! replacing #{anchor} with ''"
             window.location.hash = window.location.hash.replace anchor, ''
+
+      else if ($ anchor-str .data \role) is \page
+        change-page anchor-str
       else
         try
           target = $('#' + anchor).offset!top
@@ -83,9 +98,7 @@ handle-navigation = (event) ->
       'home-page'
     anchor = page.2
 
-    console.log "page is changed to #{main-section} / #{anchor}"
-    $ ':mobile-pagecontainer' .pagecontainer 'change', ('#' + main-section), do
-      transition: \none
+    change-page ('#' + main-section)
 
     # scroll immediately (in the same page)
     scroll-to-anchor anchor
