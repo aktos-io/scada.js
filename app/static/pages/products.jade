@@ -1,14 +1,18 @@
 //- products page 
+
 #products(data-role='page', data-theme='b', style="padding-bottom: 100px").
   {{>nav-bar {active_button: 'products'}}}
   
   {{#each page.products}}
     <div style="
-      width: 40em;  
+      max-height: 60vw;
+      max-width: 100vw;
+      width: 40em; 
       height: 25em; 
       display: inline-block;
       margin: 5px;
       padding: 0;
+
       ">
       
       <a href="{{ .addr ? .addr : '#' }}">
@@ -18,6 +22,15 @@
           background: url({{.src}}) no-repeat center center ;
           background-size: cover;
           position: relative; 
+
+      -webkit-border-radius: 18px;
+      -moz-border-radius: 18px;
+      border-radius: 18px;
+      border: none;
+      outline: none;
+      box-shadow: 0 0 8px  rgb(51, 89, 193);
+      overflow: hidden; 
+
           ">
           
           <div style="
@@ -28,6 +41,8 @@
             color: white; 
             width: 100%; 
             height: 8em; 
+
+
             
             "> 
             
@@ -40,7 +55,10 @@
               {{.label}}</div> 
             <div style="
               display: inline-block; 
-              width: 50%; 
+              width: 50%;
+              position: absolute; 
+              right: 5px; 
+              top: 10px;  
               padding: auto; 
               ">
               {{ .shortDesc }}

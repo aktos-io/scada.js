@@ -1,14 +1,17 @@
 //- projects page
 
-#projects(data-role='page', data-theme='b').
-  {{>nav-bar {active_button: 'projects'}}}
+#applications(data-role='page', data-theme='b').
+  {{>nav-bar {active_button: 'applications'}}}
 
   {{#each page.projects}}
     <div style="
       width: 30em;  
       height: 30em; 
+      max-height: 100vw;
+      max-width: 100vw;
+
       display: inline-block;
-      margin: 5px;
+      margin: 10px;
       padding: 0;
       ">
       
@@ -19,6 +22,17 @@
           background: url({{.src}}) no-repeat center center ;
           background-size: cover;
           position: relative; 
+          
+                -webkit-border-radius: 18px;
+                -moz-border-radius: 18px;
+                border-radius: 18px;
+                border: none;
+                outline: none;
+
+                border: none;
+                box-shadow: 0 0 10px  white;
+
+                overflow: hidden; 
           ">
           
           <div style="
@@ -38,7 +52,8 @@
             width: 100%; 
             height: 3em; 
             display: inline-block; 
-            padding: auto; ">
+            padding: auto; 
+            ">
             {{.label}}</div>           
          </div>
         </div>
