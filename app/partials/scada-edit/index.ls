@@ -48,8 +48,6 @@ RactivePartial! .register ->
           w = $ this .css \width
           h = $ this .css \height
 
-          if (parse-int wid) in [5, 20]
-            console.log "wid: #{wid}, parent-coord: ", parent-coord, y
 
           #console.log "widget found: wid: #wid, x: #x, y: #y, width: #w, height: #h, top: #{parent-coord.top}, left: #{parent-coord.left}", $ this
 
