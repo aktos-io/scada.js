@@ -1,60 +1,75 @@
 style.
-  .cici-meze-scada .panel-body{
+  .cici-meze-scada .scada-container{
     background-image: url('./projects/cici-meze/scada-background.png');  
     background-repeat: no-repeat;
     /*background-size: 100% auto;
     */
   }
-  
-.panel.panel-primary.scada-drawing-area.cici-meze-scada
-  .panel-heading
-    h2.panel-title CM
-    .row
-      .col-sm-2.col-xs-6.
-        {{>scada-generate-layout {pin_name: 'scada'} }}
-      .col-sm-2.col-xs-6.
-        {{>jq-checkbox {pin_name: 'lock-scada', label: 'Locked'} }}
-  .panel-body
-    //- 
-      üretim hazırlık:
-          sıcaklık: 284980DF05000098
-          kapı: 280C6ADE050000EE
+//-
+  p naber
+  p naber
+  p naber
+  p naber
+  p naber
+  p naber
+  p naber
+  p naber
+  p naber
+  p naber
+  p naber
+  p naber
+  p naber
+div
+  .panel.panel-primary
+    .panel-heading
+      h2.panel-title CM
+      .row
+        .col-sm-2.col-xs-6.
+          {{>scada-generate-layout {pin_name: 'scada'} }}
+        .col-sm-2.col-xs-6.
+          {{>jq-checkbox {pin_name: 'lock-scada', label: 'Locked'} }}
+    .panel-body
+      //- 
+        üretim hazırlık:
+            sıcaklık: 284980DF05000098
+            kapı: 280C6ADE050000EE
 
-      sebze meyve deposu:
-          sıcaklık: 28CE9DDE050000E8
-          kapı: 28619FDD0500009B
-          dış ortam sıcaklık: 284A78DF05000059
+        sebze meyve deposu:
+            sıcaklık: 28CE9DDE050000E8
+            kapı: 28619FDD0500009B
+            dış ortam sıcaklık: 284A78DF05000059
 
-      son ürün:
-          sıcaklık: 285582DD0500003A
-          iç kapı: 28FEFDDD0500009C
-          dış kapı: 28E61ADE05000065
-          dış ortam sıcaklık: 280BFADD05000054
+        son ürün:
+            sıcaklık: 285582DD0500003A
+            iç kapı: 28FEFDDD0500009C
+            dış kapı: 28E61ADE05000065
+            dış ortam sıcaklık: 280BFADD05000054
 
-      kuru bakliyat:
-          sıcaklık: 28D026DF05000010
-    
-    .row(style="min-height: 500px; min-width: 100%", id="cici-meze-scada" rel="external").  
-      
-      {{>seven-segment {pin_name: '284980DF05000098', wid: 21, format: '##.### °C'} }}
-      {{>status-led {pin_name: '280C6ADE050000EE', src: 'normally-on-alarm', wid: 23} }}
-      
-      
-      {{>seven-segment {pin_name: '28CE9DDE050000E8', wid: 12, format: '##.### °C'} }}
-      {{>status-led {pin_name: '28619FDD0500009B', src: 'normally-on-alarm', wid: 24} }}
-      {{>seven-segment {pin_name: '284A78DF05000059', wid: 15, format: '##.### °C'} }}
-      
-      {{>seven-segment {pin_name: '285582DD0500003A', wid: 16, format: '##.### °C'} }}
-      {{>status-led {pin_name: '28FEFDDD0500009C', src: 'normally-on-alarm', wid: 25} }}
-      {{>status-led {pin_name: '28E61ADE05000065', src: 'normally-on-alarm', wid: 26} }}
-      {{>seven-segment {pin_name: '280BFADD05000054', wid: 11, format: '##.### °C'} }}
-      
-      {{>seven-segment {pin_name: '28D026DF05000010', wid: 20, format: '##.### °C'} }}
-      
-      {{>b-notification-box {pin_name: 'online-users', opt: 'green', icon: 'user', label: 'Online', wid: 30} }}
+        kuru bakliyat:
+            sıcaklık: 28D026DF05000010
+          
+      .cici-meze-scada
+        .scada-drawing-area
+          .scada-container.
+            {{>seven-segment {pin_name: '284980DF05000098', wid: 21, format: '##.### °C'} }}
+            {{>status-led {pin_name: '280C6ADE050000EE', src: 'normally-on-alarm', wid: 23} }}
+            
+            
+            {{>seven-segment {pin_name: '28CE9DDE050000E8', wid: 12, format: '##.### °C'} }}
+            {{>status-led {pin_name: '28619FDD0500009B', src: 'normally-on-alarm', wid: 24} }}
+            {{>seven-segment {pin_name: '284A78DF05000059', wid: 15, format: '##.### °C'} }}
+            
+            {{>seven-segment {pin_name: '285582DD0500003A', wid: 16, format: '##.### °C'} }}
+            {{>status-led {pin_name: '28FEFDDD0500009C', src: 'normally-on-alarm', wid: 25} }}
+            {{>status-led {pin_name: '28E61ADE05000065', src: 'normally-on-alarm', wid: 26} }}
+            {{>seven-segment {pin_name: '280BFADD05000054', wid: 11, format: '##.### °C'} }}
+            
+            {{>seven-segment {pin_name: '28D026DF05000010', wid: 20, format: '##.### °C'} }}
+            
+            {{>b-notification-box {pin_name: 'online-users', opt: 'green', icon: 'user', label: 'Online', wid: 30} }}
 
 
-.panel.panel-primary.scada-drawing-area
+.panel.panel-primary
   .panel-heading
     h2.panel-title Scada çizim alanı 
   
@@ -65,43 +80,44 @@ style.
         {{>jq-checkbox {pin_name: 'lock-scada', label: 'Locked'} }}
   
   .panel-body        
-    .row(style="min-height: 500px; min-width: 100%").  
-      {{! push button example }}
-      {{>push-button {pin_name: 'vpin-0', label: 'Virtual pin 0', wid: 1} }}
-      {{>status-led {pin_name: 'vpin-0', wid: 2} }}
-      
-      {{! checkbox example }}
-      {{>jq-checkbox {pin_name: 'vpin-1', wid: 3} }}
-      {{>status-led {pin_name: 'vpin-1', wid: 4, src: 'computer'} }}
-      
-      {{! graph example }}
-      {{>line-graph {pin_name: 'vpin-2', wid: 5} }}
-      {{>slider {pin_name: 'vpin-2', wid: 6} }}
-      
-      {{>thermometer {pin_name: 'vpin-2', wid: 8} }}
-      
-      {{>b-vertical-progress-bar {pin_name: 'vpin-3', wid: 9} }}
-      {{>slider {pin_name: 'vpin-3', wid: 10} }}
-      {{>b-progress-bar {pin_name: 'vpin-3', wid: 400} }}
+    .scada-drawing-area
+      .scada-container. 
+        {{! push button example }}
+        {{>push-button {pin_name: 'vpin-0', label: 'Virtual pin 0', wid: 1} }}
+        {{>status-led {pin_name: 'vpin-0', wid: 2} }}
+        
+        {{! checkbox example }}
+        {{>jq-checkbox {pin_name: 'vpin-1', wid: 3} }}
+        {{>status-led {pin_name: 'vpin-1', wid: 4, src: 'computer'} }}
+        
+        {{! graph example }}
+        {{>line-graph {pin_name: 'vpin-2', wid: 5} }}
+        {{>slider {pin_name: 'vpin-2', wid: 6} }}
+        
+        {{>thermometer {pin_name: 'vpin-2', wid: 8} }}
+        
+        {{>b-vertical-progress-bar {pin_name: 'vpin-3', wid: 9} }}
+        {{>slider {pin_name: 'vpin-3', wid: 10} }}
+        {{>b-progress-bar {pin_name: 'vpin-3', wid: 400} }}
 
-      {{>justgage {pin_name: 'vpin-2', val: 45, wid: 401} }}
-      {{>numeric-keyboard {wid: 402} }}
-      
-      {{>b-stacked-progress 
-        {pin_names: [ 
-            ['vpin-2', 'red'], 
-            ['vpin-3', ''], 
-            ['vpin-4', 'green']
-          ], wid: 403} }}
-      {{>slider {pin_name: 'vpin-4', wid: 404} }}
-      
-      {{>switch-button-basic {wid: 405, pin_name: 'vpin-5', label: 'Test pin'} }}
-      {{>switch-button {wid: 408,pin_name: 'vpin-5', label: 'TEST PIN'} }}
-      {{>b-circle-button {wid: 409,pin_name: 'vpin-6'} }}
-      {{>b-circle-button {wid: 410,pin_name: 'vpin-6', icon: 'shield'} }}
-      {{>b-circle-button {wid: 411,pin_name: 'vpin-6', icon: 'warning'} }}
-      {{>b-circle-button {wid: 412,pin_name: 'vpin-6', icon: 'signal'} }}
-      {{>arrow-keys {wid: 413} }}
+        {{>justgage {pin_name: 'vpin-2', val: 45, wid: 401} }}
+        {{>numeric-keyboard {wid: 402} }}
+        
+        {{>b-stacked-progress 
+          {pin_names: [ 
+              ['vpin-2', 'red'], 
+              ['vpin-3', ''], 
+              ['vpin-4', 'green']
+            ], wid: 403} }}
+        {{>slider {pin_name: 'vpin-4', wid: 404} }}
+        
+        {{>switch-button-basic {wid: 405, pin_name: 'vpin-5', label: 'Test pin'} }}
+        {{>switch-button {wid: 408,pin_name: 'vpin-5', label: 'TEST PIN'} }}
+        {{>b-circle-button {wid: 409,pin_name: 'vpin-6'} }}
+        {{>b-circle-button {wid: 410,pin_name: 'vpin-6', icon: 'shield'} }}
+        {{>b-circle-button {wid: 411,pin_name: 'vpin-6', icon: 'warning'} }}
+        {{>b-circle-button {wid: 412,pin_name: 'vpin-6', icon: 'signal'} }}
+        {{>arrow-keys {wid: 413} }}
 
 
 .panel.panel-primary.scada-drawing-area
@@ -116,33 +132,34 @@ style.
   
   .panel-body        
     //- wid: 800+
-    .row(style="min-height: 500px; min-width: 100%").      
-      {{>gauge {pin_name: 'vpin-7', type: 'speed', wid: 800} }}     
-      {{>gauge {pin_name: 'vpin-7', type: 'download', wid: 801} }}     
-      {{>gauge {pin_name: 'vpin-7', type: 'ping', wid: 802} }}     
-      {{>b-notification-box {pin_name: 'vpin-8', icon: 'gears', label: 'Testing', wid: 803} }}
-      {{>b-notification-box {pin_name: 'vpin-8', opt: 'red', label: 'Alert', icon: 'warning', wid: 804} }}
-      {{>slider {pin_name: 'vpin-7', wid: 805} }}
-      {{>slider {pin_name: 'vpin-8', wid: 806} }}
-      {{>seven-segment {pin_name: 'vpin-7',  format: '####.#', wid: 807}}}
-      {{>spinbox {pin_name: "vpin-8", val: 35, wid: 808} }}
+    .scada-drawing-area
+      .scada-container. 
+        {{>gauge {pin_name: 'vpin-7', type: 'speed', wid: 800} }}     
+        {{>gauge {pin_name: 'vpin-7', type: 'download', wid: 801} }}     
+        {{>gauge {pin_name: 'vpin-7', type: 'ping', wid: 802} }}     
+        {{>b-notification-box {pin_name: 'vpin-8', icon: 'gears', label: 'Testing', wid: 803} }}
+        {{>b-notification-box {pin_name: 'vpin-8', opt: 'red', label: 'Alert', icon: 'warning', wid: 804} }}
+        {{>slider {pin_name: 'vpin-7', wid: 805} }}
+        {{>slider {pin_name: 'vpin-8', wid: 806} }}
+        {{>seven-segment {pin_name: 'vpin-7',  format: '####.#', wid: 807}}}
+        {{>spinbox {pin_name: "vpin-8", val: 35, wid: 808} }}
 
-      {{>circular-progress {pin_name: 'vpin-9', wid: 809, color: 'yellowgreen green'} }}
-      {{>circular-progress {wid: 810, pin_name: 'vpin-9', format: '### °C'} }}
-      {{>slider {pin_name: "vpin-9", val: 35, wid: 811} }}
+        {{>circular-progress {pin_name: 'vpin-9', wid: 809, color: 'yellowgreen green'} }}
+        {{>circular-progress {wid: 810, pin_name: 'vpin-9', format: '### °C'} }}
+        {{>slider {pin_name: "vpin-9", val: 35, wid: 811} }}
 
-      {{>seven-segment {wid: 813, pin_name: 'vpin-10', val: 123.45, format: '#######.##', type: 'multimeter'}}}
-      {{>seven-segment {wid: 814, pin_name: 'vpin-10',  format: '####.#'}}}
-      {{>seven-segment {wid: 815, pin_name: 'vpin-10',  format: '##.###'}}}
-      {{>slider {wid: 816, pin_name: 'vpin-10',  val: 0} }}
+        {{>seven-segment {wid: 813, pin_name: 'vpin-10', val: 123.45, format: '#######.##', type: 'multimeter'}}}
+        {{>seven-segment {wid: 814, pin_name: 'vpin-10',  format: '####.#'}}}
+        {{>seven-segment {wid: 815, pin_name: 'vpin-10',  format: '##.###'}}}
+        {{>slider {wid: 816, pin_name: 'vpin-10',  val: 0} }}
 
-      {{>toolbar {wid: 817, buttons: [
-        '#link1 fa-car', 
-        '#link2 fa-heart', 
-        '#link3', 
-        '#link4 fa-car', 
-        '#link5 fa-plane' 
-        ], icon: 'fa-cog'} }}        
+        {{>toolbar {wid: 817, buttons: [
+          '#link1 fa-car', 
+          '#link2 fa-heart', 
+          '#link3', 
+          '#link4 fa-car', 
+          '#link5 fa-plane' 
+          ], icon: 'fa-cog'} }}        
 
 .panel.panel-primary.scada-drawing-area
   .panel-heading
@@ -156,34 +173,37 @@ style.
   
   //- wid: 900+
   .panel-body  
-    .row(style="min-height: 500px; min-width: 100%").      
-      {{>table {wid: 900, pin_name: 'test-table'} }}
-      {{>textbox {wid: 901, pin_name: 'test-table', val: 'test value'} }}
-      {{>label {wid: 902, pin_name: 'test-table'}}}
-      {{>label {wid: 903, val: 'Tablo'}}}
-      {{>label {wid: 904, val: 'Kullanıcı Girişi'}}}
+    .scada-drawing-area
+      .scada-container. 
+        {{>table {wid: 900, pin_name: 'test-table'} }}
+        {{>textbox {wid: 901, pin_name: 'test-table', val: 'test value'} }}
+        {{>label {wid: 902, pin_name: 'test-table'}}}
+        {{>label {wid: 903, val: 'Tablo'}}}
+        {{>label {wid: 904, val: 'Kullanıcı Girişi'}}}
 
 .panel.panel-primary
   .panel-heading
     h3.panel-title Giriş Formu
   .panel-body
-    .row
-      :md
-        Test şifreleri: 
-        
-          * cca12345
-          * me12345
-          * tk12345
-      div
-        div Login input: {{>login-input {} }}
-        div Login status {{>login-info {} }}
+    .scada-drawing-area
+      .scada-container 
+        :md
+          Test şifreleri: 
+          
+            * cca12345
+            * me12345
+            * tk12345
+        div
+          div Login input: {{>login-input {} }}
+          div Login status {{>login-info {} }}
 
-  .row.
-    {{>jq-push-button {wid: 1000, pin_name: 'gui-command', label: 'r'} }}
+      .row.
+        {{>jq-push-button {wid: 1000, pin_name: 'gui-command', label: 'r'} }}
     
 .panel.panel-primary
   .panel-heading
     h3.panel-title Realtime Video Stream
   .panel-body
-    .row
-      img#video-frame
+    .scada-drawing-area
+      .scada-container 
+        img#video-frame

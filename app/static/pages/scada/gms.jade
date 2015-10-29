@@ -4,17 +4,19 @@ style.
   }
   
 #gms(data-role='page', data-theme='b')
-  .scada-drawing-area.scada.
-    {{#each gms.Root.Oda}}
-      <div style="
-        width:100px;  
-        display: inline-block;
-        background-color: {{ .Connection[0] === 'YOK' ? 'gray' : 'yellowgreen' }};
-        margin: 5px;
-        padding: 5px;">
-        <h3><span>#</span>{{ .$.No }} </h3>
-        kart time: {{ .KartTime }}
-        </div>
-    {{/each}}
-    
-    {{>connection-status {}}}
+  .scada-drawing-area.scada
+    .scada-container. 
+
+      {{#each gms.Root.Oda}}
+        <div style="
+          width:100px;  
+          display: inline-block;
+          background-color: {{ .Connection[0] === 'YOK' ? 'gray' : 'yellowgreen' }};
+          margin: 5px;
+          padding: 5px;">
+          <h3><span>#</span>{{ .$.No }} </h3>
+          kart time: {{ .KartTime }}
+          </div>
+      {{/each}}
+      
+      {{>connection-status {}}}

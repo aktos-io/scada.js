@@ -40,13 +40,16 @@ RactivePartial! .register ->
 
         if wid?
           # widget found, get position information
-          parent-coord = $ this .parents \.scada-drawing-area .position!
+          parent-coord = $ this .parents \.scada-container .position! or {top: 0, left: 0}
 
-          x = $ this .attr \data-x or 0
-          y = $ this .attr \data-y or 0
+          x = ($ this .attr \data-x |> parse-float) - parent-coord.left
+          y = ($ this .attr \data-y |> parse-float) - parent-coord.top
 
           w = $ this .css \width
           h = $ this .css \height
+
+          if (parse-int wid) in [5, 20]
+            console.log "wid: #{wid}, parent-coord: ", parent-coord, y
 
           #console.log "widget found: wid: #wid, x: #x, y: #y, width: #w, height: #h, top: #{parent-coord.top}, left: #{parent-coord.left}", $ this
 
@@ -56,7 +59,7 @@ RactivePartial! .register ->
           layout := layout + "    w: #w" + \\n
           layout := layout + "    h: #h" + \\n
 
-      console.log "Layout: " + \\n + layout
+      #console.log "Layout: " + \\n + layout
 
       $ ('#layout-output-area-' + actor.actor-id) .html layout
 
@@ -124,7 +127,6 @@ RactivePartial!register ->
         ...
     inertia: true
     restrict:
-      restriction: \.scada-drawing-area
       end-only: true
       element-rect: {top: 0, left: 0, bottom: 1, right: 1}
 
