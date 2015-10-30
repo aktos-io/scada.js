@@ -134,6 +134,7 @@ RactivePartial!register ->
         ...
     inertia: true
     restrict:
+      restriction: \.scada-container
       end-only: true
       element-rect: {top: 0, left: 0, bottom: 1, right: 1}
 
