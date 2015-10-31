@@ -15,8 +15,6 @@ style.
   .scada-drawing-area.scada
     .scada-container. 
       <img src="./projects/cici-meze/scada-background2.png" style="position: absolute; top: 10px; left: 0; margin: 0; padding: 0; border-bottom: 1px solid blue  " />
-      <a href="#/"><img src="./img/aktos-icon.png" style="position: absolute; z-index: 19999; bottom: 0; right: 0; margin: 0; padding: 0; width: 55px; height: auto; " />
-      </a>
       {{>label {val: 'Üretim Hazırlık', wid: 211} }}
       {{>label {val: 'Sebze Meyve Deposu', wid: 212} }}
       {{>label {val: 'Son Ürün', wid: 213} }}
@@ -38,4 +36,6 @@ style.
       {{>seven-segment {pin_name: '28D026DF05000010', wid: 209, format: '##.# °C', range: '10 to 35', type: 'temp'} }}
       
       {{>b-notification-box {pin_name: 'online-users', opt: 'green', icon: 'user', label: 'Online', wid: 210} }}
+
+  | <a href="#/"><img src="./img/aktos-icon.png" style="position: absolute; z-index: 19999; bottom: 0; left: 0; margin: 0; padding: 5px; width: 55px; height: auto; " /> </a>
   | {{>connection-status {}}}
