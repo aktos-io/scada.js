@@ -118,18 +118,22 @@ RactivePartial! .register-for-post-ready ->
   # modify anchors to point their current pages
   $ \a .click (e) ->
     addr = $ this .attr \href
-    if addr.match /^#.*/
-      # this is an internal link
-      console.log "link orig addr: #{addr}, length: #{addr.length}"
-      addr = tail addr
-      if addr.match /^[^\/]+/ or addr is ''
-        # this link refers to an anchor (like #foo)
-        e.prevent-default!
-        curr-page = window.location.hash.replace /^#/, '' .split '/' .1
-        if curr-page?
-          console.log "click function is called! curr-page: #{curr-page}"
-          new-hash = '#' + "/#{curr-page}/#{addr}"
-          #window.location.hash = new-hash
-          history.pushState({}, '', new-hash)
+    if addr?
+      if addr.match /^#.*/
+        # this is an internal link
+        console.log "link orig addr: #{addr}, length: #{addr.length}"
+        addr = tail addr
+        if addr.match /^[^\/]+/ or addr is ''
+          # this link refers to an anchor (like #foo)
+          e.prevent-default!
+          curr-page = window.location.hash.replace /^#/, '' .split '/' .1
+          if curr-page?
+            console.log "click function is called! curr-page: #{curr-page}"
+            new-hash = '#' + "/#{curr-page}/#{addr}"
+            #window.location.hash = new-hash
+            history.pushState({}, '', new-hash)
 
-    handle-navigation e
+      handle-navigation e
+    else
+      console.log "navigation handler got no addr..."
+      # as there is no addr, this handler should not modify anchor's click function
