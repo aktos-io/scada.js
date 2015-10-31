@@ -52,6 +52,8 @@
   white-space: nowrap;
   display: inline-block;
   position: relative; /* this is extremely important for relative widget positioning */
+  left: 0;
+  bottom: 0; 
   margin: 0;
   padding: 0;
 }

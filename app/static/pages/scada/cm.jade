@@ -1,25 +1,20 @@
 style.
   #cici-meze .scada-container{
-    background-image: url('./projects/cici-meze/scada-background2.png');  
-    background-repeat: no-repeat;
-    height: 99.999%; 
-  }
-  #cici-meze, #cici-meze .panel-body, #cici-meze .panel {
-    margin: 0 !important; 
-    padding: 0 !important; 
+    min-height: 99% !important; 
   }
   #cici-meze .scada-drawing-area {
-    height: 550px; 
-    margin-top: auto; 
+    height: 100%; 
   }
   #cici-meze {
-    height: 100vh !important; 
+    height: 100vh;  
+    /*height: 100vh !important; */
   }
   
 
 #cici-meze(data-role='page', data-theme='b')
   .scada-drawing-area
     .scada-container. 
+      <img src="./projects/cici-meze/scada-background2.png" style="position: absolute; top: 10px; left: 0; margin: 0; padding: 0; border-bottom: 1px solid blue  " />
       {{>label {val: 'Üretim Hazırlık', wid: 211} }}
       {{>label {val: 'Sebze Meyve Deposu', wid: 212} }}
       {{>label {val: 'Son Ürün', wid: 213} }}
@@ -41,5 +36,4 @@ style.
       {{>seven-segment {pin_name: '28D026DF05000010', wid: 209, format: '##.# °C', range: '10 to 35', type: 'temp'} }}
       
       {{>b-notification-box {pin_name: 'online-users', opt: 'green', icon: 'user', label: 'Online', wid: 210} }}
-  // | <div style="background-color: blue; width: 100%; height: 100%"></div>
-  //- | {{>connection-status {}}}
+  | {{>connection-status {}}}
