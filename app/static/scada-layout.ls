@@ -165,10 +165,10 @@ widget-positions =
     w: 178px
     h: 50px
   * wid: 808
-    x: 988.75
-    y: 421
-    w: 112px
-    h: 56px
+    x: 990.4833984375
+    y: 427.5999755859375
+    w: 122px
+    h: 58px
   * wid: 809
     x: 0
     y: 0
@@ -310,8 +310,8 @@ widget-positions =
     w: 69px
     h: 38px
   * wid: 210
-    x: 940
-    y: 399.3999938964844
+    x: 930
+    y: 500
     w: 169px
     h: 104px
   * wid: 1103
@@ -359,6 +359,7 @@ widget-positions =
     y: 354
     w: 160px
     h: 99px
+
 
 
 
