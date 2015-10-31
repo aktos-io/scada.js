@@ -18,8 +18,8 @@ app = new Ractive do
   el: 'container'
   template: '#app'
   data:
-    gms: {}
     marked: marked
+    JSON: JSON
 
 # Register ractive app in order to use in partials
 RactiveApp!set app
@@ -41,7 +41,7 @@ app.on 'complete', !->
     set-timeout (->
       RactivePartial! .init-for-post-ready!
       # Update all I/O on init
-      ), 1000
+      ), 1000ms
 
 
   console.log "ractive app completed..."
@@ -95,6 +95,45 @@ RactivePartial!register ->
 
   poll-gms!
   set-interval poll-gms, 30_000ms
+
+
+# test trello
+RactivePartial!register-for-document-ready ->
+  console.log "Trello integration test..."
+
+  on-authorize = ->
+    if Trello.authorized!
+      console.log "trello authorization is successful"
+      Trello.members.get "me", (member) ->
+        app.set \trelloData.member, member
+
+      Trello.get "members/me/boards", (boards) ->
+        app.set \trelloData.boards, boards
+
+      console.log "trello on-authorize is ended..."
+    else
+      console.log "BUG: trello test: on-authorize! is called before authorized!"
+
+  # authorize
+  console.log "authorizing to trello silently..."
+  trello-silent-login = ->
+    Trello.authorize do
+        interactive:false
+        success: on-authorize
+
+  trello-silent-login!
+
+  $ '#trello-login' .on \click, ->
+    console.log "logging in to Trello"
+    Trello.authorize do
+      type: "popup"
+      success: on-authorize
+
+  $ '#trello-logout' .on \click, ->
+    console.log "disconnecting from Trello"
+    Trello.deauthorize!
+    app.set \trelloData, null
+
 
 
 RactivePartial!register ->

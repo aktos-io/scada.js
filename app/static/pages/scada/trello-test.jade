@@ -1,0 +1,24 @@
+style.
+  #trello-test .scada-container {
+    white-space: normal; 
+    width: 100%; 
+  }
+#trello-test(data-role='page', data-theme='b')
+  .scada-drawing-area.scada
+    .scada-container.
+      {{#with trelloData}}
+      
+        <p style="background-color: yellow"> --- </p>
+        {{#if .member}}
+          <p> Logged in as {{.member.fullName}} <a id='trello-logout'> Logout!</a></p>
+        {{else}}
+          <p> please login <a id="trello-login">Login to Trello</a></p>
+        {{/if}}
+
+        <!-- <textarea>{{ JSON.stringify(.member, null, 4) }}aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</textarea> -->
+        {{#each .boards}}
+          <p>Board name: {{ .name }}</p>
+        {{/each}}
+      {{/with}}
+      
+  |{{>connection-status {}}}
