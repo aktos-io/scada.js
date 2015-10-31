@@ -2,38 +2,22 @@ style.
   #cici-meze .scada-container{
     background-image: url('./projects/cici-meze/scada-background2.png');  
     background-repeat: no-repeat;
+    height: 99.999%; 
   }
   #cici-meze, #cici-meze .panel-body, #cici-meze .panel {
     margin: 0 !important; 
     padding: 0 !important; 
   }
+  #cici-meze .scada-drawing-area {
+    height: 550px; 
+    margin-top: auto; 
+  }
+  #cici-meze {
+    height: 100vh !important; 
+  }
+  
 
 #cici-meze(data-role='page', data-theme='b')
-  .panel.panel-primary
-    .panel-heading
-      h2.panel-title Cici Meze - Telemetri 
-    .panel-body
-      //- 
-        üretim hazırlık:
-            sıcaklık: 284980DF05000098
-            kapı: 280C6ADE050000EE
-
-        sebze meyve deposu:
-            sıcaklık: 28CE9DDE050000E8
-            kapı: 28619FDD0500009B
-            dış ortam sıcaklık: 284A78DF05000059
-
-        son ürün:
-            sıcaklık: 285582DD0500003A
-            iç kapı: 28FEFDDD0500009C
-            dış kapı: 28E61ADE05000065
-            dış ortam sıcaklık: 280BFADD05000054
-
-        kuru bakliyat:
-            sıcaklık: 28D026DF05000010
-      
-      //-
-        last-id: 214
   .scada-drawing-area
     .scada-container. 
       {{>label {val: 'Üretim Hazırlık', wid: 211} }}
@@ -57,5 +41,5 @@ style.
       {{>seven-segment {pin_name: '28D026DF05000010', wid: 209, format: '##.# °C', range: '10 to 35', type: 'temp'} }}
       
       {{>b-notification-box {pin_name: 'online-users', opt: 'green', icon: 'user', label: 'Online', wid: 210} }}
-
-  | {{>connection-status {}}}
+  // | <div style="background-color: blue; width: 100%; height: 100%"></div>
+  //- | {{>connection-status {}}}

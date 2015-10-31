@@ -8,11 +8,10 @@ style.
     .scada-container.
       {{#with trelloData}}
       
-        <p style="background-color: yellow"> --- </p>
         {{#if .member}}
-          <p> Logged in as {{.member.fullName}} <a id='trello-logout'> Logout!</a></p>
+          <p> Logged in as {{.member.fullName}} <a on-click="trello_logout"> Logout!</a></p>
         {{else}}
-          <p> please login <a id="trello-login">Login to Trello</a></p>
+          <p> please login <a on-click="trello_login">Login to Trello</a></p>
         {{/if}}
 
         <!-- <textarea>{{ JSON.stringify(.member, null, 4) }}aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</textarea> -->

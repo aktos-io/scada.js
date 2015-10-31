@@ -123,16 +123,18 @@ RactivePartial!register-for-document-ready ->
 
   trello-silent-login!
 
-  $ '#trello-login' .on \click, ->
-    console.log "logging in to Trello"
-    Trello.authorize do
-      type: "popup"
-      success: on-authorize
 
-  $ '#trello-logout' .on \click, ->
-    console.log "disconnecting from Trello"
-    Trello.deauthorize!
-    app.set \trelloData, null
+  #app.on \trello, actions
+  app.on do
+    trello_login: ->
+      console.log "logging in to Trello"
+      Trello.authorize do
+        type: "popup"
+        success: on-authorize
+    trello_logout: ->
+      console.log "disconnecting from Trello"
+      Trello.deauthorize!
+      app.set \trelloData, null
 
 
 

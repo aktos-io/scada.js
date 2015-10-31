@@ -7,18 +7,11 @@ body {
     margin: 0 !important;
     padding: 0 !important;
 }
-
-#home-page {
-  background-image: url('../img/aktos-elektronik/home-page/aktos-arkaplan-site.jpg');
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
+/*
+div[data-role='page'] {
+  height: 100vh !important;
 }
-
-.home-col-padding {
-  margin-left: 2em;
-  margin-right: 2em;
-}
+*/
 
 .no-shadow {
     -moz-box-shadow: none !important;
