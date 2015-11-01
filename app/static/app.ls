@@ -69,6 +69,7 @@ require! {
     zip,
     split,
     last,
+    filter,
   }
 }
 
@@ -101,14 +102,37 @@ RactivePartial!register ->
 RactivePartial!register-for-document-ready ->
   console.log "Trello integration test..."
 
+  authorized = false
   on-authorize = ->
     if Trello.authorized!
+      authorized := true
       console.log "trello authorization is successful"
       Trello.members.get "me", (member) ->
         app.set \trelloData.member, member
 
       Trello.get "members/me/boards", (boards) ->
         app.set \trelloData.boards, boards
+
+        board-id = filter (.shortLink is 'xnRCqVHI'), boards .0.id
+        get-cards = ->
+          if authorized
+            Trello.get "/boards/#{board-id}/cards", (cards) ->
+              console.log "getting cards for board #{board-id}"
+              app.set 'trelloData.cards', cards
+              actions = []
+              for i in cards
+                Trello.get "/cards/#{i.id}/actions", (a) ->
+                  actions.push a
+                  if actions.length is cards.length
+                    app.set \trelloData.card_actions, actions
+                    app.set \trelloData.card_comments, [i.data.text for action in actions for i in action when i?.type is \commentCard ]
+                    console.log actions
+
+              set-timeout get-cards, 2000ms
+
+        get-cards!
+
+
 
       console.log "trello on-authorize is ended..."
     else
@@ -134,6 +158,7 @@ RactivePartial!register-for-document-ready ->
     trello_logout: ->
       console.log "disconnecting from Trello"
       Trello.deauthorize!
+      authorized := false
       app.set \trelloData, null
 
 

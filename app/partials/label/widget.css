@@ -2,8 +2,9 @@
   padding: 5px;
 }
 .label__inner {
-  width: 100%;
-  height: 100%;
+  white-space:pre-wrap;
+  word-wrap: break-word;
+  text-align: left; 
 
   padding: 1em;
   border: 1px solid white;
@@ -14,4 +15,5 @@
 }
 .label__inner p {
     font-size: 100%;
+    width: 100%;
 }

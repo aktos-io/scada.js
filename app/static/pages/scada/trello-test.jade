@@ -9,15 +9,23 @@ style.
       {{#with trelloData}}
       
         {{#if .member}}
-          <p> Logged in as {{.member.fullName}} <a on-click="trello_logout"> Logout!</a></p>
+          <p> 
+            Welcome <span style="font-weight: bold; font-size: 1.2em;">{{.member.fullName}}!</span> 
+            <a on-click="trello_logout"> Logout!</a>
+          </p>
         {{else}}
-          <p> please login <a on-click="trello_login">Login to Trello</a></p>
+          <p> <a on-click="trello_login">Login to Trello</a></p>
         {{/if}}
 
-        <!-- <textarea>{{ JSON.stringify(.member, null, 4) }}aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</textarea> -->
-        {{#each .boards}}
-          <p>Board name: {{ .name }}</p>
+        
+        {{#each .cards}}
+          <p>card name: {{ .name }}</p>
+          {{!>label {val: JSON.stringify(., null, 4)} }} 
         {{/each}}
+        {{#each .card_comments}}
+          <p>comments: {{ . }}</p>
+        {{/each}}
+        
       {{/with}}
       
   |{{>connection-status {}}}
