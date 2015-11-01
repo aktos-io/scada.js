@@ -266,7 +266,7 @@ RactivePartial!register ->
       short-desc: """
         aktos-dcs uyumlu sistemler için web tabanlı realtime scada uygulaması
         """
-      addr: 'https://github.com/ceremcem/aktos-website'
+      addr: '#/demos'
 
     * label: 'dijital termometre'
       src: 'projects/dijital-termometre/proje-kapak.jpg'
