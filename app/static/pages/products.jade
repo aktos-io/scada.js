@@ -1,70 +1,77 @@
 //- products page 
-
-#products(data-role='page', data-theme='b', style="padding-bottom: 100px").
-  {{>nav-bar {active_button: 'products'}}}
-  
-  {{#each page.products}}
-    <div style="
+style.
+  .vcenter__outer{
+    text-align: center; 
+  }
+  .vcenter__inner{
+  }
+  .product__container {
       max-height: 60vw;
-      max-width: 100vw;
+      max-width: 95vw;
       width: 40em; 
       height: 25em; 
       display: inline-block;
       margin: 5px;
       padding: 0;
+  }
+  .product__background {
+    width: 100%; 
+    height: 100%; 
+    position: relative; 
+    -webkit-border-radius: 18px;
+    -moz-border-radius: 18px;
+    border-radius: 18px;
+    border: none;
+    outline: none;
+    box-shadow: 0 0 8px  rgb(51, 89, 193);
+    overflow: hidden;
+  }
+  .product__text-container {
+    background-color: rgba(0, 0, 0, 0.8);
+    position: absolute; 
+    left: 0; 
+    bottom: 0; 
+    color: white; 
+    width: 100%; 
+    height: 40%; 
+    text-align: left;  
+  }
+  .product__label-container {
+    color: white; 
+    width: 100%; 
+    font-weight: bold; 
+    font-size: 200%; 
+    padding: 5px; 
+  }
+  .product__short-desc-container {
+    width: 100%;
+    padding: 6px; 
+  }
 
-      ">
-      
-      <a href="{{ .addr ? .addr : '#' }}">
-        <div  style="
-          width: 100%; 
-          height: 100%; 
-          background: url({{.src}}) no-repeat center center ;
-          background-size: cover;
-          position: relative; 
-
-      -webkit-border-radius: 18px;
-      -moz-border-radius: 18px;
-      border-radius: 18px;
-      border: none;
-      outline: none;
-      box-shadow: 0 0 8px  rgb(51, 89, 193);
-      overflow: hidden; 
-
-          ">
-          
-          <div style="
-            background-color: rgba(0, 0, 0, 0.8);
-            position: absolute; 
-            left: 0; 
-            bottom: 0; 
-            color: white; 
-            width: 100%; 
-            height: 8em; 
-
-
-            
-            "> 
-            
-            <div style="
-              font-weigth: bold; 
-              font-size: 2em; 
-              width: 40%; display: 
-              inline-block; 
-              padding: auto; ">
-              {{.label}}</div> 
-            <div style="
-              display: inline-block; 
-              width: 50%;
-              position: absolute; 
-              right: 5px; 
-              top: 10px;  
-              padding: auto; 
-              ">
-              {{ .shortDesc }}
+#products(data-role='page', data-theme='b', style="padding-bottom: 100px").
+  {{>nav-bar {active_button: 'products'}}}
+  {{#with page.products}}
+    <div class="vcenter__outer">
+      <div class="vcenter__inner">
+      {{#each .}}
+        <div class="product__container">
+          <a href="{{ .addr ? .addr : '#' }}">
+            <div  class="product__background" style="
+              background: url({{.src}}) no-repeat center center ;
+              background-size: cover;
+            ">
+              <div class="product__text-container"> 
+                <div class="product__label-container">
+                  {{.label}}
+                </div> 
+                <div class="product__short-desc-container">
+                  {{ .shortDesc }}
+                </div>
+              </div>
             </div>
-          </div>
+          </a>
         </div>
-      </a>
+      {{/each}}
+      </div>
     </div>
-  {{/each}}
+    {{/with}}
