@@ -4,6 +4,7 @@ include ../../templates/mixins.jade
   .jq-flipswitch-v2
     select.jq-flipswitch-v2__switch(
       data-role="slider"
+      data-theme="{{scada_theme ? scada_theme : 'b' }}"
       id="{{ .actor_id }}-switch"
       data-pin-name="{{ .pin_name }}"
       )

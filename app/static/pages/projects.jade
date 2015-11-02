@@ -1,17 +1,17 @@
 //- projects page
+//-
+  style.
+    #applications .product__container {
+      width: 30em;  
+      height: 30em; 
+      max-height: 95vw;
+      max-width: 95vw;
+    }
+    #applications .product__background {
+      /*box-shadow: 0 0 10px  white;*/
+    }
 
-style.
-  #applications .product__container {
-    width: 30em;  
-    height: 30em; 
-    max-height: 95vw;
-    max-width: 95vw;
-  }
-  #applications .product__background {
-    box-shadow: 0 0 10px  white;
-  }
-
-#applications(data-role='page', data-theme='b').
+#applications(data-role='page', data-theme='a').
   {{>nav-bar {active_button: 'applications'}}}
   {{#with page.projects}}
     <div class="vcenter__outer">

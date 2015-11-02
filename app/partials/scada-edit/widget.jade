@@ -2,13 +2,19 @@ include ../../templates/mixins.jade
 
 +partial('scada-generate-layout')
   .scada-generate-layout(style="max-height: 200px;")
-    a(href="#layout-output-{{ .actor_id }}", data-rel="popup") 
-      button(type=button) Generate Layout!
+    a(
+      href="#layout-output-{{ .actor_id }}"
+      data-rel="popup"
+      ) 
+      button(
+        type='button'
+        data-theme="{{scada_theme ? scada_theme : 'b' }}"
+        ) Generate Layout!
     
     .ui-corner-all.ui-popup.ui-body-a.ui-overlay-shadow(
       data-role="popup" 
       id="layout-output-{{ .actor_id }}" 
-      data-theme="b"
+      data-theme="{{scada_theme ? scada_theme : 'b' }}"
       )        
         h3 Generated layout 
         :md

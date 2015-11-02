@@ -6,6 +6,8 @@ include ../../templates/mixins.jade
       input.jq-checkbox__input(
         type="checkbox"
         style="display: none;"
+        data-theme="{{scada_theme ? scada_theme : 'b' }}"
+
         )
       | {{ .label ? .label : .pin_name }}
  

@@ -7,5 +7,6 @@ include ../../templates/mixins.jade
       type="button"
       data-icon="{{ .icon }}"
       data-iconpos="{{ .iconpos }}"
+      data-theme="{{scada_theme ? scada_theme : 'b' }}"
       ) 
       | {{ .label ? .label : .pin_name }}
