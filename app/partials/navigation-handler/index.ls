@@ -29,8 +29,13 @@ handle-navigation = (event) ->
 
   change-page = (target-id) ->
     console.log "page is changed to #{target-id}"
+    /*
     $ ':mobile-pagecontainer' .pagecontainer 'change', target-id, do
       transition: \none
+    */
+    $ "div[data-role='page']" .hide!
+    $ target-id .show!
+    $ ".ui-loader" .hide!
 
 
   # try to scroll to anchor, immediately or after page change
