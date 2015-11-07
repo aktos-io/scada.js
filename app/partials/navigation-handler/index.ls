@@ -91,7 +91,7 @@ handle-navigation = (event) ->
         catch
           # pass
 
-  if page.length is 1
+  if page.length is 1 and page.0?.length > 0
     # example: #abcd
     # this is a anchor, just navigate to it
     scroll-to-anchor page.0
@@ -100,11 +100,11 @@ handle-navigation = (event) ->
     #          #/aaaa/bbbb        : aaaa is page, bbbb is anchor
 
 
-    main-section = if page.1? and page.1.length > 0 then
-      page.1
-    else
-      'home-page'
+    main-section = if page.1? and page.1.length > 0 then page.1
     anchor = page.2
+
+    main-section ?= 'home-page'
+    console.log "main section: ", main-section
 
     change-page ('#' + main-section)
 
@@ -116,11 +116,8 @@ handle-navigation = (event) ->
       $ document .off \pageshow
 
 RactivePartial!register ->
+  console.log "all divs are hidden"
   $ "*[data-role='page'] " .css \display, \none
-
-
-RactivePartial! .register-for-document-ready ->
-  handle-navigation!
 
 RactivePartial! .register-for-post-ready ->
   $ window .on \hashchange, ->
@@ -133,7 +130,7 @@ RactivePartial! .register-for-post-ready ->
     custom-click = ($ this .data \custom-click) ? false
 
     if custom-click
-      console.log "this ancor will not be modified: ", do-not-modify
+      console.log "this ancor will not be modified: "
     else
       console.log "this is not a custom click function"
 
@@ -152,5 +149,7 @@ RactivePartial! .register-for-post-ready ->
               new-hash = '#' + "/#{curr-page}/#{addr}"
               #window.location.hash = new-hash
               history.pushState({}, '', new-hash)
-
         handle-navigation e
+  # run on page load
+  console.log "run on page load"
+  handle-navigation!

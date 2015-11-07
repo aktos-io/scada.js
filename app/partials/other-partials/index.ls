@@ -4,10 +4,9 @@ require! {
   }
 }
 
-RactivePartial!register-for-document-ready ->
+RactivePartial!register ->
   console.log "navbar ls is running..."
-  menu-anchor = $ ".navbar-nav a"
-  menu-anchor.each ->
+  $ ".navbar-nav a" .each ->
     console.log "menu anchor is being modified...."
     $ this .data \custom-click, true
     $ this .click (event) ->
