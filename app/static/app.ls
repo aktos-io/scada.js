@@ -91,7 +91,7 @@ RactivePartial!register ->
       url: "gms/WebService1.asmx/GetRooms"
       data-type: 'json'
       success: (response) ->
-        console.log "got gms data..."
+        #console.log "got gms data..."
         app.set \gms, response
 
   poll-gms!
@@ -117,7 +117,7 @@ RactivePartial!register-for-document-ready ->
         get-cards = ->
           if authorized
             Trello.get "/boards/#{board-id}/cards", (cards) ->
-              console.log "getting cards for board #{board-id}"
+              #console.log "getting cards for board #{board-id}"
               app.set 'trelloData.cards', cards
               actions = []
               for i in cards
@@ -126,7 +126,7 @@ RactivePartial!register-for-document-ready ->
                   if actions.length is cards.length
                     app.set \trelloData.card_actions, actions
                     app.set \trelloData.card_comments, [i.data.text for action in actions for i in action when i?.type is \commentCard ]
-                    console.log actions
+                    #console.log actions
 
               set-timeout get-cards, 2000ms
 
@@ -161,7 +161,18 @@ RactivePartial!register-for-document-ready ->
       authorized := false
       app.set \trelloData, null
 
+RactivePartial!register ->
+  menu =
+    brand:
+      name: 'aktos'
+      icon: 'img/aktos-icon.png'
+    links:
+      * name: 'Ana Sayfa'
+        addr: '#/'
+      * name: 'İşler'
+        addr: '#/applications'
 
+  app.set "page.menu", menu
 
 RactivePartial!register ->
   projects =

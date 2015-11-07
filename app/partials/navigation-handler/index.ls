@@ -1,6 +1,7 @@
 require! {
   '../../modules/aktos-dcs': {
     RactivePartial,
+    RactiveApp,
     IoActor,
   }
 }
@@ -33,9 +34,11 @@ handle-navigation = (event) ->
     $ ':mobile-pagecontainer' .pagecontainer 'change', target-id, do
       transition: \none
     */
-    $ "div[data-role='page']" .hide!
-    $ target-id .show!
-    $ ".ui-loader" .hide!
+    $ "*[data-role='page'] " .css \display, \none
+    $ target-id .css \display, \block
+    $ ".ui-loader" .css \display, \none
+    RactiveApp!get!set \page.active_page, target-id
+    console.log "active page is: ", RactiveApp!get!get \page.active_page
 
 
   # try to scroll to anchor, immediately or after page change
@@ -112,6 +115,10 @@ handle-navigation = (event) ->
       scroll-to-anchor anchor
       $ document .off \pageshow
 
+RactivePartial!register ->
+  $ "*[data-role='page'] " .css \display, \none
+
+
 RactivePartial! .register-for-document-ready ->
   handle-navigation!
 
@@ -121,24 +128,29 @@ RactivePartial! .register-for-post-ready ->
     handle-navigation!
 
   # modify anchors to point their current pages
-  $ \a .click (e) ->
+  $ \a .each ->
     addr = $ this .attr \href
-    if addr?
-      if addr.match /^#.*/
-        # this is an internal link
-        console.log "link orig addr: #{addr}, length: #{addr.length}"
-        addr = tail addr
-        if addr.match /^[^\/]+/ or addr is ''
-          # this link refers to an anchor (like #foo)
-          e.prevent-default!
-          curr-page = window.location.hash.replace /^#/, '' .split '/' .1
-          if curr-page?
-            console.log "click function is called! curr-page: #{curr-page}"
-            new-hash = '#' + "/#{curr-page}/#{addr}"
-            #window.location.hash = new-hash
-            history.pushState({}, '', new-hash)
+    custom-click = ($ this .data \custom-click) ? false
 
-      handle-navigation e
+    if custom-click
+      console.log "this ancor will not be modified: ", do-not-modify
     else
-      console.log "navigation handler got no addr..."
-      # as there is no addr, this handler should not modify anchor's click function
+      console.log "this is not a custom click function"
+
+    if addr? and not custom-click
+      $ this .click ->
+        if addr.match /^#.*/
+          # this is an internal link
+          console.log "link orig addr: #{addr}, length: #{addr.length}"
+          addr = tail addr
+          if addr.match /^[^\/]+/ or addr is ''
+            # this link refers to an anchor (like #foo)
+            e.prevent-default!
+            curr-page = window.location.hash.replace /^#/, '' .split '/' .1
+            if curr-page?
+              console.log "click function is called! curr-page: #{curr-page}"
+              new-hash = '#' + "/#{curr-page}/#{addr}"
+              #window.location.hash = new-hash
+              history.pushState({}, '', new-hash)
+
+        handle-navigation e
