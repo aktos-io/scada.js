@@ -103,8 +103,8 @@ handle-navigation = (event) ->
     main-section = if page.1? and page.1.length > 0 then page.1
     anchor = page.2
 
-    main-section ?= 'home-page'
     console.log "main section: ", main-section
+    main-section ?= 'home-page'
 
     change-page ('#' + main-section)
 

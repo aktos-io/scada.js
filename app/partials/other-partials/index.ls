@@ -4,7 +4,7 @@ require! {
   }
 }
 
-RactivePartial!register ->
+RactivePartial!register-for-document-ready ->
   console.log "navbar ls is running..."
   $ ".navbar-nav a" .each ->
     console.log "menu anchor is being modified...."

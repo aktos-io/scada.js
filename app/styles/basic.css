@@ -1,17 +1,7 @@
-body, html, .ui-mobile {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-.content {
-    margin: 0 !important;
-    padding: 0 !important;
-}
-/*
 div[data-role='page'] {
-  height: 100vh !important;
+  min-height: 100vh !important;
+  padding-bottom: 2em !important; /* for connection-status bar */
 }
-*/
 
 .no-shadow {
     -moz-box-shadow: none !important;

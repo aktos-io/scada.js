@@ -167,10 +167,14 @@ RactivePartial!register ->
       name: 'aktos'
       icon: 'img/aktos-icon.png'
     links:
-      * name: 'Ana Sayfa'
-        addr: '#/'
       * name: 'İşler'
         addr: '#/applications'
+      * name: 'Ürünler'
+        addr: '#/products'
+      * name: 'Demo'
+        addr: '#/demos'
+      * name: 'İletişim'
+        addr: '#/contact-page'
 
   app.set "page.menu", menu
 

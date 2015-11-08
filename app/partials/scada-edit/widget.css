@@ -40,7 +40,7 @@
 }
 
 .scada-drawing-area {
-  min-width: 500px;
+  width: 100%;
   overflow: auto;
   margin: 0;
   padding: 0;
@@ -48,7 +48,7 @@
   /* scada theme is set by ractive.data.scada_theme and these two below */
   background-color: #252525 !important;
   color: white;
-  font-size: 0.9em; 
+  font-size: 0.9em;
 
 }
 .scada-container {
