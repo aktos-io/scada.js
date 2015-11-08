@@ -128,7 +128,7 @@ RactivePartial!register-for-document-ready ->
                     app.set \trelloData.card_comments, [i.data.text for action in actions for i in action when i?.type is \commentCard ]
                     #console.log actions
 
-              set-timeout get-cards, 2000ms
+              set-timeout get-cards, 12000ms
 
         get-cards!
 

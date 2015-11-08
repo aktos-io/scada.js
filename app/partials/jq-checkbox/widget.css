@@ -1,9 +1,0 @@
-.jq-checkbox > * {
-  padding: 0;
-  margin: 0; 
-}
-.jq-checkbox * {
-  width: auto; 
-  height: 100%; 
-}
-

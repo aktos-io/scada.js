@@ -6,7 +6,7 @@ require! {
 
 RactivePartial!register-for-document-ready ->
   console.log "navbar ls is running..."
-  $ ".navbar-nav a" .each ->
+  $ ".navbar a" .each ->
     console.log "menu anchor is being modified...."
     $ this .data \custom-click, true
     $ this .click (event) ->
