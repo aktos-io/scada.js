@@ -12,6 +12,7 @@ exports.config =
         # even if they aren't specified in order.before.
         before: [
           'vendor/base-libraries/jquery-1.11.js',
+          'vendor/jquery-ui/jquery-ui.min.js',
           'vendor/flot.min/jquery.flot.min.js'
         ]
 
@@ -24,21 +25,19 @@ exports.config =
           /^app/,
           'vendor/toolbar/toolbar-bootstrap3.fix.css'
         ]
-      
+
   plugins:
     jadeStatic:
       #compileDebug: true
       locals: {}                    # Locals passed to the template
-      formatPath: (path) -> 
+      formatPath: (path) ->
         console.log "path is: ", path
         try
           p = path.match(/^app(\/|\\)static(\/|\\)([^\\]+)\.jade$/)
           #console.log "path match: ", p
           return p[3]
-        catch 
+        catch
           return 'ignore-this-file'
-          
+
       extension: '.html'            # Extension of compiled templates
       pretty: true                  # Any other Jade API option
-        
-        

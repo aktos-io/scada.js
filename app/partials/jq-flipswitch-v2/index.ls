@@ -8,27 +8,17 @@ require! {
 RactivePartial! .register-for-document-ready ->
   $ \.jq-flipswitch-v2 .each ->
     #console.log "switch-button created"
-    actor = IoActor $ this 
+    actor = IoActor $ this
 
-    elem = actor.node.find \.jq-flipswitch-v2__switch
-    
-    if (actor.get-ractive-var \wid)? 
-      actor.node.add-class \draggable 
+    input = actor.node.find \.jq-flipswitch-v2__switch
+    input.bootstrap-switch!
 
-    
-    send-gui-event = (event) -> 
-      #console.log "jq-flipswitch-2 sending msg: ", elem.val!        
-      actor.gui-event (elem.val! == \on)
+    if (actor.get-ractive-var \wid)?
+      actor.node.add-class \draggable
 
-    elem.on \change, send-gui-event
-    
+    input.on 'switchChange.bootstrapSwitch', (event, state) ->
+      console.log "jq-checkbox changed: #state"
+      actor.gui-event state
+
     actor.add-callback (msg) ->
-      #console.log "switch-button got message", msg
-      elem.unbind \change
-      
-      if msg.val
-        elem.val \on .slider \refresh
-      else
-        elem.val \off .slider \refresh
-      
-      elem.bind \change, send-gui-event 
+      input.bootstrapSwitch 'state', msg.val
