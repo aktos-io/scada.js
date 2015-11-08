@@ -8,6 +8,18 @@ This webui is online at https://aktos-elektronik.com/
 
 Crossbar.io : https://github.com/crossbario
 
+# Used Technologies / Libraries
+
+* Livescript
+* Ractive 
+* Jade
+* Bootstrap 
+* jQuery
+* jQuery Mobile (to be removed)
+* CSS
+* Flot
+* ...and others (see [vendor](./vendor))
+
 # File Structure
 
 + **app**:  application specific directory, see brunch.io
