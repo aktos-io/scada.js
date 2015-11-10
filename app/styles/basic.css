@@ -8,15 +8,15 @@
   background-size: cover;
   background-position: center;
 }
-/*
+
 .nav-bar {
   position: fixed !important;
   top: 0;
   left; 0;
   width: 100%;
-  z-index: 99999;
+  z-index: 999;
 }
-*/
+
 body, html {
     padding: 0;
     margin: 0;
