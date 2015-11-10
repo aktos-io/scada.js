@@ -17,15 +17,16 @@
 
 }
 
-.scada-generate-layout h3{
-  background-color: yellow;
-}
+
 .scada-generate-layout__textarea {
     width: 99%;
    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
     -moz-box-sizing: border-box;    /* Firefox, other Gecko */
     box-sizing: border-box;         /* Opera/IE 8+ */
-    background-color: red;
+}
+
+.scada-generate-layout {
+  color: black; 
 }
 
 .scada {
