@@ -38,6 +38,8 @@ app.on 'complete', !->
     proxy-actor.update-connection-status!
 
     RactivePartial! .init-for-dynamic-pos widget-positions
+
+
     set-timeout (->
       RactivePartial! .init-for-post-ready!
       # Update all I/O on init
