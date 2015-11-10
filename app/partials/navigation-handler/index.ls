@@ -151,5 +151,6 @@ RactivePartial! .register-for-post-ready ->
               history.pushState({}, '', new-hash)
         handle-navigation e
   # run on page load
-  console.log "run on page load"
+  console.log "internal redirect on load..."
+  $ '#loading' .css \display, \none
   handle-navigation!
