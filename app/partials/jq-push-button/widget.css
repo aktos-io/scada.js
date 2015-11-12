@@ -1,15 +1,15 @@
 .jq-push-button {
-  /*max-width: 150px; 
+  /*max-width: 150px;
    */
-  width: auto; 
+  width: auto;
   height: auto;
 }
 
 .jq-push-button__button {
-  /*max-width: 150px; 
+  /*max-width: 150px;
    */
-  width: auto; 
-  height: 100%; 
-  margin: 0; 
+  width: auto;
+  height: 100%;
+  margin: 0;
   padding: auto;
 }

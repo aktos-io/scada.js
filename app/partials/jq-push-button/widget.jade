@@ -2,7 +2,7 @@ include ../../templates/mixins.jade
 
 +partial('jq-push-button')
   .jq-push-button
-    button.jq-push-button__button.no-shadow(
+    button.jq-push-button__button.no-shadow.btn-default(
       style="{{ .connected? '' : 'border: 1px dashed red' }}"
       type="button"
       data-icon="{{ .icon }}"

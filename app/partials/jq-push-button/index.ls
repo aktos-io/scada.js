@@ -4,17 +4,17 @@ require! {
     IoActor,
   }
 }
-  
+
 #RactivePartial! .register ->
 RactivePartial! .register-for-document-ready ->
   $ '.jq-push-button' .each ->
     #console.log "found push-button!"
     actor = IoActor $ this
     elem = actor.node.find \.jq-push-button__button
-    
-    if (actor.get-ractive-var \wid)? 
-      actor.node.add-class \draggable 
-    
+
+    if (actor.get-ractive-var \wid)?
+      actor.node.add-class \draggable
+
 
     # desktop support
     elem.on 'mousedown' ->
@@ -42,7 +42,8 @@ RactivePartial! .register-for-document-ready ->
     actor.add-callback (msg) ->
       #console.log "jq-push-button got message: ", msg.val
       if msg.val
-        elem.add-class 'ui-btn-active'
+        elem.remove-class 'btn-default'
+        elem.add-class 'btn-active'
       else
-        elem.remove-class 'ui-btn-active'
-        
+        elem.remove-class 'btn-active'
+        elem.add-class 'btn-default'
