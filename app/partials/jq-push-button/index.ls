@@ -13,8 +13,8 @@ RactivePartial!register ->
     checkbox = widget.find 'input:checkbox'
     color = button.data \color
     settings =
-      on: icon: 'fa fa-check-square'
-      off: icon: 'fa fa-square'
+      on: icon: 'fa fa-square'
+      off: icon: 'fa fa-square-o'
 
     update-display = ->
       is-checked = checkbox.is \:checked
@@ -59,45 +59,38 @@ RactivePartial! .register-for-document-ready ->
       actor.node.add-class \draggable
 
 
+    turn = (state) ->
+      checkbox.prop \checked, state
+      checkbox.trigger \change
+
     # desktop support
     button.on 'mousedown' ->
       console.log "mousedown detected"
-      checkbox.prop \checked, on
-      checkbox.trigger \change
-
+      turn on
       button.on 'mouseleave', ->
-        checkbox.prop \checked, off
-        checkbox.trigger \change
-    button.on 'mouseup' ->
-      checkbox.prop \checked, off
-      checkbox.trigger \change
+        turn off
 
+    button.on 'mouseup' ->
+      turn off
       button.off 'mouseleave'
 
     # touch support
-    /*
     button.on 'touchstart' (e) ->
-      actor.gui-event on
+      turn on
       button.touchleave ->
-        actor.gui-event off
-        button.remove-class \ui-focus
-
+        turn off
       e.stop-propagation!
-    button.on 'touchend' (e) ->
-      actor.gui-event off
-      button.remove-class \ui-focus
 
-    */
-    
-    input = actor.node.find \input
+    button.on 'touchend' (e) ->
+      turn off
 
     i = 0
-    input.change ->
-      state = input.is \:checked
+    checkbox.change ->
+      state = checkbox.is \:checked
       console.log "jq-checkbox changed: #state", i
       i := i + 1
       actor.gui-event state
 
     actor.add-callback (msg) ->
-      input.prop 'checked', msg.val
-      input.trigger \update-display
+      checkbox.prop 'checked', msg.val
+      checkbox.trigger \update-display
