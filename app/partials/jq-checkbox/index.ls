@@ -7,7 +7,7 @@ require! {
 
 RactivePartial!register ->
   console.log "bootstrap-checkboxes are initialized..."
-  $ \.button-checkbox .each ->
+  $ '.jq-checkbox .button-checkbox' .each ->
     console.log "checkbox is initialized...", $ this
     widget = $ this
     button = widget.find 'button'
