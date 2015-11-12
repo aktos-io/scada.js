@@ -38,7 +38,7 @@ RactivePartial!register ->
     button.on \click, ->
       state = checkbox.is \:checked
       checkbox.prop \checked, not state
-      checkbox.trigger \update-display
+      checkbox.trigger \change
       update-display!
 
     checkbox.on \change, ->
