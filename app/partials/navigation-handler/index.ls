@@ -108,7 +108,7 @@ RactivePartial! .register-for-post-ready ->
 
     if addr? and not custom-click
       anchor-page = $ this .closest "[data-role='page']" .attr \id
-      console.log "anchor address is #{addr} and is under", anchor-page
+      #console.log "anchor address is #{addr} and is under", anchor-page
       if addr.match /^#[a-zA-Z0-9_]+/ or addr is '#'
         # this is in-page link (eg. <a href="#abc/def"></a>)
         new-hash = ('#/' + anchor-page + '/' + tail addr)

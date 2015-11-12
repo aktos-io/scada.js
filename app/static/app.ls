@@ -76,7 +76,7 @@ require! {
 }
 
 RactivePartial!register ->
-  console.log "Testing sending data to table from app.ls"
+  #console.log "Testing sending data to table from app.ls"
   test = SwitchActor 'test-actor'
   test.send IoMessage:
     pin_name: \test-table
@@ -102,13 +102,13 @@ RactivePartial!register ->
 
 # test trello
 RactivePartial!register-for-document-ready ->
-  console.log "Trello integration test..."
+  #console.log "Trello integration test..."
 
   authorized = false
   on-authorize = ->
     if Trello.authorized!
       authorized := true
-      console.log "trello authorization is successful"
+      #console.log "trello authorization is successful"
       Trello.members.get "me", (member) ->
         app.set \trelloData.member, member
 
@@ -136,12 +136,12 @@ RactivePartial!register-for-document-ready ->
 
 
 
-      console.log "trello on-authorize is ended..."
+      #console.log "trello on-authorize is ended..."
     else
       console.log "BUG: trello test: on-authorize! is called before authorized!"
 
   # authorize
-  console.log "authorizing to trello silently..."
+  #console.log "authorizing to trello silently..."
   trello-silent-login = ->
     Trello.authorize do
         interactive:false

@@ -6,73 +6,55 @@ require! {
 }
 
 RactivePartial!register ->
-  ``
-$(function () {
-    $('.button-checkbox').each(function () {
+  console.log "bootstrap-checkboxes are initialized..."
+  $ \.button-checkbox .each ->
+    console.log "checkbox is initialized...", $ this
+    widget = $ this
+    button = widget.find 'button'
+    checkbox = widget.find 'input:checkbox'
+    color = button.data \color
+    settings =
+      on: icon: 'fa fa-check-square'
+      off: icon: 'fa fa-square-o'
 
-        // Settings
-        var $widget = $(this),
-            $button = $widget.find('button'),
-            $checkbox = $widget.find('input:checkbox'),
-            color = $button.data('color'),
-            settings = {
-                on: {
-                    icon: 'glyphicon glyphicon-check'
-                },
-                off: {
-                    icon: 'glyphicon glyphicon-unchecked'
-                }
-            };
+    update-display = ->
+      is-checked = checkbox.is \:checked
 
-        // Event Handlers
-        $button.on('click', function () {
-            $checkbox.prop('checked', !$checkbox.is(':checked'));
-            $checkbox.triggerHandler('change');
-            updateDisplay();
-        });
-        $checkbox.on('change', function () {
-            updateDisplay();
-        });
+      button.data \state, if is-checked then \on else \off
 
-        // Actions
-        function updateDisplay() {
-            var isChecked = $checkbox.is(':checked');
+      button.find \.state-icon
+        .remove-class!
+        .add-class 'state-icon ' + settings[button.data('state')].icon
 
-            // Set the button's state
-            $button.data('state', (isChecked) ? "on" : "off");
+      if is-checked
+        button
+          .removeClass 'btn-default'
+          .addClass('btn-' + color + ' active')
+      else
+        button
+          .removeClass('btn-' + color + ' active')
+          .addClass('btn-default')
 
-            // Set the button's icon
-            $button.find('.state-icon')
-                .removeClass()
-                .addClass('state-icon ' + settings[$button.data('state')].icon);
+    button.on \click, ->
+      state = checkbox.is \:checked
+      checkbox.prop \checked, not state
+      checkbox.trigger \update-display
+      update-display!
 
-            // Update the button's color
-            if (isChecked) {
-                $button
-                    .removeClass('btn-default')
-                    .addClass('btn-' + color + ' active');
-            }
-            else {
-                $button
-                    .removeClass('btn-' + color + ' active')
-                    .addClass('btn-default');
-            }
-        }
+    checkbox.on \change, ->
+      console.log "checkbox change run"
+      update-display!
 
-        // Initialization
-        function init() {
+    checkbox.on \update-display, -> update-display!
 
-            updateDisplay();
+    init = ->
+      update-display!
+      if button.find('.state-icon').length == 0
+          button.prepend('<i class="state-icon ' + settings[button.data('state')].icon + '"></i> ')
 
-            // Inject the icon if applicable
-            if ($button.find('.state-icon').length == 0) {
-                $button.prepend('<i class="state-icon ' + settings[$button.data('state')].icon + '"></i> ');
-            }
-        }
-        init();
-    });
-});
-  ``
+    init!
+
+
 RactivePartial! .register ->
   $ '.jq-checkbox' .each !->
     actor = IoActor $ this
@@ -82,10 +64,13 @@ RactivePartial! .register ->
 
     input = actor.node.find \input
 
+    i = 0
     input.change ->
       state = input.is \:checked
-      console.log "jq-checkbox changed: #state"
+      console.log "jq-checkbox changed: #state", i
+      i := i + 1
       actor.gui-event state
 
     actor.add-callback (msg) ->
       input.prop 'checked', msg.val
+      input.trigger \update-display
