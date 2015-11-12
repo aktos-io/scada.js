@@ -11,6 +11,7 @@ Crossbar.io : https://github.com/crossbario
 # Used Technologies / Libraries
 
 * ZeroMQ
+* Socket.io
 * Livescript
 * Ractive 
 * Jade
