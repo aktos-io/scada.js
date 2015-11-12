@@ -14,10 +14,13 @@
   top: 0;
   left; 0;
   width: 100%;
-  height: 50px; 
+  height: 50px;
   z-index: 999;
 }
-
+.btn:focus,
+.btn-primary:focus {
+    outline: none;
+  }
 body, html {
     padding: 0;
     margin: 0;
