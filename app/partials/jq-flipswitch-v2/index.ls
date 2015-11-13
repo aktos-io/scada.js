@@ -33,5 +33,5 @@ RactivePartial! .register-for-document-ready ->
       console.log "bootstrap-toggle received message"
 
       input.off \change
-      input.prop \checked, msg.val .change!
+      input.bootstrap-toggle if msg.val then \on else \off 
       input.change change-handler
