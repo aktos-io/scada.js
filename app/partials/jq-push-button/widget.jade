@@ -3,6 +3,6 @@ include ../../templates/mixins.jade
 +partial('jq-push-button')
   .jq-push-button.
     <span class="button-checkbox" style="{{ .connected? '' : 'border: 1px dashed red' }}">
-        <button type="button" class="btn" data-color="primary">{{ .label ? .label : .pin_name }}</button>
+        <button type="button" class="btn" data-color="primary"><span class="jq-push-button__label">{{ .label ? .label : .pin_name }}</span></button>
         <input type="checkbox" class="hidden" />
     </span>

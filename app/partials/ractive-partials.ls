@@ -2,6 +2,7 @@
 require './analog-display'
 require './arrow-keys'
 require './b-circle-button'
+require './b-circle-button-v2'
 require './b-notification-box'
 require './b-progress-bar'
 require './b-slider'
