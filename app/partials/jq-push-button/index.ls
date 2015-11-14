@@ -16,6 +16,10 @@ RactivePartial!register ->
       on: icon: 'fa fa-square'
       off: icon: 'fa fa-square-o'
 
+    button.data \on-icon, settings.on.icon
+    button.data \off-icon, settings.off.icon
+
+
     update-display = ->
       is-checked = checkbox.is \:checked
 
@@ -23,7 +27,7 @@ RactivePartial!register ->
 
       button.find \.state-icon
         .remove-class!
-        .add-class 'state-icon ' + settings[button.data('state')].icon
+        .add-class 'state-icon ' + if is-checked then button.data \on-icon else button.data \off-icon
 
       if is-checked
         button
@@ -58,6 +62,14 @@ RactivePartial! .register-for-document-ready ->
     if (actor.get-ractive-var \wid)?
       actor.node.add-class \draggable
 
+    icon-param = actor.get-ractive-var \icon
+    if icon-param?
+      [on-icon, off-icon] = icon-param.split ' '
+      console.log "on off icons: ", on-icon, off-icon
+      unless off-icon? then off-icon = on-icon
+      button.data \on-icon, "fa fa-#{on-icon}"
+      button.data \off-icon, "fa fa-#{off-icon}"
+      checkbox.trigger \update-display
 
     turn = (state) ->
       checkbox.prop \checked, state
