@@ -1,16 +1,37 @@
-.nav-bar *:not(.ui-btn-active){
-  background-color: rgba(100, 100, 100, 0.2) !important;
-}
-.nav-bar .ui-btn-active{
-  background-color: rgb(41, 99, 213) !important;
-}
 
-
-.nav-glyphish-example .ui-btn { padding-top: 40px !important; }
-.nav-glyphish-example .ui-btn:after { width: 30px!important; height: 30px!important; margin-left: -15px !important; box-shadow: none!important; -moz-box-shadow: none!important; -webkit-box-shadow: none!important; -webkit-border-radius: 0 !important; border-radius: 0 !important; }
-#home::after { background:  url("../img/icons/32x32/home.png") 50% 50% no-repeat; background-size: 24px 24px; }
-#project::after { background:  url("../img/icons/32x32/tray.png") 50% 50% no-repeat; background-size: 24px 24px;  }
-#product::after { background:  url("../img/icons/32x32/store.png") 50% 50% no-repeat;  background-size: 24px 24px; }
-#demo::after { background:  url("../img/icons/32x32/wave-2.png") 50% 50% no-repeat;  background-size: 24px 24px; }
-#download::after { background:  url("../img/icons/32x32/cloud.png") 50% 50% no-repeat;  background-size: 24px 24px; }
-#contact::after { background:  url("../img/icons/32x32/speech-bubble-left.png") 50% 50% no-repeat;  background-size: 24px 24px; }
+@media (max-width: 992px) {
+    .navbar-header {
+        float: none;
+    }
+    .navbar-left,.navbar-right {
+        float: none !important;
+    }
+    .navbar-toggle {
+        display: block;
+    }
+    .navbar-collapse {
+        border-top: 1px solid transparent;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    .navbar-fixed-top {
+		top: 0;
+		border-width: 0 0 1px;
+	}
+    .navbar-collapse.collapse {
+        display: none!important;
+    }
+    .navbar-nav {
+        float: none!important;
+		margin-top: 7.5px;
+	}
+	.navbar-nav>li {
+        float: none;
+    }
+    .navbar-nav>li>a {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .collapse.in{
+  		display:block !important;
+	}
+}

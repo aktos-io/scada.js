@@ -17,15 +17,16 @@
 
 }
 
-.scada-generate-layout h3{
-  background-color: yellow;
-}
+
 .scada-generate-layout__textarea {
     width: 99%;
    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
     -moz-box-sizing: border-box;    /* Firefox, other Gecko */
     box-sizing: border-box;         /* Opera/IE 8+ */
-    background-color: red;
+}
+
+.scada-generate-layout {
+  color: black; 
 }
 
 .scada {
@@ -40,7 +41,7 @@
 }
 
 .scada-drawing-area {
-  min-width: 500px;
+  width: 100%;
   overflow: auto;
   margin: 0;
   padding: 0;
@@ -48,7 +49,7 @@
   /* scada theme is set by ractive.data.scada_theme and these two below */
   background-color: #252525 !important;
   color: white;
-  font-size: 0.9em; 
+  font-size: 0.9em;
 
 }
 .scada-container {

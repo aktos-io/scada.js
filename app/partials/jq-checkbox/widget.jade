@@ -1,13 +1,8 @@
 include ../../templates/mixins.jade
 
 +partial('jq-checkbox')
-  .jq-checkbox
-    label(style="{{ .connected? '' : 'border: 1px dashed red' }}")
-      input.jq-checkbox__input(
-        type="checkbox"
-        style="display: none;"
-        data-theme="{{scada_theme ? scada_theme : 'b' }}"
-
-        )
-      | {{ .label ? .label : .pin_name }}
- 
+  .jq-checkbox.
+    <span class="button-checkbox" style="{{ .connected? '' : 'border: 1px dashed red' }}">
+        <button type="button" class="btn" data-color="primary">{{ .label ? .label : .pin_name }}</button>
+        <input type="checkbox" class="hidden" />
+    </span>

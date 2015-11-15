@@ -19,9 +19,12 @@ html(class="no-js", lang="en")
     )
     script(src="javascripts/vendor.js")
     script(src="javascripts/app.js")
-    script(src="https://trello.com/1/client.js?key=395a2b7fc0ea81ff5dc7dcd08af05786")
     link(rel="stylesheet", href="stylesheets/app.css")
   body
+
+    #loading
+      h1(style="text-align: center") Loading aktos-scada...
+      
     #container
     script#app(type='text/ractive')
       block content

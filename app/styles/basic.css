@@ -1,17 +1,36 @@
-body {
-  margin: 0 !important;
-  padding: 0 !important;
+#home-page,
+#applications,
+#products,
+#contact-page,
+#demos {
+  background-image: url('../img/aktos-elektronik/home-page/aktos-arkaplan-site-white.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 
-.content {
-    margin: 0 !important;
-    padding: 0 !important;
+.nav-bar {
+  position: fixed !important;
+  top: 0;
+  left; 0;
+  width: 100%;
+  height: 50px;
+  z-index: 999;
 }
-/*
+.btn:focus,
+.btn-primary:focus {
+    outline: none;
+  }
+body, html {
+    padding: 0;
+    margin: 0;
+}
+
 div[data-role='page'] {
-  height: 100vh !important;
+  min-height: 100vh;
+  padding-bottom: 2em; /* for connection-status bar */
+  padding-top: 60px; /* for fixed navbar */
 }
-*/
 
 .no-shadow {
     -moz-box-shadow: none !important;

@@ -4,45 +4,105 @@ require! {
     IoActor,
   }
 }
-  
-#RactivePartial! .register ->
+RactivePartial!register ->
+  console.log "bootstrap-checkboxes are initialized..."
+  $ '.jq-push-button .button-checkbox' .each ->
+    console.log "checkbox is initialized...", $ this
+    widget = $ this
+    button = widget.find 'button'
+    checkbox = widget.find 'input:checkbox'
+    color = button.data \color
+    settings =
+      on: icon: 'fa fa-square'
+      off: icon: 'fa fa-square-o'
+
+    button.data \on-icon, settings.on.icon
+    button.data \off-icon, settings.off.icon
+
+
+    update-display = ->
+      is-checked = checkbox.is \:checked
+
+      button.data \state, if is-checked then \on else \off
+
+      button.find \.state-icon
+        .remove-class!
+        .add-class 'state-icon ' + if is-checked then button.data \on-icon else button.data \off-icon
+
+      if is-checked
+        button
+          .removeClass 'btn-default'
+          .addClass('btn-' + color + ' active')
+      else
+        button
+          .removeClass('btn-' + color + ' active')
+          .addClass('btn-default')
+
+    checkbox.on \change, ->
+      console.log "checkbox change run"
+      update-display!
+
+    checkbox.on \update-display, -> update-display!
+
+    init = ->
+      update-display!
+      if button.find('.state-icon').length == 0
+          button.prepend('<i class="state-icon ' + settings[button.data('state')].icon + '"></i> ')
+
+    init!
+
+
 RactivePartial! .register-for-document-ready ->
   $ '.jq-push-button' .each ->
     #console.log "found push-button!"
     actor = IoActor $ this
-    elem = actor.node.find \.jq-push-button__button
-    
-    if (actor.get-ractive-var \wid)? 
-      actor.node.add-class \draggable 
-    
+    button = actor.node.find 'button'
+    checkbox = actor.node.find 'input:checkbox'
+
+    if (actor.get-ractive-var \wid)?
+      actor.node.add-class \draggable
+
+    icon-param = actor.get-ractive-var \icon
+    if icon-param?
+      [on-icon, off-icon] = icon-param.split ' '
+      console.log "on off icons: ", on-icon, off-icon
+      unless off-icon? then off-icon = on-icon
+      button.data \on-icon, "fa fa-#{on-icon}"
+      button.data \off-icon, "fa fa-#{off-icon}"
+      checkbox.trigger \update-display
+
+    turn = (state) ->
+      checkbox.prop \checked, state
+      checkbox.trigger \change
 
     # desktop support
-    elem.on 'mousedown' ->
-      actor.gui-event on
-      elem.on 'mouseleave', ->
-        actor.gui-event off
-        elem.remove-class \ui-focus
-    elem.on 'mouseup' ->
-      actor.gui-event off
-      elem.off 'mouseleave'
-      elem.remove-class \ui-focus
+    button.on 'mousedown' ->
+      console.log "mousedown detected"
+      turn on
+      button.on 'mouseleave', ->
+        turn off
+
+    button.on 'mouseup' ->
+      turn off
+      button.off 'mouseleave'
 
     # touch support
-    elem.on 'touchstart' (e) ->
-      actor.gui-event on
-      elem.touchleave ->
-        actor.gui-event off
-        elem.remove-class \ui-focus
-
+    button.on 'touchstart' (e) ->
+      turn on
+      button.touchleave ->
+        turn off
       e.stop-propagation!
-    elem.on 'touchend' (e) ->
-      actor.gui-event off
-      elem.remove-class \ui-focus
+
+    button.on 'touchend' (e) ->
+      turn off
+
+    i = 0
+    checkbox.change ->
+      state = checkbox.is \:checked
+      console.log "jq-checkbox changed: #state", i
+      i := i + 1
+      actor.gui-event state
 
     actor.add-callback (msg) ->
-      #console.log "jq-push-button got message: ", msg.val
-      if msg.val
-        elem.add-class 'ui-btn-active'
-      else
-        elem.remove-class 'ui-btn-active'
-        
+      checkbox.prop 'checked', msg.val
+      checkbox.trigger \update-display

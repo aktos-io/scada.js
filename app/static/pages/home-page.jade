@@ -1,31 +1,12 @@
-style.
-  #home-page, 
-  #applications, 
-  #products, 
-  #contact-page, 
-  #demos {
-    background-image: url('../img/aktos-elektronik/home-page/aktos-arkaplan-site-white.png');
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-  }
-
-  .home-col-padding {
-    margin-left: 2em;
-    margin-right: 2em;
-  }
-
-
-
-#home-page(data-role='page', data-theme='a', style="padding-bottom: 100px")
-  | {{>nav-bar {active_button: 'home-page'}}}
+#home-page(data-role='page', data-theme='a')
+  | {{>nav-bar {active_button: '#/'}}}
   
-  .content
+  .container
     .row
-      .col-sm-offset-1.col-sm-10.col-sm-offset-1
+      .col-sm-12
         img(
           src="img/aktos-logo-2.3.png"
-          style="width: 100%; margin: -10px;"
+          style="width: 100%; margin: 0; margin-top: -10px;"
         )
     .row
       .col-sm-offset-1.col-sm-4.home-col-padding

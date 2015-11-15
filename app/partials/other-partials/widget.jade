@@ -1,16 +1,28 @@
 include ../../templates/mixins.jade
-
 +partial('nav-bar')
-  .nav-bar
-    | <div data-role="navbar" class="nav-glyphish-example" data-grid="d">
-    |   <ul>
-    |     <li><a {{>jq-persist {active: .active_button, this_page: "home-page"}}}  href="#/" id="home" data-icon="custom" >Ana Sayfa</a></li>
-    |     <li><a {{>jq-persist {active: .active_button, this_page: "applications"}}} href="#/applications" id="project" data-icon="custom" >İşler</a></li>
-    |     <li><a {{>jq-persist {active: .active_button, this_page: "products"}}} href="#/products" id="product" data-icon="custom">Ürünler</a></li>
-    |     <li><a {{>jq-persist {active: .active_button, this_page: "demos"}}} href="#/demos" id="demo" data-icon="custom" >Demo</a></li>
-    |     <li><a {{>jq-persist {active: .active_button, this_page: "contact-page"}}} href="#/contact-page" id="contact" data-icon="custom" >İletişim</a></li>
-    |   </ul>
-    | </div>
+  .nav-bar.
+    {{#with page.menu}}
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" style="padding: 0; padding-left: 10px; " href="#/"><img src="{{.brand.icon}}" style="height: 100%; width: auto;" alt="{{.brand.name}}"/></a>
+        </div>
 
-+partial('jq-persist')
-  |  {{ active == this_page ? 'class="ui-btn-active ui-state-persist"' : '' }}
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            {{#each .links}}
+            <li {{ .addr === active_button ? 'class="active"' : ''}}><a href="{{.addr}}">{{.name}}</a></li>
+            {{/each}}
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+    {{/with}}

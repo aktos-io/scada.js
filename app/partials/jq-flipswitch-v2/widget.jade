@@ -2,12 +2,11 @@ include ../../templates/mixins.jade
     
 +partial('jq-flipswitch-v2')
   .jq-flipswitch-v2
-    select.jq-flipswitch-v2__switch(
-      data-role="slider"
-      data-theme="{{scada_theme ? scada_theme : 'b' }}"
+    input.jq-flipswitch-v2__switch(
       id="{{ .actor_id }}-switch"
       data-pin-name="{{ .pin_name }}"
+      type="checkbox"
+      data-toggle='toggle'
+      data-style="quick"
       )
-      option(value="off") Off
-      option(value="on") On
     

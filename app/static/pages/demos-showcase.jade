@@ -1,22 +1,22 @@
-
 .panel.panel-primary
   .panel-heading
     h2.panel-title Scada çizim alanı 
   
-    .row
-      .col-sm-2.col-xs-6.
-        {{>scada-generate-layout {pin_name: 'scada'} }}
-      .col-sm-2.col-xs-6.
-        {{>jq-checkbox {pin_name: 'lock-scada', label: 'Locked'} }}
+    .container
+      .row
+        .col-sm-2.col-xs-6.
+          {{>scada-generate-layout {pin_name: 'scada'} }}
+        .col-sm-2.col-xs-6.
+          {{>jq-checkbox {pin_name: 'lock-scada', label: 'Locked'} }}
   
   .panel-body        
-    .scada-drawing-area(data-content-theme="b")
+    .scada-drawing-area.scada
       .scada-container. 
         {{! push button example }}
         {{>push-button {pin_name: 'vpin-0', label: 'Virtual pin 0', wid: 1} }}
         {{>status-led {pin_name: 'vpin-0', wid: 2} }}
         
-        {{! checkbox example }}
+        <!-- checkbox example -->
         {{>jq-checkbox {pin_name: 'vpin-1', wid: 3} }}
         {{>status-led {pin_name: 'vpin-1', wid: 4, src: 'computer'} }}
         
@@ -41,28 +41,30 @@
             ], wid: 403} }}
         {{>slider {pin_name: 'vpin-4', wid: 404} }}
         
-        {{>switch-button-basic {wid: 405, pin_name: 'vpin-5', label: 'Test pin'} }}
-        {{>switch-button {wid: 408,pin_name: 'vpin-5', label: 'TEST PIN'} }}
-        {{>b-circle-button {wid: 409,pin_name: 'vpin-6'} }}
-        {{>b-circle-button {wid: 410,pin_name: 'vpin-6', icon: 'shield'} }}
-        {{>b-circle-button {wid: 411,pin_name: 'vpin-6', icon: 'warning'} }}
-        {{>b-circle-button {wid: 412,pin_name: 'vpin-6', icon: 'signal'} }}
+        {{>switch-button-basic {wid: 405, pin_name: 'vpin-1', label: 'Test pin'} }}
+        {{>switch-button {wid: 408,pin_name: 'vpin-1', label: 'TEST PIN'} }}
+        
+        {{>b-circle-button-v2 {wid: 409,pin_name: 'vpin-6'} }}
+        {{>b-circle-button-v2 {wid: 410,pin_name: 'vpin-6', icon: 'shield warning'} }}
+        {{>b-circle-button-v2 {wid: 411,pin_name: 'vpin-6', icon: 'warning'} }}
+        {{>b-circle-button-v2 {wid: 412,pin_name: 'vpin-6', icon: 'signal'} }}
         {{>arrow-keys {wid: 413} }}
 
 
-.panel.panel-primary.scada-drawing-area
+.panel.panel-primary
   .panel-heading
     h2.panel-title Scada çizim alanı 
   
-    .row
-      .col-sm-2.col-xs-6.
-        {{>scada-generate-layout {pin_name: 'scada'} }}
-      .col-sm-2.col-xs-6.
-        {{>jq-checkbox {pin_name: 'lock-scada', label: 'Locked'} }}
-  
+    .container
+      .row
+        .col-sm-2.col-xs-6.
+          {{>scada-generate-layout {pin_name: 'scada'} }}
+        .col-sm-2.col-xs-6.
+          {{>jq-checkbox {pin_name: 'lock-scada', label: 'Locked'} }}
+    
   .panel-body        
     //- wid: 800+
-    .scada-drawing-area
+    .scada-drawing-area.scada
       .scada-container. 
         {{>gauge {pin_name: 'vpin-7', type: 'speed', wid: 800} }}     
         {{>gauge {pin_name: 'vpin-7', type: 'download', wid: 801} }}     
@@ -91,19 +93,19 @@
           '#link5 fa-plane' 
           ], icon: 'fa-cog'} }}        
 
-.panel.panel-primary.scada-drawing-area
+.panel.panel-primary
   .panel-heading
     h2.panel-title Scada çizim alanı 
-  
-    .row
-      .col-sm-2.col-xs-6.
-        {{>scada-generate-layout {pin_name: 'scada'} }}
-      .col-sm-2.col-xs-6.
-        {{>jq-checkbox {pin_name: 'lock-scada', label: 'Locked'} }}
+    .container
+      .row
+        .col-sm-2.col-xs-6.
+          {{>scada-generate-layout {pin_name: 'scada'} }}
+        .col-sm-2.col-xs-6.
+          {{>jq-checkbox {pin_name: 'lock-scada', label: 'Locked'} }}
   
   //- wid: 900+
   .panel-body  
-    .scada-drawing-area
+    .scada-drawing-area.scada
       .scada-container. 
         {{>table {wid: 900, pin_name: 'test-table'} }}
         {{>textbox {wid: 901, pin_name: 'test-table', val: 'test value'} }}
@@ -115,25 +117,28 @@
   .panel-heading
     h3.panel-title Giriş Formu
   .panel-body
-    .scada-drawing-area
-      .scada-container 
-        :md
-          Test şifreleri: 
-          
-            * cca12345
-            * me12345
-            * tk12345
-        div
-          div Login input: {{>login-input {} }}
-          div Login status {{>login-info {} }}
+    .scada-drawing-area.scada
+      .scada-container
+        .container
+          .row
+            .col-md-12
+              :md
+                Test şifreleri: 
+                
+                  * cca12345
+                  * me12345
+                  * tk12345
+              div
+                div Login input: {{>login-input {} }}
+                div Login status {{>login-info {} }}
 
-        .row.
-          {{>jq-push-button {wid: 1000, pin_name: 'gui-command', label: 'r'} }}
+          .row.
+            {{>jq-push-button {wid: 1000, pin_name: 'gui-command', label: 'r'} }}
       
 .panel.panel-primary
   .panel-heading
     h3.panel-title Realtime Video Stream
   .panel-body
-    .scada-drawing-area
+    .scada-drawing-area.scada
       .scada-container 
         img#video-frame

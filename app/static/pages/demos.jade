@@ -1,8 +1,12 @@
-#demos(data-theme="a", data-role="page")
-  | {{>nav-bar {active_button: 'demos'}}}
+style.
+  #demos .panel-body {
+    padding: 0 !important; 
+  }
 
-  .scada.content
-    
+#demos(data-theme="a", data-role="page")
+  | {{>nav-bar {active_button: '#/demos'}}}
+
+  .container
     .row.vcenter(style="padding: 6em;")
       .col-md-offset-2.col-md-4
         h2
@@ -45,8 +49,7 @@
       br
       br
       br
-    .row
-      .col-md-offset-1.col-md-10.col-md-offset-1
-        include demos-showcase.jade
+
+  include demos-showcase.jade
             
-    | {{>connection-status {} }}
+  | {{>connection-status {} }}

@@ -1,6 +1,7 @@
 require! {
   '../../modules/aktos-dcs': {
     RactivePartial,
+    RactiveApp,
     IoActor,
   }
 }
@@ -18,122 +19,105 @@ require! {
     zip,
     split,
     last,
+    reverse,
   }
 }
+
+change-page = (target-id) ->
+  # target-id: the target div id (without the hash)
+  # example:
+  #
+  #     change-page 'my-page'
+  #     # => this will change page to "<div id='my-page' data-role='page'>...</div>"
+  #
+  target = $ ('#' + target-id)
+  default-page = 'home-page'
+
+  if (target?.data \role) is \page
+    $ "*[data-role='page'] " .css \display, \none
+    $ '#loading' .css \display, \none
+    target.css \display, \block
+    RactiveApp!get!set \page.active_page, target-id
+    console.log "active page is: ", RactiveApp!get!get \page.active_page
+  else
+    console.log "target (#{target-id}) is not a page, redirecting to default!"
+    change-page default-page
+
+
+scroll-to-anchor = (anchor) ->
+  # anchor may be
+  #   * simple anchor in page
+  if anchor? and anchor isnt ''
+    console.log "navigate to anchor: #{anchor}"
+    anchor-str = '#' + anchor
+
+    try
+      target = $('#' + anchor).offset!top
+      target -= 5px  # give a default margin
+      #$.mobile.silent-scroll target
+      $ 'html, body' .animate {scroll-top: target}, 10
+    catch
+      # pass
 
 # Handle page navigation
 # -----------------------
 handle-navigation = (event) ->
-  page = window.location.hash.replace /^#/, '' .split '/'
-  console.log "hash changed: #{page}"
-
-  change-page = (target-id) ->
-    console.log "page is changed to #{target-id}"
-    $ ':mobile-pagecontainer' .pagecontainer 'change', target-id, do
-      transition: \none
-
-
-  # try to scroll to anchor, immediately or after page change
-  scroll-to-anchor = (anchor) ->
-    # anchor may be
-    #   * simple anchor in page
-    #   * popup
-    #   * subpage
-
-    if anchor? and anchor isnt ''
-      console.log "navigate to anchor: #{anchor}"
-      anchor-str = '#' + anchor
-      if ($ anchor-str .data \role) is \popup
-        # this is a popup
-        console.log "#{anchor-str} is a popup link!"
-        target = anchor-str.replace /!$/, ''
-        popup-options = {}
-
-        if event?
-          console.log "handle navigation got event: ", event
-          popup-options <<< do
-            x: event.client-x
-            y: event.client-y
-
-        $ target .popup \open, popup-options
-
-        # remove popup link portion from url on close
-        /*
-        TODO: fix this function. this function makes the popup close on open
-        $ target .on \popupafterclose, (event) ->
-          console.log "the popup is closed! replacing #{anchor} with ''"
-          window.location.hash = window.location.hash.replace anchor, ''
-          $ target .off \popupafterclose
-        */
-        $ document .mouseup (e) ->
-          container = $ target
-          if not container.is e.target and container.has e.target .length is 0
-            #container.hide!
-            console.log "the popup is closed! replacing #{anchor} with ''"
-            window.location.hash = window.location.hash.replace anchor, ''
-
-      else if ($ anchor-str .data \role) is \page
-        change-page anchor-str
-      else
-        try
-          target = $('#' + anchor).offset!top
-          target -= 5px  # give a default margin
-          #$.mobile.silent-scroll target
-          $ 'html, body' .animate {scroll-top: target}, 10
-        catch
-          # pass
-
-  if page.length is 1
-    # example: #abcd
-    # this is a anchor, just navigate to it
-    scroll-to-anchor page.0
+  addr = window.location.hash
+  console.log "original window.hash is: ", addr
+  if addr in ['', '#/']
+    console.log "redirecting to default page"
+    change-page!
   else
-    #          #/aaaa             : aaaa is page
-    #          #/aaaa/bbbb        : aaaa is page, bbbb is anchor
+    section = addr.replace /^#/, '' .split '/'
+    console.log "hash changed: #{section}"
+
+    closest-page = [.. for reverse section when ($ ('#' + ..) .data \role) is \page].0
+    console.log "closest page is: #{closest-page}"
+
+    change-page closest-page
+    last-anchor = [.. for reverse section when ($ ('#' + ..) .data \role) isnt \page].0
+
+    if last-anchor?
+      console.log "scrolling to anchor: #{last-anchor}"
+      s = ->
+        scroll-to-anchor last-anchor
+      set-timeout s, 10
 
 
-    main-section = if page.1? and page.1.length > 0 then
-      page.1
-    else
-      'home-page'
-    anchor = page.2
 
-    change-page ('#' + main-section)
-
-    # scroll immediately (in the same page)
-    scroll-to-anchor anchor
-    # .. and after page chaged
-    $ document .on \pageshow, ->
-      scroll-to-anchor anchor
-      $ document .off \pageshow
-
-RactivePartial! .register-for-document-ready ->
-  handle-navigation!
+RactivePartial!register ->
+  console.log "all divs are hidden"
+  $ "*[data-role='page'] " .css \display, \none
 
 RactivePartial! .register-for-post-ready ->
   $ window .on \hashchange, ->
-    console.log "hash changed, handling navigation..."
+    console.log "hash changed to #{window.location.hash}, handling navigation..."
     handle-navigation!
 
   # modify anchors to point their current pages
-  $ \a .click (e) ->
+  $ \a .each ->
     addr = $ this .attr \href
-    if addr?
-      if addr.match /^#.*/
-        # this is an internal link
-        console.log "link orig addr: #{addr}, length: #{addr.length}"
-        addr = tail addr
-        if addr.match /^[^\/]+/ or addr is ''
-          # this link refers to an anchor (like #foo)
-          e.prevent-default!
-          curr-page = window.location.hash.replace /^#/, '' .split '/' .1
-          if curr-page?
-            console.log "click function is called! curr-page: #{curr-page}"
-            new-hash = '#' + "/#{curr-page}/#{addr}"
-            #window.location.hash = new-hash
-            history.pushState({}, '', new-hash)
+    custom-click = ($ this .data \custom-click) ? false
 
-      handle-navigation e
+    /*
+    if custom-click
+      console.log "this ancor will not be modified: "
     else
-      console.log "navigation handler got no addr..."
-      # as there is no addr, this handler should not modify anchor's click function
+      console.log "this is not a custom click function"
+    */
+
+    if addr? and not custom-click
+      anchor-page = $ this .closest "[data-role='page']" .attr \id
+      #console.log "anchor address is #{addr} and is under", anchor-page
+      if addr.match /^#[a-zA-Z0-9_]+/ or addr is '#'
+        # this is in-page link (eg. <a href="#abc/def"></a>)
+        new-hash = ('#/' + anchor-page + '/' + tail addr)
+        $ this .attr \href, new-hash
+      $ this .click ->
+        history.pushState({}, '', new-hash)
+        handle-navigation!
+
+RactivePartial! .register-for-post-ready ->
+  # run on page load
+  console.log "internal redirect on first load..."
+  handle-navigation!
