@@ -17,7 +17,6 @@ Crossbar.io : https://github.com/crossbario
 * Jade
 * Bootstrap 
 * jQuery
-* jQuery Mobile (to be removed)
 * CSS
 * Flot
 * ...and others (see [vendor](./vendor))
