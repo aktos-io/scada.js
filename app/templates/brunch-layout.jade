@@ -17,8 +17,6 @@ html(class="no-js", lang="en")
       name="viewport" 
       content="width=device-width; target-densitydpi=device-dpi; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"
     )
-    script(src="javascripts/vendor.js")
-    script(src="javascripts/app.js")
     link(rel="stylesheet", href="stylesheets/app.css")
   body
 
@@ -29,5 +27,7 @@ html(class="no-js", lang="en")
     script#app(type='text/ractive')
       block content
       
+    script(src="javascripts/vendor.js")
+    script(src="javascripts/app.js")
     script.
       require("init");
