@@ -5,6 +5,8 @@ require! {
   }
 }
 
+# http://refreshless.com/nouislider/examples/
+
 RactivePartial! .register-for-document-ready ->
   $ '.slider' .each !->
     widget = $ this
