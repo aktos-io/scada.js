@@ -33,6 +33,12 @@ run-production-server:
 	npm run server
 
 update-production:
+	brunch b
+	rm -r server/public.bak 2> /dev/null; true 
+	mv server/public/ server/public.bak 
+	mv public server/
+
+update-production-old:
 	git pull
 	if [ ! -d "server/public.to-remove-1" ]; then \
 		if [ -d "./public" ]; then \
