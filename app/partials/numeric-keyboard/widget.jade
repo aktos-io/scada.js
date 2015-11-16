@@ -1,16 +1,18 @@
 include ../../templates/mixins.jade
     
     
-+partial('numeric-keyboard-row')
-  tr.
-    {{#each keyboard_row_data:i}}
-      <th> {{>push-button {pin_name: 'keypad-' + keyboard_row_data[i], label:  keyboard_row_data[i]} }} </th>
-    {{/each}}
-
 +partial('numeric-keyboard')
   .numeric-keyboard
     table 
       tbody.
         {{#each keyboard_data:i}}
-          {{>numeric-keyboard-row {keyboard_row_data: keyboard_data[i]} }}
+          <tr>
+          {{#each keyboard_data[i]:j}}
+            <th> 
+              {{>push-button {pin_name: 'keypad-' + keyboard_data[i][j], label:  keyboard_data[i][j]} }} 
+            </th>
+          {{/each}}
+          </tr>
         {{/each}}
+        
+      | {{>push-button {pin_name: 'keypad' + keyboard_data[0][0], label: keyboard_data[0][0]}  }}

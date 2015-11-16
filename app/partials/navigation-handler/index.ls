@@ -84,7 +84,6 @@ handle-navigation = (event) ->
       set-timeout s, 10
 
 
-
 RactivePartial!register ->
   console.log "all divs are hidden"
   $ "*[data-role='page'] " .css \display, \none
