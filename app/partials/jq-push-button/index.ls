@@ -5,9 +5,8 @@ require! {
   }
 }
 RactivePartial!register ->
-  console.log "bootstrap-checkboxes are initialized..."
   $ '.jq-push-button .button-checkbox' .each ->
-    console.log "checkbox is initialized...", $ this
+    #console.log "push-button is initialized...", $ this
     widget = $ this
     button = widget.find 'button'
     checkbox = widget.find 'input:checkbox'
@@ -39,7 +38,7 @@ RactivePartial!register ->
           .addClass('btn-default')
 
     checkbox.on \change, ->
-      console.log "checkbox change run"
+      #console.log "checkbox change run"
       update-display!
 
     checkbox.on \update-display, -> update-display!
@@ -65,7 +64,7 @@ RactivePartial! .register-for-document-ready ->
     icon-param = actor.get-ractive-var \icon
     if icon-param?
       [on-icon, off-icon] = icon-param.split ' '
-      console.log "on off icons: ", on-icon, off-icon
+      #console.log "on off icons: ", on-icon, off-icon
       unless off-icon? then off-icon = on-icon
       button.data \on-icon, "fa fa-#{on-icon}"
       button.data \off-icon, "fa fa-#{off-icon}"

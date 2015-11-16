@@ -6,9 +6,9 @@ require! {
 }
 
 RactivePartial!register ->
-  console.log "bootstrap-checkboxes are initialized..."
+  #console.log "bootstrap-checkboxes are initialized..."
   $ '.jq-checkbox .button-checkbox' .each ->
-    console.log "checkbox is initialized...", $ this
+    #console.log "checkbox is initialized...", $ this
     widget = $ this
     button = widget.find 'button'
     checkbox = widget.find 'input:checkbox'
@@ -42,7 +42,7 @@ RactivePartial!register ->
       update-display!
 
     checkbox.on \change, ->
-      console.log "checkbox change run"
+      #console.log "checkbox change run"
       update-display!
 
     checkbox.on \update-display, -> update-display!
@@ -67,7 +67,7 @@ RactivePartial! .register ->
     i = 0
     input.change ->
       state = input.is \:checked
-      console.log "jq-checkbox changed: #state", i
+      #console.log "jq-checkbox changed: #state", i
       i := i + 1
       actor.gui-event state
 

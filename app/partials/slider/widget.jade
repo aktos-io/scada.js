@@ -1,6 +1,7 @@
 include ../../templates/mixins.jade
     
 +partial('slider')
-  .slider.
-    {{>jq-slider}}
+  .slider
+    .slider__outer 
+      .slider__inner(id="{{actor_id}}")
   
