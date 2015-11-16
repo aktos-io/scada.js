@@ -1,9 +1,4 @@
-.jq-checkbox > * {
-  padding: 0;
-  margin: 0; 
+.jq-checkbox button{
+  border: none;
+  outline: none; 
 }
-.jq-checkbox * {
-  width: auto; 
-  height: 100%; 
-}
-

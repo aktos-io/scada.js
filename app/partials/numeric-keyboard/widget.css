@@ -1,9 +1,6 @@
 .numeric-keyboard table {
   width: 100%;
   height: 100%;
-      -webkit-box-shadow:0 0 12px #3388cc;
-    -moz-box-shadow: 0 0 12px #3388cc;
-    box-shadow:0 0 12px #3388cc;
 }
 .numeric-keyboard table tbody {
   padding: 50px;

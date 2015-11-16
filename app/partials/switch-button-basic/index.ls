@@ -14,8 +14,12 @@ RactivePartial! .register ->
     if (actor.get-ractive-var \wid)?
       actor.node.add-class \draggable
 
-    input.change ->
+    change-handler = ->
       #console.log "switch button changed: ", (input.prop \checked)
       actor.gui-event input.prop \checked
+    input.change change-handler
+
     actor.add-callback (msg) ->
-      input.prop 'checked', msg.val
+      input.off \change
+      input.prop \checked, msg.val
+      input.change change-handler

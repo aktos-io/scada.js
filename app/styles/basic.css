@@ -1,42 +1,36 @@
-body {
-  margin: 0;
-}
-
-#home-page {
-  background-image: url('../img/aktos-elektronik/home-page/aktos-arkaplan-site.jpg');
+#home-page,
+#applications,
+#products,
+#contact-page,
+#demos {
+  background-image: url('../img/aktos-elektronik/home-page/aktos-arkaplan-site-white.png');
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: center; 
-
-}
-
-#header1 {
-  background-image: url('../img/header.png');
-  background-repeat: no-repeat;
-  background-size: contain;
-  height:300px;
-  /*width: 100%;
-   */
   background-position: center;
 }
 
-
-.home-col-padding {
-  padding: 2em;
+.nav-bar {
+  position: fixed !important;
+  top: 0;
+  left; 0;
+  width: 100%;
+  height: 50px;
+  z-index: 999;
+}
+.btn:focus,
+.btn-primary:focus {
+    outline: none;
+  }
+body, html {
+    padding: 0;
+    margin: 0;
 }
 
-
-
-.scada {
-  -webkit-user-select: none;
-     -moz-user-select: -moz-none;
-      -ms-user-select: none;
-          user-select: none;
--webkit-touch-callout: none;
-    -khtml-user-select: none;
-
-    overflow: hidden;
-
+div[data-role='page'] {
+  min-height: 100vh;
+  padding-bottom: 2em; /* for connection-status bar */
+  padding-top: 60px; /* for fixed navbar */
+  display: none; 
 }
 
 .no-shadow {
@@ -50,13 +44,3 @@ body {
     vertical-align: middle;
     float: none;
 }
-
-
-.nav-glyphish-example .ui-btn { padding-top: 40px !important; }
-.nav-glyphish-example .ui-btn:after { width: 30px!important; height: 30px!important; margin-left: -15px !important; box-shadow: none!important; -moz-box-shadow: none!important; -webkit-box-shadow: none!important; -webkit-border-radius: 0 !important; border-radius: 0 !important; }
-#home::after { background:  url("../img/icons/32x32/home.png") 50% 50% no-repeat; background-size: 24px 24px; }
-#project::after { background:  url("../img/icons/32x32/tray.png") 50% 50% no-repeat; background-size: 24px 24px;  }
-#product::after { background:  url("../img/icons/32x32/store.png") 50% 50% no-repeat;  background-size: 24px 24px; }
-#demo::after { background:  url("../img/icons/32x32/wave-2.png") 50% 50% no-repeat;  background-size: 24px 24px; }
-#download::after { background:  url("../img/icons/32x32/cloud.png") 50% 50% no-repeat;  background-size: 24px 24px; }
-#contact::after { background:  url("../img/icons/32x32/speech-bubble-left.png") 50% 50% no-repeat;  background-size: 24px 24px; }

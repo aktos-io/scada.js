@@ -1,10 +1,12 @@
 .connection-status {
-  margin: 0;
+  margin: 0px;
   padding: 0.001em;
-  padding-left: 2em;
+  padding-left: 75px;
   position: fixed;
   bottom: 0;
   width: 100%;
-  text-shadow: 0.1em 0.1em #333;
+  height: 2em;
+  color: black; 
+  text-shadow: 0.1em 0.1em white;
   z-index: 999;
 }

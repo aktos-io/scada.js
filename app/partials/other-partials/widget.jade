@@ -1,69 +1,28 @@
 include ../../templates/mixins.jade
-
 +partial('nav-bar')
-  .nav-bar
-    | <div data-role="navbar" class="nav-glyphish-example" data-grid="d">
-    |   <ul>
-    |     <li><a {{>jq-persist {active: .active_button, this_page: "home-page"}}}  href="#/" id="home" data-icon="custom" data-transition="none">Ana Sayfa</a></li>
-    |     <li><a {{>jq-persist {active: .active_button, this_page: "projects"}}} href="#/projects" id="project" data-icon="custom" data-transition="none">Projeler</a></li>
-    |     <li><a {{>jq-persist {active: .active_button, this_page: "products"}}} href="#/products" id="product" data-icon="custom" data-transition="none">Ürünler</a></li>
-    |     <li><a {{>jq-persist {active: .active_button, this_page: "demos"}}} href="#/demos" id="demo" data-icon="custom" data-transition="none">Demo</a></li>
-    |     <li><a {{>jq-persist {active: .active_button, this_page: "contact-page"}}} href="#/contact-page" id="contact" data-icon="custom" data-transition="none">İletişim</a></li>
-    |   </ul>
-    | </div>
-       
+  .nav-bar.
+    {{#with page.menu}}
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" style="padding: 0; padding-left: 10px; " href="#/"><img src="{{.brand.icon}}" style="height: 100%; width: auto;" alt="{{.brand.name}}"/></a>
+        </div>
 
-+partial('switch-list')
-  .switch-list
-
-+partial('jq-persist')
-  |  {{ active == this_page ? 'class="ui-btn-active ui-state-persist"' : '' }}
-  
-
-style.
-  .project-buttons111 {
-    background-size:   cover;                      /* <------ */
-    background-repeat: no-repeat;
-    background-position: center center;            /* optionally, center the image */
-    height:33vw;
-    margin:0.5%;
-    background-color: red; 
-    padding: 2.5%;
-  }
-  
-  .well {
-    background: #333; 
-    border-color: #337ab7;
-  }
-  .project-buttons {
-    margin: 1em;
-  }
-  
-+partial('projects-buttons')
-  .project-buttons.well
-    a(
-      href="{{ .addr? addr: '#' }}" 
-      )
-      img.thumbnail.img-responsive(src="{{ .src }}")
-      span {{ .label }}
-    span. 
-      lumikeaylu uylimekau ieaui
-      ea uyliekalu auyieak uie a 
-
-  
-   
-style.
-  .demo-buttons {
-    border: 1px solid white; 
-  }
-  .demo-buttons img {
-    float: left;
-    padding: 5px; 
-  }
-
-+partial('demo-buttons')
-  a.demo-buttons(
-    href="{{ .addr? addr : '#' }}" 
-    )
-    img(src="{{ .src ? .src : 'images/icons-png/gear-black.png' }}")
-    | {{ .label }}
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            {{#each .links}}
+            <li {{ .addr === active_button ? 'class="active"' : ''}}><a href="{{.addr}}">{{.name}}</a></li>
+            {{/each}}
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+    {{/with}}

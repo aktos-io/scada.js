@@ -1,47 +1,55 @@
-#demos(data-theme="b", data-role="page")
-  .scada
-    | {{>nav-bar {active_button: 'demos'}}}
+style.
+  #demos .panel-body {
+    padding: 0 !important; 
+  }
 
-    // button#reload Click to reload page 
-    
+#demos(data-theme="a", data-role="page")
+  | {{>nav-bar {active_button: '#/demos'}}}
+
+  .container
     .row.vcenter(style="padding: 6em;")
       .col-md-offset-2.col-md-4
         h2
           :md 
             **aktos-scada** Demo
-      
-        a(
-          href="#demo-popup-menu"
-          data-rel="popup"
-          data-role="button"
-          data-inline="true"
-          data-transition="none"
-          data-icon="gear"
-          data-theme="e"
-          ).
-          Canlı SCADA örnekleri ->
-          
-        div(
-          id="demo-popup-menu"
-          data-role="popup"
-          data-theme="d"
-          )
-          ul(
-            data-role="listview"
-            data-inset="true"
-            style="min-width:210px;" 
-            data-theme="d"
-            )
-            li
-              a(href="#/cici-meze") Gıda Otomasyonu 
-
-      .col-md-4.col-md-offset-2
+              
+    .row.vcenter
+      .col-md-offset-1.col-md-10.col-md-offset-1
         :md
+          # Bu sayfa ne işe yarar? 
           Bu sayfada **aktos-scada**'da kullanılan 
-          görsel nesnelerin örnekleri bulunur. 
+          görsel nesnelerin örnekleri bulunur. Tüm görsel nesneleri görebilir, 
+          değerlerini değiştirebilir, yeniden konumlandırabilir, yeniden boyutlandırabilirsiniz. 
+          
+          # Bu sayfa nasıl kullanılır? 
+          1. Basitçe kaydırmalı girişleri kullanarak nesnelerin değerini değiştirin. 
+          2. Bu sayfayı yeni bir pencerede açın. Bir pencerede yaptığınız değişiklikleri diğer pencerede aynı anda görün. 
+          3. Bu sayfayı birden fazla cihazda açın. Bir cihazda yaptığınız değişikliği aynı anda diğer bir cihazda görün. 
+          
+
+          # Kaynak kodlar
+          aktos-scada sisteminin [kaynak kodları açıktır](https://github.com/ceremcem/aktos-dcs).
+          İstediğiniz gibi kullanmakta özgürsünüz. 
+
+          # Diğer sistemler 
+          
+          * [Cici Meze - Gıda Telemetri Sistemi](#/cici-meze)
+          * [Trello Entegrasyon Testi](#/trello-test)
+
+    //                
+      # Neden ücretsiz? 
+      Ücretsiz değil, özgür.
+      
+      # Neden satın alalım? 
+      Kaynak kodlar açıkken neden size ücret ödeyerek bu sistemi kurduralım? 
+      
+      Misafiriniz geldiğinde neden bir kafeye götürürsünüz? Neden orada bardağı 5 liradan çay ısmarlarsınız? 
 
     .row
-      .col-md-offset-1.col-md-10.col-md-offset-1
-        include demos-showcase.jade
+      br
+      br
+      br
+
+  include demos-showcase.jade
             
-    | {{>connection-status {} }}
+  | {{>connection-status {} }}

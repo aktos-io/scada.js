@@ -5,30 +5,33 @@ require! {
   }
 }
 
+# http://www.bootstraptoggle.com/
+
 RactivePartial! .register-for-document-ready ->
+  i = 0
   $ \.jq-flipswitch-v2 .each ->
-    #console.log "switch-button created"
-    actor = IoActor $ this 
+    console.log "switch-button no #{i} created"
+    i := i + 1
 
-    elem = actor.node.find \.jq-flipswitch-v2__switch
-    
-    if (actor.get-ractive-var \wid)? 
-      actor.node.add-class \draggable 
+    actor = IoActor $ this
 
-    
-    send-gui-event = (event) -> 
-      #console.log "jq-flipswitch-2 sending msg: ", elem.val!        
-      actor.gui-event (elem.val! == \on)
+    input = actor.node.find \.jq-flipswitch-v2__switch
+    input.bootstrap-toggle!
 
-    elem.on \change, send-gui-event
-    
+    if (actor.get-ractive-var \wid)?
+      actor.node.add-class \draggable
+
+
+    change-handler = ->
+      state = input.prop \checked
+      console.log "bootstrap-toggle changed: #state"
+      actor.gui-event state
+
+    input.change change-handler
+
     actor.add-callback (msg) ->
-      #console.log "switch-button got message", msg
-      elem.unbind \change
-      
-      if msg.val
-        elem.val \on .slider \refresh
-      else
-        elem.val \off .slider \refresh
-      
-      elem.bind \change, send-gui-event 
+      console.log "bootstrap-toggle received message"
+
+      input.off \change
+      input.bootstrap-toggle if msg.val then \on else \off 
+      input.change change-handler

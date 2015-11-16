@@ -1,4 +1,78 @@
 //- products page 
-#products(data-role='page', data-theme='b')
-  | {{>nav-bar {active_button: 'products'}}}
-  
+style.
+  .vcenter__outer{
+    text-align: center; 
+  }
+  .vcenter__inner{
+  }
+  .product__container {
+      max-height: 60vw;
+      max-width: 85vw;
+      width: 32em; 
+      height: 20em; 
+      display: inline-block;
+      margin: 1.5em;
+      padding: 0;
+  }
+  .product__background {
+    width: 100%; 
+    height: 100%; 
+    position: relative; 
+    -webkit-border-radius: 18px;
+    -moz-border-radius: 18px;
+    border-radius: 18px;
+    border: none;
+    outline: none;
+    box-shadow: 0 0 8px  rgb(51, 89, 193);
+    overflow: hidden;
+  }
+  .product__text-container {
+    /*background-color: rgba(0, 0, 0, 0.8);*/
+    background-color: rgba(255,255,255, 0.8);
+    position: absolute; 
+    left: 0; 
+    bottom: 0; 
+    width: 100%; 
+    height: 40%; 
+    text-align: left;  
+    
+    vertical-align: middle;
+  }
+  .product__label-container {
+    width: 100%; 
+    font-weight: bold; 
+    font-size: 200%; 
+    padding: 5px; 
+  }
+  .product__short-desc-container {
+    width: 100%;
+    padding: 6px; 
+  }
+
+#products(data-role='page', data-theme='a', style="padding-bottom: 100px").
+  {{>nav-bar {active_button: '#/products'}}}
+  {{#with page.products}}
+    <div class="vcenter__outer">
+      <div class="vcenter__inner">
+      {{#each .}}
+        <div class="product__container">
+          <a href="{{ .addr ? .addr : '#' }}">
+            <div  class="product__background" style="
+              background: url({{.src}}) no-repeat center center ;
+              background-size: cover;
+            ">
+              <div class="product__text-container"> 
+                <div class="product__label-container">
+                  {{.label}}
+                </div> 
+                <div class="product__short-desc-container">
+                  {{ .shortDesc }}
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      {{/each}}
+      </div>
+    </div>
+    {{/with}}

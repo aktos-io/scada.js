@@ -1,17 +1,28 @@
 include ../../templates/mixins.jade
 
 +partial('scada-generate-layout')
-  .scada-generate-layout(style="max-height: 200px;")
-    a(href="#layout-output-{{ .actor_id }}", data-rel="popup") 
-      button(type=button) Generate Layout!
-    
-    .ui-corner-all.ui-popup.ui-body-a.ui-overlay-shadow(
-      data-role="popup" 
-      id="layout-output-{{ .actor_id }}" 
-      data-theme="b"
-      )        
-        h3 Generated layout 
-        :md
-          [--> scada-layout.ls](https://github.com/ceremcem/aktos-website/blob/master/app/static/scada-layout.ls)
-        textarea.scada-generate-layout__textarea(
-          id="layout-output-area-{{ .actor_id }}")
+  .scada-generate-layout.
+    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#layout-output-{{ .actor_id }}">Generate Layout!</button>
+
+    <div class="modal fade" id="layout-output-{{ .actor_id }}"  role="dialog">
+      <div class="modal-dialog">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Scada Layout</h4>
+          </div>
+          <div class="modal-body">
+              <p>
+                [--> scada-layout.ls](https://github.com/ceremcem/aktos-website/blob/master/app/static/scada-layout.ls)
+              </p>
+              <textarea class="scada-generate-layout__textarea" id="layout-output-area-{{ .actor_id }}"></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+        
+      </div>
+    </div>

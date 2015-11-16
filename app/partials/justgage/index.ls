@@ -32,6 +32,7 @@ RactivePartial! .register-for-document-ready ->
       value: 0
       label: '°C'
       relativeGaugeSize: true
+      valueFontColor: 'white'
 
     actor.add-callback (msg) ->
       justgage.refresh msg.val

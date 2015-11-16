@@ -1,4 +1,9 @@
-
+.b-notification-box .panel-footer
+{
+  background-color: #252525;
+  color: white;
+  text-shadow: none; 
+}
 .huge {
     font-size: 40px;
 }

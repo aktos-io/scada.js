@@ -40,23 +40,33 @@ RactivePartial! .register ->
 
         if wid?
           # widget found, get position information
-          parent-coord = $ this .parents \.scada-drawing-area .position!
+          parent-coord = $ this .closest \.scada-container .position!
 
-          x = $ this .attr \data-x or 0
-          y = $ this .attr \data-y or 0
+          if not parent-coord?
+            console.log "why? wid: ", wid
+          else
+            x = ($ this .attr \data-x |> parse-float)
+            y = ($ this .attr \data-y |> parse-float)
 
-          w = $ this .css \width
-          h = $ this .css \height
+            w = $ this .css \width
+            h = $ this .css \height
 
-          #console.log "widget found: wid: #wid, x: #x, y: #y, width: #w, height: #h, top: #{parent-coord.top}, left: #{parent-coord.left}", $ this
+            if x < 0 or y < 0
+              console.log "something is wrong. check how you calculated the widget coordinates of wid: ", wid, "parent: ", parent-coord
 
-          layout := layout + "  * wid: #wid" + \\n
-          layout := layout + "    x: #x" + \\n
-          layout := layout + "    y: #y" + \\n
-          layout := layout + "    w: #w" + \\n
-          layout := layout + "    h: #h" + \\n
+            # do not accept negative values
+            x = x >? 0
+            y = y >? 0
 
-      console.log "Layout: " + \\n + layout
+            #console.log "widget found: wid: #wid, x: #x, y: #y, width: #w, height: #h, top: #{parent-coord.top}, left: #{parent-coord.left}", $ this
+
+            layout := layout + "  * wid: #wid" + \\n
+            layout := layout + "    x: #x" + \\n
+            layout := layout + "    y: #y" + \\n
+            layout := layout + "    w: #w" + \\n
+            layout := layout + "    h: #h" + \\n
+
+      #console.log "Layout: " + \\n + layout
 
       $ ('#layout-output-area-' + actor.actor-id) .html layout
 
@@ -124,7 +134,7 @@ RactivePartial!register ->
         ...
     inertia: true
     restrict:
-      restriction: \.scada-drawing-area
+      restriction: \.scada-container
       end-only: true
       element-rect: {top: 0, left: 0, bottom: 1, right: 1}
 

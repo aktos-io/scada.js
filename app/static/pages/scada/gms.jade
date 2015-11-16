@@ -1,19 +1,27 @@
+style.
+  #gms {
+      padding-bottom: 40px; 
+  }
+  #gms .scada-container {
+    /*display: block !important;*/
+    white-space: normal;  
+    width: auto !important; 
+  }
+  
 #gms(data-role='page', data-theme='b')
-  .panel.panel-primary.scada-drawing-area
-    .panel-heading
-      h2.panel-title Gms Rooms
-      .row
-        .col-sm-2.col-xs-6.
-          {{>scada-generate-layout {pin_name: 'scada'} }}
-        .col-sm-2.col-xs-6.
-          {{>jq-checkbox {pin_name: 'lock-scada', label: 'Locked'} }}
-    .panel-body
-      .row(style="min-height: 500px; min-width: 100%", rel="external").  
-        {{#each gms.Root.Oda}}
-          <div style="width:100px; height: 100px; display: inline-block">
-            oda no: {{ .$.No }} <br />
-            kart time: {{ .KartTime }}
-            </div>
-        {{/each}}
-    
-  | {{>connection-status {}}}
+  .scada-drawing-area.scada
+    .scada-container. 
+
+      {{#each gms.Root.Oda}}
+        <div style="
+          width:100px;  
+          display: inline-block;
+          background-color: {{ .Connection[0] === 'YOK' ? 'gray' : 'yellowgreen' }};
+          margin: 5px;
+          padding: 5px;">
+          <h3><span>#</span>{{ .$.No }} </h3>
+          kart time: {{ .KartTime }}
+          </div>
+      {{/each}}
+      
+      {{>connection-status {}}}
