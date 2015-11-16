@@ -48,7 +48,6 @@ app.on 'complete', !->
 
   console.log "ractive app completed..."
 
-
 # ----------------------------------------------------
 #             All test code goes below
 # ----------------------------------------------------

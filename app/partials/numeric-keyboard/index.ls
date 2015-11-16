@@ -12,9 +12,9 @@ RactivePartial!register ->
 
     if (actor.get-ractive-var \wid)?
       actor.node.add-class \draggable
-    
+
     elem = actor.node.find \table
-    elem.add-class \ui-corner-all
+    #elem.add-class \ui-corner-all
 
     layout =
       * <[ 1 2 3 a  ]>
