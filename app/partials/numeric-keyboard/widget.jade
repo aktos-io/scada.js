@@ -5,14 +5,13 @@ include ../../templates/mixins.jade
   .numeric-keyboard
     table 
       tbody.
-        {{#each keyboard_data:i}}
+        {{#each [0, 1, 2, 3]:i}}
           <tr>
-          {{#each keyboard_data[i]:j}}
+          {{#each [0, 1, 2, 3]:j}}
             <th> 
-              {{>push-button {pin_name: 'keypad-' + keyboard_data[i][j], label:  keyboard_data[i][j]} }} 
+              {{>push-button {pin_name: 'keypad-' + keyboard_data[i][j], label:  keyboard_data[i][j], icon: ''} }} 
             </th>
           {{/each}}
           </tr>
         {{/each}}
         
-      | {{>push-button {pin_name: 'keypad' + keyboard_data[0][0], label: keyboard_data[0][0]}  }}
