@@ -67,10 +67,11 @@ RactivePartial! .register ->
     i = 0
     input.change ->
       state = input.is \:checked
-      #console.log "jq-checkbox changed: #state", i
+      console.log "jq-checkbox changed: #state", i, actor.actor-id
       i := i + 1
       actor.gui-event state
 
     actor.add-callback (msg) ->
+      console.log "jq-checkbox received message: ", msg.val, actor.actor-id
       input.prop 'checked', msg.val
       input.trigger \update-display

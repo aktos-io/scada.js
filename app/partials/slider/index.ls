@@ -7,7 +7,7 @@ require! {
 
 # http://refreshless.com/nouislider/examples/
 
-RactivePartial! .register-for-document-ready ->
+RactivePartial! .register ->
   $ '.slider' .each !->
     widget = $ this
     actor = IoActor widget
@@ -23,11 +23,11 @@ RactivePartial! .register-for-document-ready ->
         min: [0]
         max: [100]
 
-    slider.0.no-ui-slider.on \update, (values, handle) ->
+    slider.0.no-ui-slider.on \slide, (values, handle) ->
       val = values[handle]
-      console.log "slider val: ", val
+      console.log "slider changed manually:", val, actor.actor-id
       actor.gui-event val
 
     actor.add-callback (msg)->
-      console.log "slider changed: ", msg.val
-      #slider.0.no-ui-slider.set msg.val
+      console.log "slider received message: ", msg.val, actor.actor-id
+      slider.0.no-ui-slider.set msg.val
