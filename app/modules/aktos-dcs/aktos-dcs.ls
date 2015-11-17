@@ -115,7 +115,8 @@ class ActorManager
               #console.log "actors will get message: topic: #{msg-topic} ", @subs-min-list[msg-topic]
               for actor in @subs-min-list[msg-topic]
                 #console.log "actor will get msg: ", actor
-                actor.recv msg
+                if actor.actor-id not in msg.sender
+                  actor.recv msg
             catch
               console.log "Error forwarding message: ", actor, msg
 

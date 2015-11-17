@@ -72,9 +72,11 @@ class SwitchActor extends Actor
 
   gui-event-base: (val) ->
     #console.log "gui event called!", val
+    /*
     @fire-callbacks do
       pin_name: @pin-name
       val: val
+    */
 
     @send IoMessage: do
       pin_name: @pin-name
