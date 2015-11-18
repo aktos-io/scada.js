@@ -19,6 +19,7 @@ RactivePartial! .register ->
     no-ui-slider.create slider.0, do
       start: null
       connect: \lower
+      step: 0.1
       range:
         min: [0]
         max: [100]
