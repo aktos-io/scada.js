@@ -33,7 +33,10 @@ div[data-role='page'] {
   display: none;
 }
 
-
+.progress-bar {
+    -webkit-transition: none !important;
+    transition: none !important;
+}
 .no-shadow {
     -moz-box-shadow: none !important;
     -webkit-box-shadow: none !important;
