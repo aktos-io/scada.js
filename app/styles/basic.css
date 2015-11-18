@@ -30,8 +30,9 @@ div[data-role='page'] {
   min-height: 100vh;
   padding-bottom: 2em; /* for connection-status bar */
   padding-top: 60px; /* for fixed navbar */
-  display: none; 
+  display: none;
 }
+
 
 .no-shadow {
     -moz-box-shadow: none !important;
