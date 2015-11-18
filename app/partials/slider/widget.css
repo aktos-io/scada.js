@@ -2,5 +2,10 @@
   padding: 20px;
 }
 .slider {
-    max-width: 95vw; 
+    max-width: 95vw;
+}
+
+.noUi-state-tap .noUi-origin {
+-webkit-transition: none;
+	transition: none;
 }
