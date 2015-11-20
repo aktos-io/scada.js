@@ -18,6 +18,8 @@ html(class="no-js", lang="en")
       content="width=device-width; target-densitydpi=device-dpi; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"
     )
     link(rel="stylesheet", href="stylesheets/app.css")
+    script(src="javascripts/vendor.js")
+    script(src="javascripts/app.js")
   body
 
     #loading
@@ -27,7 +29,5 @@ html(class="no-js", lang="en")
     script#app(type='text/ractive')
       block content
         
-    script(src="javascripts/vendor.js")
-    script(src="javascripts/app.js")
     script.
       require("init");
