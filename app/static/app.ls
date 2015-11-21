@@ -15,7 +15,7 @@ Ractive.DEBUG = /unminified/.test !-> /*unminified*/
 
 
 # workaround for ios9 bug: use preparsed output
-{preparsed} = require './preparsed'
+# {preparsed} = require './preparsed'
 
 app = new Ractive do
   el: 'container'
