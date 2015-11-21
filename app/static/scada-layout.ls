@@ -424,6 +424,21 @@ widget-positions =
     y: 354
     w: 160px
     h: 99px
+  * wid: 9011
+    x: 4
+    y: 16.583328247070312
+    w: 528px
+    h: 43px
+  * wid: 9012
+    x: 1
+    y: 85.58332824707031
+    w: 1055px
+    h: 314px
+  * wid: 9012
+    x: 1063
+    y: 85.58332824707031
+    w: 223px
+    h: 152px
 
 module.exports = {
   widget-positions,
