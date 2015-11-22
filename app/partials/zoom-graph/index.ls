@@ -35,24 +35,6 @@ RactivePartial! .register ->
     y-min = SwitchActor (actor.pin-name + "-y-min")
     y-max = SwitchActor (actor.pin-name + "-y-max")
 
-    x-min.add-callback (msg) ->
-      console.log "x-min: msg: ", msg
-      y-min.node.css \background-color, "rgb(#{parse-int msg.val}, 50, 50)"
-
-    x-max.add-callback (msg) ->
-      console.log "x-max: msg: ", msg
-      actor.node.css \background-color, "rgb(#{parse-int msg.val}, 50, 50)"
-
-    y-min.add-callback (msg) ->
-      console.log "y-min: msg: ", msg
-      actor.node.css \background-color, "rgb(#{parse-int msg.val}, 50, 50)"
-
-    y-max.add-callback (msg) ->
-      console.log "y-max: msg: ", msg
-      actor.node.css \background-color, "rgb(#{parse-int msg.val}, 50, 50)"
-
-
-
     elem = actor.node.find \.zoom-graph__graph
 
     if (actor.get-ractive-var \wid)?
@@ -82,6 +64,38 @@ RactivePartial! .register ->
         label: 'sin(x sin(x))'
         data: d
       }]
+
+
+    options = {
+      legend: {show: false}
+      series: {
+        lines: {show: true}
+        points: {show: true}
+      }
+      yaxis: {ticks: 10}
+      selection: {mode: 'xy'}
+    }
+    x-min.add-callback (msg) ->
+      console.log "x-min: msg: ", msg
+      startData = getData 0,msg.val
+      plot = $.plot '.zoom-graph', startData, options
+
+    x-max.add-callback (msg) ->
+      console.log "x-max: msg: ", msg
+      startData = getData 0,msg.val
+      plot = $.plot '.zoom-graph', startData, options
+
+    y-min.add-callback (msg) ->
+      console.log "y-min: msg: ", msg
+      startData = getData 0,msg.val
+      plot = $.plot '.zoom-graph', startData, options
+
+    y-max.add-callback (msg) ->
+      console.log "y-max: msg: ", msg
+      startData = getData 0,msg.val
+      plot = $.plot '.zoom-graph', startData, options
+
+
     $ (->
 
       options = {
@@ -121,7 +135,7 @@ RactivePartial! .register ->
         selection: {mode: 'xy'}
       }
 
-      startData = getData 0, 3 * Math.PI
+      startData = getData 0,5
 
       plot = $.plot '.zoom-graph', startData, options
 
