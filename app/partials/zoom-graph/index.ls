@@ -2,6 +2,7 @@ require! {
   '../../modules/aktos-dcs': {
     RactivePartial,
     IoActor,
+    SwitchActor,
   }
 }
 
@@ -26,6 +27,31 @@ require! {
 RactivePartial! .register ->
   $ \.zoom-graph .each ->
     actor = IoActor $ this
+
+    console.log "zoom-graph pin-name: ", actor.pin-name
+
+    x-min = SwitchActor (actor.pin-name + "-x-min")
+    x-max = SwitchActor (actor.pin-name + "-x-max")
+    y-min = SwitchActor (actor.pin-name + "-y-min")
+    y-max = SwitchActor (actor.pin-name + "-y-max")
+
+    x-min.add-callback (msg) ->
+      console.log "x-min: msg: ", msg
+      actor.node.css \background-color, "rgb(#{parse-int msg.val}, 50, 50)"
+
+    x-max.add-callback (msg) ->
+      console.log "x-max: msg: ", msg
+      actor.node.css \background-color, "rgb(#{parse-int msg.val}, 50, 50)"
+
+    y-min.add-callback (msg) ->
+      console.log "y-min: msg: ", msg
+      actor.node.css \background-color, "rgb(#{parse-int msg.val}, 50, 50)"
+
+    y-max.add-callback (msg) ->
+      console.log "y-max: msg: ", msg
+      actor.node.css \background-color, "rgb(#{parse-int msg.val}, 50, 50)"
+
+
 
     elem = actor.node.find \.zoom-graph__graph
 
@@ -160,72 +186,4 @@ RactivePartial! .register ->
 
 
     actor.add-callback (msg) ->
-      console.log "zoom-graph got new value: #{msg.val}"
-      console.log "overview-graph got new value: #{msg.val}"
-      #refresh!
-
-
-      /*
-          data = []
-          total-points = 300
-
-          y-max = 100
-          y-min = 0
-
-          push-random-data = ->
-            if data.length > 0
-              data := tail data
-
-            while data.length < total-points
-
-              prev = if data.length > 0 then last data else y-max / 2
-
-              y = prev + Math.random! * 10  - 5
-              y = y-min if y < y-min
-              y = y-max if y > y-max
-
-              data.push y
-
-          get-graph-data = ->
-            return [zip [0 to total-points] data]
-
-          #console.log "random data: ", get-random-data!
-
-          push-graph-data = (new-point) ->
-            totalPoints = 300
-            if data.length > 0 then
-              data := tail data
-            while data.length < total-points
-              data.push new-point
-
-
-          update-interval = 30
-
-          push-random-data!
-          plot = $.plot ('#' + actor.actor-id), get-graph-data!, do
-            series:
-              shadow-size: 0
-            yaxis:
-              min: y-min
-              max: y-max
-            xaxis:
-              show: false
-
-
-          refresh = ->
-            plot.set-data get-graph-data!
-            plot.draw!
-
-
-          update = ->
-            #push-random-data!
-            push-graph-data last data
-            plot.set-data get-graph-data!
-            plot.resize!
-            plot.setup-grid!
-            plot.draw!
-            set-timeout update, update-interval
-
-          update!
-
-      */
+      console.log "msg: " msg
