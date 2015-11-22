@@ -32,15 +32,6 @@ RactivePartial! .register ->
     if (actor.get-ractive-var \wid)?
       actor.node.add-class \draggable
 
-RactivePartial! .register ->
-  $ \.overview-graph .each ->
-    actor = IoActor $ this
-
-    elem = actor.node.find \.overview-graph__graph
-
-    if (actor.get-ractive-var \wid)?
-      actor.node.add-class \draggable
-
     #console.log "this is graph widget: ", elem, actor.actor-name
 
     /*
@@ -93,36 +84,7 @@ RactivePartial! .register ->
 
     	var plot = $.plot(".zoom-graph", startData, options);
 
-      // Create the overview plot
-
-      var overview = $.plot(".overview-graph", startData, {
-    		legend: {
-    			show: false
-    		},
-    		series: {
-    			lines: {
-    				show: true,
-    				lineWidth: 1
-    			},
-    			shadowSize: 0
-    		},
-    		xaxis: {
-    			ticks: 4
-    		},
-    		yaxis: {
-    			ticks: 3,
-    			min: -2,
-    			max: 2
-    		},
-    		grid: {
-    			color: "#999"
-    		},
-    		selection: {
-    			mode: "xy"
-    		}
-      });
-
-    	// now connect the two
+      // now connect the two
 
     	$(".zoom-graph").bind("plotselected", function (event, ranges) {
 
@@ -147,7 +109,6 @@ RactivePartial! .register ->
 
     		// don't fire event on the overview to prevent eternal loop
 
-    		overview.setSelection(ranges, true);
     	});
 
       $(".overview-graph").bind("plotselected", function (event, ranges) {
@@ -156,6 +117,47 @@ RactivePartial! .register ->
     });
 
     ``
+
+    $ \.zoom-graph .on \dblclick, (event) !->
+      ``
+      function getData(x1, x2) {
+
+        var d = [];
+        for (var i = 0; i <= 100; ++i) {
+          var x = x1 + i * (x2 - x1) / 100;
+          d.push([x, Math.sin(x * Math.sin(x))]);
+        }
+
+        return [
+          { label: "sin(x sin(x))", data: d }
+        ];
+      }
+
+      var options = {
+        legend: {
+          show: false
+        },
+        series: {
+          lines: {
+            show: true
+          },
+          points: {
+            show: true
+          }
+        },
+        yaxis: {
+          ticks: 10
+        },
+        selection: {
+          mode: "xy"
+        }
+      };
+
+      var startData = getData(0, 3 * Math.PI);
+
+      var plot = $.plot(".zoom-graph", startData, options);
+      ``
+
 
     actor.add-callback (msg) ->
       console.log "zoom-graph got new value: #{msg.val}"
