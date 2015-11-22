@@ -54,11 +54,13 @@ RactivePartial! .register ->
 
     */
     getData = (x1, x2) ->
+      x1 = parse-int x1
+      x2 = parse-int x2
       d = []
       i = 0
       while i <= 100
         x = x1 + i * (x2 - x1) / 100
-        d.push [x, Math.sin x * Math.sin x]
+        d.push [x, Math.sin x]
         ++i
       [{
         label: 'sin(x sin(x))'
@@ -75,24 +77,34 @@ RactivePartial! .register ->
       yaxis: {ticks: 10}
       selection: {mode: 'xy'}
     }
+    curr =
+      x-min: 0
+      x-max: 100
+      y-min: 0
+      y-max: 100
+
     x-min.add-callback (msg) ->
-      console.log "x-min: msg: ", msg
-      startData = getData 0,msg.val
+      curr.x-min = msg.val
+      console.log "x-min: curr: ", curr
+      startData = get-data curr.x-min, curr.x-max
       plot = $.plot '.zoom-graph', startData, options
 
     x-max.add-callback (msg) ->
-      console.log "x-max: msg: ", msg
-      startData = getData 0,msg.val
+      curr.x-max = msg.val
+      console.log "x-max: curr: ", curr
+      startData = getData curr.x-min, curr.x-max
       plot = $.plot '.zoom-graph', startData, options
 
     y-min.add-callback (msg) ->
+      curr.y-min = msg.val
       console.log "y-min: msg: ", msg
-      startData = getData 0,msg.val
+      startData = getData curr.y-min,curr.y-max
       plot = $.plot '.zoom-graph', startData, options
 
     y-max.add-callback (msg) ->
+      curr.y-max = msg.val
       console.log "y-max: msg: ", msg
-      startData = getData 0,msg.val
+      startData = getData curr.y-min,curr.y-max
       plot = $.plot '.zoom-graph', startData, options
 
 
@@ -135,7 +147,7 @@ RactivePartial! .register ->
         selection: {mode: 'xy'}
       }
 
-      startData = getData 0,5
+      startData = getData 0,10
 
       plot = $.plot '.zoom-graph', startData, options
 
