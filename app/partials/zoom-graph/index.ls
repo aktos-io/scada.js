@@ -74,7 +74,7 @@ RactivePartial! .register ->
         lines: {show: true}
         points: {show: true}
       }
-      yaxis: {ticks: 10}
+      yaxis: {ticks: 1}
       selection: {mode: 'xy'}
     }
     curr =
@@ -85,26 +85,60 @@ RactivePartial! .register ->
 
     x-min.add-callback (msg) ->
       curr.x-min = msg.val
+      options := options <<< do
+        xaxis:
+          min: curr.x-min
+          max: curr.x-max
+        yaxis:
+          min: curr.y-min
+          max: curr.y-max
       console.log "x-min: curr: ", curr
       startData = get-data curr.x-min, curr.x-max
       plot = $.plot '.zoom-graph', startData, options
 
     x-max.add-callback (msg) ->
       curr.x-max = msg.val
+
+      options := options <<< do
+        xaxis:
+          min: curr.x-min
+          max: curr.x-max
+        yaxis:
+          min: curr.y-min
+          max: curr.y-max
+
       console.log "x-max: curr: ", curr
       startData = getData curr.x-min, curr.x-max
       plot = $.plot '.zoom-graph', startData, options
 
     y-min.add-callback (msg) ->
-      curr.y-min = msg.val
-      console.log "y-min: msg: ", msg
-      startData = getData curr.y-min,curr.y-max
-      plot = $.plot '.zoom-graph', startData, options
+      curr.y-min = msg.val - 50
+
+      options := options <<< do
+        xaxis:
+          min: curr.x-min
+          max: curr.x-max
+        yaxis:
+          min: curr.y-min
+          max: curr.y-max
+
+      console.log "y-min: msg: ", msg, "options: ", options
+      startData = getData curr.x-min,curr.x-max
+      $.plot '.zoom-graph', startData, options
 
     y-max.add-callback (msg) ->
       curr.y-max = msg.val
-      console.log "y-max: msg: ", msg
-      startData = getData curr.y-min,curr.y-max
+
+      options := options <<< do
+        xaxis:
+          min: curr.x-min
+          max: curr.x-max
+        yaxis:
+          min: curr.y-min
+          max: curr.y-max
+      curr.y-max = msg.val
+      console.log "y-max: msg: ", msg, "options: ", options
+      startData = getData curr.x-min,curr.x-max
       plot = $.plot '.zoom-graph', startData, options
 
 
@@ -116,7 +150,7 @@ RactivePartial! .register ->
           lines: {show: true}
           points: {show: true}
         }
-        yaxis: {ticks: 10}
+        yaxis: {ticks: 1}
         selection: {mode: 'xy'}
       }
       startData = getData 0, 3 * Math.PI
@@ -124,16 +158,14 @@ RactivePartial! .register ->
       ($ '.zoom-graph').bind 'plotselected', (event, ranges) ->
         ranges.xaxis.to = ranges.xaxis.from + 0.00001 if ranges.xaxis.to - ranges.xaxis.from < 0.00001
         if ranges.yaxis.to - ranges.yaxis.from < 0.00001 then ranges.yaxis.to = ranges.yaxis.from + 0.00001
-        plot := $.plot '.zoom-graph', (getData ranges.xaxis.from, ranges.xaxis.to), $.extend true, {}, options, {
-          xaxis: {
+        plot := $.plot '.zoom-graph', (getData ranges.xaxis.from, ranges.xaxis.to), $.extend true, {}, options, do
+          xaxis:
             min: ranges.xaxis.from
             max: ranges.xaxis.to
-          }
-          yaxis: {
+          yaxis:
             min: ranges.yaxis.from
             max: ranges.yaxis.to
-          }
-        }
+
       ($ '.overview-graph').bind 'plotselected', (event, ranges) -> plot.setSelection ranges)
 
     $ \.zoom-graph .on \dblclick, (event) !->
@@ -143,7 +175,7 @@ RactivePartial! .register ->
           lines: {show: true}
           points: {show: true}
         }
-        yaxis: {ticks: 10}
+        yaxis: {ticks: 1}
         selection: {mode: 'xy'}
       }
 
@@ -154,4 +186,4 @@ RactivePartial! .register ->
 
 
     actor.add-callback (msg) ->
-      console.log "msg: " msg
+      console.log "msg: ", msg
