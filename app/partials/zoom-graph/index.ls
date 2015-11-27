@@ -60,7 +60,7 @@ RactivePartial! .register ->
       i = 0
       while i <= 100
         x = x1 + i * (x2 - x1) / 100
-        d.push [x, 10*Math.sin x]
+        d.push [x, 30 * Math.sin(x * Math.sin(x))]
         ++i
       [{
         label: 'sin(x sin(x))'
