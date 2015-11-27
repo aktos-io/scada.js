@@ -60,11 +60,11 @@ RactivePartial! .register ->
 
             #console.log "widget found: wid: #wid, x: #x, y: #y, width: #w, height: #h, top: #{parent-coord.top}, left: #{parent-coord.left}", $ this
 
-            layout := layout + "  * wid: #wid" + \\n
-            layout := layout + "    x: #x" + \\n
-            layout := layout + "    y: #y" + \\n
-            layout := layout + "    w: #w" + \\n
-            layout := layout + "    h: #h" + \\n
+            layout := layout + "  * wid: '#{wid}'" + \\n
+            layout := layout + "    x: #{x}" + \\n
+            layout := layout + "    y: #{y}" + \\n
+            layout := layout + "    w: #{w}" + \\n
+            layout := layout + "    h: #{h}" + \\n
 
       #console.log "Layout: " + \\n + layout
 
@@ -77,7 +77,7 @@ RactivePartial! .register-for-dynamic-pos (wpos) ->
     actor = $ this .data \actor
 
     if actor?
-      wid = actor.get-ractive-var \wid
+      wid = String actor.get-ractive-var \wid
       widget = actor.node
       if wid?
         db = [p for p in wpos when p.wid == wid]

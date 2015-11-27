@@ -12,27 +12,21 @@
   .panel-body        
     .scada-drawing-area.scada
       .scada-container. 
-        {{! push button example }}
+        <!-- push button example -->
         {{>push-button {pin_name: 'vpin-0', label: 'Virtual pin 0', wid: 1} }}
         {{>status-led {pin_name: 'vpin-0', wid: 2} }}
-        
         <!-- checkbox example -->
         {{>jq-checkbox {pin_name: 'vpin-1', wid: 3} }}
         {{>status-led {pin_name: 'vpin-1', wid: 4, src: 'computer'} }}
-        
-        {{! graph example }}
+        <!-- graph example -->
         {{>line-graph {pin_name: 'vpin-2', wid: 5} }}
         {{>slider {pin_name: 'vpin-2', wid: 6} }}
-        
         {{>thermometer {pin_name: 'vpin-2', wid: 8} }}
-        
         {{>b-vertical-progress-bar {pin_name: 'vpin-3', wid: 9} }}
         {{>slider {pin_name: 'vpin-3', wid: 10} }}
         {{>b-progress-bar {pin_name: 'vpin-3', wid: 400} }}
-
         {{>justgage {pin_name: 'vpin-2', val: 45, wid: 401} }}
         {{>numeric-keyboard {wid: 402} }}
-        
         {{>b-stacked-progress 
           {pin_names: [ 
               ['vpin-2', 'red'], 
@@ -40,15 +34,14 @@
               ['vpin-4', 'green']
             ], wid: 403} }}
         {{>slider {pin_name: 'vpin-4', wid: 404} }}
-        
         {{>switch-button-basic {wid: 405, pin_name: 'vpin-1', label: 'Test pin'} }}
         {{>switch-button {wid: 408,pin_name: 'vpin-1', label: 'TEST PIN'} }}
-        
         {{>b-circle-button-v2 {wid: 409,pin_name: 'vpin-6'} }}
         {{>b-circle-button-v2 {wid: 410,pin_name: 'vpin-6', icon: 'shield warning'} }}
         {{>b-circle-button-v2 {wid: 411,pin_name: 'vpin-6', icon: 'warning'} }}
         {{>b-circle-button-v2 {wid: 412,pin_name: 'vpin-6', icon: 'signal'} }}
         {{>arrow-keys {wid: 413} }}
+        {{>range-slider {pin_name: 'vpin-2', pin_name2: 'vpin-3', wid: 'lann'}}}
 
 
 .panel.panel-primary
