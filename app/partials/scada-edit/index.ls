@@ -80,7 +80,7 @@ RactivePartial! .register-for-dynamic-pos (wpos) ->
       wid = String actor.get-ractive-var \wid
       widget = actor.node
       if wid?
-        db = [p for p in wpos when p.wid == wid]
+        db = [p for p in wpos when String(p.wid) == wid]
         if not empty db
           [x, y] = [db.0.x, db.0.y]
           #console.log "dynamic-pos: this widget's id: #wid position: ", x, y
