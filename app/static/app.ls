@@ -84,7 +84,6 @@ RactivePartial!register ->
       <[ a1 b1 c1 d1 e1 ]>
       <[ a2 b2 c2 d2 e2 ]>
 
-
 RactivePartial!register ->
   poll-gms = ->
     $.ajax do

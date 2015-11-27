@@ -1,0 +1,47 @@
+#solaris(data-role='page', data-theme='b')
+  .panel.panel-primary.scada-drawing-area
+    .panel-heading
+      h2.panel-title Solaris-Panel
+      .row
+        .col-sm-2.col-xs-6.
+          {{>scada-generate-layout {pin_name: 'scada'} }}
+        .col-sm-2.col-xs-6.
+          {{>jq-checkbox {pin_name: 'lock-scada', label: 'Locked'} }}
+    .panel-body
+      //- wid: 1100+
+      .scada-drawing-area
+        .scada-container. 
+          {{>label {wid: 8001, val: 'Acil Durum'}}}
+          {{>jq-checkbox {pin_name: 'Acil Durum', wid: 8002} }}
+          {{>status-led {pin_name: 'Acil Durum', wid: 8003} }}
+          
+          {{>label {wid: 8004, val: 'Gerilim'}}}
+          {{>seven-segment {wid: 8005, pin_name: 'Gerilim', val: 132.00, format: '###.##', type: 'multimeter'}}}
+  
+          {{>label {wid: 8000, val: 'Sıcaklık'}}}
+          {{>thermometer {pin_name: 'Sıcaklık', wid: 8007} }}
+                  
+          {{>label {wid: 7000, val: 'Pil'}}}
+          {{>b-vertical-progress-bar {pin_name: 'Pil', wid: 7001} }}
+          
+          {{>label {wid: 7005, val: 'Realtime Graph'}}}
+          {{>line-graph {pin_name: 'graph', wid: 7003} }}
+          
+          {{>label {wid: 7006, val: 'Speed'}}}
+          {{>justgage {pin_name: 'Speed', val: 45, wid: 7007} }}
+          {{>gauge {pin_name: 'Speed', type: 'speed', wid: 7008} }}   
+          
+          {{>label {wid: 7010, val: 'Current'}}}
+          {{>b-notification-box {pin_name: 'Current', opt: 'red', label: 'Alert', icon: 'warning', wid: 7009} }}
+          
+          {{>b-notification-box {pin_name: 'online-users', opt: 'green', icon: 'user', label: 'Online', wid: 1106} }}
+      
+        .scada-container. 
+          {{>label {wid: 9011, val: 'Zoom-Graph'}}}
+          {{>zoom-graph {pin_name: 'Zoom-Graph', wid: 9012} }}
+          {{>slider {pin_name: 'Zoom-Graph-x-min', wid: 9014 } }}
+          {{>slider {pin_name: 'Zoom-Graph-x-max', wid: 9013 } }}
+          {{>slider {pin_name: 'Zoom-Graph-y-min', wid: 9015 } }}
+          {{>slider {pin_name: 'Zoom-Graph-y-max', wid: 9016 } }}
+
+  | {{>connection-status {}}}
