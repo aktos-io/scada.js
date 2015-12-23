@@ -47,6 +47,10 @@ Crossbar.io : https://github.com/crossbario
   * `cd test-folder`
   * `git clone https://github.com/ceremcem/aktos-dcs`
   * follow [installation notes](https://github.com/ceremcem/aktos-dcs/blob/master/README.md#install)
+  
+* install [aktos-dcs-lib](https://github.com/ceremcem/aktos-dcs-lib) 
+  * Just clone aktos-dcs-lib as aktos-dcs-lib-cca
+     `git clone https://github.com/ceremcem/aktos-dcs-lib aktos-dcs-lib-cca`      
 
 * install [Node.js](http://nodejs.org/)
 * install global dependencies:
@@ -55,10 +59,15 @@ Crossbar.io : https://github.com/crossbario
   * install libzmq-4.x
 
           sudo apt-get install libzmq3-dev  # or install from source
+          
+    For OS X
+     
+          brew install zeromq
+          
 
 * clone this project and install rest of the dependencies
 
-  * `cd test-folder`
+  * `cd manual-test`
   * clone or download this project
   * open terminal in project directory
   * as normal user: `npm install`
@@ -73,7 +82,7 @@ While in project directory,
 
 * open another terminal and type:
 
-        python test_message_sending/keypad_simulator.py
+        python python-messaging/keypad_simulator.py 
 
 Then open [http://localhost:4000](http://localhost:4000) and see if the button clicks are sent to python process and analog display is changing.
 

@@ -13,3 +13,4 @@ disabled/*
 .kateproject.d
 .kateproject
 npm-debug.log
+.idea/
