@@ -50,7 +50,7 @@ Crossbar.io : https://github.com/crossbario
 
 * install [aktos-dcs-lib](https://github.com/ceremcem/aktos-dcs-lib)
 
-  `git clone https://github.com/ceremcem/aktos-dcs-lib aktos-dcs-lib-cca`      
+  `git clone https://github.com/ceremcem/aktos-dcs-lib aktos-dcs-lib`      
 
 * install [Node.js](http://nodejs.org/)
 * install global dependencies:
