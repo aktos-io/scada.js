@@ -1,6 +1,6 @@
-from aktos_dcs import * 
+from aktos_dcs import *
 
-from pprint import pprint 
+from pprint import pprint
 
 class Test(Actor):
     def receive(self, msg):
@@ -10,7 +10,7 @@ class Test(Actor):
     def action(self):
         value = 0
         while True:
-            self.send({'IoMessage': {'pin_name': 'gauge-slider', 'val': value}})
+            self.send({'IoMessage': {'pin_name': 'vpin-2', 'val': value}})
             value += 1
             sleep(1)
 
