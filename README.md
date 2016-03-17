@@ -2,7 +2,7 @@
 
 This webui is intended to be both a part of [aktos-dcs](https://github.com/ceremcem/aktos-dcs) project as its SCADA infrastructure and the official website of [aktos-elektronik](https://aktos-elektronik.com), The Open Source Telemetry and Automation Systems Company, Turkey.
 
-This webui is online at https://aktos-elektronik.com/
+This webui is online at https://aktos.io/
 
 # Similar projects
 
