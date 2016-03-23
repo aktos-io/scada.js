@@ -283,7 +283,7 @@ RactivePartial!register ->
           * realtime web arayüzü hazırlanması
 
           konularında eğitim verilecektir. Katılım için kayıt:
-          info@aktos-elektronik.com
+          info@aktos.io
 
           """
 
