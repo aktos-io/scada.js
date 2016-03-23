@@ -10,16 +10,20 @@ require! {
 
 # include widgets' initialize codes
 require '../partials/ractive-partials'
-
 # Set Ractive.DEBUG to false when minified:
 Ractive.DEBUG = /unminified/.test !-> /*unminified*/
 
+
+# workaround for ios9 bug: use preparsed output
+# {preparsed} = require './preparsed'
+
 app = new Ractive do
   el: 'container'
-  template: '#app'
+  template: preparsed
   data:
     marked: marked
     JSON: JSON
+
 
 # Register ractive app in order to use in partials
 RactiveApp!set app
@@ -39,11 +43,36 @@ app.on 'complete', !->
 
     RactivePartial! .init-for-dynamic-pos widget-positions
 
+    /*
+    data = Ractive.parse ($ '#app' .html!)
+    json = JSON.stringify data
+    blob = new Blob([json], {type: "application/json"})
+    url  = URL.createObjectURL(blob)
+
+    a = document.createElement('a')
+    a.download    = "backup.json"
+    a.href        = url
+    a.textContent = "Download backup.json"
+
+    document.getElementById('selam').appendChild(a)
+    console.log "child", a, "should be appended"
+
+    url = 'data:text/json;charset=utf8,' + encodeURIComponent(json)
+    window.open(url, '_blank');
+    window.focus();
+
+    if json == preparsed
+      console.log "preparsed json is imported correctly"
+    else
+      console.log "preparsing is incorrect!", json.length, preparsed.length
+    */
 
     set-timeout (->
       RactivePartial! .init-for-post-ready!
       # Update all I/O on init
       ), 1000ms
+
+
 
 
   console.log "ractive app completed..."

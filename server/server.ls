@@ -99,6 +99,8 @@ cleanup-msg-history = ->
 
 set-interval cleanup-msg-history, 10000_ms
 
+
+"""
 mjpeg-camera = require \mjpeg-camera
 camera = new mjpeg-camera do
   name: 'backdoor'
@@ -107,8 +109,11 @@ camera = new mjpeg-camera do
 camera.on \data, (frame) ->
   io.emit \frame, frame.data.to-string \base64
 
-camera.start!
-
+try
+  camera.start!
+catch
+  console.log "mjpeg-camera can not be started..."
+"""
 
 user-db =
   * id: 1
