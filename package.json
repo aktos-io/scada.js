@@ -19,6 +19,7 @@
     "show-logs": "pm2 logs"
   },
   "dependencies": {
+    "cheerio": "^0.19.0",
     "clean-css-brunch": ">= 1.0 < 1.5",
     "css-brunch": ">= 1.0 < 1.5",
     "h2o2": "^4.0.1",
@@ -26,6 +27,7 @@
     "inert": "^3.1.0",
     "jade-static-brunch": "git://github.com/ceremcem/jade-static-brunch.git",
     "javascript-brunch": ">= 1.0 < 1.5",
+    "jquery": "^2.1.4",
     "less-brunch": ">= 1.0 < 1.5",
     "livescript": "^1.4.0",
     "livescript-brunch": "git://github.com/brunch/LiveScript-brunch.git",
@@ -33,6 +35,7 @@
     "mjpeg-camera": "^1.5.8",
     "msgpack-js": "^0.3.0",
     "prelude-ls": "^1.1.2",
+    "ractive": "^0.7.3",
     "shortid": "^2.2.2",
     "socket.io": "^1.3.6",
     "uglify-js-brunch": ">= 1.0 < 1.5",
