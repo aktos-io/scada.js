@@ -2,17 +2,10 @@
 
 PRODUCTION_FOLDER := production
 
-production: clean
-	rm -r public 2> /dev/null & true
-	mkdir $(PRODUCTION_FOLDER)
-	DEBUG='brunch:*' brunch build --production
-	mv public/ $(PRODUCTION_FOLDER)
-	lsc -o $(PRODUCTION_FOLDER) -c server/server.ls
-
 clean:
 	rm -r $(PRODUCTION_FOLDER) 2> /dev/null & true
 
-new-client:
+launch-browser:
 	@firefox -new-tab -url http://localhost:4000 2>/dev/null &
 
 run-ide:
@@ -23,31 +16,22 @@ run-ide:
 run-ide-atom:
 	atom .
 
-run-brunch:
-	@brunch b && brunch w
 
-run-development-server:
-	cd server && lsc server.ls
 
-run-production-server:
-	npm run server
-
-update-production:
-	brunch b
-	rm -r server/public.bak 2> /dev/null; true 
-	mv server/public/ server/public.bak 
+production-update:
+	# build everything into ./public
+	rm -r public 2> /dev/null & true 
+	sudo sh -c "ulimit -n 4096"; brunch b
+	node preparse.js
+	
+	# if everything went ok, then update the public dir 
+	rm -r server/public.bak 2> /dev/null & true 
+	mv server/public server/public.bak 2> /dev/null & true  
 	mv public server/
+	
+production-run: 
+	cd server; \
+	pm2 delete server; \
+	pm2 start server.ls --interpreter=lsc --watch --ignore-watch='public' --max-memory-restart=160M
 
-update-production-old:
-	git pull
-	if [ ! -d "server/public.to-remove-1" ]; then \
-		if [ -d "./public" ]; then \
-			mv server/public server/public.to-remove-1; \
-			mv public server; \
-		fi; \
-	fi;
-	brunch b
-	mv server/public server/public.to-remove-2 2> /dev/null; true
-	ln -s ../public server
-	rm -rf server/public.to-remove-1 2> /dev/null; true
-	rm -rf server/public.to-remove-2 2> /dev/null; true
+
