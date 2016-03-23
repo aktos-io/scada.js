@@ -33,5 +33,5 @@ production-run:
 	cd server; \
 	pm2 delete server; \
 	pm2 start server.ls --interpreter=lsc --watch --ignore-watch='public' --max-memory-restart=160M
-
+	watch pm2 status 
 
