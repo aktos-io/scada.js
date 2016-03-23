@@ -4,6 +4,7 @@ production
 server/public.*
 server/public-*
 server/public
+server/server.js
 node_modules
 *.kate-swp
 vendor-*

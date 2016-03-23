@@ -3,12 +3,25 @@
 zmq = require 'zmq'
 short-id = require \shortid
 
-app = (require \express)!
+express = require \express
+app = express!
 http = require \http .Server app
 io = (require "socket.io") http
 
 #https://gist.github.com/dbainbridge/2424055#file-app-js-L13
 pub-dir = __dirname + "/public"
+
+static-folders =
+  * \javascripts
+  * \images
+  * \img
+  * \stylesheets
+  * \fonts
+  * \projects
+
+for i in static-folders
+  console.log "serving static folder: #{i}..."
+  app.use "/#{i}", express.static "#{pub-dir}/#{i}"
 
 app.get '/', (req, res) ->
   res.send-file "#{pub-dir}/index.html"
