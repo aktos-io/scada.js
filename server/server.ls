@@ -1,8 +1,22 @@
 {map, filter, tail} = require 'prelude-ls'
-Hapi = require "hapi"
 
 zmq = require 'zmq'
 short-id = require \shortid
+
+app = (require \express)!
+http = require \http .Server app
+io = (require "socket.io") http
+
+#https://gist.github.com/dbainbridge/2424055#file-app-js-L13
+pub-dir = __dirname + "/public"
+
+app.get '/', (req, res) ->
+  res.send-file "#{pub-dir}/index.html"
+
+http.listen 4000 ->
+  console.log "listening on *:4000"
+
+
 #msgpack = require 'msgpack-js'
 require! {
   './modules/aktos-dcs': {
@@ -22,13 +36,10 @@ if (parse-int zmq.version.0) < 4
   process.exit 1
 
 
-server = new Hapi.Server!
-server.connection port: 4000
 #server.register (require 'h2o2'), ->
 #server.register (require 'inert'), ->
 
 
-io = require 'socket.io' .listen server.listener
 sub-sock = zmq.socket 'sub'
 pub-sock = zmq.socket 'pub'
 
@@ -215,102 +226,3 @@ sub-sock.on 'message', (message) !->
       msg.sender ++= [server-id]
       #console.log "forwarding msg to clients, msg_id: ", msg.msg_id
       io.sockets.emit 'aktos-message', msg
-
-server.route do
-  method: 'GET'
-  path: '/'
-  handler:
-    file: './public/index.html'
-
-/*
-proxy xml webservice
-convert response xml to json
-*/
-wreck = require \wreck
-{parseString} = require 'xml2js'
-server.route do
-  method: '*'
-  path: '/gms/{f*}'
-  handler:
-    proxy:
-      map-uri: (request, callback) ->
-        resourceUri = request.url.path.replace('/gms/', '/')
-        url = 'http://78.178.216.214:81/' + resourceUri
-        console.log 'url: ', url
-        callback(null,url);
-      on-response: (err, res, request, reply, settings, ttl) ->
-        wreck.read res, null, (err, payload) ->
-          body = payload.to-string!
-          parse-string body, (err, result) ->
-            parse-string result.string._, (err, result) ->
-              console.dir result
-              for i in result.Root.Oda
-                console.log "i: ", i
-              reply(result)
-
-      accept-encoding: false
-      pass-through: true
-      xforward: true
-
-server.route do
- *  method: 'GET'
-    path: '/img/{f*}'
-    handler:
-      directory:
-        path: 'public/img'
-        listing: 'true'
-        index: ['index.html']
-server.route do
- *  method: 'GET'
-    path: '/images/{f*}'
-    handler:
-      directory:
-        path: 'public/images'
-        listing: 'true'
-        index: ['index.html']
-server.route do
- *  method: 'GET'
-    path: '/javascripts/{f*}'
-    handler:
-      directory:
-        path: 'public/javascripts'
-        listing: 'true'
-        index: ['index.html']
-server.route do
- *  method: 'GET'
-    path: '/pages/{f*}'
-    handler:
-      directory:
-        path: 'public/pages'
-        listing: 'true'
-        index: ['index.html']
-server.route do
- *  method: 'GET'
-    path: '/stylesheets/{f*}'
-    handler:
-      directory:
-        path: 'public/stylesheets'
-        listing: 'true'
-        index: ['index.html']
-server.route do
- *  method: 'GET'
-    path: '/fonts/{f*}'
-    handler:
-      directory:
-        path: 'public/fonts'
-        listing: 'true'
-        index: ['index.html']
-server.route do
- *  method: 'GET'
-    path: '/projects/{f*}'
-    handler:
-      directory:
-        path: 'public/projects'
-        listing: 'true'
-        index: ['index.html']
-
-#a = require './app/lib/weblib.ls'
-#a.test!
-
-server.start !->
-  console.log "Server running at:", server.info.uri
