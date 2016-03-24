@@ -1,3 +1,11 @@
+development = yes 
+
+if development
+  preparsed = '#app'  # for development
+else
+  preparsed = preparsed   # for production
+
+
 require! {
   '../modules/aktos-dcs': {
     ProxyActor,
@@ -12,10 +20,6 @@ require! {
 require '../partials/ractive-partials'
 # Set Ractive.DEBUG to false when minified:
 Ractive.DEBUG = /unminified/.test !-> /*unminified*/
-
-
-# workaround for ios9 bug: use preparsed output
-# {preparsed} = require './preparsed'
 
 app = new Ractive do
   el: 'container'
