@@ -50,8 +50,7 @@ development-run-server:
 	lsc server.ls
 
 development-compile-watch:
-	@echo "Starting to compile with brunch"
-	@echo "---- DO NOT FORGET TO SET preparsed variable in app.ls!!! -----"
-	mv server/public serve/public.bak 2> /dev/null; true
+	@echo "---- DO NOT FORGET TO SET development = yes in app.ls!!! -----"
+	mv server/public/ server/public.bak/ 2> /dev/null && \
 	ln -sf ../public server/
 	brunch watch
