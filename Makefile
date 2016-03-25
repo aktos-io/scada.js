@@ -10,15 +10,17 @@ launch-broser:
 
 
 install-npm-packages:
-	pm2 delete server
+	pm2 delete server 2> /dev/null; true
 	rm -rf node_modules 2> /dev/null; true
 	rm -rf .npm 2> /dev/null; true
 	npm install
 
+LOGINUSER := $$USER
+
 production-update:
 	# build everything into ./public
 	rm -r public 2> /dev/null & true
-	sudo sh -c "ulimit -n 4096"; brunch b
+	sudo sh -c "ulimit -n 65536; sudo -u $(LOGINUSER) brunch build";
 	node preparse.js
 
 	# if everything went ok, then update the public dir
@@ -36,10 +38,6 @@ production-optimize:
 	@echo "USE uglify to minimize javascripts..."
 	uglifyjs server/public/javascripts/app.js > server/public/javascripts/app.js
 	uglifyjs server/public/javascripts/vendor.js > server/public/javascripts/vendor.js
-
-
-
-
 
 development-run-server:
 	@echo "Starting server"
