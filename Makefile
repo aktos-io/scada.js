@@ -52,6 +52,6 @@ development-run-server:
 
 development-compile-watch:
 	@echo "---- DO NOT FORGET TO SET development = yes in app.ls!!! -----"
-	mv server/public/ server/public.bak/ 2> /dev/null && \
+	rm -rf server/public 2> /dev/null && \
 	ln -sf ../public server/
 	brunch watch
