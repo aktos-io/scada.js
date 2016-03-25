@@ -1,0 +1,77 @@
+style.
+  .vcenter__outer{
+    text-align: center; 
+  }
+  .vcenter__inner{
+  }
+  .pcb__container {
+      max-height: 60vw;
+      max-width: 85vw;
+      width: 32em; 
+      height: 20em; 
+      display: inline-block;
+      margin: 1.5em;
+      padding: 0;
+  }
+  .pcb__background {
+    width: 100%; 
+    height: 100%; 
+    position: relative; 
+    -webkit-border-radius: 18px;
+    -moz-border-radius: 18px;
+    border-radius: 18px;
+    border: none;
+    outline: none;
+    box-shadow: 0 0 8px  rgb(51, 89, 193);
+    overflow: hidden;
+  }
+  .pcb__text-container {
+    /*background-color: rgba(0, 0, 0, 0.8);*/
+    background-color: rgba(255,255,255, 0.8);
+    position: absolute; 
+    left: 0; 
+    bottom: 0; 
+    width: 100%; 
+    height: 20%; 
+    text-align: left;  
+    
+    vertical-align: middle;
+  }
+  .pcb__label-container {
+    width: 100%; 
+    font-weight: bold; 
+    font-size: 200%; 
+    padding: 5px; 
+  }
+  .pcb__short-desc-container {
+    width: 100%;
+    padding: 6px; 
+  }
+
+#pcb(data-role='page', data-theme='a').
+    {{>nav-bar {active_button: '#/pcb'}}}
+    {{#with page.pcb}}
+      <div class="vcenter__outer">
+        <div class="vcenter__inner">
+        {{#each .}}
+          <div class="pcb__container">
+            <a href="{{ .addr ? .addr : '#' }}">
+              <div  class="pcb__background" style="
+                background: url({{.src}}) no-repeat center center ;
+                background-size: cover;
+              ">
+                <div class="pcb__text-container"> 
+                  <div class="pcb__label-container">
+                    {{.label}}
+                  </div> 
+                  <div class="pcb__short-desc-container">
+                    {{ .shortDesc }}
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        {{/each}}
+        </div>
+      </div>
+      {{/with}}

@@ -1,4 +1,4 @@
-development = no
+development = yes
 
 require! {
   '../modules/aktos-dcs': {
@@ -200,6 +200,8 @@ RactivePartial!register ->
         addr: '#/products'
       * name: 'Demo'
         addr: '#/demos'
+      * name: 'Pcb'
+        addr: '#/pcb'
       * name: 'İletişim'
         addr: '#/contact-page'
 
@@ -242,7 +244,6 @@ RactivePartial!register ->
       src: 'projects/kku-nukleer-fizik-lab/proje-kapak.jpg'
 
   app.set \page.projects, projects
-
 
 RactivePartial!register ->
   home =
@@ -331,6 +332,26 @@ RactivePartial!register ->
     */
 
   app.set \page.products, products
+
+RactivePartial!register ->
+  pcb =
+    * label: 'Stm32-dev'
+      src: 'projects/pcb/stm-dev/stm-dev.jpg'
+
+    * label: 'Raspberry-Hat'
+      src: 'projects/pcb/rpi-head/rpi-head.png'
+
+    * label: 'Stm32F0-dev'
+      src: 'projects/pcb/stm-f0-dev/stm-f0-dev.jpg'
+
+    * label: 'RS232-to-UART'
+      src: 'projects/pcb/rs-to-cmos/rs232-to-uart.jpg'
+
+    * label: 'Remote-Controller'
+      src: 'projects/pcb/kumanda/remote-control.jpg'
+
+
+  app.set \page.pcb, pcb
 
   /*
 
