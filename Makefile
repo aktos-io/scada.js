@@ -24,6 +24,7 @@ production-update:
 	node preparse.js
 
 	# if everything went ok, then update the public dir
+	rm server/public 2> /dev/null ; \
 	rm -rf server/public.bak 2> /dev/null ; \
 	mv server/public/ server/public.bak/ 2> /dev/null ; \
 	mv public/ server/
