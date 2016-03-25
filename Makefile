@@ -24,6 +24,7 @@ production-update:
 	node preparse.js
 
 	# if everything went ok, then update the public dir
+	rm server/public 2> /dev/null ; \
 	rm -rf server/public.bak 2> /dev/null ; \
 	mv server/public/ server/public.bak/ 2> /dev/null ; \
 	mv public/ server/
@@ -50,8 +51,7 @@ development-run-server:
 	lsc server.ls
 
 development-compile-watch:
-	@echo "Starting to compile with brunch"
-	@echo "---- DO NOT FORGET TO SET preparsed variable in app.ls!!! -----"
-	mv server/public serve/public.bak 2> /dev/null; true
+	@echo "---- DO NOT FORGET TO SET development = yes in app.ls!!! -----"
+	rm -rf server/public 2> /dev/null && \
 	ln -sf ../public server/
 	brunch watch
