@@ -9,6 +9,10 @@ launch-broser:
 #	@kate .kateproject 2>/dev/null &
 
 
+install-npm-packages:
+	rm -rf node_modules 2> /dev/null; true
+	npm install
+
 production-update:
 	# build everything into ./public
 	rm -r public 2> /dev/null & true
@@ -28,6 +32,10 @@ production-run-server:
 
 production-optimize:
 	@echo "USE uglify to minimize javascripts..."
+	uglifyjs server/public/javascripts/app.js > server/public/javascripts/app.js
+	uglifyjs server/public/javascripts/vendor.js > server/public/javascripts/vendor.js
+
+
 
 
 
