@@ -36,8 +36,13 @@ production-run-server:
 
 production-optimize:
 	@echo "USE uglify to minimize javascripts..."
-	uglifyjs server/public/javascripts/app.js > server/public/javascripts/app.min.js
-	uglifyjs server/public/javascripts/vendor.js > server/public/javascripts/vendor.min.js
+	cd server/public/javascripts ; \
+	uglifyjs app.js > app.min.js && \
+	mv app.js app.js.bak && \
+	mv app.min.js app.js ; \
+	uglifyjs vendor.js > vendor.min.js && \
+	mv vendor.js vendor.js.bak && \
+	mv vendor.min.js vendor.js ; 
 
 development-run-server:
 	@echo "Starting server"
