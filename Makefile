@@ -10,7 +10,9 @@ launch-broser:
 
 
 install-npm-packages:
+	pm2 delete server
 	rm -rf node_modules 2> /dev/null; true
+	rm -rf .npm 2> /dev/null; true
 	npm install
 
 production-update:
@@ -21,8 +23,8 @@ production-update:
 
 	# if everything went ok, then update the public dir
 	rm -rf server/public.bak 2> /dev/null & true
-	mv server/public server/public.bak 2> /dev/null & true
-	mv public server/
+	mv server/public/ server/public.bak 2> /dev/null & true
+	mv public/ server/
 
 production-run-server:
 	cd server; \
