@@ -1,10 +1,4 @@
-development = yes 
-
-if development
-  preparsed = '#app'  # for development
-else
-  preparsed = preparsed   # for production
-
+development = no
 
 require! {
   '../modules/aktos-dcs': {
@@ -23,7 +17,7 @@ Ractive.DEBUG = /unminified/.test !-> /*unminified*/
 
 app = new Ractive do
   el: 'container'
-  template: preparsed
+  template: if development then '#app' else preparsed
   data:
     marked: marked
     JSON: JSON
