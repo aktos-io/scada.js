@@ -47,10 +47,31 @@ style.
     width: 100%;
     padding: 6px; 
   }
+  
+#pcb(data-role='page', data-theme='a')
+  h2(style="font-size: 38px; font-weight: bold")
+    center Prototip PCB İmalatı
 
-#pcb(data-role='page', data-theme='a').
+  .container
+    .row.vcenter
+      .col
+              
+    .row.vcenter
+      .col-md-offset-1.col-md-10.col-md-offset-1
+        :md
+          **aktos elektronik**, kendi ihtiyaçları doğrultusunda tek yüzeyli 
+          ve çift yüzeyli prototip PCB imalatı yapmaktadır. Çizimleri tamamlanmış 
+          PCB'ler ortalama 2 saat içerisinde dizgiye hazır şekilde üretilebilmektedir.
+          
+          Bilgi ve fiyat teklifi için PCB dosyanızı info@aktos.io adresine göndermeniz yeterlidir.
+  
+  div.
     {{>nav-bar {active_button: '#/pcb'}}}
     {{#with page.pcb}}
+    
+            
+    
+    
       <div class="vcenter__outer">
         <div class="vcenter__inner">
         {{#each .}}

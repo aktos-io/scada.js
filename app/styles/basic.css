@@ -2,13 +2,20 @@
 #applications,
 #products,
 #contact-page,
-#pcb,
 #demos {
   background-image: url('../img/aktos-elektronik/home-page/aktos-arkaplan-site-white.png');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
 }
+
+#pcb {
+  background-image: url('../projects/pcb/page-background.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
 
 .nav-bar {
   position: fixed !important;

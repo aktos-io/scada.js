@@ -347,8 +347,11 @@ RactivePartial!register ->
     * label: 'RS232-to-UART'
       src: 'projects/pcb/rs-to-cmos/rs232-to-uart.jpg'
 
-    * label: 'Remote-Controller'
+    * label: 'Remote Controller'
       src: 'projects/pcb/kumanda/remote-control.jpg'
+
+    * label: 'Industrial Output Module'
+      src: 'projects/pcb/output-module/output-module.jpg'
 
 
   app.set \page.pcb, pcb
