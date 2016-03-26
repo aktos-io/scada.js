@@ -1,14 +1,15 @@
-#home-page,
-#products,
-#contact-page,
-#demos {
+#contact-page {
+  background-image: url('../projects/contact-background.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+#home-page {
   background-image: url('../img/aktos-elektronik/home-page/aktos-arkaplan-site-white.png');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
 }
-
-
 #pcb {
   background-image: url('../projects/pcb/page-background.jpg');
   background-repeat: no-repeat;
@@ -21,7 +22,18 @@
   background-size: cover;
   background-position: center;
 }
-
+#demos {
+  background-image: url('../projects/demos-background.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center top;
+}
+#products {
+  background-image: url('../projects/demos-background.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center top;
+}
 
 
 .nav-bar {

@@ -198,10 +198,10 @@ RactivePartial!register ->
         addr: '#/applications'
       * name: 'Ürünler'
         addr: '#/products'
-      * name: 'Demo'
-        addr: '#/demos'
       * name: 'Pcb'
         addr: '#/pcb'
+      * name: 'Demo'
+        addr: '#/demos'
       * name: 'İletişim'
         addr: '#/contact-page'
 
