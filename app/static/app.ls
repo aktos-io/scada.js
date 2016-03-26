@@ -339,7 +339,7 @@ RactivePartial!register ->
       src: 'projects/pcb/stm-dev/stm-dev.jpg'
 
     * label: 'Raspberry-Hat'
-      src: 'projects/pcb/rpi-head/rpi-head.png'
+      src: 'projects/pcb/rpi-head/rpi-head.jpg'
 
     * label: 'Stm32F0-dev'
       src: 'projects/pcb/stm-f0-dev/stm-f0-dev.jpg'
