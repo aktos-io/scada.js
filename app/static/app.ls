@@ -296,7 +296,7 @@ RactivePartial!register ->
       short-desc: """
         Otomasyon ve telemetri sistemleri için yazılım altyapısı
         """
-      addr: 'https://github.com/ceremcem/aktos-dcs'
+      addr: 'https://github.com/aktos-io'
 
     * label: 'aktos-ipc'
       src: 'projects/aktos-ipc/proje-kapak.jpg'

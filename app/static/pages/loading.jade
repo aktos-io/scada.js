@@ -1,0 +1,56 @@
+#loading
+    h1(style="text-align: center") Loading aktos-scada...
+  
+    table#loading-img
+      tr
+        td
+          img(src="projects/loading.jpg")
+        
+      tr
+        td
+          #loading-timer.
+            this is timer content
+          
+          #loading-emergency-info(style="display: none")
+            p.
+              Addr: Halkapınar Mah. 1202/2 Sk. No: 101/Y PK:35170 Gıda Çarşısı, Yenişehir, Konak, İZMİR  
+            p Tel: 0555 306 6003 
+            p info@aktos.io 
+            p Koord: 38.427996,27.172554
+    
+style.
+  #loading-img{
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  
+  #loading-img td{
+    vertical-align: middle;
+    text-align: center;
+  }
+
+
+script.
+  console.log("Loading Scada...");
+  function loadEmergencyInfo () {
+    console.log("Loading emergeny info...");
+     document.getElementById("loading-emergency-info").style.display = "block";
+  }
+  setTimeout(loadEmergencyInfo, 5000);
+  loading_timer = 10; 
+  
+  function countDownTimer() {
+    console.log("Running countDownTimer", loading_timer);
+    document.getElementById("loading-timer").textContent = loading_timer.toString();
+    loading_timer -= 1;
+    
+    if (loading_timer > -10){
+      setTimeout(countDownTimer, 1000);
+    } else {
+      console.log("Yok artık... Daha da yüklenmediyse...");
+    }
+  }
+  
+  countDownTimer(); 

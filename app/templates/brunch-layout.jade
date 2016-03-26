@@ -20,15 +20,15 @@ html(class="no-js", lang="en")
     link(rel="stylesheet", href="stylesheets/app.css")
   body
 
-    #loading
-      h1(style="text-align: center") Loading aktos-scada...
+    block loading
       
     #container
     script#app(type='text/ractive')
       block content
-        
-    script(src="javascripts/vendor.js")
-    script(src="javascripts/preparsed.js")
-    script(src="javascripts/app.js")
-    script.
-      require("init");
+    
+    //-    
+      script(src="javascripts/vendor.js")
+      script(src="javascripts/preparsed.js")
+      script(src="javascripts/app.js")
+      script.
+        require("init");

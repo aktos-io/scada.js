@@ -34,7 +34,13 @@
   background-size: cover;
   background-position: center top;
 }
-
+#loading {
+  height: 100vh;
+  width: 100vw;
+  image: url('../projects/loading.png');
+  size: 500px 300px;
+  position: center top;
+}
 
 .nav-bar {
   position: fixed !important;
