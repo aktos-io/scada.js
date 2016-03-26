@@ -1,5 +1,4 @@
 #home-page,
-#applications,
 #products,
 #contact-page,
 #demos {
@@ -9,12 +8,20 @@
   background-position: center;
 }
 
+
 #pcb {
   background-image: url('../projects/pcb/page-background.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
 }
+#applications {
+  background-image: url('../projects/projets-background.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
 
 
 .nav-bar {

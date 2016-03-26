@@ -345,14 +345,22 @@ RactivePartial!register ->
       src: 'projects/pcb/stm-f0-dev/stm-f0-dev.jpg'
 
     * label: 'RS232-to-UART'
-      src: 'projects/pcb/rs-to-cmos/rs232-to-uart.jpg'
+      src: 'projects/pcb/rs232-to-uart/rs232-to-uart.jpg'
 
     * label: 'Remote Controller'
-      src: 'projects/pcb/kumanda/remote-control.jpg'
+      src: 'projects/pcb/remote-control/remote-control.jpg'
 
     * label: 'Industrial Output Module'
       src: 'projects/pcb/output-module/output-module.jpg'
 
+    * label: 'Dot-Matrix Controller'
+      src: 'projects/pcb/dot-matrix/dot-matrix.jpg'
+
+    * label: 'ESP-8266-dev'
+      src: 'projects/pcb/esp8266-dev/esp8266-dev.jpg'
+
+    * label: 'Slave-Bus Converter'
+      src: 'projects/pcb/slave-bus/slave-bus.jpg'
 
   app.set \page.pcb, pcb
 
