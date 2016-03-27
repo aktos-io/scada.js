@@ -1,16 +1,22 @@
 #loading
-    h1(style="text-align: center") Loading aktos-scada...
   
     table#loading-img
       tr
         td
-          img(src="projects/loading.jpg")
-        
+          img(src="projects/loading-2.jpg")
+
       tr
         td
-          #loading-timer.
-            this is timer content
-          
+          h2(style="font-weight: bold;font-style: italic")
+            center Loading aktos-scada...
+
+      tr
+        td
+          .number-circle
+            span#loading-timer.
+              this is timer content
+      tr
+        td
           #loading-emergency-info(style="display: none")
             p.
               Addr: Halkapınar Mah. 1202/2 Sk. No: 101/Y PK:35170 Gıda Çarşısı, Yenişehir, Konak, İZMİR  
@@ -29,17 +35,46 @@ style.
   #loading-img td{
     vertical-align: middle;
     text-align: center;
+    padding: 10px;
+  }
+  
+  .number-circle {
+      display:inline-block;
+      line-height:0px;
+      
+      border-radius:80%;
+      border:2px solid;
+      border-color: white;
+      
+      font-size:65px;
+      font-weight: bold;
+      background-color: rgb(51, 89, 193);
+      
+      box-shadow: 0 0 18px  rgb(51, 89, 193);
+      
+  }
+
+  .number-circle span {
+      display:inline-block;
+      
+      padding-top:50%;
+      padding-bottom:50%;
+      color: white;
+      
+      margin-left:28px;
+      margin-right:28px;
   }
 
 
-script.
+
+script. 
   console.log("Loading Scada...");
   function loadEmergencyInfo () {
     console.log("Loading emergeny info...");
      document.getElementById("loading-emergency-info").style.display = "block";
   }
   setTimeout(loadEmergencyInfo, 5000);
-  loading_timer = 10; 
+  loading_timer = 9; 
   
   function countDownTimer() {
     console.log("Running countDownTimer", loading_timer);
