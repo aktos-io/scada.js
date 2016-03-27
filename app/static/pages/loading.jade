@@ -19,9 +19,9 @@
         td
           #loading-emergency-info(style="display: none")
             p.
-              Addr: Halkapınar Mah. 1202/2 Sk. No: 101/Y PK:35170 Gıda Çarşısı, Yenişehir, Konak, İZMİR  
-            p Tel: 0555 306 6003 
-            p info@aktos.io 
+              <b> Addr: </b> Halkapınar Mah. 1202/2 Sk. No: 101/Y PK:35170 Gıda Çarşısı, Yenişehir, Konak, İZMİR  
+            p <b>Tel: </b> 0555 306 6003 
+            p <a href="info@aktos.io">info@aktos.io</a> 
             p Koord: 38.427996,27.172554
     
 style.
@@ -69,23 +69,30 @@ style.
 
 script. 
   console.log("Loading Scada...");
-  function loadEmergencyInfo () {
-    console.log("Loading emergeny info...");
-     document.getElementById("loading-emergency-info").style.display = "block";
-  }
-  setTimeout(loadEmergencyInfo, 5000);
-  loading_timer = 9; 
+  loading_timer = 7; 
   
   function countDownTimer() {
     console.log("Running countDownTimer", loading_timer);
     document.getElementById("loading-timer").textContent = loading_timer.toString();
-    loading_timer -= 1;
+
+    if (loading_timer == 0) {
+      document.getElementById("loading-emergency-info").style.display = "block";
+      var nc = document.getElementsByClassName("number-circle");
+      var i;
+      for (i = 0; i < nc.length; i++){
+        nc[i].style.backgroundColor = "red";
+        nc[i].style.boxShadow = "0 0 18px  rgb(255, 0, 0)";
+      } 
+    }
     
     if (loading_timer > -10){
       setTimeout(countDownTimer, 1000);
     } else {
-      console.log("Yok artık... Daha da yüklenmediyse...");
+      console.log("Loading emergeny info...");
     }
+
+    loading_timer -= 1;
+    
   }
   
   countDownTimer(); 
