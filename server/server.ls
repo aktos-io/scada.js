@@ -26,6 +26,9 @@ for i in static-folders
 app.get '/', (req, res) ->
   res.send-file "#{pub-dir}/index.html"
 
+app.get '/map', (req, res) ->
+  res.send-file "#{pub-dir}/map.html"
+
 http.listen 4000 ->
   console.log "listening on *:4000"
 
