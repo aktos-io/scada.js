@@ -10,7 +10,8 @@ io = (require "socket.io") http
 
 #https://gist.github.com/dbainbridge/2424055#file-app-js-L13
 pub-dir = __dirname + "/public"
-http-subfolder = "/cca"
+#http-subfolder = "/cca"
+http-subfolder = ""
 
 static-folders =
   * \javascripts
