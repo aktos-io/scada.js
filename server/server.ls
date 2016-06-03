@@ -10,8 +10,6 @@ io = (require "socket.io") http
 
 #https://gist.github.com/dbainbridge/2424055#file-app-js-L13
 pub-dir = __dirname + "/public"
-#http-subfolder = "/cca"
-http-subfolder = ""
 
 static-folders =
   * \javascripts
@@ -23,12 +21,12 @@ static-folders =
 
 for i in static-folders
   console.log "serving static folder: #{i}..."
-  app.use "#{http-subfolder}/#{i}", express.static "#{pub-dir}/#{i}"
+  app.use "/#{i}", express.static "#{pub-dir}/#{i}"
 
-app.get "#{http-subfolder}/", (req, res) ->
+app.get "/", (req, res) ->
   res.send-file "#{pub-dir}/index.html"
 
-app.get "#{http-subfolder}/map", (req, res) ->
+app.get "/map", (req, res) ->
   res.send-file "#{pub-dir}/map.html"
 
 http.listen 4000 ->
