@@ -9,7 +9,7 @@
     <script src="scripts/prelude-browser-min.js"></script>
     <script type="text/ls" src="app.ls"></script>
     <script src="scripts/jquery-1.12.0.min.js"></script>
-    <script src="scripts/jQuery.Soap.js"></script>
+    <script src="scripts/jQuery.Soap.js"></script> 
 
 
 </head>
@@ -43,12 +43,16 @@
         <br><br> {{#kds:i}}
         <div class='box'>
             <!-- the donut chart -->
-            <donutchart data='{{scores}}' selected='{{id}}' delay='{{ i * 50 }}' style='width: 16.666%;' on-select='select' />
+            <donutchart data='{{scores}}' selected='{{id}}'  delay='{{ i * 50 }}' style='width: 16.666%;' on-select='select' />
             <!-- the month name -->
             <div class='label'>{{supplierName}}</div>
         </div>
         {{/kds}}
-
+        {{#if selected }}
+            <text intro-outro='fade' y='1'>Score: {{selected["value"]}}</text>
+            <span></span> 
+        {{/if}}
+       
 
     </script>
 
@@ -58,16 +62,13 @@
         <svg viewBox='0 0 100 100'>
           <g transform='translate(50,50)'>
             {{# getSegments( scores ) :i}}
-              <polygon on-hover='select:{{id["id"]}}' class='donut-segment' fill='{{ colors[ id["id"] ] }}' on-mouseover='set("selected",id["id"])' value='set("value",id["value"])'
+              <polygon on-hover='select:{{id}}' class='donut-segment' fill='{{ colors[ id["id"] ] }}' on-mouseover='set("selected",id)' 
                 on-mouseout='set("selected",null)'
-                opacity='{{ !selected ? 1 : ( selected === id["id"] ? 1 : 0.2 ) }}'
+                opacity='{{ !selected ? 1 : ( selected === id ? 1 : 0.4 ) }}'
                 points='{{ getSegmentPoints( ., 20, 50, c ) }}'
               >
             {{/ segments }} 
-          {{#if value }}
-            <text intro-outro='fade' y='1'>{{value}}</text>
-            <span></span> 
-        {{/if}}
+
           </g>
         </svg>
     </script>

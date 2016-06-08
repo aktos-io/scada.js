@@ -24,7 +24,7 @@ DonutChart=Ractive.extend do
             segments=data.map((datum)->
                 size = datum.value / total
                 end = start + size
-                segment={id:{datum.id,datum.value}, start: start,end: end}
+                segment={id:datum,value:datum.value,start: start,end: end}
                 start:=end
                 segment)
             segments
@@ -50,9 +50,9 @@ kds-data= [
         *id:'score2'
          value:2
         *id:'score3'
-         value:2
+         value:3
         *id:'score4'
-         value:2
+         value:4
         *id:'score5'
          value:2
          ],
@@ -105,13 +105,13 @@ convert-kds = (x) ->
 get-kds-data = ->
     console.log "getting kds data..."
     ractive.set \kds ''
-    $.get "http://78.189.167.200/DemeterKds/api/rfm/ScoresVersion?rawMaterialCode=#{ractive.get 'kdsProductId'}&VersionNumber=635973759505058264", (text) ->
+    $.get "http://192.168.9.111/DemeterKds/api/rfm/ScoresVersion?rawMaterialCode=#{ractive.get 'kdsProductId'}&VersionNumber=635973759505058264", (text) ->
         ractive.set \kds, convert-kds text
 
 
 getSoap = ->
     $.soap do
-        url :"http://78.189.167.200:2222/Servis/DemeterWS/RawMaterialOrderService.svc"
+        url :"http://192.168.9.111:2222/Servis/DemeterWS/RawMaterialOrderService.svc"
         SOAPAction : "http://tempuri.org/IRawMaterialOrderService/GetRawMaterialList"
         method : "GetRawMaterialList"
         data : {}
