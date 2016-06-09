@@ -18,7 +18,23 @@ kds-data=
       amount:25
       reason:"hammadde bozuk"
       date:4
-
+    * product-id:2458
+      amount:45
+      reason:"hammadde bozuk"
+      date:8
+    * product-id:2426
+      amount:25
+      reason:"hammadde bozuk"
+      date:2
+    * product-id:2458
+      amount:15
+      reason:"hammadde bozuk"
+      date:6
+    * product-id:2426
+      amount:12
+      reason:"hava sıcaklıgı"
+      date:4
+      
 ractive=new Ractive do
     el: '#example_container'
     template: '#donutTemplate'
@@ -32,9 +48,9 @@ ractive.on do
     get-kds-data:(event,id) -> get-kds-data!
 
 products=
-    * id:19
+    * id:2426
       name:"domates"
-    * id:6
+    * id:2458
       name:"patates"
 
 
@@ -59,6 +75,8 @@ get-kds-data = ->
 
 
 getSoap = ->
+
+    return
     $.soap do
         url :"http://192.168.9.111:2222/Servis/DemeterWS/ProductsService.svc"
         SOAPAction : "http://tempuri.org/IProductsService/GetProductList"
