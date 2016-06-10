@@ -6,7 +6,7 @@ kds-data=
       amount:5
       reason:"hava sıcaklıgı"
       date:8
-    * product-id:2426
+    * product-id: 2426
       amount:5
       reason:"hammadde bozuk"
       date:2
@@ -14,15 +14,15 @@ kds-data=
       amount:15
       reason:"hava sıcaklıgı"
       date:6
-    * product-id:2426
+    * product-id: 2426
       amount:25
       reason:"hammadde bozuk"
       date:4
     * product-id:2458
-      amount:45
+      amount:1
       reason:"hammadde bozuk"
       date:8
-    * product-id:2426
+    * product-id: 2426
       amount:25
       reason:"hammadde bozuk"
       date:2
@@ -30,11 +30,11 @@ kds-data=
       amount:15
       reason:"hammadde bozuk"
       date:6
-    * product-id:2426
+    * product-id: 2426
       amount:12
       reason:"hava sıcaklıgı"
       date:4
-      
+
 ractive=new Ractive do
     el: '#example_container'
     template: '#donutTemplate'
@@ -48,10 +48,10 @@ ractive.on do
     get-kds-data:(event,id) -> get-kds-data!
 
 products=
-    * id:2426
-      name:"domates"
-    * id:2458
-      name:"patates"
+    * id: 2426
+      name: "domates"
+    * id: 2458
+      name: "patates"
 
 
 ractive.on 'complete', !->
@@ -67,8 +67,9 @@ convert-kds = (x) ->
 
 get-kds-data = ->
     console.log "getting kds data..."
-    selected-id=ractive.get 'kdsProductId'
-    ractive.set \kds [.. for kds-data when ..product-id is selected-id]
+    selected-id = ractive.get 'kdsProductId' |> parse-int 
+    selected-list = [.. for kds-data when ..product-id is selected-id]
+    ractive.set \kds selected-list
     return
     $.get "http://192.168.9.111/DemeterKds/api/productlosses/ProductLoss?productcode=#{ractive.get 'kdsProductId'}",(text) ->
         ractive.set \kds, convert-kds text

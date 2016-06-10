@@ -28,11 +28,12 @@ server.route do
   handler:
     file: "./public/index.html"
 
-server.route do
-  path: "/app.ls"
+server.route do 
+  path: "/app/{f*}"
   method: "GET"
   handler:
-    file: "./public/app.ls"
+    directory:
+      path: "./public/app"
 
 server.route do
   path: "/scripts/{f*}"

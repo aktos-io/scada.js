@@ -9,7 +9,7 @@
     <script src="scripts/prelude-browser-min.js"></script>
     <script type="text/ls" src="RawMaterial-Supplier_Score.ls"></script>
     <script src="scripts/jquery-1.12.0.min.js"></script>
-    <script src="scripts/jQuery.Soap.js"></script> 
+    <script src="scripts/jQuery.Soap.js"></script>
 
 
 </head>
@@ -50,9 +50,9 @@
         {{/kds}}
         {{#if selected }}
             <text intro-outro='fade' y='1'>Score: {{selected["value"]}}</text>
-            <span></span> 
+            <span></span>
         {{/if}}
-       
+
 
     </script>
 
@@ -62,12 +62,12 @@
         <svg viewBox='0 0 100 100'>
           <g transform='translate(50,50)'>
             {{# getSegments( scores ) :i}}
-              <polygon on-hover='select:{{id}}' class='donut-segment' fill='{{ colors[ id["id"] ] }}' on-mouseover='set("selected",id)' 
+              <polygon on-hover='select:{{id}}' class='donut-segment' fill='{{ colors[ id["id"] ] }}' on-mouseover='set("selected",id)'
                 on-mouseout='set("selected",null)'
                 opacity='{{ !selected ? 1 : ( selected === id ? 1 : 0.4 ) }}'
                 points='{{ getSegmentPoints( ., 20, 50, c ) }}'
               >
-            {{/ segments }} 
+            {{/ segments }}
 
           </g>
         </svg>
@@ -79,13 +79,13 @@
             float: left;
             margin: 0 0 1em 0;
         }
-        
+
         .box:after {
             display: block;
             content: '';
             padding-bottom: 80%;
         }
-        
+
         svg {
             position: absolute;
             width: 100%;
@@ -95,7 +95,7 @@
             -moz-box-sizing: border-box;
             box-sizing: border-box;
         }
-        
+
         polygon {
             stroke: white;
             stroke-width: 1;
@@ -105,29 +105,29 @@
             -o-transition: opacity 0.2s;
             transition: opacity 0.2s;
         }
-        
+
         .label {
             position: absolute;
             bottom: 0;
             width: 100%;
             text-align: center;
         }
-        
+
         <!-- p {
             text-align: center;
         }
-        
+
         --> ul {
             list-style: none;
             margin: 0;
             padding: 0;
         }
-        
+
         li {
             display: inline-block;
             margin: 0 0 0 1em;
         }
-        
+
         .block {
             position: relative;
             top: 0.1em;
@@ -137,7 +137,7 @@
             margin: 0 0.1em 0 0;
             border-radius: 50%;
         }
-        
+
         #myProgress {
             position: relative;
             margin-top: 0px;
@@ -145,7 +145,7 @@
             height: 10px;
             background-color: #ddd;
         }
-        
+
         #myBar {
             position: absolute;
             width: 0%;
