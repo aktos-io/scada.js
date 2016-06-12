@@ -18,6 +18,16 @@ html(class="no-js", lang="en")
       content="width=device-width; target-densitydpi=device-dpi; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"
     )
     link(rel="stylesheet", href="stylesheets/app.css")
+        
+    script.
+        var myEvent = window.attachEvent || window.addEventListener;
+        var chkevent = window.attachEvent ? 'onbeforeunload' : 'beforeunload'; /// make IE7, IE8 compatable
+
+        myEvent(chkevent, function(e) { // For >=IE7, Chrome, Firefox
+            var confirmationMessage = ' ';  // a space
+            (e || window.event).returnValue = confirmationMessage;
+            return confirmationMessage;
+        });
   body
 
     block loading
