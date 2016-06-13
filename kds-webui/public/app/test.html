@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang='en-GB'>
+
+<head>
+    <meta charset='utf-8'>
+    <title>Raw Material-Supplier Score</title>
+    <script src="scripts/ractive.js"></script>
+    <script src="scripts/livescript.js"></script>
+    <script src="scripts/prelude-browser-min.js"></script>
+    <script type="text/ls" src="test.ls"></script>
+    <script src="scripts/jquery-1.12.0.min.js"></script>
+    <script src="scripts/jQuery.Soap.js"></script>
+</head>
+
+<body style="margin:0px;">
+    <h1>test123</h1>
+    <div id='example_container'></div>
+    <script id='donutTemplate' type='text/ractive'>
+        <br><br> {{#kds}}
+        <div class='box'>
+            <!-- the donut chart -->
+            <donutchart data='{{scores}}' selected='{{id}}' test="naber"  delay='{{ i * 50 }}' style='width: 16.666%;' on-select='select' />
+        </div>
+        {{/kds}}
+        {{#if selected }}
+            <text intro-outro='fade' y='1'>Score: {{selected["value"]}}</text>
+            <span></span>
+        {{/if}}
+    </script>
+    <script id='donutchart' type='text/ractive'>
+        <p> burası components: {{test}} </p> 
+        <svg viewBox='0 0 100 100'>
+          <g transform='translate(50,50)'>
+            {{# getSegments( scores ) :i}}
+              <polygon on-hover='select:{{id}}' class='donut-segment' fill='{{ colors[ id["id"] ] }}' on-mouseover='set("selected",id)'
+                on-mouseout='set("selected",null)'
+                opacity='{{ !selected ? 1 : ( selected === id ? 1 : 0.4 ) }}'
+                points='{{ getSegmentPoints( ., 20, 50 ) }}'
+              >
+            {{/ segments }}
+          </g>
+        </svg>
+    </script>
+    <style>
+        .box {
+            position: relative;
+            width: 15%;
+            float: left;
+            margin: 0 0 1em 0;
+        }
+
+        .box:after {
+            display: block;
+            content: '';
+            padding-bottom: 80%;
+        }
+    </style>
+    <script>
+        require("LiveScript").go()
+    </script>
+</body>
+</html>
