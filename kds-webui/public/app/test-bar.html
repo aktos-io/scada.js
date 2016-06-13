@@ -18,6 +18,7 @@
   </div>
 
     <h1>test123</h1>
+
     <div id='example_container'></div>
     <script id='donutTemplate' type="text/ractive">
         <select value='{{ kdsProductId }}' on-change='getKdsData'>
@@ -26,21 +27,20 @@
             <option value='{{ .["id"] }}'>{{num}} is {{ .["name"] }}</option>
           {{/ products }}
         </select>
-        <td>Selected: {{kdsProductId}} </td>
-        <barchart />
+        <p>Selected: {{kdsProductId}} </p>
+        <barchart val="{{kdsProductId}}"/>
     </script>
 
     <script id='chart' type='text/ractive'>
-
     <svg class="chart" width="420" height="150" aria-labelledby="title desc" role="img">
       <title id="title">A bar chart showing information</title>
       <desc id="desc">4 apples; 8 bananas; 15 kiwis; 16 oranges; 23 lemons</desc>
-      {{#each graphData:i}}
+      {{#each getGraphData(val):i}}
       <g class="bar">
         <rect width="{{amount*10}}"  height="19" y="{{i*20}}"></rect>
         <text x="{{amount*10+5}}" y="{{i*20+8}}" dy=".35em">{{amount}} {{reason}}</text>
       </g>
-      {{/each}}
+      {{/each }}
     </svg>
 
     </script>

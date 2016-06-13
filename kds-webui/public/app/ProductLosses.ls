@@ -67,7 +67,7 @@ convert-kds = (x) ->
 
 get-kds-data = ->
     console.log "getting kds data..."
-    selected-id = ractive.get 'kdsProductId' |> parse-int 
+    selected-id = ractive.get 'kdsProductId' |> parse-int
     selected-list = [.. for kds-data when ..product-id is selected-id]
     ractive.set \kds selected-list
     return
