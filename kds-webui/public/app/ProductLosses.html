@@ -44,13 +44,16 @@
         {{/kds}}
 
         <svg class="chart" width="420" height="150" aria-labelledby="title desc" role="img">
-          <title id="title">A bar chart showing information</title>
-          <desc id="desc">4 apples; 8 bananas; 15 kiwis; 16 oranges; 23 lemons</desc>
+          <title id="title">Lost Amount</title>
+          <desc id="desc">ProductLosses: Reasons - Amount</desc>
           {{#kds:i}}
           <g class="bar">
-            <rect width="{{amount*10}}"  height="19" y="{{i*20}}"></rect>
-            <text x="{{amount*10+5}}" y="{{i*20+8}}" dy=".35em">{{amount}} {{reason}}</text>
+            <text x="10" y="{{i*20+8}}" dy=".35em">{{reason}}</text>
+            <rect width="{{amount*10}}"  height="19" x="160" y="{{i*20}}"></rect>
+            <text x="{{amount*10+175}}" y="{{i*20+9}}" dy=".35em">{{amount}}</text>
           </g>
+          <line id="y_axis" x1="160" x2="160" y1="{{i*20+20}}" y2="0" stroke="orange" fill="transparent" stroke-width="2"/><span>Reasons</span>
+          <line id="x_axis "x1="160" x2="500" y1="{{i*20+20}}" y2="{{i*20+20}}" stroke="orange" fill="transparent" stroke-width="2"/><span>Amount</span>
           {{/kds}}
         </svg>
 

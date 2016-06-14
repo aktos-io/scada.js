@@ -34,7 +34,14 @@ kds-data=
       amount:12
       reason:"hava sıcaklıgı"
       date:4
-
+    * product-id: 2426
+      amount:12
+      reason:"hava sıcaklıgı"
+      date:4
+    * product-id: 2426
+      amount:12
+      reason:"hava sıcaklıgı"
+      date:4      
 ractive=new Ractive do
     el: '#example_container'
     template: '#donutTemplate'
