@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang='en-GB'>
+
+<head>
+    <meta charset='utf-8'>
+    <title>TEST PAGE</title>
+    <script src="scripts/ractive.js"></script>
+    <script src="scripts/livescript.js"></script>
+    <script src="scripts/prelude-browser-min.js"></script>
+    <script type="text/ls" src="table.ls"></script>
+    <script src="scripts/jquery-1.12.0.min.js"></script>
+    <script src="scripts/jQuery.Soap.js"></script>
+</head>
+
+<body style="margin:0px;">
+
+    <h1>test123</h1>
+
+    <div id='example_container'></div>
+        <script id='mainTemplate' type="text/ractive">
+            <table class='superheroes'>
+                <tr>
+                  <th>#</th>
+                  <th>Superhero name</th>
+                  <th>Real name</th>
+                  <th>Superpower</th>
+                </tr>
+              {{#each superheroes:i}}
+                <tr>
+                  <td>{{i+1}}</td>
+                  <td><input value='{{name}}'></td>
+                  <td><input value='{{realname}}'></td>
+                  <td><input value='{{power}}'></td>
+                </tr>
+              {{/each}}
+            </table>
+            <br/>
+            <table class='superheroes'>
+                <tr>
+                  <th>#</th>
+                  <th>Superhero name</th>
+                  <th>Real name</th>
+                  <th>Superpower</th>
+                </tr>
+              {{#each superheroes:i}}
+                <tr>
+                  <td>{{i+1}}</td>
+                  <td><input value='{{name}}'></td>
+                  <td><input value='{{realname}}'></td>
+                  <td><input value='{{power}}'></td>
+                </tr>
+              {{/each}}
+            </table>
+
+    </script>
+
+
+    <style>
+    body {
+        background-color: gray;
+    }
+    </style>
+
+    <script>
+        require("LiveScript").go()
+    </script>
+
+</body>
+</html>
