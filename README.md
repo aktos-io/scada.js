@@ -1,10 +1,10 @@
-# INSTALL
+# INSTALL KDS-WEBUI
 
 1. install Node.js
 2. install NPM
-3. `npm install`
-4. `npm install -g livescript`
-5. `npm i --save http-proxy`
+3. `cd kds-webui`
+4. `npm install`
+5. `npm install -g livescript`
 
 # RUN KDS-WEBUI
 
