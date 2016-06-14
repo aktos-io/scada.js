@@ -1,31 +1,58 @@
-{split, take, join, lists-to-obj} = require 'prelude-ls'
+{split, take, join, lists-to-obj, sum} = require 'prelude-ls'
 Ractive.DEBUG = /unminified/.test -> /*unminified*/
 
 kds-data=
     * product-id: 2426
       amount:14
-      reason:"ıı bozuk"
+      reason:"sebep aa"
       date:2
     * product-id: 2426
       amount:18
-      reason:"aa bozuk"
+      reason:"sebep bb"
+      date:5
+    * product-id: 2426
+      amount:11
+      reason:"sebep cc"
+      date:5
+    * product-id: 2426
+      amount:40
+      reason:"sebep dd"
       date:5
     * product-id: 2458
-      amount:11
+      amount:30
       reason:"ie bozuk"
-      date:2
+      date:15
     * product-id: 2458
-      amount:5
+      amount:10
       reason:"ui bozuk"
-      date:4
+      date:20
 
 StackedBarChart = Ractive.extend do
     template: '#stackedchart'
     data:
+        get-color: (order) ->
+            colors = <[ red yellow green blue gray ]>
+            console.log "color: ", colors[order]
+            colors[order]
+
         get-graph-data:(val) ->
             console.log "getting graph data...val: ", val
             selected-id = val |> parse-int
             selected-list = [.. for kds-data when ..product-id is selected-id]
+
+            r = []
+            for i of selected-list
+                console.log "i : ", i
+                data-point = selected-list[i]
+
+                # add cumulative starting coordinate to each data point
+                data-point.start-x = sum [..amount for (take i, selected-list)]
+                #console.log "sum: ", data-point.start-x
+
+                r ++= [data-point]
+
+            #console.log "r is: ", r
+            r
 
 ractive = new Ractive do
     el: '#example_container'

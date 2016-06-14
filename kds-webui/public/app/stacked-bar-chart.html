@@ -13,9 +13,6 @@
 </head>
 
 <body style="margin:0px;">
-    <div id="myProgress" style="display:none;">
-        <div id="myBar"></div>
-    </div>
 
     <h1>test123</h1>
 
@@ -28,34 +25,33 @@
         {{/ products }}
         </select>
         <p>Selected: {{kdsProductId}} </p>
-        <stackedbarchart val="{{kdsProductId}}"/>
+        <!-- <stackedbarchart val="{{kdsProductId}}"/> -->
+        <stackedbarchart val="2426"/>
+        <stackedbarchart val="2458"/>
     </script>
 
     <script id='stackedchart' type='text/ractive'>
-        <svg class="chart" width="420" height="150" aria-labelledby="title desc" role="img">
+        <svg class="chart" width="420" height="120" aria-labelledby="title desc" role="img">
         {{#each getGraphData(val):i}}
-        <g class="bar">
-        <rect width="{{amount*10}}"  height="19" y="{{i*20}}"></rect>
-        <text x="{{amount*10+5}}" y="{{i*20+8}}" dy=".35em">{{amount}} {{reason}}</text>
-        </g>
+            <g class="bar">
+                <rect width="{{amount*5}}"  height="55" y="0" x="{{startX*5}}" style="fill: {{ getColor(i) }}" ></rect>
+                <text x="{{startX*5}}" y="40"  dy=".35em">{{amount}}</text>
+            </g>
         {{/each }}
         </svg>
     </script>
 
     <style>
     .bar {
-        fill: red; /* changes the background */
-        height: 21px;
-        transition: fill .3s ease;
         cursor: pointer;
         font-family: Helvetica, sans-serif;
     }
     .bar text {
-        color: black;
+        color: yellow;
     }
     .bar:hover,
     .bar:focus {
-        fill: black;
+        fill: green;
     }
     </style>
 
