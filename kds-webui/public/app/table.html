@@ -5,6 +5,7 @@
     <meta charset='utf-8'>
     <title>TEST PAGE</title>
     <script src="scripts/ractive.js"></script>
+    <script src="scripts/ractive.single-double-click.js"></script>
     <script src="scripts/livescript.js"></script>
     <script src="scripts/prelude-browser-min.js"></script>
     <script type="text/ls" src="table.ls"></script>
@@ -28,7 +29,7 @@
                   <th>tutar</th>
                 </tr>
               {{#each table:i}}
-                <tr class="input-line" on-click="activated">
+                <tr class="input-line" on-doubleclick="activated">
                     <td>{{#if clickedIndex === i }}<span class="table-control">edit</span>{{/if}}</td>
                     <td>{{i+1}}</td>
                     <td><div class="input" contenteditable="{{editable}}" value='{{siparisNo}}'></div></td>

@@ -33,6 +33,6 @@ ractive = new Ractive do
 
 ractive.on do
     activated: (...args) ->
-        index = args.0.index.i
-        console.log "activated!!!", index
+        index = (args.0.keypath |> split '.').1 |> parse-int
+        console.log "activated!!!", index, args
         ractive.set \clickedIndex, index
