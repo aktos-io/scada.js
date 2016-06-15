@@ -61,7 +61,7 @@ ractive = new Ractive do
         kds:''
         products:[9]
     components:
-        stackedbarchart: StackedBarChart
+        'stacked-bar-chart': StackedBarChart
 
 ractive.on do
     select : (event,id)->if event.hover then @set 'id',id else @set 'id',null

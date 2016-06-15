@@ -1,7 +1,7 @@
 {split, take, join, lists-to-obj, sum} = require 'prelude-ls'
 Ractive.DEBUG = /unminified/.test -> /*unminified*/
 
-table-data=
+data-from-webservice =
     * siparis-no: "123"
       tarih: "10.06"
       sube: "orası-burası-şurası"
@@ -23,16 +23,51 @@ table-data=
       urun-sayisi: "3"
       tutar: "50"
 
-ractive = new Ractive do
-    el: '#example_container'
-    template: '#mainTemplate'
+
+decorate-table-data = (table-data) ->
+    #[{siparis-no: ..siparis-no, tarih: ..tarih, sube: ..sube, urun-sayisi: ..urun-sayisi, tutar: "#{..tutar} TL"} for table-data]
+    #console.log "table-data..." , table-data
+    [[..tarih, ..siparis-no, ..sube, ..urun-sayisi, ..tutar] for table-data]
+
+InteractiveTable = Ractive.extend do
+    oninit: ->
+        col-list = @get \cols |> split ','
+        @set \columnList, col-list
+
+        @on do
+            activated: (...args) ->
+                index = (args.0.keypath |> split '.').1 |> parse-int
+                console.log "activated!!!", args, index
+                @set \clickedIndex, index
+
+            hide-menu: ->
+                console.log "clicked to hide", (@get \clickedIndex)
+                @set \clickedIndex, -1
+
+    template: '#interactive-table'
     data:
-        table: table-data
         editable: false
         clicked-index: void
+        cols: void
+        column-list: void
 
-ractive.on do
-    activated: (...args) ->
-        index = (args.0.keypath |> split '.').1 |> parse-int
-        console.log "activated!!!", index, args
-        ractive.set \clickedIndex, index
+
+x = decorate-table-data data-from-webservice
+
+ractive = new Ractive do
+    el: '#main-output'
+    template: '#main-template'
+    data:
+        my-table-data: x
+        my-table-data2: x
+    components:
+        'interactive-table': InteractiveTable
+
+
+sleep = (ms, f) -> set-timeout f, ms
+
+ractive.on \complete, ->
+    <- :lo(op) ->
+        console.log "x is: ", x.2.3
+        <- sleep 2000ms
+        lo(op)

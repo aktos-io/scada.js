@@ -17,61 +17,59 @@
 
     <h1>test123</h1>
 
-    <div id='example_container'></div>
-        <script id='mainTemplate' type="text/ractive" >
-            <table class='table'>
-                <tr>
-                  <th>#</th>
-                  <th>siparis no</th>
-                  <th>tarih</th>
-                  <th>şube</th>
-                  <th>ürün-sayısı</th>
-                  <th>tutar</th>
-                </tr>
-              {{#each table:i}}
+    <div id='main-output'></div>
+    <script id='main-template' type="text/ractive" >
+
+        <interactive-table cols="Tarih, Sipariş No, Şube, Ürün Sayısı, Tutar (TL)", data="{{ myTableData }}" />
+        <interactive-table cols="Tarih, Sipariş NUMARASI, Şube, Ürün HELEHELE, Tutar (USD)", data="{{ myTableData2 }}" />
+    </script>
+
+    <script id='interactive-table' type='text/ractive'>
+        <table class='table'>
+            <tr>
+                <th>...</th>
+                <th>#</th>
+                {{#each columnList}}
+                    <td> {{ . }}</td>
+                {{/each}}
+            </tr>
+            {{#each data:i}}
                 <tr class="input-line" on-doubleclick="activated" {{#if editable && (clickedIndex === i)}} style="background-color: white" {{/if}}>
                     <td>
-                        {{#if clickedIndex === i }}<span class="table-control">edit</span>
-                        <input type='checkbox' checked='{{editable}}'>{{/if}}
+                        {{#if clickedIndex === i }}
+                            <span class="table-control">edit</span>
+                            <input type='checkbox' checked='{{editable}}'>
+                            <div on-click="hideMenu">Hide</div>
+                        {{/if}}
                     </td>
                     <td>{{i+1}}</td>
-                    <td><div class="input" contenteditable="{{editable && (clickedIndex === i)}}" value='{{siparisNo}}'></div></td>
-                    <td><div class="input" contenteditable="{{editable && (clickedIndex === i)}}" value='{{tarih}}'></div></td>
-                    <td><div class="input" contenteditable="{{editable && (clickedIndex === i)}}" value='{{sube}}'></div></td>
-                    <td><div class="input" contenteditable="{{editable && (clickedIndex === i)}}" value='{{urunSayisi}}'></div></td>
-                    <td><div class="input" contenteditable="{{editable && (clickedIndex === i)}}" value='{{tutar}}'></div></td>
+                    {{#each columnList:j}}
+                        <td><div class="input" contenteditable="{{ editable && (clickedIndex === i) }}" value='{{ data[i][j] }}'></div></td>
+                    {{/each}}
                 </tr>
-              {{/each}}
-            </table>
-            <br/>
-            <table class='table'>
-              {{#each table:i}}
-                <tr class="input-line">
-                    <td>{{siparisNo}}</td>
-                    <td>{{tarih}}</td>
-                    <td>{{sube}}</td>
-                    <td>{{urunSayisi}}</td>
-                    <td>{{tutar}}</td>
-                </tr>
-              {{/each}}
-            </table>
-        </script>
+            {{/each}}
+        </table>
+    </script>
+
     <style>
-    body {
-        background-color: gray;
-    }
-    .input-line {
-        color: black;
-    }
-    .input-line div:hover{
-        background-color: yellowgreen;
-    }
-    .input {
-        display: inline;
-    }
-    .table-control {
-        background-color: red;
-    }
+        body {
+            background-color: gray;
+        }
+        .input-line {
+            color: black;
+        }
+        .input-line div:hover{
+            background-color: yellowgreen;
+        }
+        .input {
+            display: table-cell;
+        }
+        .table-control {
+            background-color: red;
+        }
+        .table td{
+            border: 1px solid black;
+        }
     </style>
 
     <script>
