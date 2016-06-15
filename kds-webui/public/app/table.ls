@@ -31,5 +31,6 @@ ractive = new Ractive do
         editable: false
 
 ractive.on do
-    activate: ->
-        console.log "testing checkbox..."
+    activated: (...args) ->
+        index = args.0.index.i
+        console.log "activated!!!", index

@@ -28,28 +28,7 @@
                   <th>tutar</th>
                 </tr>
               {{#each table:i}}
-                <tr  class="input-line" on-click="activate" >
-                  <td>{{i+1}}</td>
-                  <div class="input" contenteditable="{{editable}}" value='{{siparisNo}}'></div>
-                  <div class="input" contenteditable="{{editable}}" value='{{tarih}}'></div>
-                  <div class="input" contenteditable="{{editable}}" value='{{sube}}'></div>
-                  <div class="input" contenteditable="{{editable}}" value='{{urunSayisi}}'></div>
-                  <div class="input" contenteditable="{{editable}}" value='{{tutar}}'></div>
-                </tr>
-              {{/each}}
-            </table>
-            <br/>
-            <table class='table'>
-                <tr>
-                  <th>#</th>
-                  <th>siparis no</th>
-                  <th>tarih</th>
-                  <th>şube</th>
-                  <th>ürün-sayısı</th>
-                  <th>tutar</th>
-                </tr>
-              {{#each table:i}}
-                <tr class="input-line" on-click="activate" >
+                <tr  class="input-line" on-click="activated">
                   <td>{{i+1}}</td>
                   <div class="input" contenteditable="{{editable}}" value='{{siparisNo}}'></div>
                   <div class="input" contenteditable="{{editable}}" value='{{tarih}}'></div>
@@ -62,9 +41,6 @@
             <br/>
             <input type='checkbox' checked='{{editable}}'> Input is {{editable ? "editable" : "not editable"}}
         </script>
-
-
-
     <style>
     body {
         background-color: gray;
