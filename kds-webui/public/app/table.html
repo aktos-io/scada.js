@@ -30,18 +30,20 @@
                 </tr>
               {{#each table:i}}
                 <tr class="input-line" on-doubleclick="activated">
-                    <td>{{#if clickedIndex === i }}<span class="table-control">edit</span>{{/if}}</td>
+                    <td>
+                        {{#if clickedIndex === i }}<span class="table-control">edit</span>
+                        <input type='checkbox' checked='{{editable}}'>{{/if}}
+                    </td>
                     <td>{{i+1}}</td>
-                    <td><div class="input" contenteditable="{{editable}}" value='{{siparisNo}}'></div></td>
-                    <td><div class="input" contenteditable="{{editable}}" value='{{tarih}}'></div></td>
-                    <td><div class="input" contenteditable="{{editable}}" value='{{sube}}'></div></td>
-                    <td><div class="input" contenteditable="{{editable}}" value='{{urunSayisi}}'></div></td>
-                    <td><div class="input" contenteditable="{{editable}}" value='{{tutar}}'></div></td>
+                    <td><div class="input" contenteditable="{{editable && (clickedIndex === i)}}" value='{{siparisNo}}'></div></td>
+                    <td><div class="input" contenteditable="{{editable && (clickedIndex === i)}}" value='{{tarih}}'></div></td>
+                    <td><div class="input" contenteditable="{{editable && (clickedIndex === i)}}" value='{{sube}}'></div></td>
+                    <td><div class="input" contenteditable="{{editable && (clickedIndex === i)}}" value='{{urunSayisi}}'></div></td>
+                    <td><div class="input" contenteditable="{{editable && (clickedIndex === i)}}" value='{{tutar}}'></div></td>
                 </tr>
               {{/each}}
             </table>
             <br/>
-            <input type='checkbox' checked='{{editable}}'> Input is {{editable ? "editable" : "not editable"}}
         </script>
     <style>
     body {
