@@ -28,7 +28,7 @@
                   <th>tutar</th>
                 </tr>
               {{#each table:i}}
-                <tr on-click="activate" >
+                <tr  class="input-line" on-click="activate" >
                   <td>{{i+1}}</td>
                   <div class="input" contenteditable="{{editable}}" value='{{siparisNo}}'></div>
                   <div class="input" contenteditable="{{editable}}" value='{{tarih}}'></div>
@@ -49,7 +49,7 @@
                   <th>tutar</th>
                 </tr>
               {{#each table:i}}
-                <tr on-click="activate" >
+                <tr class="input-line" on-click="activate" >
                   <td>{{i+1}}</td>
                   <div class="input" contenteditable="{{editable}}" value='{{siparisNo}}'></div>
                   <div class="input" contenteditable="{{editable}}" value='{{tarih}}'></div>
@@ -69,11 +69,11 @@
     body {
         background-color: gray;
     }
-    input {
-        color: #0B2161
+    .input-line {
+        color: black;
     }
-    input:focus{
-        color: #FF0040
+    .input-line div:hover{
+        background-color: yellowgreen;
     }
     .input {
       display: table-cell;
