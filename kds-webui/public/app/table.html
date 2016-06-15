@@ -29,7 +29,7 @@
                   <th>tutar</th>
                 </tr>
               {{#each table:i}}
-                <tr class="input-line" on-doubleclick="activated">
+                <tr class="input-line" on-doubleclick="activated" {{#if editable && (clickedIndex === i)}} style="background-color: white" {{/if}}>
                     <td>
                         {{#if clickedIndex === i }}<span class="table-control">edit</span>
                         <input type='checkbox' checked='{{editable}}'>{{/if}}
