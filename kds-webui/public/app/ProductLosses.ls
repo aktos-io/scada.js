@@ -116,9 +116,9 @@ getSoap = ->
                     id : y
                     name : x
         error : (SOAPResponse) ->
-            alert "�r�n listesi al�namad�.\n Servise Ula��lam�yor."
+            alert "Urun listesi alınamadı.\n Servise Ulasılamıyor."
 
-# js2ls ile d�zenlenen k�s�m
+# js2ls ile duzenlenen kisim
 (($) ->
   elem = document.getElementById 'myBar'
   elem2 = document.getElementById 'myProgress'
