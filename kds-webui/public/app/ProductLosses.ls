@@ -1,4 +1,4 @@
-{split, take, join, lists-to-obj} = require 'prelude-ls'
+{split, take, join, lists-to-obj, sum} = require 'prelude-ls'
 Ractive.DEBUG = /unminified/.test -> /*unminified*/
 
 kds-data=
@@ -26,33 +26,46 @@ kds-data=
       amount:25
       reason:"hammadde bozuk"
       date:2
-    * product-id:2458
-      amount:15
-      reason:"hammadde bozuk"
-      date:6
-    * product-id: 2426
-      amount:12
-      reason:"hava sıcaklıgı"
-      date:4
-    * product-id: 2426
-      amount:12
-      reason:"hava sıcaklıgı"
-      date:4
-    * product-id: 2426
-      amount:12
-      reason:"hava sıcaklıgı"
-      date:4      
-ractive=new Ractive do
+
+StackedBarChart = Ractive.extend do
+    template: '#stackedchart'
+    data:
+        get-color: (order) ->
+            colors = <[ red yellow green blue gray ]>
+            console.log "color: ", colors[order]
+            colors[order]
+
+        get-graph-data:(val) ->
+            console.log "getting graph data...val: ", val
+            selected-id = val |> parse-int
+            selected-list = [.. for kds-data when ..product-id is selected-id]
+
+            r = []
+            for i of selected-list
+                console.log "i : ", i
+                data-point = selected-list[i]
+
+                # add cumulative starting coordinate to each data point
+                data-point.start-x = sum [..amount for (take i, selected-list)]
+                #console.log "sum: ", data-point.start-x
+
+                r ++= [data-point]
+
+            console.log "r is: ", r
+            r
+
+ractive = new Ractive do
     el: '#example_container'
-    template: '#donutTemplate'
+    template: '#mainTemplate'
     data:
         kds:''
         products:[9]
-
+    components:
+        stackedbarchart: StackedBarChart
 
 ractive.on do
     select : (event,id)->if event.hover then @set 'id',id else @set 'id',null
-    get-kds-data:(event,id) -> get-kds-data!
+    get-kds-data: (event,id) -> ractive.set "kds", kds-data
 
 products=
     * id: 2426
@@ -60,17 +73,9 @@ products=
     * id: 2458
       name: "patates"
 
-
 ractive.on 'complete', !->
     get-soap!
     ractive.set \products products
-
-convert-kds = (x) ->
-    score-keys = <[ score1 score2 score3 score4 score5 ]>
-    a=[{supplier-code: ..SupplierCode, score: lists-to-obj score-keys, (split '' ..Score)}  for x.Data.0.Scores]
-    b=[{supplier-name: ..supplier-code, scores: [ {id: key ,value: parse-int ..score[key]} for key of ..score] } for a ]
-    console.log b
-    b
 
 get-kds-data = ->
     console.log "getting kds data..."
@@ -80,7 +85,6 @@ get-kds-data = ->
     return
     $.get "http://192.168.9.111/DemeterKds/api/productlosses/ProductLoss?productcode=#{ractive.get 'kdsProductId'}",(text) ->
         ractive.set \kds, convert-kds text
-
 
 getSoap = ->
 
@@ -114,7 +118,6 @@ getSoap = ->
         error : (SOAPResponse) ->
             alert "�r�n listesi al�namad�.\n Servise Ula��lam�yor."
 
-
 # js2ls ile d�zenlenen k�s�m
 (($) ->
   elem = document.getElementById 'myBar'
@@ -138,4 +141,4 @@ getSoap = ->
             return ), false
       req
   }
-  return ) jQuery
+  return ) jQuery        
