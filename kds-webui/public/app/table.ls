@@ -29,8 +29,10 @@ ractive = new Ractive do
     data:
         table: table-data
         editable: false
+        clicked-index: void
 
 ractive.on do
     activated: (...args) ->
         index = args.0.index.i
         console.log "activated!!!", index
+        ractive.set \clickedIndex, index
