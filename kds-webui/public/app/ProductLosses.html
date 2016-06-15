@@ -23,7 +23,7 @@
     <h1>Ractive test</h1>
 
     <div id='example_container'></div>
-    <script id='donutTemplate' type="text/ractive">
+    <script id='mainTemplate' type="text/ractive">
 
         <h3> Select Products </h3>
 
@@ -42,8 +42,10 @@
             <li>Reason:    {{reason}}</li>
             <br>
         {{/kds}}
+         
+        <stackedbarchart val="{{kdsProductId}}"/>
 
-        <svg class="chart" width="420" height="150" aria-labelledby="title desc" role="img">
+       <!--  <svg class="chart" width="420" height="150" aria-labelledby="title desc" role="img">
           <title id="title">Lost Amount</title>
           <desc id="desc">ProductLosses: Reasons - Amount</desc>
           {{#kds:i}}
@@ -55,12 +57,21 @@
           <line id="y_axis" x1="160" x2="160" y1="{{i*20+20}}" y2="0" stroke="orange" fill="transparent" stroke-width="2"/><span>Reasons</span>
           <line id="x_axis "x1="160" x2="500" y1="{{i*20+20}}" y2="{{i*20+20}}" stroke="orange" fill="transparent" stroke-width="2"/><span>Amount</span>
           {{/kds}}
-        </svg>
+        </svg> -->
 
     </script>
-
+    <script id='stackedchart' type='text/ractive'>
+        <svg class="chart" width="420" height="120" aria-labelledby="title desc" role="img">
+        {{#each getGraphData(val):i}}
+            <g class="bar">
+                <rect width="{{amount*5}}"  height="55" y="0" x="{{startX*5}}" style="fill: {{ getColor(i) }}" ></rect>
+                <text x="{{startX*5}}" y="40"  dy=".35em">{{amount}}</text>
+            </g>
+        {{/each }}
+        </svg>
+    </script>
 <style>
-.bar {
+<!-- .bar {
   fill: red; /* changes the background */
   height: 21px;
   transition: fill .3s ease;
@@ -77,7 +88,7 @@
 .bar:hover text,
 .bar:focus text {
   fill: red;
-}
+} -->
 svg {
 	width: 100%;
 	height: 100%;
@@ -101,6 +112,17 @@ svg {
     width: 0%;
     height: 100%;
     background-color: #4CAF50;
+}
+.bar {
+    cursor: pointer;
+    font-family: Helvetica, sans-serif;
+}
+.bar text {
+    color: yellow;
+}
+.bar:hover,
+.bar:focus {
+    fill: green;
 }
 </style>
 
