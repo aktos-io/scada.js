@@ -10,6 +10,6 @@
 
 1. `cd kds-webui`
 2. `lsc server.ls`
-3. `firefox http://localhost:5000`
+3. `firefox http://localhost:4001`
 
 

@@ -2,7 +2,7 @@ hapi = require "hapi"
 http-proxy = require 'http-proxy'
 server = new hapi.Server!
 server.connection do
-  port: 4000
+  port: 4001
   routes:
     cors: true
 
