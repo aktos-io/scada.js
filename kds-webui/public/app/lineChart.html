@@ -16,69 +16,87 @@
  <div id="myProgress" style="display:none;">
         <div id="myBar"></div>
     </div>
-    <h1>test Line Chart</h1>
+    <h1>test123</h1>
 
-    <div id='example_container'></div>
-        <script id='mainTemplate' type="text/ractive">
-        <select value='{{ kdsProductId }}' on-change='getKdsData'>
-        <option value='all' >All</option>
-        {{# products:num }}
-        <option value='{{ .["id"] }}'>{{num}} is {{ .["name"] }}</option>
-        {{/ products }}
-        </select>
-        <p>Selected: {{kdsProductId}} </p>
-        <linechart val="{{kdsProductId}}"/>
-       <!--  <stackedbarchart val="2426"/>
-        <stackedbarchart val="2458"/> -->
+    <div id='main-output'></div>
+    <script id='main-template' type="text/ractive">
+        <linechart points="{{points}}" />
+
     </script>
 
     <script id='linechart' type='text/ractive'>
 
-        <svg class="wrapper">
+    <svg viewBox="0 0 500 120" class="chart" >  
 
-      <!-- gradient - higher temperatures are redder, lower temperatures are bluer -->
-      <defs>
-        <linearGradient id='gradient' x2='0' y2='100%' gradientUnits='userSpaceOnUse'>
-          <stop offset='0%' stop-color='rgb(255,0,0)' />
-          <stop offset='100%' stop-color='rgb(0,0,255)' />
-        </linearGradient>
-      </defs>
+       <polyline
+         fill="none"
+         stroke="#0074d9"
+         stroke-width="2"
+         points="{{convertToSvgPoints()}}"
+       />
 
-      <!-- horizontal line representing freezing -->
-      <g transform='translate( 0, {{ yScale(0) }} )'>
-        <line class='freezing' x2='{{width}}'/>
-        <text class='freezing-label-bg' x='{{ xScale(6) }}' y='0.3em'>freezing</text>
-        <text class='freezing-label' x='{{ xScale(6) }}' y='0.3em'>freezing</text>
-      </g>
-
-      <!-- the band -->
-      <polygon fill='url(#gradient)' stroke='url(#gradient)' class='temperature-band' points='{{points}}'/>
-
-      {{#each temperatures :i}}
-        <!-- point markers for average highs -->
-        <g class='marker' transform='translate({{ xScale(i+0.5) }},{{ yScale(high) }})'>
-          <circle r='2'/>
-          <text y='-10'>{{ format(high) }}</text>
-        </g>
-
-
-      {{/each}}
     </svg>
-
     </script>
 
     <style>
-    .bar {
-        cursor: pointer;
-        font-family: Helvetica, sans-serif;
-    }
-    .bar text {
-        color: yellow;
-    }
-    .bar:hover,
-    .bar:focus {
-        fill: green;
-    }
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+.chart {
+  background: white;
+  width: 500px;
+  height: 100px;
+  border-left: 1px dotted #555;
+  border-bottom: 1px dotted #555;
+  padding: 20px 20px 20px 0;
+}
+
+body {
+  /* background: #ccc; */
+  padding: 20px;
+  display: flex;
+<!--   align-items: center;
+  justify-content: center; -->
+}
+
+body, html {
+  height: 100%;
+}
+
+.graph .labels.x-labels {
+  text-anchor: middle;
+}
+
+.graph .labels.y-labels {
+  text-anchor: end;
+}
+line {
+  height: 500px;
+  width: 800px;
+}
+
+.graph .grid {
+  stroke: #ccc;
+  stroke-dasharray: 0;
+  stroke-width: 1;
+}
+
+.labels {
+  font-size: 13px;
+}
+
+.label-title {
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 12px;
+  fill: black;
+}
+
+.data {
+  fill: red;
+  stroke-width: 1; 
+}
+
     </style>
 
     <script>
