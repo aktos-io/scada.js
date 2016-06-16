@@ -17,15 +17,7 @@
     <h1>test123</h1>
 
     <div id='example_container'></div>
-        <script id='mainTemplate' type="text/ractive">
-        <select value='{{ kdsProductId }}' on-change='getKdsData'>
-        <option value='all' >All</option>
-        {{# products:num }}
-        <option value='{{ .["id"] }}'>{{num}} is {{ .["name"] }}</option>
-        {{/ products }}
-        </select>
-        <p>Selected: {{kdsProductId}} </p>
-        <!-- <stackedbarchart val="{{kdsProductId}}"/> -->
+    <script id='mainTemplate' type="text/ractive">
         <stacked-bar-chart val="2426"/>
         <br/>
         <stacked-bar-chart val="2458"/>
@@ -43,17 +35,17 @@
     </script>
 
     <style>
-    .bar {
-        cursor: pointer;
-        font-family: Helvetica, sans-serif;
-    }
-    .bar text {
-        color: yellow;
-    }
-    .bar:hover,
-    .bar:focus {
-        fill: green;
-    }
+        .bar {
+            cursor: pointer;
+            font-family: Helvetica, sans-serif;
+        }
+        .bar text {
+            color: yellow;
+        }
+        .bar:hover,
+        .bar:focus {
+            fill: green;
+        }
     </style>
 
     <script>
