@@ -61,6 +61,8 @@ ractive=new Ractive do
     data:
         kds:kds-data
         my-data: [3,5,7,99]
+        my-data1: [4,5,12,1]
+        my-data2: [213,5,2,5]
         x: kds-data.scores
     components:
         piechart: PieChart

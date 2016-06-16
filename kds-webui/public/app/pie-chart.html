@@ -14,7 +14,9 @@
     <h1>Pie-Chart</h1>
     <div id='main-output'></div>
     <script id='main-template' type='text/ractive'>
-        <piechart names="Domates,Patates,Soğan,Mantar" values="{{myData}}" scores="{{x}}"/>
+        <div class="box"><piechart names="Domates,Patates,Soğan,Mantar" values="{{myData}}"/></div>
+        <div class="box"><piechart names="Kekik,Peynir,Zeytin,Mahmut" values="{{myData1}}"/></div>
+        <div class="box"><piechart names="Kamil,Muhittin,Süleyman,Ben" values="{{myData2}}"/></div>
     </script>
     <script id='pie-chart' type='text/ractive'>
         <svg viewBox='0 0 100 180'>
@@ -29,21 +31,20 @@
                 <rect transform='translate(0,{{i*10}})' width="5" height="5" style="fill:{{ colors[i] }};stroke-width:0.5;stroke:rgb(0,0,0)" />
                 <text transform='translate(10,{{i*10+5}})'  font-size="7">{{columnList[i]}}</text>
             </g>
-            <g transform='translate(46,57)'>
+            <g transform='translate(50,58)'>
                 {{#if selected === i}}
-                    <text text-anchor="middle" font-size="20">{{ .["value"] }}</text>
+                    <text text-anchor="middle"  style="font-weight: bold; font-family: monospace; font-size: 1.8em;">{{ .["value"] }}</text>
                 {{/if}}
             </g>
         {{/each segments}}
         </svg>
-
     </script>
     <style>
         .box {
             position: relative;
             width: 15%;
             float: left;
-            margin: 0 0 1em 0;
+            margin: 1em;
         }
         .box:after {
             display: block;
