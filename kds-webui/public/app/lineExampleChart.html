@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang='en-GB'>
+
+<head>
+    <meta charset='utf-8'>
+    <title>TEST PAGE</title>
+    <script src="scripts/ractive.js"></script>
+    <script src="scripts/livescript.js"></script>
+    <script src="scripts/prelude-browser-min.js"></script>
+    <script type="text/ls" src="lineChart.ls"></script>
+    <script src="scripts/jquery-1.12.0.min.js"></script>
+    <script src="scripts/jQuery.Soap.js"></script>
+</head>
+
+<body style="margin:0px;">
+ <div id="myProgress" style="display:none;">
+        <div id="myBar"></div>
+    </div>
+    <h1>test123</h1>
+
+    <div id='main-output'></div>
+    <script id='main-template' type="text/ractive">
+        <linechart points="{{points}}" />
+
+    </script>
+
+    <script id='linechart' type='text/ractive'>
+
+    <svg viewBox="0 0 500 120" class="chart" >  
+
+       <polyline
+         fill="none"
+         stroke="#0074d9"
+         stroke-width="2"
+         points="{{convertToSvgPoints()}}"
+       />
+
+    </svg>
+    </script>
+
+    <style>
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+.chart {
+  background: white;
+  width: 500px;
+  height: 100px;
+  border-left: 1px dotted #555;
+  border-bottom: 1px dotted #555;
+  padding: 20px 20px 20px 0;
+}
+
+body {
+  /* background: #ccc; */
+  padding: 20px;
+  display: flex;
+<!--   align-items: center;
+  justify-content: center; -->
+}
+
+body, html {
+  height: 100%;
+}
+
+.graph .labels.x-labels {
+  text-anchor: middle;
+}
+
+.graph .labels.y-labels {
+  text-anchor: end;
+}
+line {
+  height: 500px;
+  width: 800px;
+}
+
+.graph .grid {
+  stroke: #ccc;
+  stroke-dasharray: 0;
+  stroke-width: 1;
+}
+
+.labels {
+  font-size: 13px;
+}
+
+.label-title {
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 12px;
+  fill: black;
+}
+
+.data {
+  fill: red;
+  stroke-width: 1; 
+}
+
+    </style>
+
+    <script>
+        require("LiveScript").go()
+    </script>
+
+</body>
+</html>
