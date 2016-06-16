@@ -47,9 +47,9 @@ InteractiveTable = Ractive.extend do
     template: '#interactive-table'
     data:
         editable: false
-        clicked-index: void
-        cols: void
-        column-list: void
+        clicked-index: null
+        cols: null
+        column-list: null
 
 
 x = decorate-table-data data-from-webservice

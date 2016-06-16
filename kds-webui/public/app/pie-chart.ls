@@ -1,4 +1,5 @@
-{split, take, join, lists-to-obj} = require 'prelude-ls'
+{split, take, join, lists-to-obj, sum, sort} = require 'prelude-ls'
+sleep = (ms, f) -> set-interval f, ms
 Ractive.DEBUG = /unminified/.test -> /*unminified*/
 
 PieChart = Ractive.extend do
@@ -10,22 +11,24 @@ PieChart = Ractive.extend do
     init:(options)->
         @animate 'c' , Math.PI*2
     data:
-        names: void
-        column-list: void
+        selected: null
+        names: null
+        column-list: null
         c: 0
-        colors:{score1: '#08088A',score2: '#151515',score3: '#585858'}
-
+        colors: <[ red green blue yellow ]>
         getSegments:(data)->
-            console.log data
-            total=data.reduce(((previous,current)-> previous+current.value), 0)
-            data = data.slice!.sort ((a, b) -> b.value - a.value)
+            total = sum data
+            data = sort data
             start=0
-            segments=data.map((datum)->
-                size = datum.value / total
+            segments = data.map (x)->
+                size = x / total
                 end = start + size
-                segment={id:datum,value:datum.value,start: start,end: end}
+                segment=
+                    value: x
+                    start: start
+                    end: end
                 start:=end
-                segment)
+                segment
             console.log "segments: ", segments
             segments
 
@@ -57,7 +60,7 @@ ractive=new Ractive do
     template: '#main-template'
     data:
         kds:kds-data
-        my-data: [3,5,7]
+        my-data: [3,5,7,99]
         x: kds-data.scores
     components:
         piechart: PieChart
