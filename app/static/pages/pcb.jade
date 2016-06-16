@@ -59,12 +59,52 @@ style.
     .row.vcenter
       .col-md-offset-1.col-md-10.col-md-offset-1
         :md
-          **aktos elektronik**, kendi ihtiyaçları doğrultusunda tek yüzeyli 
-          ve çift yüzeyli prototip PCB imalatı yapmaktadır. Çizimleri tamamlanmış 
-          PCB'ler ortalama 2 saat içerisinde dizgiye hazır şekilde üretilebilmektedir.
+          # Prototip PCB imalatı 
           
-          Bilgi ve fiyat teklifi için PCB dosyanızı info@aktos.io adresine göndermeniz yeterlidir.
-  
+          **Ücret**
+          
+          * PCB aşındırma ücreti: 0.13 USD/cm²
+          * Via: 0.35 USD/adet
+          * Delik: 0.17 USD/adet
+          * Dizgi: 0.25 USD/cm²
+          * Ekspres PCB baskı: 50 USD
+          * Ekspres dizgi: 70 USD
+          
+          **Süre**
+          
+          * Her 1000cm²'ye kadar PCB baskısı için:
+          
+              * 24 saatte teslim edilir. 
+              * Ekspres baskılar 6 saatte teslim edilir. 
+              * 2 saatte teslim seçeneği anlaşmaya tabidir.   
+          
+          * Her 1000cm²'ye kadar PCB dizgisi için (baskı hariç):
+              
+              * 48 saatte teslim edilir. 
+              * Ekspres dizgiler 24 saatte teslim edilir. 
+              * 6 saatte teslim seçeneği anlaşmaya tabidir.  
+
+          **Prototip üretimi için Teknolojik imkan ve kısıtlar**
+          
+          * Via dış çap: 1.5mm, iç çap 0.5mm
+          * Via'lar tel lehimlenerek yapılır, delik içi kaplama yapılmaz. 
+          * Maksimum PCB ebatları: 30x30cm
+          * Minimum yol genişliği/clearence: 0.15mm
+          * Desteklenen formatlar: Gerber, PDF
+          * Çift yüzlü devre basılır. 
+          
+          **Malzeme**
+          
+          PCB malzemesi olarak kaliteli FR4 epoksi plaket kullanılır. 
+          
+          **Notlar** 
+          
+          * Delik içi kaplama yapılmadığı için header'lara bağlanan yollar
+            lehim yapılacak yüzeyden gelmelidir. 
+          * Via'lar tel lehimle yapıldığı için çok hassas şekilde lehimlenen 
+            malzemelerde malzeme altına via atılmamalıdır. Malzeme altına 
+            via atılması konusunda bilgi alınız. 
+          
   div.
     {{>nav-bar {active_button: '#/pcb'}}}
     {{#with page.pcb}}
