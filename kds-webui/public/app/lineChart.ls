@@ -1,4 +1,4 @@
-{split, take, join, lists-to-obj, sum} = require 'prelude-ls'
+{maximum-by, last, sort-by, split, take, join, lists-to-obj, sum} = require 'prelude-ls'
 Ractive.DEBUG = /unminified/.test -> /*unminified*/
 
 kds-data=
@@ -13,19 +13,39 @@ kds-data=
     * product-id: 2426
       amount:11
       reason:"sebep cc"
-      date:5
+      date:22
     * product-id: 2426
       amount:40
       reason:"sebep dd"
+      date:7
+    * product-id: 2426
+      amount:14
+      reason:"sebep aa"
+      date:6
+    * product-id: 2426
+      amount:18
+      reason:"sebep bb"
+      date:5
+    * product-id: 2426
+      amount:11
+      reason:"sebep cc"
+      date:11
+    * product-id: 2426
+      amount:0
+      reason:"sebep dd"
       date:5
     * product-id: 2458
-      amount:30
+      amount:100
       reason:"ie bozuk"
       date:15
     * product-id: 2458
-      amount:10
+      amount:15
       reason:"ui bozuk"
-      date:20
+      date:6
+    * product-id: 2458
+      amount:1
+      reason:"ui bozuk"
+      date:2      
 
 LineChart = Ractive.extend do
     template: '#linechart'
@@ -44,8 +64,19 @@ LineChart = Ractive.extend do
                 "1 5,15 16"
             */
             
-            points = @get "points" 
-            join ',' ["#{..x} #{..y}" for points]
+            points = @get "points"
+            
+            max-x = last points .x
+            max-y = maximum-by (.y), points
+            #console.log max-y.y  
+            width = @get \width
+            height = @get \height
+            console.log height
+            scale-factor-x = width / max-x
+            scale-factor-y = height / max-y.y
+            x = join ' ' ["#{..x * scale-factor-x},#{height - (..y * scale-factor-y)}" for points]
+            console.log x
+            x
             
             
             
@@ -70,33 +101,25 @@ convert-kds-to-linechartpoints = (selected-id)->
                       y: 10
     */       
     console.log "selected-list: "
-    selected-list = [.. for kds-data when ..product-id is (selected-id |> parse-int)]
+    selected-list-temp = [.. for kds-data when ..product-id is (selected-id |> parse-int)]
+    selected-list = sort-by (.date),selected-list-temp
+    
     console.log selected-list
     #[x as date, y as amount in.. for selected-list] 
-    points=[{x: ..date, y: ..amount} for selected-list]
+    startX=selected-list[0].date;
+    points=[{x: (..date)-startX, y: ..amount} for selected-list]
+
+    #p=[{x: ..date-startX}for selected-list]
     console.log points
     points
+ 
+
  
 ractive = new Ractive do
     el: '#main-output'
     template: '#main-template'
     data:
-        domates-zayiat-datasi:
-            * x: 1
-              y: 5
-            * x: 15
-              y: 15
-            * x: 25
-              y: 25
-            * x: 35
-              y: 35
-            * x: 45
-              y: 45
-            * x: 55
-              y: 40
-            * x: 60
-              y: 105
-        points: convert-kds-to-linechartpoints 2458     
+        kds-to-points: convert-kds-to-linechartpoints 2426     
     components:
         linechart: LineChart
 

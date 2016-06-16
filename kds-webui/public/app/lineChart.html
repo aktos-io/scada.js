@@ -20,13 +20,12 @@
 
     <div id='main-output'></div>
     <script id='main-template' type="text/ractive">
-        <linechart points="{{points}}" />
-
+        <linechart points="{{kdsToPoints}}" width="500" height="100" />
     </script>
 
     <script id='linechart' type='text/ractive'>
 
-    <svg viewBox="0 0 500 120" class="chart" >  
+    <svg viewBox="0 0 500 100" class="chart" >  
 
        <polyline
          fill="none"
@@ -39,62 +38,25 @@
     </script>
 
     <style>
-body {
-  font-family: 'Open Sans', sans-serif;
-}
 .chart {
   background: white;
   width: 500px;
   height: 100px;
   border-left: 1px dotted #555;
   border-bottom: 1px dotted #555;
-  padding: 20px 20px 20px 0;
+  <!-- padding: 20px 20px 20px 0; -->
 }
-
+<!-- polyline{width:500 height:100} -->
 body {
   /* background: #ccc; */
   padding: 20px;
-  display: flex;
+  <!-- display: flex; -->
 <!--   align-items: center;
   justify-content: center; -->
 }
 
 body, html {
   height: 100%;
-}
-
-.graph .labels.x-labels {
-  text-anchor: middle;
-}
-
-.graph .labels.y-labels {
-  text-anchor: end;
-}
-line {
-  height: 500px;
-  width: 800px;
-}
-
-.graph .grid {
-  stroke: #ccc;
-  stroke-dasharray: 0;
-  stroke-width: 1;
-}
-
-.labels {
-  font-size: 13px;
-}
-
-.label-title {
-  font-weight: bold;
-  text-transform: uppercase;
-  font-size: 12px;
-  fill: black;
-}
-
-.data {
-  fill: red;
-  stroke-width: 1; 
 }
 
     </style>
