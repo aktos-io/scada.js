@@ -20,37 +20,33 @@
 
     <div id='main-output'></div>
     <script id='main-template' type="text/ractive">
-        <linechart points="{{kdsToPoints}}" width="500" height="100" />
+        <linechart points="{{kdsToPoints}}" width="600" height="100" />
     </script>
 
     <script id='linechart' type='text/ractive'>
-
-    <svg class="chart" viewbox="0 0 500 130">  
+    {{test()}}
+    <svg class="chart" viewbox="0 0 600 100">  
     
-        <g class="grid x-grid" id="xGrid">
-          <line x1="0" x2="0" y1="5" y2="110"></line>
-        </g>
-        <g class="grid y-grid" id="yGrid">
-          <line x1="0" x2="505" y1="110" y2="110"></line>
-        </g>
-
-          <g class="labels x-labels">
+        <g class="labels x-labels">
           {{#each xLabels:i}}
-          <text x="{{ . }}"   y="130">{{ . }}</text>
+          
+          <text x="{{ .["x"] }}"   y="100">{{ .["data"] }}</text> 
+          
+          <!-- <text x="{{ .["x"] }}"   y="100">{{ .["data"] }} {{ yLabels[i]}}</text> -->
           {{/each}}
-         <!--  <text x="450" y="105" class="label-title">Year</text> -->
+          <!-- <text x="{{width + 50}}" y="130" class="label-title">Year</text>  -->
         </g>
         <g class="labels y-labels">         
           {{#each yLabels:i}}
-          <text x="0"   y="{{ i*50  }}">{{ . }}</text>
+          <text x="0"   y="{{ .["y"]  }}">{{ .["data"] }}</text>
           {{/each}}
         </g>
-       <polyline
+        <polyline
          fill="none"
          stroke="#0074d9"
          stroke-width="2"
          points="{{convertToSvgPoints(scaledPoints())}}"
-       />
+        />
 
     </svg>
     </script>
@@ -68,18 +64,6 @@
   text-anchor: end;
 }
 
-
-.graph {
-  height: 000px;
-  width: 500px;
-}
-
-.graph .grid {
-  stroke: #ccc;
-  stroke-dasharray: 0;
-  stroke-width: 1;
-}
-
 .labels {
   font-size: 13px;
 }
@@ -91,24 +75,20 @@
   fill: black;
 }
 
-.data {
-  fill: red;
-  stroke-width: 1; 
-}
 /* above style is for axis*/
 .chart {
-  background: white;
-  width: 505px;
-  height: 110px; 
+  background: pink;
+  width: 510px;
+  height: 105px; 
   border-left: 1px dotted #555;
   border-bottom: 1px dotted #555;
   <!-- padding: 20px 20px 20px 0; -->
 }
-<!-- polyline{width:500 height:100} -->
+
 body {
   /* background: #ccc; */
   padding: 20px;
-  <!-- display: flex; -->
+<!-- display: flex;  -->
 <!--   align-items: center;
   justify-content: center; -->
 }
