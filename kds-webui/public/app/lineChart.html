@@ -25,23 +25,81 @@
 
     <script id='linechart' type='text/ractive'>
 
-    <svg viewBox="0 0 500 100" class="chart" >  
+    <svg class="chart" viewbox="0 0 500 130">  
+    
+        <g class="grid x-grid" id="xGrid">
+          <line x1="0" x2="0" y1="5" y2="110"></line>
+        </g>
+        <g class="grid y-grid" id="yGrid">
+          <line x1="0" x2="505" y1="110" y2="110"></line>
+        </g>
 
+          <g class="labels x-labels">
+          {{#each xLabels:i}}
+          <text x="{{ . }}"   y="130">{{ . }}</text>
+          {{/each}}
+         <!--  <text x="450" y="105" class="label-title">Year</text> -->
+        </g>
+        <g class="labels y-labels">         
+          {{#each yLabels:i}}
+          <text x="0"   y="{{ i*50  }}">{{ . }}</text>
+          {{/each}}
+        </g>
        <polyline
          fill="none"
          stroke="#0074d9"
          stroke-width="2"
-         points="{{convertToSvgPoints()}}"
+         points="{{convertToSvgPoints(scaledPoints())}}"
        />
 
     </svg>
     </script>
 
     <style>
+ body {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.graph .labels.x-labels {
+  text-anchor: middle;
+}
+
+.graph .labels.y-labels {
+  text-anchor: end;
+}
+
+
+.graph {
+  height: 000px;
+  width: 500px;
+}
+
+.graph .grid {
+  stroke: #ccc;
+  stroke-dasharray: 0;
+  stroke-width: 1;
+}
+
+.labels {
+  font-size: 13px;
+}
+
+.label-title {
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 12px;
+  fill: black;
+}
+
+.data {
+  fill: red;
+  stroke-width: 1; 
+}
+/* above style is for axis*/
 .chart {
   background: white;
-  width: 500px;
-  height: 100px;
+  width: 505px;
+  height: 110px; 
   border-left: 1px dotted #555;
   border-bottom: 1px dotted #555;
   <!-- padding: 20px 20px 20px 0; -->

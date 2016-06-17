@@ -49,8 +49,33 @@ kds-data=
 
 LineChart = Ractive.extend do
     template: '#linechart'
-    data:
-        convert-to-svg-points: ->
+    oninit: ->
+            width = @get \width
+            x-labels=[0 to width by 50]
+            @set "xLabels", x-labels 
+            
+            height= @get \height
+            y-labels= [(height+50) to 0 by -50]
+            #console.log y-labels
+            @set "yLabels", y-labels
+    data:     
+        y-labals: null
+        x-labels: null        
+        scaled-points: ->
+            points = @get "points"
+            
+            max-x = last points .x
+            max-y = maximum-by (.y), points
+            #console.log max-y.y  
+            width = @get \width
+            height = @get \height
+            #console.log height
+            scale-factor-x = width / max-x
+            scale-factor-y = height / max-y.y
+            a = [{x: ..x * scale-factor-x, y: height - (..y * scale-factor-y)} for points]
+            #console.log "scaled points are :", a
+            a
+        convert-to-svg-points: (points) ->
             /* converts points for the following format: 
             
                 @points = 
@@ -64,17 +89,7 @@ LineChart = Ractive.extend do
                 "1 5,15 16"
             */
             
-            points = @get "points"
-            
-            max-x = last points .x
-            max-y = maximum-by (.y), points
-            #console.log max-y.y  
-            width = @get \width
-            height = @get \height
-            console.log height
-            scale-factor-x = width / max-x
-            scale-factor-y = height / max-y.y
-            x = join ' ' ["#{..x * scale-factor-x},#{height - (..y * scale-factor-y)}" for points]
+            x = join ' ' ["#{..x},#{..y}" for points]
             console.log x
             x
             
