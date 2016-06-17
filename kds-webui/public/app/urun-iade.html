@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang='en-GB'>
-
 <head>
     <meta charset='utf-8'>
-    <title>TEST PAGE</title>
+    <title>bootstrap-example-page</title>
     <script src="scripts/ractive.js"></script>
+    <script src="scripts/ractive.single-double-click.js"></script>
     <script src="scripts/livescript.js"></script>
     <script src="scripts/prelude-browser-min.js"></script>
     <script src="scripts/ractive-bootstrap.js"></script>
@@ -12,59 +12,53 @@
     <script src="scripts/jquery-1.12.0.min.js"></script>
     <script src="scripts/jQuery.Soap.js"></script>
 
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="scripts/bootstrap.min.css" >
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="scripts/bootstrap.min.css" >
 
-<!-- Optional theme -->
-<link rel="stylesheet" href="scripts/bootstrap-theme.min.css" >
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="scripts/bootstrap-theme.min.css" >
 
-<!-- Latest compiled and minified JavaScript -->
-<script src="scripts/bootstrap.min.js" ></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="scripts/bootstrap.min.js" ></script>
 </head>
-
 <body style="margin:0px;">
 
-    <h1>test123</h1>
+    <h1>Stacked Bar Chart on Boostrap Page</h1>
 
     <div id='main-output'></div>
     <script id='main-template' type="text/ractive">
-
-        <btn onclick="alert('kihkihkih')">Button with onclick event</btn>
-        <hr/>
-            <btn type="default">Default</btn>
-            <btn type="primary">Primary</btn>
-            <btn type="success">Success</btn>
-            <btn type="info">Info</btn>
-            <btn type="warning">Warning</btn>
-            <btn type="danger">Danger</btn>
-        <hr/>
-        <b-table>
-        	<thead>
-        		<tr>
-        			<th>First Name</th>
-        			<th>Last Name</th>
-        			<th>Username</th>
-        		</tr>
-        	</thead>
-        	<tbody>
-        		<tr>
-        			<td>Mark</td>
-        			<td>Otto</td>
-        			<td>@mdo</td>
-        		</tr>
-        		<tr>
-        			<td>Jacob</td>
-        			<td>Thornton</td>
-        			<td>@fat</td>
-        		</tr>
-        		<tr>
-        			<td>Larry</td>
-        			<td>the Bird</td>
-        			<td>@twitter</td>
-        		</tr>
-        	</tbody>
-        </b-table>
+        {{# returnReasons:i}}
+            <p><stacked-bar-chart data="{{convertReasonToSbc(.["returnReasons"])}}"> {{.["name"]}} </p>
+        {{/ returnReasons}}
     </script>
+
+    <script id='stackedchart' type='text/ractive'>
+        <svg class="chart" width="1200" height="180" aria-labelledby="title desc" role="img">
+        {{#each getGraphData(data):i}}
+                <g>
+                    <rect y="80" transform='translate(0,{{i*20}})' width="7" height="9" style="fill:{{ getColor(i)}};stroke-width:0.5;stroke:rgb(0,0,0)" />
+                    <text y="80" transform='translate(10,{{i*20+10}})'  font-size="15">{{name}}</text>
+                </g>
+            <g class="bar"><rect width="{{amount * 5}}"  height="75" y="0" x="{{startX*5}}" style="fill: {{ getColor(i) }}"></rect>
+                <text text-anchor="middle" x="{{ centerX * 5 }}" y="40"  dy=".35em" >{{amount}}</text>
+            </g>
+        {{/each }}
+        </svg>
+    </script>
+
+    <style>
+        .bar {
+            cursor: pointer;
+            font-family: Helvetica, sans-serif;
+        }
+        .bar text {
+            color: yellow;
+        }
+        .bar:hover,
+        .bar:focus {
+            fill: white;
+        }
+    </style>
 
     <script>
         require("LiveScript").go()

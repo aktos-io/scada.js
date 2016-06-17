@@ -14,21 +14,21 @@
 
 <body style="margin:0px;">
 
-    <h1>test123</h1>
+    <h1>Stacked Bar Chart Example</h1>
 
-    <div id='example_container'></div>
-    <script id='mainTemplate' type="text/ractive">
-        <stacked-bar-chart val="2426"/>
-        <br/>
-        <stacked-bar-chart val="2458"/>
+    <div id='main-output'></div>
+    <script id='main-template' type="text/ractive">
+        <stacked-bar-chart data="{{myBarChart}}"/>
+        <br>
+        <stacked-bar-chart data="{{myBarChart2}}"/>
     </script>
 
     <script id='stackedchart' type='text/ractive'>
-        <svg class="chart" width="420" height="120" aria-labelledby="title desc" role="img">
-        {{#each getGraphData(val):i}}
-            <g class="bar">
-                <rect width="{{amount*5}}"  height="55" y="0" x="{{startX*5}}" style="fill: {{ getColor(i) }}" ></rect>
-                <text x="{{startX*5}}" y="40"  dy=".35em">{{amount}}</text>
+        <svg class="chart" width="1200" height="120" aria-labelledby="title desc" role="img">
+        {{#each getGraphData(data):i}}
+            <g class="bar" on-mouseover='set("selected", i)' on-mouseout='set("selected", null)'>
+                <rect width="{{amount * 5}}"  height="75" y="0" x="{{startX*5}}" style="fill: {{ getColor(i) }}" ></rect>
+                <text text-anchor="middle" x="{{ centerX * 5 }}" y="40"  dy=".35em" >{{amount}}</text>
             </g>
         {{/each }}
         </svg>
@@ -44,7 +44,7 @@
         }
         .bar:hover,
         .bar:focus {
-            fill: green;
+            fill: white;
         }
     </style>
 
