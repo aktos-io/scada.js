@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang='en-GB'>
+
+<head>
+    <meta charset='utf-8'>
+    <title>TEST PAGE</title>
+    <script src="scripts/ractive.js"></script>
+    <script src="scripts/livescript.js"></script>
+    <script src="scripts/prelude-browser-min.js"></script>
+    <script src="scripts/ractive-bootstrap.js"></script>
+    <script type="text/ls" src="urun-iade.ls"></script>
+    <script src="scripts/jquery-1.12.0.min.js"></script>
+    <script src="scripts/jQuery.Soap.js"></script>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="scripts/bootstrap.min.css" >
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="scripts/bootstrap-theme.min.css" >
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="scripts/bootstrap.min.js" ></script>
+</head>
+
+<body style="margin:0px;">
+
+    <h1>test123</h1>
+
+    <div id='main-output'></div>
+    <script id='main-template' type="text/ractive">
+
+        <btn onclick="alert('kihkihkih')">Button with onclick event</btn>
+        <hr/>
+            <btn type="default">Default</btn>
+            <btn type="primary">Primary</btn>
+            <btn type="success">Success</btn>
+            <btn type="info">Info</btn>
+            <btn type="warning">Warning</btn>
+            <btn type="danger">Danger</btn>
+        <hr/>
+        <b-table>
+        	<thead>
+        		<tr>
+        			<th>First Name</th>
+        			<th>Last Name</th>
+        			<th>Username</th>
+        		</tr>
+        	</thead>
+        	<tbody>
+        		<tr>
+        			<td>Mark</td>
+        			<td>Otto</td>
+        			<td>@mdo</td>
+        		</tr>
+        		<tr>
+        			<td>Jacob</td>
+        			<td>Thornton</td>
+        			<td>@fat</td>
+        		</tr>
+        		<tr>
+        			<td>Larry</td>
+        			<td>the Bird</td>
+        			<td>@twitter</td>
+        		</tr>
+        	</tbody>
+        </b-table>
+    </script>
+
+    <script>
+        require("LiveScript").go()
+    </script>
+
+</body>
+</html>
