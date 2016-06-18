@@ -43,7 +43,7 @@
             </thead>
             <tbody>
                 {{#each data:i}}
-                    <tr class="input-line {{#if editable && (clickedIndex === i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}}" on-doubleclick="activated">
+                    <tr class="input-line {{#if editable && (clickedIndex === i)}}bg-danger{{/if}} {{#if clickedIndex === i}}bg-warning{{/if}}" on-doubleclick="activated">
                         {{#if clickedIndex === i }}
                             <td>
                                 <input type='checkbox' checked='{{editable}}'> <icon-pencil/>

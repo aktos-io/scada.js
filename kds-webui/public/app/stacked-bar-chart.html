@@ -1,56 +1,51 @@
 <!doctype html>
 <html lang='en-GB'>
 
-<head>
-    <meta charset='utf-8'>
-    <title>TEST PAGE</title>
-    <script src="scripts/ractive.js"></script>
-    <script src="scripts/livescript.js"></script>
-    <script src="scripts/prelude-browser-min.js"></script>
-    <script type="text/ls" src="stacked-bar-chart.ls"></script>
-    <script src="scripts/jquery-1.12.0.min.js"></script>
-    <script src="scripts/jQuery.Soap.js"></script>
-</head>
+    <head>
+        <meta charset='utf-8'>
+        <title>TEST PAGE</title>
+        <script src="scripts/ractive.js"></script>
+        <script src="scripts/ractive.single-double-click.js"></script>
+        <script src="scripts/livescript.js"></script>
+        <script src="scripts/prelude-browser-min.js"></script>
+        <script src="scripts/ractive-bootstrap.js"></script>
+        <script src="scripts/jquery-1.12.0.min.js"></script>
+        <script src="scripts/jQuery.Soap.js"></script>
+        <link rel="stylesheet" href="scripts/bootstrap.min.css" >
+        <link rel="stylesheet" href="scripts/bootstrap-theme.min.css" >
+        <script src="scripts/bootstrap.min.js" ></script>
 
-<body style="margin:0px;">
+        <script type="text/ls" src="stacked-bar-chart.ls"></script>
+    </head>
 
-    <h1>Stacked Bar Chart Example</h1>
+    <body style="margin:0px;">
 
-    <div id='main-output'></div>
-    <script id='main-template' type="text/ractive">
-        <stacked-bar-chart data="{{myBarChart}}"/>
-        <br>
-        <stacked-bar-chart data="{{myBarChart2}}"/>
-    </script>
+        <h1>Stacked Bar Chart Example</h1>
 
-    <script id='stackedchart' type='text/ractive'>
-        <svg class="chart" width="1200" height="120" aria-labelledby="title desc" role="img">
-        {{#each getGraphData(data):i}}
-            <g class="bar" on-mouseover='set("selected", i)' on-mouseout='set("selected", null)'>
-                <rect width="{{amount * 5}}"  height="75" y="0" x="{{startX*5}}" style="fill: {{ getColor(i) }}" ></rect>
-                <text text-anchor="middle" x="{{ centerX * 5 }}" y="40"  dy=".35em" >{{amount}}</text>
-            </g>
-        {{/each }}
-        </svg>
-    </script>
+        <div id='main-output'></div>
+        <script id='main-template' type="text/ractive">
+            <stacked-bar-chart data="{{myBarChart}}"/>
+            <br>
+            <stacked-bar-chart data="{{myBarChart2}}"/>
+        </script>
 
-    <style>
-        .bar {
-            cursor: pointer;
-            font-family: Helvetica, sans-serif;
-        }
-        .bar text {
-            color: yellow;
-        }
-        .bar:hover,
-        .bar:focus {
-            fill: white;
-        }
-    </style>
+        <script id='stackedchart' type='text/ractive'>
+            <svg class="chart" width="1200" height="40" aria-labelledby="title desc" role="img">
+            {{#each getGraphData(data):i}}
+                <g class="bar" on-mouseover='set("selected", i)' on-mouseout='set("selected", null)'>
+                    <rect width="{{amount * 5}}"  height="38" y="0" x="{{startX*5}}" style="fill: {{ getColor(i) }}" ></rect>
+                    <text font-family="monospace" font-weight="bold" font-size="15" fill="white" 
+         text-anchor="middle" x="{{ centerX * 5 }}" y="19"  dy=".35em" >{{amount}}</text>
+                </g>
+            {{/each }}
+            </svg>
+        </script>
 
-    <script>
-        require("LiveScript").go()
-    </script>
 
-</body>
+
+        <script>
+            require("LiveScript").go()
+        </script>
+
+    </body>
 </html>

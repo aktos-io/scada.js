@@ -5,7 +5,7 @@ StackedBarChart = Ractive.extend do
     template: '#stackedchart'
     data:
         get-color: (order) ->
-            colors = <[ red yellow pink blue gray ]>
+            colors = <[ #d9534f #5bc0de #5cb85c #f0ad4e #337ab7 ]>
             console.log "color: ", colors[order]
             colors[order]
 
