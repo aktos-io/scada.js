@@ -3,73 +3,62 @@
 
 <head>
     <meta charset='utf-8'>
-    <title>TEST PAGE</title>
+    <title>Interactive Table Example</title>
     <script src="scripts/ractive.js"></script>
     <script src="scripts/ractive.single-double-click.js"></script>
     <script src="scripts/livescript.js"></script>
     <script src="scripts/prelude-browser-min.js"></script>
-    <script type="text/ls" src="table.ls"></script>
+    <script src="scripts/ractive-bootstrap.js"></script>
     <script src="scripts/jquery-1.12.0.min.js"></script>
     <script src="scripts/jQuery.Soap.js"></script>
+    <link rel="stylesheet" href="scripts/bootstrap.min.css" >
+    <link rel="stylesheet" href="scripts/bootstrap-theme.min.css" >
+    <script src="scripts/bootstrap.min.js" ></script>
+
+    <script type="text/ls" src="table.ls"></script>
 </head>
 
-<body style="margin:0px;">
+<body>
 
     <h1>Table-Page</h1>
 
     <div id='main-output'></div>
     <script id='main-template' type="text/ractive" >
-
         <interactive-table cols="Tarih, Sipariş No, Şube, Ürün Sayısı, Tutar (TL)", data="{{ myTableData }}" />
-        <interactive-table cols="Tarih, Sipariş NUMARASI, Şube, Ürün HELEHELE, Tutar (USD)", data="{{ myTableData2 }}" />
+        <interactive-table cols="Tarih, Sipariş NUMARASI, Şube, Ürün HELEHELE, Tutar (USD)", data="{{ myTableData }}" />
     </script>
 
     <script id='interactive-table' type='text/ractive'>
-        <table class='table'>
-            <tr>
-                <th>...</th>
-                <th>#</th>
-                {{#each columnList}}
-                    <td> {{ . }}</td>
-                {{/each}}
-            </tr>
-            {{#each data:i}}
-                <tr class="input-line" on-doubleclick="activated" {{#if editable && (clickedIndex === i)}} style="background-color: white" {{/if}}>
-                    <td>
-                        {{#if clickedIndex === i }}
-                            <span class="table-control">edit</span>
-                            <input type='checkbox' checked='{{editable}}'>
-                            <div on-click="hideMenu">Hide</div>
-                        {{/if}}
-                    </td>
-                    <td>{{i+1}}</td>
-                    {{#each columnList:j}}
-                        <td><div class="input" contenteditable="{{ editable && (clickedIndex === i) }}" value='{{ data[i][j] }}'></div></td>
+        <b-table>
+            <thead>
+                <tr>
+                    {{#if clickedIndex !== null}}
+                        <th>Editing...</th>
+                    {{/if}}
+                    <th>#</th>
+                    {{#each columnList}}
+                        <th>{{ . }}</th>
                     {{/each}}
                 </tr>
-            {{/each}}
-        </table>
+            </thead>
+            <tbody>
+                {{#each data:i}}
+                    <tr class="input-line {{#if editable && (clickedIndex === i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}}" on-doubleclick="activated">
+                        {{#if clickedIndex === i }}
+                            <td>
+                                <input type='checkbox' checked='{{editable}}'> <icon-pencil/>
+                                <span on-click="hideMenu"><btn type="success block"><icon-ok/> Hide</btn></span>
+                            </td>
+                        {{/if}}
+                        <td>{{i+1}}</td>
+                        {{#each columnList:j}}
+                            <td><div style="display: inline; border: none" contenteditable="{{ editable && (clickedIndex === i) }}" value='{{ data[i][j] }}'></div></td>
+                        {{/each}}
+                    </tr>
+                {{/each}}
+            </tbody>
+        </b-table>
     </script>
-    <style>
-        body {
-            background-color: gray;
-        }
-        .input-line {
-            color: black;
-        }
-        .input-line div:hover{
-            background-color: yellowgreen;
-        }
-        .input {
-            display: table-cell;
-        }
-        .table-control {
-            background-color: red;
-        }
-        .table td{
-            border: 1px solid black;
-        }
-    </style>
     <script>
         require("LiveScript").go()
     </script>
