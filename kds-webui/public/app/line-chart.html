@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang='en-GB'>
 
+<<<<<<< 40f6e38ffa8fb51fe6eaf6e95e547d69eb030137
 <head>
     <meta charset='utf-8'>
     <title>TEST PAGE</title>
@@ -112,4 +113,84 @@ body, html {
     </script>
 
 </body>
+=======
+    <head>
+        <meta charset='utf-8'>
+        <meta name="viewport" content="width=device-width; target-densitydpi=device-dpi; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+        <title>Line Chart</title>
+        <script src="scripts/ractive.js"></script>
+        <script src="scripts/ractive.single-double-click.js"></script>
+        <script src="scripts/livescript.js"></script>
+        <script src="scripts/prelude-browser-min.js"></script>
+        <script src="scripts/ractive-bootstrap.js"></script>
+        <script src="scripts/jquery-1.12.0.min.js"></script>
+        <script src="scripts/jQuery.Soap.js"></script>
+        <link rel="stylesheet" href="scripts/bootstrap.min.css" >
+        <link rel="stylesheet" href="scripts/bootstrap-theme.min.css" >
+        <script src="scripts/bootstrap.min.js" ></script>
+
+        <script type="text/ls" src="line-chart.ls"></script>
+    </head>
+
+    <body style="margin:0px;">
+        <div id='main-output'></div>
+        <script id='main-template' type="text/ractive">
+            <h2> Line Char Example </h2>
+            <line-chart points="{{myData}}" width="600" height="100" />
+        </script>
+        <script id='line-chart' type='text/ractive'>
+            <svg class="chart" viewbox="0 0 600 100">
+                <g class="labels x-labels">
+                  {{#each xLabels:i}}
+                      <text x="{{ .["x"] }}"   y="100">{{ .["data"] }}</text>
+                  {{/each}}
+                </g>
+                <g class="labels y-labels">
+                  {{#each yLabels:i}}
+                    <text x="0"   y="{{ .["y"]  }}">{{ .["data"] }}</text>
+                  {{/each}}
+                </g>
+                <g>
+                <polyline fill="none" stroke="#0074d9" stroke-width="2"
+                     points="{{convertToSvgPoints(scaledPoints())}}" />
+                </g>
+            </svg>
+        </script>
+
+        <style>
+            .graph .labels.x-labels {
+              text-anchor: middle;
+            }
+
+            .graph .labels.y-labels {
+              text-anchor: end;
+            }
+
+            .labels {
+              font-size: 13px;
+            }
+
+            .label-title {
+              font-weight: bold;
+              text-transform: uppercase;
+              font-size: 12px;
+              fill: black;
+            }
+
+            /* above style is for axis*/
+            .chart {
+              background: pink;
+              width: 510px;
+              height: 105px;
+              border-left: 1px dotted #555;
+              border-bottom: 1px dotted #555;
+              <!-- padding: 20px 20px 20px 0; -->
+            }
+        </style>
+        <script>
+            require("LiveScript").go()
+        </script>
+
+    </body>
+>>>>>>> fixes demeter-tel/kds#41
 </html>
