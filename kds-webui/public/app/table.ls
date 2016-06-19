@@ -55,6 +55,10 @@ InteractiveTable = Ractive.extend do
         clicked-index: null
         cols: null
         column-list: null
+        is-editing-line: (index) ->
+            editable = @get \editable
+            clicked-index = @get \clickedIndex
+            editable and (index is clicked-index)
 
 
 x = decorate-table-data data-from-webservice

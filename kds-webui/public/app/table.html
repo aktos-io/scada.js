@@ -44,7 +44,7 @@
             </thead>
             <tbody>
                 {{#each data:i}}
-                    <tr class="input-line {{#if editable && (clickedIndex === i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}}" on-doubleclick="activated">
+                    <tr class="input-line {{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}}" on-doubleclick="activated">
                         {{#if clickedIndex === i }}
                             <td>
                                 <btn-group>
@@ -56,7 +56,14 @@
                             <td>{{i+1}}</td>
                         {{/if}}
                         {{#each columnList:j}}
-                            <td><div style="display: inline; border: none" contenteditable="{{ editable && (clickedIndex === i) }}" value='{{ data[i][j] }}'></div></td>
+
+                            <td>
+                                {{#if isEditingLine(i)}}
+                                    <input  class="form-control" type="text" value="{{ data[i][j] }}">
+                                {{else}}
+                                    {{ data[i][j] }}
+                                {{/if}}
+                            </td>
                         {{/each}}
                     </tr>
                 {{/each}}
