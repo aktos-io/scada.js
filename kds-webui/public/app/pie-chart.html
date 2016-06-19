@@ -23,8 +23,9 @@
     <div id='main-output'></div>
     <script id='main-template' type='text/ractive'>
         <div class="box"><piechart names="Domates,Patates,Soğan,Mantar" values="{{myData}}"/></div>
-        <div class="box"><piechart names="Kekik,Peynir,Zeytin,Mahmut" values="{{simulateData(1)}}"/></div>
-        <div class="box"><piechart names="Kamil,Muhittin,Süleyman,Ben" values="{{simulateData(1)}}"/></div>
+        {{#each [1,2,3,4,5,6,7,8]:i}}
+            <div class="box"><piechart names="Kekik,Peynir,Zeytin,Mahmut" values="{{simulateData(i)}}"/></div>
+        {{/each}}
     </script>
     <script id='pie-chart' type='text/ractive'>
         <svg viewBox='0 0 100 180'>
