@@ -51,13 +51,23 @@ PieChart = Ractive.extend do
             #console.log "test:" , points.join ' '
             return points.join ' '
 
+simulate-data = ->
+    reasons =
+        "Son kullanma tarihi geçmiş"
+        "Müşteri İade"
+        "Hatalı Sipariş"
+        "Hayat zor"
+
+    random = -> parse-int (Math.random! * 100)
+    x = [{name: .., amount: random!} for reasons]
+    x = [random! for reasons]
+
 
 ractive=new Ractive do
     el: '#main-output'
     template: '#main-template'
     data:
         my-data: [3,5,7,99]
-        my-data1: [4,5,12,1]
-        my-data2: [213,5,2,5]
+        simulate-data: simulate-data
     components:
         piechart: PieChart
