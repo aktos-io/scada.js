@@ -67,14 +67,19 @@ convert-reason-to-sbc = (x) ->
 
 
 get-return-reasons = ->
-    names = <[
-        Haydari
-        Rus salata
-        Mercimek
-        İçli Köfte
-        Sarma
-        Dolma
-        Patlıcan Ezme ]>
+    names =
+        "Haydari"
+        "Rus salata"
+        "Mercimek"
+        "İçli Köfte"
+        "Sarma"
+        "Dolma"
+        "Patlıcan Ezme"
+        "Biber Dolma"
+        "Patates Közleme"
+        "Balık Buğulama"
+        "Ayva Güllacı"
+        "Mahmut Beğendi"
 
     reasons = <[
         SKT
