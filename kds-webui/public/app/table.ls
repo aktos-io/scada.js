@@ -45,6 +45,10 @@ InteractiveTable = Ractive.extend do
                 @set \clickedIndex, null
                 @set \editable, no
 
+            toggle-editing: ->
+                editable = @get \editable
+                @set \editable, not editable
+
     template: '#interactive-table'
     data:
         editable: false

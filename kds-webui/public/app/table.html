@@ -34,8 +34,9 @@
                 <tr>
                     {{#if clickedIndex !== null}}
                         <th>Editing...</th>
+                    {{else}}
+                        <th>#</th>
                     {{/if}}
-                    <th>#</th>
                     {{#each columnList}}
                         <th>{{ . }}</th>
                     {{/each}}
@@ -46,11 +47,14 @@
                     <tr class="input-line {{#if editable && (clickedIndex === i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}}" on-doubleclick="activated">
                         {{#if clickedIndex === i }}
                             <td>
-                                <input type='checkbox' checked='{{editable}}'> <icon-pencil/>
-                                <span on-click="hideMenu"><btn type="success"><icon-ok/></btn></span>
+                                <btn-group>
+                                    <span on-click="toggleEditing"><btn><input type='checkbox' checked='{{editable}}' /> <icon-pencil/></btn></span>
+                                    <span on-click="hideMenu"><btn type="success"><icon-ok/></btn></span>
+                                </btn-group>
                             </td>
+                        {{else}}
+                            <td>{{i+1}}</td>
                         {{/if}}
-                        <td>{{i+1}}</td>
                         {{#each columnList:j}}
                             <td><div style="display: inline; border: none" contenteditable="{{ editable && (clickedIndex === i) }}" value='{{ data[i][j] }}'></div></td>
                         {{/each}}
