@@ -34,8 +34,8 @@
             {{#each getGraphData(data):i}}
                 <g class="bar" on-mouseover='set("selected", i)' on-mouseout='set("selected", null)'>
                     <rect width="{{amount * 5}}"  height="38" y="0" x="{{startX*5}}" style="fill: {{ getColor(i) }}" ></rect>
-                    <text font-family="monospace" font-weight="bold" font-size="15" fill="white" 
-         text-anchor="middle" x="{{ centerX * 5 }}" y="19"  dy=".35em" >{{amount}}</text>
+                    <text font-family="monospace" font-weight="bold" font-size="15" fill="white"
+                        text-anchor="middle" x="{{ centerX * 5 }}" y="19"  dy=".35em" >{{amount}}</text>
                 </g>
             {{/each }}
             </svg>
