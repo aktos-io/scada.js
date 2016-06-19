@@ -6,7 +6,6 @@ StackedBarChart = Ractive.extend do
     data:
         get-color: (order) ->
             colors = <[ #d9534f #5bc0de #5cb85c #f0ad4e #337ab7 ]>
-            console.log "color: ", colors[order]
             colors[order]
 
         get-graph-data:(data-list) ->
@@ -38,20 +37,21 @@ StackedBarChart = Ractive.extend do
                           center-x: start-x + amount3 / 2
                         ...
             */
-            console.log "data-list: " , data-list
+            #console.log "data-list: " , data-list
             r = []
             for i in data-list
-                console.log "i : ", i
+                #console.log "i : ", i
                 data-point = {name: i.name, amount: i.amount}
 
                 # add cumulative starting coordinate to each data point
                 data-point.start-x = sum [..amount for r]
                 data-point.center-x = data-point.start-x + (data-point.amount / 2)
-                console.log "sum: ", data-point.start-x
+                #console.log "sum: ", data-point.start-x
 
                 r ++= [data-point]
-                console.log "r: ", r
+                #console.log "r: ", r
             return r
+
 
 
 my-data =
@@ -62,19 +62,21 @@ my-data =
     * name: "hatalı sipariş"
       amount: 23
 
-my-data2 =
-    * name: "son kullanma tarihi geçmiş"
-      amount: 11
-    * name: "müşteri iade"
-      amount: 35
-    * name: "hatalı sipariş"
-      amount: 49
+simulate-data = ->
+    reasons =
+        "Son kullanma tarihi geçmiş"
+        "Müşteri İade"
+        "Hatalı Sipariş"
+        "Hayat zor"
+
+    random = -> parse-int (Math.random! * 100)
+    x = [{name: .., amount: random!} for reasons]
 
 ractive = new Ractive do
     el: '#main-output'
     template: '#main-template'
     data:
-        my-bar-chart: my-data
-        my-bar-chart2: my-data2
+        simulate-data: simulate-data
+        my-data: my-data
     components:
         'stacked-bar-chart': StackedBarChart
