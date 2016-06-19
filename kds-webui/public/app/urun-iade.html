@@ -2,7 +2,7 @@
 <html lang='en-GB'>
 <head>
     <meta charset='utf-8'>
-    <title>bootstrap-example-page</title>
+    <title>Ürün İade</title>
     <script src="scripts/ractive.js"></script>
     <script src="scripts/ractive.single-double-click.js"></script>
     <script src="scripts/livescript.js"></script>
@@ -14,47 +14,42 @@
     <link rel="stylesheet" href="scripts/bootstrap-theme.min.css" >
     <script src="scripts/bootstrap.min.js" ></script>
 
-
     <script type="text/ls" src="urun-iade.ls"></script>
 </head>
-<body style="margin:0px;">
-
-    <h1>Stacked Bar Chart on Boostrap Page</h1>
-
+<body>
     <div id='main-output'></div>
     <script id='main-template' type="text/ractive">
-        {{# returnReasons:i}}
-            <p><stacked-bar-chart data="{{convertReasonToSbc(.["returnReasons"])}}"> {{.["name"]}} </p>
-        {{/ returnReasons}}
+        <row>
+            <col-md-4></col-md-4>
+            <col-md-4>
+                <h1>Ürün İade</h1>
+            </col-md-4>
+            <col-md-4></col-md-4>
+        </row>
+
+        <row>
+            {{# returnReasons:i}}
+                <col-md-2>
+                    <h4 class="text-right"><tag>{{ .["name"] }}</tag></h4>
+                </col-md-2>
+                <col-md-10>
+                    <stacked-bar-chart data="{{convertReasonToSbc(.['returnReasons'])}}">
+                </col-md-10>
+            {{/ returnReasons}}
+        </row>
     </script>
 
     <script id='stackedchart' type='text/ractive'>
-        <svg class="chart" width="1200" height="180" aria-labelledby="title desc" role="img">
+        <svg class="chart" width="1200" height="40" aria-labelledby="title desc" role="img">
         {{#each getGraphData(data):i}}
-                <g>
-                    <rect y="80" transform='translate(0,{{i*20}})' width="7" height="9" style="fill:{{ getColor(i)}};stroke-width:0.5;stroke:rgb(0,0,0)" />
-                    <text y="80" transform='translate(10,{{i*20+10}})'  font-size="15">{{name}}</text>
-                </g>
-            <g class="bar"><rect width="{{amount * 5}}"  height="75" y="0" x="{{startX*5}}" style="fill: {{ getColor(i) }}"></rect>
-                <text text-anchor="middle" x="{{ centerX * 5 }}" y="40"  dy=".35em" >{{amount}}</text>
+            <g class="bar" on-mouseover='set("selected", i)' on-mouseout='set("selected", null)'>
+                <rect width="{{amount * 5}}"  height="38" y="0" x="{{startX*5}}" style="fill: {{ getColor(i) }}" ></rect>
+                <text font-family="monospace" font-weight="bold" font-size="15" fill="white"
+                    text-anchor="middle" x="{{ centerX * 5 }}" y="19"  dy=".35em" >{{amount}}</text>
             </g>
         {{/each }}
         </svg>
     </script>
-
-    <style>
-        .bar {
-            cursor: pointer;
-            font-family: Helvetica, sans-serif;
-        }
-        .bar text {
-            color: yellow;
-        }
-        .bar:hover,
-        .bar:focus {
-            fill: white;
-        }
-    </style>
 
     <script>
         require("LiveScript").go()

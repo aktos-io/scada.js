@@ -5,7 +5,7 @@ StackedBarChart = Ractive.extend do
     template: '#stackedchart'
     data:
         get-color: (order) ->
-            colors = <[ red yellow pink blue gray ]>
+            colors = <[ #d9534f #5bc0de #5cb85c #f0ad4e #337ab7 ]>
             console.log "color: ", colors[order]
             colors[order]
 
@@ -54,6 +54,7 @@ StackedBarChart = Ractive.extend do
             return r
 
 
+
 # ------------------------------------------------------------------------- #
                     # edit only below #
 # ------------------------------------------------------------------------- #
@@ -63,6 +64,28 @@ convert-reason-to-sbc = (x) ->
     r = [name: ..reason, amount: ..amount for x]
     console.log "...: ", r
     r
+
+
+get-return-reasons = ->
+    names = <[
+        Haydari
+        Rus salata
+        Mercimek
+        İçli Köfte
+        Sarma
+        Dolma
+        Patlıcan Ezme ]>
+
+    reasons = <[
+        SKT
+        AAA
+        BBB
+        CCC
+    ]>
+
+    random = -> parse-int (Math.random! * 100)
+
+    [{name: .., return-reasons: [{reason: .., amount: random!} for reasons]} for names]
 
 return-reasons =
     * name: \Haydari
@@ -87,7 +110,7 @@ ractive = new Ractive do
     el: '#main-output'
     template: '#main-template'
     data:
-        return-reasons: return-reasons
+        return-reasons: get-return-reasons!
         convert-reason-to-sbc: convert-reason-to-sbc
     components:
         'stacked-bar-chart': StackedBarChart
