@@ -38,7 +38,7 @@
             <g transform='translate(5,110)' on-mouseover='set("selected", i)' on-mouseout='set("selected", null)'
                 opacity='{{ selected === null ? 1 : (selected === i ? 1 : 0.2) }}'>
                 <rect transform='translate(0,{{i*10}})' width="5" height="5" style="fill:{{ colors[i] }};stroke-width:0.5;stroke:rgb(0,0,0)" />
-                <text transform='translate(10,{{i*10+5}})'  font-size="7">{{columnList[i]}}</text>
+                <text transform='translate(10,{{i*10+5}})'  font-size="7">{{columnList[i]}} ({{ .["value"] }})</text>
             </g>
             <g transform='translate(50,58)'>
                 {{#if selected === i}}
