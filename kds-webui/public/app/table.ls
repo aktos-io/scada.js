@@ -43,6 +43,7 @@ InteractiveTable = Ractive.extend do
             hide-menu: ->
                 console.log "clicked to hide", (@get \clickedIndex)
                 @set \clickedIndex, null
+                @set \editable, no
 
     template: '#interactive-table'
     data:
