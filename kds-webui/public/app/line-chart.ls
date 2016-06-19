@@ -6,6 +6,7 @@ Ractive.DEBUG = /unminified/.test -> /*unminified*/
 LineChart = Ractive.extend do
     template: '#linechart'
     init: ->
+<<<<<<< 5c1446c6fdf461c0255366f9eb66b623e0e288c2
             
         points = @get "points"
         @set "scaledPoints", @scaled-points
@@ -24,6 +25,23 @@ LineChart = Ractive.extend do
         b = [{y: scaled-points[i].y, data: points[i].y}  for i of points]
         @set "yLabels", b
         
+=======
+        points = @get "points"
+        @set "scaledPoints", @scaled-points
+        scaled-points = @scaled-points!
+
+        #console.log "a is: ", a
+        x-labels = [0 to (last scaledPoints).x by 10]
+        console.log "x-labels: ", x-labels
+        @set "xLabels", x-labels
+
+
+        height= @get \height
+        y-labels = [0 to height by 50]
+        console.log "y-labels: ", y-labels
+        @set "yLabels", y-labels
+
+>>>>>>> line-chart axis labels are added, not working correctly though
     scaled-points: ->
         points = @get "points"            
         sorted-x = sort-by (.x),points
@@ -119,9 +137,20 @@ LineChart = Ractive.extend do
             #console.log "djsdjkcnlkd: ", scaled-points
             x = join ' ' ["#{..x},#{..y}" for points]
             console.log x
+<<<<<<< 5c1446c6fdf461c0255366f9eb66b623e0e288c2
             x           
  
 my-data = 
+=======
+            x
+
+
+# ------------------------------------------------------------ #
+                # Edit only Below #
+# ------------------------------------------------------------ #
+
+my-data =
+>>>>>>> line-chart axis labels are added, not working correctly though
     * x: 1 # date
       y: 1.5 # amount
     * x: 3
@@ -154,6 +183,7 @@ my-data =
             x
 
 
+<<<<<<< 5c1446c6fdf461c0255366f9eb66b623e0e288c2
 
 
 
@@ -191,6 +221,8 @@ convert-kds-to-linechartpoints = (selected-id)->
 
 
 >>>>>>> line-chart cleaned up
+=======
+>>>>>>> line-chart axis labels are added, not working correctly though
 ractive = new Ractive do
     el: '#main-output'
     template: '#main-template'
