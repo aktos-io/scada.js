@@ -7,6 +7,11 @@ PieChart = Ractive.extend do
     oninit: ->
         col-list = @get \names |> split ','
         @set \columnList, col-list
+        self=@
+        <- sleep @get \delay
+        self.animate 'c', Math.PI * 2, do
+            duration: 800
+            easing: 'easeOut'
 
     init:(options)->
         @animate 'c' , Math.PI*2
@@ -46,23 +51,13 @@ PieChart = Ractive.extend do
             #console.log "test:" , points.join ' '
             return points.join ' '
 
-kds-data=
-    scores:
-        *id:'score1'
-         value:1
-        *id:'score2'
-         value:22
-        *id:'score3'
-         value: 55
 
 ractive=new Ractive do
     el: '#main-output'
     template: '#main-template'
     data:
-        kds:kds-data
         my-data: [3,5,7,99]
         my-data1: [4,5,12,1]
         my-data2: [213,5,2,5]
-        x: kds-data.scores
     components:
         piechart: PieChart

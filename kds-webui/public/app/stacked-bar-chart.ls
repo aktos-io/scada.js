@@ -2,7 +2,7 @@
 Ractive.DEBUG = /unminified/.test -> /*unminified*/
 
 StackedBarChart = Ractive.extend do
-    template: '#stackedchart'
+    template: '#stacked-bar-chart'
     data:
         get-color: (order) ->
             colors = <[ #d9534f #5bc0de #5cb85c #f0ad4e #337ab7 ]>

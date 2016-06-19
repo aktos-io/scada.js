@@ -29,7 +29,7 @@
             <stacked-bar-chart data="{{myBarChart2}}"/>
         </script>
 
-        <script id='stackedchart' type='text/ractive'>
+        <script id='stacked-bar-chart' type='text/ractive'>
             <svg class="chart" width="1200" height="40" aria-labelledby="title desc" role="img">
             {{#each getGraphData(data):i}}
                 <g class="bar" on-mouseover='set("selected", i)' on-mouseout='set("selected", null)'>
