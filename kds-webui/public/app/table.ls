@@ -8,6 +8,7 @@ InteractiveTable = Ractive.extend do
         col-list = @get \cols |> split ','
         @set \columnList, col-list
         self = @
+        console.log "table content", @get \content
 
         @on do
             activated: (...args) ->

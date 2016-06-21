@@ -25,11 +25,18 @@
 
     <div id='main-output'></div>
     <script id='main-template' type="text/ractive" >
-        <interactive-table cols="Tarih, Sipariş No, Şube, Ürün Sayısı, Tutar (TL)", data="{{ myTableData }}" />
+        <interactive-table cols="Tarih, Sipariş No, Şube, Ürün Sayısı, Tutar (TL)", data="{{ myTableData }}" >
+            Tarih:
+                type: date
+            Sipariş No:
+                type: int
+                max: 9999
+        </interactive-table>
         <interactive-table cols="Tarih, Sipariş NUMARASI, Şube, Ürün HELEHELE, Tutar (USD)", data="{{ myTableData }}" />
     </script>
 
     <script id='interactive-table' type='text/ractive'>
+        {{>content}}
         <b-table>
             <thead>
                 <tr>
@@ -49,8 +56,8 @@
                         {{#if clickedIndex === i }}
                             <td>
                                 <btn-group>
-                                    <span on-click="toggleEditing"><btn type="{{#if editTooltip }}danger{{else}}default{{/if}}" ><input type='checkbox' checked='{{editable}}' /> <icon-pencil/></btn></span>
-                                    <span on-click="hideMenu"><btn type="success"><icon-ok/></btn></span>
+                                    <btn on-buttonclick="toggleEditing" type="{{#if editTooltip }}danger{{else}}default{{/if}}" ><input type='checkbox' checked='{{editable}}' /> <icon-pencil/></btn>
+                                    <btn type="success" on-buttonclick="hideMenu"><icon-ok/></btn>
                                 </btn-group>
                             </td>
                         {{else}}
