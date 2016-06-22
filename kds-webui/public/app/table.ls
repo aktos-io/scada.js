@@ -18,6 +18,8 @@ InteractiveTable = Ractive.extend do
                 if index is curr-index
                     console.log "Give tooltip!"
                     i = 0
+                    @fire \showModal
+                    <- sleep 1000ms
                     <- :lo(op) ->
                         <- sleep 150ms
                         self.set \editTooltip, on
@@ -37,6 +39,14 @@ InteractiveTable = Ractive.extend do
             toggle-editing: ->
                 editable = @get \editable
                 @set \editable, not editable
+
+            revert: ->
+                alert "Changes Reverted!"
+
+            show-modal: ->
+                id = @get \id
+                console.log "My id: ", id
+                $ "\##{id}-modal" .modal \show
 
     template: '#interactive-table'
     data:

@@ -25,23 +25,29 @@
 
     <div id='main-output'></div>
     <script id='main-template' type="text/ractive" >
-        <interactive-table cols="Tarih, Sipariş No, Şube, Ürün Sayısı, Tutar (TL)", data="{{ myTableData }}" >
-            Tarih:
-                type: date
-            Sipariş No:
-                type: int
-                max: 9999
-        </interactive-table>
-        <interactive-table cols="Tarih, Sipariş NUMARASI, Şube, Ürün HELEHELE, Tutar (USD)", data="{{ myTableData }}" />
+
+        <interactive-table id="aa1" cols="Tarih, Sipariş No, Şube, Ürün Sayısı, Tutar (TL)", data="{{ myTableData }}" />
+        <interactive-table id="aa2" cols="Tarih, Sipariş NUMARASI, Şube, Ürün HELEHELE, Tutar (USD)", data="{{ myTableData }}" />
+
     </script>
 
     <script id='interactive-table' type='text/ractive'>
-        {{>content}}
+        <modal-custom id="{{id}}-modal" backdrop="false" keyboard="false">
+        	<modal-header>
+        		<icon-star/> <i>Ho ho ho</i>
+        	</modal-header>
+        	<modal-body>
+                Düzenlemek için kalem işaretini (<icon-pencil/>) kullanın...
+        	</modal-body>
+        	<modal-footer>
+        		<btn type="primary block" onclick="$('#{{id}}-modal').modal('hide')">Got it!</btn>
+        	</modal-footer>
+        </modal-custom>
         <b-table>
             <thead>
                 <tr>
                     {{#if clickedIndex !== null}}
-                        <th>Editing...</th>
+                        <th on-click="showModal">Editing...</th>
                     {{else}}
                         <th>#</th>
                     {{/if}}
@@ -55,9 +61,10 @@
                     <tr class="input-line {{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}}" on-doubleclick="activated">
                         {{#if clickedIndex === i }}
                             <td>
-                                <btn-group>
-                                    <btn on-buttonclick="toggleEditing" type="{{#if editTooltip }}danger{{else}}default{{/if}}" ><input type='checkbox' checked='{{editable}}' /> <icon-pencil/></btn>
+                                <btn-group type="xs">
+                                    <btn on-buttonclick="toggleEditing" type="{{#if editTooltip }}danger{{else}}default{{/if}}" active="{{editable}}" ><icon-pencil/></btn>
                                     <btn type="success" on-buttonclick="hideMenu"><icon-ok/></btn>
+                                    <btn type="info" on-buttonclick="revert"><icon-remove/></btn>
                                 </btn-group>
                             </td>
                         {{else}}
