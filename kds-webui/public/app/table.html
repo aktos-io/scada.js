@@ -40,14 +40,14 @@
                 Düzenlemek için kalem işaretini (<icon-pencil/>) kullanın...
         	</modal-body>
         	<modal-footer>
-        		<btn type="primary block" onclick="$('#{{id}}-modal').modal('hide')">Got it!</btn>
+        		<btn type="primary block" on-buttonclick="closeModal">Got it!</btn>
         	</modal-footer>
         </modal-custom>
         <b-table>
             <thead>
                 <tr>
                     {{#if clickedIndex !== null}}
-                        <th on-click="showModal">Editing...</th>
+                        <th>Editing...</th>
                     {{else}}
                         <th>#</th>
                     {{/if}}

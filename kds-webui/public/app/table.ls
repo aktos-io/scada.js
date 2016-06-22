@@ -17,19 +17,28 @@ InteractiveTable = Ractive.extend do
                 curr-index = @get \clickedIndex
                 if index is curr-index
                     console.log "Give tooltip!"
-                    i = 0
                     @fire \showModal
-                    <- sleep 1000ms
-                    <- :lo(op) ->
-                        <- sleep 150ms
-                        self.set \editTooltip, on
-                        <- sleep 150ms
-                        self.set \editTooltip, off
-                        if ++i is 2
-                            return op!
-                        lo(op)
-
                 @set \clickedIndex, index
+
+            close-modal: ->
+                self = @
+                $ "\##{@get 'id'}-modal" .modal \hide
+                <- sleep 300ms
+                self.fire \giveTooltip
+
+
+            give-tooltip: ->
+                self = @
+                i = 0
+                <- :lo(op) ->
+                    <- sleep 150ms
+                    self.set \editTooltip, on
+                    <- sleep 150ms
+                    self.set \editTooltip, off
+                    if ++i is 2
+                        return op!
+                    lo(op)
+
 
             hide-menu: ->
                 console.log "clicked to hide", (@get \clickedIndex)
