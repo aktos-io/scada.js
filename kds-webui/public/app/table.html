@@ -33,6 +33,9 @@
 
     <script id='interactive-table' type='text/ractive'>
         <modal-custom id="{{id}}-modal" backdrop="true" keyboard="false">
+        	<modal-header>
+        		<icon-star/> <i>Info</i>
+        	</modal-header>
         	<modal-body>
                 Düzenlemek için kalem işaretini (<icon-pencil/>) kullanın...
         	</modal-body>
@@ -59,7 +62,14 @@
                         {{#if clickedIndex === i }}
                             <td>
                                 <btn-group type="xs">
-                                    <btn on-buttonclick="toggleEditing" type="{{#if editTooltip }}danger{{else}}default{{/if}}" active="{{editable}}" ><icon-pencil/></btn>
+                                    <btn on-buttonclick="toggleEditing" type="{{#if editTooltip }}danger{{else}}default{{/if}}" active="{{editable}}" >
+                                        {{#if editable}}
+                                            <icon-check/>
+                                        {{else}}
+                                            <icon-unchecked/>
+                                        {{/if}}
+                                        <icon-pencil/>
+                                    </btn>
                                     <btn type="success" on-buttonclick="hideMenu"><icon-ok/></btn>
                                     <btn type="info" on-buttonclick="revert"><icon-remove/></btn>
                                 </btn-group>
