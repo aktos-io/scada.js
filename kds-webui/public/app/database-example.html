@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang='en-GB'>
+
+<head>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width; target-densitydpi=device-dpi; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+    <title>Interactive Table Example</title>
+    <script src="scripts/ractive.js"></script>
+    <script src="scripts/ractive.single-double-click.js"></script>
+    <script src="scripts/livescript.js"></script>
+    <script src="scripts/prelude-browser-min.js"></script>
+    <script src="scripts/ractive-bootstrap.js"></script>
+    <script src="scripts/jquery-1.12.0.min.js"></script>
+    <script src="scripts/jQuery.Soap.js"></script>
+    <link rel="stylesheet" href="scripts/bootstrap.min.css" >
+    <link rel="stylesheet" href="scripts/bootstrap-theme.min.css" >
+    <script src="scripts/bootstrap.min.js" ></script>
+
+    <script src="https://cdn.jsdelivr.net/pouchdb/5.4.4/pouchdb.min.js"></script>
+    <script src="database-conf.js"></script>
+    <script type="text/ls" src="database-example.ls"></script>
+</head>
+
+<body>
+
+    <div id='main-output'></div>
+    <script id='main-template' type="text/ractive" >
+
+        <textarea style="height: 600px; width: 100%">{{JSON.stringify(myTableData, null, 2)}}</textarea>
+
+    </script>
+    <script>
+        require("LiveScript").go()
+    </script>
+</body>
+</html>
