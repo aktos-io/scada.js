@@ -8,12 +8,15 @@ ractive = new Ractive do
     template: '#main-template'
     data:
         my-table-data: null
+        materials: []
 
 user-id = 5
 
 get-new-id = ->
     timestamp = new Date!get-time! .to-string 16
     "#{user-id}-#{timestamp}"
+
+
 
 products =
     _id: get-new-id!
@@ -35,11 +38,30 @@ update-view = (...x) ->
 db = new PouchDB \mydb
 #remote = 'https://USERNAME:PASSWORD@USERNAME.cloudant.com/DB_NAME'
 opts =
-    continuous: yes
-    on-change: update-view
+    live: yes
+    ...
+
 
 db.replicate.to remote, opts
 db.replicate.from remote, opts
+
+
+# ------------------- Database definition ends here ----------------------#
+
+get-materials = ->
+    db.query 'primitives/raw-material-list', (err, res) ->
+        console.log "this document contains raw material list: ", res
+        material-document = res.rows.0.id
+        db.get material-document, (err, res) ->
+            materials =  [..name for res.contents]
+            console.log "these are materials: ", materials
+            ractive.set \materials, materials
+
+
+db.changes!.on 'change',  ->
+    console.log "change detected!"
+    get-materials!
+
 
 
 db.info (...x) ->
@@ -47,6 +69,8 @@ db.info (...x) ->
 
 db.query 'getTitles/new-view', (err, res) ->
     console.log "getting titles: ", res
+
+raw-material-list = null
 
 db.put products, (err, result) ->
     if not err

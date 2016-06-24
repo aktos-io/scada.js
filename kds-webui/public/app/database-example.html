@@ -26,6 +26,12 @@
     <div id='main-output'></div>
     <script id='main-template' type="text/ractive" >
 
+        <ul>
+        {{# materials}}
+            <li>Material: {{.}}</li>
+        {{/ materials}}
+        </ul>
+
         <textarea style="height: 600px; width: 100%">{{JSON.stringify(myTableData, null, 2)}}</textarea>
 
     </script>
