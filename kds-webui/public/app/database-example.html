@@ -32,8 +32,8 @@
         {{/ materials}}
         </ul>
 
-        <textarea style="height: 600px; width: 100%">{{JSON.stringify(myTableData, null, 2)}}</textarea>
-
+        <textarea style="height: 600px; width: 100%" value="{{myTableData}}"></textarea>
+        <button on-click="updateTable">update!</button>
     </script>
     <script>
         require("LiveScript").go()

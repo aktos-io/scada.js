@@ -2,6 +2,8 @@
 sleep = (ms, f) -> set-timeout f, ms
 
 
+db = null
+satis-listesi = null
 
 ractive = new Ractive do
     el: '#main-output'
@@ -10,39 +12,27 @@ ractive = new Ractive do
         my-table-data: null
         materials: []
 
-user-id = 5
-
-get-new-id = ->
-    timestamp = new Date!get-time! .to-string 16
-    "#{user-id}-#{timestamp}"
-
-
-
-products =
-    _id: get-new-id!
-    title: \products
-    product-list:
-        * name: \
-          unit: \piece
-          best-served: \cold
-        * name: \water
-          unit: \kg
-          best-served: \hot
-
-
-update-view = (...x) ->
-    console.log "Change detected! : ", x
-    db.allDocs {include_docs: true, descending: true}, (err, doc) ->
-        console.log "Docs: ", doc
+ractive.on do
+    update-table: ->
+        console.log "updating satis listesi!", satis-listesi
+        db.put satis-listesi, (err, res) ->
+            console.log "satıs listesi (put): ", err, res
+        <- sleep 1000ms
+        console.log "satis-listesi: :: ", satis-listesi
 
 db = new PouchDB \mydb
 #remote = 'https://USERNAME:PASSWORD@USERNAME.cloudant.com/DB_NAME'
-opts =
-    live: yes
 
-db.sync remote, opts
+db.sync remote, {live: yes}
 
 # ------------------- Database definition ends here ----------------------#
+
+get-new-id = (user-id) -->
+    timestamp = new Date!get-time! .to-string 16
+    "#{user-id}-#{timestamp}"
+
+default-entry-id = get-new-id 5
+
 
 get-materials = ->
     db.query 'primitives/raw-material-list', (err, res) ->
@@ -60,17 +50,18 @@ opts =
 
 db.changes opts .on 'change', (...x) ->
     console.log "change detected!", x
-    #get-materials!
+    get-materials!
 
 db.info (...x) ->
     console.log "info ::: ", x
 
 db.query 'getTitles/new-view', (err, res) ->
     console.log "getting titles: ", res
+    db.all-docs {include_docs: yes, keys: [..key for res.rows]}, (err, res) ->
+        console.log "documents related with titles: ", err, res
 
-raw-material-list = null
 
-db.put products, (err, result) ->
-    if not err
-        console.log "success!"
-    console.log "result: ", result
+db.get "satış listesi", (err, res) ->
+    satis-listesi := res
+    console.log "satış listesi: ", satis-listesi
+    ractive.set "myTableData", satis-listesi.entries
