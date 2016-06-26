@@ -27,12 +27,32 @@
     <script id='main-template' type="text/ractive" >
 
         <ul>
+            <li>Name: <input value="{{newSales.name}}" /></li>
+            <li>date: <input value="{{newSales.date}}" /></li>
+        </ul>
+        <button on-click="addSalesEntry">Add sales entry!</button>
+
+        <h2> Sales entries: </h2>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>:::</th>
+                <th>Date</th>
+            </tr>
+            {{#each salesEntries}}
+                <tr>
+                    <td>{{ .["name"] }}</td><td>:::</td><td>{{ .["date"] }}</td>
+                </tr>
+            {{/each }}
+        </table>
+
+
+        <ul>
         {{# materials}}
             <li>Material: {{.}}</li>
         {{/ materials}}
         </ul>
 
-        <textarea style="height: 600px; width: 100%" value="{{myTableData}}"></textarea>
         <button on-click="updateTable">update!</button>
     </script>
     <script>
