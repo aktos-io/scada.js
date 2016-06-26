@@ -31,7 +31,6 @@
             </svg>
         </script>
 
-
 <script id="pie-chart" type="text/ractive">
         <svg viewBox='0 0 100 180'>
         {{#each getSegments( values ) :i}}
@@ -53,6 +52,7 @@
         {{/each segments}}
         </svg>
     </script>
+
 <script id="stacked-bar-chart" type="text/ractive">
             <svg class="chart" width="1200" height="40" aria-labelledby="title desc" role="img">
             {{#each getGraphData(data):i}}

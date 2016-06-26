@@ -10,7 +10,7 @@ path = require \path
 cheerio = require \cheerio
 {each, split} = require 'prelude-ls'
 
-dirname = '/home/mesut/dev/kds/kds-webui/public/app'
+dirname = __dirname
 #dirname = '/home/mesut/dev/livescript-file-read'
 components-html = \components.html
 components-ls = \components.ls
