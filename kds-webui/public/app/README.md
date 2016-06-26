@@ -15,3 +15,6 @@ Add the follows:
 </body>
 
 ```
+
+For every component's `.ls` files, you have to add `#END-OF-COMPONENT` tag at
+the end of component.
