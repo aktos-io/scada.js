@@ -39,12 +39,8 @@ db = new PouchDB \mydb
 #remote = 'https://USERNAME:PASSWORD@USERNAME.cloudant.com/DB_NAME'
 opts =
     live: yes
-    ...
 
-
-db.replicate.to remote, opts
-db.replicate.from remote, opts
-
+db.sync remote, opts
 
 # ------------------- Database definition ends here ----------------------#
 
@@ -58,11 +54,13 @@ get-materials = ->
             ractive.set \materials, materials
 
 
-db.changes!.on 'change',  ->
-    console.log "change detected!"
-    get-materials!
+opts =
+    since: 'now'
+    live: true
 
-
+db.changes opts .on 'change', (...x) ->
+    console.log "change detected!", x
+    #get-materials!
 
 db.info (...x) ->
     console.log "info ::: ", x
