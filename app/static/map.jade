@@ -15,12 +15,59 @@ html(class="no-js", lang="en")
             content="width=device-width; target-densitydpi=device-dpi; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"
         )
     body
-        div
-            p 
-                a(href="https://aktos.io") aktos.io
-            p info@aktos.io 
-            p Halkapınar Mah. 1202/2 Sk. No: 101/Y PK:35170 Gıda Çarşısı, Yenişehir, Konak, İZMİR
-            p 
-                a(href="geo:38.427996,27.172554") coord: 38.427996,27.172554
-            p Cerem Cem ASLAN: 
-                a(href='tel:+905553066003') +90 555 3066003
+        //- 
+            div
+                p 
+                    a(href="https://aktos.io") aktos.io
+                p info@aktos.io 
+                p Halkapınar Mah. 1202/2 Sk. No: 101/Y PK:35170 Gıda Çarşısı, Yenişehir, Konak, İZMİR
+                p 
+                    a(href="geo:38.427996,27.172554") coord: 38.427996,27.172554
+                p Cerem Cem ASLAN: 
+                    a(href='tel:+905553066003') +90 555 3066003
+        h1#map-header aktos elektronik 
+        table#map-info
+            tr
+                td Navigasyon için
+                td :
+                td 
+                    a(href="geo:38.427996,27.172554") Tıklayın 
+            tr
+                td Koordinatlar
+                td : 
+                td 38.427996,27.172554
+                
+            tr
+                td Adres 
+                td : 
+                td Halkapınar Mah. 1202/2 Sk. No: 101/Y 35170 Gıda Çarşısı, Konak, İZMİR
+            tr 
+                td E-posta 
+                td : 
+                td info@aktos.io
+            tr 
+                td Tel
+                td : 
+                td 
+                    a(href='tel:+905553066003') +90 555 3066003
+            tr 
+                td Ana Sayfa
+                td : 
+                td 
+                    a(href="https://aktos.io") https://aktos.io
+                    
+        style.
+            #map-header {
+                text-align: center; 
+            }
+            #map-header, #map-info {
+                font-family: monospace;
+                width: 100%; 
+            }
+            #map-info {
+                border-collapse: collapse;  
+            }
+            #map-info tr:nth-child(odd) td
+            {
+              background-color: #E8E8FF;
+            }
