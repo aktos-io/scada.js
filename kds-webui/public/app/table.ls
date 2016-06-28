@@ -1,6 +1,4 @@
 {split, take, join, lists-to-obj, sum} = require 'prelude-ls'
-Ractive.DEBUG = /unminified/.test -> /*unminified*/
-
 sleep = (ms, f) -> set-timeout f, ms
 
 InteractiveTable = Ractive.extend do
