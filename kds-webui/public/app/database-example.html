@@ -17,8 +17,8 @@
     <script src="scripts/bootstrap.min.js" ></script>
 
     <script src="https://cdn.jsdelivr.net/pouchdb/5.4.4/pouchdb.min.js"></script>
-    <script src="database-conf.js"></script>
-    <script type="text/ls" src="database-example.ls"></script>
+    <!-- <script type="text/ls" src="database-example.ls"></script>
+    -->
 </head>
 
 <body>
@@ -33,18 +33,7 @@
         <button on-click="addSalesEntry">Add sales entry!</button>
 
         <h2> Sales entries: </h2>
-        <table>
-            <tr>
-                <th>Name</th>
-                <th>:::</th>
-                <th>Date</th>
-            </tr>
-            {{#each salesEntries}}
-                <tr>
-                    <td>{{ .["name"] }}</td><td>:::</td><td>{{ .["date"] }}</td>
-                </tr>
-            {{/each }}
-        </table>
+        <interactive-table tabledata="{{ salesEntries }}" cols="a, b" />
 
 
         <ul>
@@ -52,8 +41,6 @@
             <li>Material: {{.}}</li>
         {{/ materials}}
         </ul>
-        <div>{{JSON.stringify(salesToTable(salesEntries), 2, null)}}</div>
-        <interactive-table tabledata="{{ salesEntries }}" cols="a, b" />
 
     </script>
 
@@ -124,6 +111,8 @@
             </tbody>
         </b-table>
     </script>
+    <script src="database-conf.js"></script>
+    <script src="scripts/bundle.js"></script>
 
     <script>
         require("LiveScript").go()

@@ -1,4 +1,14 @@
 {split, take, join, lists-to-obj, sum} = require 'prelude-ls'
+
+PouchDB = require \pouchdb
+Auth = require "pouchdb-auth"
+PouchDB.plugin Auth
+
+
+a = new PouchDB '_users'
+
+
+
 sleep = (ms, f) -> set-timeout f, ms
 
 db = null
