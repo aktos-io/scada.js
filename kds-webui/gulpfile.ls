@@ -1,18 +1,23 @@
 gulp = require \gulp
 browserify = require \browserify
-lsc = require 'gulp-livescript'
-clean = require 'gulp-clean'
-source = require 'vinyl-source-stream'
-buffer = require 'vinyl-buffer'
-glob = require 'glob'
-concat = require 'gulp-concat'
-{union} = require 'prelude-ls'
+lsc = require \gulp-livescript
+clean = require \gulp-clean
+source = require \vinyl-source-stream
+buffer = require \vinyl-buffer
+glob = require \glob
+concat = require \gulp-concat
+{union} = require \prelude-ls
 path = require \path
+
+vendor-folder = './vendor'
+client-src = './src'
+client-public = './public'
 
 gulp.task \default, ->
     console.log "task lsc is running.."
-    gulp.watch './src/**/*.*', ->
-        gulp.start <[ browserify html vendor]>
+    run = -> gulp.start <[ browserify html vendor vendor-css ]>
+    run!
+    gulp.watch './src/**/*.*', -> run!
 
 gulp.task \lsc ->
     gulp.src ['./src/app/*.ls']
@@ -52,4 +57,12 @@ gulp.task \vendor, ->
         #console.log "ordered list is: ", ordered-list
         gulp.src ["./vendor/#{..}" for ordered-list]
             .pipe concat "vendor.js"
+            .pipe gulp.dest "./public/app"
+
+
+gulp.task \vendor-css, ->
+    glob './vendor/**/*.css', (err, files) ->
+        console.log "css list is: ", files
+        gulp.src files
+            .pipe concat "vendor.css"
             .pipe gulp.dest "./public/app"
