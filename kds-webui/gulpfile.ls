@@ -11,7 +11,8 @@ path = require \path
 
 gulp.task \default, ->
     console.log "task lsc is running.."
-    gulp.start <[ browserify html vendor]>
+    gulp.watch './src/**/*.*', ->
+        gulp.start <[ browserify html vendor]>
 
 gulp.task \lsc ->
     gulp.src ['./src/app/*.ls']
@@ -48,7 +49,7 @@ gulp.task \vendor, ->
 
     glob './vendor/**/*.js', (err, files) ->
         ordered-list = union order, [path.basename .. for files]
-        console.log "ordered list is: ", ordered-list
+        #console.log "ordered list is: ", ordered-list
         gulp.src ["./vendor/#{..}" for ordered-list]
             .pipe concat "vendor.js"
             .pipe gulp.dest "./public/app"
