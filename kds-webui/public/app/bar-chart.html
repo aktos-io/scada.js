@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang='en-GB'>
+
+<head>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width; target-densitydpi=device-dpi; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+    <title>Bar Chart</title>
+    <script src="scripts/ractive.js"></script>
+    <script src="scripts/ractive.single-double-click.js"></script>
+    <script src="scripts/livescript.js"></script>
+    <script src="scripts/prelude-browser-min.js"></script>
+    <script src="scripts/ractive-bootstrap.js"></script>
+    <script src="scripts/jquery-1.12.0.min.js"></script>
+    <script src="scripts/jQuery.Soap.js"></script>
+    <link rel="stylesheet" href="scripts/bootstrap.min.css" >
+    <link rel="stylesheet" href="scripts/bootstrap-theme.min.css" >
+    <script src="scripts/bootstrap.min.js" ></script>
+
+    <script type="text/ls" src="bar-chart.ls"></script>
+
+
+</head>
+
+<body style="margin:0px;">
+    <div id='main-output'></div>
+    <script id='main-template' type="text/ractive">
+        <h1>Bar Chart</h1>
+        <bar-chart data="{{myData}}" />
+
+        {{#each [1, 2, 3, 4, 5]:i}}
+            <bar-chart data="{{ simulateData(i) }}" />
+        {{/each}}
+
+    </script>
+
+    <script id='bar-chart' type='text/ractive'>
+        <svg class="chart" width="420" height="250" aria-labelledby="title desc" role="img">
+            {{#each data:i}}
+                <g class="bar">
+                    <rect width="48"  height="{{amount}}" x="{{i*50}}" y="{{ 80 - amount }}" fill="{{ getColor(i) }}"></rect>
+                </g>
+                <g>
+                    <text transform="rotate(270)" text-anchor="right" x="-150" y="{{ i*50 + 20 }}" dx=".35em">{{ getShortName(.["name"]) }}</text>
+                </g>
+            {{/each }}
+        </svg>
+    </script>
+
+    <style>
+    .bar {
+        transition: fill .3s ease;
+        cursor: pointer;
+    }
+    .bar text {
+        color: black;
+    }
+    .bar:hover,
+    .bar:focus {
+        border: 1px solid red;
+    }
+    </style>
+
+    <script>
+        require("LiveScript").go()
+    </script>
+
+</body>
+</html>

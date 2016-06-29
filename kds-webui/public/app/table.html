@@ -4,35 +4,32 @@
 <head>
     <meta charset='utf-8'>
     <meta name="viewport" content="width=device-width; target-densitydpi=device-dpi; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
-    <title>Database Example</title>
-    <script src="vendor.js"></script>
+    <title>Interactive Table Example</title>
+    <script src="scripts/ractive.js"></script>
+    <script src="scripts/ractive.single-double-click.js"></script>
+    <script src="scripts/livescript.js"></script>
+    <script src="scripts/prelude-browser-min.js"></script>
+    <script src="scripts/ractive-bootstrap.js"></script>
+    <script src="scripts/jquery-1.12.0.min.js"></script>
+    <script src="scripts/jQuery.Soap.js"></script>
     <link rel="stylesheet" href="scripts/bootstrap.min.css" >
     <link rel="stylesheet" href="scripts/bootstrap-theme.min.css" >
+    <script src="scripts/bootstrap.min.js" ></script>
+
+    <script type="text/ls" src="table.ls"></script>
 </head>
 
 <body>
 
+    <h1>Table-Page</h1>
+
     <div id='main-output'></div>
     <script id='main-template' type="text/ractive" >
 
-        <ul>
-            <li>Name: <input value="{{newSales.name}}" /></li>
-            <li>date: <input value="{{newSales.date}}" /></li>
-        </ul>
-        <button on-click="addSalesEntry">Add sales entry!</button>
-
-        <h2> Sales entries: </h2>
-        <interactive-table tabledata="{{ salesEntries }}" cols="a, b" />
-
-
-        <ul>
-        {{# materials}}
-            <li>Material: {{.}}</li>
-        {{/ materials}}
-        </ul>
+        <interactive-table id="aa1" cols="Tarih, Sipariş No, Şube, Ürün Sayısı, Tutar (TL)", data="{{ myTableData }}" />
+        <interactive-table id="aa2" cols="Tarih, Sipariş NUMARASI, Şube, Ürün HELEHELE, Tutar (USD)", data="{{ myTableData }}" />
 
     </script>
-
 
     <script id='interactive-table' type='text/ractive'>
         <modal-custom id="{{id}}-modal" backdrop="true" keyboard="false">
@@ -60,7 +57,7 @@
                 </tr>
             </thead>
             <tbody>
-                {{#each tabledata:i}}
+                {{#each data:i}}
                     <tr class="input-line {{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}}" on-doubleclick="activated">
                         {{#if clickedIndex === i }}
                             <td>
@@ -73,35 +70,30 @@
                                         {{/if}}
                                         <icon-pencil/>
                                     </btn>
-                                    <btn type="success" on-buttonclick="saveAndExit"><icon-ok/></btn>
+                                    <btn type="success" on-buttonclick="hideMenu"><icon-ok/></btn>
                                     <btn type="info" on-buttonclick="revert"><icon-remove/></btn>
                                 </btn-group>
                             </td>
                         {{else}}
                             <td>{{i+1}}</td>
                         {{/if}}
-                        <td>
-                            {{#if isEditingLine(i)}}
-                                <input  class="form-control" type="text" value="{{ tabledata[i]["name"] }}">
-                            {{else}}
-                                {{ tabledata[i]["name"] }}
-                            {{/if}}
-                        </td>
-                        <td>
-                            {{#if isEditingLine(i)}}
-                                <input  class="form-control" type="text" value="{{ tabledata[i]["date"] }}">
-                            {{else}}
-                                {{ tabledata[i]["date"] }}
-                            {{/if}}
-                        </td>
+                        {{#each columnList:j}}
 
+                            <td>
+                                {{#if isEditingLine(i)}}
+                                    <input  class="form-control" type="text" value="{{ data[i][j] }}">
+                                {{else}}
+                                    {{ data[i][j] }}
+                                {{/if}}
+                            </td>
+                        {{/each}}
                     </tr>
                 {{/each}}
             </tbody>
         </b-table>
     </script>
-    <script src="database-conf.js"></script>
-    <script src="database-example.js"></script>
-
+    <script>
+        require("LiveScript").go()
+    </script>
 </body>
 </html>

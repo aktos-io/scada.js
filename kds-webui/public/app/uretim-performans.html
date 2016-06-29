@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang='en-GB'>
+
+<head>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width; target-densitydpi=device-dpi; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+    <title>Planlanan-Uretilen</title>
+    <script src="scripts/ractive.js"></script>
+    <script src="scripts/ractive.single-double-click.js"></script>
+    <script src="scripts/livescript.js"></script>
+    <script src="scripts/prelude-browser-min.js"></script>
+    <script src="scripts/ractive-bootstrap.js"></script>
+    <script src="scripts/jquery-1.12.0.min.js"></script>
+    <script src="scripts/jQuery.Soap.js"></script>
+    <link rel="stylesheet" href="scripts/bootstrap.min.css" >
+    <link rel="stylesheet" href="scripts/bootstrap-theme.min.css" >
+    <script src="scripts/bootstrap.min.js" ></script>
+
+    <script type="text/ls" src="uretim-performans.ls"></script>
+
+
+</head>
+
+<body style="margin:0px;">
+    <div id='main-output'></div>
+    <script id='main-template' type="text/ractive">
+        <h1>Planlanan-Uretilen</h1>
+        <row>
+            {{#each myData:i}}
+                <col-md-1></col-md-1>
+                <col-md-2> <h2>{{ .["name"] }}</h2></col-md-2>
+                <col-md-9><bar-chart data="{{getReturnProduction(.["name"])}}" /></col-md-9>
+            {{/each}}
+        </row>
+    </script>
+
+    <script id='bar-chart' type='text/ractive'>
+        <svg width="420" height="250" aria-labelledby="title desc" role="img">
+            {{#each data:i}}
+                <g>
+                    <rect width="48"  height="{{ .["planned"] }}" x="{{i*100 + i*30}}" y="{{ 120 - .["planned"] }}" fill="{{ getColor(1) }}"></rect>
+                </g>
+                <g>
+                    <text text-anchor="middle" x="{{i*130+24.5}}" y="{{ 120 - .["planned"] }}" >{{ .["planned"] }}</text>
+                </g>
+
+                <g>
+                    <rect width="48"  height="{{ .["produced"] }}" x="{{i*100+50 + i*30}}" y="{{ 120 - .["produced"] }}" fill="{{ getColor(2) }}"></rect>
+                </g>
+                <g>
+                    <text text-anchor="middle" x="{{i*130+72.5}}" y="{{ 120 - .["produced"] }}" >{{ .["produced"] }}</text>
+                </g>
+
+                <g>
+                    <text text-anchor="middle" x="{{i*130+49}}" y="{{ 140 }}" >{{ .["date"] }}</text>
+                </g>
+            {{/each }}
+        </svg>
+    </script>
+
+
+    <script>
+        require("LiveScript").go()
+    </script>
+
+</body>
+</html>

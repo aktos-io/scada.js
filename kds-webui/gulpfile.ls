@@ -5,10 +5,13 @@ clean = require 'gulp-clean'
 source = require 'vinyl-source-stream'
 buffer = require 'vinyl-buffer'
 glob = require 'glob'
+concat = require 'gulp-concat'
+{union} = require 'prelude-ls'
+path = require \path
 
-gulp.task \default, -> 
+gulp.task \default, ->
     console.log "task lsc is running.."
-    gulp.start <[ browserify html]>
+    gulp.start <[ browserify html vendor]>
 
 gulp.task \lsc ->
     gulp.src ['./src/app/*.ls']
@@ -16,21 +19,36 @@ gulp.task \lsc ->
     .pipe gulp.dest './public/compiled-js'
 
 
-gulp.task \browserify <[ clean-js lsc ]> -> 
-    glob './public/compiled-js/*.js', (err, filepath) -> 
+gulp.task \browserify <[ lsc ]> ->
+    glob './public/compiled-js/*.js', (err, filepath) ->
         for f in filepath
             filename = f.split '/' .slice -1
             browserify f
                 .bundle!
-                .pipe source "./public/app/#{filename}"
+                .on \error, (err) ->
+                    console.log "Error while bundling: ", err
+
+                .pipe source "#{filename}"
                 .pipe buffer!
                 .pipe gulp.dest './public/app'
 
 gulp.task \clean-js, ->
     console.log "Cleaned build directory..."
     gulp.src './public/**/*.js'
-    .pipe clean! 
+        .pipe clean!
 
-gulp.task \html, -> 
+gulp.task \html, ->
     gulp.src './src/app/*.html'
         .pipe gulp.dest './public/app'
+
+gulp.task \vendor, ->
+    order =
+        \ractive.js
+        \jquery-1.12.0.min.js
+
+    glob './vendor/**/*.js', (err, files) ->
+        ordered-list = union order, [path.basename .. for files]
+        console.log "ordered list is: ", ordered-list
+        gulp.src ["./vendor/#{..}" for ordered-list]
+            .pipe concat "vendor.js"
+            .pipe gulp.dest "./public/app"

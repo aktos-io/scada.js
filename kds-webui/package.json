@@ -23,12 +23,14 @@
     "http-proxy": "^1.13.3",
     "inert": "^3.2.1",
     "pouchdb": "^5.4.4",
-    "pouchdb-auth": "^2.1.0"
+    "pouchdb-auth": "^2.1.0",
+    "ractive": "^0.7.3"
   },
   "devDependencies": {
     "glob": "^7.0.5",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
+    "gulp-concat": "^2.6.0",
     "gulp-livescript": "^3.0.1",
     "livescript": "^1.5.0",
     "vinyl-buffer": "^1.0.0",
