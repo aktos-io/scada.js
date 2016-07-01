@@ -28,7 +28,7 @@ server.route do
   handler:
     file: "./public/index.html"
 
-server.route do 
+server.route do
   path: "/app/{f*}"
   method: "GET"
   handler:
@@ -41,6 +41,13 @@ server.route do
   handler:
     directory:
       path: "./public/scripts"
+
+server.route do
+  path: "/fonts/{f*}"
+  method: "GET"
+  handler:
+    directory:
+      path: "./public/fonts"
 
 server.start !->
   console.log "Server started at: ", server.info.uri

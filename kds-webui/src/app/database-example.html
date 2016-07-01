@@ -3,11 +3,10 @@
 
 <head>
     <meta charset='utf-8'>
-    <meta name="viewport" content="width=device-width; target-densitydpi=device-dpi; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>Database Example</title>
     <script src="vendor.js"></script>
-    <link rel="stylesheet" href="scripts/bootstrap.min.css" >
-    <link rel="stylesheet" href="scripts/bootstrap-theme.min.css" >
+    <link rel="stylesheet" href="vendor.css" >
 </head>
 
 <body>
@@ -22,7 +21,7 @@
         <button on-click="addSalesEntry">Add sales entry!</button>
 
         <h2> Sales entries: </h2>
-        <interactive-table tabledata="{{ salesEntries }}" cols="a, b" />
+        <interactive-table tabledata="{{ salesEntries }}" cols="a, b" db="{{mydb}}"/>
 
 
         <ul>

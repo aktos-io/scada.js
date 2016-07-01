@@ -24,7 +24,8 @@
     "inert": "^3.2.1",
     "pouchdb": "^5.4.4",
     "pouchdb-auth": "^2.1.0",
-    "ractive": "^0.7.3"
+    "ractive": "^0.7.3",
+    "randomstring": "^1.1.5"
   },
   "devDependencies": {
     "glob": "^7.0.5",

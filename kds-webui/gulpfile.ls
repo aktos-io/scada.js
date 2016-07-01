@@ -15,7 +15,7 @@ client-public = './public'
 
 gulp.task \default, ->
     console.log "task lsc is running.."
-    run = -> gulp.start <[ browserify html vendor vendor-css ]>
+    run = -> gulp.start <[ browserify html vendor vendor-css assets]>
     run!
     gulp.watch './src/**/*.*', -> run!
 
@@ -32,7 +32,7 @@ gulp.task \browserify <[ lsc ]> ->
             browserify f
                 .bundle!
                 .on \error, (err) ->
-                    console.log "Error while bundling: ", err
+                    console.log "Error while bundling: ", err.to-string!
 
                 .pipe source "#{filename}"
                 .pipe buffer!
@@ -59,10 +59,12 @@ gulp.task \vendor, ->
             .pipe concat "vendor.js"
             .pipe gulp.dest "./public/app"
 
-
 gulp.task \vendor-css, ->
     glob './vendor/**/*.css', (err, files) ->
-        console.log "css list is: ", files
         gulp.src files
             .pipe concat "vendor.css"
             .pipe gulp.dest "./public/app"
+
+gulp.task \assets, ->
+    gulp.src "./src/client/assets/**/*", {base: './src/client/assets'}
+        .pipe gulp.dest client-public

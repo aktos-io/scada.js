@@ -1,15 +1,8 @@
 
 {split, take, join, lists-to-obj, sum} = require 'prelude-ls'
-{sleep} = require "./aea"
-
-random = require \randomstring
 
 export InteractiveTable = Ractive.extend do
     oninit: ->
-        if (@get \id) is \will-be-random
-            # then make it random
-            @set \id random.generate 7
-            console.log "Table id is automatically generated: ", @get \id
         col-list = @get \cols |> split ','
         @set \columnList, col-list
         self = @
@@ -50,7 +43,7 @@ export InteractiveTable = Ractive.extend do
                 console.log "clicked to save and hide", index
                 line = (@get \tabledata)[index]
                 #console.log "line is: ", line
-                @get \db .put line
+                db.put line
                 @set \clickedIndex, null
                 @set \editable, no
 
@@ -68,8 +61,6 @@ export InteractiveTable = Ractive.extend do
 
     template: '#interactive-table'
     data:
-        id: \will-be-random
-        db: null
         tabledata: null
         editable: false
         clicked-index: null
