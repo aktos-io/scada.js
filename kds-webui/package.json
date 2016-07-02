@@ -18,12 +18,14 @@
   "homepage": "https://github.com/ceremcem/livescript-ractive-example-project#readme",
   "dependencies": {
     "cheerio": "^0.20.0",
+    "crypto": "0.0.3",
     "h2o2": "^5.1.0",
     "hapi": "^13.3.0",
     "http-proxy": "^1.13.3",
     "inert": "^3.2.1",
     "pouchdb": "^5.4.4",
     "pouchdb-auth": "^2.1.0",
+    "pouchdb-authentication": "^0.5.2",
     "ractive": "^0.7.3",
     "randomstring": "^1.1.5"
   },
@@ -34,6 +36,7 @@
     "gulp-concat": "^2.6.0",
     "gulp-livescript": "^3.0.1",
     "livescript": "^1.5.0",
+    "node-notifier": "^4.6.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
   }

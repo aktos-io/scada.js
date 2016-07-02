@@ -8,11 +8,17 @@ glob = require \glob
 concat = require \gulp-concat
 {union} = require \prelude-ls
 path = require \path
+notifier = require \node-notifier
 
+# Build Settings
+notification-enabled = yes
+
+# Project Folder Structure
 vendor-folder = './vendor'
 client-src = './src'
 client-public = './public'
 
+# Tasks
 gulp.task \default, ->
     console.log "task lsc is running.."
     run = -> gulp.start <[ browserify html vendor vendor-css assets]>
@@ -32,7 +38,9 @@ gulp.task \browserify <[ lsc ]> ->
             browserify f
                 .bundle!
                 .on \error, (err) ->
-                    console.log "Error while bundling: ", err.to-string!
+                    msg = "Error while bundling: #{err.to-string!}"
+                    notifier.notify {title: \GULP, message: msg} if notification-enabled
+                    console.log msg
 
                 .pipe source "#{filename}"
                 .pipe buffer!
