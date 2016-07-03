@@ -1,6 +1,6 @@
 
 {split, take, join, lists-to-obj, sum} = require 'prelude-ls'
-{sleep} = require "./aea"
+{sleep} = require "./lib/aea"
 
 random = require \randomstring
 
@@ -9,11 +9,11 @@ export InteractiveTable = Ractive.extend do
         if (@get \id) is \will-be-random
             # then make it random
             @set \id random.generate 7
-            console.log "Table id is automatically generated: ", @get \id
+            #console.log "Table id is automatically generated: ", @get \id
         col-list = @get \cols |> split ','
         @set \columnList, col-list
         self = @
-        console.log "table content", @get \content
+        #console.log "table content", @get \content
 
         @on do
             activated: (...args) ->
@@ -50,7 +50,11 @@ export InteractiveTable = Ractive.extend do
                 console.log "clicked to save and hide", index
                 line = (@get \tabledata)[index]
                 #console.log "line is: ", line
-                @get \db .put line
+                @get \db .put line, (err, res) ->
+                    if err
+                        console.log "ERR: Table:", err
+                    else
+                        console.log "INFO: Table: ", res
                 @set \clickedIndex, null
                 @set \editable, no
 

@@ -1,0 +1,62 @@
+script#interactive-table(type="text/ractive")
+    modal-custom(
+        id="{{id}}-modal",
+        backdrop="true", 
+        keyboard="false")
+        modal-header 
+            icon-exclamation-sign: i Düzenlemek mi istediniz? 
+            
+        modal-body.
+            Düzenlemek için kalem işaretini #[icon-pencil] kullanın...
+            
+        modal-footer
+            btn(type="primary block", on-buttonclick="closeModal") Tamam!
+    b-table 
+        thead 
+            tr.
+                {{#if clickedIndex !== null}}
+                    <th>Editing...</th>
+                {{else}}
+                    <th>#</th>
+                {{/if}}
+                {{#each columnList}}
+                    <th>{{ . }}</th>
+                {{/each}}
+
+        tbody.
+            {{#each tabledata:i}}
+                <tr class="input-line {{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}}" on-doubleclick="activated">
+                    {{#if clickedIndex === i }}
+                        <td>
+                            <btn-group type="xs">
+                                <btn on-buttonclick="toggleEditing" type="{{#if editTooltip }}danger{{else}}default{{/if}}" active="{{editable}}" >
+                                    {{#if editable}}
+                                        <icon-check/>
+                                    {{else}}
+                                        <icon-unchecked/>
+                                    {{/if}}
+                                    <icon-pencil/>
+                                </btn>
+                                <btn type="success" on-buttonclick="saveAndExit"><icon-ok/></btn>
+                                <btn type="info" on-buttonclick="revert"><icon-remove/></btn>
+                            </btn-group>
+                        </td>
+                    {{else}}
+                        <td>{{i+1}}</td>
+                    {{/if}}
+                    <td>
+                        {{#if isEditingLine(i)}}
+                            <input  class="form-control" type="text" value="{{ tabledata[i]["name"] }}">
+                        {{else}}
+                            {{ tabledata[i]["name"] }}
+                        {{/if}}
+                    </td>
+                    <td>
+                        {{#if isEditingLine(i)}}
+                            <input  class="form-control" type="text" value="{{ tabledata[i]["date"] }}">
+                        {{else}}
+                            {{ tabledata[i]["date"] }}
+                        {{/if}}
+                    </td>
+                </tr>
+            {{/each}}
