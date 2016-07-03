@@ -13,7 +13,7 @@ mixin each(name)
   block
   != '{{/' + name + '}}'
 
-| <!doctype html>
+doctype html
 html(lang="en-GB")
     head
         meta(charset="utf-8")
@@ -27,38 +27,46 @@ html(lang="en-GB")
     body
         #main-output
         script#main-template(type="text/ractive")
-            row
-                col-xs-4
-                    panel(title="Add New Entry")
-                        form-horizontal
-                            form-group
-                                b-label.col-sm-4 Name
-                                col-sm-8: input.form-control(value="{{newSales.name}}")
-                            form-group
-                                b-label.col-sm-4 Date
-                                col-sm-8: input.form-control(value="{{newSales.date}}")
-                            form-group
-                                button(on-click="addSalesEntry" type="button") Add sales entry!
-                col-xs-4
-                    panel(title="Login")
-                        form-horizontal
-                            form-group
-                                b-label.col-sm-4 Username
-                                col-sm-8: input.form-control(value="{{user.name}}")
-                            form-group
-                                b-label.col-sm-4 Password
-                                col-sm-8: input.form-control(value="{{user.passwd}}")
-                            form-group
-                                button(on-click="doLogin" type="button") Login!
+            
+            +if('login.err !== null')
+                div(style="position: fixed; top: 10; right: 10")
+                    alert(type="danger" closable="true") {{ login.err.msg }}
+                
+            panel(title="Login {{ login.ok ? 'ok!' : 'waiting...'}}" type="{{#if login.ok}}primary{{else}}warning{{/if}}")
+                form-vertical
+                    | {{#if !login.ok}}
+                    form-group
+                        b-label.col-sm-4 Username
+                        col-sm-8: input.form-control(value="{{user.name}}")
+                    form-group
+                        b-label.col-sm-4 Password
+                        col-sm-8: input.form-control(value="{{user.passwd}}")
+                    form-group
+                        btn(on-buttonclick="doLogin") Login!
+                    | {{else}}
+                    form-group 
+                        p Welcome {{ login.name }}!
+                        btn(on-buttonclick="doLogout") Logout
+                    | {{/if}}
 
+            +if('login.ok')
+                panel(title="Add New Entry" type="{{#if login}}success{{else}}default{{/if}}")
+                    form-horizontal
+                        form-group
+                            b-label.col-sm-4 Name
+                            col-sm-8: input.form-control(value="{{newSales.name}}")
+                        form-group
+                            b-label.col-sm-4 Date
+                            col-sm-8: input.form-control(value="{{newSales.date}}")
+                        form-group
+                            btn(on-buttonclick="addSalesEntry") Add sales entry!
 
-
-            h2 Sales Entries:
-            interactive-table(
-                tabledata="{{ salesEntries }}"
-                cols="a, b"
-                db="{{ mydb }}"
-                )
+                h2 Sales Entries:
+                interactive-table(
+                    tabledata="{{ salesEntries }}"
+                    cols="a, b"
+                    db="{{ mydb }}"
+                    )
             ul
                 +each("materials")
                     li Material: {{ . }}
