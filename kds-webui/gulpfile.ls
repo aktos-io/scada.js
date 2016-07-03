@@ -28,6 +28,8 @@ gulp.task \default, ->
     run = -> gulp.start <[ browserify html vendor vendor-css assets jade ]>
     run!
     watch './src/**/*.*', (event) -> run!
+    watch "#{vendor-folder}/**", (event) ->
+        gulp.start <[ vendor vendor-css ]>
 
 gulp.task \lsc ->
     gulp.src ['./src/client/app/**/*.ls']
