@@ -9,6 +9,10 @@ concat = require \gulp-concat
 {union} = require \prelude-ls
 path = require \path
 notifier = require \node-notifier
+jade = require \gulp-jade
+watch = require \gulp-watch
+
+# TODO: combine = require('stream-combiner')
 
 # Build Settings
 notification-enabled = yes
@@ -21,12 +25,12 @@ client-public = './public'
 # Tasks
 gulp.task \default, ->
     console.log "task lsc is running.."
-    run = -> gulp.start <[ browserify html vendor vendor-css assets]>
+    run = -> gulp.start <[ browserify html vendor vendor-css assets jade ]>
     run!
-    gulp.watch './src/**/*.*', -> run!
+    watch './src/**/*.*', (event) -> run!
 
 gulp.task \lsc ->
-    gulp.src ['./src/app/*.ls']
+    gulp.src ['./src/client/app/**/*.ls']
     .pipe lsc!
     .pipe gulp.dest './public/compiled-js'
 
@@ -75,4 +79,13 @@ gulp.task \vendor-css, ->
 
 gulp.task \assets, ->
     gulp.src "./src/client/assets/**/*", {base: './src/client/assets'}
+        .pipe gulp.dest client-public
+
+gulp.task \jade, ->
+    gulp.src "./src/client/**/*.jade", {base: './src/client'}
+        .pipe jade pretty: yes
+        .on \error, (err) ->
+            msg = "Error while bundling: #{err.to-string!}"
+            notifier.notify {title: \GULP, message: msg} if notification-enabled
+            console.log msg
         .pipe gulp.dest client-public
