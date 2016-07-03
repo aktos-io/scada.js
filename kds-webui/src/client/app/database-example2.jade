@@ -45,7 +45,7 @@ html(lang="en-GB")
                         btn(on-buttonclick="doLogin") Login!
                     | {{else}}
                     form-group 
-                        p Welcome {{ login.name }}!
+                        p Welcome {{ login.user.name }}!
                         btn(on-buttonclick="doLogout") Logout
                     | {{/if}}
 
