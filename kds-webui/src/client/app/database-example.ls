@@ -98,8 +98,7 @@ do # check whether we are logged in or not
     feed = null
     after-logged-in := ->
         err, res <- db.info
-        try
-            feed.cancel!
+        feed?.cancel!
         feed := local.sync db, {+live, +retry, since: \now}
             .on \error, -> feed.cancel!
             .on 'change', (change) ->
