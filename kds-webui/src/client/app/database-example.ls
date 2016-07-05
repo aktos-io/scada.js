@@ -1,8 +1,8 @@
 {InteractiveTable} = require './components'
 PouchDB = require \pouchdb
     ..plugin require \pouchdb-authentication
+    ..set-max-listeners 123
 {sleep} = require "./lib/aea"
-{remote} = require "./db-conf"
 
 
 # Ractive definition
@@ -50,10 +50,7 @@ ractive.on do
     add-sales-entry: ->
         new-sales = ractive.get \newSales
         new-sales.rel = "sales"
-        new-sales.name = get-entry-id!
-        new-sales._id = "org.couchdb.user:" + new-sales.name
-        new-sales.type = \user
-        new-sales.roles = <[ normal-user ]>
+        new-sales._id = get-entry-id!
         console.log "putting new-sales: ", new-sales
         db.put new-sales, (err, res) ->
             try
@@ -79,14 +76,12 @@ ractive.on do
             ractive.set \login.err, {msg: err.message}
         else
             console.log "Logged  in: ", res
-
-
-        err, res <- db.get-session
-        console.log "Session: ", err, res.userCtx
-        if res.userCtx.name
-            ractive.set \login.err, null
-            ractive.set \login.ok, yes
-            after-logged-in!
+            err, res <- db.get-session
+            console.log "Session: ", err, res.userCtx
+            if res.userCtx.name
+                ractive.set \login.err, null
+                ractive.set \login.ok, yes
+                after-logged-in!
 
 
     do-logout: ->
@@ -100,8 +95,17 @@ do # check whether we are logged in or not
     err, res <- db.get-session
     console.log "Session: ", err, res.userCtx
 
+    feed = null
     after-logged-in := ->
-        local.sync db, {+live, +retry} .on \error, console.log.bind console
+        err, res <- db.info
+        try
+            feed.cancel!
+        feed := local.sync db, {+live, +retry, since: \now}
+            .on \error, -> feed.cancel!
+            .on 'change', (change) ->
+                console.log "change detected!", change
+                get-materials!
+                get-sales-entries!
 
         db.get-session (err, res) ->
             ractive.set \login, {user: res.userCtx, +ok}
@@ -148,10 +152,6 @@ do # check whether we are logged in or not
 
         get-sales-entries!
 
-        db.changes {since: \now, live: yes} .on 'change', (change) ->
-            console.log "change detected!", change
-            get-materials!
-            get-sales-entries!
 
     after-logged-in! if res.userCtx.name
 

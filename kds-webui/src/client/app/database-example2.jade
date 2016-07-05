@@ -28,7 +28,7 @@ html(lang="en-GB")
         #main-output
         script#main-template(type="text/ractive")
             
-            +if('login.err !== null')
+            +if('login.err')
                 div(style="position: fixed; top: 10; right: 10")
                     alert(type="danger" closable="true") {{ login.err.msg }}
                 
