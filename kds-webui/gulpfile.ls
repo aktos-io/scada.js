@@ -40,6 +40,8 @@ gulp.task \default, ->
     run!
     watch "#{client-src}/**/*.*", (event) ->
         run!
+    watch "#{lib-src}/**/*.*", (event) ->
+        run!
     watch "#{vendor-folder}/**", (event) ->
         gulp.start <[ vendor vendor-css ]>
 
