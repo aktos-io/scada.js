@@ -1,0 +1,23 @@
+#/bin/bash
+
+# in order to run in background, pass "background" option
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $DIR
+
+AVAILABLE_WINDOW=1
+run-in-tmux() {
+    tmux new-window -t ${SESSION}:${AVAILABLE_WINDOW}
+    tmux send-keys -t ${SESSION}:${AVAILABLE_WINDOW} "$*" C-m
+    AVAILABLE_WINDOW=$((${AVAILABLE_WINDOW}+1))
+}
+
+SESSION="aktos-scada"
+tmux start-server
+tmux new-session -d -s ${SESSION}
+run-in-tmux 'gulp'
+run-in-tmux 'cd src/server; lsc server.ls'
+
+if [[ "$1" != "background" ]]; then
+    tmux attach -t $SESSION
+fi
