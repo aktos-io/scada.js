@@ -46,13 +46,17 @@ gulp.task \default, ->
 gulp.task \lsc-client, ->
     gulp.src "#{client-src}/**/*.ls", {base: client-src}
         .pipe lsc!
-        .on \error, (err) -> on-error \lsc, err
+        .on \error, (err) ->
+            on-error \lsc-lib, err
+            @emit \end
         .pipe gulp.dest client-tmp
 
 gulp.task \lsc-lib, ->
     gulp.src "#{lib-src}/**/*.ls", {base: lib-src}
         .pipe lsc!
-        .on \error, (err) -> on-error \lsc, err
+        .on \error, (err) ->
+            on-error \lsc-lib, err
+            @emit \end
         .pipe gulp.dest client-tmp
 
 
@@ -64,8 +68,8 @@ gulp.task \browserify <[ lsc-client lsc-lib ]> ->
             browserify f, {paths: ["#{client-tmp}"]}
                 .bundle!
                 .on \error, (err) ->
-                    console.log "ERR:", err
-                    on-error err
+                    on-error \browserify, err
+                    @emit \end
                 .pipe source "#{filename}"
                 .pipe buffer!
                 .pipe gulp.dest "#{client-public}/#{base-folder}"
@@ -105,5 +109,7 @@ gulp.task \jade, ->
     #   mixins.jade
     gulp.src "#{client-src}/**/*.jade", {base: client-src}
         .pipe jade {pretty: yes}
-        .on \error, (err) -> on-error \jade, err
+        .on \error, (err) ->
+            on-error \jade, err
+            @emit \end
         .pipe gulp.dest client-public
