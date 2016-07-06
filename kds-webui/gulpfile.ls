@@ -1,19 +1,17 @@
-# TODO: http://stackoverflow.com/questions/23971388/prevent-errors-from-breaking-crashing-gulp-watch
-
-gulp = require \gulp
-browserify = require \browserify
-lsc = require \gulp-livescript
-clean = require \gulp-clean
-source = require \vinyl-source-stream
-buffer = require \vinyl-buffer
-glob = require \glob
-concat = require \gulp-concat
 {union} = require \prelude-ls
-path = require \path
-notifier = require \node-notifier
-jade = require \gulp-jade
-watch = require \gulp-watch
-plumber = require \gulp-plumber
+require! 'gulp-livescript': lsc
+require! <[ gulp glob path]>
+require! 'vinyl-source-stream': source
+require! 'vinyl-buffer': buffer
+require! 'vinyl-transform': transform
+require! 'gulp-plumber': plumber
+require! 'gulp-watch': watch
+require! 'gulp-jade': jade
+require! 'node-notifier': notifier
+require! 'gulp-concat': cat
+require! 'browserify-livescript'
+require! 'browserify': browserify
+require! 'gulp-uglify': uglify
 
 # TODO: combine = require('stream-combiner')
 
@@ -22,14 +20,17 @@ notification-enabled = yes
 
 # Project Folder Structure
 vendor-folder = './vendor'
-client-src = './src'
-client-public = './public'
+server-src = "./src/server"
+client-src = './src/client'
+build-folder = "./build"
+client-public = "#{build-folder}/public"
+client-tmp = "#{build-folder}/__tmp"
+lib-src = "./src/lib"
 
-on-error = (err) ->
-    msg = "GULP ERROR: #{err.to-string!}"
-    notifier.notify {title: \GULP, message: msg} if notification-enabled
+on-error = (source, err) ->
+    msg = "GULP ERROR: #{err?.to-string!}"
+    notifier.notify {title: "GULP.#{source}", message: msg} if notification-enabled
     console.log msg
-    @emit \end
 
 
 # Tasks
@@ -37,62 +38,72 @@ gulp.task \default, ->
     console.log "task lsc is running.."
     run = -> gulp.start <[ browserify html vendor vendor-css assets jade ]>
     run!
-    watch './src/**/*.*', (event) ->
+    watch "#{client-src}/**/*.*", (event) ->
         run!
     watch "#{vendor-folder}/**", (event) ->
         gulp.start <[ vendor vendor-css ]>
 
-gulp.task \lsc ->
-    gulp.src ['./src/client/app/**/*.ls']
-    .pipe lsc!
-    .on \error, on-error
-    .pipe gulp.dest './public/compiled-js'
+gulp.task \lsc-client, ->
+    gulp.src "#{client-src}/**/*.ls", {base: client-src}
+        .pipe lsc!
+        .on \error, (err) -> on-error \lsc, err
+        .pipe gulp.dest client-tmp
+
+gulp.task \lsc-lib, ->
+    gulp.src "#{lib-src}/**/*.ls", {base: lib-src}
+        .pipe lsc!
+        .on \error, (err) -> on-error \lsc, err
+        .pipe gulp.dest client-tmp
 
 
-gulp.task \browserify <[ lsc ]> ->
-    glob './public/compiled-js/*.js', (err, filepath) ->
+gulp.task \browserify <[ lsc-client lsc-lib ]> ->
+    glob "#{client-tmp}/**/*.js", (err, filepath) ->
         for f in filepath
             filename = f.split '/' .slice -1
-            browserify f
+            base-folder = "#{f}" - "#{client-tmp}/" - "/#{filename}"
+            browserify f, {paths: ["#{client-tmp}"]}
                 .bundle!
-                .on \error, on-error
+                .on \error, (err) ->
+                    console.log "ERR:", err
+                    on-error err
                 .pipe source "#{filename}"
                 .pipe buffer!
-                .pipe gulp.dest './public/app'
+                .pipe gulp.dest "#{client-public}/#{base-folder}"
 
-gulp.task \clean-js, ->
-    console.log "Cleaned build directory..."
-    gulp.src './public/**/*.js'
-        .pipe clean!
+
 
 gulp.task \html, ->
-    gulp.src './src/app/*.html'
-        .pipe gulp.dest './public/app'
+    gulp.src "#{client-src}/*.html"
+        .pipe gulp.dest client-public
 
 gulp.task \vendor, ->
     order =
         \ractive.js
         \jquery-1.12.0.min.js
 
-    glob './vendor/**/*.js', (err, files) ->
+    glob "#{vendor-folder}/**/*.js", (err, files) ->
         ordered-list = union order, [path.basename .. for files]
         #console.log "ordered list is: ", ordered-list
-        gulp.src ["./vendor/#{..}" for ordered-list]
-            .pipe concat "vendor.js"
-            .pipe gulp.dest "./public/app"
+        gulp.src ["#{vendor-folder}/#{..}" for ordered-list]
+            .pipe cat "vendor.js"
+            .pipe gulp.dest "#{client-public}/js"
 
 gulp.task \vendor-css, ->
-    glob './vendor/**/*.css', (err, files) ->
+    glob "#{vendor-folder}/**/*.css", (err, files) ->
         gulp.src files
-            .pipe concat "vendor.css"
-            .pipe gulp.dest "./public/app"
+            .pipe cat "vendor.css"
+            .pipe gulp.dest "#{client-public}/css"
 
 gulp.task \assets, ->
-    gulp.src "./src/client/assets/**/*", {base: './src/client/assets'}
+    gulp.src "#{client-src}/assets/**/*", {base: "#{client-src}/assets"}
         .pipe gulp.dest client-public
 
 gulp.task \jade, ->
-    gulp.src "./src/client/**/*.jade", {base: './src/client'}
+    # TODO: exclude list!
+    # exclude-list =
+    #   template.jade
+    #   mixins.jade
+    gulp.src "#{client-src}/**/*.jade", {base: client-src}
         .pipe jade {pretty: yes}
-        .on \error, on-error
+        .on \error, (err) -> on-error \jade, err
         .pipe gulp.dest client-public

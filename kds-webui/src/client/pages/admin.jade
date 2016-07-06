@@ -1,0 +1,40 @@
+extends template.jade 
+
+block title
+    title Admin Page
+
+block ractive
+    panel(title="Login" type="{{#if login.ok}}primary{{else}}warning{{/if}}")
+        form-vertical
+            | {{#if !login.ok}}
+            form-group
+                b-label.col-sm-4 Username
+                col-sm-8: input.form-control(value="{{user.name}}")
+            form-group
+                b-label.col-sm-4 Password
+                col-sm-8: input.form-control(value="{{user.passwd}}")
+            form-group
+                btn(on-buttonclick="doLogin") Login!
+            | {{else}}
+            form-group 
+                p Welcome {{ login.user.name }}!
+                btn(on-buttonclick="doLogout") Logout
+            | {{/if}}
+            
+    +if('login.ok')
+        div Login roles: {{ login.user.roles }}            
+        panel(title="Add User")
+            form-vertical
+                form-group
+                    b-label.col-sm-4 Username
+                    col-sm-8: input.form-control(value="{{newUser.name}}")
+                form-group
+                    b-label.col-sm-4 Password
+                    col-sm-8: input.form-control(value="{{newUser.passwd}}")
+                form-group
+                    btn(on-buttonclick="addUser") Add User!
+            
+        
+    
+block script 
+    script(src="admin.js")

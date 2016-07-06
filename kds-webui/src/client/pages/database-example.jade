@@ -1,0 +1,51 @@
+extends template.jade
+
+block title 
+    title Database Example 3
+    
+block ractive 
+    +if('login.err')
+        div(style="position: fixed; top: 10; right: 10")
+            alert(type="danger" closable="true") {{ login.err.msg }}
+        
+    panel(title="Login {{ login.ok ? 'ok!' : 'waiting...'}}" type="{{#if login.ok}}primary{{else}}warning{{/if}}")
+        form-vertical
+            | {{#if !login.ok}}
+            form-group
+                b-label.col-sm-4 Username
+                col-sm-8: input.form-control(value="{{user.name}}")
+            form-group
+                b-label.col-sm-4 Password
+                col-sm-8: input.form-control(value="{{user.passwd}}")
+            form-group
+                btn(on-buttonclick="doLogin") Login!
+            | {{else}}
+            form-group 
+                p Welcome {{ login.user.name }}!
+                btn(on-buttonclick="doLogout") Logout
+            | {{/if}}
+
+    +if('login.ok')
+        panel(title="Add New Entry" type="{{#if login}}success{{else}}default{{/if}}")
+            form-horizontal
+                form-group
+                    b-label.col-sm-4 Name
+                    col-sm-8: input.form-control(value="{{newSales.name}}")
+                form-group
+                    b-label.col-sm-4 Date
+                    col-sm-8: input.form-control(value="{{newSales.date}}")
+                form-group
+                    btn(on-buttonclick="addSalesEntry") Add sales entry!
+
+        h2 Sales Entries:
+        interactive-table(
+            tabledata="{{ salesEntries }}"
+            cols="a, b"
+            db="{{ mydb }}"
+            )
+    ul
+        +each("materials")
+            li Material: {{ . }}
+
+block script             
+    script(src="database-example.js")

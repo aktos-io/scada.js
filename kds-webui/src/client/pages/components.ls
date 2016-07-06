@@ -1,6 +1,6 @@
 
 {split, take, join, lists-to-obj, sum} = require 'prelude-ls'
-{sleep} = require "./lib/aea"
+{sleep} = require "aea"
 
 random = require \randomstring
 

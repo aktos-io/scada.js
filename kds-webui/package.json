@@ -23,6 +23,7 @@
     "hapi": "^13.3.0",
     "http-proxy": "^1.13.3",
     "inert": "^3.2.1",
+    "liveify": "^3.0.0",
     "pouchdb": "^5.4.4",
     "pouchdb-auth": "^2.1.0",
     "pouchdb-authentication": "^0.5.2",
@@ -30,17 +31,24 @@
     "randomstring": "^1.1.5"
   },
   "devDependencies": {
+    "anyify": "^1.0.1",
+    "browserify-livescript": "^0.2.3",
     "glob": "^7.0.5",
     "gulp": "^3.9.1",
+    "gulp-browser": "^2.1.9",
+    "gulp-browserify": "^0.5.1",
     "gulp-clean": "^0.3.2",
     "gulp-concat": "^2.6.0",
     "gulp-jade": "^1.1.0",
     "gulp-livescript": "^3.0.1",
     "gulp-plumber": "^1.1.0",
+    "gulp-uglify": "^1.5.4",
     "gulp-watch": "^4.3.8",
+    "liveify": "^3.0.0",
     "livescript": "^1.5.0",
     "node-notifier": "^4.6.0",
     "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0"
+    "vinyl-source-stream": "^1.1.0",
+    "vinyl-transform": "^1.0.0"
   }
 }

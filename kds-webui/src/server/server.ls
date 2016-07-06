@@ -1,13 +1,16 @@
 hapi = require "hapi"
 http-proxy = require 'http-proxy'
 server = new hapi.Server!
-server.connection do
-  port: 4001
-  routes:
-    cors: true
+    ..connection do
+      port: 4001
+      routes:
+        cors: true
+    ..register (require 'h2o2'), ->
+    ..register (require 'inert'), ->
+path = require \path
 
-server.register (require 'h2o2'), ->
-server.register (require 'inert'), ->
+public-dir = path.join __dirname, "../../build/public"
+console.log "Public Directory: #{public-dir}"
 
 server.route do
   method: '*'
@@ -26,28 +29,35 @@ server.route do
   path: "/"
   method: "GET"
   handler:
-    file: "./public/index.html"
+    file: "#{public-dir}/index.html"
 
 server.route do
   path: "/app/{f*}"
   method: "GET"
   handler:
     directory:
-      path: "./public/app"
+      path: "#{public-dir}/pages"
 
 server.route do
-  path: "/scripts/{f*}"
+  path: "/js/{f*}"
   method: "GET"
   handler:
     directory:
-      path: "./public/scripts"
+      path: "#{public-dir}/js"
+
+server.route do
+  path: "/css/{f*}"
+  method: "GET"
+  handler:
+    directory:
+      path: "#{public-dir}/css"
 
 server.route do
   path: "/fonts/{f*}"
   method: "GET"
   handler:
     directory:
-      path: "./public/fonts"
+      path: "#{public-dir}/fonts"
 
 server.start !->
   console.log "Server started at: ", server.info.uri

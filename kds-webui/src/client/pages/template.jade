@@ -1,0 +1,22 @@
+include mixins.jade
+doctype html
+html(lang="en-GB")
+    head
+        meta(charset="utf-8")
+        meta(
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+            )
+        block title
+            title My Example Page
+        script(src="../js/vendor.js")
+        link(rel="stylesheet", href="../css/vendor.css")
+    body
+        #main-output. 
+            Loading...
+        script#main-template(type="text/ractive")
+            block ractive 
+
+        include ./components.jade
+        block script 
+        //- script(src="database-example.js")
