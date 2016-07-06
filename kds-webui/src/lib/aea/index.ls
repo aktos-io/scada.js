@@ -1,9 +1,20 @@
-{sleep} = require './aea'
-{signup} = require './cca-pouchdb-auth'
+require! {
+    './cca-pouchdb-auth': {
+        signup
+        get-cookie
+        login-with-token
+    }
+    './merge'
+    './sleep': {
+        sleep
+    }
+}
 
 PouchDB = require \pouchdb
     ..plugin require \pouchdb-authentication
 
 module.exports = {
-    sleep, signup, PouchDB
+    signup, PouchDB, get-cookie, login-with-token
+    sleep,
+    merge
 }
