@@ -4,7 +4,7 @@
 
 random = require \randomstring
 
-export InteractiveTable = Ractive.extend do
+Ractive.components['interactive-table'] = Ractive.extend do
     oninit: ->
         if (@get \id) is \will-be-random
             # then make it random

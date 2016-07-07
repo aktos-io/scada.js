@@ -38,6 +38,10 @@ block ractive
             textarea#design-document-auth(value="{{usersAuth.livescript}}")
             btn(on-buttonclick="putAuthDocument") Put Auth Document!
             
+    ace-editor(code="{{ usersAuth.livescript }}")
+        
+    interactive-table(cols="aa, ee")
+            
         
     
 block script 
