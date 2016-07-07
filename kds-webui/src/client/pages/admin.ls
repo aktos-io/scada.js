@@ -4,12 +4,13 @@ require! {
         PouchDB
         sleep
     }
-    './components': {
+    'components': {
         InteractiveTable
     }
 }
 
 Ractive.components['interactive-table'] = InteractiveTable
+
 
 # Ractive definition
 ractive = new Ractive do
@@ -25,13 +26,12 @@ ractive = new Ractive do
         user:
             name: \demeter
             passwd: \hPwZLjgITAlqk
+        users-auth: null
 
 
 db = new PouchDB 'https://demeter.cloudant.com/_users', skip-setup: yes
 local = new PouchDB \local_db
 ractive.set \db, db
-
-after-logged-in = null
 
 ractive.on do
     do-login: ->
@@ -60,32 +60,48 @@ ractive.on do
     add-user: ->
         new-user = @get \newUser
         console.log "Adding user!", new-user?.name
-
-        #demeter:hPwZLjgITAlqk
-
         # admin should already be logged in `_users` database
         err, res <- signup db, new-user.name, new-user.passwd
         if not err
             console.log "Successfully added new user: ", new-user.name
-
         else
             console.log "ERROR: Adding new user: ", err
 
-do # check whether we are logged in or not
-    feed = null
-    do after-logged-in := ->
-        err, res <- db.info
-        console.log "Error: ", err if err
-        throw err if err?.status isnt 200
-        feed?.cancel!
-        feed := local.sync db, {+live, +retry, since: \now}
-            .on \error, -> feed.cancel!
-            .on 'change', (change) ->
-                console.log "change detected!", change
-                get-materials!
-                get-sales-entries!
 
-        db.get-session (err, res) ->
-            ractive.set \login, {user: res.userCtx, +ok}
 
-        # add a design document to
+
+# check whether we are logged in or not
+feed = null
+do function after-logged-in
+    console.log "RUNNING AFTER_LOGGED_IN..."
+
+    err, res <- db.info
+    console.log "DB info: ", err, res
+
+    err, res <- db.get-session
+    console.log "Session info: ", err, res
+    return if err
+
+    # Set ractive login variable
+    ractive.set \login, {user: res.userCtx, +ok}
+
+    # Subscribe the changes...
+    feed?.cancel!
+    feed := local.sync db, {+live, +retry, since: \now}
+        .on \error, -> feed.cancel!
+        .on 'change', (change) ->
+            console.log "change detected!", change
+
+
+    do # get the _auth design document
+        err, res <- db.query '_design/_auth'
+        if err
+            # put a new design document
+            console.log "Putting a new _auth document..."
+            auth =
+                _id: '_design/_auth'
+
+            err, res <- db.put auth
+            console.log "Put design document: ", res if not err
+        else
+            console.log "Current _auth document: ", res

@@ -1,4 +1,4 @@
-extends template.jade 
+extends ../templates/template.jade 
 
 block title
     title Admin Page
@@ -33,6 +33,10 @@ block ractive
                     col-sm-8: input.form-control(value="{{newUser.passwd}}")
                 form-group
                     btn(on-buttonclick="addUser") Add User!
+                    
+        panel(title="_design/_auth")
+            textarea#design-document-auth(value="{{usersAuth.livescript}}")
+            btn(on-buttonclick="putAuthDocument") Put Auth Document!
             
         
     

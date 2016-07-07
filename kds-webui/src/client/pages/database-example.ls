@@ -2,7 +2,7 @@ require! {
     'aea': {
         PouchDB
     }
-    './components': {
+    'components': {
         InteractiveTable
     }
 }
