@@ -1,5 +1,4 @@
 PouchDB = require \pouchdb
-require! 'jquery': $
 
 export signup = (db, user, password, callback) ->
     require! \crypto
@@ -19,11 +18,3 @@ export signup = (db, user, password, callback) ->
 
     err, res <- db.put new-user
     callback err, res if callback
-
-
-export get-cookie = ->
-    console.log "Cookie: ", document.cookie
-
-
-export login-with-token = (token) ->
-    console.log "token is: ", token
