@@ -5,10 +5,13 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
 
-AVAILABLE_WINDOW=1
+AVAILABLE_WINDOW=0
 run-in-tmux() {
+    list_of_commands=("$@")
     tmux new-window -t ${SESSION}:${AVAILABLE_WINDOW}
-    tmux send-keys -t ${SESSION}:${AVAILABLE_WINDOW} "$*" C-m
+    for i in "${list_of_commands[@]}"; do 
+        tmux send-keys -t ${SESSION}:${AVAILABLE_WINDOW} "$i" C-m
+    done
     AVAILABLE_WINDOW=$((${AVAILABLE_WINDOW}+1))
 }
 
@@ -16,7 +19,8 @@ SESSION="aktos-scada"
 tmux start-server
 tmux new-session -d -s ${SESSION}
 run-in-tmux 'gulp'
-run-in-tmux 'cd src/server; lsc server.ls'
+run-in-tmux 'cd src/server' 'lsc server.ls'
+run-in-tmux 'atom .'
 
 if [[ "$1" != "background" ]]; then
     tmux attach -t $SESSION
