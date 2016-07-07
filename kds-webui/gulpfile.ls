@@ -12,6 +12,8 @@ require! 'gulp-concat': cat
 require! 'browserify-livescript'
 require! 'browserify': browserify
 require! 'gulp-uglify': uglify
+require! 'gulp-sourcemaps': sourcemaps
+require! './src/lib/aea': {sleep}
 
 # TODO: combine = require('stream-combiner')
 
@@ -26,6 +28,8 @@ build-folder = "./build"
 client-public = "#{build-folder}/public"
 client-tmp = "#{build-folder}/__tmp"
 lib-src = "./src/lib"
+components-path = "#{client-tmp}/components"
+lib-path = client-tmp
 
 on-error = (source, err) ->
     msg = "GULP ERROR: #{err?.to-string!}"
@@ -36,12 +40,12 @@ on-error = (source, err) ->
 # Tasks
 gulp.task \default, ->
     console.log "task lsc is running.."
-    run = -> gulp.start <[ browserify html vendor vendor-css assets jade ]>
-    run!
+    do function run-all
+        gulp.start <[ info-browserify html vendor vendor-css assets jade ]>
     watch "#{client-src}/**/*.*", (event) ->
-        run!
+        run-all!
     watch "#{lib-src}/**/*.*", (event) ->
-        run!
+        run-all!
     watch "#{vendor-folder}/**", (event) ->
         gulp.start <[ vendor vendor-css ]>
 
@@ -67,19 +71,23 @@ gulp.task \browserify <[ lsc-client lsc-lib ]> ->
         for f in filepath
             filename = f.split '/' .slice -1
             base-folder = "#{f}" - "#{client-tmp}/" - "/#{filename}"
-            browserify f, {paths: ["#{client-tmp}"]}
+            browserify f, {paths: [components-path, lib-path]}
                 .bundle!
                 .on \error, (err) ->
                     on-error \browserify, err
                     @emit \end
                 .pipe source "#{filename}"
                 .pipe buffer!
+                ## Source Maps are working (needs more testing)
+                #.pipe sourcemaps.init {+load-maps}
+                #.pipe uglify!
+                #.pipe sourcemaps.write!
                 .pipe gulp.dest "#{client-public}/#{base-folder}"
 
 
 
 gulp.task \html, ->
-    gulp.src "#{client-src}/*.html"
+    gulp.src "#{client-src}/pages/*.html"
         .pipe gulp.dest client-public
 
 gulp.task \vendor, ->
@@ -104,12 +112,16 @@ gulp.task \assets, ->
     gulp.src "#{client-src}/assets/**/*", {base: "#{client-src}/assets"}
         .pipe gulp.dest client-public
 
+gulp.task \info-browserify <[ browserify ]> ->
+    console.log "Browserifying finished!"
+
+
 gulp.task \jade, ->
     # TODO: exclude list!
     # exclude-list =
     #   template.jade
     #   mixins.jade
-    gulp.src "#{client-src}/**/*.jade", {base: client-src}
+    gulp.src "#{client-src}/pages/*.jade", {base: client-src}
         .pipe jade {pretty: yes}
         .on \error, (err) ->
             on-error \jade, err
