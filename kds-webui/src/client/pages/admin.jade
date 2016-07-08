@@ -2,6 +2,9 @@ extends ../templates/template.jade
 
 block title
     title Admin Page
+    
+block script 
+    script(src="admin.js")
 
 block ractive
     panel(title="Login" type="{{#if login.ok}}primary{{else}}warning{{/if}}")
@@ -37,13 +40,13 @@ block ractive
         panel(title="_design/_auth")
             ace-editor(code="{{ usersAuth.livescript }}" mode="livescript" theme="xcode")
             btn-group
-                btn(on-buttonclick="putAuthDocument" type="success") Put Auth Document!
-                btn(on-buttonclick="compileAuthDocument" type="info") Compile
+                btn(on-buttonclick="putAuthDocument" type="success").
+                    Put Auth Document!
+                btn(on-buttonclick="compileAuthDocument" type="info").
+                    Compile
             ace-editor(code="{{ usersAuth.javascript }}" mode="javascript" theme="xcode")
         
-    interactive-table(cols="aa, ee")
+        panel(title="test table")
+            interactive-table(cols="aa, ee")
             
         
-    
-block script 
-    script(src="admin.js")

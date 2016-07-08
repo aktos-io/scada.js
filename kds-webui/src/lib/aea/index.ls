@@ -1,23 +1,10 @@
 require! {
-    './cca-pouchdb-auth': {
-        signup
-    }
-    './merge': {
-        merge
-    }
-    './sleep': {
-        sleep
-        after
-        clear-timer
-    }
-    './signal': {
-        wait-for
-        timeout-wait-for
-        go
-    }
-    './debug-log': {
-        debug-log
-    }
+    './cca-pouchdb-auth': {signup}
+    './merge': {merge}
+    './sleep': {sleep, after, clear-timer}
+    './signal': {wait-for, timeout-wait-for, go}
+    './debug-log': {debug-log}
+    './packing': {pack, unpack}
 }
 
 PouchDB = require \pouchdb
@@ -29,4 +16,5 @@ module.exports = {
     merge
     wait-for, timeout-wait-for, go
     debug-log
+    pack, unpack
 }

@@ -11,6 +11,7 @@ Ractive.components['ace-editor'] = Ractive.extend({
         var theme = ractive.get('theme')
         e.setTheme("ace/theme/" + theme);
         e.getSession().setMode('ace/mode/' + mode)
+        e.$blockScrolling = Infinity
 
         this.observe('code', function(v){
             if(getting) return;

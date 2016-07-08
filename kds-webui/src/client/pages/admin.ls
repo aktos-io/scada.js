@@ -1,9 +1,10 @@
 require! components
 require! {
     'aea': {
-        signup
-        PouchDB
+        PouchDB, signup
         sleep
+        merge
+        pack, unpack
     }
 }
 require! 'livescript': lsc
@@ -31,6 +32,29 @@ ractive = new Ractive do
 db = new PouchDB 'https://demeter.cloudant.com/_users', skip-setup: yes
 local = new PouchDB \local_db
 ractive.set \db, db
+
+get-auth-document = ->
+    # get the _auth design document
+    err, res <- db.get '_design/_auth'
+    users-auth =
+        _id: '_design/_auth'
+
+    if err
+        # put a new design document
+        console.log "Putting a new _auth document..."
+        err, res <- db.put users-auth
+
+        if err
+            console.log "Error putting design document: ", err
+        else
+            console.log "Design document uploaded successfully...", res
+    else
+        console.log "Current _auth document: ", res
+        auth = res
+        auth.livescript = res.src
+        ractive.set \usersAuth, auth
+
+
 
 ractive.on do
     do-login: ->
@@ -70,6 +94,7 @@ ractive.on do
         console.log "Compiling auth document..."
         try
             js = lsc.compile (@get \usersAuth.livescript), {+bare, -header}
+            console.log "Compiled output: ", js
         catch
             js = e.to-string!
         @set \usersAuth.javascript, js
@@ -79,8 +104,27 @@ ractive.on do
 
     putAuthDocument: ->
         console.log "Putting auth document!"
-        <- @fire \compileAuthDocument
+        <- ractive.fire \compileAuthDocument
         console.log "Uploading auth document..."
+        auth = ractive.get \usersAuth
+        c = eval auth.javascript
+        console.log "json document: ", c
+        auth = auth `merge` c
+        x = c.view.to-string!
+        console.log "view: ", x
+        auth.view = x
+        auth.src = auth.livescript
+        console.log "Full document to upload: ", auth
+        err, res <- db.put auth
+        if err
+            console.log "Error uploading auth document: ", err
+        else
+            console.log "Auth document uploaded successfully"
+        # update _rev field for the following updates
+        get-auth-document!
+
+
+
 
 # check whether we are logged in or not
 feed = null
@@ -105,15 +149,4 @@ do function after-logged-in
             console.log "change detected!", change
 
 
-    do # get the _auth design document
-        err, res <- db.query '_design/_auth'
-        if err
-            # put a new design document
-            console.log "Putting a new _auth document..."
-            auth =
-                _id: '_design/_auth'
-
-            err, res <- db.put auth
-            console.log "Put design document: ", res if not err
-        else
-            console.log "Current _auth document: ", res
+    get-auth-document!
