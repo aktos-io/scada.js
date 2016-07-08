@@ -6,12 +6,13 @@ Ractive.components['ace-editor'] = Ractive.extend({
             ractive = this,
             getting, setting;
 
-        var mode = ractive.get('mode') || 'javascript'
-        console.log('mode is: ' + mode) || 'monokai'
-        var theme = ractive.get('theme')
+        var mode = ractive.get('mode') || 'javascript';
+        console.log('mode is: ' + mode) || 'monokai';
+        var theme = ractive.get('theme');
         e.setTheme("ace/theme/" + theme);
-        e.getSession().setMode('ace/mode/' + mode)
-        e.$blockScrolling = Infinity
+        e.getSession().setMode('ace/mode/' + mode);
+        e.$blockScrolling = Infinity;
+        ace.require("ace/edit_session").EditSession.prototype.$useWorker=false;
 
         this.observe('code', function(v){
             if(getting) return;
