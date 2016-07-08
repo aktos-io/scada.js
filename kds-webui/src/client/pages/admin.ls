@@ -1,7 +1,7 @@
 require! components
 require! {
     'aea': {
-        PouchDB, signup
+        PouchDB, signup, make-design-doc
         sleep
         merge
         pack, unpack
@@ -99,21 +99,19 @@ ractive.on do
             js = e.to-string!
         @set \usersAuth.javascript, js
 
-        console.log "Type of callback: ", typeof! callback
         callback! if typeof! callback is \Function
 
     putAuthDocument: ->
         console.log "Putting auth document!"
-        <- ractive.fire \compileAuthDocument
+        # <- ractive.fire \compileAuthDocument
         console.log "Uploading auth document..."
         auth = ractive.get \usersAuth
-        c = eval auth.javascript
-        console.log "json document: ", c
-        auth = auth `merge` c
-        x = c.view.to-string!
-        console.log "view: ", x
-        auth.view = x
+        design-doc = eval auth.javascript
+        # convert special functions to strings
+        console.log "json document: ", design-doc
+        auth = auth `merge` design-doc
         auth.src = auth.livescript
+        auth = make-design-doc auth
         console.log "Full document to upload: ", auth
         err, res <- db.put auth
         if err
@@ -147,6 +145,5 @@ do function after-logged-in
         .on \error, -> feed.cancel!
         .on 'change', (change) ->
             console.log "change detected!", change
-
 
     get-auth-document!
