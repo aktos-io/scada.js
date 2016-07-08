@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/ceremcem/livescript-ractive-example-project#readme",
   "dependencies": {
+    "browserify-livescript": "^0.2.3",
     "cheerio": "^0.20.0",
     "crypto": "0.0.3",
     "h2o2": "^5.1.0",
@@ -25,6 +26,7 @@
     "inert": "^3.2.1",
     "jquery": "^3.0.0",
     "liveify": "^3.0.0",
+    "livescript": "^1.5.0",
     "pouchdb": "^5.4.4",
     "pouchdb-auth": "^2.1.0",
     "pouchdb-authentication": "^0.5.2",

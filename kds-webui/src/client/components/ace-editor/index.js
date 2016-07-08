@@ -1,12 +1,16 @@
 var modes = ace.require('ace/ext/modelist')
 Ractive.components['ace-editor'] = Ractive.extend({
-    template: '<div class="editor" ></div>',
+    template: '<div class="editor"></div>',
     onrender: function(){
         var e = ace.edit( this.find('*') ),
             ractive = this,
             getting, setting;
 
-        e.getSession().setMode('ace/mode/javascript')
+        var mode = ractive.get('mode') || 'javascript'
+        console.log('mode is: ' + mode) || 'monokai'
+        var theme = ractive.get('theme')
+        e.setTheme("ace/theme/" + theme);
+        e.getSession().setMode('ace/mode/' + mode)
 
         this.observe('code', function(v){
             if(getting) return;

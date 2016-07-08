@@ -6,6 +6,8 @@ require! {
         sleep
     }
 }
+require! 'livescript': lsc
+
 
 # Ractive definition
 ractive = new Ractive do
@@ -21,7 +23,9 @@ ractive = new Ractive do
         user:
             name: \demeter
             passwd: \hPwZLjgITAlqk
-        users-auth: null
+        users-auth:
+            livescript: ''
+            javascript: ''
 
 
 db = new PouchDB 'https://demeter.cloudant.com/_users', skip-setup: yes
@@ -62,7 +66,13 @@ ractive.on do
         else
             console.log "ERROR: Adding new user: ", err
 
-
+    compileAuthDocument: ->
+        console.log "Compiling auth document..."
+        try
+            js = lsc.compile @get \usersAuth.livescript
+        catch
+            js = e.to-string!
+        @set \usersAuth.javascript, js
 
 
 # check whether we are logged in or not

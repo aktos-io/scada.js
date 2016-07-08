@@ -35,10 +35,14 @@ block ractive
                     btn(on-buttonclick="addUser") Add User!
                     
         panel(title="_design/_auth")
-            textarea#design-document-auth(value="{{usersAuth.livescript}}")
-            btn(on-buttonclick="putAuthDocument") Put Auth Document!
+            ace-editor(code="{{ usersAuth.livescript }}" mode="livescript" theme="xcode")
+            btn-group(type="xs")
+                btn(on-buttonclick="putAuthDocument") Put Auth Document!
+                btn(on-buttonclick="compileAuthDocument") Compile
+            ace-editor(code="{{ usersAuth.javascript }}" mode="javascript" theme="xcode")
             
-    ace-editor(code="{{ usersAuth.livescript }}")
+            
+            
         
     interactive-table(cols="aa, ee")
             
