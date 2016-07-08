@@ -66,14 +66,21 @@ ractive.on do
         else
             console.log "ERROR: Adding new user: ", err
 
-    compileAuthDocument: ->
+    compileAuthDocument: (callback) ->
         console.log "Compiling auth document..."
         try
-            js = lsc.compile @get \usersAuth.livescript
+            js = lsc.compile (@get \usersAuth.livescript), {+bare, -header}
         catch
             js = e.to-string!
         @set \usersAuth.javascript, js
 
+        console.log "Type of callback: ", typeof! callback
+        callback! if typeof! callback is \Function
+
+    putAuthDocument: ->
+        console.log "Putting auth document!"
+        <- @fire \compileAuthDocument
+        console.log "Uploading auth document..."
 
 # check whether we are logged in or not
 feed = null

@@ -36,13 +36,10 @@ block ractive
                     
         panel(title="_design/_auth")
             ace-editor(code="{{ usersAuth.livescript }}" mode="livescript" theme="xcode")
-            btn-group(type="xs")
-                btn(on-buttonclick="putAuthDocument") Put Auth Document!
-                btn(on-buttonclick="compileAuthDocument") Compile
+            btn-group
+                btn(on-buttonclick="putAuthDocument" type="success") Put Auth Document!
+                btn(on-buttonclick="compileAuthDocument" type="info") Compile
             ace-editor(code="{{ usersAuth.javascript }}" mode="javascript" theme="xcode")
-            
-            
-            
         
     interactive-table(cols="aa, ee")
             
