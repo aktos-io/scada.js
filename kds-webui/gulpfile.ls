@@ -42,6 +42,11 @@ on-error = (source, err) ->
     console.log msg
 
 
+list-rel-files = (base, main, file-list) ->
+        main = "#{base}/components.jade"
+        ["./#{f}" - "#{base}/" for f in file-list when f isnt main]
+
+
 # Organize Tasks
 gulp.task \default, ->
     console.log "task lsc is running.."
@@ -127,13 +132,13 @@ gulp.task \browserify <[ lsc-client lsc-lib js]> ->
 # Concatenate vendor javascript files into public/js/vendor.js
 gulp.task \vendor, ->
     order =
-        \ractive.js
-        \jquery-1.12.0.min.js
+        './ractive.js'
+        './jquery-1.12.0.min.js'
         # and the rest...
 
     glob "#{vendor-folder}/**/*.js", (err, files) ->
-        ordered-list = union order, [path.basename .. for files]
-        #console.log "ordered list is: ", ordered-list
+        ordered-list = union order, (list-rel-files vendor-folder, '', files)
+        console.log "ordered list is: ", ordered-list
         gulp.src ["#{vendor-folder}/#{..}" for ordered-list]
             .pipe cat "vendor.js"
             .pipe gulp.dest "#{client-public}/js"
@@ -158,6 +163,7 @@ gulp.task \jade <[ jade-components ]> ->
             on-error \jade, err
             @emit \end
         .pipe gulp.dest client-public
+
 
 gulp.task \jade-components ->
     # create a file which includes all jade file includes in it
