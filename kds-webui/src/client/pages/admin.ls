@@ -25,8 +25,8 @@ ractive = new Ractive do
             name: \demeter
             passwd: \hPwZLjgITAlqk
         users-auth:
-            livescript: ''
-            javascript: ''
+            livescript: null
+            javascript: null
 
 
 db = new PouchDB 'https://demeter.cloudant.com/_users', skip-setup: yes
@@ -83,8 +83,9 @@ ractive.on do
     add-user: ->
         new-user = @get \newUser
         console.log "Adding user!", new-user?.name
+        new-user.roles = new-user.roles?split ','
         # admin should already be logged in `_users` database
-        err, res <- signup db, new-user.name, new-user.passwd
+        err, res <- signup db, new-user
         if not err
             console.log "Successfully added new user: ", new-user.name
         else
@@ -108,9 +109,13 @@ ractive.on do
         auth = ractive.get \usersAuth
         design-doc = eval auth.javascript
         # convert special functions to strings
+
+        console.log "design-doc: ", design-doc
+        console.log "design-doc-str: ", pack design-doc
         console.log "json document: ", design-doc
         auth = auth `merge` design-doc
         auth.src = auth.livescript
+
         auth = make-design-doc auth
         console.log "Full document to upload: ", auth
         err, res <- db.put auth

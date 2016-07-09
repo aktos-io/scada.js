@@ -1,14 +1,9 @@
+require! components
 require! {
     'aea': {
         PouchDB
     }
-    'components': {
-        InteractiveTable
-    }
 }
-
-Ractive.components['interactive-table'] = InteractiveTable
-
 
 # Ractive definition
 ractive = new Ractive do
