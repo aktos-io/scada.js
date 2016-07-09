@@ -17,7 +17,7 @@ Ractive.components['ace-editor'] = Ractive.extend({
         this.observe('code', function(v){
             if(getting) return;
             setting = true;
-            e.setValue(v);
+            e.setValue(v || '');
             e.clearSelection();
             setting = false;
         })
