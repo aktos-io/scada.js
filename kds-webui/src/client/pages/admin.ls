@@ -1,13 +1,18 @@
 require! components
 require! {
     'aea': {
-        PouchDB, signup, make-design-doc
+        PouchDB, signup, make-design-doc, check-login
         sleep
         merge
         pack, unpack
     }
+    'prelude-ls': {
+        join
+    }
 }
 require! 'livescript': lsc
+
+
 
 Ractive.components['x'] = Ractive.extend do
     template: '#x'
@@ -33,9 +38,10 @@ ractive = new Ractive do
             javascript: null
 
 
-db = new PouchDB 'https://demeter.cloudant.com/_users', {skip-setup: yes, adapter: \websql}
-local = new PouchDB \local_db
+db = new PouchDB 'https://demeter.cloudant.com/_users', {skip-setup: yes}
+#local = new PouchDB \local_db
 ractive.set \db, db
+console.log "current adapter:", local?adapter
 
 
 get-design-document = ->
@@ -73,13 +79,9 @@ ractive.on do
             console.log "Error while logging in: ", err
             ractive.set \login.err, {msg: err.message}
         else
-            console.log "Logged  in: ", res
-            err, res <- db.get-session
-            console.log "Session: ", err, res.userCtx
-            if res.userCtx.name
-                ractive.set \login.err, null
-                ractive.set \login.ok, yes
-                after-logged-in!
+            console.log "Seems logged in succesfully: ", res
+            after-logged-in!
+
     do-logout: ->
         console.log "Logging out!"
         err, res <- db.logout!
@@ -131,24 +133,26 @@ ractive.on do
     put-new-design-document: ->
         put-new-design-document!
 
-# check whether we are logged in or not
+
+# do stuff after logged in
 feed = null
 do function after-logged-in
+    <- check-login db
     console.log "RUNNING AFTER_LOGGED_IN..."
-
-    err, res <- db.info
-    console.log "DB info: ", err, res
-
     err, res <- db.get-session
     console.log "Session info: ", err, res
-    return if err
-
+    try
+        throw if res.user-ctx.name is null
+    catch
+        console.log "not logged in, returning..."
+        ractive.set \login, {+err, -ok, user: null}
+        return
     # Set ractive login variable
-    ractive.set \login, {user: res.userCtx, +ok}
+    ractive.set \login, {user: res.userCtx, +ok, -err}
 
     # Subscribe the changes...
     feed?.cancel!
-    feed := local.sync db, {+live, +retry, since: \now}
+    feed := local?.sync db, {+live, +retry, since: \now}
         .on \error, -> feed.cancel!
         .on 'change', (change) ->
             console.log "change detected!", change
