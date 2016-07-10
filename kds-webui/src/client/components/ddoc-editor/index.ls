@@ -2,8 +2,6 @@ require! 'livescript': lsc
 require! 'prelude-ls': {camelize}
 require! 'aea': {merge, make-design-doc}
 
-console.log "merge function: ", merge
-
 Ractive.components['ddoc-editor'] = Ractive.extend do
     template: '#ddoc-editor'
     oninit: ->

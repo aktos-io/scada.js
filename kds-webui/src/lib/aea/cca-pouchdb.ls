@@ -6,7 +6,7 @@ PouchDB = require \pouchdb
 
 export PouchDB
 
-console.log "PouchDB adapters: ", PouchDB.adapters
+#console.log "PouchDB adapters: ", PouchDB.adapters
 
 export signup = (db, user, callback) ->
     require! \crypto

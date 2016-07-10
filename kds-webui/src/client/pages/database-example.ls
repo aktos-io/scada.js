@@ -1,7 +1,7 @@
 require! components
 require! {
     'aea': {
-        PouchDB
+        PouchDB, check-login
     }
 }
 
@@ -19,7 +19,7 @@ ractive = new Ractive do
             err: null
             ok: no
             user: null
-        mydb: \will-be-set-later
+        db: \will-be-set-later
         sales-to-table: (sales-data) ->
             [[..name, ..date] for sales-data]
 
@@ -32,10 +32,9 @@ generate-entry-id = (user-id) -> ->
 
 get-entry-id = generate-entry-id 5
 
-after-logged-in = null
 db = new PouchDB 'https://demeter.cloudant.com/cicimeze', skip-setup: yes
 local = new PouchDB \local_db
-ractive.set \mydb, db
+ractive.set \db, db
 # ------------------- Database definition ends here ----------------------#
 
 ractive.on do
@@ -84,16 +83,16 @@ ractive.on do
 
 # check whether we are logged in or not
 feed = null
-do after-logged-in := ->
+do function after-logged-in
+    err <- check-login db
+    return if err
     err, res <- db.info
     console.log "Error getting info: ", err if err
-    throw err if err?.status isnt 200
-    console.log "hele hele "
     err, res <- db.get-session
     console.log "Session: ", err, res.userCtx
 
     feed?.cancel!
-    feed := local.sync db, {+live, +retry, since: \now}
+    feed := local?.sync db, {+live, +retry, since: \now}
         .on \error, -> feed.cancel!
         .on 'change', (change) ->
             console.log "change detected!", change
@@ -115,12 +114,10 @@ do after-logged-in := ->
     # get all sales entries and set ractive's appropriate property
     do get-sales-entries = ->
         console.log "getting sales entries!"
-        db.query 'get-by-type/get-sales', (err, res) ->
+        db.query 'get-by-type/get-sales', {+include_docs}, (err, res) ->
             try
                 throw err if err
-                console.log "got sales entry id's, fetching data..."
-                db.all-docs {include_docs: yes, keys: [..key for res.rows]}, (err, res) ->
-                    console.log "sales entries: ", err, res
-                    ractive.set "salesEntries", [..doc for res.rows]
+                console.log "sales entries: ", err, res
+                ractive.set "salesEntries", [..doc for res.rows]
             catch
                 console.log "error: ", e

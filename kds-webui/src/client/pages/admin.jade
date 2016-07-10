@@ -6,29 +6,11 @@ block title
 block script 
     script(src="admin.js")
 
-
 block components
-    +component('x').
-        p Naber!
 
 block ractive
     panel(title="Login" type="{{#if login.ok}}primary{{else}}warning{{/if}}")
-            
-        form-vertical
-            | {{#if !login.ok}}
-            form-group
-                b-label.col-sm-4 Username
-                col-sm-8: input.form-control(value="{{user.name}}")
-            form-group
-                b-label.col-sm-4 Password
-                col-sm-8: input.form-control(value="{{user.passwd}}")
-            form-group
-                btn(on-buttonclick="doLogin") Login!
-            | {{else}}
-            form-group 
-                p Welcome {{ login.user.name }}!
-                btn(on-buttonclick="doLogout") Logout
-            | {{/if}}
+        login(on-success="afterLoggedIn" context="{{ login }}" db="{{ db }}")
             
     +if('login.ok')
         div Login roles: {{ login.user.roles }}            
@@ -47,26 +29,7 @@ block ractive
                     btn(on-buttonclick="addUser") Add User!
                     
         panel(title="{{designDocument._id}}" type="success")
-            form-horizontal
-                form-group
-                    row
-                        col-sm-2
-                            b-label Document ID
-                        col-sm-4
-                            input.form-control(value="{{designDocument._id}}")
-                        col-sm-6    
-                            btn-group
-                                btn(on-buttonclick="getDesignDocument" type="primary").
-                                    Get Document!
-                                btn(on-buttonclick="putNewDesignDocument" type="danger").
-                                    New Document!
-                ace-editor(code="{{ designDocument.livescript }}" mode="livescript" theme="xcode")
-            btn-group
-                btn(on-buttonclick="putDesignDocument" type="success").
-                    Put Auth Document!
-                btn(on-buttonclick="compileDesignDocument" type="info").
-                    Compile
-            ace-editor(code="{{ designDocument.javascript }}" mode="javascript" theme="xcode")
+            ddoc-editor(document="{{ designDocument }}" db="{{ db }}")
         
         panel(title="test table")
             interactive-table(cols="aa, ee")
