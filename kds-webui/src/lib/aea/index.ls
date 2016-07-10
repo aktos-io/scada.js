@@ -1,5 +1,5 @@
 require! {
-    './cca-pouchdb': {signup, make-design-doc}
+    './cca-pouchdb': {PouchDB, signup, make-design-doc, check-login}
     './merge': {merge}
     './sleep': {sleep, after, clear-timer}
     './signal': {wait-for, timeout-wait-for, go}
@@ -7,11 +7,9 @@ require! {
     './packing': {pack, unpack}
 }
 
-PouchDB = require \pouchdb
-    ..plugin require \pouchdb-authentication
 
 module.exports = {
-    signup, PouchDB, make-design-doc
+    signup, PouchDB, make-design-doc, check-login
     sleep, after, clear-timer
     merge
     wait-for, timeout-wait-for, go
