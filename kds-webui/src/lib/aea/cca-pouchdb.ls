@@ -40,11 +40,20 @@ export function check-login (db, callback)
         xhrFields: {+withCredentials}
         headers:
             'Content-Type':'application/x-www-form-urlencoded'
-        success: ->
-            console.log "We are already logged in!"
-            callback! if typeof! callback is \Function
-        error: ->
-            console.log "We are not logged in yet..."
+        success: (data) ->
+            try
+                res = JSON.parse data
+                throw "not logged in..." if res.user-ctx.name is null
+                console.log "We are already logged in as ", res.user-ctx.name
+                callback false if typeof! callback is \Function
+            catch
+                console.log "Check login not succeeded: ", e?.to-string!
+                callback true if typeof! callback is \Function
+
+        error: (err) ->
+            console.log "Something went wrong while checking logged in state: ", err
+            callback true if typeof! callback is \Function
+
 
 export function make-design-doc (obj)
     # convert functions to strings in design docs
