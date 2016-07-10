@@ -7,7 +7,7 @@ Ractive.components['ace-editor'] = Ractive.extend({
             getting, setting;
 
         var mode = ractive.get('mode') || 'javascript';
-        console.log('mode is: ' + mode) || 'monokai';
+        //console.log('mode is: ' + mode) || 'monokai';
         var theme = ractive.get('theme');
         e.setTheme("ace/theme/" + theme);
         e.getSession().setMode('ace/mode/' + mode);
