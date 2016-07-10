@@ -9,6 +9,9 @@ require! {
 }
 require! 'livescript': lsc
 
+Ractive.components['x'] = Ractive.extend do
+    template: '#x'
+
 
 # Ractive definition
 ractive = new Ractive do
@@ -24,36 +27,39 @@ ractive = new Ractive do
         user:
             name: \demeter
             passwd: \hPwZLjgITAlqk
-        users-auth:
+        design-document:
+            _id: '_design/test'
             livescript: null
             javascript: null
 
 
-db = new PouchDB 'https://demeter.cloudant.com/_users', skip-setup: yes
+db = new PouchDB 'https://demeter.cloudant.com/_users', {skip-setup: yes, adapter: \websql}
 local = new PouchDB \local_db
 ractive.set \db, db
 
-get-auth-document = ->
+
+get-design-document = ->
     # get the _auth design document
-    err, res <- db.get '_design/_auth'
-    users-auth =
-        _id: '_design/_auth'
-
+    design-document = ractive.get \designDocument
+    err, res <- db.get design-document._id
     if err
-        # put a new design document
-        console.log "Putting a new _auth document..."
-        err, res <- db.put users-auth
-
-        if err
-            console.log "Error putting design document: ", err
-        else
-            console.log "Design document uploaded successfully...", res
+        console.log "Can not get design document: ", err
     else
         console.log "Current _auth document: ", res
-        auth = res
-        auth.livescript = res.src
-        ractive.set \usersAuth, auth
+        ddoc = res
+        ddoc.livescript = res.src
+        ractive.set \designDocument, ddoc
 
+put-new-design-document = ->
+    design-document = ractive.get \designDocument
+    delete design-document._rev
+    console.log "Putting new design document: ", design-document
+    err, res <- db.put design-document
+    if err
+        console.log "Error putting design document: ", err
+    else
+        console.log "Design document uploaded successfully...", res
+        get-design-document!
 
 
 ractive.on do
@@ -91,43 +97,39 @@ ractive.on do
         else
             console.log "ERROR: Adding new user: ", err
 
-    compileAuthDocument: (callback) ->
+    compileDesignDocument: (callback) ->
         console.log "Compiling auth document..."
         try
-            js = lsc.compile (@get \usersAuth.livescript), {+bare, -header}
+            js = lsc.compile (@get \designDocument.livescript), {+bare, -header}
             console.log "Compiled output: ", js
         catch
             js = e.to-string!
-        @set \usersAuth.javascript, js
+        @set \designDocument.javascript, js
 
         callback! if typeof! callback is \Function
 
-    putAuthDocument: ->
-        console.log "Putting auth document!"
-        # <- ractive.fire \compileAuthDocument
-        console.log "Uploading auth document..."
-        auth = ractive.get \usersAuth
-        design-doc = eval auth.javascript
+    putDesignDocument: ->
+        console.log "Putting design document!"
+        console.log "Uploading design document..."
+        ddoc = ractive.get \designDocument
+        ddoc-js = eval ddoc.javascript
         # convert special functions to strings
-
-        console.log "design-doc: ", design-doc
-        console.log "design-doc-str: ", pack design-doc
-        console.log "json document: ", design-doc
-        auth = auth `merge` design-doc
-        auth.src = auth.livescript
-
-        auth = make-design-doc auth
-        console.log "Full document to upload: ", auth
-        err, res <- db.put auth
+        ddoc = ddoc `merge` ddoc-js
+        ddoc.src = ddoc.livescript
+        ddoc = make-design-doc ddoc
+        console.log "Full document to upload: ", ddoc
+        err, res <- db.put ddoc
         if err
-            console.log "Error uploading auth document: ", err
+            console.log "Error uploading ddoc-src document: ", err
         else
-            console.log "Auth document uploaded successfully"
+            console.log "ddoc-src document uploaded successfully"
         # update _rev field for the following updates
-        get-auth-document!
+        get-design-document!
 
-
-
+    get-design-document: ->
+        get-design-document!
+    put-new-design-document: ->
+        put-new-design-document!
 
 # check whether we are logged in or not
 feed = null
@@ -151,4 +153,4 @@ do function after-logged-in
         .on 'change', (change) ->
             console.log "change detected!", change
 
-    get-auth-document!
+    get-design-document!
