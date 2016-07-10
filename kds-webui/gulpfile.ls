@@ -3,16 +3,13 @@ require! 'gulp-livescript': lsc
 require! <[ gulp glob path]>
 require! 'vinyl-source-stream': source
 require! 'vinyl-buffer': buffer
-require! 'vinyl-transform': transform
-require! 'gulp-plumber': plumber
+#require! 'gulp-plumber': plumber
 require! 'gulp-watch': watch
 require! 'gulp-jade': jade
 require! 'node-notifier': notifier
 require! 'gulp-concat': cat
-require! 'browserify-livescript'
 require! 'browserify': browserify
 require! 'gulp-uglify': uglify
-require! 'gulp-sourcemaps': sourcemaps
 require! './src/lib/aea': {sleep}
 require! 'fs'
 
@@ -57,16 +54,19 @@ gulp.task \default, ->
     watch ["#{client-src}/components/**/*.*", "!#{client-src}/components/*.jade", "!#{client-src}/components/*.ls"] , (event) ->
         gulp.start <[ jade info-browserify ]>
 
-    # watch for jade changes
-    watch ["#{client-src}/**/*.jade"], ->
+    # watch for templates changes
+    watch ["#{client-src}/templates/**/*.jade"], ->
         gulp.start \jade
-        
+
     watch "#{client-src}/pages/*.*", (event) ->
         run-all!
     watch "#{lib-src}/**/*.*", (event) ->
         run-all!
     watch "#{vendor-folder}/**", (event) ->
         gulp.start <[ vendor vendor-css ]>
+
+    watch "./node_modules/**", (event) ->
+        run-all!
 
 # Copy js and html files as is
 gulp.task \js, ->
@@ -129,10 +129,7 @@ gulp.task \browserify <[ lsc-client lsc-lib js]> ->
                     @emit \end
                 .pipe source "#{filename}"
                 .pipe buffer!
-                ## Source Maps are working (needs more testing)
-                #.pipe sourcemaps.init {+load-maps}
                 #.pipe uglify!
-                #.pipe sourcemaps.write!
                 .pipe gulp.dest "#{client-public}/#{base-folder}"
 
 
