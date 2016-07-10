@@ -52,8 +52,15 @@ gulp.task \default, ->
     console.log "task lsc is running.."
     do function run-all
         gulp.start <[ js info-browserify html vendor vendor-css assets jade ]>
+
+    # watch for component changes
     watch ["#{client-src}/components/**/*.*", "!#{client-src}/components/*.jade", "!#{client-src}/components/*.ls"] , (event) ->
         gulp.start <[ jade info-browserify ]>
+
+    # watch for jade changes
+    watch ["#{client-src}/**/*.jade"], ->
+        gulp.start \jade
+        
     watch "#{client-src}/pages/*.*", (event) ->
         run-all!
     watch "#{lib-src}/**/*.*", (event) ->
