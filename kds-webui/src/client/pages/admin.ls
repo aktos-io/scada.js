@@ -39,7 +39,7 @@ ractive = new Ractive do
 
 
 db = new PouchDB 'https://demeter.cloudant.com/_users', {skip-setup: yes}
-#local = new PouchDB \local_db
+local = new PouchDB \local_db
 ractive.set \db, db
 console.log "current adapter:", local?adapter
 
@@ -137,7 +137,8 @@ ractive.on do
 # do stuff after logged in
 feed = null
 do function after-logged-in
-    <- check-login db
+    err <- check-login db
+    return if err
     console.log "RUNNING AFTER_LOGGED_IN..."
     err, res <- db.get-session
     console.log "Session info: ", err, res
