@@ -13,6 +13,11 @@ mixin each(name)
     block
     != '{{/' + name + '}}'
 
+mixin partial(name)
+    != '{{#partial ' + name + '}}'
+    block
+    != '{{/partial}}'
+
 mixin component(name)
     != '<script id="' + name  + '" type="text/ractive">'
     block
