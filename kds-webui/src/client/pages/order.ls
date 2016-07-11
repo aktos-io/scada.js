@@ -13,7 +13,6 @@ ractive = new Ractive do
     el: '#main-output'
     template: '#main-template'
     data:
-        sales-entries: []
         login:
             ok: no
         db: db

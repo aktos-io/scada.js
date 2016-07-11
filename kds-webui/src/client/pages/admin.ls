@@ -29,7 +29,7 @@ ractive.on do
     add-user: ->
         new-user = @get \newUser
         console.log "Adding user!", new-user?.name
-        new-user.roles = new-user.roles?split ','
+        new-user.roles = new-user.roles?.split ','
         # admin should already be logged in `_users` database
         err, res <- signup db, new-user
         if not err
