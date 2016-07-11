@@ -1,9 +1,12 @@
 require! components
 require! {
     'aea': {
-        PouchDB, check-login
+        PouchDB
     }
 }
+
+db = new PouchDB 'https://demeter.cloudant.com/cicimeze', skip-setup: yes
+local = new PouchDB \local_db
 
 # Ractive definition
 ractive = new Ractive do
@@ -19,7 +22,7 @@ ractive = new Ractive do
             err: null
             ok: no
             user: null
-        db: \will-be-set-later
+        db: db
         sales-to-table: (sales-data) ->
             [[..name, ..date] for sales-data]
 
@@ -32,11 +35,9 @@ generate-entry-id = (user-id) -> ->
 
 get-entry-id = generate-entry-id 5
 
-db = new PouchDB 'https://demeter.cloudant.com/cicimeze', skip-setup: yes
-local = new PouchDB \local_db
-ractive.set \db, db
 # ------------------- Database definition ends here ----------------------#
 
+feed = null
 ractive.on do
     update-table: ->
         console.log "updating satis listesi!", satis-listesi
@@ -56,68 +57,38 @@ ractive.on do
             catch
                 console.log "Could not add sales entry: ", e
 
-    do-login: ->
-        user = @get \user
-        ajax-opts = ajax: headers:
-            Authorization: "Basic #{window.btoa user.name + ':' + user.passwd}"
-        console.log "Logging in with #{user.name} and #{user.passwd}"
-        err, res <- db.login user.name, user.passwd, ajax-opts
-        if err
-            console.log "Error while logging in: ", err
-            ractive.set \login.err, {msg: err.message}
-        else
-            console.log "Logged  in: ", res
-            err, res <- db.get-session
-            console.log "Session: ", err, res.userCtx
-            if res.userCtx.name
-                ractive.set \login.err, null
-                ractive.set \login.ok, yes
-                after-logged-in!
-
-    do-logout: ->
-        console.log "Logging out!"
-        err, res <- db.logout!
-        console.log "Logged out: err: #{err}, res: ", res
-        ractive.set \login.ok, null if res.ok
-
-
-# check whether we are logged in or not
-feed = null
-do function after-logged-in
-    err <- check-login db
-    return if err
-    err, res <- db.info
-    console.log "Error getting info: ", err if err
-    err, res <- db.get-session
-    console.log "Session: ", err, res.userCtx
-
-    feed?.cancel!
-    feed := local?.sync db, {+live, +retry, since: \now}
-        .on \error, -> feed.cancel!
-        .on 'change', (change) ->
-            console.log "change detected!", change
+    after-logged-in: ->
+        do function on-change
+            console.log "running function on-change!"
             get-materials!
             get-sales-entries!
 
-    db.get-session (err, res) ->
-        ractive.set \login, {user: res.userCtx, +ok}
+        feed?.cancel!
+        feed := local?.sync db, {+live, +retry, since: \now}
+            .on \error, -> feed.cancel!
+            .on 'change', (change) ->
+                console.log "change detected!", change
+                try
+                    on-change!
+                catch
+                    console.log "nedir?", e
 
-    get-materials = ->
-        db.query 'primitives/raw-material-list', (err, res) ->
-            console.log "this document contains raw material list: ", res
-            material-document = res.rows.0.id
-            db.get material-document, (err, res) ->
-                materials =  [..name for res.contents]
-                console.log "these are materials: ", materials
-                ractive.set \materials, materials
+function get-materials
+    db.query 'primitives/raw-material-list', (err, res) ->
+        console.log "this document contains raw material list: ", res
+        material-document = res.rows.0.id
+        db.get material-document, (err, res) ->
+            materials =  [..name for res.contents]
+            console.log "these are materials: ", materials
+            ractive.set \materials, materials
 
-    # get all sales entries and set ractive's appropriate property
-    do get-sales-entries = ->
-        console.log "getting sales entries!"
-        db.query 'get-by-type/get-sales', {+include_docs}, (err, res) ->
-            try
-                throw err if err
-                console.log "sales entries: ", err, res
-                ractive.set "salesEntries", [..doc for res.rows]
-            catch
-                console.log "error: ", e
+# get all sales entries and set ractive's appropriate property
+function get-sales-entries
+    console.log "getting sales entries!"
+    db.query 'get-by-type/get-sales', {+include_docs}, (err, res) ->
+        try
+            throw err if err
+            console.log "sales entries: ", err, res
+            ractive.set "salesEntries", [..doc for res.rows]
+        catch
+            console.log "error: ", e

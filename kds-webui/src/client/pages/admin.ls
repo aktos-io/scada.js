@@ -1,13 +1,7 @@
 require! components
 require! {
     'aea': {
-        PouchDB, signup, make-design-doc, check-login
-        sleep
-        merge
-        pack, unpack
-    }
-    'prelude-ls': {
-        join
+        PouchDB, signup
     }
 }
 

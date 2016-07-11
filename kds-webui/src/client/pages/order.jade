@@ -1,0 +1,19 @@
+extends ../templates/template.jade
+block script             
+    script(src="order.js")
+block title 
+    title Siparişler
+    
+block ractive     
+    panel
+        login(on-login="afterLoggedIn" context="{{ login }}" db="{{ db }}")
+
+    +if('login.ok')
+        h2 Siparişler:
+        order-table(
+            tabledata="{{ orders }}"
+            cols="Müşteri Adı, Adet, Toplam (kg)"
+            db="{{ db }}"
+            view="get-orders"
+            gen-entry-id="{{ genEntryId }}"
+            )

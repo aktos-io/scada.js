@@ -6,11 +6,9 @@ block title
 block script 
     script(src="admin.js")
 
-block components
-
 block ractive
     panel(title="Login" type="{{#if login.ok}}primary{{else}}warning{{/if}}")
-        login(on-success="afterLoggedIn" context="{{ login }}" db="{{ db }}")
+        login(on-login="afterLoggedIn" context="{{ login }}" db="{{ db }}")
             
     +if('login.ok')
         div Login roles: {{ login.user.roles }}            
