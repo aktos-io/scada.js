@@ -6,20 +6,33 @@ component-name = "order-table"
 Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
     oninit: ->
+        self = @
         if (@get \id) is \will-be-random
-            # then make it random
             @set \id random.generate 7
-            #console.log "Table id is automatically generated: ", @get \id
+
+        # column names
         col-list = @get \cols |> split ','
         @set \columnList, col-list
-        self = @
+
+        # contents
         #console.log "table content", @partials.content
+
         db = @get \db
         gen-entry-id = @get \gen-entry-id
-        console.log "db", typeof! db
+
+        do function update-table
+            err, res <- db.query 'orders/getOrders', {+include_docs}
+            if err
+                console.log "ERROR: order table: ", err
+            else
+                console.log "Updating table: ", res
+                self.set \tabledata, res
+                self.set \showData, [[i.doc.client, i.doc.due-date, sum [(split ' ', ..amount .0 |> parse-int) for i.doc.entries]] for i in res.rows]
+
         db.changes {since: 'now', +live, +include_docs}
             .on \change, (change) ->
                 console.log "order-table change detected!", change
+                update-table!
         @on do
             activated: (...args) ->
                 index = (args.0.keypath |> split '.').1 |> parse-int
@@ -29,6 +42,9 @@ Ractive.components[component-name] = Ractive.extend do
                     console.log "Give tooltip!"
                     @fire \showModal
                 @set \clickedIndex, index
+                tabledata = @get \tabledata
+                @set \currOrder, tabledata.rows[index].doc
+                console.log "Started editing an order: ", (@get \currOrder)
 
             close-modal: ->
                 self = @
@@ -52,16 +68,16 @@ Ractive.components[component-name] = Ractive.extend do
 
             save-and-exit: ->
                 index = @get \clickedIndex
-                console.log "clicked to save and hide", index
-                line = (@get \tabledata)[index]
-                #console.log "line is: ", line
-                @get \db .put line, (err, res) ->
-                    if err
-                        console.log "ERR: Table:", err
-                    else
-                        console.log "INFO: Table: ", res
+                #tabledata = @get \tabledata
+                #edited-doc = tabledata.rows[index].doc
+                #console.log "editing document: ", edited-doc
+                console.log "clicked to save and end editing", index
+                @fire \endEditing
+
+            end-editing: ->
                 @set \clickedIndex, null
                 @set \editable, no
+                @set \editingDoc, null
 
             toggle-editing: ->
                 editable = @get \editable
@@ -77,45 +93,62 @@ Ractive.components[component-name] = Ractive.extend do
 
             add-new-order: ->
                 @set \addingNew, true
+                @set \currOrder, (@get \newOrder)!
 
             add-new-order-close: ->
                 @set \addingNew, false
+                @fire \endEditing
 
             add-new-order-save: ->
-                new-order = @get \newOrder
-                order-doc = new-order `merge` {_id: gen-entry-id!}
-                console.log "new order document: ", order-doc
+                self = @
+                order-doc = @get \currOrder
+                console.log "Saving new order document: ", order-doc
+                if not order-doc._id?
+                    console.log "Generating new id for the document!"
+                    order-doc = order-doc `merge` {_id: gen-entry-id!}
                 err, res <- db.put order-doc
                 if err
                     console.log "Error putting new order: ", err
                 else
                     console.log "New order put in the database", res
+                    order-doc._rev = res.rev
+                    console.log "Updating current order document rev: ", order-doc._rev
+                    self.set \currOrder, order-doc
 
             add-new-entry: ->
-                new-order = @get \newOrder
-                console.log "new order: ", new-order
-                new-order.entries ++= entry =
+                editing-doc = @get \currOrder
+                console.log "adding new entry to the order: ", editing-doc
+                editing-doc.entries ++= entry =
                     * type: "Type of order..."
                       amount: "amount of order..."
                     ...
-                @set \newOrder, new-order
+                console.log "adding new entry: ", editing-doc
+                @set \currOrder, editing-doc
 
             delete-order: (index) ->
                 console.log "Delete index: ", index
-                new-order = @get \newOrder
-                new-order.entries.splice index, 1
-                console.log "new order (deleted: )", new-order.entries
-                @set \newOrder, new-order
+                editing-doc = @get \currOrder
+                editing-doc.entries.splice index, 1
+                console.log "editing doc: (deleted: )", editing-doc.entries
+                @set \currOrder, editing-doc
 
 
     data: ->
-        new-order:
+        new-order: ->
             client: "test..."
-            entries: []
+            type: \order
+            entries:
+                * type: 'tip...'
+                  amount: 'x kg'
+                ...
+        curr-order: null
         id: \will-be-random
         gen-entry-id: null
         db: null
         tabledata: null
+        show-data:
+            <[ col1 col2 col3 ]>
+            <[ col11 col22 col33 ]>
         editable: false
         clicked-index: null
         cols: null

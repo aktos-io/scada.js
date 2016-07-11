@@ -1,4 +1,28 @@
 +component('order-table')
+    +partial('edit-form')
+        panel(title="Yeni Sipariş Ekle" type="primary")
+            // {{ JSON.stringify(currOrder) }}
+            form-vertical
+                form-group
+                    span Müşteri: 
+                    input(value="{{ currOrder.client }}")
+                form-group
+                    span Teslim Tarihi: 
+                    input(value="{{ currOrder.dueDate }}")
+                +each('currOrder.entries:i')
+                    form-group
+                        span Type
+                        input(value="{{ .['type'] }}")
+                        input(value="{{ .['amount'] }}")
+                        btn(on-buttonclick="deleteOrder" value="{{ i }}")
+                            icon-remove
+                form-group
+                    btn(on-buttonclick="addNewEntry")
+                        icon-plus 
+                        span Kalem Ekle
+            btn(on-buttonclick="addNewOrderClose") Close!
+            btn(on-buttonclick="addNewOrderSave") Save!
+
     b-table 
         thead 
             tr.
@@ -18,31 +42,14 @@
                         btn(on-buttonclick="addNewOrder")
                             icon-plus
                             span Yeni sipariş ekle
-                    +if('addingNew')
-                        panel(title="Yeni Sipariş Ekle" type="info")
-                            form-vertical
-                                form-group
-                                    span Client: 
-                                    input(value="{{ newOrder.client }}")
-                                +each('newOrder.entries:i')
-                                    form-group
-                                        span Type
-                                        input(value="{{ .['type'] }}")
-                                        input(value="{{ .['amount'] }}")
-                                        btn(on-buttonclick="deleteOrder" value="{{ i }}")
-                                            icon-remove
-                                form-group
-                                    btn(on-buttonclick="addNewEntry")
-                                        icon-plus 
-                                        span Kalem Ekle
-                            btn(on-buttonclick="addNewOrderClose") Close!
-                            btn(on-buttonclick="addNewOrderSave") Save!
+                    +if('addingNew') 
+                        | {{>edit-form}}
 
-            +each('tabledata:i').
+            +each('showData:i').
                 <tr class="input-line {{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}}" on-doubleclick="activated">
                     {{#if clickedIndex === i }}
                         <td>
-                            <btn-group type="xs">
+                            <btn-group-vertical>
                                 <btn on-buttonclick="toggleEditing" type="{{#if editTooltip }}danger{{else}}default{{/if}}" active="{{editable}}" >
                                     {{#if editable}}
                                         <icon-check/>
@@ -53,23 +60,16 @@
                                 </btn>
                                 <btn type="success" on-buttonclick="saveAndExit"><icon-ok/></btn>
                                 <btn type="info" on-buttonclick="revert"><icon-remove/></btn>
-                            </btn-group>
+                            </btn-group-vertical>
                         </td>
                     {{else}}
                         <td>{{i+1}}</td>
                     {{/if}}
-                    <td>
-                        {{#if isEditingLine(i)}}
-                            <input  class="form-control" type="text" value="{{ tabledata[i]["name"] }}">
-                        {{else}}
-                            {{ tabledata[i]["name"] }}
-                        {{/if}}
-                    </td>
-                    <td>
-                        {{#if isEditingLine(i)}}
-                            <input  class="form-control" type="text" value="{{ tabledata[i]["date"] }}">
-                        {{else}}
-                            {{ tabledata[i]["date"] }}
-                        {{/if}}
-                    </td>
+                    {{#if isEditingLine(i)}}
+                        <td colspan="{{ columnList.length }}">{{>edit-form}}</td>
+                    {{else}}
+                        {{#each showData[i]:j}}
+                            <td>{{ showData[i][j] }}</td>
+                        {{/each}}
+                    {{/if}}
                 </tr>
