@@ -1,0 +1,75 @@
++component('order-table')
+    b-table 
+        thead 
+            tr.
+                {{#if clickedIndex !== null}}
+                    <th>Editing...</th>
+                {{else}}
+                    <th>#</th>
+                {{/if}}
+                {{#each columnList}}
+                    <th>{{ . }}</th>
+                {{/each}}
+
+        tbody
+            tr
+                td(colspan="{{ columnList.length + 1 }}")
+                    +unless('addingNew')
+                        btn(on-buttonclick="addNewOrder")
+                            icon-plus
+                            span Yeni sipariş ekle
+                    +if('addingNew')
+                        panel(title="Yeni Sipariş Ekle" type="info")
+                            form-vertical
+                                form-group
+                                    span Client: 
+                                    input(value="{{ newOrder.client }}")
+                                +each('newOrder.entries:i')
+                                    form-group
+                                        span Type
+                                        input(value="{{ .['type'] }}")
+                                        input(value="{{ .['amount'] }}")
+                                        btn(on-buttonclick="deleteOrder" value="{{ i }}")
+                                            icon-remove
+                                form-group
+                                    btn(on-buttonclick="addNewEntry")
+                                        icon-plus 
+                                        span Kalem Ekle
+                            btn(on-buttonclick="addNewOrderClose") Close!
+                            btn(on-buttonclick="addNewOrderSave") Save!
+
+            +each('tabledata:i').
+                <tr class="input-line {{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}}" on-doubleclick="activated">
+                    {{#if clickedIndex === i }}
+                        <td>
+                            <btn-group type="xs">
+                                <btn on-buttonclick="toggleEditing" type="{{#if editTooltip }}danger{{else}}default{{/if}}" active="{{editable}}" >
+                                    {{#if editable}}
+                                        <icon-check/>
+                                    {{else}}
+                                        <icon-unchecked/>
+                                    {{/if}}
+                                    <icon-pencil/>
+                                </btn>
+                                <btn type="success" on-buttonclick="saveAndExit"><icon-ok/></btn>
+                                <btn type="info" on-buttonclick="revert"><icon-remove/></btn>
+                            </btn-group>
+                        </td>
+                    {{else}}
+                        <td>{{i+1}}</td>
+                    {{/if}}
+                    <td>
+                        {{#if isEditingLine(i)}}
+                            <input  class="form-control" type="text" value="{{ tabledata[i]["name"] }}">
+                        {{else}}
+                            {{ tabledata[i]["name"] }}
+                        {{/if}}
+                    </td>
+                    <td>
+                        {{#if isEditingLine(i)}}
+                            <input  class="form-control" type="text" value="{{ tabledata[i]["date"] }}">
+                        {{else}}
+                            {{ tabledata[i]["date"] }}
+                        {{/if}}
+                    </td>
+                </tr>
