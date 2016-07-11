@@ -7,34 +7,4 @@ block script
     script(src="main.js")
 
 block ractive
-    body.
-        <tr>
-        <td style="{{#if hideMenuValue}}width:{{showMenu ? "200px" : "80px"}}{{/if}}">
-        <div style="position: fixed">
-        <btn on-buttonclick="hideMenu"><p style="font-size: 1.5em" align="left"><icon-inbox/></p> </btn>
-        </div>
-        <div style="{{#if hideMenuValue}}position: fixed; visibility:visible{{else}}visibility: hidden{{/if}};
-        height:100%; overflow-y: auto">
-        <div style="display:inline-block; height:1px">
-        {{#if hideMenuValue}}
-        <btn-group-vertical>
-        <btn on-buttonclick="toggleMenu"><p style="font-size: 1.5em" align="left"><icon-th-list/></p> </btn>
-        {{#menu:i}}
-        <btn href="{{.['url']}}" type="primary">
-        {{#if showMenu}} <p align="left"><span class='glyphicon glyphicon-{{icon}}' aria-hidden='true'></span> {{title}} </p>
-        {{else }} <span class='glyphicon glyphicon-{{icon}}' aria-hidden='true'></span>
-        {{/if}}
-        </btn>
-        {{/menu}}
-        <btn on-buttonclick="hideMenu"> {{#if hideMenuValue}}Hide{{else}}Show{{/if}}</btn>
-        </btn-group-vertical>
-        {{/if}}
-        </div>
-        </div>
-        </td>
-        <td style="vertical-align:top; padding-left: 20px; {{#if hideMenuValue}}{{else}}padding-top: 100px{{/if}}">
-        <page-header>
-        <h1>Index Page <small>aktos.io</small></h1>
-        </page-header>
-        </td>
-        </tr>
+    menu

@@ -3,5 +3,6 @@ require! './ace-editor'
 require! './ddoc-editor'
 require! './interactive-table'
 require! './login'
+require! './menu'
 require! './order-table'
-module.exports = { ace-editor, ddoc-editor, interactive-table, login, order-table }
+module.exports = { ace-editor, ddoc-editor, interactive-table, login, menu, order-table }
