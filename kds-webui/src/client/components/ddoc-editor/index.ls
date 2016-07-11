@@ -12,7 +12,7 @@ Ractive.components[component-name] = Ractive.extend do
         @set (camelize \design-document), design-document
         @on do
             get-design-document: ->
-                self = this
+                self = @
                 # get the _auth design document
                 console.log "DB is: ", db
                 design-document = self.get camelize \design-document
@@ -26,6 +26,7 @@ Ractive.components[component-name] = Ractive.extend do
                     self.set (camelize \design-document), ddoc
 
             put-new-design-document: ->
+                self = @
                 design-document = @get \designDocument
                 delete design-document._rev
                 console.log "Putting new design document: ", design-document
