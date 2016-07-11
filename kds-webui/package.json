@@ -26,10 +26,12 @@
     "jquery": "^3.0.0",
     "pouchdb": "^5.4.4",
     "pouchdb-authentication": "^0.5.2",
+    "prelude-ls": "^1.1.2",
     "ractive": "^0.7.3",
     "randomstring": "^1.1.5"
   },
   "devDependencies": {
+    "browserify": "^13.0.1",
     "glob": "^7.0.5",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",

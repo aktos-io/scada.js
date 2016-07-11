@@ -1,6 +1,5 @@
 hapi = require "hapi"
 http-proxy = require 'http-proxy'
-Wreck = require \wreck
 
 server = new hapi.Server!
         ..connection do
@@ -32,7 +31,13 @@ server.route do
     path: "/"
     method: "GET"
     handler:
-        file: "#{public-dir}/index.html"
+        file: "#{public-dir}/pages/main.html"
+
+server.route do
+    path: "/main.js"
+    method: "GET"
+    handler:
+        file: "#{public-dir}/pages/main.js"
 
 server.route do
     path: "/app/{f*}"
