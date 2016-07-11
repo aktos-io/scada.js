@@ -9,17 +9,18 @@
 
 require! 'aea': {check-login}
 
-Ractive.components['login'] = Ractive.extend do
-    template: '#login'
+component-name = "login"
+Ractive.components[component-name] = Ractive.extend do
+    template: "\##{component-name}"
     oninit: ->
         self = @
         # check whether we are logged in
         check-login (@get \db), (err) ->
             if not err
-                console.log "Login component says: we are logged in..."
-                self.fire \success
+                #console.log "Login component says: we are logged in..."
+                self.fire \login
             else
-                console.log "Login component says: we are not logged in!"
+                #console.log "Login component says: we are not logged in!"
         @on do
             do-login: ->
                 self = @
@@ -34,7 +35,8 @@ Ractive.components['login'] = Ractive.extend do
                     self.set \context.err, {msg: err.message}
                 else
                     console.log "Seems logged in succesfully: ", res
-                    self.fire \success
+                    self.set \context.err, null
+                    self.fire \login
 
             do-logout: ->
                 self = @
@@ -44,7 +46,7 @@ Ractive.components['login'] = Ractive.extend do
                 console.log "Logged out: err: #{err}, res: ", res
                 self.set \context.ok, no if res.ok
 
-            success: (event) ->
+            login: (event) ->
                 # do more success actions...
                 console.log "Login component success... ", event
                 db = @get \db
@@ -53,6 +55,7 @@ Ractive.components['login'] = Ractive.extend do
                 try
                     throw if res.user-ctx.name is null
                     self.set \context.ok, yes
+                    self.set \context.err, null
                     self.set \context.user, res.user-ctx
                 catch
                     console.log "not logged in, returning..."

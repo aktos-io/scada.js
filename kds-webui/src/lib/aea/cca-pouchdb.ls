@@ -33,7 +33,7 @@ export function check-login (db, callback)
         ..[session-db.length - 1] = '_session'
 
     session-url = join "/" session-db
-    console.log "Checking sessoni with url: ", session-url
+    #console.log "Checking sessoni with url: ", session-url
     $.ajax do
         type: \GET
         url: session-url
@@ -44,14 +44,14 @@ export function check-login (db, callback)
             try
                 res = JSON.parse data
                 throw "not logged in..." if res.user-ctx.name is null
-                console.log "We are already logged in as ", res.user-ctx.name
+                #console.log "We are already logged in as ", res.user-ctx.name
                 callback false if typeof! callback is \Function
             catch
-                console.log "Check login not succeeded: ", e?.to-string!
+                #console.log "Check login not succeeded: ", e?.to-string!
                 callback true if typeof! callback is \Function
 
         error: (err) ->
-            console.log "Something went wrong while checking logged in state: ", err
+            #console.log "Something went wrong while checking logged in state: ", err
             callback true if typeof! callback is \Function
 
 

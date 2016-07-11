@@ -32,7 +32,7 @@ Ractive.components['btn'] = Ractive.extend({
 		if( this.get('href') )
 			return      "<a class='btn btn-{{type.replace(/ +/g,\" btn-\")}} {{#disabled}}disabled{{/}} {{#active}}active{{/}} {{#dropdown}}dropdown-toggle{{/}}' {{#dropdown}}data-toggle='dropdown'{{/}} href='{{href}}'>{{yield}}</a>"
 		else
-			return "<button type='button' class='btn btn-{{type.replace(/ +/g,\" btn-\")}} {{#disabled}}disabled{{/}} {{#active}}active{{/}} {{#dropdown}}dropdown-toggle{{/}}' {{#dropdown}}data-toggle='dropdown'{{/}} onclick='{{onclick}}' on-click=\"fire('buttonclick')\">{{yield}}</button>"
+			return "<button type='button' class='btn btn-{{type.replace(/ +/g,\" btn-\")}} {{#disabled}}disabled{{/}} {{#active}}active{{/}} {{#dropdown}}dropdown-toggle{{/}}' {{#dropdown}}data-toggle='dropdown'{{/}} onclick='{{onclick}}' on-click=\"fire('buttonclick', value)\">{{yield}}</button>"
 	}
 })
 

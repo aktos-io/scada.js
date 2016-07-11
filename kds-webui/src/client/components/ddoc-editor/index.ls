@@ -2,8 +2,9 @@ require! 'livescript': lsc
 require! 'prelude-ls': {camelize}
 require! 'aea': {merge, make-design-doc}
 
-Ractive.components['ddoc-editor'] = Ractive.extend do
-    template: '#ddoc-editor'
+component-name = "ddoc-editor"
+Ractive.components[component-name] = Ractive.extend do
+    template: "\##{component-name}"
     oninit: ->
         console.log "ddoc editor initializing..."
         db = @get \db

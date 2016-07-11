@@ -142,7 +142,7 @@ gulp.task \vendor, ->
 
     glob "#{vendor-folder}/**/*.js", (err, files) ->
         ordered-list = union order, (list-rel-files vendor-folder, '', files)
-        console.log "ordered list is: ", ordered-list
+        #console.log "ordered list is: ", ordered-list
         gulp.src ["#{vendor-folder}/#{..}" for ordered-list]
             .pipe cat "vendor.js"
             .pipe gulp.dest "#{client-public}/js"
@@ -182,7 +182,7 @@ gulp.task \jade-components ->
 
         i = 0
         <- :lo(op) ->
-            console.log "Adding component: ",components[i]
+            #console.log "Adding component: ",components[i]
             fs.append-file-sync main, "include #{components[i]}\n"
             if ++i < components.length
                 lo(op)

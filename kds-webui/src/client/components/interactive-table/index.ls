@@ -4,7 +4,9 @@
 
 random = require \randomstring
 
-Ractive.components['interactive-table'] = Ractive.extend do
+component-name = "interactive-table"
+Ractive.components[component-name] = Ractive.extend do
+    template: "\##{component-name}"
     oninit: ->
         if (@get \id) is \will-be-random
             # then make it random
@@ -13,7 +15,6 @@ Ractive.components['interactive-table'] = Ractive.extend do
         col-list = @get \cols |> split ','
         @set \columnList, col-list
         self = @
-        #console.log "table content", @get \content
 
         @on do
             activated: (...args) ->
@@ -69,9 +70,7 @@ Ractive.components['interactive-table'] = Ractive.extend do
                 id = @get \id
                 console.log "My id: ", id
                 $ "\##{id}-modal" .modal \show
-
-    template: '#interactive-table'
-    data:
+    data: -> 
         id: \will-be-random
         db: null
         tabledata: null

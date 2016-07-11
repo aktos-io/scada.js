@@ -3,4 +3,5 @@ require! './ace-editor'
 require! './ddoc-editor'
 require! './interactive-table'
 require! './login'
-module.exports = { ace-editor, ddoc-editor, interactive-table, login }
+require! './order-table'
+module.exports = { ace-editor, ddoc-editor, interactive-table, login, order-table }

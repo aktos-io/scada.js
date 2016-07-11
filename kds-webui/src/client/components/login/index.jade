@@ -14,3 +14,6 @@
             p Welcome {{ context.user.name }}!
             btn(on-buttonclick="doLogout") Logout
         | {{/if}}
+    +if('context.err')
+        div(style="position: fixed; top: 10; right: 10")
+            alert(type="danger" closable="true") {{ context.err.msg }}
