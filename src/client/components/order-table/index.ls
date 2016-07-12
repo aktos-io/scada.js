@@ -101,10 +101,10 @@ Ractive.components[component-name] = Ractive.extend do
                 @fire \endEditing
 
             add-new-order-save: ->
-                _ = @
+                __ = @
                 order-doc = @get \curr
 
-                _.set \saving, "Kaydediyor..."
+                __.set \saving, "Kaydediyor..."
                 console.log "Saving new order document: ", order-doc
                 if not order-doc._id?
                     console.log "Generating new id for the document!"
@@ -113,22 +113,22 @@ Ractive.components[component-name] = Ractive.extend do
                 err, res <- db.put order-doc
                 if err
                     console.log "Error putting new order: ", err
-                    _.set \saving, err.reason
+                    __.set \saving, err.reason
                 else
                     console.log "New order put in the database", res
                     # if adding new document, clean up current document
                     console.log "order putting database: ", order-doc
                     if order-doc._rev is void
                         console.log "refreshing new order...."
-                        _.set \curr, (_.get \newOrder)!
+                        __.set \curr, (__.get \newOrder)!
                     else
                         console.log "order had rev: ", order-doc._rev
                         order-doc._rev = res.rev
                         console.log "Updating current order document rev: ", order-doc._rev
-                        _.set \curr, order-doc
-                    _.set \saving, "OK!"
+                        __.set \curr, order-doc
+                    __.set \saving, "OK!"
                     <- sleep 1000ms
-                    _.set \saving, ''
+                    __.set \saving, ''
 
             add-new-entry: ->
                 editing-doc = @get \curr
