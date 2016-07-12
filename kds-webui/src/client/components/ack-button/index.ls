@@ -6,19 +6,19 @@ random = require \randomstring
 component-name = "ack-button"
 Ractive.components[component-name] = Ractive.extend do
     oninit: ->
-        _ = @
+        __ = @
         @observe \state, (val) ->
             #console.log "State change dedected!", val
             if val == "waiting"
                 rotate-icon!
 
         function rotate-icon
-            console.log "rotate function is starting..."
-            state-val = _.get \buttonState
+            #console.log "rotate function is starting... , test ractive: __" , __
+            state-val = __.get \buttonState
             #console.log "state-val: ", state-val
-            _.animate {angle: 360degree}, {duration: 2000ms}
+            __.animate {angle: 360degree}, {duration: 2000ms}
             .then ->
-                _.set 'angle', 1
+                __.set 'angle', 1
                 if state-val == "waiting"
                     rotate-icon!
                 else
