@@ -8,7 +8,13 @@ Ractive.components['ace-editor'] = Ractive.extend({
 
         var mode = ractive.get('mode') || 'javascript';
         //console.log('mode is: ' + mode) || 'monokai';
-        var theme = ractive.get('theme');
+        var theme = ractive.get('theme') || 'light';
+        if(theme === 'light'){
+            theme = 'xcode'
+        }
+        if(theme === 'dark'){
+            theme = 'monokai'
+        }
         e.setTheme("ace/theme/" + theme);
         e.getSession().setMode('ace/mode/' + mode);
         e.$blockScrolling = Infinity;
