@@ -1,15 +1,7 @@
-# INSTALL KDS-WEBUI
+# INSTALL
 
-1. install Node.js
-2. install NPM
-3. `cd kds-webui`
-4. `npm install`
-5. `npm install -g livescript`
+Install all dependencies:
 
-# RUN KDS-WEBUI
-
-1. `cd kds-webui`
-2. `lsc server.ls`
-3. `firefox http://localhost:4001`
-
-
+    sudo npm install gulp livescript -g
+    cd PROJECT_DIRECTORY
+    npm install
