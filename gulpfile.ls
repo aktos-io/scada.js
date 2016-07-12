@@ -135,15 +135,10 @@ gulp.task \browserify <[ lsc-client lsc-lib js]> ->
 
 # Concatenate vendor javascript files into public/js/vendor.js
 gulp.task \vendor, ->
-    order =
-        './ractive.js'
-        './jquery-1.12.0.min.js'
-        # and the rest...
-
-    glob "#{vendor-folder}/**/*.js", (err, files) ->
-        ordered-list = union order, (list-rel-files vendor-folder, '', files)
-        #console.log "ordered list is: ", ordered-list
-        gulp.src ["#{vendor-folder}/#{..}" for ordered-list]
+    glob "./vendor/**/*.js", (err, files) ->
+        for f in files
+            console.log "VENDOR: #{f}"
+        gulp.src files
             .pipe cat "vendor.js"
             .pipe gulp.dest "#{client-public}/js"
 
