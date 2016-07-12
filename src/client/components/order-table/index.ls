@@ -1,5 +1,5 @@
 {split, take, join, lists-to-obj, sum} = require 'prelude-ls'
-{sleep, merge} = require "aea"
+{sleep, merge, pack, unpack} = require "aea"
 random = require \randomstring
 
 component-name = "order-table"
@@ -130,15 +130,15 @@ Ractive.components[component-name] = Ractive.extend do
                     <- sleep 1000ms
                     __.set \saving, ''
 
-            add-new-entry: ->
-                editing-doc = @get \curr
+            add-new-entry: (keypath) ->
+                __ = @
+                editing-doc = __.get \curr
                 console.log "adding new entry to the order: ", editing-doc
-                editing-doc.entries ++= entry =
-                    * type: "Type of order..."
-                      amount: "amount of order..."
-                    ...
-                console.log "adding new entry: ", editing-doc
-                @set \curr, editing-doc
+                entry-template = __.get \default [keypath]
+                editing-doc[keypath] ++= entry-template[keypath].0
+
+                #console.log "adding new entry: ", editing-doc
+                __.set \curr, editing-doc
 
             delete-order: (index) ->
                 console.log "Delete index: ", index
@@ -149,13 +149,10 @@ Ractive.components[component-name] = Ractive.extend do
 
 
     data: ->
+        __ = @
         new-order: ->
-            client: "test..."
-            type: \order
-            entries:
-                * type: 'tip...'
-                  amount: 'x kg'
-                ...
+            console.log "Returning new default value: ", __.get \default
+            unpack pack __.get \default
         saving: ''
         curr: null
         id: \will-be-random

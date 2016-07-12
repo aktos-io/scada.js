@@ -17,6 +17,15 @@ ractive = new Ractive do
             ok: no
         db: db
         gen-entry-id: gen-entry-id
+        orders-default:
+            type: \order
+            client: "Müşteri...."
+            due-date: "1.2.3.4"
+            order-date: "22.2.2.2."
+            entries:
+                * product: "Rus salata"
+                  amount: "2kg"
+                ...
 
 # ------------------- Database definition ends here ----------------------#
 
