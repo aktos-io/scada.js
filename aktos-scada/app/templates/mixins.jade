@@ -1,0 +1,23 @@
+mixin if(name)
+  != '\n{{#' + name + '}}\n'
+  block
+  != '\n{{/' + name + '}}\n'
+
+mixin unless(name)
+
+  != '{{^' + name + '}}'
+  block
+  != '{{/' + name + '}}'
+
+mixin each(name)
+
+  != '\n{{#' + name + '}}\n'
+  block
+  != '\n{{/' + name + '}}\n'
+  
+mixin partial(name)
+
+  != '\n{{#partial ' + name + '}}\n'
+  block
+  != '\n{{/partial}}\n'
+  

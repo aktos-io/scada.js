@@ -1,0 +1,6 @@
+.b-circle-button-v2 button {
+    border-radius: 15000px;
+}
+.b-circle-button-v2 .jq-push-button__label {
+  display: none; 
+}

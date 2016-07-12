@@ -1,0 +1,98 @@
+#loading
+  
+    table#loading-img
+      tr
+        td
+          img(src="projects/loading.png")
+
+      tr
+        td
+          h2(style="font-weight: bold;font-style: italic")
+            center Loading aktos-scada...
+
+      tr
+        td
+          .number-circle
+            span#loading-timer.
+              this is timer content
+      tr
+        td
+          #loading-emergency-info(style="display: none")
+            p.
+              <b> Addr: </b> Halkapınar Mah. 1202/2 Sk. No: 101/Y PK:35170 Gıda Çarşısı, Yenişehir, Konak, İZMİR  
+            p <b>Tel: </b> 0555 306 6003 
+            p <a href="info@aktos.io">info@aktos.io</a> 
+            p Koord: 38.427996,27.172554
+    
+style.
+  #loading-img{
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  
+  #loading-img td{
+    vertical-align: middle;
+    text-align: center;
+    padding: 10px;
+  }
+  
+  .number-circle {
+      display:inline-block;
+      line-height:0px;
+      
+      border-radius:80%;
+      border:2px solid;
+      border-color: white;
+      
+      font-size:65px;
+      font-weight: bold;
+      background-color: rgb(51, 89, 193);
+      
+      box-shadow: 0 0 18px  rgb(51, 89, 193);
+      
+  }
+
+  .number-circle span {
+      display:inline-block;
+      
+      padding-top:50%;
+      padding-bottom:50%;
+      color: white;
+      
+      margin-left:28px;
+      margin-right:28px;
+  }
+
+
+
+script. 
+  console.log("Loading Scada...");
+  loading_timer = 7; 
+  
+  function countDownTimer() {
+    console.log("Running countDownTimer", loading_timer);
+    document.getElementById("loading-timer").textContent = loading_timer.toString();
+
+    if (loading_timer == 0) {
+      document.getElementById("loading-emergency-info").style.display = "block";
+      var nc = document.getElementsByClassName("number-circle");
+      var i;
+      for (i = 0; i < nc.length; i++){
+        nc[i].style.backgroundColor = "red";
+        nc[i].style.boxShadow = "0 0 18px  rgb(255, 0, 0)";
+      } 
+    }
+    
+    if (loading_timer > -10){
+      setTimeout(countDownTimer, 1000);
+    } else {
+      console.log("Loading emergeny info...");
+    }
+
+    loading_timer -= 1;
+    
+  }
+  
+  countDownTimer(); 

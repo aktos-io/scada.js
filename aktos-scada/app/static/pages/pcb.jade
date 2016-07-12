@@ -1,0 +1,138 @@
+style.
+  .vcenter__outer{
+    text-align: center; 
+  }
+  .vcenter__inner{
+  }
+  .pcb__container {
+      max-height: 60vw;
+      max-width: 85vw;
+      width: 32em; 
+      height: 20em; 
+      display: inline-block;
+      margin: 1.5em;
+      padding: 0;
+  }
+  .pcb__background {
+    width: 100%; 
+    height: 100%; 
+    position: relative; 
+    -webkit-border-radius: 18px;
+    -moz-border-radius: 18px;
+    border-radius: 18px;
+    border: none;
+    outline: none;
+    box-shadow: 0 0 8px  rgb(51, 89, 193);
+    overflow: hidden;
+  }
+  .pcb__text-container {
+    /*background-color: rgba(0, 0, 0, 0.8);*/
+    background-color: rgba(255,255,255, 0.8);
+    position: absolute; 
+    left: 0; 
+    bottom: 0; 
+    width: 100%; 
+    height: 20%; 
+    text-align: left;  
+    
+    vertical-align: middle;
+  }
+  .pcb__label-container {
+    width: 100%; 
+    font-weight: bold; 
+    font-size: 200%; 
+    padding: 5px; 
+  }
+  .pcb__short-desc-container {
+    width: 100%;
+    padding: 6px; 
+  }
+  
+#pcb(data-role='page', data-theme='a')
+  h2(style="font-size: 38px; font-weight: bold")
+    center Prototip PCB İmalatı
+
+  .container
+    .row.vcenter
+      .col
+              
+    .row.vcenter
+      .col-md-offset-1.col-md-10.col-md-offset-1
+        :md
+          # Prototip PCB imalatı 
+          
+          **Ücret**
+          
+          * PCB aşındırma ücreti: 0.13 USD/cm²
+          * Via: 0.35 USD/adet
+          * Delik: 0.17 USD/adet
+          * Dizgi: 0.25 USD/cm²
+          * Ekspres PCB baskı: 50 USD
+          * Ekspres dizgi: 70 USD
+          
+          **Süre**
+          
+          * Her 1000cm²'ye kadar PCB baskısı için:
+          
+              * 24 saatte teslim edilir. 
+              * Ekspres baskılar 6 saatte teslim edilir. 
+              * 2 saatte teslim seçeneği anlaşmaya tabidir.   
+          
+          * Her 1000cm²'ye kadar PCB dizgisi için (baskı hariç):
+              
+              * 48 saatte teslim edilir. 
+              * Ekspres dizgiler 24 saatte teslim edilir. 
+              * 6 saatte teslim seçeneği anlaşmaya tabidir.  
+
+          **Prototip üretimi için Teknolojik imkan ve kısıtlar**
+          
+          * Via dış çap: 1.5mm, iç çap 0.5mm
+          * Via'lar tel lehimlenerek yapılır, delik içi kaplama yapılmaz. 
+          * Maksimum PCB ebatları: 30x30cm
+          * Minimum yol genişliği/clearence: 0.15mm
+          * Desteklenen formatlar: Gerber, PDF
+          * Çift yüzlü devre basılır. 
+          
+          **Malzeme**
+          
+          PCB malzemesi olarak kaliteli FR4 epoksi plaket kullanılır. 
+          
+          **Notlar** 
+          
+          * Delik içi kaplama yapılmadığı için header'lara bağlanan yollar
+            lehim yapılacak yüzeyden gelmelidir. 
+          * Via'lar tel lehimle yapıldığı için çok hassas şekilde lehimlenen 
+            malzemelerde malzeme altına via atılmamalıdır. Malzeme altına 
+            via atılması konusunda bilgi alınız. 
+          
+  div.
+    {{>nav-bar {active_button: '#/pcb'}}}
+    {{#with page.pcb}}
+    
+            
+    
+    
+      <div class="vcenter__outer">
+        <div class="vcenter__inner">
+        {{#each .}}
+          <div class="pcb__container">
+            <a href="{{ .addr ? .addr : '#' }}">
+              <div  class="pcb__background" style="
+                background: url({{.src}}) no-repeat center center ;
+                background-size: cover;
+              ">
+                <div class="pcb__text-container"> 
+                  <div class="pcb__label-container">
+                    {{.label}}
+                  </div> 
+                  <div class="pcb__short-desc-container">
+                    {{ .shortDesc }}
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        {{/each}}
+        </div>
+      </div>
+      {{/with}}

@@ -1,0 +1,7 @@
+.numeric-keyboard table {
+  width: 100%;
+  height: 100%;
+}
+.numeric-keyboard table tbody {
+  padding: 50px;
+}

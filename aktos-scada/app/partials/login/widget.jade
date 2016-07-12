@@ -1,0 +1,17 @@
+include ../../templates/mixins.jade
+
+//-
+  Example: 
+  
+  {{>login-input {} }}
+
+  {{>login-info {} }}
+
++partial('login-input')
+  .login-input
+    input(type="text")
+    
+    
++partial('login-info')
+  .login-info
+    p {{ .client_name }}

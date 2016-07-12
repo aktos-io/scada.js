@@ -1,0 +1,27 @@
+style.
+  #gms {
+      padding-bottom: 40px; 
+  }
+  #gms .scada-container {
+    /*display: block !important;*/
+    white-space: normal;  
+    width: auto !important; 
+  }
+  
+#gms(data-role='page', data-theme='b')
+  .scada-drawing-area.scada
+    .scada-container. 
+
+      {{#each gms.Root.Oda}}
+        <div style="
+          width:100px;  
+          display: inline-block;
+          background-color: {{ .Connection[0] === 'YOK' ? 'gray' : 'yellowgreen' }};
+          margin: 5px;
+          padding: 5px;">
+          <h3><span>#</span>{{ .$.No }} </h3>
+          kart time: {{ .KartTime }}
+          </div>
+      {{/each}}
+      
+      {{>connection-status {}}}
