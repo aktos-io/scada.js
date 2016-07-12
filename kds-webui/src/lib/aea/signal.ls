@@ -9,6 +9,13 @@ get-wait-event = (event-id) ->
         wait-events[event-id] = ev_
     return ev_
 
+export is-waiting = (event-id) ->
+    ev_ = wait-events[event-id]
+    if ev_?
+        return ev_.waiting
+    else
+        return no
+
 run-waiting-event = (event-id, timer) ->
     ev_ = get-wait-event event-id
     if ev_.waiting and ev_.run
