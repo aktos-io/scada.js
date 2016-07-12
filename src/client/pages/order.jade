@@ -17,3 +17,31 @@ block ractive
             view="get-orders"
             gen-entry-id="{{ genEntryId }}"
             )
+            panel(title="Yeni Sipariş Ekle" type="primary")
+                //- {{ JSON.stringify(currOrder) }}
+                form-vertical
+                    form-group
+                        span Müşteri: 
+                        input(value="{{ currOrder.client }}")
+                    form-group
+                        span Teslim Tarihi: 
+                        input(value="{{ currOrder.dueDate }}")
+                    +each('currOrder.entries:i')
+                        form-group
+                            span Type
+                            input(value="{{ .['type'] }}")
+                            input(value="{{ .['amount'] }}")
+                            btn(on-buttonclick="deleteOrder" value="{{ i }}")
+                                icon-remove
+                    form-group
+                        btn(on-buttonclick="addNewEntry")
+                            icon-plus 
+                            span Kalem Ekle
+                btn(on-buttonclick="addNewOrderClose") Kapat!
+                btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
+
+    
+        // JADE 
+        search-combobox(data="{{ myList }}" selected="{{ selected }}")
+        // selected: -1 olmalı 
+        // seçim yapıldığı zaman liste indexini bu değişkene girmeli 

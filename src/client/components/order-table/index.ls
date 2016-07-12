@@ -43,8 +43,8 @@ Ractive.components[component-name] = Ractive.extend do
                     @fire \showModal
                 @set \clickedIndex, index
                 tabledata = @get \tabledata
-                @set \currOrder, tabledata.rows[index].doc
-                console.log "Started editing an order: ", (@get \currOrder)
+                @set \curr, tabledata.rows[index].doc
+                console.log "Started editing an order: ", (@get \curr)
 
             close-modal: ->
                 self = @
@@ -93,44 +93,59 @@ Ractive.components[component-name] = Ractive.extend do
 
             add-new-order: ->
                 @set \addingNew, true
-                @set \currOrder, (@get \newOrder)!
+                @set \curr, (@get \newOrder)!
+                console.log "adding brand-new order!", (@get \curr)
 
             add-new-order-close: ->
                 @set \addingNew, false
                 @fire \endEditing
 
             add-new-order-save: ->
-                self = @
-                order-doc = @get \currOrder
+                _ = @
+                order-doc = @get \curr
+
+                _.set \saving, "Kaydediyor..."
                 console.log "Saving new order document: ", order-doc
                 if not order-doc._id?
                     console.log "Generating new id for the document!"
                     order-doc = order-doc `merge` {_id: gen-entry-id!}
+
                 err, res <- db.put order-doc
                 if err
                     console.log "Error putting new order: ", err
+                    _.set \saving, err.reason
                 else
                     console.log "New order put in the database", res
-                    order-doc._rev = res.rev
-                    console.log "Updating current order document rev: ", order-doc._rev
-                    self.set \currOrder, order-doc
+                    # if adding new document, clean up current document
+                    console.log "order putting database: ", order-doc
+                    if order-doc._rev is void
+                        console.log "refreshing new order...."
+                        _.set \curr, (_.get \newOrder)!
+                    else
+                        console.log "order had rev: ", order-doc._rev
+                        order-doc._rev = res.rev
+                        console.log "Updating current order document rev: ", order-doc._rev
+                        _.set \curr, order-doc
+                    _.set \saving, "OK!"
+                    <- sleep 1000ms
+                    _.set \saving, ''
 
             add-new-entry: ->
-                editing-doc = @get \currOrder
+                editing-doc = @get \curr
                 console.log "adding new entry to the order: ", editing-doc
                 editing-doc.entries ++= entry =
                     * type: "Type of order..."
                       amount: "amount of order..."
                     ...
                 console.log "adding new entry: ", editing-doc
-                @set \currOrder, editing-doc
+                @set \curr, editing-doc
 
             delete-order: (index) ->
                 console.log "Delete index: ", index
-                editing-doc = @get \currOrder
+                editing-doc = @get \curr
                 editing-doc.entries.splice index, 1
                 console.log "editing doc: (deleted: )", editing-doc.entries
-                @set \currOrder, editing-doc
+                @set \curr, editing-doc
 
 
     data: ->
@@ -141,7 +156,8 @@ Ractive.components[component-name] = Ractive.extend do
                 * type: 'tip...'
                   amount: 'x kg'
                 ...
-        curr-order: null
+        saving: ''
+        curr: null
         id: \will-be-random
         gen-entry-id: null
         db: null

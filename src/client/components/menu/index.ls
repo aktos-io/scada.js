@@ -15,7 +15,7 @@ Ractive.components[component-name] = Ractive.extend do
             hide-menu: ->
                 @set \hideMenuValue, not (@get \hideMenuValue)
                 console.log "hide menu value...", @get \hideMenuValue
-    data:
+    data: -> 
         hide-menu-value: true
         menu:
             * title: "Bar Chart"
