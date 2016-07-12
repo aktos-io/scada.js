@@ -1,0 +1,10 @@
+extends ../templates/template.jade
+block script             
+    script(src="w32.js")
+
+block title 
+    title aktos-wifi32 module
+    
+block ractive     
+    panel
+        ace-editor(code="{{ module.ls }}" language="livescript" theme="light")
