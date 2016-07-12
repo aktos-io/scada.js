@@ -1,0 +1,35 @@
+style.
+  #trello-test {
+    padding: 0 !important; 
+  }
+  #trello-test .scada-container {
+    white-space: normal; 
+    width: 100%; 
+    height: 100vh;
+  }
+#trello-test(data-role='page', data-theme='b')
+  .scada-drawing-area.scada
+    .scada-container.
+      {{#with trelloData}}
+      
+        {{#if .member}}
+          <p> 
+            Welcome <span style="font-weight: bold; font-size: 1.2em;">{{.member.fullName}}!</span> 
+            <a on-click="trello_logout"> Logout!</a>
+          </p>
+        {{else}}
+          <p> <a on-click="trello_login">Login to Trello</a></p>
+        {{/if}}
+
+        
+        {{#each .cards}}
+          <p>card name: {{ .name }}</p>
+          {{!>label {val: JSON.stringify(., null, 4)} }} 
+        {{/each}}
+        {{#each .card_comments}}
+          <p>comments: {{ . }}</p>
+        {{/each}}
+        
+      {{/with}}
+      
+  |{{>connection-status {}}}

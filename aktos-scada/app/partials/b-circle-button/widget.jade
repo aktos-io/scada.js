@@ -1,0 +1,10 @@
+include ../../templates/mixins.jade
+
++partial('b-circle-button')
+  .b-circle-button
+    .jq-push-button
+      button.jq-push-button__button.btn-circle.btn-xl.no-shadow(
+        style="{{ .connected? '' : 'border: 1px dashed red' }}"
+        type="button"
+        ) 
+        i(class="fa fa-{{ .icon ? .icon : 'trash' }}" )

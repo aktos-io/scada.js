@@ -1,0 +1,11 @@
+.slider__outer {
+  padding: 20px;
+}
+.range-slider {
+    max-width: 95vw;
+}
+
+.noUi-state-tap .noUi-origin {
+-webkit-transition: none;
+	transition: none;
+}

@@ -1,0 +1,40 @@
+//- projects page
+//-
+  style.
+    #applications .product__container {
+      width: 30em;  
+      height: 30em; 
+      max-height: 95vw;
+      max-width: 95vw;
+    }
+    #applications .product__background {
+      /*box-shadow: 0 0 10px  white;*/
+    }
+
+#applications(data-role='page', data-theme='a').
+  {{>nav-bar {active_button: '#/applications'} }}
+  {{#with page.projects}}
+    <div class="vcenter__outer">
+      <div class="vcenter__inner">
+      {{#each .}}
+        <div class="product__container">
+          <a href="{{ .addr ? .addr : '#' }}">
+            <div  class="product__background" style="
+              background: url({{.src}}) no-repeat center center ;
+              background-size: cover;
+            ">
+              <div class="product__text-container"> 
+                <div class="product__label-container">
+                  {{.label}}
+                </div> 
+                <div class="product__short-desc-container">
+                  {{ .shortDesc }}
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      {{/each}}
+      </div>
+    </div>
+    {{/with}}

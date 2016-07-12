@@ -1,0 +1,20 @@
+include ../../templates/mixins.jade
+
+
+//- 
+  we will use this widget in the future as follows: 
+
+  {{>toolbar {buttons: [
+    '#gidilecek-sayfa fa-car danger',     ---- parameter position won't be important 
+    '#diğer-sayfa primary fa-bicycle', 
+    '>test-pin fa-plane'                  --- if begins with gt; it will send signal
+  ], icon: 'fa-cog'} }}
+
++partial('toolbar')
+  .toolbar.
+    <div id="{{ .actor_id }}" data-toolbar="hide-option" class="btn-toolbar btn-toolbar-primary"><i class="fa {{ .icon ? .icon : 'fa-cog' }}"></i></div>
+    <div id="{{ .actor_id }}-options" class="hidden">      
+      {{#each buttons:i}}
+        <a href='{{ buttons[i].split(" ")[0] }}'><i class='fa {{ buttons[i].split(" ")[1] ? buttons[i].split(" ")[1] : "fa-cog" }}'></i></a>
+      {{/each}}
+    </div>

@@ -1,0 +1,83 @@
+#contact-page {
+  background-image: url('../projects/contact-background.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+#home-page {
+  background-image: url('../img/aktos-elektronik/home-page/aktos-arkaplan-site-white.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+#pcb {
+  background-image: url('../projects/pcb/page-background.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+#applications {
+  background-image: url('../projects/projets-background.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+#demos {
+  background-image: url('../projects/demos-background.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center top;
+}
+#products {
+  background-image: url('../projects/demos-background.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center top;
+}
+#loading {
+  height: 100vh;
+  width: 100vw;
+  image: url('../projects/loading.png');
+  size: 500px 300px;
+  position: center top;
+}
+
+.nav-bar {
+  position: fixed !important;
+  top: 0;
+  left; 0;
+  width: 100%;
+  height: 50px;
+  z-index: 999;
+}
+.btn:focus,
+.btn-primary:focus {
+    outline: none;
+  }
+body, html {
+    padding: 0;
+    margin: 0;
+}
+
+div[data-role='page'] {
+  min-height: 100vh;
+  padding-bottom: 2em; /* for connection-status bar */
+  padding-top: 60px; /* for fixed navbar */
+  display: none;
+}
+
+.progress-bar {
+    -webkit-transition: none !important;
+    transition: none !important;
+}
+.no-shadow {
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+}
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}

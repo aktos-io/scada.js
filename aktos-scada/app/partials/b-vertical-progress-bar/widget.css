@@ -1,0 +1,33 @@
+
+.b-vertical-progress-bar {
+  height: 100%;
+  width: 100%;
+}
+.progress-vertical {
+    position: relative;
+    float: left;
+    margin-right: 20px;
+    background-repeat: repeat-y;
+    transform: rotate(180deg);
+    width: 100%;
+    height: 100%;
+
+}
+.progress-vertical .progress-bar {
+    width: 100%;
+    height: 100%;
+}
+.b-vertical-progress-bar__inner {
+  width: 100%;
+  height: 100%;
+}
+
+.progressbar-front-text {
+  display: block;
+  width: 100%;
+  font-size: 12px;
+  line-height: 20px;
+  text-align: center;
+  transform: rotate(180deg);
+
+}
