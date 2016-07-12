@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/ceremcem/livescript-ractive-example-project#readme",
   "dependencies": {
+    "body-parser": "^1.15.2",
     "cheerio": "^0.20.0",
     "crypto": "0.0.3",
     "h2o2": "^5.1.0",
