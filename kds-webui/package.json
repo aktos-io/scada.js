@@ -1,0 +1,25 @@
+{
+  "name": "ractive-webservice-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "jquery-1.12.0.min.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ceremcem/livescript-ractive-example-project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ceremcem/livescript-ractive-example-project/issues"
+  },
+  "homepage": "https://github.com/ceremcem/livescript-ractive-example-project#readme",
+  "dependencies": {
+    "h2o2": "^5.1.0",
+    "hapi": "^13.3.0",
+    "http-proxy": "^1.13.3",
+    "inert": "^3.2.1"
+  }
+}
