@@ -17,7 +17,7 @@
                     +unless('addingNew')
                         btn(on-buttonclick="addNewOrder")
                             icon-plus
-                            span Yeni sipariş ekle
+                            span {{yield addnewTitle}}
                     +if('addingNew') 
                         | {{>content}}
 

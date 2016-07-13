@@ -9,30 +9,64 @@ block ractive
         login(on-login="afterLoggedIn" context="{{ login }}" db="{{ db }}")
 
     +if('login.ok')
+        h2 Reçeteler:
+        order-table(
+            cols="{{ receiptsColNames }}"
+            view-func="{{ receiptsViewGenerator }}"
+            default="{{ receiptsDefault }}"
+            db="{{ db }}"
+            view="primitives/getReceipts"
+            gen-entry-id="{{ genEntryId }}"
+            )
+            +partial('addnewTitle')
+                | Reçete Ekle
+            panel(title="Reçete" type="primary")
+                //- {{ JSON.stringify(curr) }}
+                form-vertical
+                    form-group
+                        span Ürün Adı: 
+                        input(value="{{ curr.productName }}" )
+                    +each('curr.contents:i')
+                        form-group
+                            span Hammadde: 
+                            input(value="{{ .['material'] }}")
+                            input(value="{{ .['amount'] }}")
+                            btn(on-buttonclick="deleteOrder" value="contents: {{ i }}")
+                                icon-remove
+                    form-group
+                        btn(on-buttonclick="addNewEntry" value="contents")
+                            icon-plus 
+                            span Hammadde Ekle
+                btn(on-buttonclick="addNewOrderClose") Kapat!
+                btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
+
         h2 Siparişler:
         order-table(
-            tabledata="{{ orders }}"
-            cols="Müşteri Adı, Teslim Tarihi, Toplam (kg)"
-            db="{{ db }}"
-            view="get-orders"
-            gen-entry-id="{{ genEntryId }}"
+            cols="{{ ordersColNames }}"
+            view-func="{{ ordersViewGenerator }}"
             default="{{ ordersDefault }}"
+            db="{{ db }}"
+            view="orders/getOrders"
+            gen-entry-id="{{ genEntryId }}"
             )
-            panel(title="Yeni Sipariş Ekle" type="primary")
+            +partial('addnewTitle')
+                | Yeni Sipariş Ekle
+                
+            panel(title="Sipariş" type="primary")
                 //- {{ JSON.stringify(curr) }}
                 form-vertical
                     form-group
                         span Müşteri: 
-                        input(value="{{ curr.client }}")
+                        input(value="{{ curr.client }}" disabled="true")
                     form-group
                         span Teslim Tarihi: 
-                        input(value="{{ curr.dueDate }}")
+                        input(value="{{ curr.dueDate }}" disabled="false")
                     +each('curr.entries:i')
                         form-group
                             span Type
                             input(value="{{ .['product'] }}")
                             input(value="{{ .['amount'] }}")
-                            btn(on-buttonclick="deleteOrder" value="{{ i }}")
+                            btn(on-buttonclick="deleteOrder" value="entries: {{ i }}")
                                 icon-remove
                     form-group
                         btn(on-buttonclick="addNewEntry" value="entries")
@@ -40,7 +74,6 @@ block ractive
                             span Kalem Ekle
                 btn(on-buttonclick="addNewOrderClose") Kapat!
                 btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
-
     
         // JADE 
         search-combobox(data="{{ myList }}" selected="{{ selected }}")
