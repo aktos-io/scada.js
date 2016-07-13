@@ -51,7 +51,7 @@ product-data =
 convert-product-to-select-list= (product-data)->
     a = group-by (.name), product-data
     a = [{name: key, id:a[key]0.id} for key of a]
-    console.log "group-by data123: ",a
+    #console.log "group-by data123: ",a
     a
 
 

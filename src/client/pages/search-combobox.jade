@@ -7,17 +7,18 @@ block script
     script(src="search-combobox.js")
 
 block ractive
-    inspina-menu
     inspina-theme
-        inspina-header
-        inspina-content
-            h1 Welcome in INSPINIA Static SeedProject
+        inspina-menu
+        inspina-right
+            inspina-header
+                span Naber Mahmut
+            
+            inspina-content
+                h1 Welcome in INSPINIA Static SeedProject
 
-            small It is an application skeleton for a typical web app. You can use it to quickly bootstrap your webapp projects and dev environment for these projects.
-
-            search-combobox(data="{{productList}}" selected="{{x}}" multiple="multiple") // multiple selected option
-            p selected: {{x}}
-            search-combobox(data="{{productList}}" selected="{{x}}" multiple="")  //  single selected option
-            p selected: {{x}}
-
-        inspina-footer
+                search-combobox(data="{{productList}}" selected="{{x}}" multiple="multiple") // multiple selected option
+                p selected: {{x}}
+                search-combobox(data="{{productList}}" selected="{{x}}" )  //  single selected option
+                
+                search-combobox(data="{{productList}}" selected="{{x}}" multiple="") // other use for single selected option
+            inspina-footer
