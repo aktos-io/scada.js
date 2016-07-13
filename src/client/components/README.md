@@ -19,10 +19,9 @@
 
 4. Place a checkbox that will toggle an `{{#if}} <my-component /> {{/if}}` block.
 
-       input(type="checkbox" checked="{{ toggleMyComponent }}")
-       +if('toggleMyComponent')
-           my-component
-
+        input(type="checkbox" checked="{{ toggleMyComponent }}")
+        +if('toggleMyComponent')
+            my-component
 
     Reason:
         Prove that `oninit()` and `onrender()` functions work correctly in your
