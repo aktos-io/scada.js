@@ -28,27 +28,27 @@ Ractive.components[component-name] = Ractive.extend do
                 user = self.get \context ._user
                 ajax-opts = ajax: headers:
                     Authorization: "Basic #{window.btoa user.name + ':' + user.password}"
-                console.log "LOGIN: Logging in with #{user.name} and #{user.password}"
+                #console.log "LOGIN: Logging in with #{user.name} and #{user.password}"
                 err, res <- db.login user.name, user.password, ajax-opts
                 if err
-                    console.log "LOGIN: Error while logging in: ", err
+                    #console.log "LOGIN: Error while logging in: ", err
                     self.set \context.err, {msg: err.message}
                 else
-                    console.log "LOGIN: Seems logged in succesfully: ", res
+                    #console.log "LOGIN: Seems logged in succesfully: ", res
                     self.set \context.err, null
                     self.fire \login
 
             do-logout: ->
                 self = @
                 db = @get \db
-                console.log "LOGIN: Logging out!"
+                #console.log "LOGIN: Logging out!"
                 err, res <- db.logout!
-                console.log "LOGIN: Logged out: err: #{err}, res: ", res
+                #console.log "LOGIN: Logged out: err: #{err}, res: ", res
                 self.set \context.ok, no if res.ok
 
             login: ->
                 # do more success actions...
-                console.log "LOGIN: Login component success... "
+                #console.log "LOGIN: Login component success... "
                 db = @get \db
                 self = @
                 err, res <- db.get-session
@@ -58,7 +58,7 @@ Ractive.components[component-name] = Ractive.extend do
                     self.set \context.err, null
                     self.set \context.user, res.user-ctx
                 catch
-                    console.log "LOGIN: not logged in, returning: ", e
+                    #console.log "LOGIN: not logged in, returning: ", e
                     self.set \context.ok, no
 
 

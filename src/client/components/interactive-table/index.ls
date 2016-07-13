@@ -19,7 +19,7 @@ Ractive.components[component-name] = Ractive.extend do
         @on do
             activated: (...args) ->
                 index = (args.0.keypath |> split '.').1 |> parse-int
-                console.log "activated!!!", args, index
+                #console.log "activated!!!", args, index
                 curr-index = @get \clickedIndex
                 if index is curr-index
                     console.log "Give tooltip!"
@@ -48,7 +48,7 @@ Ractive.components[component-name] = Ractive.extend do
 
             save-and-exit: ->
                 index = @get \clickedIndex
-                console.log "clicked to save and hide", index
+                #console.log "clicked to save and hide", index
                 line = (@get \tabledata)[index]
                 #console.log "line is: ", line
                 @get \db .put line, (err, res) ->
@@ -70,7 +70,7 @@ Ractive.components[component-name] = Ractive.extend do
                 id = @get \id
                 console.log "My id: ", id
                 $ "\##{id}-modal" .modal \show
-    data: -> 
+    data: ->
         id: \will-be-random
         db: null
         tabledata: null

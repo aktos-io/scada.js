@@ -1,3 +1,4 @@
+{sleep} = require "aea"
 require! {
     'prelude-ls': {
         group-by
@@ -18,6 +19,7 @@ data2 = [[0,1],[1,0],[2,2],[3,0],[4,1],[5,3],[6,1],[7,5],[8,2],[9,3],[10,2],[11,
 random = ->
     x= parse-int (Math.random! * 10)
     x
+
 convert-to-flot =  ->
     #console.log "convert-to-flot1"
     x = [[x:random!, y:random!] for i from 0 to 15]
@@ -26,6 +28,7 @@ convert-to-flot =  ->
     z=[[0.x,0.y] for y]
     #console.log "convert-to-flot1:", z
     z
+
 product-data1 =
     * name: "domates"
       id: 47
@@ -56,3 +59,20 @@ ractive = new Ractive do
         x: 5
         product-list: product-data1
         y: 1
+
+ractive.on \complete, ->
+    i = 0
+    states =
+        \waiting
+        \normal
+        \error
+        \okey
+
+    <- :lo(op) ->
+        new-state = states[i++]
+        #console.log "changing state: ", new-state
+        ractive.set \buttonState, new-state
+        if i > 3
+            i:=0
+        <- sleep 5000ms
+        lo(op)
