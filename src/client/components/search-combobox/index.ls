@@ -45,8 +45,8 @@ Ractive.components[component-name] = Ractive.extend do
             $ __.find \* .selectpicker \render
 
         <- sleep 0ms
-        console.log "AAAAAAAAAAAAAAAAAAAAAAAAAA"
         $ __.find \* .selectpicker \render
+        __.set \selected, (__.get \data).0.id
 
     data: ->
         selected: -1
