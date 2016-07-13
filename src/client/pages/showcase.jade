@@ -33,9 +33,6 @@ block ractive
                     search-combobox(db="{{ db }}" view="customers/getReceipts" selected="{{y}}")
                     p selected: {{y}}
 
-
-                row
-                    flot-chart(data1="{{data1}}" data2 ="{{data2}}")
                 row
                     | {{#each [1,2,3]:i}}
                     div.box

@@ -10,10 +10,10 @@ Ractive.components[component-name] = Ractive.extend do
     oninit: ->
         if (@get \id) is \will-be-random
             @set \id random.generate 7
-            console.log "picker id is: ", @get \id
+            #console.log "picker id is: ", @get \id
 
         @on do
-            console.log "date-time-picker starting..."
+            #console.log "date-time-picker starting..."
             self = @
             $ ->
                 $ "\##{self.get 'id'}" .datetimepicker do
