@@ -6,28 +6,31 @@ component-name = "order-table"
 Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
     oninit: ->
-        self = @
+        __ = @
         if (@get \id) is \will-be-random
             @set \id random.generate 7
 
         # column names
-        col-list = @get \cols |> split ','
-        @set \columnList, col-list
+        try
+            col-list = split ',', @get \cols
+        catch
+            throw "ORDER_TABLE: Can not get cols list: #{e}"
 
-        # contents
-        #console.log "table content", @partials.content
+        @set \columnList, col-list
 
         db = @get \db
         gen-entry-id = @get \gen-entry-id
 
+        view-func = @get \view-func
+        console.log "ORDER_TABLE: view-func: ", view-func
         do function update-table
-            err, res <- db.query 'orders/getOrders', {+include_docs}
+            err, res <- db.query (__.get \view), {+include_docs}
             if err
                 console.log "ERROR: order table: ", err
             else
                 console.log "Updating table: ", res
-                self.set \tabledata, res
-                self.set \showData, [[i.doc.client, i.doc.due-date, sum [(split ' ', ..amount .0 |> parse-int) for i.doc.entries]] for i in res.rows]
+                __.set \tabledata, res
+                __.set \showData, (view-func res)
 
         db.changes {since: 'now', +live, +include_docs}
             .on \change, (change) ->
@@ -47,20 +50,20 @@ Ractive.components[component-name] = Ractive.extend do
                 console.log "Started editing an order: ", (@get \curr)
 
             close-modal: ->
-                self = @
+                __ = @
                 $ "\##{@get 'id'}-modal" .modal \hide
                 <- sleep 300ms
-                self.fire \giveTooltip
+                __.fire \giveTooltip
 
 
             give-tooltip: ->
-                self = @
+                __ = @
                 i = 0
                 <- :lo(op) ->
                     <- sleep 150ms
-                    self.set \editTooltip, on
+                    __.set \editTooltip, on
                     <- sleep 150ms
-                    self.set \editTooltip, off
+                    __.set \editTooltip, off
                     if ++i is 2
                         return op!
                     lo(op)
@@ -140,10 +143,12 @@ Ractive.components[component-name] = Ractive.extend do
                 #console.log "adding new entry: ", editing-doc
                 __.set \curr, editing-doc
 
-            delete-order: (index) ->
-                console.log "Delete index: ", index
+            delete-order: (index-str) ->
+                [key, index] = split ':', index-str
+                index = parse-int index
+                console.log "ORDER_TABLE: delete ..#{key}.#{index}"
                 editing-doc = @get \curr
-                editing-doc.entries.splice index, 1
+                editing-doc[key].splice index, 1
                 console.log "editing doc: (deleted: )", editing-doc.entries
                 @set \curr, editing-doc
 
@@ -160,14 +165,16 @@ Ractive.components[component-name] = Ractive.extend do
         db: null
         tabledata: null
         show-data:
-            <[ col1 col2 col3 ]>
-            <[ col11 col22 col33 ]>
+            <[ default1 default2 default3 ]>
+            <[ default11 default22 default33 ]>
+            <[ default111 default222 default333 ]>
         editable: false
         clicked-index: null
         cols: null
         column-list: null
         editTooltip: no
         addingNew: no
+        view-func: null
         is-editing-line: (index) ->
             editable = @get \editable
             clicked-index = @get \clickedIndex

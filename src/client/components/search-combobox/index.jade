@@ -1,0 +1,5 @@
+
++component('search-combobox')
+    select.selectpicker(value='{{selected}}', data-style='btn-success', data-live-search='true', data-width='auto', '{{multiple}}')
+        +each("data")
+            option(value="{{.['id']}}") {{.["name"]}}

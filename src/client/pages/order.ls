@@ -1,5 +1,6 @@
 require! components
 require! 'aea': {PouchDB}
+require! 'prelude-ls': {sum, split}
 
 db = new PouchDB 'https://demeter.cloudant.com/cicimeze', skip-setup: yes
 local = new PouchDB \local_db
@@ -26,6 +27,20 @@ ractive = new Ractive do
                 * product: "Rus salata"
                   amount: "2kg"
                 ...
+        orders-col-names: "Müşteri Adı, Teslim Tarihi, Toplam (kg)"
+        orders-view-generator: (res) ->
+            [[i.doc.client, i.doc.due-date, sum [(split ' ', ..amount .0 |> parse-int) for i.doc.entries]] for i in res.rows]
+
+        receipts-default:
+            type: \receipt
+            product-name: "Ürün Adı"
+            contents:
+                * material: "Ham madde..."
+                  amount: "x kg"
+                ...
+        receipts-col-names: "Ürün adı"
+        receipts-view-generator: (res) ->
+            [[i.doc.product-name] for i in res.rows]
 
 # ------------------- Database definition ends here ----------------------#
 
