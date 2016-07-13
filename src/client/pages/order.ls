@@ -18,6 +18,8 @@ ractive = new Ractive do
             ok: no
         db: db
         gen-entry-id: gen-entry-id
+
+        # ORDERS
         orders-default:
             type: \order
             client: "Müşteri...."
@@ -31,6 +33,7 @@ ractive = new Ractive do
         orders-view-generator: (res) ->
             [[i.doc.client, i.doc.due-date, sum [(split ' ', ..amount .0 |> parse-int) for i.doc.entries]] for i in res.rows]
 
+        # RECEIPTS
         receipts-default:
             type: \receipt
             product-name: "Ürün Adı"
@@ -42,7 +45,19 @@ ractive = new Ractive do
         receipts-view-generator: (res) ->
             [[i.doc.product-name] for i in res.rows]
 
-# ------------------- Database definition ends here ----------------------#
+        # CUSTOMERS
+        customers-default:
+            type: \receipt
+            product-name: "Ürün Adı"
+            contents:
+                * material: "Ham madde..."
+                  amount: "x kg"
+                ...
+        customers-col-names: "Ürün adı"
+        customers-view-generator: (res) ->
+            [[i.doc.product-name] for i in res.rows]
+
+
 
 feed = null
 ractive.on do
