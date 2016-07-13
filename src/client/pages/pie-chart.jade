@@ -7,6 +7,7 @@ block script
     script(src="pie-chart.js")
     
 block ractive
+    p naber
     | {{#each [1,2,3,4,5,6,7,8]:i}}
     div.box.
         <pie-chart names="Kekik,Peynir,Zeytin,Mahmut" values="{{simulateData(i)}}" />

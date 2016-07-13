@@ -7,6 +7,7 @@ require! {
 }
 require! components
 require! 'aea': {PouchDB}
+Ractive.DEBUG = /unminified/.test -> /*unminified*/
 
 db = new PouchDB 'https://demeter.cloudant.com/cicimeze', skip-setup: yes
 
@@ -46,54 +47,6 @@ simulate-data = ->
 
     random = -> parse-int (Math.random! * 100)
     x = [random! for reasons]
-
-product-data =
-    * name: "domates"
-      supplier: "A_202"
-      price: 25
-      date: 12
-      id: 47
-    * name: "domates"
-      supplier: "A_202"
-      price: 23
-      date: 17
-      id: 47
-    * name: "domates"
-      supplier: "A_202"
-      price: 24
-      date: 11
-      id: 47
-    * name: "domates"
-      supplier: "A_101"
-      price: 22
-      date: 45
-      id: 47
-    * name: "patates"
-      supplier: "A_101"
-      price: 10
-      date: 15
-      id: 12
-    * name: "patates"
-      supplier: "A_101"
-      price: 14
-      date: 18
-      id: 12
-    * name: "patates"
-      supplier: "A_101"
-      price: 12
-      date: 26
-      id: 12
-    * name: "patates"
-      supplier: "A_202"
-      price: 10
-      date: 15
-      id: 12
-
-convert-product-to-select-list= (product-data)->
-    a = group-by (.name), product-data
-    a = [{name: key, id:a[key]0.id} for key of a]
-    #console.log "group-by data123: ",a
-    a
 
 ractive = new Ractive do
     el: '#main-output'
