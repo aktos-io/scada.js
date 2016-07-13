@@ -26,7 +26,7 @@ product-data =
       supplier: "A_101"
       price: 22
       date: 45
-      id: 47      
+      id: 47
     * name: "patates"
       supplier: "A_101"
       price: 10
@@ -40,20 +40,20 @@ product-data =
     * name: "patates"
       supplier: "A_101"
       price: 12
-      date: 26
+      date: 28
       id: 12
     * name: "patates"
       supplier: "A_202"
       price: 10
-      date: 15  
+      date: 15
       id: 12
 
 convert-product-to-select-list= (product-data)->
     a = group-by (.name), product-data
     a = [{name: key, id:a[key]0.id} for key of a]
-    console.log "group-by data: ",a
+    console.log "group-by data1234: ",a
     a
-    
+
 
 ractive = new Ractive do
     el: '#main-output'
