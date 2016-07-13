@@ -1,11 +1,8 @@
 require! components
-require! {
-    'aea': {
-        PouchDB, signup
-    }
-}
+require! 'aea': {PouchDB, signup}
 
-db = new PouchDB 'https://demeter.cloudant.com/_users', {skip-setup: yes}
+
+db = new PouchDB 'https://demeter.cloudant.com/cicimeze', {skip-setup: yes}
 local = new PouchDB \local_db
 
 # Ractive definition
