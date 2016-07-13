@@ -5,7 +5,7 @@ Ractive.components[component-name] = Ractive.extend do
     oninit: ->
         __ = @
         db = @get \db
-        console.log "Database object is: ", db
+        #console.log "Database object is: ", db
 
         view = @get \view
 
@@ -15,7 +15,7 @@ Ractive.components[component-name] = Ractive.extend do
                 if err
                     console.log "ERROR: order table: ", err
                 else
-                    console.log "Updating table: ", res
+                    #console.log "Updating table: ", res
                     __.set \selectionList, [{name: ..doc.product-name, id: ..doc._id} for res.rows]
                     $ '.selectpicker' .selectpicker 'refresh'
 
@@ -24,7 +24,7 @@ Ractive.components[component-name] = Ractive.extend do
             @set \selectionList, data
 
     data: ->
-        selected: -1 
+        selected: -1
         data:
             * name: 'example1'
               id: 1
