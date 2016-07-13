@@ -15,7 +15,9 @@ block ractive
 
             small It is an application skeleton for a typical web app. You can use it to quickly bootstrap your webapp projects and dev environment for these projects.
 
-            search-combobox(data="{{productList}}" selected="{{x}}" multiple="")
+            search-combobox(data="{{productList}}" selected="{{x}}" multiple="multiple") // multiple selected option
+            p selected: {{x}}
+            search-combobox(data="{{productList}}" selected="{{x}}" multiple="")  //  single selected option
             p selected: {{x}}
 
         inspina-footer
