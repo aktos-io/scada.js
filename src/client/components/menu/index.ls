@@ -10,12 +10,12 @@ Ractive.components[component-name] = Ractive.extend do
         @on do
             toggle-menu: ->
                 @set \showMenu, not (@get \showMenu)
-                console.log "show menu...", @get \showMenu
+                #console.log "show menu...", @get \showMenu
 
             hide-menu: ->
                 @set \hideMenuValue, not (@get \hideMenuValue)
-                console.log "hide menu value...", @get \hideMenuValue
-    data: -> 
+                #console.log "hide menu value...", @get \hideMenuValue
+    data: ->
         hide-menu-value: true
         menu:
             * title: "Bar Chart"

@@ -45,8 +45,5 @@ Ractive.components[component-name] = Ractive.extend do
                         tooltip: true
                     }
             )
-            console.log "cizdiriyorum hacı.."
 
     template: "\##{component-name}"
-    data: {}
-    

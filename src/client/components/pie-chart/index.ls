@@ -13,9 +13,6 @@ Ractive.components[component-name] = Ractive.extend do
         self.animate 'c', Math.PI * 2, do
             duration: 800
             easing: 'easeOut'
-
-    init:(options)->
-        @animate 'c' , Math.PI*2
     data:
         selected: null
         names: null
@@ -35,7 +32,7 @@ Ractive.components[component-name] = Ractive.extend do
                     end: end
                 start:=end
                 segment
-            console.log "segments: ", segments
+            #console.log "segments: ", segments
             segments
 
         getSegmentPoints:(segment, innerRadius, outerRadius)->
@@ -51,7 +48,3 @@ Ractive.components[component-name] = Ractive.extend do
             points[ points.length ] = getPoint start, innerRadius
             #console.log "test:" , points.join ' '
             return points.join ' '
-
-
-
-    

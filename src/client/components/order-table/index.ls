@@ -22,7 +22,7 @@ Ractive.components[component-name] = Ractive.extend do
         gen-entry-id = @get \gen-entry-id
 
         view-func = @get \view-func
-        console.log "ORDER_TABLE: view-func: ", view-func
+        #console.log "ORDER_TABLE: view-func: ", view-func
         do function update-table
             err, res <- db.query (__.get \view), {+include_docs}
             if err
