@@ -1,5 +1,5 @@
 require! components
-require! 'aea': {PouchDB}
+require! 'aea': {PouchDB, sleep}
 require! 'prelude-ls': {sum, split}
 
 db = new PouchDB 'https://demeter.cloudant.com/cicimeze', skip-setup: yes
@@ -8,6 +8,7 @@ local = new PouchDB \local_db
 gen-entry-id = ->
     timestamp = new Date!get-time! .to-string 16
     "#{ractive.get 'login.user.name'}-#{timestamp}"
+
 
 # Ractive definition
 ractive = new Ractive do
@@ -18,6 +19,7 @@ ractive = new Ractive do
             ok: no
         db: db
         gen-entry-id: gen-entry-id
+        x: -1
 
         # ORDERS
         orders-default:
@@ -47,16 +49,10 @@ ractive = new Ractive do
 
         # CUSTOMERS
         customers-default:
-            type: \receipt
-            product-name: "Ürün Adı"
-            contents:
-                * material: "Ham madde..."
-                  amount: "x kg"
-                ...
-        customers-col-names: "Ürün adı"
+            type: \customer
+        customers-col-names: "Müşteri adı"
         customers-view-generator: (res) ->
-            [[i.doc.product-name] for i in res.rows]
-
+            [[i.doc.name] for i in res.rows]
 
 
 feed = null
@@ -64,6 +60,13 @@ ractive.on do
     after-logged-in: ->
         do function on-change
             console.log "running function on-change!"
+
+            err, res <- db.query 'customers/getCustomers', {+include_docs}
+            if err
+                console.log "ERROR customer list: ", err
+            else
+                console.log "customer list updated: ", res
+                ractive.set \customersList, [{name: ..doc.name, id: ..doc.name} for res.rows]
 
         feed?.cancel!
         feed := local?.sync db, {+live, +retry, since: \now}

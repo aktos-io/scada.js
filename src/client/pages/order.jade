@@ -1,6 +1,7 @@
 extends ../templates/template.jade
 block script             
     script(src="order.js")
+
 block title 
     title Siparişler
     
@@ -26,17 +27,6 @@ block ractive
                     form-group
                         span Müşteri Adı: 
                         input(value="{{ curr.name }}" )
-                    +each('curr.contents:i')
-                        form-group
-                            span Hammadde: 
-                            input(value="{{ .['material'] }}")
-                            input(value="{{ .['amount'] }}")
-                            btn(on-buttonclick="deleteOrder" value="contents: {{ i }}")
-                                icon-remove
-                    form-group
-                        btn(on-buttonclick="addNewEntry" value="contents")
-                            icon-plus 
-                            span Hammadde Ekle
                 btn(on-buttonclick="addNewOrderClose") Kapat!
                 btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
 
@@ -71,6 +61,9 @@ block ractive
                 btn(on-buttonclick="addNewOrderClose") Kapat!
                 btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
 
+
+        search-combobox(data="{{ customersList }}" selected="{{ x }}")
+        input(value="{{ customersList[0].name }}")
         h2 Siparişler:
         order-table(
             cols="{{ ordersColNames }}"
@@ -82,16 +75,21 @@ block ractive
             )
             +partial('addnewTitle')
                 | Yeni Sipariş Ekle
+                search-combobox(data="{{ customersList }}" selected="{{ x }}")
+
                 
             panel(title="Sipariş" type="primary")
                 //- {{ JSON.stringify(curr) }}
                 form-vertical
                     form-group
                         span Müşteri: 
-                        input(value="{{ curr.client }}" disabled="true")
+                        span {{ JSON.stringify(customersList) }}
+                        div 
+                            search-combobox(data="{{ customersList }}" selected="{{ x }}")
+                        input(value="{{ curr.client }}")
                     form-group
                         span Teslim Tarihi: 
-                        input(value="{{ curr.dueDate }}" disabled="false")
+                        input(value="{{ curr.dueDate }}")
                     +each('curr.entries:i')
                         form-group
                             span Type
@@ -106,7 +104,3 @@ block ractive
                 btn(on-buttonclick="addNewOrderClose") Kapat!
                 btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
     
-        // JADE 
-        search-combobox(data="{{ myList }}" selected="{{ selected }}")
-        // selected: -1 olmalı 
-        // seçim yapıldığı zaman liste indexini bu değişkene girmeli 
