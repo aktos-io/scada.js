@@ -35,7 +35,7 @@ Ractive.components[component-name] = Ractive.extend do
                     end: end
                 start:=end
                 segment
-            console.log "segments: ", segments
+            #console.log "segments: ", segments
             segments
 
         getSegmentPoints:(segment, innerRadius, outerRadius)->
@@ -51,7 +51,3 @@ Ractive.components[component-name] = Ractive.extend do
             points[ points.length ] = getPoint start, innerRadius
             #console.log "test:" , points.join ' '
             return points.join ' '
-
-
-
-    

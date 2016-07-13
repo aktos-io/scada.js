@@ -1,3 +1,4 @@
+{sleep} = require "aea"
 require! {
     'prelude-ls': {
         group-by
@@ -17,14 +18,16 @@ data2 = [[0,1],[1,0],[2,2],[3,0],[4,1],[5,3],[6,1],[7,5],[8,2],[9,3],[10,2],[11,
 random = ->
     x= parse-int (Math.random! * 10)
     x
+
 convert-to-flot =  ->
-    console.log "convert-to-flot1"
+    #console.log "convert-to-flot1"
     x = [[x:random!, y:random!] for i from 0 to 15]
     y= sort-by (.x), x
-    console.log "y : ",y
+    #console.log "y : ",y
     z=[[0.x,0.y] for y]
-    console.log "convert-to-flot1:", z
+    #console.log "convert-to-flot1:", z
     z
+
 product-data1 =
     * name: "domates"
       id: 47
@@ -43,6 +46,7 @@ simulate-data = ->
 
     random = -> parse-int (Math.random! * 100)
     x = [random! for reasons]
+
 product-data =
     * name: "domates"
       supplier: "A_202"
@@ -88,16 +92,34 @@ product-data =
 convert-product-to-select-list= (product-data)->
     a = group-by (.name), product-data
     a = [{name: key, id:a[key]0.id} for key of a]
-    console.log "group-by data123: ",a
+    #console.log "group-by data123: ",a
     a
+
 ractive = new Ractive do
     el: '#main-output'
     template: '#main-template'
     data:
-        db: db 
+        db: db
         data1:convert-to-flot!
         data2:data2
         simulate-data:simulate-data
         x: 5
         product-list: product-data1
         y: 1
+
+ractive.on \complete, ->
+    i = 0
+    states =
+        \waiting
+        \normal
+        \error
+        \okey
+
+    <- :lo(op) ->
+        new-state = states[i++]
+        #console.log "changing state: ", new-state
+        ractive.set \buttonState, new-state
+        if i > 3
+            i:=0
+        <- sleep 5000ms
+        lo(op)

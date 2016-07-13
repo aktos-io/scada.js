@@ -2,37 +2,50 @@ extends ../templates/template.jade
 
 block title
     title Show Case
+
 block script
     script(src="showcase.js")
-
+    
 block ractive
     inspina-theme
         inspina-menu
         inspina-right
             inspina-header
-                span Naber Mahmut
+                span AKTOS.io
             
             inspina-content
-                h1 Welcome12 in INSPINIA Static SeedProject
+                
+                row
+                    date-picker
+                    date-picker
+                    date-picker
 
-                search-combobox(data="{{productList}}" selected="{{x}}")
-                p selected: {{x}}
+                row
+                    ack-button(state="{{ buttonState }}") MY BUTTON
+                    ack-button(state="{{ buttonState }}") MY BUTTON2
+                    ack-button(state="{{ buttonState }}") MY BUTTON3
 
-                search-combobox(db="{{ db }}" view="customers/getReceipts" selected="{{y}}")
-                p selected: {{y}}
+                row
+                    search-combobox(data="{{productList}}" selected="{{x}}")
+                    p selected: {{x}}
+                
+                row
+                    search-combobox(db="{{ db }}" view="customers/getReceipts" selected="{{y}}")
+                    p selected: {{y}}
 
-                flot-chart(data1="{{data1}}" data2 ="{{data2}}")
 
-                div
+                row
+                    flot-chart(data1="{{data1}}" data2 ="{{data2}}")
+                row
                     | {{#each [1,2,3]:i}}
                     div.box
                         pie-chart(names="Kekik,Peynir,Zeytin,Mahmut" values="{{simulateData(i)}}")
                     | {{/each}}
-
+                
 
             inspina-footer
                 +partial('mahmut')
-                    span Selam ben mahmut
+                    span aktos.io
                     
                 +partial('left')
-                    span Selam ben left
+                    span showcase page
