@@ -16,33 +16,4 @@ block ractive
             db="{{ db }}"
             view="get-orders"
             gen-entry-id="{{ genEntryId }}"
-            default="{{ ordersDefault }}"
             )
-            panel(title="Yeni Sipariş Ekle" type="primary")
-                //- {{ JSON.stringify(curr) }}
-                form-vertical
-                    form-group
-                        span Müşteri: 
-                        input(value="{{ curr.client }}")
-                    form-group
-                        span Teslim Tarihi: 
-                        input(value="{{ curr.dueDate }}")
-                    +each('curr.entries:i')
-                        form-group
-                            span Type
-                            input(value="{{ .['product'] }}")
-                            input(value="{{ .['amount'] }}")
-                            btn(on-buttonclick="deleteOrder" value="{{ i }}")
-                                icon-remove
-                    form-group
-                        btn(on-buttonclick="addNewEntry" value="entries")
-                            icon-plus 
-                            span Kalem Ekle
-                btn(on-buttonclick="addNewOrderClose") Kapat!
-                btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
-
-    
-        // JADE 
-        search-combobox(data="{{ myList }}" selected="{{ selected }}")
-        // selected: -1 olmalı 
-        // seçim yapıldığı zaman liste indexini bu değişkene girmeli 

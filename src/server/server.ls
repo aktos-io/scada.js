@@ -31,13 +31,7 @@ server.route do
     path: "/"
     method: "GET"
     handler:
-        file: "#{public-dir}/pages/main.html"
-
-server.route do
-    path: "/main.js"
-    method: "GET"
-    handler:
-        file: "#{public-dir}/pages/main.js"
+        file: "#{public-dir}/index.html"
 
 server.route do
     path: "/app/{f*}"

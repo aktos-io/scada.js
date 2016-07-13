@@ -1,5 +1,5 @@
 {split, take, join, lists-to-obj, sum} = require 'prelude-ls'
-{sleep, merge, pack, unpack} = require "aea"
+{sleep, merge} = require "aea"
 random = require \randomstring
 
 component-name = "order-table"
@@ -43,8 +43,8 @@ Ractive.components[component-name] = Ractive.extend do
                     @fire \showModal
                 @set \clickedIndex, index
                 tabledata = @get \tabledata
-                @set \curr, tabledata.rows[index].doc
-                console.log "Started editing an order: ", (@get \curr)
+                @set \currOrder, tabledata.rows[index].doc
+                console.log "Started editing an order: ", (@get \currOrder)
 
             close-modal: ->
                 self = @
@@ -93,68 +93,55 @@ Ractive.components[component-name] = Ractive.extend do
 
             add-new-order: ->
                 @set \addingNew, true
-                @set \curr, (@get \newOrder)!
-                console.log "adding brand-new order!", (@get \curr)
+                @set \currOrder, (@get \newOrder)!
 
             add-new-order-close: ->
                 @set \addingNew, false
                 @fire \endEditing
 
             add-new-order-save: ->
-                __ = @
-                order-doc = @get \curr
-
-                __.set \saving, "Kaydediyor..."
+                self = @
+                order-doc = @get \currOrder
                 console.log "Saving new order document: ", order-doc
                 if not order-doc._id?
                     console.log "Generating new id for the document!"
                     order-doc = order-doc `merge` {_id: gen-entry-id!}
-
                 err, res <- db.put order-doc
                 if err
                     console.log "Error putting new order: ", err
-                    __.set \saving, err.reason
                 else
                     console.log "New order put in the database", res
-                    # if adding new document, clean up current document
-                    console.log "order putting database: ", order-doc
-                    if order-doc._rev is void
-                        console.log "refreshing new order...."
-                        __.set \curr, (__.get \newOrder)!
-                    else
-                        console.log "order had rev: ", order-doc._rev
-                        order-doc._rev = res.rev
-                        console.log "Updating current order document rev: ", order-doc._rev
-                        __.set \curr, order-doc
-                    __.set \saving, "OK!"
-                    <- sleep 1000ms
-                    __.set \saving, ''
+                    order-doc._rev = res.rev
+                    console.log "Updating current order document rev: ", order-doc._rev
+                    self.set \currOrder, order-doc
 
-            add-new-entry: (keypath) ->
-                __ = @
-                editing-doc = __.get \curr
+            add-new-entry: ->
+                editing-doc = @get \currOrder
                 console.log "adding new entry to the order: ", editing-doc
-                entry-template = __.get \default [keypath]
-                editing-doc[keypath] ++= entry-template[keypath].0
-
-                #console.log "adding new entry: ", editing-doc
-                __.set \curr, editing-doc
+                editing-doc.entries ++= entry =
+                    * type: "Type of order..."
+                      amount: "amount of order..."
+                    ...
+                console.log "adding new entry: ", editing-doc
+                @set \currOrder, editing-doc
 
             delete-order: (index) ->
                 console.log "Delete index: ", index
-                editing-doc = @get \curr
+                editing-doc = @get \currOrder
                 editing-doc.entries.splice index, 1
                 console.log "editing doc: (deleted: )", editing-doc.entries
-                @set \curr, editing-doc
+                @set \currOrder, editing-doc
 
 
     data: ->
-        __ = @
         new-order: ->
-            console.log "Returning new default value: ", __.get \default
-            unpack pack __.get \default
-        saving: ''
-        curr: null
+            client: "test..."
+            type: \order
+            entries:
+                * type: 'tip...'
+                  amount: 'x kg'
+                ...
+        curr-order: null
         id: \will-be-random
         gen-entry-id: null
         db: null
