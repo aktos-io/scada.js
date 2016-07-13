@@ -136,8 +136,8 @@ gulp.task \browserify <[ lsc-client lsc-lib js]> ->
 # Concatenate vendor javascript files into public/js/vendor.js
 gulp.task \vendor, ->
     glob "./vendor/**/*.js", (err, files) ->
-        for f in files
-            console.log "VENDOR: #{f}"
+        #for f in files
+        #    console.log "VENDOR: #{f}"
         gulp.src files
             .pipe cat "vendor.js"
             .pipe gulp.dest "#{client-public}/js"
