@@ -7,22 +7,30 @@ block script
     script(src="show-case.js")
 
 block ractive
-    inspina-menu
     inspina-theme
-        inspina-header
-        inspina-content
-            h1 Welcome12 in INSPINIA Static SeedProject
+        inspina-menu
+        inspina-right
+            inspina-header
+                span Naber Mahmut
+            
+            inspina-content
+                h1 Welcome12 in INSPINIA Static SeedProject
 
-            search-combobox(data="{{productList}}" selected="{{x}}")
-            p selected: {{x}}
+                search-combobox(data="{{productList}}" selected="{{x}}")
+                p selected: {{x}}
 
-            flot-chart(data1="{{data1}}" data2 ="{{data2}}")
+                flot-chart(data1="{{data1}}" data2 ="{{data2}}")
 
-            div
-                | {{#each [1,2,3]:i}}
-                div.box
-                    pie-chart(names="Kekik,Peynir,Zeytin,Mahmut" values="{{simulateData(i)}}")
-                | {{/each}}
+                div
+                    | {{#each [1,2,3]:i}}
+                    div.box
+                        pie-chart(names="Kekik,Peynir,Zeytin,Mahmut" values="{{simulateData(i)}}")
+                    | {{/each}}
 
 
-        inspina-footer
+            inspina-footer
+                +partial('mahmut')
+                    span Selam ben mahmut
+                    
+                +partial('left')
+                    span Selam ben left
