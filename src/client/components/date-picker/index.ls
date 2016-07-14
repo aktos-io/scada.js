@@ -29,7 +29,7 @@ Ractive.components[component-name] = Ractive.extend do
         i = 0
         change-date = ->
             date-data = x.data!
-            console.log "date is changed: ", date-data.date
+            #console.log "date is changed: ", date-data.date
             self.set \value, date-data.date
 
         x.on "dp.change" , ->
