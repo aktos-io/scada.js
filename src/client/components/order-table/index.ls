@@ -41,9 +41,11 @@ Ractive.components[component-name] = Ractive.extend do
                 index = (args.0.keypath |> split '.').1 |> parse-int
                 console.log "activated!!!", args, index
                 curr-index = @get \clickedIndex
+                /*
                 if index is curr-index
-                    console.log "Give tooltip!"
-                    @fire \showModal
+                    #console.log "Give tooltip!"
+                    #@fire \showModal
+                */
                 @set \clickedIndex, index
                 tabledata = @get \tabledata
                 @set \curr, tabledata.rows[index].doc
@@ -100,6 +102,7 @@ Ractive.components[component-name] = Ractive.extend do
                 console.log "adding brand-new order!", (@get \curr)
 
             add-new-order-close: ->
+                console.log "ORDER_TABLE: Closing edit form..."
                 @set \addingNew, false
                 @fire \endEditing
 
@@ -179,3 +182,7 @@ Ractive.components[component-name] = Ractive.extend do
             editable = @get \editable
             clicked-index = @get \clickedIndex
             editable and (index is clicked-index)
+
+        is-clicked: (index) ->
+            clicked-index = @get \clickedIndex
+            index is clicked-index

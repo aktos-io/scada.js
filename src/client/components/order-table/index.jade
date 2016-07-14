@@ -19,11 +19,11 @@
                             icon-plus
                             span {{yield addnewTitle}}
                     +if('addingNew') 
-                        | {{>content}}
+                        | {{>editForm}}
 
             +each('showData:i').
                 <tr class="input-line {{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}}" on-doubleclick="activated">
-                    {{#if clickedIndex === i }}
+                    {{#if isClicked(i) }}
                         <td>
                             <btn-group-vertical>
                                 <btn on-buttonclick="toggleEditing" type="{{#if editTooltip }}danger{{else}}default{{/if}}" active="{{editable}}" >
@@ -35,17 +35,22 @@
                                     <icon-pencil/>
                                 </btn>
                                 <btn type="success" on-buttonclick="saveAndExit"><icon-ok/></btn>
-                                <btn type="info" on-buttonclick="revert"><icon-remove/></btn>
+                                <btn type="info" on-buttonclick="addNewOrderClose"><icon-remove/></btn>
+                                
                             </btn-group-vertical>
                         </td>
                     {{else}}
                         <td>{{i+1}}</td>
                     {{/if}}
                     {{#if isEditingLine(i)}}
-                        <td colspan="{{ columnList.length }}">{{>content}}</td>
+                        <td colspan="{{ columnList.length }}">{{>editForm}}</td>
                     {{else}}
-                        {{#each showData[i]:j}}
-                            <td>{{ showData[i][j] }}</td>
-                        {{/each}}
+                        {{#if isClicked(i) }}
+                            <td colspan="{{ columnList.length }}"> {{>viewForm}} </td>
+                        {{else}}
+                            {{#each showData[i]:j}}
+                                <td>{{ showData[i][j] }}</td>
+                            {{/each}}
+                        {{/if}}
                     {{/if}}
                 </tr>
