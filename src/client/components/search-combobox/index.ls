@@ -22,6 +22,7 @@ Ractive.components[component-name] = Ractive.extend do
                 console.log "SEARCH_COMBOBOX updated: ", res
                 __.set \selectionList, [{name: ..doc.product-name, id: ..doc._id} for res.rows]
                 $ __.find \* .selectpicker \render
+                $ __.find \* .selectpicker \refresh
 
         data = @get \data
         console.log "DATA: ", data
@@ -35,6 +36,7 @@ Ractive.components[component-name] = Ractive.extend do
                 #$ '.selectpicker' .selectpicker 'refresh'
                 console.log "COMBOBOX: re-rendering!"
                 $ __.find \* .selectpicker \render
+                $ __.find \* .selectpicker \refresh
 
         else
             console.log "Combobox using view...", view
@@ -49,6 +51,7 @@ Ractive.components[component-name] = Ractive.extend do
         <- sleep 0ms
         console.log "COMBOBOX: first rendering!"
         $ __.find \* .selectpicker \render
+        $ __.find \* .selectpicker \refresh
         try __.set \selected, (__.get \data).0.id
 
     data: ->
