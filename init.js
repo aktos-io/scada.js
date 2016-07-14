@@ -168,31 +168,40 @@ loadCode = void 8;
 LongPolling.prototype.sendGet = function(opts, callback){
   var __, content, connInf, getRequestId, req;
   __ = this;
-  content = this.content;
+  content = merge(this.content, {
+    data: "NABER"
+  });
   opts = merge(opts, {
-    method: 'GET',
-    headers: null
+    method: 'POST'
   });
   connInf = this.mkOpts(content, opts);
+  console.log("Connection info: ", connInf);
   getRequestId = genRandomId(3);
   console.log("New GET request: " + getRequestId);
-  req = this.http.get(connInf, function(res){
+  req = this.http.request(connInf, function(res){
     return res.on('data', function(data){
       console.log("GET: " + getRequestId + " have DATA: ", data, typeof data, data.length);
       loadCode = data;
       console.log("get requestine data gelince : ", process.memory());
-      return go('call-error');
+      return go('call-error', 'got-data');
     });
   });
   req.on('error', function(err){
-    console.log("GET: " + getRequestId + " have PROBLEM: ", err, " type: ", typeof err);
-    console.log("Error code: ", err.code);
-    console.log("Error message : ", err.message);
-    if (isWaiting('call-error')) {
-      return go('call-error', err);
-    } else if (err.message === 'no response') {
-      return callback('try-connect-again');
+    console.log("GET: " + getRequestId + " have PROBLEM: ", err);
+    if (err.message === 'no response') {
+      console.log("Error message: ", err.message);
+      callback('try-connect-again');
+    } else if (err.message === 'connection reset') {
+      console.log("Connect olunmali.");
+      callback('try-connect-again');
+    } else if (isWaiting('call-error')) {
+      console.log("GO with ", err);
+      go('call-error', err);
+    } else {
+      console.log("What happened");
     }
+    req.write(pack(content));
+    return req.end();
   });
   console.log("get requesti acildiktan sonra : ", process.memory());
   return timeoutWaitFor(30000, 'call-error', function(reason, param){
@@ -200,7 +209,7 @@ LongPolling.prototype.sendGet = function(opts, callback){
       console.log("Has event: ", param);
       return callback(param);
     } else if (reason === 'timed-out') {
-      console.log("Timeout....");
+      console.log("Timeout...");
       return callback('timeout');
     }
   });
@@ -215,11 +224,11 @@ LongPolling.prototype.connect = function(callback){
       return function lo(op){
         console.log("Receiver is starting asyncronously..");
         return __.sendGet({
-          path: '/receive'
+          path: '/al'
         }, function(reason){
-          if (!reason) {
+          if (reason === 'got-data') {
             console.log("I got data.. I am connecting again for new data: ");
-            return sleep(10000, function(){
+            return sleep(3000, function(){
               return lo(op);
             });
           } else if (reason === 'try-connect-again') {
@@ -266,6 +275,7 @@ onInit = function(){
     x$.on('code', function(code){
       return console.log("Code is : ", code);
     });
+    console.log("Initialy memory: ", process.memory());
     return comm.connect(function(){
       return sleep(20000, function(){});
     });

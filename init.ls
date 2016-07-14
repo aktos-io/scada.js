@@ -125,26 +125,42 @@ LongPolling::send-raw = (msg, callback) ->
 load-code = void
 LongPolling::send-get = (opts, callback) ->
     __ = @
-    content = @content
-    opts = opts `merge` {method: 'GET', headers: null}
+    content = @content `merge` {data: "NABER"}
+    #opts = opts `merge` {method: 'GET', headers: null}
+    opts = opts `merge` {method: 'POST'}
     conn-inf = @mk-opts content, opts
+    console.log "Connection info: ", conn-inf
     get-request-id = gen-random-id 3
     console.log "New GET request: #{get-request-id}"
-    req = @http.get conn-inf, (res) ->
+
+    req = @http.request conn-inf, (res) ->
         res.on \data, (data) ->
             console.log "GET: #{get-request-id} have DATA: ", data, typeof data, data.length
             load-code := data
             #TODO: trigger something
             #callback!
             console.log "get requestine data gelince : ", process.memory!
-            go \call-error
+            go \call-error, \got-data
 
     req.on \error, (err) ->
-        console.log "GET: #{get-request-id} have PROBLEM: ", err, " type: ", typeof err
-        if is-waiting \call-error
-            go \call-error, err
-        else if err.message is 'no response'
+        console.log "GET: #{get-request-id} have PROBLEM: ", err
+        if err.message is 'no response'
+            console.log "Error message: ", err.message
             callback \try-connect-again
+
+        else if err.message is 'connection reset'
+            console.log "Connect olunmali."
+            callback \try-connect-again
+
+        else if is-waiting \call-error
+            console.log "GO with ", err
+            go \call-error, err
+        else
+            console.log "What happened"
+
+        req.write (pack content)
+        req.end!
+
 
     console.log "get requesti acildiktan sonra : ", process.memory!
     reason, param <-timeout-wait-for 30000ms, \call-error
@@ -152,7 +168,7 @@ LongPolling::send-get = (opts, callback) ->
         console.log "Has event: ", param
         callback param
     else if reason is 'timed-out'
-        console.log "Timeout...."
+        console.log "Timeout..."
         callback \timeout
 
 LongPolling::connect = (callback)->
@@ -165,10 +181,10 @@ LongPolling::connect = (callback)->
         do
             <- :lo(op) ->
                 console.log "Receiver is starting asyncronously.."
-                reason <- __.send-get {path: '/receive'}
-                if not reason
+                reason <- __.send-get {path: '/al'}
+                if reason is \got-data
                     console.log "I got data.. I am connecting again for new data: "
-                    <- sleep 10000ms
+                    <- sleep 3000ms
                     lo(op)
 
                 else if reason is \try-connect-again
