@@ -85,6 +85,7 @@ block ractive
             db="{{ db }}"
             view="orders/getOrders"
             gen-entry-id="{{ genEntryId }}"
+            x="{{ customersList }}"
             )
             +partial('addnewTitle')
                 | Yeni Sipariş Ekle
@@ -106,7 +107,7 @@ block ractive
                     form-vertical
                         form-group
                             span Müşteri: 
-                            search-combobox(data="{{ customersList }}" selected="{{ curr.client }}")
+                            search-combobox(data="{{ x }}" selected="{{ curr.client }}")
                         form-group
                             span Sipariş Tarihi: 
                             input(value="{{ curr.orderDate }}")

@@ -41,6 +41,10 @@ ractive = new Ractive do
                 console.log "Cheesecake filter running...", rows
                 [[..doc._id] for rows]
                 #[.. for rows when 'Cheesecake' in [i.product-name for i ..doc.entries]]
+            who: (rows, param) ->
+                x = [[..doc.client, ..doc._id, 1] for rows]
+                console.log "who filter: ", x 
+                x
 
         # RECEIPTS
         receipts-default:

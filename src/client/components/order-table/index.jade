@@ -22,9 +22,6 @@
                         | {{>editForm}}
                     
                     | {{>header}}
-                    p opts.selected: {{ filterOpts.selected }}
-                    p opts.params: {{ filterOpts.params }}
-                    p dataFilters: {{ dataFilters[filterOpts.selected](tabledata, filterOpts.params) }}
             +each('dataFilters[filterOpts.selected](tabledata, filterOpts.params):i')
                 +if('true').
                     <tr class="input-line {{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}}" on-doubleclick="activated">
@@ -53,9 +50,7 @@
                             {{#if isClicked(i) }}
                                 <td colspan="{{ columnList.length }}"> {{>viewForm}} </td>
                             {{else}}
-                                {{#each .}}
-                                    <td>{{ . }}</td>
-                                {{/each}}
+                                {{#.}}<td>{{.}}</td>{{/}}
                             {{/if}}
                         {{/if}}
                     </tr>
