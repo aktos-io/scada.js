@@ -53,3 +53,11 @@
             .col-lg-12
                 .text-center.m-t-lg
                     | {{>content}}
+                    
+                    
++component('inspina-footer')
+    .footer
+        .pull-right
+            | {{yield right}}
+        div
+            | {{yield left}}

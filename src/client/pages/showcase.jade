@@ -14,17 +14,17 @@ block ractive
                 span
                     | AKTOS.io
             inspina-content
-                
+                p mahmutcan
                 row
                     date-picker
                     date-picker
                     date-picker
 
+                p mahmut
                 row
                     ack-button(state="{{ buttonState }}") MY BUTTON
                     ack-button(state="{{ buttonState }}") MY BUTTON2
                     ack-button(state="{{ buttonState }}") MY BUTTON3
-
                 row
                     search-combobox(data="{{productList}}" selected="{{x}}")
                     p selected: {{x}}
@@ -38,7 +38,8 @@ block ractive
                     div.box
                         pie-chart(names="Kekik,Peynir,Zeytin,Mahmut" values="{{simulateData(i)}}")
                     | {{/each}}
-                
+                row
+                    flot-chart(data1="{{data1}}" data2 ="{{data2}}")
 
             inspina-footer
                 +partial('right')
