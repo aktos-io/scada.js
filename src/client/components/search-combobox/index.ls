@@ -23,10 +23,21 @@ Ractive.components[component-name] = Ractive.extend do
                 __.set \selectionList, [{name: ..doc.product-name, id: ..doc._id} for res.rows]
 
         data = @get \data
-        if data
+        console.log "DATA: ", data
+        console.log "VIEW:", view
+        unless view
             console.log "COMBOBOX: using data: ", data
-            @set \selectionList, data
-        else if view
+            __.set \selectionList, data
+            __.observe \data, (new-val)->
+                console.log "COMBOBOX: observing....", new-val
+                __.set \selectionList, new-val
+                #$ '.selectpicker' .selectpicker 'refresh'
+                console.log "COMBOBOX: re-rendering!"
+                $ __.find \* .selectpicker \render
+                console.log "COMBOBOX: refreshing"
+                $ __.find \* .selectpicker \refresh
+
+        else
             console.log "Combobox using view...", view
             update-combobox!
 
@@ -34,19 +45,12 @@ Ractive.components[component-name] = Ractive.extend do
                 .on \change, (change) ->
                     console.log "search-combobox detected change!", change
                     update-combobox!
-        else
-            @set \selectionList, (@get \exampleData)
 
-        console.log "COMBOBOX: refreshing...."
-        __.observe \data, (new-val)->
-            __.set \selectionList, new-val
-            #$ '.selectpicker' .selectpicker 'refresh'
-            console.log "COMBOBOX: refreshed!"
-            $ __.find \* .selectpicker \render
 
         <- sleep 0ms
+        console.log "COMBOBOX: first rendering!"
         $ __.find \* .selectpicker \render
-        __.set \selected, (__.get \data).0.id
+        try __.set \selected, (__.get \data).0.id
 
     data: ->
         selected: -1
