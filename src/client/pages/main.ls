@@ -7,6 +7,7 @@ ractive = new Ractive do
     template: '#main-template'
     data:
         button-state: null
+        toggle-my-component: true
 
 
 ractive.on \complete, ->
