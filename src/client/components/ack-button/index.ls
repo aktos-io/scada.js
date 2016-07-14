@@ -21,8 +21,8 @@ Ractive.components[component-name] = Ractive.extend do
                 __.set 'angle', 1
                 if state-val == "waiting"
                     rotate-icon!
-                else
-                    console.log "rotate function is stopped..."
+                #else
+                #    console.log "rotate function is stopped..."
 
     template: "\##{component-name}"
     data:

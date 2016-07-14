@@ -112,8 +112,9 @@ block ractive
                             span Sipariş Tarihi: 
                             input(value="{{ curr.orderDate }}")
                         form-group
-                            span Teslim Tarihi: 
-                            input(value="{{ curr.dueDate }}")
+                            span Teslim Tarihi:
+                            date-picker(value="{{ curr.dueDate }}")
+                            //- input(value="{{ curr.dueDate }}")
                         +each('curr.entries:i')
                             form-group
                                 span Type
