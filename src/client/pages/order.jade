@@ -9,6 +9,9 @@ block ractive
     panel
         login(on-login="afterLoggedIn" context="{{ login }}" db="{{ db }}")
 
+    
+    search-combobox(data="{{ customersList }}" selected="{{ x }}")
+
     +if('login.ok')
         h2 Müşteriler:
         order-table(
@@ -62,7 +65,6 @@ block ractive
                 btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
 
 
-        search-combobox(data="{{ customersList }}" selected="{{ x }}")
         input(value="{{ customersList[0].name }}")
         h2 Siparişler:
         order-table(
@@ -75,17 +77,11 @@ block ractive
             )
             +partial('addnewTitle')
                 | Yeni Sipariş Ekle
-                search-combobox(data="{{ customersList }}" selected="{{ x }}")
-
-                
             panel(title="Sipariş" type="primary")
-                //- {{ JSON.stringify(curr) }}
                 form-vertical
                     form-group
                         span Müşteri: 
-                        span {{ JSON.stringify(customersList) }}
-                        div 
-                            search-combobox(data="{{ customersList }}" selected="{{ x }}")
+                        search-combobox(data="{{ customersList }}" selected="{{ curr.client }}")
                         input(value="{{ curr.client }}")
                     form-group
                         span Teslim Tarihi: 

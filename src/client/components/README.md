@@ -1,3 +1,14 @@
+## Component design
+
+1. Use `Ractive.components['your-component-name'] = Ractive.extend ...`
+
+    Reason:
+        Otherwise, component users must define your component in their
+        ractive instance as `{... components: {'your-component': ...}}` which
+        will lead verbose, unnecessarily complex and possibly inconsistent code.  
+
+2. Use `isolated: yes` in components.
+
 ## Testing
 
 1. Use your component in `../pages/showcase.jade`
