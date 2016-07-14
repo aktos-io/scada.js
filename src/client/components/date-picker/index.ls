@@ -12,12 +12,17 @@ Ractive.components[component-name] = Ractive.extend do
             @set \id random.generate 7
             #console.log "picker id is: ", @get \id
 
-        @on do
-            #console.log "date-time-picker starting..."
-            self = @
-            $ ->
-                $ "\##{self.get 'id'}" .datetimepicker do
-                    daysOfWeekDisabled: [0, 6]
+        #console.log "date-time-picker starting..."
+        self = @
+        <- sleep 0ms
+        x = $ "\##{self.get 'id'}" .datetimepicker do
+            daysOfWeekDisabled: [0, 6]
+        #console.log "x: " , x
+        change-date = ->
+            date-data = x.data!
+            console.log "date is changed: ", date-data.date
+        x.on "dp.change" , ->
+            change-date!
 
     data: ->
         id: \will-be-random
