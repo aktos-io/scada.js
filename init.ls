@@ -1,5 +1,5 @@
 require! 'aea':{
-    sleep, wait-for, timeout-wait-for, go
+    sleep, wait-for, timeout-wait-for, go, is-waiting
     merge, unpack, pack, repl, config
 }
 
@@ -47,6 +47,11 @@ connect-to-wifi = (callback) ->
                 lo(op)
             callback! if typeof callback is \function
 
+gen-random-id = (digit) ->
+    if not digit
+        digit = 3
+    Math.floor (Math.random! * Math.pow 10, digit)
+
 !function LongPolling settings
     __ = this
     @settings = settings
@@ -88,12 +93,13 @@ LongPolling::send-raw = (msg, callback) ->
     content = msg `merge` @content
     conn-inf = @mk-opts content
     console.log \- * 20
-    test-req-id = Math.floor (Math.random! * 1000 + 1)
-    console.log "New Request: ", test-req-id
+    post-request-id = gen-random-id 3
+    console.log "New POST request: ", post-request-id
     req = @http.request conn-inf, (res) ->
         res.on \data, (data) ->
             got-data = unpack data
-            console.log "Resp id: #{test-req-id} HTTP> ", got-data
+            console.log "POST: #{post-request-id} HTTP> ", got-data
+            console.log "post requestine data gelince : ", process.memory!
             if got-data.ack
                 #console.log "ACK arrive: ", got-data.ack
                 try
@@ -104,9 +110,9 @@ LongPolling::send-raw = (msg, callback) ->
                     callback!
 
         res.on \error, ->
-            console.log "Error: #{test-req-id} ... WTF"
+            console.log "Error: #{post-request-id} ... WTF"
         res.on \close, ->
-            console.log "Request: #{test-req-id} closed by server.."
+            console.log "Request: #{post-request-id} closed by server.."
 
     req.on \error, (err) ->
         __.trigger \error, err, callback
@@ -114,24 +120,40 @@ LongPolling::send-raw = (msg, callback) ->
 
     req.write (pack content)
     req.end!
-    console.log process.memory!
+    console.log "post requesti acildiktan sonra : ", process.memory!
+
 load-code = void
-LongPolling::send-get = (msg) ->
+LongPolling::send-get = (opts, callback) ->
     __ = @
-
-    content = msg `merge` @content
-
-    options =
-        host: '192.168.2.107'
-        id: 'abc123'
-        port: 5656
-        path: '/receive'
-
-    conn-inf = options
+    content = @content
+    opts = opts `merge` {method: 'GET', headers: null}
+    conn-inf = @mk-opts content, opts
+    get-request-id = gen-random-id 3
+    console.log "New GET request: #{get-request-id}"
     req = @http.get conn-inf, (res) ->
         res.on \data, (data) ->
-            console.log "Get function got data: ", data, typeof data, data.length
+            console.log "GET: #{get-request-id} have DATA: ", data, typeof data, data.length
             load-code := data
+            #TODO: trigger something
+            #callback!
+            console.log "get requestine data gelince : ", process.memory!
+            go \call-error
+
+    req.on \error, (err) ->
+        console.log "GET: #{get-request-id} have PROBLEM: ", err, " type: ", typeof err
+        if is-waiting \call-error
+            go \call-error, err
+        else if err.message is 'no response'
+            callback \try-connect-again
+
+    console.log "get requesti acildiktan sonra : ", process.memory!
+    reason, param <-timeout-wait-for 30000ms, \call-error
+    if reason is 'has-event'
+        console.log "Has event: ", param
+        callback param
+    else if reason is 'timed-out'
+        console.log "Timeout...."
+        callback \timeout
 
 LongPolling::connect = (callback)->
     __ = @
@@ -143,13 +165,15 @@ LongPolling::connect = (callback)->
         do
             <- :lo(op) ->
                 console.log "Receiver is starting asyncronously.."
-                arr <- __.send-get
-                console.log "ARR: ", arr
-                if not arr
-                    console.log "Burasi..."
+                reason <- __.send-get {path: '/receive'}
+                if not reason
+                    console.log "I got data.. I am connecting again for new data: "
                     <- sleep 10000ms
                     lo(op)
 
+                else if reason is \try-connect-again
+                    console.log "I have a problem. I must be connect again: ", reason
+                    lo(op)
     else
         console.log "Trying to connect again (2s)..."
         <- sleep 1000ms
@@ -157,7 +181,6 @@ LongPolling::connect = (callback)->
 
 LongPolling::on = (event, callback) ->
     @events[event] ++= callback
-
 
 on-init = ->
     <- connect-to-wifi
@@ -184,17 +207,22 @@ on-init = ->
         ..on \code (code) ->
             console.log "Code is : ", code
             #eval code
-
+    console.log "Initialy memory: ", process.memory!
     <- comm.connect
     <- sleep 20000ms
+/*
     do
         <- :lo(op) ->
+
             if load-code
-                console.log "Evaling code,,"
+                #console.log "Evaling code,,"
                 eval load-code
+                #load-code = undefined
             else
                 lo(op)
-    console.log "following code is starting..."
+    #console.log "following code is starting..."
+*/
+/*
 
     do
         <- sleep 1000ms
@@ -207,3 +235,5 @@ on-init = ->
                 console.log "We couldn't send data!"
             <- timeout-wait-for 10000ms, \temperature-measured
             lo(op)
+
+*/
