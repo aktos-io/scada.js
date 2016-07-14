@@ -14,14 +14,15 @@ block ractive
         h2 Müşteriler:
         order-table(
             cols="{{ customersColNames }}"
-            view-func="{{ customersViewGenerator }}"
             default="{{ customersDefault }}"
+            filters="{{ customersFilters }}"
             db="{{ db }}"
             view="customers/getCustomers"
             gen-entry-id="{{ genEntryId }}"
             )
             +partial('addnewTitle')
                 | Müşteri Ekle
+            +partial('header')
             +partial('viewForm')
                 h3 Müşteri: {{ curr.name }}
                 
@@ -38,14 +39,15 @@ block ractive
         h2 Reçeteler:
         order-table(
             cols="{{ receiptsColNames }}"
-            view-func="{{ receiptsViewGenerator }}"
             default="{{ receiptsDefault }}"
+            filters="{{ receiptsFilters }}"
             db="{{ db }}"
             view="primitives/getReceipts"
             gen-entry-id="{{ genEntryId }}"
             )
             +partial('addnewTitle')
                 | Reçete Ekle
+            +partial('header')
             +partial('viewForm')
                 p Ürün adı: {{ curr.productName }}
                 p İçindekiler: 
@@ -78,14 +80,19 @@ block ractive
         h2 Siparişler:
         order-table(
             cols="{{ ordersColNames }}"
-            view-func="{{ ordersViewGenerator }}"
             default="{{ ordersDefault }}"
+            filters="{{ ordersFilters }}"
             db="{{ db }}"
             view="orders/getOrders"
             gen-entry-id="{{ genEntryId }}"
             )
             +partial('addnewTitle')
                 | Yeni Sipariş Ekle
+            
+            +partial('header')
+                input(value="{{ filterOpts.selected }}")
+                input(value="{{ filterOpts.params }}")
+            
             +partial('viewForm')
                 h3 {{ curr.client }}
                 p Sipariş tarihi: {{ curr.orderDate }}

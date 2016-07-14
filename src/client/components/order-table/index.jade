@@ -20,37 +20,42 @@
                             span {{yield addnewTitle}}
                     +if('addingNew') 
                         | {{>editForm}}
-
-            +each('showData:i').
-                <tr class="input-line {{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}}" on-doubleclick="activated">
-                    {{#if isClicked(i) }}
-                        <td>
-                            <btn-group-vertical>
-                                <btn on-buttonclick="toggleEditing" type="{{#if editTooltip }}danger{{else}}default{{/if}}" active="{{editable}}" >
-                                    {{#if editable}}
-                                        <icon-check/>
-                                    {{else}}
-                                        <icon-unchecked/>
-                                    {{/if}}
-                                    <icon-pencil/>
-                                </btn>
-                                <btn type="success" on-buttonclick="saveAndExit"><icon-ok/></btn>
-                                <btn type="info" on-buttonclick="addNewOrderClose"><icon-remove/></btn>
-                                
-                            </btn-group-vertical>
-                        </td>
-                    {{else}}
-                        <td>{{i+1}}</td>
-                    {{/if}}
-                    {{#if isEditingLine(i)}}
-                        <td colspan="{{ columnList.length }}">{{>editForm}}</td>
-                    {{else}}
+                    
+                    | {{>header}}
+                    p opts.selected: {{ filterOpts.selected }}
+                    p opts.params: {{ filterOpts.params }}
+                    p dataFilters: {{ dataFilters[filterOpts.selected](tabledata, filterOpts.params) }}
+            +each('dataFilters[filterOpts.selected](tabledata, filterOpts.params):i')
+                +if('true').
+                    <tr class="input-line {{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}}" on-doubleclick="activated">
                         {{#if isClicked(i) }}
-                            <td colspan="{{ columnList.length }}"> {{>viewForm}} </td>
+                            <td>
+                                <btn-group-vertical>
+                                    <btn on-buttonclick="toggleEditing" type="{{#if editTooltip }}danger{{else}}default{{/if}}" active="{{editable}}" >
+                                        {{#if editable}}
+                                            <icon-check/>
+                                        {{else}}
+                                            <icon-unchecked/>
+                                        {{/if}}
+                                        <icon-pencil/>
+                                    </btn>
+                                    <btn type="success" on-buttonclick="saveAndExit"><icon-ok/></btn>
+                                    <btn type="info" on-buttonclick="addNewOrderClose"><icon-remove/></btn>
+                                    
+                                </btn-group-vertical>
+                            </td>
                         {{else}}
-                            {{#each showData[i]:j}}
-                                <td>{{ showData[i][j] }}</td>
-                            {{/each}}
+                            <td>{{i+1}}</td>
                         {{/if}}
-                    {{/if}}
-                </tr>
+                        {{#if isEditingLine(i)}}
+                            <td colspan="{{ columnList.length }}">{{>editForm}}</td>
+                        {{else}}
+                            {{#if isClicked(i) }}
+                                <td colspan="{{ columnList.length }}"> {{>viewForm}} </td>
+                            {{else}}
+                                {{#each .}}
+                                    <td>{{ . }}</td>
+                                {{/each}}
+                            {{/if}}
+                        {{/if}}
+                    </tr>
