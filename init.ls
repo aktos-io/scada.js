@@ -35,32 +35,24 @@ LongPolling::mk-opts = (payload, settings) ->
 LongPolling::trigger = (name, ...event) ->
   [..apply @, event for @events[name] when typeof .. is \function ]
 
-LongPolling::send = (...params, callback) ->
-    [msg, opts] = params
-    @send-raw {data: msg}, opts, callback
+LongPolling::send = (msg, callback) ->
+    @send-raw {data: msg}, callback
 
 LongPolling::send-ack = (callback) ->
     @send-raw {ack: "Mahmut"}, callback
 
-LongPolling::send-raw = (...params, callback) ->
+LongPolling::send-raw = (msg, callback) ->
     __ = @
-    [msg, opts] = params
     content = msg `merge` @content
-    if opts
-        conn-inf = @mk-opts content, opts
-    else
-        conn-inf = @mk-opts content
+    conn-inf = @mk-opts content
     console.log \- * 20
     req = @http.request conn-inf, (res) ->
         res.on \data, (data) ->
             got-data = unpack data
+            console.log "GOT-DATA: ", got-data
             console.log "RESPONSE DATA HTTP> ", got-data
             #console.log "My path: ", conn-inf.path
-            console.log "http data: ", got-data.data
-            if got-data.code
-                __.trigger \code, got-data.code
-                try
-                    callback!
+            #console.log "http data: ", got-data.data
             if got-data.ack
                 #console.log "ACK arrive: ", got-data.ack
                 try
@@ -69,7 +61,6 @@ LongPolling::send-raw = (...params, callback) ->
                 #console.log "ACK arrive: ", got-data.ack
                 try
                     callback!
-
 
         res.on \error, ->
             console.log "Error:... WTF"
@@ -80,10 +71,24 @@ LongPolling::send-raw = (...params, callback) ->
         __.trigger \error, err, callback
         callback err.message
 
-
     req.write (pack content)
     req.end!
     console.log process.memory!
+load-code = void
+LongPolling::send-get = (msg) ->
+    __ = @
+    content = msg `merge` @content
+    options =
+        host: '192.168.2.107'
+        id: 'abc123'
+        port: 5656
+        path: '/receive'
+
+    conn-inf = options
+    req = @http.get conn-inf, (res) ->
+        res.on \data, (data) ->
+            console.log "Get function got data: ", data, typeof data, data.length
+            load-code := data
 
 LongPolling::connect = (callback)->
     __ = @
@@ -93,17 +98,15 @@ LongPolling::connect = (callback)->
             console.log "Connect function run correctly.."
             callback!
         do
-            <- sleep 2000ms
-
             <- :lo(op) ->
                 console.log "!!!!!!Receiver is starting asyncronously.."
-                err <- __.send {data: "I am receiver"}, {path: '/receive'}
-                if not err
+                arr <- __.send-get {teset: \AAAA}
+                console.log "ARR: ", arr
+                if not arr
                     console.log "Burasi..."
-                    <- sleep 4000ms
+                    <- sleep 10000ms
                     lo(op)
-                else
-                    console.log "Receiver error: ", err
+
     else
         console.log "Trying to connect again (2s)..."
         <- sleep 1000ms
@@ -178,13 +181,19 @@ on-init = ->
         ..on \disconnect, ->
             console.log "Disconnected from server!"
         ..on \code (code) ->
-            eval code
-            try
-                console.log "X is: ", x
+            console.log "Code is : ", code
+            #eval code
 
     <- comm.connect
-
+    <- sleep 10000ms
+    <- :lo(op) ->
+        if load-code
+            console.log "Evaling code.."
+            eval load-code
+        else
+            lo(op)
     console.log "following code is starting..."
+    /*
     do
         <- sleep 1000ms
 
