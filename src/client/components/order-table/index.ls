@@ -36,8 +36,9 @@ Ractive.components[component-name] = Ractive.extend do
             if err
                 console.log "ERROR: order table: ", err
             else
-                console.log "Updating table: ", res
-                __.set \tabledata, res.rows
+                docs = [..doc for res.rows]
+                console.log "Updating table: ", docs
+                __.set \tabledata, docs
 
         db.changes {since: 'now', +live, +include_docs}
             .on \change, (change) ->
@@ -55,7 +56,7 @@ Ractive.components[component-name] = Ractive.extend do
                 */
                 @set \clickedIndex, index
                 tabledata = @get \tabledata
-                @set \curr, tabledata[index].doc
+                @set \curr, tabledata[index]
                 console.log "Started editing an order: ", (@get \curr)
 
             close-modal: ->
@@ -179,9 +180,9 @@ Ractive.components[component-name] = Ractive.extend do
         addingNew: no
         view-func: null
         data-filters:
-            all: (rows, param) ->
-                console.log "ORDER_TABLE: using default filter!",param, rows
-                [[..id, ..key, ..value] for rows]
+            all: (docs, param) ->
+                console.log "ORDER_TABLE: using default filter!",param, docs
+                [[..id, ..key, ..value] for docs]
 
         filter-opts:
             params: \mahmut
