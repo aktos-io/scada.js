@@ -42,11 +42,12 @@ Ractive.components[component-name] = Ractive.extend do
             console.log "Combobox using view...", view
             update-combobox!
 
+            /*
             db.changes {since: 'now', +live, +include_docs}
                 .on \change, (change) ->
                     console.log "search-combobox detected change!", change
                     update-combobox!
-
+            */
 
         <- sleep 0ms
         console.log "COMBOBOX: first rendering!"
