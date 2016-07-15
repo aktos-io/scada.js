@@ -66,13 +66,19 @@ block ractive
                 p {{ test.date2 }}
                 
                 row
+                    h3 this row: date-picker components testing row before check the rules
+                    date-picker(unix="{{ myUnixTime }}")
+                    p unix-time: {{ myUnixTime }}
+                
+                row
                     ack-button(state="{{ buttonState }}") MY BUTTON
                     ack-button(state="{{ buttonState }}") MY BUTTON2
                     ack-button(state="{{ buttonState }}") MY BUTTON3
+                
                 row
                     search-combobox(data="{{productList}}" selected="{{x}}")
                     p selected: {{x}}
-                
+
                 row
                     search-combobox(db="{{ db }}" view="customers/getReceipts" selected="{{y}}")
                     p selected: {{y}}
@@ -87,6 +93,7 @@ block ractive
                     | {{/each}}
                 row
                     flot-chart(data1="{{data1}}" data2 ="{{data2}}")
+
 
             inspina-footer
                 +partial('right')

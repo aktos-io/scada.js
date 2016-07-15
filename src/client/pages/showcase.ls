@@ -54,6 +54,7 @@ ractive = new Ractive do
     el: '#main-output'
     template: '#main-template'
     data:
+        my-unix-time: 1454277600000
         db: db
         data1:data1
         data2:data2
@@ -69,6 +70,7 @@ ractive = new Ractive do
         datepicker:
             show: yes
 
+
 ractive.on \complete, ->
     i = 0
     states =
@@ -77,10 +79,15 @@ ractive.on \complete, ->
         \error
         \okey
 
+    unixs = [1554277600000,1354276600000,1254257600000,1054247600000]
+
     <- :lo(op) ->
-        new-state = states[i++]
+        a = i++
+        new-state = states[a]
+        new-unix = unixs[a]
         #console.log "changing state: ", new-state
         ractive.set \buttonState, new-state
+        ractive.set \myUnixTime, new-unix
         if i > 3
             i:=0
         <- sleep 5000ms
