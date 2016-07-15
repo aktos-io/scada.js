@@ -34,19 +34,25 @@ ractive = new Ractive do
         orders-col-names: "Müşteri Adı, Teslim Tarihi, Toplam (kg)"
         orders-filters:
             all: (docs, param) ->
-                console.log "orders My custom all filter data: ", docs
                 [[..client, ..due-date] for docs]
                 #[[i.doc.client, i.doc.due-date, sum [(split ' ', ..amount .0 |> parse-int) for i.doc.entries]] for i in docs]
             cheese: (docs, param) ->
-                console.log "Cheesecake filter running...", docs
                 [[..client, ..due-date] for docs when \Cheesecake in [i.product for i in ..entries]]
-                #[.. for docs when 'Cheesecake' in [i.product-name for i ..doc.entries]]
+
             who: (docs, param) ->
                 x = [[..client, .._id, 1] for docs]
-                console.log "who filter: ", x
-                x
-            today: (docs, param) ->
-                
+
+            todays-orders: (docs, param) ->
+                now = Date.now!
+                tomorrow = now + 1day * 24hours_per_day * 3600seconds_per_hour * 1000ms_per_second
+
+                console.log "calculated now: ", now 
+                author = (doc) -> (split '-', doc._id).0
+
+                orders = [[..client, author .., \selam ] for docs when now < ..due-date < tomorrow]
+                console.log "Siparişler: found #{orders.length} orders. "
+                orders
+
 
         # RECEIPTS
         receipts-default:
