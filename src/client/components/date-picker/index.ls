@@ -37,7 +37,10 @@ Ractive.components[component-name] = Ractive.extend do
         unix-to-date = ->
             from-others-unix = self.get \unix
             my-date = new Date( from-others-unix )
-            from-others = my-date.toLocaleString!
+            from-others-origin-data = my-date.toLocaleString!
+            x = from-others-origin-data.split ","
+            a = x.0.split "/"
+            from-others=  a.1 + "/" + a.0 + "/" + a.2 + "," + x.1
             console.log "unix date converted: ", from-others
 
         change-date = ->
