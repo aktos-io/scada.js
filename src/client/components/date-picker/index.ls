@@ -31,12 +31,10 @@ Ractive.components[component-name] = Ractive.extend do
         i = 0
         change-date = ->
             date-data = x.data!
-            test = date-data.date
-            console.log "test01: ", test
-            testing = moment(test).format('X')
-            console.log "testing: ", testing
+            unix-time-data = moment(date-data.date).format('x')
+            console.log "unix-time-data: ", unix-time-data
             console.log "date is changed: ", date-data.date
-            self.set \value, testing
+            self.set \value, unix-time-data
 
         x.on "dp.change" , ->
             change-date!
