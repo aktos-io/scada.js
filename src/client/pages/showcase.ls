@@ -40,27 +40,34 @@ product-data1 =
 
 simulate-data = ->
     reasons =
-        "Son kullanma tarihi geçmiş"
-        "Müşteri İade"
-        "Hatalı Sipariş"
+        "Son kullanma tarihi geÃ§miÅ"
+        "MÃ¼Återi Ä°ade"
+        "HatalÄ± SipariÅ"
         "Hayat zor"
 
     random = -> parse-int (Math.random! * 100)
     x = [random! for reasons]
-
+utc-date = ->
+    date = new Date!
+    new Date date.getUTCFullYear!, date.getUTCMonth!, date.getUTCDate!, date.getUTCHours!, date.getUTCMinutes!, date.getUTCSeconds!
 ractive = new Ractive do
     el: '#main-output'
     template: '#main-template'
     data:
         db: db
-        data1:convert-to-flot!
+        data1:data1
         data2:data2
+        test:
+            date: utc-date!
+            date2:new Date!
         simulate-data:simulate-data
         x: 5
         product-list: product-data1
         y: 1
         example-component:
-            show: yes 
+            show: yes
+        datepicker:
+            show: yes
 
 ractive.on \complete, ->
     i = 0

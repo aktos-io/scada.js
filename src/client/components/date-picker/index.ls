@@ -12,7 +12,7 @@ Ractive.components[component-name] = Ractive.extend do
         self = @
 
         @observe \value, (val) ->
-            console.log "val: ", val
+            #console.log "val: ", val
 
         if (@get \id) is \will-be-random
             @set \id random.generate 7
@@ -23,14 +23,19 @@ Ractive.components[component-name] = Ractive.extend do
         x = $ "\##{self.get 'id'}" .datetimepicker do
             daysOfWeekDisabled: [6, 7]
             format: 'DD/MM/YYYY hh:mm'
+            # format: 'X' // for unixtime stamp
             locale: 'tr'
 
         #console.log "x: " , x
+
         i = 0
         change-date = ->
             date-data = x.data!
-            #console.log "date is changed: ", date-data.date
-            self.set \value, date-data.date
+            test = date-data.date.toISOSring
+            testing = moment(test).format('X')
+            console.log "time1245: ", testing
+            console.log "date is changed: ", date-data.date
+            self.set \value, testing
 
         x.on "dp.change" , ->
             change-date!
