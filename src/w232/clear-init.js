@@ -30,7 +30,9 @@ function LongPolling(settings){
   };
   this.connected = false;
   this.connecting = false;
-  this.reconnectInterval = 1000;
+  this.retryCount = 0;
+  this.retryInterval = 500;
+  this.maxInterval = 5000;
 }
 LongPolling.prototype.on = function(event, callback){
   var ref$;
@@ -54,26 +56,23 @@ LongPolling.prototype.send = function(msg, callback){
     if (!this.connected) {
       throw 'you MUST connect first!';
     }
-    this.postRaw({
+    return this.postRaw({
       data: msg
     }, callback);
-    return log("WARNING: not calling callback!");
   } catch (e$) {
     e = e$;
     log("error: ", e);
-    return callback(e, null);
+    return this.commErr(e, callback);
   }
 };
 LongPolling.prototype.getRaw = function(){
-  var i$, query, callback, __, log, queryStr, key, value, e;
-  query = 0 < (i$ = arguments.length - 1) ? slice$.call(arguments, 0, i$) : (i$ = 0, []), callback = arguments[i$];
-  query = query[0];
+  var i$, params, callback, query, path, __, log, queryStr, key, value, err;
+  params = 0 < (i$ = arguments.length - 1) ? slice$.call(arguments, 0, i$) : (i$ = 0, []), callback = arguments[i$];
+  query = params[0];
+  path = params[1] || this.settings.sociPath;
   __ = this;
   log = getLogger('GET_RAW');
   try {
-    if (!this.connected) {
-      throw 'not connected';
-    }
     queryStr = "?" + (function(){
       var ref$, results$ = [];
       for (key in ref$ = query) {
@@ -82,121 +81,159 @@ LongPolling.prototype.getRaw = function(){
       }
       return results$;
     }()).join("&");
-    log(queryStr);
+    if (query != null) {
+      log("query string: ", queryStr);
+    }
     return sleep(0, function(){
       var options, requestId, req;
       options = {
         host: __.settings.host,
         port: __.settings.port,
         method: 'GET',
-        path: __.settings.sociPath + queryStr
+        path: path + queryStr
       };
       requestId = genReqId(3);
-      log("new request: ", requestId);
       req = http.get(options, function(res){
         res.on('data', function(data){
-          log("got data: ", data);
-          return callback(null, data);
+          var e;
+          log("got raw data: ", data);
+          try {
+            return callback(null, unpack(data));
+          } catch (e$) {
+            e = e$;
+            return callback({
+              exception: e,
+              message: data
+            }, null);
+          }
         });
         res.on('error', function(){
-          return log(requestId + " Response Error: ", err);
+          log("res error: ", err);
+          throw null;
         });
         return res.on('close', function(){
-          return log(requestId + " request is closed by server... ");
+          log(requestId + " request is closed by server... ");
+          throw null;
         });
       });
       return req.on('error', function(err){
-        log("req #" + requestId + " has error: ", err);
-        __.connect();
-        return __.trigger('error', err);
+        log("req error: ", err);
+        return __.commErr(err, callback);
       });
     });
   } catch (e$) {
-    e = e$;
-    log("get-raw returned with error: ", e);
-    callback(e, null);
-    __.connect();
-    return __.trigger('error', e);
+    err = e$;
+    log("get-raw returned with error: ", err);
+    return __.commErr(err, callback);
+  }
+};
+LongPolling.prototype.commErr = function(reason, callback){
+  var log;
+  log = getLogger('COMM_ERR');
+  log("comm error happened: ", reason);
+  log("connected: ", this.connected);
+  log("connecting: ", this.connecting);
+  callback(reason, null);
+  if (this.connected) {
+    this.trigger('error', reason);
+    this.trigger('disconnect');
+    this.connected = false;
+  }
+  if (this.connecting) {
+    return log("Already trying to reconnect!...");
+  } else {
+    log("Triggering connect!");
+    return this.connect();
   }
 };
 LongPolling.prototype.postRaw = function(msg, callback){
   var __, log, err, content, contentStr, options, requestId, req;
   __ = this;
   log = getLogger("POST_RAW");
-  err = false;
-  content = merge(this.content, msg);
-  contentStr = pack(content);
-  options = {
-    host: this.settings.host,
-    port: this.settings.port,
-    method: 'POST',
-    path: this.settings.sicoPath,
-    headers: {
-      "Content-Type": "application/json",
-      "Content-Length": contentStr.length
+  try {
+    if (!this.connected) {
+      throw 'not connected';
     }
-  };
-  requestId = genReqId(3);
-  log("initiating new request: ", requestId);
-  req = http.request(options, function(res){
-    res.on('data', function(data){
-      var e;
-      log(requestId + " got data: ", data);
-      try {
-        return callback(null, unpack(data));
-      } catch (e$) {
-        e = e$;
-        log("CAN NOT UNPACK DATA: ", data);
-        log("err: ", e);
-        return callback(e, null);
+    err = false;
+    content = merge(this.content, msg);
+    contentStr = pack(content);
+    options = {
+      host: this.settings.host,
+      port: this.settings.port,
+      method: 'POST',
+      path: this.settings.sicoPath,
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": contentStr.length
       }
+    };
+    requestId = genReqId(3);
+    log("initiating new request: ", requestId);
+    req = http.request(options, function(res){
+      res.on('data', function(data){
+        var e;
+        log("got data: ", data);
+        try {
+          return callback(null, unpack(data));
+        } catch (e$) {
+          e = e$;
+          log("CAN NOT UNPACK DATA: ", data);
+          log("err: ", e);
+          return callback(e, null);
+        }
+      });
+      res.on('error', function(){
+        log(requestId + " Response Error: ", err);
+        throw "RES.ON ERROR???";
+      });
+      return res.on('close', function(){
+        log(requestId + " request is closed by server... ");
+        throw "RES.ON CLOSE???";
+      });
     });
-    res.on('error', function(){
-      log(requestId + " Response Error: ", err);
-      throw "RES.ON ERROR???";
+    req.on('error', function(err){
+      log(requestId + " Request Error: ", err);
+      return __.commErr(err, callback);
     });
-    return res.on('close', function(){
-      log(requestId + " request is closed by server... ");
-      throw "RES.ON CLOSE???";
-    });
-  });
-  req.on('error', function(err){
-    log(requestId + " Request Error: ", err);
-    __.connected = false;
-    __.trigger('error', err);
-    callback(err, null);
-    log("trying to reconnect in " + __.reconnectInterval + "ms...");
-    return sleep(__.reconnectInterval, function(){
-      return __.connect();
-    });
-  });
-  req.write(contentStr);
-  return req.end();
+    req.write(contentStr);
+    return req.end();
+  } catch (e$) {
+    err = e$;
+    log("raw-get has exception: ", err);
+    return __.commErr(err, callback);
+  }
 };
 LongPolling.prototype.connect = function(nextStep){
-  var __, log;
+  var __, log, interval;
   __ = this;
   log = getLogger('CONNECT');
-  if (this.connecting) {
-    log("Already started...");
-    return;
-  }
   this.connecting = true;
-  this.connected = false;
-  __.trigger('disconnect');
-  log("Trying to connect to server...");
-  return __.postRaw({
-    ack: "200"
-  }, function(err, data){
-    var e;
-    if (!err) {
+  interval = this.retryCount * this.retryInterval;
+  if (interval > this.maxInterval) {
+    interval = this.maxInterval;
+  }
+  this.retryCount++;
+  if (interval > 0) {
+    log("retrying in " + interval + "ms...");
+  }
+  return sleep(interval, function(){
+    log("Trying to connect to server...");
+    return __.getRaw({
+      protocol: "aea-longpolling-01"
+    }, '/_info', function(err, data){
+      var e;
       try {
+        if (err) {
+          throw "connection error";
+        }
         if (data.ack !== 'OK') {
           throw "not my server!";
         }
         log("Connection seems ok, starting all tasks...");
-        sleep(0, function(){
+        return sleep(0, function(){
+          __.retryCount = 0;
           __.connected = true;
+          __.connecting = false;
           __.receiveLoop();
           __.trigger('connect', data);
           if (typeof nextStep === 'function') {
@@ -206,13 +243,12 @@ LongPolling.prototype.connect = function(nextStep){
       } catch (e$) {
         e = e$;
         log("Error: ", e);
-        log("Retrying in " + __.reconnectInterval + "ms...");
-        sleep(__.reconnectInterval, function(){
+        return sleep(10, function(){
+          __.connecting = false;
           return __.connect();
         });
       }
-    }
-    return __.connecting = false;
+    });
   });
 };
 LongPolling.prototype.receiveLoop = function(){
@@ -225,12 +261,10 @@ LongPolling.prototype.receiveLoop = function(){
     receiverId = genReqId(3);
     return __.getRaw(function(err, res){
       if (err) {
-        log(receiverId + " has Error: ", err);
-        __.trigger('error', err);
-        log("Breaking receive loop...");
+        log("stopping receive loop: ", err);
         return op();
       } else {
-        log(receiverId + " got data...", res);
+        log("got data: ", pack(res));
         __.trigger('data', res);
         return lo(op);
       }
@@ -252,39 +286,33 @@ function init(){
     return log("COMM-ERR:: ", err);
   });
   x$.on('connect', function(info){
-    return log("Connected to server. Server info: ", info);
+    return log("Connected to server. Server info: ", pack(info));
   });
   x$.on('disconnect', function(){
     return log("Disconnected from server!!!");
   });
   x$.on('data', function(data){
-    return log("Received DATA: ", data);
+    return log("Received DATA: ", pack(data));
   });
-  return comm.getRaw({
-    hello: 'world'
-  }, function(err, res){
-    log("get raw returned with err, res: ", err, res);
-    return comm.send({
-      mydata: 'hello'
-    }, function(err){
-      log("send hello: ", err);
-      return comm.connect(function(){
-        log("it seems connection is ok, continuing...");
+  return comm.send({
+    mydata: 'hello'
+  }, function(err){
+    log("send hello: ", err);
+    return comm.connect(function(){
+      log("it seems connection is ok, continuing...");
+      return function lo(op){
         return;
-        return function lo(op){
-          return;
-          return comm.send({
-            temperature: Math.random()
-          }, function(err){
-            if (err) {
-              log("We couldn't send to data because: ", err);
-            }
-            return timeoutWaitFor(10000, 'temperature-measured', function(){
-              return lo(op);
-            });
+        return comm.send({
+          temperature: Math.random()
+        }, function(err){
+          if (err) {
+            log("We couldn't send to data because: ", err);
+          }
+          return timeoutWaitFor(10000, 'temperature-measured', function(){
+            return lo(op);
           });
-        }(function(){});
-      });
+        });
+      }(function(){});
     });
   });
 } init();

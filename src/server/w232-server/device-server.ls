@@ -26,6 +26,11 @@ app.get '/receive' (req, res) ->
     <- sleep 5000ms
     res.send {ack: "simulating slow response..."}
 
+
+app.get '/_info' (req, res) ->
+    console.log "info got client request query: ", req.query
+    res.send {ack: \OK, info: "aea device server"}
+
 app.post '/send' (req, res) ->
     payload = req.body
     node = payload.node
