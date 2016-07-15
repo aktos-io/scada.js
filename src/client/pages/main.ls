@@ -19,11 +19,12 @@ ractive.on \complete, ->
         \error
         \okey
 
-    unixs = [1454277600000,1454276600000,1454257600000,1454247600000]
+    unixs = [1554277600000,1354276600000,1254257600000,1054247600000]
 
     <- :lo(op) ->
-        new-state = states[i++]
-        new-unix = unixs[i++]
+        a = i++
+        new-state = states[a]
+        new-unix = unixs[a]
         #console.log "changing state: ", new-state
         ractive.set \buttonState, new-state
         ractive.set \myUnixTime, new-unix

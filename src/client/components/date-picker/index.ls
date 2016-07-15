@@ -31,8 +31,14 @@ Ractive.components[component-name] = Ractive.extend do
             # format: 'X' // for unixtime stamp
             locale: 'tr'
             useCurrent: false
-            #showTodayButton: true
+            showTodayButton: true
         #console.log "x: " , x
+
+        unix-to-date = ->
+            from-others-unix = self.get \unix
+            my-date = new Date( from-others-unix )
+            from-others = my-date.toLocaleString!
+            console.log "unix date converted: ", from-others
 
         change-date = ->
             disp = x.data!.date
@@ -49,13 +55,7 @@ Ractive.components[component-name] = Ractive.extend do
 
         self.observe \unix, (val) ->
             console.log "unix val: ", val
-
-
-        /*
-        TODO:
-            1- datetimepicker'ın girildiği date-data formatını UTC formatına çeviren fonksiyon yazılacak.
-            2- UTC formatını datetimepicker'ın kabul ettiği formata çeviren fonksiyon yazılacak.
-        */
+            unix-to-date!
 
     data: ->
         id: \will-be-random
