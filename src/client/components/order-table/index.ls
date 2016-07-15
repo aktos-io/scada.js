@@ -37,7 +37,7 @@ Ractive.components[component-name] = Ractive.extend do
                 console.log "ERROR: order table: ", err
             else
                 docs = [..doc for res.rows]
-                console.log "Updating table: ", docs
+                #console.log "Updating table: ", docs
                 __.set \tabledata, docs
 
         db.changes {since: 'now', +live, +include_docs}
@@ -159,6 +159,10 @@ Ractive.components[component-name] = Ractive.extend do
                 editing-doc[key].splice index, 1
                 console.log "editing doc: (deleted: )", editing-doc.entries
                 @set \curr, editing-doc
+
+            setfilter: (filter-name) ->
+                console.log "ORDER_TABLE: filter is set to #{filter-name}"
+                @set \filterOpts.selected, filter-name
 
 
     data: ->

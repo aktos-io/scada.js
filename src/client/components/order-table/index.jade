@@ -14,14 +14,18 @@
         tbody
             tr
                 td(colspan="{{ columnList.length + 1 }}")
-                    +unless('addingNew')
-                        btn(on-buttonclick="addNewOrder")
-                            icon-plus
-                            span {{yield addnewTitle}}
-                    +if('addingNew') 
-                        | {{>editForm}}
-                    
-                    | {{>header}}
+                    row 
+                        | {{#if addingNew}}
+                        |   {{>editForm}}
+                        | {{else}}
+                        .col-md-3.col-sm-3
+                            +unless('addingNew')
+                                btn(on-buttonclick="addNewOrder")
+                                    icon-plus
+                                    span {{yield addnewTitle}}
+                        .col-md-9.col-sm-9
+                            | {{>header}}
+                        | {{/if}}
             +each('dataFilters[filterOpts.selected](tabledata, filterOpts.params):i')
                 +if('true').
                     <tr class="input-line {{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}}" on-doubleclick="activated">
