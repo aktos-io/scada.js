@@ -5,6 +5,7 @@ random = require \randomstring
 component-name = "order-table"
 Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
+    isolated: yes
     oninit: ->
         __ = @
         if (@get \id) is \will-be-random
@@ -21,16 +22,23 @@ Ractive.components[component-name] = Ractive.extend do
         db = @get \db
         gen-entry-id = @get \gen-entry-id
 
-        view-func = @get \view-func
-        #console.log "ORDER_TABLE: view-func: ", view-func
+
+
+        filters = @get \filters
+        console.log "ORDER_TABLE: DEBUG: got filters: ", filters
+        if filters
+            console.log "Setting data filters..."
+            @set \dataFilters, filters
+
+
         do function update-table
             err, res <- db.query (__.get \view), {+include_docs}
             if err
                 console.log "ERROR: order table: ", err
             else
-                console.log "Updating table: ", res
-                __.set \tabledata, res
-                __.set \showData, (view-func res)
+                docs = [..doc for res.rows]
+                console.log "Updating table: ", docs
+                __.set \tabledata, docs
 
         db.changes {since: 'now', +live, +include_docs}
             .on \change, (change) ->
@@ -41,12 +49,14 @@ Ractive.components[component-name] = Ractive.extend do
                 index = (args.0.keypath |> split '.').1 |> parse-int
                 console.log "activated!!!", args, index
                 curr-index = @get \clickedIndex
+                /*
                 if index is curr-index
-                    console.log "Give tooltip!"
-                    @fire \showModal
+                    #console.log "Give tooltip!"
+                    #@fire \showModal
+                */
                 @set \clickedIndex, index
                 tabledata = @get \tabledata
-                @set \curr, tabledata.rows[index].doc
+                @set \curr, tabledata[index]
                 console.log "Started editing an order: ", (@get \curr)
 
             close-modal: ->
@@ -86,9 +96,6 @@ Ractive.components[component-name] = Ractive.extend do
                 editable = @get \editable
                 @set \editable, not editable
 
-            revert: ->
-                alert "Changes Reverted!"
-
             show-modal: ->
                 id = @get \id
                 console.log "My id: ", id
@@ -100,6 +107,7 @@ Ractive.components[component-name] = Ractive.extend do
                 console.log "adding brand-new order!", (@get \curr)
 
             add-new-order-close: ->
+                console.log "ORDER_TABLE: Closing edit form..."
                 @set \addingNew, false
                 @fire \endEditing
 
@@ -164,10 +172,6 @@ Ractive.components[component-name] = Ractive.extend do
         gen-entry-id: null
         db: null
         tabledata: null
-        show-data:
-            <[ default1 default2 default3 ]>
-            <[ default11 default22 default33 ]>
-            <[ default111 default222 default333 ]>
         editable: false
         clicked-index: null
         cols: null
@@ -175,7 +179,20 @@ Ractive.components[component-name] = Ractive.extend do
         editTooltip: no
         addingNew: no
         view-func: null
+        data-filters:
+            all: (docs, param) ->
+                console.log "ORDER_TABLE: using default filter!",param, docs
+                [[..id, ..key, ..value] for docs]
+
+        filter-opts:
+            params: \mahmut
+            selected: \all
+
         is-editing-line: (index) ->
             editable = @get \editable
             clicked-index = @get \clickedIndex
             editable and (index is clicked-index)
+
+        is-clicked: (index) ->
+            clicked-index = @get \clickedIndex
+            index is clicked-index

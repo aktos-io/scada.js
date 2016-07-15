@@ -32,8 +32,19 @@ ractive = new Ractive do
                   amount: "2kg"
                 ...
         orders-col-names: "Müşteri Adı, Teslim Tarihi, Toplam (kg)"
-        orders-view-generator: (res) ->
-            [[i.doc.client, i.doc.due-date, sum [(split ' ', ..amount .0 |> parse-int) for i.doc.entries]] for i in res.rows]
+        orders-filters:
+            all: (docs, param) ->
+                console.log "orders My custom all filter data: ", docs
+                [[..client, ..due-date] for docs]
+                #[[i.doc.client, i.doc.due-date, sum [(split ' ', ..amount .0 |> parse-int) for i.doc.entries]] for i in docs]
+            cheese: (docs, param) ->
+                console.log "Cheesecake filter running...", docs
+                [[..client, ..due-date] for docs when \Cheesecake in [i.product for i in ..entries]]
+                #[.. for docs when 'Cheesecake' in [i.product-name for i ..doc.entries]]
+            who: (docs, param) ->
+                x = [[..client, .._id, 1] for docs]
+                console.log "who filter: ", x
+                x
 
         # RECEIPTS
         receipts-default:
@@ -44,16 +55,19 @@ ractive = new Ractive do
                   amount: "x kg"
                 ...
         receipts-col-names: "Ürün adı"
-        receipts-view-generator: (res) ->
-            [[i.doc.product-name] for i in res.rows]
+        receipts-filters:
+            all: (docs, param) ->
+                console.log "Running custom filter (receipts)", docs
+                [[..product-name] for docs]
 
         # CUSTOMERS
         customers-default:
             type: \customer
         customers-col-names: "Müşteri adı"
-        customers-view-generator: (res) ->
-            [[i.doc.name] for i in res.rows]
-
+        customers-filters:
+            all: (docs, param) ->
+                console.log "Running custom filter (customers)", docs
+                [[..name] for docs]
 
 feed = null
 ractive.on do
