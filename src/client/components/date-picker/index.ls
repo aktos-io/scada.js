@@ -21,7 +21,7 @@ Ractive.components[component-name] = Ractive.extend do
         #console.log "date-time-picker starting..."
         <- sleep 0ms
         x = $ "\##{self.get 'id'}" .datetimepicker do
-            daysOfWeekDisabled: [6, 7]
+            # daysOfWeekDisabled: [6, 7]
             format: 'DD/MM/YYYY hh:mm'
             # format: 'X' // for unixtime stamp
             locale: 'tr'
@@ -31,9 +31,10 @@ Ractive.components[component-name] = Ractive.extend do
         i = 0
         change-date = ->
             date-data = x.data!
-            test = date-data.date.toISOSring
+            test = date-data.date
+            console.log "test01: ", test
             testing = moment(test).format('X')
-            console.log "time1245: ", testing
+            console.log "testing: ", testing
             console.log "date is changed: ", date-data.date
             self.set \value, testing
 
