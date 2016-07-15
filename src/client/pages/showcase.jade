@@ -14,16 +14,7 @@ block ractive
                 span
                     | AKTOS.io
             inspina-content
-<<<<<<< HEAD
-                p mahmutcan
-                row
-                    date-picker
-                    date-picker
-                    date-picker
-
-
-=======
-                
+    
                 row 
                     //- Example component usage example
                     col-md-2
@@ -54,14 +45,21 @@ block ractive
                         p age2: {{ exampleComponent.age2 }}
                 
                 row
+                    p Show/hide datepicker
+                    input(type="checkbox" checked="{{ datepicker.show }}")
+                    +if('datepicker.show')
+                        h3 Tied component 
+                        date-picker(value="{{ test.date }}")
+                        p {{ test.date }}
+                        
+                    h3 Tied component     
                     date-picker(value="{{ test.date }}")
                     p {{ test.date }}
-                    date-picker(value="{{ test.date }}")
-
+                    
+                    h3 Next free instance
                     date-picker(value="{{ test.date2 }}")
                     p {{ test.date2 }}
-                    
->>>>>>> e2294962e84b99d5ba00ec7f363388fb29d8cea7
+                        
                 row
                     ack-button(state="{{ buttonState }}") MY BUTTON
                     ack-button(state="{{ buttonState }}") MY BUTTON2

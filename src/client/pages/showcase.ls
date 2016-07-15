@@ -55,12 +55,18 @@ ractive = new Ractive do
         db: db
         data1:data1
         data2:data2
+        date:new Date!
+        test:
+            date:new Date!
+            date2:new Date!
         simulate-data:simulate-data
         x: 5
         product-list: product-data1
         y: 1
         example-component:
-            show: yes 
+            show: yes
+        datepicker:
+            show: yes
 
 ractive.on \complete, ->
     i = 0
