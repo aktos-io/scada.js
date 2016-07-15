@@ -59,6 +59,8 @@ ractive = new Ractive do
         x: 5
         product-list: product-data1
         y: 1
+        example-component:
+            show: yes 
 
 ractive.on \complete, ->
     i = 0
