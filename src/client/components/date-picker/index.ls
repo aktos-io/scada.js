@@ -12,7 +12,7 @@ Ractive.components[component-name] = Ractive.extend do
         self = @
 
         @observe \value, (val) ->
-            #console.log "val: ", val
+            console.log "val: ", val
 
         if (@get \id) is \will-be-random
             @set \id random.generate 7
@@ -34,6 +34,12 @@ Ractive.components[component-name] = Ractive.extend do
 
         x.on "dp.change" , ->
             change-date!
+
+        /*
+        TODO:
+            1- datetimepicker'ın girildiği date-data formatını UTC formatına çeviren fonksiyon yazılacak.
+            2- UTC formatını datetimepicker'ın kabul ettiği formata çeviren fonksiyon yazılacak.
+        */
 
     data: ->
         id: \will-be-random
