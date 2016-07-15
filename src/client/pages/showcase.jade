@@ -18,6 +18,7 @@ block ractive
                 //- example-component usage ||meets 1||
                 //- Meets requirements: 1, 2, 3, 4, 5, 6
                 //- Untested: 7, 8
+
                 row 
                     col-md-2
                         // a checkbox to toggle one component instance ||meets 5||
@@ -47,18 +48,27 @@ block ractive
                         p age2: {{ exampleComponent.age2 }}
                 
                 row
-                    date-picker(value="{{ test.date }}")
-                    p {{ test.date }}
-                    date-picker(value="{{ test.date }}")
-
-                    date-picker(value="{{ test.date2 }}")
-                    p {{ test.date2 }}
-                    
+                    col-md-2.col-xs-2   
+                        p Show/hide datepicker Tied component1
+                        input(type="checkbox" checked="{{ datepicker.show }}")
+                    col-md-3.col-xs-2
+                        +if('datepicker.show')
+                            h3 Tied component1 
+                            date-picker(value="{{ test.date }}")
+                            p {{ test.date }}
+                    col-md-6.col-xs-2
+                        h3 Tied component2     
+                        date-picker(value="{{ test.date }}")
+                        p {{ test.date }}
+                
+                h3 Next free instance
+                date-picker(value="{{ test.date2 }}")
+                p {{ test.date2 }}
+                
                 row
                     ack-button(state="{{ buttonState }}") MY BUTTON
                     ack-button(state="{{ buttonState }}") MY BUTTON2
                     ack-button(state="{{ buttonState }}") MY BUTTON3
-
                 row
                     search-combobox(data="{{productList}}" selected="{{x}}")
                     p selected: {{x}}
@@ -75,7 +85,8 @@ block ractive
                     div.box
                         pie-chart(names="Kekik,Peynir,Zeytin,Mahmut" values="{{simulateData(i)}}")
                     | {{/each}}
-                
+                row
+                    flot-chart(data1="{{data1}}" data2 ="{{data2}}")
 
             inspina-footer
                 +partial('right')
