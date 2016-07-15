@@ -107,16 +107,16 @@ LongPolling.prototype.getRaw = function(){
       });
       return req.on('error', function(err){
         log("req #" + requestId + " has error: ", err);
-        return sleep(1000, function(){
-          return __.connect();
-        });
+        __.connect();
+        return __.trigger('error', err);
       });
     });
   } catch (e$) {
     e = e$;
     log("get-raw returned with error: ", e);
     callback(e, null);
-    return __.connect();
+    __.connect();
+    return __.trigger('error', e);
   }
 };
 LongPolling.prototype.postRaw = function(msg, callback){
@@ -137,7 +137,7 @@ LongPolling.prototype.postRaw = function(msg, callback){
     }
   };
   requestId = genReqId(3);
-  log("New POST request: ", requestId);
+  log("initiating new request: ", requestId);
   req = http.request(options, function(res){
     res.on('data', function(data){
       var e;
@@ -147,14 +147,17 @@ LongPolling.prototype.postRaw = function(msg, callback){
       } catch (e$) {
         e = e$;
         log("CAN NOT UNPACK DATA: ", data);
-        return log("err: ", e);
+        log("err: ", e);
+        return callback(e, null);
       }
     });
     res.on('error', function(){
-      return log(requestId + " Response Error: ", err);
+      log(requestId + " Response Error: ", err);
+      throw "RES.ON ERROR???";
     });
     return res.on('close', function(){
-      return log(requestId + " request is closed by server... ");
+      log(requestId + " request is closed by server... ");
+      throw "RES.ON CLOSE???";
     });
   });
   req.on('error', function(err){
@@ -180,6 +183,7 @@ LongPolling.prototype.connect = function(nextStep){
   }
   this.connecting = true;
   this.connected = false;
+  __.trigger('disconnect');
   log("Trying to connect to server...");
   return __.postRaw({
     ack: "200"
@@ -194,6 +198,7 @@ LongPolling.prototype.connect = function(nextStep){
         sleep(0, function(){
           __.connected = true;
           __.receiveLoop();
+          __.trigger('connect', data);
           if (typeof nextStep === 'function') {
             return nextStep();
           }
@@ -214,7 +219,7 @@ LongPolling.prototype.receiveLoop = function(){
   var __, log;
   __ = this;
   log = getLogger('RECEIVE_LOOP');
-  log("starting...");
+  log("started...");
   return function lo(op){
     var receiverId;
     receiverId = genReqId(3);

@@ -84,13 +84,14 @@ LongPolling::get-raw = (...query, callback) ->
 
         req.on \error, (err) ->
             log "req \##{request-id} has error: ", err
-            <- sleep 1000ms # REMOVE THIS
             __.connect!
+            __.trigger \error, err
 
     catch
         log "get-raw returned with error: ", e
         callback e, null
         __.connect!
+        __.trigger \error, e
 
 
 
@@ -113,7 +114,7 @@ LongPolling::post-raw = (msg, callback) ->
             "Content-Length": content-str.length
 
     request-id = gen-req-id 3
-    log "New POST request: ", request-id
+    log "initiating new request: ", request-id
 
     req = http.request options, (res) ->
         res.on \data, (data) ->
@@ -123,17 +124,23 @@ LongPolling::post-raw = (msg, callback) ->
             catch
                 log "CAN NOT UNPACK DATA: ", data
                 log "err: ", e
+                callback e, null
 
         res.on \error, ->
             log "#{request-id} Response Error: ", err
+            throw "RES.ON ERROR???"
 
         res.on \close, ->
             log "#{request-id} request is closed by server... "
+            throw "RES.ON CLOSE???"
 
     req.on \error, (err) ->
         # called when we closed server with Ctrl+C
         log "#{request-id} Request Error: ", err
+        # # IMPORTANT
+        # must be before any sleep before __.connect!
         __.connected = no
+        # / IMPORTANT
         __.trigger \error, err
         # call the callback with error
         callback err, null
@@ -155,6 +162,7 @@ LongPolling::connect = (next-step) ->
         return
     @connecting = yes
     @connected = no
+    __.trigger \disconnect
 
     log "Trying to connect to server..."
     err, data <- __.post-raw {ack: "200"}
@@ -165,6 +173,7 @@ LongPolling::connect = (next-step) ->
             <- sleep 0
             __.connected = yes
             __.receive-loop!
+            __.trigger \connect, data
             next-step! if typeof next-step is \function
         catch
             log "Error: ", e
@@ -179,7 +188,7 @@ LongPolling::receive-loop = ->
     __ = @
     log = get-logger \RECEIVE_LOOP
 
-    log "starting..."
+    log "started..."
     <- :lo(op) ->
         receiver-id = gen-req-id 3
         err, res <- __.get-raw
