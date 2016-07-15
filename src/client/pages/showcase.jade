@@ -128,17 +128,17 @@ block ractive
                     col-md-3.col-xs-2
                         +if('pie.show')
                             h3 Tied component1
-                            div.box
+                            .box
                                 pie-chart(names="Kekik,Peynir,Zeytin,Mahmut" values="{{simulateData()}}")
                             p simulatedData: {{simulateData()}}
                     col-md-3.col-xs-2  
                         h3 Tied component2 
-                        div.box
+                        .box
                             pie-chart(names="Kekik,Peynir,Zeytin,Mahmut" values="{{simulateData()}}")
                         p simulatedData: {{simulateData()}}
                     col-md-3.col-xs-2 
                         h3 Untied (free) instance
-                        div.box
+                        .box
                             pie-chart(names="Kekik,Peynir,Zeytin,Mahmut" values="{{pieData}}")
                         p simulatedData: {{pieData}}
             inspina-footer
