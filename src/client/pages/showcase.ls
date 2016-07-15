@@ -68,6 +68,8 @@ ractive = new Ractive do
             show: yes
         datepicker:
             show: yes
+        combobox:
+            show: yes
 
 ractive.on \complete, ->
     i = 0
