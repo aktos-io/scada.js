@@ -8,11 +8,16 @@ Ractive.components[component-name] = Ractive.extend do
     isolated: yes
     template: "\##{component-name}"
 
+
+    /*
+        Example Usage:
+            date-picker(unix="{{ myUnixTime }}" display="{{ myDisplayTime }}" mode="{{ timePickerMode }}")
+            unix -> eg: "1468575910000" for "Fri, 15 Jul 2016 09:45:10 GMT"
+            display -> eg: "27.10.2016 13:15 (Istanbul)"
+    */
+
     oninit: ->
         self = @
-
-        @observe \value, (val) ->
-            #console.log "val: ", val
 
         if (@get \id) is \will-be-random
             @set \id random.generate 7
@@ -25,18 +30,26 @@ Ractive.components[component-name] = Ractive.extend do
             format: 'DD/MM/YYYY HH:mm'
             # format: 'X' // for unixtime stamp
             locale: 'tr'
-
+            useCurrent: false
+            #showTodayButton: true
         #console.log "x: " , x
 
-        i = 0
         change-date = ->
             disp = x.data!.date
             unix = moment(disp, 'DD/MM/YYYY HH:mm').unix! * 1000ms
-            console.log "unix time: ", unix
+            #console.log "unix time: ", unix
             self.set \value, unix
+            self.set \unix, unix
 
         x.on "dp.change" , ->
             change-date!
+
+        self.observe \value, (val) ->
+            #console.log "val: ", val
+
+        self.observe \unix, (val) ->
+            console.log "unix val: ", val
+
 
         /*
         TODO:

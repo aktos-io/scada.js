@@ -40,9 +40,9 @@ product-data1 =
 
 simulate-data = ->
     reasons =
-        "Son kullanma tarihi geÃ§miÅ"
-        "MÃ¼Återi Ä°ade"
-        "HatalÄ± SipariÅ"
+        "Son kullanma tarihi geçmiş"
+        "Müşteri İade"
+        "Hatalı Sipariş"
         "Hayat zor"
 
     random = -> parse-int (Math.random! * 100)
