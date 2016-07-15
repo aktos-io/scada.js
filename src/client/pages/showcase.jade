@@ -48,7 +48,8 @@ block ractive
                         p age2: {{ exampleComponent.age2 }}
                 
                 row
-                    col-md-2.col-xs-2  //- col-xs can be used for mobile  
+                    col-md-2.col-xs-2   
+
                         p Show/hide datepicker Tied component1
                         input(type="checkbox" checked="{{ datepicker.show }}")
                     col-md-3.col-xs-2
@@ -64,6 +65,7 @@ block ractive
                 h3 Untied (free) instance
                 date-picker(value="{{ test.date2 }}")
                 p unix: {{ test.date2 }}
+
                 
                 row
                     ack-button(state="{{ buttonState }}") MY BUTTON

@@ -21,19 +21,28 @@ Ractive.components[component-name] = Ractive.extend do
         #console.log "date-time-picker starting..."
         <- sleep 0ms
         x = $ "\##{self.get 'id'}" .datetimepicker do
-            daysOfWeekDisabled: [6, 7]
-            format: 'DD/MM/YYYY hh:mm'
+            # daysOfWeekDisabled: [6, 7]
+            format: 'DD/MM/YYYY HH:mm'
+            # format: 'X' // for unixtime stamp
             locale: 'tr'
 
         #console.log "x: " , x
+
         i = 0
         change-date = ->
-            date-data = x.data!
-            #console.log "date is changed: ", date-data.date
-            self.set \value, date-data.date
+            disp = x.data!.date
+            unix = moment(disp, 'DD/MM/YYYY HH:mm').unix! * 1000ms
+            console.log "unix time: ", unix
+            self.set \value, unix
 
         x.on "dp.change" , ->
             change-date!
+
+        /*
+        TODO:
+            1- datetimepicker'ın girildiği date-data formatını UTC formatına çeviren fonksiyon yazılacak.
+            2- UTC formatını datetimepicker'ın kabul ettiği formata çeviren fonksiyon yazılacak.
+        */
 
     data: ->
         id: \will-be-random

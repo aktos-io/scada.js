@@ -40,9 +40,9 @@ product-data1 =
 
 simulate-data = ->
     reasons =
-        "Son kullanma tarihi geçmiş"
-        "Müşteri İade"
-        "Hatalı Sipariş"
+        "Son kullanma tarihi geÃ§miÅ"
+        "MÃ¼Återi Ä°ade"
+        "HatalÄ± SipariÅ"
         "Hayat zor"
 
     random = -> parse-int (Math.random! * 100)
@@ -70,6 +70,7 @@ ractive = new Ractive do
             show: yes
         combobox:
             show: yes
+
 
 ractive.on \complete, ->
     i = 0
