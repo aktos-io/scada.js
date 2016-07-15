@@ -11,29 +11,61 @@
 
 ## Testing
 
-1. Use your component in `../pages/showcase.jade`
-2. Place a simple ractive variable by your component so we can observe variables.
-3. Place 2 instances of your component.
+If not matches with **MOST IMPORTANT**: Your component is alpha, not ready to go.
+If not matches with **IMPORTANT**: Your component is beta, ready to go with parallel development effort
+If not matches with **MEDIUM**: Your component is ready to go, but buggy.
+If not matches with **LOW**: Your component is ready to go, another developer might finalize it.
 
-   Reason:
-       Prove that your component does not interfere with new instances.
+If matches all: Congratulations! Your component is rock solid!
 
-   Debug:
+1. **MOST IMPORTANT** Use your component in `../pages/showcase.jade`
+2. **IMPORTANT** Place a simple ractive variable by your component,
+    SEE THAT: we can observe variables.
+
+3. **IMPORTANT** Place 2 untied instances of your component.
+
+   SEE THAT:
+       Your component does not interfere with new instances.
+
+   TIP:
        1. Does your component uses any elements which have static `id` field? BUG!
 
-4. Place a checkbox that will toggle an `{{#if}} <my-component /> {{/if}}` block.
+4. **MOST IMPORTANT** Place one or more of:
+    * a pair of tied instances
+    * `<input .../>` field
+    * streaming live feed
 
-   Reason:
-        Prove that `oninit()` and `onrender()` functions work correctly in your
+    that will change component's variable.
+
+   SEE THAT:
+        Component properly updates itself whenever main Ractive instance's variable is changed.
+
+5. **IMPORTANT** Place a checkbox that will toggle an `{{#if}} <my-component /> {{/if}}` block.
+
+   SEE THAT:
+        Your component appears and disappears correctly.
+
+   TIP:
+        Check that `oninit()` and `onrender()` functions work correctly in your
         component
 
-5. Set width and height to different sizes to prove that your component
-   does not include bad css code inside.
+6. **MEDIUM** Test your code in mobile.  
 
-6. Feed a live data to your component to prove that your component can handle
-   live feeds.
+    SEE THAT:
+        Your component is usable in mobile device.
 
-7. Test your code in mobile.  
+7. **MEDIUM** Set width and height to different sizes
+
+    SEE THAT:
+        Your component resizes correctly.
+
+8. **LOW** Your component must match with theme colors
+
+    SEE THAT:
+        It looks good.
+
+    TIP:
+        Ask a friend.
 
 ## Example component
 
