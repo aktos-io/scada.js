@@ -53,7 +53,10 @@ Ractive.components[component-name] = Ractive.extend do
         #console.log "COMBOBOX: first rendering!"
         $ __.find \* .selectpicker \render
         $ __.find \* .selectpicker \refresh
-        try __.set \selected, (__.get \data).0.id
+        try
+            throw if (__.get \selected) is null 
+        catch
+            try __.set \selected, (__.get \data).0.id
 
     data: ->
         selected: -1
