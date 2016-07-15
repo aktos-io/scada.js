@@ -47,7 +47,9 @@ simulate-data = ->
 
     random = -> parse-int (Math.random! * 100)
     x = [random! for reasons]
-
+utc-date = ->
+    date = new Date!
+    new Date date.getUTCFullYear!, date.getUTCMonth!, date.getUTCDate!, date.getUTCHours!, date.getUTCMinutes!, date.getUTCSeconds!
 ractive = new Ractive do
     el: '#main-output'
     template: '#main-template'
@@ -55,9 +57,8 @@ ractive = new Ractive do
         db: db
         data1:data1
         data2:data2
-        date:new Date!
         test:
-            date:new Date!
+            date: utc-date!
             date2:new Date!
         simulate-data:simulate-data
         x: 5
