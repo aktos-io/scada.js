@@ -22,7 +22,7 @@ Ractive.components[component-name] = Ractive.extend do
         <- sleep 0ms
         x = $ "\##{self.get 'id'}" .datetimepicker do
             # daysOfWeekDisabled: [6, 7]
-            format: 'DD/MM/YYYY hh:mm'
+            format: 'DD/MM/YYYY HH:mm'
             # format: 'X' // for unixtime stamp
             locale: 'tr'
 
@@ -30,11 +30,10 @@ Ractive.components[component-name] = Ractive.extend do
 
         i = 0
         change-date = ->
-            date-data = x.data!
-            unix-time-data = moment(date-data.date).format('x')
-            console.log "unix-time-data: ", unix-time-data
-            console.log "date is changed: ", date-data.date
-            self.set \value, unix-time-data
+            disp = x.data!.date
+            unix = moment(disp, 'DD/MM/YYYY HH:mm').unix! * 1000ms
+            console.log "unix time: ", unix
+            self.set \value, unix
 
         x.on "dp.change" , ->
             change-date!
