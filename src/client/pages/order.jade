@@ -109,11 +109,13 @@ block ractive
                             span Müşteri: 
                             search-combobox(data="{{ x }}" selected="{{ curr.client }}")
                         form-group
-                            span Sipariş Tarihi: 
-                            input(value="{{ curr.orderDate }}")
+                            row 
+                                col-md-4: span Sipariş Tarihi: 
+                                col-md-8: date-picker(value="{{ curr.orderDate }}")
                         form-group
-                            span Teslim Tarihi:
-                            date-picker(value="{{ curr.dueDate }}")
+                            row 
+                                col-md-4: span Teslim Tarihi:
+                                col-md-8: date-picker(value="{{ curr.dueDate }}")
                             //- input(value="{{ curr.dueDate }}")
                         +each('curr.entries:i')
                             form-group

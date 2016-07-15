@@ -45,6 +45,8 @@ ractive = new Ractive do
                 x = [[..client, .._id, 1] for docs]
                 console.log "who filter: ", x
                 x
+            today: (docs, param) ->
+                
 
         # RECEIPTS
         receipts-default:
