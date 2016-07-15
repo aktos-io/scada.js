@@ -15,10 +15,42 @@ block ractive
                     | AKTOS.io
             inspina-content
                 
+                row 
+                    //- Example component usage example
+                    col-md-2
+                        // a checkbox to toggle one component instance
+                        p Show/hide
+                        input(type="checkbox" checked="{{ exampleComponent.show }}")
+                    col-md-3
+                        // a component instance that is created on demand 
+                        +if('exampleComponent.show')
+                            h3 Tied component 
+                            example-component(age="{{ exampleComponent.age }}" birth="{{ exampleComponent.birth }}")
+                            // simple ractive variables to be able to observe values 
+                            p birth: {{ exampleComponent.birth }}
+                            p age: {{ exampleComponent.age }}
+                    col-md-3
+                        h3 Tied component 
+                        example-component(age="{{ exampleComponent.age }}" birth="{{ exampleComponent.birth }}")
+                        // simple ractive variables to be able to observe values 
+                        p birth: {{ exampleComponent.birth }}
+                        p age: {{ exampleComponent.age }}
+
+                    col-md-3
+                        h3 Next free instance
+                        // Third instance is to prove it doesn't interfere with other instances
+                        example-component(age="{{ exampleComponent.age2 }}" birth="{{ exampleComponent.birth2 }}")
+                        // simple ractive variables to be able to observe values 
+                        p birth2: {{ exampleComponent.birth2 }}
+                        p age2: {{ exampleComponent.age2 }}
+                
                 row
-                    date-picker
-                    date-picker
-                    date-picker
+                    date-picker(value="{{ test.date }}")
+                    p {{ test.date }}
+                    date-picker(value="{{ test.date }}")
+
+                    date-picker(value="{{ test.date2 }}")
+                    p {{ test.date2 }}
                     
                 row
                     ack-button(state="{{ buttonState }}") MY BUTTON
