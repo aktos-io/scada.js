@@ -14,31 +14,34 @@ block ractive
                 span
                     | AKTOS.io
             inspina-content
-    
+                
+                //- example-component usage ||meets 1||
+                //- Meets requirements: 1, 2, 3, 4, 5, 6
+                //- Untested: 7, 8
+
                 row 
-                    //- Example component usage example
                     col-md-2
-                        // a checkbox to toggle one component instance
-                        p Show/hide
+                        // a checkbox to toggle one component instance ||meets 5||
+                        p Show/hide Tied component 1
                         input(type="checkbox" checked="{{ exampleComponent.show }}")
                     col-md-3
                         // a component instance that is created on demand 
-                        +if('exampleComponent.show')
-                            h3 Tied component 
+                        +if('exampleComponent.show')  
+                            h3 Tied component 1
                             example-component(age="{{ exampleComponent.age }}" birth="{{ exampleComponent.birth }}")
-                            // simple ractive variables to be able to observe values 
+                            // simple ractive variables to be able to observe values ||meets 2||
                             p birth: {{ exampleComponent.birth }}
                             p age: {{ exampleComponent.age }}
                     col-md-3
-                        h3 Tied component 
+                        // 
+                        h3 Tied component 2
                         example-component(age="{{ exampleComponent.age }}" birth="{{ exampleComponent.birth }}")
-                        // simple ractive variables to be able to observe values 
                         p birth: {{ exampleComponent.birth }}
                         p age: {{ exampleComponent.age }}
 
                     col-md-3
-                        h3 Next free instance
-                        // Third instance is to prove it doesn't interfere with other instances
+                        // Third instance is to prove it doesn't interfere with other instances ||meets 3||
+                        h3 Untied (free) instance
                         example-component(age="{{ exampleComponent.age2 }}" birth="{{ exampleComponent.birth2 }}")
                         // simple ractive variables to be able to observe values 
                         p birth2: {{ exampleComponent.birth2 }}
