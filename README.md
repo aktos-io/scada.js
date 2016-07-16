@@ -45,7 +45,7 @@ To start WebUI development:
 ./tools/dev-ui
 ```
 
-Then visit http://localhost:4001
+Then visit [http://localhost:4001](http://localhost:4001)
 
 To start Embedded system development:
 
@@ -61,5 +61,7 @@ To start Embedded system development:
 
 -----
 Aktos Electronics, the Opensource Telemetry and Automation Company, Turkey.
+
 https://aktos.io
+
 info@aktos.io
