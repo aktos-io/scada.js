@@ -58,10 +58,3 @@ To start Embedded system development:
 * Open `git BASH`
 * `gulp`
 * `cd src/server; lsc server.ls`
-
------
-Aktos Electronics, the Opensource Telemetry and Automation Company, Turkey.
-
-https://aktos.io
-
-info@aktos.io
