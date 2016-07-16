@@ -9,20 +9,19 @@ AVAILABLE_WINDOW=0
 run-in-tmux() {
     list_of_commands=("$@")
     tmux new-window -t ${SESSION}:${AVAILABLE_WINDOW}
-    for i in "${list_of_commands[@]}"; do
+    for i in "${list_of_commands[@]}"; do 
         tmux send-keys -t ${SESSION}:${AVAILABLE_WINDOW} "$i" C-m
     done
     AVAILABLE_WINDOW=$((${AVAILABLE_WINDOW}+1))
 }
 
-SESSION="aktos-w232"
+SESSION=$(basename "$0")
+echo "Session name is: $SESSION"
 tmux start-server
 tmux new-session -d -s ${SESSION}
-run-in-tmux 'cd server/w232-server' 'lsc device-server.ls'
-run-in-tmux 'cd w232' './watch.sh'
-run-in-tmux 'xdg-open .' 'atom .'
-run-in-tmux 'cd w232' 'lsc clear-init.ls'
-
+run-in-tmux 'cd ..' 'gulp'
+run-in-tmux 'cd ../src/server' 'lsc server.ls'
+run-in-tmux 'cd ..' 'xdg-open .' 'atom .'
 
 if [[ "$1" != "background" ]]; then
     tmux attach -t $SESSION
