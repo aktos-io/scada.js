@@ -6,144 +6,140 @@ block title
     title Siparişler
     
 block ractive     
-    inspina-theme
-        inspina-menu
-        inspina-right
-            inspina-header      
-                login(on-login="afterLoggedIn" context="{{ login }}" db="{{ db }}")
-            inspina-content
+    panel 
+        login(on-login="afterLoggedIn" context="{{ login }}" db="{{ db }}")
+
+    +if('login.ok')
+        h2 Müşteriler:
+        order-table(
+            cols="{{ customersColNames }}"
+            default="{{ customersDefault }}"
+            filters="{{ customersFilters }}"
+            db="{{ db }}"
+            view="customers/getCustomers"
+            gen-entry-id="{{ genEntryId }}"
+            )
+            +partial('addnewTitle')
+                | Müşteri Ekle
+            +partial('header')
+            +partial('viewForm')
+                h3 Müşteri: {{ curr.name }}
                 
-                +if('login.ok')
-                    h2 Müşteriler:
-                    order-table(
-                        cols="{{ customersColNames }}"
-                        default="{{ customersDefault }}"
-                        filters="{{ customersFilters }}"
-                        db="{{ db }}"
-                        view="customers/getCustomers"
-                        gen-entry-id="{{ genEntryId }}"
-                        )
-                        +partial('addnewTitle')
-                            | Müşteri Ekle
-                        +partial('header')
-                        +partial('viewForm')
-                            h3 Müşteri: {{ curr.name }}
-                            
-                        +partial('editForm')
-                            panel(title="Müşteri" type="primary")
-                                //- {{ JSON.stringify(curr) }}
-                                form-vertical
-                                    form-group
-                                        span Müşteri Adı: 
-                                        input(value="{{ curr.name }}" )
-                                btn(on-buttonclick="addNewOrderClose") Kapat!
-                                btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
+            +partial('editForm')
+                panel(title="Müşteri" type="primary")
+                    //- {{ JSON.stringify(curr) }}
+                    form-vertical
+                        form-group
+                            span Müşteri Adı: 
+                            input(value="{{ curr.name }}" )
+                    btn(on-buttonclick="addNewOrderClose") Kapat!
+                    btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
 
-                    h2 Reçeteler:
-                    order-table(
-                        cols="{{ receiptsColNames }}"
-                        default="{{ receiptsDefault }}"
-                        filters="{{ receiptsFilters }}"
-                        db="{{ db }}"
-                        view="primitives/getReceipts"
-                        gen-entry-id="{{ genEntryId }}"
-                        )
-                        +partial('addnewTitle')
-                            | Reçete Ekle
-                        +partial('header')
-                        +partial('viewForm')
-                            p Ürün adı: {{ curr.productName }}
-                            p İçindekiler: 
-                            ul
-                                +each('curr.contents:i')
-                                    li {{ .['material'] }} ({{ .['amount'] }})
+        h2 Reçeteler:
+        order-table(
+            cols="{{ receiptsColNames }}"
+            default="{{ receiptsDefault }}"
+            filters="{{ receiptsFilters }}"
+            db="{{ db }}"
+            view="primitives/getReceipts"
+            gen-entry-id="{{ genEntryId }}"
+            )
+            +partial('addnewTitle')
+                | Reçete Ekle
+            +partial('header')
+            +partial('viewForm')
+                p Ürün adı: {{ curr.productName }}
+                p İçindekiler: 
+                ul
+                    +each('curr.contents:i')
+                        li {{ .['material'] }} ({{ .['amount'] }})
 
-                        +partial('editForm')
-                            panel(title="Reçete" type="primary")
-                                //- {{ JSON.stringify(curr) }}
-                                form-vertical
-                                    form-group
-                                        span Ürün Adı: 
-                                        input(value="{{ curr.productName }}" )
-                                    +each('curr.contents:i')
-                                        form-group
-                                            span Hammadde: 
-                                            input(value="{{ .['material'] }}")
-                                            input(value="{{ .['amount'] }}")
-                                            btn(on-buttonclick="deleteOrder" value="contents: {{ i }}")
-                                                icon-remove
-                                    form-group
-                                        btn(on-buttonclick="addNewEntry" value="contents")
-                                            icon-plus 
-                                            span Hammadde Ekle
-                                btn(on-buttonclick="addNewOrderClose") Kapat!
-                                btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
+            +partial('editForm')
+                panel(title="Reçete" type="primary")
+                    //- {{ JSON.stringify(curr) }}
+                    form-vertical
+                        form-group
+                            span Ürün Adı: 
+                            input(value="{{ curr.productName }}" )
+                        +each('curr.contents:i')
+                            form-group
+                                span Hammadde: 
+                                input(value="{{ .['material'] }}")
+                                input(value="{{ .['amount'] }}")
+                                btn(on-buttonclick="deleteOrder" value="contents: {{ i }}")
+                                    icon-remove
+                        form-group
+                            btn(on-buttonclick="addNewEntry" value="contents")
+                                icon-plus 
+                                span Hammadde Ekle
+                    btn(on-buttonclick="addNewOrderClose") Kapat!
+                    btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
 
 
-                    h2 Siparişler:
-                    order-table(
-                        cols="{{ ordersColNames }}"
-                        default="{{ ordersDefault }}"
-                        filters="{{ ordersFilters }}"
-                        db="{{ db }}"
-                        view="orders/getOrders"
-                        gen-entry-id="{{ genEntryId }}"
-                        x="{{ customersList }}"
-                        )
-                        +partial('addnewTitle')
-                            | Yeni Sipariş Ekle
+        h2 Siparişler:
+        order-table(
+            cols="{{ ordersColNames }}"
+            default="{{ ordersDefault }}"
+            filters="{{ ordersFilters }}"
+            db="{{ db }}"
+            view="orders/getOrders"
+            gen-entry-id="{{ genEntryId }}"
+            x="{{ customersList }}"
+            )
+            +partial('addnewTitle')
+                | Yeni Sipariş Ekle
+            
+            +partial('header')
+                h3 Filtreler
+                row 
+                    col-md-3
+                        btn(on-buttonclick="setfilter" value="todaysOrders") Bugün!
+                        btn(on-buttonclick="setfilter" value="all") Tümü
+                        input(type="text" value="{{ filterOpts.selected }}")
+                    col-md-3
+                
+                //- 
+                    col-md-3
+                        input(value="{{ filterOpts.selected }}")
+                    col-md-3
+                        input(value="{{ filterOpts.params }}")
+            
+            
+            +partial('viewForm')
+                h3 {{ curr.client }}
+                p Sipariş tarihi: {{ curr.orderDate }}
+                p Teslim tarihi: {{ curr.dueDate }}
+                ol 
+                    +each('curr.entries:i')
+                        li {{ .['product'] }} -> {{ .['amount'] }}
                         
-                        +partial('header')
-                            h3 Filtreler
+            +partial('editForm')
+                panel(title="Sipariş" type="primary")
+                    form-vertical
+                        form-group
+                            span Müşteri: 
+                            search-combobox(data="{{ x }}" selected="{{ curr.client }}")
+                            p C: {{ curr.client }}
+                        form-group
                             row 
-                                col-md-3
-                                    btn(on-buttonclick="setfilter" value="todaysOrders") Bugün!
-                                    btn(on-buttonclick="setfilter" value="all") Tümü
-                                col-md-3
-                            
-                            //- 
-                                col-md-3
-                                    input(value="{{ filterOpts.selected }}")
-                                col-md-3
-                                    input(value="{{ filterOpts.params }}")
-                        
-                        
-                        +partial('viewForm')
-                            h3 {{ curr.client }}
-                            p Sipariş tarihi: {{ curr.orderDate }}
-                            p Teslim tarihi: {{ curr.dueDate }}
-                            ol 
-                                +each('curr.entries:i')
-                                    li {{ .['product'] }} -> {{ .['amount'] }}
-                                    
-                        +partial('editForm')
-                            panel(title="Sipariş" type="primary")
-                                form-vertical
-                                    form-group
-                                        span Müşteri: 
-                                        search-combobox(data="{{ x }}" selected="{{ curr.client }}")
-                                        p C: {{ curr.client }}
-                                    form-group
-                                        row 
-                                            col-md-4: span Sipariş Tarihi: 
-                                            col-md-8: date-picker(value="{{ curr.orderDate }}")
-                                    form-group
-                                        row 
-                                            col-md-4: span Teslim Tarihi:
-                                            col-md-8: date-picker(value="{{ curr.dueDate }}")
-                                        p Due date: {{ curr.dueDate }}
-                                        //- input(value="{{ curr.dueDate }}")
-                                    +each('curr.entries:i')
-                                        form-group
-                                            span Type
-                                            input(value="{{ .['product'] }}")
-                                            input(value="{{ .['amount'] }}")
-                                            btn(on-buttonclick="deleteOrder" value="entries: {{ i }}")
-                                                icon-remove
-                                    form-group
-                                        btn(on-buttonclick="addNewEntry" value="entries")
-                                            icon-plus 
-                                            span Kalem Ekle
-                                btn(on-buttonclick="addNewOrderClose") Kapat!
-                                btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
-                
+                                col-md-4: span Sipariş Tarihi: 
+                                col-md-8: date-picker(value="{{ curr.orderDate }}")
+                        form-group
+                            row 
+                                col-md-4: span Teslim Tarihi:
+                                col-md-8: date-picker(value="{{ curr.dueDate }}")
+                            p Due date: {{ curr.dueDate }}
+                            //- input(value="{{ curr.dueDate }}")
+                        +each('curr.entries:i')
+                            form-group
+                                span Type
+                                input(value="{{ .['product'] }}")
+                                input(value="{{ .['amount'] }}")
+                                btn(on-buttonclick="deleteOrder" value="entries: {{ i }}")
+                                    icon-remove
+                        form-group
+                            btn(on-buttonclick="addNewEntry" value="entries")
+                                icon-plus 
+                                span Kalem Ekle
+                    btn(on-buttonclick="addNewOrderClose") Kapat!
+                    btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
