@@ -65,13 +65,35 @@ LongPolling.prototype.send = function(msg, callback){
     return this.commErr(e, callback);
   }
 };
+LongPolling.prototype.get = function(){
+  var i$, params, callback, path, query, log, e;
+  params = 0 < (i$ = arguments.length - 1) ? slice$.call(arguments, 0, i$) : (i$ = 0, []), callback = arguments[i$];
+  path = params[0];
+  query = params[1];
+  log = getLogger('SEND');
+  log("path: ".path, "query: ", query);
+  try {
+    if (!this.connected) {
+      throw 'you MUST connect first!';
+    }
+    return this.getRaw(query, path, callback);
+  } catch (e$) {
+    e = e$;
+    log("error: ", e);
+    return this.commErr(e, callback);
+  }
+};
 LongPolling.prototype.getRaw = function(){
   var i$, params, callback, query, path, __, log, queryStr, key, value, err;
   params = 0 < (i$ = arguments.length - 1) ? slice$.call(arguments, 0, i$) : (i$ = 0, []), callback = arguments[i$];
-  query = params[0];
-  path = params[1] || this.settings.sociPath;
+  query = params[0], path = params[1];
   __ = this;
   log = getLogger('GET_RAW');
+  if (!path) {
+    path = this.settings.path.changes;
+  }
+  log("path: ", path);
+  log("query: ", pack(query));
   try {
     queryStr = "?" + (function(){
       var ref$, results$ = [];
@@ -90,7 +112,10 @@ LongPolling.prototype.getRaw = function(){
         host: __.settings.host,
         port: __.settings.port,
         method: 'GET',
-        path: path + queryStr
+        path: path + queryStr,
+        headers: {
+          'Accept': '*/*'
+        }
       };
       requestId = genReqId(3);
       req = http.get(options, function(res){
@@ -146,10 +171,12 @@ LongPolling.prototype.commErr = function(reason, callback){
     return this.connect();
   }
 };
-LongPolling.prototype.postRaw = function(msg, callback){
-  var __, log, err, content, contentStr, options, requestId, req;
+LongPolling.prototype.postRaw = function(){
+  var i$, params, callback, __, log, msg, path, err, content, contentStr, options, requestId, req;
+  params = 0 < (i$ = arguments.length - 1) ? slice$.call(arguments, 0, i$) : (i$ = 0, []), callback = arguments[i$];
   __ = this;
   log = getLogger("POST_RAW");
+  msg = params[0], path = params[1];
   try {
     if (!this.connected) {
       throw 'not connected';
@@ -161,7 +188,7 @@ LongPolling.prototype.postRaw = function(msg, callback){
       host: this.settings.host,
       port: this.settings.port,
       method: 'POST',
-      path: this.settings.sicoPath,
+      path: this.settings.path.post,
       headers: {
         "Content-Type": "application/json",
         "Content-Length": contentStr.length
@@ -219,15 +246,19 @@ LongPolling.prototype.connect = function(nextStep){
   return sleep(interval, function(){
     log("Trying to connect to server...");
     return __.getRaw({
-      protocol: "aea-longpolling-01"
-    }, '/_info', function(err, data){
+      hello: "world"
+    }, __.settings.path.info, function(err, data){
       var e;
       try {
         if (err) {
           throw "connection error";
         }
-        if (data.ack !== 'OK') {
-          throw "not my server!";
+        if (data.aktos === 'Welcome') {
+          log("connected to aktos device server");
+        } else if (data.couchdb === 'Welcome') {
+          log("connected to CouchDB");
+        } else {
+          throw "unknown server!";
         }
         log("Connection seems ok, starting all tasks...");
         return sleep(0, function(){
@@ -259,7 +290,10 @@ LongPolling.prototype.receiveLoop = function(){
   return function lo(op){
     var receiverId;
     receiverId = genReqId(3);
-    return __.getRaw(function(err, res){
+    return __.getRaw({
+      since: 'now',
+      feed: 'longpoll'
+    }, this.changes, function(err, res){
       if (err) {
         log("stopping receive loop: ", err);
         return op();
@@ -277,8 +311,11 @@ function init(){
   comm = new LongPolling({
     host: 'localhost',
     port: 5656,
-    sicoPath: '/send',
-    sociPath: '/receive',
+    path: {
+      post: '/send',
+      changes: '/_changes',
+      info: "/"
+    },
     id: 'abc123'
   });
   x$ = comm;
@@ -300,19 +337,22 @@ function init(){
     log("send hello: ", err);
     return comm.connect(function(){
       log("it seems connection is ok, continuing...");
-      return function lo(op){
+      return comm.get('/test_shared_1/ef955ea6b0fede37392a83cd34f2fe0c', function(err, data){
+        log("err: ", err, "data: ", pack(data));
         return;
-        return comm.send({
-          temperature: Math.random()
-        }, function(err){
-          if (err) {
-            log("We couldn't send to data because: ", err);
-          }
-          return timeoutWaitFor(10000, 'temperature-measured', function(){
-            return lo(op);
+        return function lo(op){
+          return comm.send({
+            temperature: Math.random()
+          }, function(err){
+            if (err) {
+              log("We couldn't send to data because: ", err);
+            }
+            return timeoutWaitFor(10000, 'temperature-measured', function(){
+              return lo(op);
+            });
           });
-        });
-      }(function(){});
+        }(function(){});
+      });
     });
   });
 } init();

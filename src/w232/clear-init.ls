@@ -48,16 +48,33 @@ LongPolling::send = (msg, callback) ->
         log "error: ", e
         @comm-err e, callback
 
+LongPolling::get = (...params, callback) ->
+    path = params.0
+    query = params.1
+
+    log = get-logger \SEND
+    log "path: ". path, "query: ", query
+    try
+        throw 'you MUST connect first!' if not @connected
+        @get-raw query, path, callback
+    catch
+        log "error: ", e
+        @comm-err e, callback
+
 
 LongPolling::get-raw = (...params, callback) ->
-    query = params.0
-    path = params.1 or @settings.soci-path
+    [query, path] = params
     # query must be an object, eg:
     #
     #     {hello: 'world', test: 123, ...}
     #
     __ = @
     log = get-logger \GET_RAW
+
+    path = @settings.path.changes if not path
+
+    log "path: ", path
+    log "query: ", pack query
     try
         # TODO: ENABLE THIS LINE throw 'not connected' if not @connected
         # get some data
@@ -69,6 +86,8 @@ LongPolling::get-raw = (...params, callback) ->
             port: __.settings.port
             method: \GET
             path: path + query-str
+            headers:
+                'Accept': '*/*'
 
         request-id = gen-req-id 3
 
@@ -114,10 +133,11 @@ LongPolling::comm-err = (reason, callback) ->
         log "Triggering connect!"
         @connect!
 
-LongPolling::post-raw = (msg, callback) ->
+LongPolling::post-raw = (...params, callback) ->
     __ = @
     log = get-logger "POST_RAW"
 
+    [msg, path] = params
     try
         throw 'not connected' if not @connected
         err = no
@@ -129,7 +149,7 @@ LongPolling::post-raw = (msg, callback) ->
             host: @settings.host
             port: @settings.port
             method: \POST
-            path: @settings.sico-path
+            path: @settings.path.post
             headers:
                 "Content-Type": "application/json"
                 "Content-Length": content-str.length
@@ -182,10 +202,15 @@ LongPolling::connect = (next-step) ->
     <- sleep interval
 
     log "Trying to connect to server..."
-    err, data <- __.get-raw {protocol: "aea-longpolling-01"}, '/_info'
+    err, data <- __.get-raw {hello: "world"}, __.settings.path.info
     try
         throw "connection error" if err
-        throw "not my server!" if data.ack isnt \OK
+        if data.aktos is \Welcome
+            log "connected to aktos device server"
+        else if data.couchdb is \Welcome
+            log "connected to CouchDB"
+        else
+            throw "unknown server!"
         log "Connection seems ok, starting all tasks..."
         <- sleep 0
         __.retry-count = 0
@@ -209,7 +234,7 @@ LongPolling::receive-loop = ->
     log "started..."
     <- :lo(op) ->
         receiver-id = gen-req-id 3
-        err, res <- __.get-raw
+        err, res <- __.get-raw {since: \now, feed: \longpoll}, @changes
         if err
             log "stopping receive loop: ", err
             # error handlers and reconnection stuff
@@ -228,10 +253,15 @@ do function init
     log = get-logger \MAIN
 
     comm = new LongPolling do
+        #host: 'demeter.cloudant.com'
+        #port: 443
         host: 'localhost'
         port: 5656
-        sico-path: '/send'
-        soci-path: '/receive'
+        path:
+            post: '/send'
+            #changes: '/test_shared_1/_changes'
+            changes: '/_changes'
+            info: "/"
         id: 'abc123'
 
     comm
@@ -254,9 +284,11 @@ do function init
     <- comm.connect!
     log "it seems connection is ok, continuing..."
 
+    err, data <- comm.get '/test_shared_1/ef955ea6b0fede37392a83cd34f2fe0c'
+    log "err: ", err, "data: ", pack data
+    return
     do
         <- :lo(op) ->
-            return
             err <- comm.send do
                 temperature: Math.random!
             if err

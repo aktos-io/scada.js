@@ -20,16 +20,17 @@ msg-box =
     'abc123': []
 k = 0
 
-app.get '/receive' (req, res) ->
+app.get '/_changes' (req, res) ->
     console.log "got client request params: ", req.params
     console.log "got client request query: ", req.query
     <- sleep 5000ms
-    res.send {ack: "simulating slow response..."}
+    console.log "/_changes simulate feed..."
+    res.send {ack: "simulating feed..."}
 
 
-app.get '/_info' (req, res) ->
+app.get '/' (req, res) ->
     console.log "info got client request query: ", req.query
-    res.send {ack: \OK, info: "aea device server"}
+    res.send {aktos: \Welcome, info: "aea device server", version: "0.7"}
 
 app.post '/send' (req, res) ->
     payload = req.body
@@ -62,6 +63,7 @@ app.post '/al' (req, res) ->
 */
 i = 0
 do function simulate-server-events
+    return
     <- :lo(op) ->
         debug-log "Generating server side event!"
         msg-box[\abc123] ++= ["naber#{i++}\n"]
