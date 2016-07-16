@@ -5,4 +5,7 @@ export function pack x
         val
 
 export function unpack x
-    JSON.parse x
+    try
+        JSON.parse x
+    catch
+        throw "Error while unpacking: #{e}"
