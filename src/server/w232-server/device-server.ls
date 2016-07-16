@@ -20,19 +20,18 @@ msg-box =
     'abc123': []
 k = 0
 
-app.get '/_changes' (req, res) ->
+app.get '/test/_changes' (req, res) ->
     console.log "got client request params: ", req.params
     console.log "got client request query: ", req.query
     <- sleep 5000ms
     console.log "/_changes simulate feed..."
     res.send {ack: "simulating feed..."}
 
-
 app.get '/' (req, res) ->
     console.log "info got client request query: ", req.query
     res.send {aktos: \Welcome, info: "aea device server", version: "0.7"}
 
-app.post '/send' (req, res) ->
+app.post '/test/mydoc' (req, res) ->
     payload = req.body
     node = payload.node
     try

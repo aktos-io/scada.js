@@ -86,23 +86,26 @@ LongPolling::get-raw = (...params, callback) ->
             port: __.settings.port
             method: \GET
             path: path + query-str
-            headers:
-                'Accept': '*/*'
-
+            #headers: {}
         request-id = gen-req-id 3
 
+        chunks = ""
         req = http.get options, (res) ->
             res.on \data, (data) ->
                 log "got raw data: ", data
-                try
-                    callback null, unpack data
-                catch
-                    # data might be something like "Cannot GET /nonexistent_path"
-                    callback {exception: e, message: data}, null
+                chunks += data
 
             res.on \error, ->
                 log "res error: ", err
                 throw
+
+            res.on \end, ->
+                log "End of transmission!"
+                try
+                    callback null, unpack chunks
+                catch
+                    # data might be something like "Cannot GET /nonexistent_path"
+                    callback {exception: e, message: chunks}, null
 
             res.on \close, ->
                 log "#{request-id} request is closed by server... "
@@ -253,14 +256,12 @@ do function init
     log = get-logger \MAIN
 
     comm = new LongPolling do
-        #host: 'demeter.cloudant.com'
-        #port: 443
         host: 'localhost'
         port: 5656
         path:
-            post: '/send'
-            #changes: '/test_shared_1/_changes'
-            changes: '/_changes'
+            post: '/test/mydoc'
+            #changes: '/todo/_changes'
+            changes: '/test/_changes'
             info: "/"
         id: 'abc123'
 
@@ -284,7 +285,7 @@ do function init
     <- comm.connect!
     log "it seems connection is ok, continuing..."
 
-    err, data <- comm.get '/test_shared_1/ef955ea6b0fede37392a83cd34f2fe0c'
+    err, data <- comm.get '/todo/mahmut-1'
     log "err: ", err, "data: ", pack data
     return
     do
