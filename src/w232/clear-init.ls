@@ -43,7 +43,7 @@ LongPolling::send = (msg, callback) ->
     log = get-logger \SEND
     try
         throw 'you MUST connect first!' if not @connected
-        @post-raw msg, callback
+        @put-raw msg, callback
     catch
         log "error: ", e
         @comm-err e, callback
@@ -136,10 +136,10 @@ LongPolling::comm-err = (reason, callback) ->
         log "Triggering connect!"
         @connect!
 
-LongPolling::post-raw = (...params, callback) ->
+LongPolling::put-raw = (...params, callback) ->
     [msg, path] = params
     __ = @
-    log = get-logger "POST_RAW"
+    log = get-logger "PUT_RAW"
 
 
     try
@@ -245,7 +245,7 @@ LongPolling::receive-loop = ->
         if err
             log "stopping receive loop: ", err
             # error handlers and reconnection stuff
-            # is triggered in @get-raw and @post-raw already
+            # is triggered in @get-raw and @put-raw already
             # so nothing to do here...
             return op!
         else
@@ -261,8 +261,8 @@ do function init
 
     comm = new LongPolling do
         host: 'localhost'
-        #port: 5656  # aktos-server
-        port: 5655  # cloudant.com (via proxy (iisexpress))
+        port: 5656  # aktos-server
+        #port: 5655  # cloudant.com (via proxy (iisexpress))
         path:
             db: '/todo'
             changes: '/todo/_changes'

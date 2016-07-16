@@ -23,6 +23,9 @@ k = 0
 app.get '/todo/_changes' (req, res) ->
     console.log "got client request params: ", req.params
     console.log "got client request query: ", req.query
+    req.on \close, (...x) ->
+        console.log "Closed connection? ", x
+        
     <- sleep 5000ms
     console.log "/_changes simulate feed..."
     res.send {ack: "simulating feed..."}
@@ -36,7 +39,7 @@ app.put '/todo/:id' (req, res) ->
     node = payload.node
     doc_id = req.params.id
     debug-log "PUT::: node: ", node, pack payload, req.params.id
-    debug-log "PUT doc_id: ", doc_id 
+    debug-log "PUT doc_id: ", doc_id
     res.send {ack: "OK"}
 
 /*
