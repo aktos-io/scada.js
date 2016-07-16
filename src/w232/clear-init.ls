@@ -43,7 +43,7 @@ LongPolling::send = (msg, callback) ->
     log = get-logger \SEND
     try
         throw 'you MUST connect first!' if not @connected
-        @post-raw {data: msg}, callback
+        @post-raw msg, callback
     catch
         log "error: ", e
         @comm-err e, callback
@@ -55,7 +55,7 @@ LongPolling::get = (...params, callback) ->
     log = get-logger \SEND
     log "path: ". path, "query: ", query
     try
-        throw 'you MUST connect first!' if not @connected
+        throw 'You MUST connect first!' if not @connected
         @get-raw query, path, callback
     catch
         log "error: ", e
@@ -137,12 +137,16 @@ LongPolling::comm-err = (reason, callback) ->
         @connect!
 
 LongPolling::post-raw = (...params, callback) ->
+    [msg, path] = params
     __ = @
     log = get-logger "POST_RAW"
 
-    [msg, path] = params
+
     try
+        throw 'documents must have and _id field' if msg._id is null
         throw 'not connected' if not @connected
+
+        path = "#{@settings.path.db}/#{msg._id}"
         err = no
         content = @content `merge` msg  # merge with node id
 
@@ -151,8 +155,8 @@ LongPolling::post-raw = (...params, callback) ->
         options =
             host: @settings.host
             port: @settings.port
-            method: \POST
-            path: @settings.path.post
+            method: \PUT
+            path: path
             headers:
                 "Content-Type": "application/json"
                 "Content-Length": content-str.length
@@ -257,11 +261,11 @@ do function init
 
     comm = new LongPolling do
         host: 'localhost'
-        port: 5656
+        #port: 5656  # aktos-server
+        port: 5655  # cloudant.com (via proxy (iisexpress))
         path:
-            post: '/test/mydoc'
-            #changes: '/todo/_changes'
-            changes: '/test/_changes'
+            db: '/todo'
+            changes: '/todo/_changes'
             info: "/"
         id: 'abc123'
 
@@ -286,11 +290,13 @@ do function init
     log "it seems connection is ok, continuing..."
 
     err, data <- comm.get '/todo/mahmut-1'
-    log "err: ", err, "data: ", pack data
-    return
+    log "err: ", err if err
+    log "data: ", pack data
     do
+        i = 0
         <- :lo(op) ->
             err <- comm.send do
+                _id: "embedded-#{i++}"
                 temperature: Math.random!
             if err
                 log "We couldn't send to data because: ", err

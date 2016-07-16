@@ -20,7 +20,7 @@ msg-box =
     'abc123': []
 k = 0
 
-app.get '/test/_changes' (req, res) ->
+app.get '/todo/_changes' (req, res) ->
     console.log "got client request params: ", req.params
     console.log "got client request query: ", req.query
     <- sleep 5000ms
@@ -31,7 +31,16 @@ app.get '/' (req, res) ->
     console.log "info got client request query: ", req.query
     res.send {aktos: \Welcome, info: "aea device server", version: "0.7"}
 
-app.post '/test/mydoc' (req, res) ->
+app.put '/todo/:id' (req, res) ->
+    payload = req.body
+    node = payload.node
+    doc_id = req.params.id
+    debug-log "PUT::: node: ", node, pack payload, req.params.id
+    debug-log "PUT doc_id: ", doc_id 
+    res.send {ack: "OK"}
+
+/*
+app.post '/test' (req, res) ->
     payload = req.body
     node = payload.node
     try
@@ -42,7 +51,7 @@ app.post '/test/mydoc' (req, res) ->
 
     debug-log "SEND SIDE::: node: ", node, "data: ", pack payload.data
     res.send {ack: "OK"}
-
+*/
 /*
 app.post '/al' (req, res) ->
     payload = req.body
