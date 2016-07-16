@@ -3,7 +3,7 @@ require! {
     './merge': {merge}
     './sleep': {sleep, after, clear-timer}
     './signal': {wait-for, timeout-wait-for, go, is-waiting}
-    './debug-log': {debug-log}
+    './debug-log': {debug-log, get-logger}
     './packing': {pack, unpack}
 }
 
@@ -13,6 +13,6 @@ module.exports = {
     sleep, after, clear-timer
     merge
     wait-for, timeout-wait-for, go, is-waiting
-    debug-log
+    debug-log, get-logger
     pack, unpack
 }

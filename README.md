@@ -1,10 +1,17 @@
+# Overview
+
+Welcome to the realtime, distributed, web-technology oriented SCADA system for Industrial usage. The SCADA system focuses on fast development and cross-platform (cross-browser and mobile) compatibility.
+
+
 # Key features
 
 * First-class support for [LiveScript](http://livescript.net)
 * Supports [Ractive.js](http://ractivejs.com) with a custom [component mechanizm](./src/client/components)
 * Supports [Jade](http://jade-lang.com) for composing html documents
-* Uses Distributed NoSQL database ([CouchDB](http://couchdb.apache.org/) in mind) via [PouchDB](http://pouchdb.com) and LongPolling
-* Supports variety of network and industrial protocol servers, including
+* Uses Distributed NoSQL database ([CouchDB](http://couchdb.apache.org/) in mind) via
+    * [PouchDB](http://pouchdb.com) for browser
+    * [LongPolling](./src/lib/aea-embedded/long-polling.ls) for embedded (on [Espruino](http://espruino.com/))
+* Supports variety of network and industrial protocol [servers](./src/server), including
     * http
     * websockets
     * long-polling
@@ -38,6 +45,8 @@ To start WebUI development:
 ./tools/dev-ui
 ```
 
+Then visit http://localhost:4001
+
 To start Embedded system development:
 
 ```bash
@@ -49,3 +58,8 @@ To start Embedded system development:
 * Open `git BASH`
 * `gulp`
 * `cd src/server; lsc server.ls`
+
+-----
+Aktos Electronics, the Opensource Telemetry and Automation Company, Turkey.
+https://aktos.io
+info@aktos.io
