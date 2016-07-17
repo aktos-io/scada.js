@@ -73,6 +73,8 @@ gulp.task \default, ->
 
     # watch for component changes
     watch ["#{client-src}/components/**/*.*", "!#{client-src}/components/*.jade", "!#{client-src}/components/*.ls"] , (event) ->
+        # changes in components should trigger browserify via removing its cache entry
+        delete cache.caches['browserify']
         gulp.start <[ jade info-browserify ]>
 
     # watch for templates changes
@@ -82,7 +84,7 @@ gulp.task \default, ->
     watch "#{client-src}/pages/**/*.jade", ->
         gulp.start \jade
 
-    watch "#{client-src}/pages/**/*.ls", (event) ->
+    watch ["#{client-src}/**/*.ls", "!#{components-src}/components.*"], (event) ->
         console.log "watching browserify ... event: ", event
         gulp.start \browserify
 
@@ -208,6 +210,8 @@ gulp.task \jade <[ jade-components ]> ->
     files = glob.sync "#{base}/**/*.jade"
     files = [.. for files when is-module-index base, ..]
     gulp.src files
+        .pipe tap (file) ->
+            console.log "TAPPING JADE: file: ", path.basename file.path
         .pipe jade {pretty: yes}
         .on \error, (err) ->
             on-error \jade, err

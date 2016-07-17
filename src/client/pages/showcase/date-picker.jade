@@ -1,0 +1,18 @@
+row
+    col-md-2.col-xs-2   
+        p Show/hide datepicker Tied component1
+        input(type="checkbox" checked="{{ datepicker.show }}")
+    col-md-3.col-xs-2
+        +if('datepicker.show')
+            h3 Tied component1 
+            date-picker(value="{{ test.date }}")
+            p unix: {{ test.date }}
+    col-md-6.col-xs-2
+        h3 Tied component2     
+        date-picker(value="{{ test.date }}")
+        p unix: {{ test.date }}
+br        
+row
+    h3 Untied (free) instance
+    date-picker(value="{{ test.date2 }}")
+    p unix: {{ test.date2 }}

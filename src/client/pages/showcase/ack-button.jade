@@ -1,0 +1,14 @@
+row
+    col-md-2.col-xs-2   
+        p Show/hide button Tied component1
+        input(type="checkbox" checked="{{ button.show }}")
+    col-md-3.col-xs-2
+        +if('button.show')
+            h3 Tied component1 
+            ack-button(state="{{ buttonState }}") MY BUTTON
+    col-md-3.col-xs-2  
+        h3 Tied component2 
+        ack-button(state="{{ buttonState }}") MY BUTTON2
+    col-md-3.col-xs-2  
+        h3 Untied (free) instance
+        ack-button(state="{{ buttonState }}") MY BUTTON3
