@@ -10,43 +10,6 @@ block ractive
         login(on-login="afterLoggedIn" context="{{ login }}" db="{{ db }}")
 
     +if('login.ok')
-        // include ./customers-table.jade
-        h2 Reçeteler:
-        order-table(
-            cols="{{ receiptsColNames }}"
-            default="{{ receiptsDefault }}"
-            filters="{{ receiptsFilters }}"
-            db="{{ db }}"
-            view="primitives/getReceipts"
-            gen-entry-id="{{ genEntryId }}"
-            )
-            +partial('addnewTitle')
-                | Reçete Ekle
-            +partial('header')
-            +partial('viewForm')
-                p Ürün adı: {{ curr.productName }}
-                p İçindekiler: 
-                ul
-                    +each('curr.contents:i')
-                        li {{ .['material'] }} ({{ .['amount'] }})
-
-            +partial('editForm')
-                panel(title="Reçete" type="primary")
-                    //- {{ JSON.stringify(curr) }}
-                    form-vertical
-                        form-group
-                            span Ürün Adı: 
-                            input(value="{{ curr.productName }}" )
-                        +each('curr.contents:i')
-                            form-group
-                                span Hammadde: 
-                                input(value="{{ .['material'] }}")
-                                input(value="{{ .['amount'] }}")
-                                btn(on-buttonclick="deleteOrder" value="contents: {{ i }}")
-                                    icon-remove
-                        form-group
-                            btn(on-buttonclick="addNewEntry" value="contents")
-                                icon-plus 
-                                span Hammadde Ekle
-                    btn(on-buttonclick="addNewOrderClose") Kapat!
-                    btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
+        include ./customers-table.jade
+        include ./receipts-table.jade
+        include ./orders-table.jade

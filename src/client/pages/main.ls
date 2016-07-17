@@ -9,7 +9,6 @@ ractive = new Ractive do
         button-state: null
         toggle-my-component: true
 
-
 ractive.on \complete, ->
     i = 0
     states =
