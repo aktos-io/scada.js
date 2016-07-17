@@ -12,8 +12,8 @@ Ractive.DEBUG = /unminified/.test -> /*unminified*/
 db = new PouchDB 'https://demeter.cloudant.com/cicimeze', skip-setup: yes
 
 
-data1 = [[0,4],[1,8],[2,5],[3,10],[4,4],[5,16],[6,5],[7,11],[8,6],[9,11],[10,30],[11,10],[12,13],[13,4],[14,3],[15,3],[16,6]]
-data2 = [[0,1],[1,0],[2,2],[3,0],[4,1],[5,3],[6,1],[7,5],[8,2],[9,3],[10,2],[11,1],[12,0],[13,2],[14,8],[15,0],[16,0]]
+data1 = [[0,4],[1,8],[2,5],[3,10],[4,4]]
+data2 = [[0,1],[1,0],[2,2]]
 
 
 random = ->
@@ -61,6 +61,7 @@ ractive = new Ractive do
             date: utc-date!
             date2:new Date!
         simulate-data:simulate-data
+        pie-data: simulate-data!
         x: 5
         product-list: product-data1
         y: 1
@@ -68,6 +69,15 @@ ractive = new Ractive do
             show: yes
         datepicker:
             show: yes
+        combobox:
+            show: yes
+        flot:
+            show: yes
+        pie:
+            show: yes
+        button:
+            show: yes
+
 
 ractive.on \complete, ->
     i = 0

@@ -54,12 +54,9 @@
                 .text-center.m-t-lg
                     | {{>content}}
 
-+component('inspina-footer').
-    <div class="footer">
-        <div class="pull-right">
-            {{yield right}}
-        </div>
-        <div>
-            {{yield left}}
-        </div>
-    </div>
++component('inspina-footer')
+    .footer
+        .pull-right
+            | {{yield right}}
+        div
+            | {{yield left}}
