@@ -38,6 +38,10 @@ Ractive.components[component-name] = Ractive.extend do
                 $ __.find \* .selectpicker \render
                 $ __.find \* .selectpicker \refresh
 
+            __.observe \selected, (new-val) ->
+                selected = __.get \selected
+                $ __.find \* .selectpicker 'val', selected
+                console.log "COMBOBOX selected:::", selected
         else
             #console.log "Combobox using view...", view
             update-combobox!
@@ -54,7 +58,7 @@ Ractive.components[component-name] = Ractive.extend do
         $ __.find \* .selectpicker \render
         $ __.find \* .selectpicker \refresh
         try
-            throw if (__.get \selected) is null 
+            throw if (__.get \selected) is null
         catch
             try __.set \selected, (__.get \data).0.id
 
