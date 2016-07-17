@@ -153,20 +153,19 @@ gulp.task \lsc-lib, ->
 
 # Browserify pages/* into public folder
 gulp.task \info-browserify <[ browserify ]> ->
-    console.log "Browserifying finished!"
 
 gulp.task \lsc <[ lsc-lib lsc-pages ]>, ->
     console.log "RUNNING LSC (which means ended)"
     console.log "lsc ended..."
 
-gulp.task \browserify <[ lsc js]> ->
-    console.log "running browserify!!!!"
+gulp.task \browserify <[ lsc js]> (...x) ->
+    console.log "Running browserify!!!! params: ", x
     base = "#{client-tmp}/pages"
     gulp.src "#{base}/**/*.js"
         .pipe tap (file) ->
             filename = path.basename file.path
             if is-module-index base, file.path
-                console.log "BROWSERIFYING FILE: ", file.path
+                console.log "BROWSERIFYING FILE: ", path.basename file.path
                 browserify file.path, {paths: [components-tmp, lib-tmp]}
                     .bundle!
                     .on \error, (err) ->
@@ -176,6 +175,8 @@ gulp.task \browserify <[ lsc js]> ->
                     .pipe buffer!
                     #.pipe uglify!
                     .pipe gulp.dest client-pages
+                    .pipe tap (file) ->
+                        console.log "Finished browserify for file: ", path.basename file.path
 
 
 # Concatenate vendor javascript files into public/js/vendor.js
