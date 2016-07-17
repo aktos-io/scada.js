@@ -211,7 +211,7 @@ gulp.task \jade <[ jade-components ]> ->
     files = [.. for files when is-module-index base, ..]
     gulp.src files
         .pipe tap (file) ->
-            console.log "TAPPING JADE: file: ", path.basename file.path
+            console.log "JADE: compiling file: ", path.basename file.path
         .pipe jade {pretty: yes}
         .on \error, (err) ->
             on-error \jade, err
