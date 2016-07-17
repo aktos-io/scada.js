@@ -15,7 +15,7 @@ ractive.on \complete, ->
         \waiting
         \normal
         \error
-        \okey
+        \okay
 
     <- :lo(op) ->
         new-state = states[i++]

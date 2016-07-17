@@ -8,7 +8,7 @@ Ractive.components[component-name] = Ractive.extend do
         __ = @
         try
             db = @get \db
-            #console.log "COMBOBOX: Database object is: ", db
+            #console.log "COMBOBOX: Database object is: ", db #
             view = @get \view
         catch
             view = null
