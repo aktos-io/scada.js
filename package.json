@@ -36,6 +36,7 @@
     "browserify": "^13.0.1",
     "glob": "^7.0.5",
     "gulp": "^3.9.1",
+    "gulp-cached": "^1.1.0",
     "gulp-clean": "^0.3.2",
     "gulp-concat": "^2.6.0",
     "gulp-flatten": "^0.3.0",

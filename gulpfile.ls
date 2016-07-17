@@ -14,6 +14,7 @@ require! './src/lib/aea': {sleep}
 require! 'fs'
 require! 'gulp-flatten': flatten
 require! 'gulp-tap': tap
+require! 'gulp-cached': cache
 
 # TODO: combine = require('stream-combiner')
 
@@ -99,8 +100,9 @@ gulp.task \js, ->
         .pipe gulp.dest client-tmp
 
 gulp.task \html, ->
-    gulp.src "#{client-src}/**/*.html", {base: client-src}
-        .pipe gulp.dest client-tmp
+    base = "#{client-src}/pages"
+    gulp.src "#{base}/**/*.html", {base: base}
+        .pipe gulp.dest "#{client-public}/pages"
 
 
 # Compile client LiveScript files into temp folder
@@ -162,6 +164,7 @@ gulp.task \browserify <[ lsc js]> (...x) ->
     console.log "Running browserify!!!! params: ", x
     base = "#{client-tmp}/pages"
     gulp.src "#{base}/**/*.js"
+        .pipe cache \browserify
         .pipe tap (file) ->
             filename = path.basename file.path
             if is-module-index base, file.path
