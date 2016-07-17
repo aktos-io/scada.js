@@ -10,7 +10,7 @@ cd "$CURR_DIR/.."
 
 start-tmux-session 0
 run-in-tmux 'cd src/w232' './watch.sh'
-run-in-tmux 'xdg-open .' 'atom .'
+run-in-tmux 'xdg-open . 2> /dev/null' 'atom .'
 run-in-tmux 'cd src/w232' 'lsc clear-init.ls'
 
 # on another terminal window
