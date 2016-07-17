@@ -46,7 +46,7 @@ block ractive
                         // simple ractive variables to be able to observe values 
                         p birth2: {{ exampleComponent.birth2 }}
                         p age2: {{ exampleComponent.age2 }}
-                
+                br
                 row
                     col-md-2.col-xs-2   
                         p Show/hide datepicker Tied component1
@@ -55,39 +55,92 @@ block ractive
                         +if('datepicker.show')
                             h3 Tied component1 
                             date-picker(value="{{ test.date }}")
-                            p {{ test.date }}
+                            p unix: {{ test.date }}
                     col-md-6.col-xs-2
                         h3 Tied component2     
                         date-picker(value="{{ test.date }}")
-                        p {{ test.date }}
-                
-                h3 Next free instance
-                date-picker(value="{{ test.date2 }}")
-                p {{ test.date2 }}
-                
+                        p unix: {{ test.date }}
+                br        
                 row
-                    ack-button(state="{{ buttonState }}") MY BUTTON
-                    ack-button(state="{{ buttonState }}") MY BUTTON2
-                    ack-button(state="{{ buttonState }}") MY BUTTON3
-                row
-                    search-combobox(data="{{productList}}" selected="{{x}}")
-                    p selected: {{x}}
-                
-                row
-                    search-combobox(db="{{ db }}" view="customers/getReceipts" selected="{{y}}")
-                    p selected: {{y}}
+                    h3 Untied (free) instance
+                    date-picker(value="{{ test.date2 }}")
+                    p unix: {{ test.date2 }}
 
+                br
                 row
-                    flot-chart(data1="{{data1}}" data2="{{data2}}")
-
+                    col-md-2.col-xs-2   
+                        p Show/hide button Tied component1
+                        input(type="checkbox" checked="{{ button.show }}")
+                    col-md-3.col-xs-2
+                        +if('button.show')
+                            h3 Tied component1 
+                            ack-button(state="{{ buttonState }}") MY BUTTON
+                    col-md-3.col-xs-2  
+                        h3 Tied component2 
+                        ack-button(state="{{ buttonState }}") MY BUTTON2
+                    col-md-3.col-xs-2  
+                        h3 Untied (free) instance
+                        ack-button(state="{{ buttonState }}") MY BUTTON3
+                br
                 row
-                    | {{#each [1,2,3]:i}}
-                    div.box
-                        pie-chart(names="Kekik,Peynir,Zeytin,Mahmut" values="{{simulateData(i)}}")
-                    | {{/each}}
+                    col-md-2.col-xs-2  
+                        p Show/hide combobox Tied component1
+                        input(type="checkbox" checked="{{ combobox.show }}")
+                    col-md-3.col-xs-2
+                        +if('combobox.show')
+                            h3 Tied component1
+                            search-combobox()
+                            p selected: {{x}}
+                    col-md-3.col-xs-2  
+                        h3 Tied component2 
+                        search-combobox(data="{{productList}}" selected="{{x}}")
+                        p selected: {{x}}
+                    col-md-3.col-xs-2 
+                        h3 Untied (free) instance
+                        search-combobox(db="{{ db }}" view="customers/getReceipts" selected="{{y}}")
+                        p selected: {{y}}
+                br
                 row
-                    flot-chart(data1="{{data1}}" data2 ="{{data2}}")
-
+                    col-md-2.col-xs-2  
+                        p Show/hide flot-chart Tied component1
+                        input(type="checkbox" checked="{{ flot.show }}")
+                    col-md-3.col-xs-2
+                        +if('flot.show')
+                            h3 Tied component1
+                            flot-chart(data1="{{data1}}" data2="{{data2}}")
+                            p data1: {{data1}}
+                            p data2: {{data2}}
+                    col-md-3.col-xs-2  
+                        h3 Tied component2 
+                        flot-chart(data1="{{data1}}" data2="{{data2}}")
+                        p data1: {{data1}}
+                        p data2: {{data2}}
+                    col-md-3.col-xs-2 
+                        h3 Untied (free) instance
+                        flot-chart(data1="{{data1}}" data2="{{data2}}")
+                        p data1: {{data1}}
+                        p data2: {{data2}}
+                br
+                row
+                    col-md-2.col-xs-2  
+                        p Show/hide pie-chart Tied component1
+                        input(type="checkbox" checked="{{ pie.show }}")
+                    col-md-3.col-xs-2
+                        +if('pie.show')
+                            h3 Tied component1
+                            .box
+                                pie-chart(names="Kekik,Peynir,Zeytin,Mahmut" values="{{simulateData()}}")
+                            p simulatedData: {{simulateData()}}
+                    col-md-3.col-xs-2  
+                        h3 Tied component2 
+                        .box
+                            pie-chart(names="Kekik,Peynir,Zeytin,Mahmut" values="{{simulateData()}}")
+                        p simulatedData: {{simulateData()}}
+                    col-md-3.col-xs-2 
+                        h3 Untied (free) instance
+                        .box
+                            pie-chart(names="Kekik,Peynir,Zeytin,Mahmut" values="{{pieData}}")
+                        p simulatedData: {{pieData}}
             inspina-footer
                 +partial('right')
                     span aktos.io
