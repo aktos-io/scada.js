@@ -12,6 +12,7 @@ require! 'browserify': browserify
 require! 'gulp-uglify': uglify
 require! './src/lib/aea': {sleep}
 require! 'fs'
+require! 'gulp-flatten': flatten
 
 # TODO: combine = require('stream-combiner')
 
@@ -26,6 +27,7 @@ build-folder = "./build"
 client-public = "#{build-folder}/public"
 client-src = './src/client'
 client-tmp = "#{build-folder}/__client-tmp"
+client-pages = "#{client-public}/pages"
 
 lib-src = "./src/lib"
 lib-tmp = "#{build-folder}/__lib-tmp"
@@ -43,6 +45,22 @@ list-rel-files = (base, main, file-list) ->
         main = "#{base}/components.jade"
         ["./#{f}" - "#{base}/" for f in file-list when f isnt main]
 
+is-module-index = (base, file) ->
+    if base is path.dirname file
+        console.log "this is a simple file: ", file
+        return true
+
+    if file is "#{path.dirname file}/#{path.basename file}"
+        console.log "this is custom module: ", file
+        return true
+
+    [filename, ext] = path.basename file .split '.'
+    if file is "#{path.dirname file}/index.#{ext}"
+        console.log "this is a standart module", file
+        return true
+
+    #console.log "not a module index: #{file} (filename: #{filename}, ext: #{ext})"
+    return false
 
 # Organize Tasks
 gulp.task \default, ->
@@ -156,12 +174,17 @@ gulp.task \assets, ->
 
 # Compile Jade files in client-src to the client-tmp folder
 gulp.task \jade <[ jade-components ]> ->
-    gulp.src "#{client-src}/pages/*.jade", {base: client-src}
-        .pipe jade {pretty: yes}
-        .on \error, (err) ->
-            on-error \jade, err
-            @emit \end
-        .pipe gulp.dest client-public
+    base = "#{client-src}/pages"
+    glob "#{base}/**/*.jade", (err, files) ->
+        files = [.. for files when is-module-index base, ..]
+        for f in files
+            console.log "jade : ", f
+        gulp.src files
+            .pipe jade {pretty: yes}
+            .on \error, (err) ->
+                on-error \jade, err
+                @emit \end
+            .pipe gulp.dest client-pages
 
 
 gulp.task \jade-components ->
