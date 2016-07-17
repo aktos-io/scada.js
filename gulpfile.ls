@@ -48,20 +48,20 @@ list-rel-files = (base, main, file-list) ->
 
 is-module-index = (base, file) ->
     if base is path.dirname file
-        console.log "this is a simple file: ", file
+        #console.log "this is a simple file: ", file
         return true
 
     [filename, ext] = path.basename file .split '.'
 
     if filename is "#{path.basename path.dirname file}"
-        console.log "this is custom module: ", file
+        #console.log "this is custom module: ", file
         return true
 
     if file is "#{path.dirname file}/index.#{ext}"
-        console.log "this is a standart module", file
+        #console.log "this is a standart module", file
         return true
 
-    console.log "not a module index: #{file} (filename: #{filename}, ext: #{ext})"
+    #console.log "not a module index: #{file} (filename: #{filename}, ext: #{ext})"
     return false
 
 # Organize Tasks
@@ -78,8 +78,13 @@ gulp.task \default, ->
     watch ["#{client-src}/templates/**/*.jade"], ->
         gulp.start \jade
 
-    watch "#{client-src}/pages/*.*", (event) ->
-        run-all!
+    watch "#{client-src}/pages/**/*.jade", ->
+        gulp.start \jade
+
+    watch "#{client-src}/pages/**/*.ls", (event) ->
+        console.log "watching browserify ... event: ", event
+        gulp.start \browserify
+
     watch "#{lib-src}/**/*.*", (event) ->
         run-all!
     watch "#{vendor-folder}/**", (event) ->
@@ -159,9 +164,9 @@ gulp.task \browserify <[ lsc js]> ->
     base = "#{client-tmp}/pages"
     gulp.src "#{base}/**/*.js"
         .pipe tap (file) ->
-            console.log "BROWSERIFY TAPPING: ", file.path
             filename = path.basename file.path
             if is-module-index base, file.path
+                console.log "BROWSERIFYING FILE: ", file.path
                 browserify file.path, {paths: [components-tmp, lib-tmp]}
                     .bundle!
                     .on \error, (err) ->
@@ -175,7 +180,10 @@ gulp.task \browserify <[ lsc js]> ->
 
 # Concatenate vendor javascript files into public/js/vendor.js
 gulp.task \vendor, ->
-    gulp.src "./vendor/**/*.js"
+    files = glob.sync "./vendor/**/*.js"
+    gulp.src files
+        .pipe tap (file) ->
+            #console.log "VENDOR: ", file.path
         .pipe cat "vendor.js"
         .pipe gulp.dest "#{client-public}/js"
 
@@ -193,10 +201,9 @@ gulp.task \assets, ->
 # Compile Jade files in client-src to the client-tmp folder
 gulp.task \jade <[ jade-components ]> ->
     base = "#{client-src}/pages"
-    gulp.src "#{base}/**/*.jade"
-        .pipe tap (file) ->
-            console.log "TAP SAYS: file is ", file.path
-            return if not is-module-index base, file.path
+    files = glob.sync "#{base}/**/*.jade"
+    files = [.. for files when is-module-index base, ..]
+    gulp.src files
         .pipe jade {pretty: yes}
         .on \error, (err) ->
             on-error \jade, err
