@@ -28,6 +28,7 @@ Ractive.components[component-name] = Ractive.extend do
         #console.log "DATA: ", data
         #console.log "VIEW:", view
         unless view
+            # USING EXTERNAL DATA (IE. Not from database directly)
             #console.log "COMBOBOX: using data: ", data
             __.set \selectionList, data
             __.observe \data, (new-val)->
@@ -61,6 +62,10 @@ Ractive.components[component-name] = Ractive.extend do
             throw if (__.get \selected) is null
         catch
             try __.set \selected, (__.get \data).0.id
+
+    onteardown: ->
+        console.log "destroying select picker..."
+        $ @find \* .selectpicker \destroy
 
     data: ->
         selected: -1
