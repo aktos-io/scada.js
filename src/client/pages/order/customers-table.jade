@@ -1,0 +1,24 @@
+h2 Müşteriler:
+order-table(
+    cols="{{ customersColNames }}"
+    default="{{ customersDefault }}"
+    filters="{{ customersFilters }}"
+    db="{{ db }}"
+    view="customers/getCustomers"
+    gen-entry-id="{{ genEntryId }}"
+    )
+    +partial('addnewTitle')
+        | Müşteri Ekle
+    +partial('header')
+    +partial('viewForm')
+        h3 Müşteri: {{ curr.name }}
+        
+    +partial('editForm')
+        panel(title="Müşteri" type="primary")
+            //- {{ JSON.stringify(curr) }}
+            form-vertical
+                form-group
+                    span Müşteri Adı: 
+                    input(value="{{ curr.name }}" )
+            btn(on-buttonclick="addNewOrderClose") Kapat!
+            btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}

@@ -1,0 +1,28 @@
+extends ../../templates/template.jade
+
+block title
+    title Showcase
+
+block script
+    script(src="showcase.js")
+    
+block ractive
+    inspina-theme
+        inspina-menu
+        inspina-right
+            inspina-header      
+                span
+                    | AKTOS.io
+            inspina-content
+                include ./example-component.jade
+                include ./search-combobox.jade
+                include ./date-picker.jade
+                include ./ack-button.jade
+                include ./pie-chart.jade 
+                include ./flot-chart.jade 
+            inspina-footer
+                +partial('right')
+                    span aktos.io
+                    
+                +partial('left')
+                    span showcase page

@@ -46,7 +46,7 @@ ractive = new Ractive do
                 now = Date.now!
                 tomorrow = now + 1day * 24hours_per_day * 3600seconds_per_hour * 1000ms_per_second
 
-                console.log "calculated now: ", now 
+                console.log "calculated now: ", now
                 author = (doc) -> (split '-', doc._id).0
 
                 orders = [[..client, author .., \selam ] for docs when now < ..due-date < tomorrow]

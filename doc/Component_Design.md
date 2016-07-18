@@ -1,4 +1,4 @@
-## Component design
+## Component Design Guide
 
 1. Use `Ractive.components['your-component-name'] = Ractive.extend ...`
 
@@ -20,7 +20,7 @@ If matches all: Congratulations! Your component is rock solid!
 
 | # | Importance     | Task                                                                                                                                                                             | See                                                                                     | Tip                                                                                                                            |
 |---|----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| 1 | MOST IMPORTANT | Implement example usage of your component in `showcase.jade`                                                                                                                     |                                                                                         |                                                                                                                                |
+| 1 | MOST IMPORTANT | Implement example usage of your component in `showcase/your-component.jade` as in the case of [example-component](../src/client/pages/showcase/example-component.jade)           |                                                                                         |                                                                                                                                |
 | 2 | IMPORTANT      | Place a simple ractive variable by your component                                                                                                                                | we can observe variables.                                                               |                                                                                                                                |
 | 3 | IMPORTANT      | Place 2 untied instances of your component.                                                                                                                                      | Your component does not interfere with new instances.                                   | Does your component use any elements which has static `id` field?                                                              |
 | 4 | MOST IMPORTANT | Place one or more of:  <ul> <li> a pair of tied instances </li> <li> `input` field </li>  <li> streaming live feed (via functions)  </li> that will change component's variable. | Component properly updates itself whenever main Ractive instance's variable is changed. | Does your component use `observe`? Does your component implements an `.on \change` (or similar) event if it uses jQuery in it? |
@@ -28,6 +28,25 @@ If matches all: Congratulations! Your component is rock solid!
 | 6 | MEDIUM         | Test your code in mobile.                                                                                                                                                        | Your component is usable in mobile device.                                              |                                                                                                                                |
 | 7 | MEDIUM         | Set width and height to different sizes                                                                                                                                          | Your component resizes correctly.                                                       |                                                                                                                                |
 | 8 | LOW            | Your component must match with theme colors                                                                                                                                      | It looks good.                                                                          | Ask a friend.                                                                                                                  |
+| 9 | IMPORTANT      | Add a quick checklist to [`your-component.jade`](../src/client/showcase/example-component.jade) to show that which tests has been performed and which tests your component passes.        |                                                                                         |                                                                                                                                |
+
+
+Example checklist for `your-component.jade`:
+
+```
+//-
+    Match with Design Guide status:
+
+        [x] 1. Example implementation
+        [x] 2. Simple variable
+        [x] 3. Unbound instances
+        [x] 4. Bound instances and/or live feed
+        [x] 5. {{#if }} ... {{/if}} block
+        [ ] 6. Test on mobile
+        [ ] 7. Change sizes
+        [x] 8. Match theme
+        [x] 9. This checklist
+```    
 ## Example component
 
-Look at the [example-component](../src/client/components/example-component) is used in [showcase](../src/client/pages/showcase.jade).
+Look at the [example-component](../src/client/components/example-component) is used in [showcase](../src/client/pages/showcase/example-component.jade).

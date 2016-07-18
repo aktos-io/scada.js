@@ -1,0 +1,15 @@
+extends ../../templates/template.jade
+block script             
+    script(src="order.js")
+
+block title 
+    title Siparişler
+    
+block ractive     
+    panel 
+        login(on-login="afterLoggedIn" context="{{ login }}" db="{{ db }}")
+
+    +if('login.ok')
+        include ./customers-table.jade
+        include ./receipts-table.jade
+        include ./orders-table.jade

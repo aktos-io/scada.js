@@ -5,7 +5,12 @@ wait-events = {}
 get-wait-event = (event-id) ->
     ev_ = wait-events[event-id]
     if ev_ is void
-        ev_ = {callbacks: [], run: no, waiting: no}
+        ev_ =
+            callbacks: []
+            run: no
+            waiting: no
+            param: {}
+
         wait-events[event-id] = ev_
     return ev_
 
@@ -25,7 +30,7 @@ run-waiting-event = (event-id, timer) ->
             status = if timer is null then \timed-out else \has-event
             clear-timer timer  # clear timer if set
             wait-events[event-id] = void
-            callback status
+            callback status, ev_.param
 
 export wait-for = (event-id, callback) !->
     ev_ = get-wait-event event-id
@@ -44,7 +49,23 @@ export timeout-wait-for = (timeout, event-id, callback) !->
         run-waiting-event event-id, null
     run-waiting-event event-id, timer
 
-export go = (event-id) !->
+export go = (event-id, param) !->
     ev_ = get-wait-event event-id
     ev_.run = yes
+    ev_.param = param if param?
     run-waiting-event event-id, "normally-go"
+
+/*
+EXAMPLE FOR USE GO!
+do
+    console.log "waiting mahmut..."
+    reason, param <- timeout-wait-for 10000ms, \mahmut
+    console.log "mahmut happened! reason: ", reason, "param: ", param
+
+do
+    console.log "firing mahmut in 2 seconds..."
+    <- sleep 2000ms
+    go \mahmut, 5
+    console.log "fired mahmut event!"
+
+*/

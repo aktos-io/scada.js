@@ -8,7 +8,7 @@ Ractive.components[component-name] = Ractive.extend do
         __ = @
         try
             db = @get \db
-            #console.log "COMBOBOX: Database object is: ", db
+            #console.log "COMBOBOX: Database object is: ", db #
             view = @get \view
         catch
             view = null
@@ -28,6 +28,7 @@ Ractive.components[component-name] = Ractive.extend do
         #console.log "DATA: ", data
         #console.log "VIEW:", view
         unless view
+            # USING EXTERNAL DATA (IE. Not from database directly)
             #console.log "COMBOBOX: using data: ", data
             __.set \selectionList, data
             __.observe \data, (new-val)->
@@ -38,6 +39,10 @@ Ractive.components[component-name] = Ractive.extend do
                 $ __.find \* .selectpicker \render
                 $ __.find \* .selectpicker \refresh
 
+            __.observe \selected, (new-val) ->
+                selected = __.get \selected
+                $ __.find \* .selectpicker 'val', selected
+                console.log "COMBOBOX selected:::", selected
         else
             #console.log "Combobox using view...", view
             update-combobox!
@@ -54,9 +59,13 @@ Ractive.components[component-name] = Ractive.extend do
         $ __.find \* .selectpicker \render
         $ __.find \* .selectpicker \refresh
         try
-            throw if (__.get \selected) is null 
+            throw if (__.get \selected) is null
         catch
             try __.set \selected, (__.get \data).0.id
+
+    onteardown: ->
+        console.log "destroying select picker..."
+        $ @find \* .selectpicker \destroy
 
     data: ->
         selected: -1

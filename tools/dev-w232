@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# include libs
+CURR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$CURR_DIR"
+. ./lib/tmux-launch
+
+# run commands
+cd "$CURR_DIR/.."
+
+start-tmux-session 0
+run-in-tmux 'cd src/w232' './watch.sh'
+run-in-tmux 'xdg-open . 2> /dev/null' 'atom .'
+run-in-tmux 'cd src/w232' 'lsc clear-init.ls'
+
+# on another terminal window
+start-tmux-session 1
+run-in-tmux 'cd src/server/w232-server' 'lsc device-server.ls'
+
+# Show in terminal
+x-terminal-emulator -e "tmux attach -t ${SESSION_BASE}-1"
+attach-tmux-session 0

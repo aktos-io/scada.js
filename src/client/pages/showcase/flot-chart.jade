@@ -1,0 +1,20 @@
+row
+    col-md-2.col-xs-2  
+        p Show/hide flot-chart Tied component1
+        input(type="checkbox" checked="{{ flot.show }}")
+    col-md-3.col-xs-2
+        +if('flot.show')
+            h3 Tied component1
+            flot-chart(data1="{{data1}}" data2="{{data2}}")
+            p data1: {{data1}}
+            p data2: {{data2}}
+    col-md-3.col-xs-2  
+        h3 Tied component2 
+        flot-chart(data1="{{data1}}" data2="{{data2}}")
+        p data1: {{data1}}
+        p data2: {{data2}}
+    col-md-3.col-xs-2 
+        h3 Untied (free) instance
+        flot-chart(data1="{{data1}}" data2="{{data2}}")
+        p data1: {{data1}}
+        p data2: {{data2}}
