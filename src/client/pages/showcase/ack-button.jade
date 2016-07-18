@@ -3,8 +3,8 @@ row
         p Show/hide button Tied component1
         input(type="checkbox" checked="{{ button.show }}")
     col-md-3.col-xs-2
+        h3 Tied component1 
         +if('button.show')
-            h3 Tied component1 
             ack-button(state="{{ buttonState }}") MY BUTTON
     col-md-3.col-xs-2  
         h3 Tied component2 
