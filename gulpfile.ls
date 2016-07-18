@@ -24,20 +24,26 @@ require! 'gulp-clean': clean
 notification-enabled = yes
 
 # Project Folder Structure
-vendor-folder = "#{__dirname}/vendor"
-server-src = "#{__dirname}/src/server"
-build-folder = "#{__dirname}/build"
+paths = {}
+paths.vendor-folder = "#{__dirname}/vendor"
+paths.server-src = "#{__dirname}/src/server"
+paths.build-folder = "#{__dirname}/build"
 
-client-public = "#{build-folder}/public"
-client-src = "#{__dirname}/src/client"
-client-tmp = "#{build-folder}/__client-tmp"
-client-pages = "#{client-public}/pages"
+paths.client-public = "#{paths.build-folder}/public"
+paths.client-src = "#{__dirname}/src/client"
+paths.client-tmp = "#{paths.build-folder}/__paths.client-tmp"
+paths.client-pages = "#{paths.client-public}/pages"
 
-lib-src = "#{__dirname}/src/lib"
-lib-tmp = "#{build-folder}/__lib-tmp"
+paths.lib-src = "#{__dirname}/src/lib"
+paths.lib-tmp = "#{paths.build-folder}/__paths.lib-tmp"
 
-components-src = "#{client-src}/components"
-components-tmp = "#{client-tmp}/components"
+paths.components-src = "#{paths.client-src}/components"
+paths.components-tmp = "#{paths.client-tmp}/components"
+
+console.log "Paths: "
+for p, k of paths
+    console.log "PATH for #{p} is: #{k}"
+console.log "---------------------------"
 
 on-error = (source, err) ->
     msg = "GULP ERROR: #{source} :: #{err?.to-string!}"
@@ -82,25 +88,25 @@ gulp.task \default, ->
         gulp.start <[ js info-browserify html vendor vendor-css assets jade ]>
 
     # watch for component changes
-    watch ["#{client-src}/components/**/*.*", "!#{client-src}/components/*.jade", "!#{client-src}/components/*.ls"] , (event) ->
+    watch ["#{paths.client-src}/components/**/*.*", "!#{paths.client-src}/components/*.jade", "!#{paths.client-src}/components/*.ls"] , (event) ->
         # changes in components should trigger browserify via removing its cache entry
         delete cache.caches['browserify']
         gulp.start <[ jade info-browserify ]>
 
     # watch for templates changes
-    watch ["#{client-src}/templates/**/*.jade"], ->
+    watch ["#{paths.client-src}/templates/**/*.jade"], ->
         gulp.start \jade
 
-    watch "#{client-src}/pages/**/*.jade", ->
+    watch "#{paths.client-src}/pages/**/*.jade", ->
         gulp.start \jade
 
-    watch ["#{client-src}/**/*.ls", "!#{components-src}/components.*"], (event) ->
+    watch ["#{paths.client-src}/**/*.ls", "!#{paths.components-src}/components.*"], (event) ->
         console.log "watching browserify ... event: ", event
         gulp.start \browserify
 
-    watch "#{lib-src}/**/*.*", (event) ->
+    watch "#{paths.lib-src}/**/*.*", (event) ->
         run-all!
-    watch "#{vendor-folder}/**", (event) ->
+    watch "#{paths.vendor-folder}/**", (event) ->
         gulp.start <[ vendor vendor-css ]>
 
     watch "./node_modules/**", (event) ->
@@ -108,42 +114,42 @@ gulp.task \default, ->
 
 # Copy js and html files as is
 gulp.task \js, ->
-    gulp.src "#{client-src}/**/*.js", {base: client-src}
-        .pipe gulp.dest client-tmp
+    gulp.src "#{paths.client-src}/**/*.js", {base: paths.client-src}
+        .pipe gulp.dest paths.client-tmp
 
 gulp.task \html, ->
-    base = "#{client-src}/pages"
+    base = "#{paths.client-src}/pages"
     gulp.src "#{base}/**/*.html", {base: base}
-        .pipe gulp.dest "#{client-public}/pages"
+        .pipe gulp.dest "#{paths.client-public}/pages"
 
 
 # Compile client LiveScript files into temp folder
 gulp.task \lsc-components <[ generate-components-module ]> ->
     console.log "RUNNING LSC_COMPONENTS"
-    gulp.src ["#{components-src}/*/*.ls", "#{components-src}/components.ls"], {base: client-src}
+    gulp.src ["#{paths.components-src}/*/*.ls", "#{paths.components-src}/components.ls"], {base: paths.client-src}
         .pipe lsc!
         .on \error, (err) ->
             on-error \lsc-lib, err
             @emit \end
-        .pipe gulp.dest client-tmp
+        .pipe gulp.dest paths.client-tmp
 
 
 gulp.task \lsc-pages <[ lsc-components ]> ->
     console.log "RUNNING LSC_PAGES"
-    base = "#{client-src}/pages"
+    base = "#{paths.client-src}/pages"
     gulp.src "#{base}/**/*.ls", {base: base}
         .pipe lsc!
         .on \error, (err) ->
             on-error \lsc-lib, err
             @emit \end
-        .pipe gulp.dest "#{client-tmp}/pages"
+        .pipe gulp.dest "#{paths.client-tmp}/pages"
 
 
 gulp.task \generate-components-module ->
     console.log "RUNNING GENERATE_COMPONENTS_MODULE"
-    components = glob.sync "#{components-src}/**/*.ls"
-    components = [.. for components when is-module-index components-src, ..]
-    index = "#{components-src}/components.ls"
+    components = glob.sync "#{paths.components-src}/**/*.ls"
+    components = [.. for components when is-module-index paths.components-src, ..]
+    index = "#{paths.components-src}/components.ls"
     components = [.. for components when .. isnt index]
     components = [path.basename path.dirname .. for components]
 
@@ -157,12 +163,12 @@ gulp.task \generate-components-module ->
 # Compile library modules into library temp folder
 gulp.task \lsc-lib, ->
     console.log "RUNNING LSC_LIB"
-    gulp.src "#{lib-src}/**/*.ls", {base: lib-src}
+    gulp.src "#{paths.lib-src}/**/*.ls", {base: paths.lib-src}
         .pipe lsc!
         .on \error, (err) ->
             on-error \lsc-lib, err
             @emit \end
-        .pipe gulp.dest lib-tmp
+        .pipe gulp.dest paths.lib-tmp
     console.log "ENDED LSC_LIB"
 
 # Browserify pages/* into public folder
@@ -173,14 +179,14 @@ gulp.task \lsc <[ lsc-lib lsc-pages ]>, ->
     console.log "lsc ended..."
 
 gulp.task \browserify <[ lsc js]> ->
-    base = "#{client-tmp}/pages"
+    base = "#{paths.client-tmp}/pages"
     gulp.src "#{base}/**/*.js"
         .pipe cache \browserify
         .pipe tap (file) ->
             filename = path.basename file.path
             if is-module-index base, file.path
                 console.log "Started Browserifying file: ", path.basename file.path
-                browserify file.path, {paths: [components-tmp, lib-tmp]}
+                browserify file.path, {paths: [paths.components-tmp, paths.lib-tmp]}
                     .bundle!
                     .on \error, (err) ->
                         on-error \browserify, err
@@ -188,7 +194,7 @@ gulp.task \browserify <[ lsc js]> ->
                     .pipe source filename
                     .pipe buffer!
                     #.pipe uglify!
-                    .pipe gulp.dest client-pages
+                    .pipe gulp.dest paths.client-pages
                     .pipe tap (file) ->
                         console.log "Finished browserify for file: ", path.basename file.path
 
@@ -200,22 +206,22 @@ gulp.task \vendor, ->
         .pipe tap (file) ->
             #console.log "VENDOR: ", file.path
         .pipe cat "vendor.js"
-        .pipe gulp.dest "#{client-public}/js"
+        .pipe gulp.dest "#{paths.client-public}/js"
 
 # Concatenate vendor css files into public/css/vendor.css
 gulp.task \vendor-css, ->
-    gulp.src "#{vendor-folder}/**/*.css"
+    gulp.src "#{paths.vendor-folder}/**/*.css"
         .pipe cat "vendor.css"
-        .pipe gulp.dest "#{client-public}/css"
+        .pipe gulp.dest "#{paths.client-public}/css"
 
 # Copy assets into the public directory as is
 gulp.task \assets, ->
-    gulp.src "#{client-src}/assets/**/*", {base: "#{client-src}/assets"}
-        .pipe gulp.dest client-public
+    gulp.src "#{paths.client-src}/assets/**/*", {base: "#{paths.client-src}/assets"}
+        .pipe gulp.dest paths.client-public
 
-# Compile Jade files in client-src to the client-tmp folder
+# Compile Jade files in paths.client-src to the paths.client-tmp folder
 gulp.task \jade <[ jade-components ]> ->
-    base = "#{client-src}/pages"
+    base = "#{paths.client-src}/pages"
     files = glob.sync "#{base}/**/*.jade"
     files = [.. for files when is-module-index base, ..]
     gulp.src files
@@ -226,14 +232,14 @@ gulp.task \jade <[ jade-components ]> ->
             on-error \jade, err
             @emit \end
         .pipe flatten!
-        .pipe gulp.dest client-pages
+        .pipe gulp.dest paths.client-pages
 
 gulp.task \jade-components ->
     # create a file which includes all jade file includes in it
     console.log "STARTED JADE_COMPONENTS"
 
-    glob "#{components-src}/**/*.jade", {base: components-src}, (err, filepath) ->
-        base = components-src
+    glob "#{paths.components-src}/**/*.jade", {base: paths.components-src}, (err, filepath) ->
+        base = paths.components-src
         main = "#{base}/components.jade"
         components = ["./#{f}" - "#{base}/" for f in filepath when f isnt main]
 
