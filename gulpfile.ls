@@ -1,4 +1,5 @@
-{union, join} = require \prelude-ls
+sleep = (ms, f) -> set-timeout f, ms
+require! 'prelude-ls': {union, join}
 require! 'gulp-livescript': lsc
 require! <[ gulp glob path]>
 require! 'vinyl-source-stream': source
@@ -15,6 +16,7 @@ require! 'fs'
 require! 'gulp-flatten': flatten
 require! 'gulp-tap': tap
 require! 'gulp-cached': cache
+require! 'gulp-clean': clean
 
 # TODO: combine = require('stream-combiner')
 
@@ -68,6 +70,14 @@ is-module-index = (base, file) ->
 # Organize Tasks
 gulp.task \default, ->
     console.log "task lsc is running.."
+    console.log "cleaning build directory"
+
+    gulp.src \build
+        .pipe clean {+force, -read}
+    console.log "build directory cleaned..."
+
+    <- sleep 500ms
+
     do function run-all
         gulp.start <[ js info-browserify html vendor vendor-css assets jade ]>
 
