@@ -1,4 +1,4 @@
-## Component design
+## Component Design Guide
 
 1. Use `Ractive.components['your-component-name'] = Ractive.extend ...`
 
@@ -28,8 +28,25 @@ If matches all: Congratulations! Your component is rock solid!
 | 6 | MEDIUM         | Test your code in mobile.                                                                                                                                                        | Your component is usable in mobile device.                                              |                                                                                                                                |
 | 7 | MEDIUM         | Set width and height to different sizes                                                                                                                                          | Your component resizes correctly.                                                       |                                                                                                                                |
 | 8 | LOW            | Your component must match with theme colors                                                                                                                                      | It looks good.                                                                          | Ask a friend.                                                                                                                  |
-| 9 | IMPORTANT      | Add a header to [`your-component.jade`](../src/client/showcase/example-component.jade) to show that which tests has been performed and which tests your component passes.        |                                                                                         |                                                                                                                                |
+| 9 | IMPORTANT      | Add a quick checklist to [`your-component.jade`](../src/client/showcase/example-component.jade) to show that which tests has been performed and which tests your component passes.        |                                                                                         |                                                                                                                                |
 
+
+Example checklist for `your-component.jade`:
+
+```
+//-
+    Match with Design Guide status:
+
+        [x] 1. Example implementation
+        [x] 2. Simple variable
+        [x] 3. Unbound instances
+        [x] 4. Bound instances and/or live feed
+        [x] 5. {{#if }} ... {{/if}} block
+        [ ] 6. Test on mobile
+        [ ] 7. Change sizes
+        [x] 8. Match theme
+        [x] 9. This checklist
+```    
 ## Example component
 
-Look at the [example-component](../src/client/components/example-component) is used in [showcase](../src/client/pages/showcase.jade).
+Look at the [example-component](../src/client/components/example-component) is used in [showcase](../src/client/pages/showcase/example-component.jade).
