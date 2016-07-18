@@ -5,10 +5,10 @@
 row 
     col-md-2
         // a checkbox to toggle one component instance ||meets 5||
-        p Show/hide Tied component 1
+        p Show/hide Bound component 1
         input(type="checkbox" checked="{{ exampleComponent.show }}")
     col-md-3
-        h3 Tied component 1
+        h3 Bound component 1
         // a component instance that is created on demand 
         +if('exampleComponent.show')  
             example-component(age="{{ exampleComponent.age }}" birth="{{ exampleComponent.birth }}")
@@ -17,14 +17,14 @@ row
             p age: {{ exampleComponent.age }}
     col-md-3
         // 
-        h3 Tied component 2
+        h3 Bound component 2
         example-component(age="{{ exampleComponent.age }}" birth="{{ exampleComponent.birth }}")
         p birth: {{ exampleComponent.birth }}
         p age: {{ exampleComponent.age }}
 
     col-md-3
         // Third instance is to prove it doesn't interfere with other instances ||meets 3||
-        h3 Untied (free) instance
+        h3 Unbound (free) instance
         example-component(age="{{ exampleComponent.age2 }}" birth="{{ exampleComponent.birth2 }}")
         // simple ractive variables to be able to observe values 
         p birth2: {{ exampleComponent.birth2 }}

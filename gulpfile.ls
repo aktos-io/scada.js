@@ -240,7 +240,7 @@ gulp.task \jade-components ->
 
     components = globby.sync ["#{base}/**/*.jade", "!#{base}/components.jade"]
     components = [path.relative base, .. for components]
-    
+
     for i in components
         console.log "jade-component: ", i
 
