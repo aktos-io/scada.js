@@ -13,11 +13,11 @@ Ractive.components[component-name] = Ractive.extend do
         if (@get \id) is \will-be-random
             @set \id random.generate 7
         id =  @get \id
-        console.log "Table id is automatically generateddd: ",id
+        console.log "Flot is automatically generated: ",id
         <- sleep 0ms
         $ document .ready ->
 
-            $ "\##{self.get 'id'}".length and $.plot($ "\##{self.get 'id'}", [
+            $($ "\##{id}").length and $.plot($($ "\##{id}"), [
                 data1, data2
             ],
                     {
@@ -54,8 +54,6 @@ Ractive.components[component-name] = Ractive.extend do
                         tooltip: true
                     }
             )
-
-            #console.log "id is:", "\##{self.get 'id'}"
 
     template: "\##{component-name}"
     data:

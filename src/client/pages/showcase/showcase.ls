@@ -21,13 +21,10 @@ random = ->
     x
 
 convert-to-flot =  ->
-    #console.log "convert-to-flot1"
-    x = [[x:random!, y:random!] for i from 0 to 15]
-    y= sort-by (.x), x
-    #console.log "y : ",y
-    z=[[0.x,0.y] for y]
-    #console.log "convert-to-flot1:", z
-    z
+    x = [[x:random!, y:random!] for i from 0 to 6]
+    y = sort-by (.x), x
+    console.log "flot random data is: ", y
+    y
 
 product-data1 =
     * name: "domates"
