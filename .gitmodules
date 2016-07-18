@@ -1,0 +1,3 @@
+[submodule "tools/aktos-espruino-tools"]
+	path = tools/aktos-espruino-tools
+	url = git@github.com:aktos-io/aktos-espruino-tools
