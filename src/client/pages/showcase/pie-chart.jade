@@ -1,20 +1,23 @@
 row
     col-md-2.col-xs-2  
-        p Show/hide pie-chart Tied component1
+        p Show/hide pie-chart Bound component1
         input(type="checkbox" checked="{{ pie.show }}")
     col-md-3.col-xs-2
-        h3 Tied component1
+        h3 Bound component1
         +if('pie.show')
             .box
-                pie-chart(names="Kekik,Peynir,Zeytin,Mahmut" values="{{simulateData()}}")
+                pie-chart(names="Kekik,Peynir,Zeytin,Mahmut" values="{{simulateData()}}" selected="{{ pie.selected }}")
             p simulatedData: {{simulateData()}}
+            p selected="{{ pie.selected }}"
     col-md-3.col-xs-2  
-        h3 Tied component2 
+        h3 Bound component2 
         .box
-            pie-chart(names="Kekik,Peynir,Zeytin,Mahmut" values="{{simulateData()}}")
+            pie-chart(names="Kekik,Peynir,Zeytin,Mahmut" values="{{simulateData()}}" selected="{{ pie.selected }}")
         p simulatedData: {{simulateData()}}
+        p selected="{{ pie.selected }}"
     col-md-3.col-xs-2 
-        h3 Untied (free) instance
+        h3 Unbound (free) instance
         .box
-            pie-chart(names="Kekik,Peynir,Zeytin,Mahmut" values="{{pieData}}")
-        p simulatedData: {{pieData}}
+            pie-chart(names="Kekik,Peynir,Zeytin,Mahmut" values="{{pieData}}" selected="{{ pie.selected2 }}")
+        p simulatedData: {{pieData}} 
+        p selected="{{ pie.selected2 }}"
