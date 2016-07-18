@@ -70,6 +70,7 @@ ractive = new Ractive do
             show: yes
         datepicker:
             show: yes
+            date1: 1469233440000  # 23.07.2016 03:24
         combobox:
             show: yes
         flot:
@@ -98,7 +99,7 @@ ractive.on \complete, ->
         #console.log "changing state: ", new-state
         ractive.set \buttonState, new-state
         ractive.set \myUnixTime, new-unix
-        console.log "myUnixTime: ", ractive.get \myUnixTime
+        #console.log "myUnixTime: ", ractive.get \myUnixTime
         if i > 3
             i:=0
         <- sleep 5000ms

@@ -17,7 +17,7 @@ Ractive.components[component-name] = Ractive.extend do
     */
 
     oninit: ->
-        self = @
+        __ = @
 
         if (@get \id) is \will-be-random
             @set \id random.generate 7
@@ -25,40 +25,29 @@ Ractive.components[component-name] = Ractive.extend do
 
         #console.log "date-time-picker starting..."
         <- sleep 0ms
-        x = $ "\##{self.get 'id'}" .datetimepicker do
+        jq = $ "\##{__.get 'id'}"
+        dp = jq.datetimepicker do
             # daysOfWeekDisabled: [6, 7]
-            format: 'DD/MM/YYYY HH:mm'
-            # format: 'X' // for unixtime stamp
+            format: 'DD.MM.YYYY HH:mm'
             locale: 'tr'
             useCurrent: false
             showTodayButton: true
         #console.log "x: " , x
 
-        unix-to-date = ->
-            from-others-unix = self.get \unix
-            my-date = new Date( from-others-unix )
-            from-others-origin-data = my-date.toLocaleString!
-            x = from-others-origin-data.split ","
-            a = x.0.split "/"
-            from-others=  a.1 + "/" + a.0 + "/" + a.2 + "," + x.1
-            console.log "unix date converted: ", from-others
+        dp-fn = $ "\##{__.get 'id'}" .data \DateTimePicker
+        console.log "dp func: ", dp-fn
 
-        change-date = ->
-            disp = x.data!.date
-            unix = moment(disp, 'DD/MM/YYYY HH:mm').unix! * 1000ms
+        dp.on "dp.change" , ->
+            disp = jq.data!.date
+            unix = moment(disp, 'DD.MM.YYYY HH:mm').unix! * 1000ms
             #console.log "unix time: ", unix
-            self.set \value, unix
-            self.set \unix, unix
+            __.set \unix, unix
 
-        x.on "dp.change" , ->
-            change-date!
-
-        self.observe \value, (val) ->
-            #console.log "val: ", val
-
-        self.observe \unix, (val) ->
+        __.observe \unix, (val) ->
             console.log "unix val: ", val
-            unix-to-date!
+            display = moment val .format 'DD.MM.YYYY HH:mm'
+            console.log "display: ", display
+            dp-fn.date display
 
     data: ->
         id: \will-be-random

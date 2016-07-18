@@ -1,18 +1,30 @@
+//- 
+    Match with Design Guide status: 
+    
+        [x] 1. Example implementation
+        [x] 2. Simple variable 
+        [x] 3. Unbound instances 
+        [x] 4. Bound instances and/or live feed
+        [x] 5. {{#if }} ... {{/if}} block
+        [ ] 6. Test on mobile 
+        [ ] 7. Change sizes
+        [x] 8. Match theme 
+        [x] 9. This checklist 
+
 row
-    col-md-2.col-xs-2   
-        p Show/hide datepicker Tied component1
+    col-md-1.col-xs-1   
+        p Show/hide datepicker
         input(type="checkbox" checked="{{ datepicker.show }}")
-    col-md-3.col-xs-2
+    col-md-3.col-xs-3
+        h3 Tied component1 
         +if('datepicker.show')
-            h3 Tied component1 
-            date-picker(value="{{ test.date }}")
-            p unix: {{ test.date }}
-    col-md-6.col-xs-2
+            date-picker(unix="{{ datepicker.date1 }}")
+            p unix: {{ datepicker.date1  }}
+    col-md-3.col-xs-3
         h3 Tied component2     
-        date-picker(value="{{ test.date }}")
-        p unix: {{ test.date }}
-br        
-row
-    h3 Untied (free) instance
-    date-picker(value="{{ test.date2 }}")
-    p unix: {{ test.date2 }}
+        date-picker(unix="{{ datepicker.date1 }}")
+        p unix: {{ datepicker.date1  }}
+    col-md-3.col-xs-3    
+        h3 Untied instance
+        date-picker(unix="{{ datepicker.date2 }}")
+        p unix: {{ datepicker.date1  }}
