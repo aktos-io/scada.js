@@ -1,18 +1,18 @@
 row
     col-md-2.col-xs-2  
-        p Show/hide combobox Tied component1
+        p Show/hide combobox Bound component1
         input(type="checkbox" checked="{{ combobox.show }}")
     col-md-3.col-xs-2
+        h3 Bound component1
         +if('combobox.show')
-            h3 Tied component1
             search-combobox(data="{{productList}}" selected="{{x}}")
             p selected: {{x}}
     col-md-3.col-xs-2  
-        h3 Tied component2 
+        h3 Bound component2 
         search-combobox(data="{{productList}}" selected="{{x}}")
         p selected: {{x}}
     col-md-3.col-xs-2 
-        h3 Untied (free) instance
+        h3 UnBound (free) instance
         search-combobox(db="{{ db }}" view="customers/getReceipts" selected="{{y}}")
         p selected: {{y}}
         

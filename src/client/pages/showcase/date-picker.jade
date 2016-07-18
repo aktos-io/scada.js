@@ -16,15 +16,15 @@ row
         p Show/hide datepicker
         input(type="checkbox" checked="{{ datepicker.show }}")
     col-md-3.col-xs-3
-        h3 Tied component1 
+        h3 Bound component1 
         +if('datepicker.show')
             date-picker(unix="{{ datepicker.date1 }}")
             p unix: {{ datepicker.date1  }}
     col-md-3.col-xs-3
-        h3 Tied component2     
+        h3 Bound component2     
         date-picker(unix="{{ datepicker.date1 }}")
         p unix: {{ datepicker.date1  }}
     col-md-3.col-xs-3    
-        h3 Untied instance
+        h3 Unbound instance
         date-picker(unix="{{ datepicker.date2 }}")
         p unix: {{ datepicker.date1  }}
