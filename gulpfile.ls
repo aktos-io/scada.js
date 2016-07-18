@@ -31,11 +31,11 @@ paths.build-folder = "#{__dirname}/build"
 
 paths.client-public = "#{paths.build-folder}/public"
 paths.client-src = "#{__dirname}/src/client"
-paths.client-tmp = "#{paths.build-folder}/__paths.client-tmp"
+paths.client-tmp = "#{paths.build-folder}/__client-tmp"
 paths.client-pages = "#{paths.client-public}/pages"
 
 paths.lib-src = "#{__dirname}/src/lib"
-paths.lib-tmp = "#{paths.build-folder}/__paths.lib-tmp"
+paths.lib-tmp = "#{paths.build-folder}/__lib-tmp"
 
 paths.components-src = "#{paths.client-src}/components"
 paths.components-tmp = "#{paths.client-tmp}/components"
@@ -49,11 +49,6 @@ on-error = (source, err) ->
     msg = "GULP ERROR: #{source} :: #{err?.to-string!}"
     notifier.notify {title: "GULP.#{source}", message: msg} if notification-enabled
     console.log msg
-
-
-list-rel-files = (base, main, file-list) ->
-        main = "#{base}/components.jade"
-        ["./#{f}" - "#{base}/" for f in file-list when f isnt main]
 
 is-module-index = (base, file) ->
     if base is path.dirname file
