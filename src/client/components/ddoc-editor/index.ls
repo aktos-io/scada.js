@@ -52,7 +52,9 @@ Ractive.components[component-name] = Ractive.extend do
                 ddoc = self.get \designDocument
                 ddoc-js = eval ddoc.javascript
                 # convert special functions to strings
-                ddoc = ddoc `merge` ddoc-js
+                ddoc.views = ddoc-js.views
+                ddoc.lists = ddoc-js.lists
+                ddoc.validate_doc_update = ddoc-js.validate_doc_update
                 ddoc.src = ddoc.livescript
                 ddoc = make-design-doc ddoc
                 console.log "Full document to upload: ", ddoc
