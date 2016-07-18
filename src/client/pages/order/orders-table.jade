@@ -45,11 +45,11 @@ order-table(
                 form-group
                     row 
                         col-md-4: span Sipariş Tarihi: 
-                        col-md-8: date-picker(value="{{ curr.orderDate }}")
+                        col-md-8: date-picker(unix="{{ curr.orderDate }}")
                 form-group
                     row 
                         col-md-4: span Teslim Tarihi:
-                        col-md-8: date-picker(value="{{ curr.dueDate }}")
+                        col-md-8: date-picker(unix="{{ curr.dueDate }}")
                     p Due date: {{ curr.dueDate }}
                     //- input(value="{{ curr.dueDate }}")
                 +each('curr.entries:i')

@@ -172,15 +172,14 @@ gulp.task \lsc <[ lsc-lib lsc-pages ]>, ->
     console.log "RUNNING LSC (which means ended)"
     console.log "lsc ended..."
 
-gulp.task \browserify <[ lsc js]> (...x) ->
-    console.log "Running browserify!!!! params: ", x
+gulp.task \browserify <[ lsc js]> ->
     base = "#{client-tmp}/pages"
     gulp.src "#{base}/**/*.js"
         .pipe cache \browserify
         .pipe tap (file) ->
             filename = path.basename file.path
             if is-module-index base, file.path
-                console.log "BROWSERIFYING FILE: ", path.basename file.path
+                console.log "Started Browserifying file: ", path.basename file.path
                 browserify file.path, {paths: [components-tmp, lib-tmp]}
                     .bundle!
                     .on \error, (err) ->
