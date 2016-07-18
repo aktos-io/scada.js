@@ -1,3 +1,5 @@
+{sleep} = require "aea"
+random = require \randomstring
 
 component-name = "flot-chart"
 Ractive.components[component-name] = Ractive.extend do
@@ -6,9 +8,16 @@ Ractive.components[component-name] = Ractive.extend do
         data1 = @get \data1
         data2 = @get \data2
 
+        self = @
+
+        if (@get \id) is \will-be-random
+            @set \id random.generate 7
+        id =  @get \id
+        console.log "Table id is automatically generateddd: ",id
+        <- sleep 0ms
         $ document .ready ->
 
-            $('#flot-dashboard-mahmut').length and $.plot($('#flot-dashboard-mahmut'), [
+            $ "\##{self.get 'id'}".length and $.plot($ "\##{self.get 'id'}", [
                 data1, data2
             ],
                     {
@@ -46,4 +55,8 @@ Ractive.components[component-name] = Ractive.extend do
                     }
             )
 
+            #console.log "id is:", "\##{self.get 'id'}"
+
     template: "\##{component-name}"
+    data:
+        id: \will-be-random
