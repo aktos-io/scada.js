@@ -8,9 +8,9 @@ row
         p Show/hide Tied component 1
         input(type="checkbox" checked="{{ exampleComponent.show }}")
     col-md-3
+        h3 Tied component 1
         // a component instance that is created on demand 
         +if('exampleComponent.show')  
-            h3 Tied component 1
             example-component(age="{{ exampleComponent.age }}" birth="{{ exampleComponent.birth }}")
             // simple ractive variables to be able to observe values ||meets 2||
             p birth: {{ exampleComponent.birth }}

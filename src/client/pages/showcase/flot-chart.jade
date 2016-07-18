@@ -3,8 +3,8 @@ row
         p Show/hide flot-chart Tied component1
         input(type="checkbox" checked="{{ flot.show }}")
     col-md-3.col-xs-2
+        h3 Tied component1
         +if('flot.show')
-            h3 Tied component1
             flot-chart(data1="{{data1}}" data2="{{data2}}")
             p data1: {{data1}}
             p data2: {{data2}}

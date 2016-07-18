@@ -3,8 +3,8 @@ row
         p Show/hide combobox Tied component1
         input(type="checkbox" checked="{{ combobox.show }}")
     col-md-3.col-xs-2
+        h3 Tied component1
         +if('combobox.show')
-            h3 Tied component1
             search-combobox(data="{{productList}}" selected="{{x}}")
             p selected: {{x}}
     col-md-3.col-xs-2  
