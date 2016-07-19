@@ -75,32 +75,43 @@ gulp.task \default, ->
 
     gulp.src \build
         .pipe clean {+force, -read}
+    <- sleep 500ms
     console.log "build directory cleaned..."
 
-    <- sleep 500ms
-
     do function run-all
-        gulp.start <[ js info-browserify html vendor vendor-css assets jade ]>
+        gulp.start <[ js browserify html vendor vendor-css assets jade ]>
 
-    # watch for component changes
-    watch ["#{paths.client-src}/components/**/*.*", "!#{paths.client-src}/components/*.jade", "!#{paths.client-src}/components/*.ls"] , (event) ->
+    for-components =
+        # include
+        "#{paths.client-src}/components/**/*.*"
+        "#{paths.lib-src}/**/*.ls"
+        "#{paths.lib-src}/**/*.js"
+        # exclude
+        "!#{paths.client-src}/components/*.jade"
+        "!#{paths.client-src}/components/*.ls"
+
+    watch for-components, (event) ->
         # changes in components should trigger browserify via removing its cache entry
         delete cache.caches['browserify']
-        gulp.start <[ jade info-browserify ]>
+        gulp.start <[ jade browserify ]>
 
-    # watch for templates changes
-    watch ["#{paths.client-src}/templates/**/*.jade"], ->
+    for-jade =
+        "#{paths.client-src}/pages/**/*.jade"
+        "#{paths.client-src}/templates/**/*.jade"
+
+    watch for-jade, ->
         gulp.start \jade
 
-    watch "#{paths.client-src}/pages/**/*.jade", ->
-        gulp.start \jade
+    for-browserify =
+        # include
+        "#{paths.client-src}/**/*.ls"
+        # exclude
+        "!#{paths.components-src}/components.*"
 
-    watch ["#{paths.client-src}/**/*.ls", "!#{paths.components-src}/components.*"], (event) ->
+    watch for-browserify, (event) ->
         console.log "watching browserify ... event: ", event
         gulp.start \browserify
 
-    watch "#{paths.lib-src}/**/*.*", (event) ->
-        run-all!
     watch "#{paths.vendor-folder}/**", (event) ->
         gulp.start <[ vendor vendor-css ]>
 
@@ -167,7 +178,6 @@ gulp.task \lsc-lib, ->
     console.log "ENDED LSC_LIB"
 
 # Browserify pages/* into public folder
-gulp.task \info-browserify <[ browserify ]> ->
 
 gulp.task \lsc <[ lsc-lib lsc-pages ]>, ->
     console.log "RUNNING LSC (which means ended)"
