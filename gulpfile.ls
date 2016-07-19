@@ -45,6 +45,11 @@ on-error = (source, err) ->
     notifier.notify {title: "GULP.#{source}", message: msg} if notification-enabled
     console.log msg
 
+log-info = (source, msg) ->
+    console-msg = "GULP INFO: #{source} : #{msg}"
+    notifier.notify {title: "GULP.#{source}", message: msg} if notification-enabled
+    console.log console-msg
+
 is-module-index = (base, file) ->
     if base is path.dirname file
         #console.log "this is a simple file: ", file
@@ -186,7 +191,8 @@ gulp.task \browserify <[ lsc js]> ->
                     #.pipe uglify!
                     .pipe gulp.dest paths.client-pages
                     .pipe tap (file) ->
-                        console.log "Finished browserify for file: ", path.basename file.path
+                        msg = "Finished browserify for file: #{path.basename file.path}"
+                        log-info "Browserify", msg
 
 
 # Concatenate vendor javascript files into public/js/vendor.js
