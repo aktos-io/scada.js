@@ -1,17 +1,17 @@
-mixin if(name)
-    != '{{#' + name + '}}'
+mixin if(condition)
+    != '{{#if ' + condition + '}}'
     block
-    != '{{/' + name + '}}'
+    != '{{/if}}'
 
 mixin unless(name)
-    != '{{^' + name + '}}'
+    != '{{#unless ' + condition+ '}}'
     block
-    != '{{/' + name + '}}'
+    != '{{/unless}}'
 
 mixin each(name)
-    != '{{#' + name + '}}'
+    != '{{#each ' + name + '}}'
     block
-    != '{{/' + name + '}}'
+    != '{{/each}}'
 
 mixin partial(name)
     != '{{#partial ' + name + '}}'
