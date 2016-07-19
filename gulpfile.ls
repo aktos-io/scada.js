@@ -81,36 +81,36 @@ gulp.task \default, ->
     do function run-all
         gulp.start <[ js browserify html vendor vendor-css assets jade ]>
 
-    for-components =
+    for-browserify =
         # include
-        "#{paths.client-src}/components/**/*.*"
+        "#{paths.client-src}/components/**/*.ls"
+        "#{paths.client-src}/components/**/*.js"
+        "!#{paths.client-src}/components/components.ls"
+
         "#{paths.lib-src}/**/*.ls"
         "#{paths.lib-src}/**/*.js"
-        # exclude
-        "!#{paths.client-src}/components/*.jade"
-        "!#{paths.client-src}/components/*.ls"
-
-    watch for-components, (event) ->
+    watch for-browserify, (event) ->
         # changes in components should trigger browserify via removing its cache entry
         delete cache.caches['browserify']
-        gulp.start <[ jade browserify ]>
+        gulp.start <[ browserify ]>
+
+    for-browserify-pages =
+            "#{paths.client-src}/pages/**/*.ls"
+
+    watch for-browserify-pages, (event) ->
+        # changes in components should trigger browserify via removing its cache entry
+        gulp.start <[ browserify ]>
+
 
     for-jade =
+        "#{paths.client-src}/components/**/*.jade"
+        "!#{paths.client-src}/components/components.jade"
+
         "#{paths.client-src}/pages/**/*.jade"
         "#{paths.client-src}/templates/**/*.jade"
 
     watch for-jade, ->
         gulp.start \jade
-
-    for-browserify =
-        # include
-        "#{paths.client-src}/**/*.ls"
-        # exclude
-        "!#{paths.components-src}/components.*"
-
-    watch for-browserify, (event) ->
-        console.log "watching browserify ... event: ", event
-        gulp.start \browserify
 
     watch "#{paths.vendor-folder}/**", (event) ->
         gulp.start <[ vendor vendor-css ]>
