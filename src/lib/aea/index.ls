@@ -5,6 +5,7 @@ require! {
     './signal': {wait-for, timeout-wait-for, go, is-waiting}
     './debug-log': {debug-log, get-logger}
     './packing': {pack, unpack}
+    './formatting': {unix-to-readable, readable-to-unix}
 }
 
 
@@ -15,4 +16,5 @@ module.exports = {
     wait-for, timeout-wait-for, go, is-waiting
     debug-log, get-logger
     pack, unpack
+    unix-to-readable, readable-to-unix
 }
