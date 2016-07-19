@@ -21,12 +21,10 @@ random = ->
     x
 
 convert-to-flot =  ->
-    #console.log "convert-to-flot1"
-    x = [[x:random!, y:random!] for i from 0 to 15]
-    y= sort-by (.x), x
-    #console.log "y : ",y
-    z=[[0.x,0.y] for y]
-    #console.log "convert-to-flot1:", z
+    x = [x:random!, y:random! for i from 0 to 5]
+    y = sort-by (.x), x
+    z = [[..x,..y] for y]
+    console.log "flot random data is: ", z
     z
 
 product-data1 =
@@ -56,8 +54,6 @@ ractive = new Ractive do
     data:
         my-unix-time: 1454277600000
         db: db
-        data1:data1
-        data2:data2
         test:
             date: utc-date!
             date2:new Date!
@@ -74,6 +70,10 @@ ractive = new Ractive do
         combobox:
             show: yes
         flot:
+            bound1: convert-to-flot!
+            bound2: convert-to-flot!
+            unbound1: convert-to-flot!
+            unbound2: convert-to-flot!
             show: yes
         pie:
             show: yes
