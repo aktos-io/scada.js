@@ -39,10 +39,20 @@ Ractive.components[component-name] = Ractive.extend do
                 $ __.find \* .selectpicker \render
                 $ __.find \* .selectpicker \refresh
 
+            <- sleep 10ms
             __.observe \selected, (new-val) ->
                 selected = __.get \selected
-                $ __.find \* .selectpicker 'val', selected
-                console.log "COMBOBOX selected:::", selected
+                try
+                    throw if (Number selected) isnt (parse-int selected)
+                    selected = Number selected
+
+                if selected in [..id for data]
+                    $ __.find \* .selectpicker 'val', selected
+                    console.log "COMBOBOX selected:::", selected
+                else
+                    console.log "COMBOBOX: selected value is not in dataset, ds: ", selected , [..id for data]
+                    $ __.find \* .selectpicker 'val', null
+
         else
             #console.log "Combobox using view...", view
             update-combobox!
@@ -58,10 +68,7 @@ Ractive.components[component-name] = Ractive.extend do
         #console.log "COMBOBOX: first rendering!"
         $ __.find \* .selectpicker \render
         $ __.find \* .selectpicker \refresh
-        try
-            throw if (__.get \selected) is null
-        catch
-            try __.set \selected, (__.get \data).0.id
+
 
     onteardown: ->
         console.log "destroying select picker..."

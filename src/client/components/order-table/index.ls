@@ -167,6 +167,7 @@ Ractive.components[component-name] = Ractive.extend do
 
     data: ->
         __ = @
+        instance: __
         new-order: ->
             console.log "Returning new default value: ", __.get \default
             unpack pack __.get \default

@@ -1,18 +1,30 @@
+| {{=<% %>=}}
+h1 search-combobox(data="{{ list }}" selected="{{ x }}")
+| <%={{ }}=%>
 row
     col-md-2.col-xs-2  
         p Show/hide combobox Bound component1
         input(type="checkbox" checked="{{ combobox.show }}")
-    col-md-3.col-xs-2
+    col-md-3.col-xs-3
         h3 Bound component1
         +if('combobox.show')
-            search-combobox(data="{{productList}}" selected="{{x}}")
-            p selected: {{x}}
-    col-md-3.col-xs-2  
+            search-combobox(data="{{productList}}" selected="{{ combobox.boundSelected }}")
+            p selected: {{combobox.boundSelected}}
+    col-md-3.col-xs-3  
         h3 Bound component2 
-        search-combobox(data="{{productList}}" selected="{{x}}")
-        p selected: {{x}}
-    col-md-3.col-xs-2 
+        search-combobox(data="{{productList}}" selected="{{ combobox.boundSelected }}")
+        p selected: {{combobox.boundSelected}}
+    col-md-3.col-xs-3 
         h3 UnBound (free) instance
         search-combobox(db="{{ db }}" view="customers/getReceipts" selected="{{y}}")
         p selected: {{y}}
+row
+    .col-md-5.col-xs-5(style="border: 1px solid black ")
+        h3 Undefined value at the beginning
+        p
+            search-combobox(data="{{productList}}" selected="{{combobox.nonexist}}")
+     
+        p 
+            span selected: 
+            input(value="{{combobox.nonexist}}") 
         

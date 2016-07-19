@@ -26,7 +26,7 @@
                         .col-md-9.col-sm-9
                             | {{>header}}
                         | {{/if}}
-            +each('dataFilters[filterOpts.selected](tabledata, filterOpts.params):i')
+            +each('dataFilters[filterOpts.selected](tabledata, filterOpts.params, this):i')
                 +if('true').
                     <tr class="input-line {{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}}" on-doubleclick="activated">
                         {{#if isClicked(i) }}
