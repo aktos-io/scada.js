@@ -3,6 +3,7 @@ random = require \randomstring
 
 component-name = "flot-chart"
 Ractive.components[component-name] = Ractive.extend do
+    isolated: yes
     oninit: ->
 
         data1 = @get \data1
