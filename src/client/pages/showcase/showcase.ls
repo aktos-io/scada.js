@@ -69,6 +69,7 @@ ractive = new Ractive do
             date1: 1469233440000  # 23.07.2016 03:24
         combobox:
             show: yes
+            bound-selected: 47
         flot:
             bound1: convert-to-flot!
             bound2: convert-to-flot!
