@@ -1,10 +1,8 @@
-sleep = (ms, f) -> set-timeout f, ms
+require! <[ gulp glob path fs globby]>
 require! 'prelude-ls': {union, join}
 require! 'gulp-livescript': lsc
-require! <[ gulp glob path]>
 require! 'vinyl-source-stream': source
 require! 'vinyl-buffer': buffer
-#require! 'gulp-plumber': plumber
 require! 'gulp-watch': watch
 require! 'gulp-jade': jade
 require! 'node-notifier': notifier
@@ -12,14 +10,10 @@ require! 'gulp-concat': cat
 require! 'browserify': browserify
 require! 'gulp-uglify': uglify
 require! './src/lib/aea': {sleep}
-require! 'fs'
 require! 'gulp-flatten': flatten
 require! 'gulp-tap': tap
 require! 'gulp-cached': cache
 require! 'gulp-clean': clean
-require! 'globby'
-
-# TODO: combine = require('stream-combiner')
 
 # Build Settings
 notification-enabled = yes
