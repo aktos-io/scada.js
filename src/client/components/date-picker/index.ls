@@ -32,6 +32,8 @@ Ractive.components[component-name] = Ractive.extend do
             locale: 'tr'
             useCurrent: false
             showTodayButton: true
+            ignoreReadonly: true
+
         #console.log "x: " , x
 
         dp-fn = $ "\##{__.get 'id'}" .data \DateTimePicker
