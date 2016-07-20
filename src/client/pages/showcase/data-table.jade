@@ -1,15 +1,15 @@
 //- 
     Match with Design Guide status: 
     
-        [ ] 1. Example implementation
-        [ ] 2. Simple variable 
-        [ ] 3. Unbound instances 
+        [x] 1. Example implementation
+        [ ] 2. Simple variable
+        [x] 3. Unbound instances 
         [ ] 4. Bound instances and/or live feed
         [ ] 5. {{#if }} ... {{/if}} block
         [ ] 6. Test on mobile 
         [ ] 7. Change sizes
         [ ] 8. Match theme 
-        [ ] 9. This checklist 
+        [x] 9. This checklist 
         
 .row
     .col-md-12
@@ -24,7 +24,7 @@
             tabledata="{{ datatable2.tabledata }}"
             )
             +partial('header')
-                span Hello!
+                span Hello! Try filters by hand (all, some)
                 input(value="{{ filterOpts.selected }}")
             +partial('viewForm')
                 span This is viev form!
