@@ -1,0 +1,40 @@
++component('data-table')
+    b-table 
+        thead 
+            tr.
+                {{#if clickedIndex !== null}}
+                    <th>Editing...</th>
+                {{else}}
+                    <th>#</th>
+                {{/if}}
+                {{#each columnList}}
+                    <th>{{ . }}</th>
+                {{/each}}
+
+        tbody.
+        tbody
+            tr
+                td(colspan="{{ columnList.length + 1 }}")
+                    {{>header}}
+            +each('dataFilters[filterOpts.selected](tabledata, filterOpts.params, this):i')
+                tr.input-line(
+                    class="{{#if clickedIndex === i}}warning{{/if}}"
+                    on-doubleclick="clicked"
+                    )
+                    {{#if isClicked(.id)}}
+                    td
+                        btn(type="info" on-buttonclick="endEditing"): icon-remove
+                    {{else}}
+                    td.
+                        {{i+1}}
+                    {{/if}}
+                    
+                    {{#if isEditingLine(.id)}}
+                    td(colspan="{{ columnList.length }}") {{>editForm}}
+                    {{elseif isClicked(.id)}}
+                    td(colspan="{{ columnList.length }}") {{>viewForm}}
+                    {{else}}
+                    +each(".cols")
+                        td {{.}}
+                    {{/if}}
+                    
