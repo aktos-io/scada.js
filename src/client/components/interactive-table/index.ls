@@ -7,6 +7,7 @@ random = require \randomstring
 component-name = "interactive-table"
 Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
+    isolated: yes
     oninit: ->
         if (@get \id) is \will-be-random
             # then make it random

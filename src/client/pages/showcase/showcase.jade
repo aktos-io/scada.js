@@ -8,12 +8,14 @@ block script
     
 block ractive
     inspina-theme
-        inspina-menu
+        inspina-menu(curr="{{testMenu.curr}}")
         inspina-right
             inspina-header      
                 span
                     | AKTOS.io
-            inspina-content                
+            inspina-content    
+                p naber {{testMenu.curr}}
+                input(value="{{testMenu.curr}}")
                 include ./example-component.jade
                 include ./search-combobox.jade
                 include ./date-picker.jade

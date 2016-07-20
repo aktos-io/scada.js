@@ -7,6 +7,7 @@
         .sidebar-collapse
             ul#side-menu.nav.metismenu
                 li.nav-header
+                    //| {{>header}}
                     .dropdown.profile-element
                         a.dropdown-toggle(data-toggle='dropdown' href='#')
                             span.clear
@@ -18,17 +19,25 @@
                             li
                                 a(href='#') Logout                
                     .logo-element IN+
-
-                li.active
-                    a(href='showcase.html')
-                        i.fa.fa-th-large
-                        span.nav-label ShowCase
-                        
+                +each('menu')
+                    li(class='{{#if parseInt(curr) === i}} active {{/if}}')
+                        +unless('.subMenu')
+                            a(href='')
+                                i.fa.fa-th-large
+                                //-span.nav-label {{yield firstpage}}
+                                span.nav-label {{.title}} 
+                                span.fa.arrow
+                        +if('.subMenu')
+                            ul.nav.nav-second-level
+                                +each('.subMenu')
+                                    li                                
+                                        a(href='{{.url}}') {{.title}}
+                                
                 li
                     a(href='minor.html')
                         i.fa.fa-diamond
                         span.nav-label minor view
-                        
+         
 
 +component('inspina-right')
     #page-wrapper.gray-bg.
@@ -56,6 +65,6 @@
 +component('inspina-footer')
     .footer
         .pull-right
-            | {{yield right}}
+            | {{>right}}
         div
-            | {{yield left}}
+            | {{>left}}

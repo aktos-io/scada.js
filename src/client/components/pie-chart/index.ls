@@ -5,6 +5,7 @@ random = require \randomstring
 component-name = "pie-chart"
 Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
+    isolated: yes
     oninit: ->
         col-list = @get \names |> split ','
         @set \columnList, col-list
