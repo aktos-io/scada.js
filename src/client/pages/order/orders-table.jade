@@ -7,6 +7,7 @@ order-table(
     view="orders/getOrders"
     gen-entry-id="{{ genEntryId }}"
     x="{{ customersList }}"
+    output="{{ production.tabledata }}"
     )
     +partial('addnewTitle')
         | Yeni Sipariş Ekle
@@ -19,13 +20,6 @@ order-table(
                 btn(on-buttonclick="setfilter" value="all") Tümü
                 input(type="text" value="{{ filterOpts.selected }}")
             col-md-3
-        
-        //- 
-            col-md-3
-                input(value="{{ filterOpts.selected }}")
-            col-md-3
-                input(value="{{ filterOpts.params }}")
-    
     
     +partial('viewForm')
         h3 {{ curr.client }}
@@ -69,3 +63,13 @@ order-table(
                         span Kalem Ekle
             btn(on-buttonclick="newOrderClose") Kapat!
             btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
+            
+data-table(
+    settings="{{ production.settings }}"
+    tabledata="{{ production.tabledata }}"
+    )
+    +partial('header')
+        //input(value="{{ filterOpts.selected }}")
+    +partial('viewForm')
+        span This is viev form!
+        

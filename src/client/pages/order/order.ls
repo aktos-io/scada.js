@@ -1,6 +1,6 @@
 require! components
-require! 'aea': {PouchDB, sleep, unix-to-readable}
-require! 'prelude-ls': {sum, split, sort-by }
+require! 'aea': {PouchDB, sleep, unix-to-readable, merge}
+require! 'prelude-ls': {sum, split, sort-by, flatten, group-by, reverse }
 
 db = new PouchDB 'https://demeter.cloudant.com/cicimeze', skip-setup: yes
 local = new PouchDB \local_db
@@ -37,25 +37,45 @@ ractive = new Ractive do
                 client-list = __.x
                 console.log "client list is: ", client-list
                 conv = unix-to-readable
-                known = [{id: doc._id, cols: [client.name, (conv doc.order-date), (conv doc.due-date)]} for doc in docs for client in client-list when client.id is doc.client]
-                sort-by (.0), known
-                #[[doc.client, doc.due-date] for doc in docs]
+                known = [{id: doc._id, cols: [client.name, doc.order-date, doc.due-date]} for doc in docs for client in client-list when client.id is doc.client]
+
+                # sort by date
+                x = reverse sort-by (.cols.2), known
+                [{id: ..id, cols: [..cols.0, conv(..cols.1), conv(..cols.2)]} for x]
+
             cheese: (docs, param) ->
                     [{id: .._id, cols: [..client, ..due-date]} for docs when \Cheesecake in [i.product for i in ..entries]]
 
             who: (docs, param) ->
                 x = [{id: .._id, cols: [..client, .._id, 1]} for docs]
 
-            todays-orders: (docs, param) ->
+            todays-orders: (docs, param, __this) ->
+                __ = __this.instance
                 now = Date.now!
                 tomorrow = now + 1day * 24hours_per_day * 3600seconds_per_hour * 1000ms_per_second
 
                 console.log "calculated now: ", now
                 author = (doc) -> (split '-', doc._id).0
 
-                orders = [{id: .._id, cols: [..client, author .., \selam ]} for docs when now < ..due-date < tomorrow]
+                filtered-docs = [.. for docs when now < ..due-date < tomorrow]
+                orders = [{id: .._id, cols: [..client, author .., \selam ]} for filtered-docs]
                 console.log "Siparişler: found #{orders.length} orders. "
-                orders
+
+                console.log "FILTERED DOCS: ", filtered-docs
+                try
+                    production-list = flatten [flatten([{id: .._id} `merge ` i for i in ..entries]) for filtered-docs]
+                    console.log "PRODUCTION LIST: ", production-list
+
+                    # order-id, product-name, amount
+                    y = group-by (.product), production-list
+                    x = [{id: \aa, cols: [product, (sum [parse-int ..amount for entries])]} for product, entries of y]
+                    console.log "Production list as table", y
+
+                    #x = [{id: ..id, cols: [..id, ..product, ..amount]} for production-list]
+                    __.set \output, x
+                catch
+                    console.log "ORDER_TABLE: error: ", e
+                sort-by (.cols.2), orders
 
             refresh-production: (docs, param) ->
 
@@ -92,6 +112,7 @@ ractive = new Ractive do
                 console.log "running customers 'all' filter..."
                 [{id: .._id, cols: [..name]} for docs]
 
+
             set-client-id: (key, __) ->
                 console.log "setting current key to: #{key}", __
                 try __.instance.set "curr.key", "client-id-#{key.to-lower-case!}"
@@ -99,12 +120,12 @@ ractive = new Ractive do
 
         # PRODUCTION
         production:
-            col-names: "Ürün adı, Toplam üretim"
-            filters:
-                all: (docs, param) ->
-                    [[..product-name, ..total] for docs]
-
-
+            settings:
+                cols: "Ürün Adı, Miktar"
+                filters:
+                    all: (docs, param, this_) ->
+                        #rows = [{id: ..id, cols: [..name, ..amount]} for docs]
+                        docs
 
 feed = null
 ractive.on do
