@@ -20,5 +20,6 @@ order-table(
                 form-group
                     span Müşteri Adı: 
                     input(value="{{ curr.name }}" )
-            btn(on-buttonclick="addNewOrderClose") Kapat!
+                    assign(if-null="true" input="{{ 'client-id-' + curr.name.toLowerCase() }}" output="{{ curr.key }}")
+            btn(on-buttonclick="newOrderClose") Kapat!
             btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}

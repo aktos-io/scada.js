@@ -11,6 +11,9 @@ Ractive.components[component-name] = Ractive.extend do
         if (@get \id) is \will-be-random
             @set \id random.generate 7
 
+        # TODO: ENABLE SETTINGS
+        settings = @get \settings
+
         # column names
         try
             col-list = split ',', @get \cols
@@ -45,18 +48,14 @@ Ractive.components[component-name] = Ractive.extend do
                 console.log "order-table change detected!", change
                 update-table!
         @on do
-            activated: (...args) ->
-                index = (args.0.keypath |> split '.').1 |> parse-int
-                console.log "activated!!!", args, index
-                curr-index = @get \clickedIndex
-                /*
-                if index is curr-index
-                    #console.log "Give tooltip!"
-                    #@fire \showModal
-                */
+            clicked: (args) ->
+                context = args.context
+                index = context.id
+                console.log "ORDER_TABLE: clicked!!!", args, index
+
                 @set \clickedIndex, index
                 tabledata = @get \tabledata
-                @set \curr, tabledata[index]
+                @set \curr, [.. for tabledata when .._id is index].0
                 console.log "Started editing an order: ", (@get \curr)
 
             close-modal: ->
@@ -106,7 +105,7 @@ Ractive.components[component-name] = Ractive.extend do
                 @set \curr, (@get \newOrder)!
                 console.log "adding brand-new order!", (@get \curr)
 
-            add-new-order-close: ->
+            new-order-close: ->
                 console.log "ORDER_TABLE: Closing edit form..."
                 @set \addingNew, false
                 @fire \endEditing

@@ -36,22 +36,26 @@ order-table(
                 li {{ .['product'] }} -> {{ .['amount'] }}
                 
     +partial('editForm')
-        panel(title="Sipariş" type="primary")
+        panel(title="Sipariş {{curr._id}}" type="primary")
             form-vertical
                 form-group
                     span Müşteri: 
                     search-combobox(data="{{ x }}" selected="{{ curr.client }}")
-                    p C: {{ curr.client }}
+                    p Client id: {{ curr.client }}
                 form-group
                     row 
-                        col-md-4: span Sipariş Tarihi: 
-                        col-md-8: date-picker(unix="{{ curr.orderDate }}")
-                form-group
-                    row 
-                        col-md-4: span Teslim Tarihi:
-                        col-md-8: date-picker(unix="{{ curr.dueDate }}")
-                    p Due date: {{ curr.dueDate }}
-                    //- input(value="{{ curr.dueDate }}")
+                        .col-md-6.col-xs-6
+                            row 
+                                col-md-4: span Sipariş Tarihi: 
+                                col-md-8
+                                    date-picker(unix="{{ curr.orderDate }}")
+                                    p order date: {{ curr.orderDate }}
+                        .col-md-6.col-xs-6
+                                row 
+                                    col-md-4: span Teslim Tarihi:
+                                    col-md-8
+                                        date-picker(unix="{{ curr.dueDate }}")
+                                        p Due date: {{ curr.dueDate }}
                 +each('curr.entries:i')
                     form-group
                         span Type
@@ -63,5 +67,5 @@ order-table(
                     btn(on-buttonclick="addNewEntry" value="entries")
                         icon-plus 
                         span Kalem Ekle
-            btn(on-buttonclick="addNewOrderClose") Kapat!
+            btn(on-buttonclick="newOrderClose") Kapat!
             btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
