@@ -27,34 +27,32 @@
                             | {{>header}}
                         | {{/if}}
             +each('dataFilters[filterOpts.selected](tabledata, filterOpts.params, this):i')
-                +if('true').
-                    <tr class="input-line {{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}}" on-doubleclick="activated">
-                        {{#if isClicked(i) }}
-                            <td>
-                                <btn-group-vertical>
-                                    <btn on-buttonclick="toggleEditing" type="{{#if editTooltip }}danger{{else}}default{{/if}}" active="{{editable}}" >
-                                        {{#if editable}}
-                                            <icon-check/>
-                                        {{else}}
-                                            <icon-unchecked/>
-                                        {{/if}}
-                                        <icon-pencil/>
-                                    </btn>
-                                    <btn type="success" on-buttonclick="saveAndExit"><icon-ok/></btn>
-                                    <btn type="info" on-buttonclick="addNewOrderClose"><icon-remove/></btn>
-                                    
-                                </btn-group-vertical>
-                            </td>
-                        {{else}}
-                            <td>{{i+1}}</td>
-                        {{/if}}
-                        {{#if isEditingLine(i)}}
-                            <td colspan="{{ columnList.length }}">{{>editForm}}</td>
-                        {{else}}
-                            {{#if isClicked(i) }}
-                                <td colspan="{{ columnList.length }}"> {{>viewForm}} </td>
-                            {{else}}
-                                {{#.}}<td>{{.}}</td>{{/}}
-                            {{/if}}
-                        {{/if}}
-                    </tr>
+                tr.input-line(
+                    class="{{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}}"
+                    on-doubleclick="clicked"
+                    )
+                    | {{#if isClicked(.id)}}
+                    td
+                        btn-group-vertical 
+                            btn(
+                                on-buttonclick="toggleEditing"
+                                type="{{#if editTooltip }}danger{{else}}default{{/if}}"
+                                active="{{editable}}"
+                                )
+                                | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
+                                icon-pencil 
+                            btn(type="success" on-buttonclick="saveAndExit"): icon-ok
+                            btn(type="info" on-buttonclick="newOrderClose"): icon-remove
+                    | {{else}}
+                    td {{i+1}}
+                    | {{/if}}
+                    
+                    | {{#if isEditingLine(.id)}}
+                    td(colspan="{{ columnList.length }}") {{>editForm}}
+                    | {{elseif isClicked(.id)}}
+                    td(colspan="{{ columnList.length }}") {{>viewForm}}
+                    | {{else}}
+                    +each(".cols")
+                        td {{.}}
+                    | {{/if}}
+                    

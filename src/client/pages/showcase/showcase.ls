@@ -80,6 +80,45 @@ ractive = new Ractive do
             show: yes
         button:
             show: yes
+        datatable:
+            settings:
+                cols: "a, b, c"
+            tabledata:
+                * id: \aa-1
+                  key: 'my key 1'
+                  value: 'my value 1'
+                * id: \aa-2
+                  key: 'my key 2'
+                  value: 'my value 2'
+                * id: \aa-3
+                  key: 'my key 3'
+                  value: 'my value 3'
+                * id: \aa-4
+                  key: 'my key 4'
+                  value: 'my value 4'
+
+        datatable2:
+            settings:
+                cols: "ID, Key, Value"
+                filters:
+                    all: (docs, param, this_) ->
+                        rows = [{id: ..id, cols: ['hello', ..key, ..value]} for docs]
+
+                    some: (docs, param, this_) ->
+                        rows = [{id: ..id, cols: ['hello', ..key, ..value]} for docs when "2" in ..key]
+            tabledata:
+                * id: \aa-1
+                  key: 'my key 1'
+                  value: 'my value 1'
+                * id: \aa-2
+                  key: 'my key 2'
+                  value: 'my value 2'
+                * id: \aa-3
+                  key: 'my key 3'
+                  value: 'my value 3'
+                * id: \aa-4
+                  key: 'my key 4'
+                  value: 'my value 4'
 
 
 
