@@ -19,104 +19,94 @@ ractive = new Ractive do
             ok: no
         db: db
         gen-entry-id: gen-entry-id
-        x: -1
 
         # ORDERS
-        orders-default:
-            type: \order
-            client: "Müşteri...."
-            due-date: "1.2.3.4"
-            order-date: "22.2.2.2."
-            entries:
-                * product: "Rus salata"
-                  amount: "2kg"
-                ...
-        orders-col-names: "Müşteri Adı, Sipariş Tarihi, Teslim Tarihi"
-        orders-filters:
-            all: (docs, param, __) ->
-                client-list = __.x
-                console.log "client list is: ", client-list
-                conv = unix-to-readable
-                known = [{id: doc._id, cols: [client.name, doc.order-date, doc.due-date]} for doc in docs for client in client-list when client.id is doc.client]
+        orders:
+            default:
+                type: \order
+                client: "Müşteri...."
+                due-date: "1.2.3.4"
+                order-date: "22.2.2.2."
+                entries:
+                    * product: "Rus salata"
+                      amount: "2kg"
+                    ...
+            col-names: "Müşteri Adı, Sipariş Tarihi, Teslim Tarihi"
+            filters:
+                all: (docs, param, __) ->
+                    client-list = __.x
+                    console.log "client list is: ", client-list
+                    conv = unix-to-readable
+                    known = [{id: doc._id, cols: [client.name, doc.order-date, doc.due-date]} for doc in docs for client in client-list when client.id is doc.client]
 
-                # sort by date
-                x = reverse sort-by (.cols.2), known
-                [{id: ..id, cols: [..cols.0, conv(..cols.1), conv(..cols.2)]} for x]
+                    # sort by date
+                    x = reverse sort-by (.cols.2), known
+                    [{id: ..id, cols: [..cols.0, conv(..cols.1), conv(..cols.2)]} for x]
 
-            cheese: (docs, param) ->
-                    [{id: .._id, cols: [..client, ..due-date]} for docs when \Cheesecake in [i.product for i in ..entries]]
+                todays-orders: (docs, param, __this) ->
+                    __ = __this.instance
+                    now = Date.now!
+                    tomorrow = now + 1day * 24hours_per_day * 3600seconds_per_hour * 1000ms_per_second
 
-            who: (docs, param) ->
-                x = [{id: .._id, cols: [..client, .._id, 1]} for docs]
+                    console.log "calculated now: ", now
+                    author = (doc) -> (split '-', doc._id).0
 
-            todays-orders: (docs, param, __this) ->
-                __ = __this.instance
-                now = Date.now!
-                tomorrow = now + 1day * 24hours_per_day * 3600seconds_per_hour * 1000ms_per_second
+                    filtered-docs = [.. for docs when now < ..due-date < tomorrow]
+                    orders = [{id: .._id, cols: [..client, author .., \selam ]} for filtered-docs]
+                    console.log "Siparişler: found #{orders.length} orders. "
 
-                console.log "calculated now: ", now
-                author = (doc) -> (split '-', doc._id).0
-
-                filtered-docs = [.. for docs when now < ..due-date < tomorrow]
-                orders = [{id: .._id, cols: [..client, author .., \selam ]} for filtered-docs]
-                console.log "Siparişler: found #{orders.length} orders. "
-
-                console.log "FILTERED DOCS: ", filtered-docs
-                try
-                    production-list = flatten [flatten([{id: .._id} `merge ` i for i in ..entries]) for filtered-docs]
-                    console.log "PRODUCTION LIST: ", production-list
-
-                    # order-id, product-name, amount
-                    y = group-by (.product), production-list
-                    x = [{id: \aa, cols: [product, (sum [parse-int ..amount for entries])]} for product, entries of y]
-                    console.log "Production list as table", y
-
-                    #x = [{id: ..id, cols: [..id, ..product, ..amount]} for production-list]
-                    __.set \output, x
-                catch
-                    console.log "ORDER_TABLE: error: ", e
-                sort-by (.cols.2), orders
-
-            refresh-production: (docs, param) ->
-
-
-                local.query my-map, {key: \next_days, +include_docs}, (err, res) ->
+                    console.log "FILTERED DOCS: ", filtered-docs
                     try
-                        throw err if err
-                        console.log "Local query: ", res
+                        production-list = flatten [flatten([{id: .._id} `merge ` i for i in ..entries]) for filtered-docs]
+                        console.log "PRODUCTION LIST: ", production-list
+
+                        # order-id, product-name, amount
+                        y = group-by (.product), production-list
+                        x = [{
+                            product-name: product
+                            total-amount: sum [parse-float ..amount for entries]
+                            related-orders: [..id for entries]
+                            } for product, entries of y]
+                        console.log "Production list as groups:", y
+                        console.log "Production list as documents", x
+
+                        #x = [{id: ..id, cols: [..id, ..product, ..amount]} for production-list]
+                        __.set \output, x
                     catch
-                        console.log "err..", err
+                        console.log "ORDER_TABLE: error: ", e
+                    sort-by (.cols.2), orders
 
 
+        # RECIPES
+        recipes:
+            default:
+                type: \receipt
+                product-name: "Ürün Adı"
+                contents:
+                    * material: "Ham madde..."
+                      amount: "x kg"
+                    ...
 
-        # RECEIPTS
-        receipts-default:
-            type: \receipt
-            product-name: "Ürün Adı"
-            contents:
-                * material: "Ham madde..."
-                  amount: "x kg"
-                ...
-        receipts-col-names: "Ürün adı"
-        receipts-filters:
-            all: (docs, param) ->
-                #console.log "Running custom filter (receipts)", docs
-                [{id: .._id, cols: [..product-name]} for docs]
+            col-names: "Ürün adı"
+            filters:
+                all: (docs, param) ->
+                    [{id: .._id, cols: [..product-name]} for docs]
 
         # CUSTOMERS
-        customers-default:
-            type: \customer
-        customers-col-names: "Müşteri adı"
-        customers-filters:
-            all: (docs, param) ->
-                console.log "running customers 'all' filter..."
-                [{id: .._id, cols: [..name]} for docs]
+        customers:
+            default:
+                type: \customer
+            col-names: "Müşteri adı"
+            filters:
+                all: (docs, param) ->
+                    console.log "running customers 'all' filter..."
+                    [{id: .._id, cols: [..name]} for docs]
 
 
-            set-client-id: (key, __) ->
-                console.log "setting current key to: #{key}", __
-                try __.instance.set "curr.key", "client-id-#{key.to-lower-case!}"
-                \ok
+                set-client-id: (key, __) ->
+                    console.log "setting current key to: #{key}", __
+                    try __.instance.set "curr.key", "client-id-#{key.to-lower-case!}"
+                    \ok
 
         # PRODUCTION
         production:
@@ -125,7 +115,43 @@ ractive = new Ractive do
                 filters:
                     all: (docs, param, this_) ->
                         #rows = [{id: ..id, cols: [..name, ..amount]} for docs]
-                        docs
+                        i = 0
+                        seq-num = (x) -> i++
+                        x = reverse sort-by (.total-amount), docs
+                        [{id: seq-num(..), cols:[..product-name, "#{..total-amount} kg"]} for x]
+
+
+        # MATERIAL USAGE
+        material-usage:
+            settings:
+                cols: "Hammadde Adı, Miktar"
+                filters:
+                    all: (docs, param, this_) ->
+                        __ = this_.instance
+
+                        try
+                            productions = __.get \production-list
+                            recipes = __.get \recipes
+                            console.log "MATERIAL_USAGE: recipes: ", recipes
+                            console.log "MATERIAL_USAGE: productions: ", productions
+                            material-usage-raw = [{
+                                name: production.product-name
+                                materials: [{material: ..material, amount: parse-float(..amount) * production.total-amount} for recipe.contents]
+                            } for production in productions for recipe in recipes
+                            when production.product-name is recipe.product-name]
+
+                            console.log "material usage: ", material-usage-raw
+                            material-list = group-by (.material), flatten [..materials for material-usage-raw]
+                            console.log "material usage all: ", material-list
+                            i = 0
+                            gen-id = -> i++
+                            x = [{id: gen-id!, cols: [material, "#{sum [..amount for usage]} kg"]} for material, usage of material-list]
+                            console.log "material usage table: ", x
+                            x
+                        catch
+                            console.log "Material usage error: ", e
+
+
 
 feed = null
 ractive.on do
