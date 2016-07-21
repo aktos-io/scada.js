@@ -12,13 +12,19 @@ Ractive.components[component-name] = Ractive.extend do
                 context = args.context
                 url = context.url
                 console.log "url", url
-                @set \selected, url
-                unless url
-                    console.log "url is undefined"
+                if url
+                    @set \selected, url
+                else
+                    curr = @get \selected
+                    selected = args.index.i
+                    selected = -1 if selected is curr and
+                    console.log "not url; curr, selected: ", curr, selected
+                    @set \selected, selected
     data: ->
         curr-url: null
         is-selected: (url, selected) ->
             x = url is selected
+            console.log "is-selected says: ", url, selected, url is selected 
             #console.log "url: ", url
             #console.log "selected", selected
             x
