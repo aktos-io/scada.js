@@ -14,7 +14,7 @@ Ractive.components[component-name] = Ractive.extend do
         self.animate 'c', Math.PI * 2, do
             duration: 800
             easing: 'easeOut'
-    data:
+    data: ->
         selected: null
         names: null
         column-list: null

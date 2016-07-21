@@ -14,7 +14,7 @@ Ractive.components[component-name] = Ractive.extend do
         if (@get \id) is \will-be-random
             @set \id random.generate 7
         id =  @get \id
-        console.log "Flot is automatically generated: ",id
+        #console.log "Flot is automatically generated: ",id
         <- sleep 0ms
         $ document .ready ->
 
