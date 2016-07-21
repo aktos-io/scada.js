@@ -47,7 +47,7 @@ Ractive.components[component-name] = Ractive.extend do
             .on \change, (change) ->
                 #console.log "order-table change detected!", change
                 update-table!
-        @on do
+        events =
             clicked: (args) ->
                 context = args.context
                 index = context.id
@@ -57,26 +57,6 @@ Ractive.components[component-name] = Ractive.extend do
                 tabledata = @get \tabledata
                 @set \curr, [.. for tabledata when .._id is index].0
                 #console.log "Started editing an order: ", (@get \curr)
-
-            close-modal: ->
-                __ = @
-                $ "\##{@get 'id'}-modal" .modal \hide
-                <- sleep 300ms
-                __.fire \giveTooltip
-
-
-            give-tooltip: ->
-                __ = @
-                i = 0
-                <- :lo(op) ->
-                    <- sleep 150ms
-                    __.set \editTooltip, on
-                    <- sleep 150ms
-                    __.set \editTooltip, off
-                    if ++i is 2
-                        return op!
-                    lo(op)
-
 
             save-and-exit: ->
                 index = @get \clickedIndex
@@ -94,11 +74,6 @@ Ractive.components[component-name] = Ractive.extend do
             toggle-editing: ->
                 editable = @get \editable
                 @set \editable, not editable
-
-            show-modal: ->
-                id = @get \id
-                console.log "My id: ", id
-                $ "\##{id}-modal" .modal \show
 
             add-new-order: ->
                 @set \addingNew, true
@@ -164,9 +139,15 @@ Ractive.components[component-name] = Ractive.extend do
                 @set \filterOpts.selected, filter-name
 
 
+        events `merge` @get \handlers
+        console.log "events: ", events
+
+        # register event handlers
+        @on events
+
     data: ->
         __ = @
-        instance: __
+        instance: @
         new-order: ->
             console.log "Returning new default value: ", __.get \default
             unpack pack __.get \default
