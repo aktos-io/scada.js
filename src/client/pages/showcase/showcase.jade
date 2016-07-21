@@ -13,8 +13,10 @@ block ractive
             inspina-header      
                 span
                     | AKTOS.io
+
             inspina-content  
-                input(value="{{testMenu.selected}}")
+                input(value="{{testMenu.selected}}")            
+                include ./data-table.jade
                 include ./example-component.jade
                 include ./search-combobox.jade
                 include ./date-picker.jade
