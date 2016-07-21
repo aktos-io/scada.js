@@ -1,8 +1,8 @@
-h2 Siparişler:
+h1 Siparişler:
 order-table(
-    cols="{{ ordersColNames }}"
-    default="{{ ordersDefault }}"
-    filters="{{ ordersFilters }}"
+    cols="{{ orders.colNames }}"
+    default="{{ orders.default }}"
+    filters="{{ orders.filters }}"
     db="{{ db }}"
     view="orders/getOrders"
     gen-entry-id="{{ genEntryId }}"
@@ -63,7 +63,8 @@ order-table(
                         span Kalem Ekle
             btn(on-buttonclick="newOrderClose") Kapat!
             btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
-            
+
+h1 Üretim Kalemlerinin Toplam Miktarları        
 data-table(
     settings="{{ production.settings }}"
     tabledata="{{ production.tabledata }}"
@@ -71,5 +72,16 @@ data-table(
     +partial('header')
         //input(value="{{ filterOpts.selected }}")
     +partial('viewForm')
-        span This is viev form!
+        span This is view form!
         
+//-
+h1 Gereken Hammadde Miktarları        
+data-table(
+    settings="{{ materialUsage.settings }}"
+    production-list="{{ production.tabledata }}"
+    recipes="{{ materialUsage.recipes }}"
+    )
+    +partial('header')
+        //input(value="{{ filterOpts.selected }}")
+    +partial('viewForm')
+        span This is viev form!

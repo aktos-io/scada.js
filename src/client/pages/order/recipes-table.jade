@@ -1,11 +1,12 @@
 h2 Reçeteler:
 order-table(
-    cols="{{ receiptsColNames }}"
-    default="{{ receiptsDefault }}"
-    filters="{{ receiptsFilters }}"
+    cols="{{ recipes.colNames }}"
+    default="{{ recipes.default }}"
+    filters="{{ recipes.filters }}"
     db="{{ db }}"
     view="primitives/getReceipts"
     gen-entry-id="{{ genEntryId }}"
+    tabledata="{{ materialUsage.recipes }}"
     )
     +partial('addnewTitle')
         | Reçete Ekle
