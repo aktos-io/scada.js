@@ -1,3 +1,5 @@
+require! 'aea': {sleep}
+
 component-name = "inspina-theme"
 Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
@@ -6,6 +8,22 @@ component-name = "inspina-menu"
 Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
     oninit: ->
+        __ = @
+        unless @get \selected
+            console.log "navigation: no selected given, using window.location.hash"
+            @set \selected, window.location.hash
+            @update!
+
+        do
+            curr = null
+            <- :lo(op) ->
+                if window.location.hash isnt curr
+                    curr := window.location.hash
+                    __.set \selected, curr
+                <- sleep 100ms
+                lo(op)
+
+
         @on do
             clicked: (args) ->
                 console.log "on-clicked: args: ", args
@@ -24,7 +42,7 @@ Ractive.components[component-name] = Ractive.extend do
         curr-url: null
         is-selected: (url, selected) ->
             x = url is selected
-            console.log "is-selected says: ", url, selected, url is selected 
+            console.log "is-selected says: ", url, selected, url is selected
             #console.log "url: ", url
             #console.log "selected", selected
             x
