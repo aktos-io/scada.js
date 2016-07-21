@@ -24,7 +24,7 @@ convert-to-flot =  ->
     x = [x:random!, y:random! for i from 0 to 5]
     y = sort-by (.x), x
     z = [[..x,..y] for y]
-    console.log "flot random data is: ", z
+    #console.log "flot random data is: ", z
     z
 
 product-data1 =
@@ -80,9 +80,29 @@ ractive = new Ractive do
             show: yes
         button:
             show: yes
-
-
-
+        menu:
+            * title: "Showcase"
+              icon:"fa fa-th-large"
+              sub-menu:
+                * title: "Bar Chart"
+                  url: '#mahmut2'
+                * title: "Line Chart"
+                  url: 'app/line-chart.html'
+                * title: "Interactive Table"
+                  url: '#'
+            * title: "Order App."
+              url: '#mahmut2'
+              icon: "fa fa-diamond"
+            * title: "Stacked Bar Chart"
+              icon: "fa fa-bar-chart-o"
+              sub-menu:
+                * title: "Bar Chart"
+                  url: 'app/bar-chart.html'
+                * title: "Line Chart"
+                  url: '#'
+                * title: "Interactive Table"
+                  url: '#hilmi'
+x = 1
 ractive.on \complete, ->
     i = 0
     states =
