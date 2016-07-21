@@ -1,0 +1,4 @@
++component('page')
+    div(name="{{ name }}" style="{{#unless isSelected(curr)}} display: none {{/unless}}").
+        {{yield}}
+        
