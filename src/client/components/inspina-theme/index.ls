@@ -9,13 +9,12 @@ Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
     oninit: ->
         __ = @
-        $ 'nav.menu a[href="#"]' .click (e)->
-            console.log "disabling click function"
-            e.prevent-default!
+
+        do function hashchange
+            __.set \selected, window.location.hash
 
         $ document .ready ->
-            $ window .on \hashchange, ->
-                __.set \selected, window.location.hash
+            $ window .on \hashchange, -> hashchange!
 
         @on do
             clicked: (args) ->
