@@ -6,6 +6,7 @@ random = require \randomstring
 component-name = "menu"
 Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
+    isolated: yes
     oninit: ->
         @on do
             toggle-menu: ->

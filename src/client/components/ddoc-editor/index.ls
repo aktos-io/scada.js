@@ -5,6 +5,7 @@ require! 'aea': {merge, make-design-doc}
 component-name = "ddoc-editor"
 Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
+    isolated: yes
     oninit: ->
         console.log "ddoc editor initializing..."
         db = @get \db

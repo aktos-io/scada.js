@@ -24,7 +24,7 @@ convert-to-flot =  ->
     x = [x:random!, y:random! for i from 0 to 5]
     y = sort-by (.x), x
     z = [[..x,..y] for y]
-    console.log "flot random data is: ", z
+    #console.log "flot random data is: ", z
     z
 
 product-data1 =
@@ -35,7 +35,8 @@ product-data1 =
     * name: "kiraz"
       id: 24
 
-
+get-page-url = ->
+    url = window.location.href
 simulate-data = ->
     reasons =
         "Son kullanma tarihi geçmiş"
@@ -48,10 +49,12 @@ simulate-data = ->
 utc-date = ->
     date = new Date!
     new Date date.getUTCFullYear!, date.getUTCMonth!, date.getUTCDate!, date.getUTCHours!, date.getUTCMinutes!, date.getUTCSeconds!
+x = 2132312
 ractive = new Ractive do
     el: '#main-output'
     template: '#main-template'
     data:
+        page-url: get-page-url!
         my-unix-time: 1454277600000
         db: db
         test:
@@ -80,6 +83,28 @@ ractive = new Ractive do
             show: yes
         button:
             show: yes
+        menu:
+            * title: "Showcase"
+              icon:"fa fa-th-large"
+              sub-menu:
+                * title: "Bar Chart"
+                  url: '#bar-chart.html'
+                * title: "Line Chart"
+                  url: '#line-chart.html'
+                * title: "Interactive Table"
+                  url: '#interactive-table.html'
+            * title: "Order App."
+              url: '#orders.html'
+              icon: "fa fa-diamond"
+            * title: "Stacked Bar Chart"
+              icon: "fa fa-bar-chart-o"
+              sub-menu:
+                * title: "Bar Chart"
+                  url: '#app/bar-chart.html'
+                * title: "Line Chart"
+                  url: '#231'
+                * title: "Interactive Table"
+                  url: '#interactive-table.html'
         datatable:
             settings:
                 cols: "a, b, c"
@@ -120,8 +145,7 @@ ractive = new Ractive do
                   key: 'my key 4'
                   value: 'my value 4'
 
-
-
+x = 2
 ractive.on \complete, ->
     i = 0
     states =
