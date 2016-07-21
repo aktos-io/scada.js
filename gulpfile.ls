@@ -212,18 +212,18 @@ gulp.task \vendor, ->
         .pipe tap (file) ->
             #console.log "VENDOR: ", file.path
         .pipe cat "vendor.js"
-        .pipe gulp.dest "#{paths.client-public}/js"
+        .pipe gulp.dest "#{paths.client-pages}/js"
 
 # Concatenate vendor css files into public/css/vendor.css
 gulp.task \vendor-css, ->
     gulp.src "#{paths.vendor-folder}/**/*.css"
         .pipe cat "vendor.css"
-        .pipe gulp.dest "#{paths.client-public}/css"
+        .pipe gulp.dest "#{paths.client-pages}/css"
 
 # Copy assets into the public directory as is
 gulp.task \assets, ->
     gulp.src "#{paths.client-src}/assets/**/*", {base: "#{paths.client-src}/assets"}
-        .pipe gulp.dest paths.client-public
+        .pipe gulp.dest paths.client-pages
 
 # Compile Jade files in paths.client-src to the paths.client-tmp folder
 gulp.task \jade <[ jade-components ]> ->

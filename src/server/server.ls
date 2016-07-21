@@ -34,38 +34,11 @@ server.route do
         file: "#{public-dir}/pages/showcase.html"
 
 server.route do
-    path: "/showcase.js"
-    method: "GET"
-    handler:
-        file: "#{public-dir}/pages/showcase.js"
-
-server.route do
-    path: "/app/{f*}"
+    path: "/{f*}"
     method: "GET"
     handler:
         directory:
             path: "#{public-dir}/pages"
-
-server.route do
-    path: "/js/{f*}"
-    method: "GET"
-    handler:
-        directory:
-            path: "#{public-dir}/js"
-
-server.route do
-    path: "/css/{f*}"
-    method: "GET"
-    handler:
-        directory:
-            path: "#{public-dir}/css"
-
-server.route do
-    path: "/fonts/{f*}"
-    method: "GET"
-    handler:
-        directory:
-            path: "#{public-dir}/fonts"
 
 server.start !->
     console.log "Server started at: ", server.info.uri
