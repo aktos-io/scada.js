@@ -30,7 +30,7 @@
                                     span.fa.arrow
                     +if('.subMenu')      
                         li(class='{{#if isSelected(i,selected)}} active {{/if}}')        
-                            a(href='' on-click='clicked')
+                            a(href='javascript:;' on-click='clicked')
                                 i(class='{{.icon}}')
                                 span.nav-label {{.title}} 
                                 +if('.subMenu')
@@ -60,14 +60,10 @@
                             i.fa.fa-sign-out Logout   
                             
 +component('inspina-content')
-    .wrapper.wrapper-content.animated.fadeInRight
-        .row
-            .col-lg-12
-                | {{yield}}
+    .wrapper.wrapper-content.animated.fadeInRight.
+        {{>content}}
 
 +component('inspina-footer')
     .footer
-        .pull-right
-            | {{>right}}
-        div
-            | {{>left}}
+        .pull-right {{>right}}
+        div {{>left}}

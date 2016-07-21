@@ -9,20 +9,13 @@ Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
     oninit: ->
         __ = @
-        unless @get \selected
-            console.log "navigation: no selected given, using window.location.hash"
-            @set \selected, window.location.hash
-            @update!
+        $ 'nav.menu a[href="#"]' .click (e)->
+            console.log "disabling click function"
+            e.prevent-default!
 
-        do
-            curr = null
-            <- :lo(op) ->
-                if window.location.hash isnt curr
-                    curr := window.location.hash
-                    __.set \selected, curr
-                <- sleep 100ms
-                lo(op)
-
+        $ document .ready ->
+            $ window .on \hashchange, ->
+                __.set \selected, window.location.hash
 
         @on do
             clicked: (args) ->
