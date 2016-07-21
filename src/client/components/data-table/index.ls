@@ -6,6 +6,7 @@ require! 'aea': {sleep}
 component-name = "data-table"
 Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
+    isolated: yes
     oninit: ->
         __ = @
         if (@get \id) is \will-be-random
@@ -94,3 +95,14 @@ Ractive.components[component-name] = Ractive.extend do
         is-clicked: (index) ->
             clicked-index = @get \clickedIndex
             index is clicked-index
+
+        get-filtered: (tabledata, param, this_) ->
+            __ = this_.instance
+            filters = __.get \dataFilters
+            filter-opts = __.get \filterOpts
+            try
+                filter = filters[filter-opts.selected]
+                filter(tabledata, param, this_) if typeof filter is \function
+            catch
+                console.log "Error getting filtered: ", e
+                null
