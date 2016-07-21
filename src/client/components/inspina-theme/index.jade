@@ -19,21 +19,22 @@
                             li
                                 a(href='#') Logout                
                     .logo-element IN+
-                +each('menu')
-                    li(class='{{#if parseInt(curr) === i}} active {{/if}}')
+                +each('menu:i')  
+                    li(class='{{#if isSelected(.url,selected)}} active {{/if}}')        
                         +unless('.subMenu')
-                            a(href='')
-                                i.fa.fa-th-large
+                            a(href='{{.url}}')
+                                i(class='{{.icon}}')
                                 //-span.nav-label {{yield firstpage}}
                                 span.nav-label {{.title}} 
-                                span.fa.arrow
-                        +if('.subMenu')
-                            ul.nav.nav-second-level
+                                +if('.subMenu')
+                                    span.fa.arrow
+                        +if('.subMenu')                            
+                            ul.nav.nav-second-level.collapse(class='{{#if isSelectedHere(.subMenu,selected)}} in {{/if}}')
                                 +each('.subMenu')
-                                    li                                
+                                    li(class='{{#if isSelected(.url, selected)}} active {{/if}}')        
                                         a(href='{{.url}}') {{.title}}
-                                
-                li
+
+                //-li
                     a(href='minor.html')
                         i.fa.fa-diamond
                         span.nav-label minor view
