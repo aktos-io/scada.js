@@ -6,6 +6,7 @@ order-table(
     db="{{ db }}"
     view="orders/getOrders"
     gen-entry-id="{{ genEntryId }}"
+    handlers="{{ orders.handlers }}"
     x="{{ customersList }}"
     output="{{ production.tabledata }}"
     )
@@ -16,18 +17,28 @@ order-table(
         h3 Filtreler
         row 
             col-md-3
-                btn(on-buttonclick="setfilter" value="todaysOrders") Bugün!
-                btn(on-buttonclick="setfilter" value="all") Tümü
+                btn-group
+                    btn(on-buttonclick="setfilter" value="todaysOrders") Bugün!
+                    btn(on-buttonclick="setfilter" value="all") Tümü
+                    btn(on-buttonclick="setfilter" value="doing") Üretimdekiler
                 input(type="text" value="{{ filterOpts.selected }}")
             col-md-3
     
     +partial('viewForm')
-        h3 {{ curr.client }}
-        p Sipariş tarihi: {{ curr.orderDate }}
-        p Teslim tarihi: {{ curr.dueDate }}
-        ol 
-            +each('curr.entries:i')
-                li {{ .['product'] }} -> {{ .['amount'] }}
+        h1 {{ curr.client }}
+        .row 
+            .col-md-8
+                p Sipariş tarihi: {{ curr.orderDate }}
+                p Teslim tarihi: {{ curr.dueDate }}
+                ol 
+                    +each('curr.entries:i')
+                        li {{ .['product'] }} -> {{ .['amount'] }}
+            .col-md-4
+                | {{#if curr.state === "doing"}}
+                h3 ÜRETİMDE!
+                | {{else}}
+                btn(on-buttonclick="sendToProduction" value="{{ [curr, db] }}") Üretime gönder!
+                | {{/if}}
                 
     +partial('editForm')
         panel(title="Sipariş {{curr._id}}" type="primary")

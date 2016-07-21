@@ -3,15 +3,30 @@ block script
     script(src="order.js")
 
 block title 
-    title Siparişler
+    title Demeter
     
-block ractive     
-    panel 
-        login(on-login="afterLoggedIn" context="{{ login }}" db="{{ db }}")
-
-    +if('login.ok')
-        include ./customers-table.jade
-        include ./recipes-table.jade
-        include ./orders-table.jade
+block ractive   
+    inspina-theme
+        inspina-menu(menu="{{menu}}" selected="{{ currPage }}")
+        inspina-right
+            inspina-header      
+                span AKTOS.io
+                login(on-login="afterLoggedIn" context="{{ login }}" db="{{ db }}")
+                p curr page is: {{ currPage }}
+            inspina-content  
+                +if('login.ok')
+                    page(name="definitions/client", curr="{{ currPage }}")
+                        include ./customers-table.jade
+                    page(name="definitions/recipe", curr="{{ currPage }}")
+                        include ./recipes-table.jade
+                    page(name="orders", curr="{{ currPage }}")
+                        include ./orders-table.jade
+            inspina-footer
+                +partial('right')
+                    span cici meze                    
+                +partial('left')
+                    span resource management system
+  
+        
 
         

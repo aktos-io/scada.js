@@ -24,7 +24,7 @@ ractive = new Ractive do
         orders:
             default:
                 type: \order
-                client: "Müşteri...."
+                client: "client-id-aktos"
                 due-date: "1.2.3.4"
                 order-date: "22.2.2.2."
                 entries:
@@ -37,7 +37,9 @@ ractive = new Ractive do
                     client-list = __.x
                     console.log "client list is: ", client-list
                     conv = unix-to-readable
-                    known = [{id: doc._id, cols: [client.name, doc.order-date, doc.due-date]} for doc in docs for client in client-list when client.id is doc.client]
+                    known = [{id: doc._id, cols: [client.name, doc.order-date, doc.due-date]
+                    } for doc in docs for client in client-list
+                    when client.id is doc.client]
 
                     # sort by date
                     x = reverse sort-by (.cols.2), known
@@ -75,6 +77,21 @@ ractive = new Ractive do
                     catch
                         console.log "ORDER_TABLE: error: ", e
                     sort-by (.cols.2), orders
+
+                doing: (docs, param, __this) ->
+                    [{id: .._id, cols: [..client, ..order-date, ..due-date]
+                    } for docs when ..state is \doing]
+
+            handlers:
+                send-to-production: (params) ->
+                    [curr, db] = params
+                    curr.state = \doing
+                    err, res <- db.put curr
+                    if not err
+                        console.log "SENT TO PRODUCTION!", curr
+                    else
+                        console.log "Not sent to production: ", err
+
 
 
         # RECIPES
@@ -120,7 +137,6 @@ ractive = new Ractive do
                         x = reverse sort-by (.total-amount), docs
                         [{id: seq-num(..), cols:[..product-name, "#{..total-amount} kg"]} for x]
 
-
         # MATERIAL USAGE
         material-usage:
             settings:
@@ -151,6 +167,25 @@ ractive = new Ractive do
                         catch
                             console.log "Material usage error: ", e
 
+        menu:
+            * title: "Ayarlar"
+              icon:"fa fa-th-large"
+              sub-menu:
+                * title: "Tüm Tanımlar"
+                  url: '#/definitions'
+                * title: "Müşteri Tanımla"
+                  url: '#/definitions/client'
+                * title: "Reçete Tanımla"
+                  url: '#/definitions/recipe'
+            * title: "Siparişler"
+              icon: "fa fa-bar-chart-o"
+              sub-menu:
+                * title: "Sipariş Listesi"
+                  url: '#/orders'
+                * title: "Üretim Kalemleri Toplamı"
+                  url: '#/orders/production-items'
+                * title: "Gereken Hammadde Miktarı"
+                  url: '#/orders/raw-material-usage'
 
 
 feed = null
