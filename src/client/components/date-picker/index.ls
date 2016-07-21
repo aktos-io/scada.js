@@ -37,7 +37,7 @@ Ractive.components[component-name] = Ractive.extend do
         #console.log "x: " , x
 
         dp-fn = $ "\##{__.get 'id'}" .data \DateTimePicker
-        console.log "dp func: ", dp-fn
+        #console.log "dp func: ", dp-fn
 
         dp.on "dp.change" , ->
             disp = jq.data!.date
@@ -46,9 +46,9 @@ Ractive.components[component-name] = Ractive.extend do
             __.set \unix, unix
 
         __.observe \unix, (val) ->
-            console.log "unix val: ", val
+            #console.log "unix val: ", val
             display = moment val .format 'DD.MM.YYYY HH:mm'
-            console.log "display: ", display
+            #console.log "display: ", display
             dp-fn.date display
 
     data: ->

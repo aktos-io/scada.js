@@ -7,6 +7,7 @@
         .sidebar-collapse
             ul#side-menu.nav.metismenu
                 li.nav-header
+                    //| {{>header}}
                     .dropdown.profile-element
                         a.dropdown-toggle(data-toggle='dropdown' href='#')
                             span.clear
@@ -18,17 +19,28 @@
                             li
                                 a(href='#') Logout                
                     .logo-element IN+
+                +each('menu:i')  
+                    +unless('.subMenu')
+                        //- No submenu, use direct links...
+                        li(class='{{#if isSelected(.url,selected)}} active {{/if}}')        
+                            a(href='{{.url}}' on-click='clicked')
+                                i(class='{{.icon}}')
+                                span.nav-label {{.title}} 
+                                +if('.subMenu')
+                                    span.fa.arrow
+                    +if('.subMenu')      
+                        li(class='{{#if isSelected(i,selected)}} active {{/if}}')        
+                            a(href='' on-click='clicked')
+                                i(class='{{.icon}}')
+                                span.nav-label {{.title}} 
+                                +if('.subMenu')
+                                    span.fa.arrow
 
-                li.active
-                    a(href='showcase.html')
-                        i.fa.fa-th-large
-                        span.nav-label ShowCase
-                        
-                li
-                    a(href='minor.html')
-                        i.fa.fa-diamond
-                        span.nav-label minor view
-                        
+                            ul.nav.nav-second-level.collapse(class='{{#if isSelected(i,selected) || isSelectedHere(.subMenu, selected)}} in {{/if}}')
+                                +each('.subMenu')
+                                    li(class='{{#if isSelected(.url, selected)}} active {{/if}}')        
+                                        a(href='{{.url}}' on-click='clicked') {{.title}}
+
 
 +component('inspina-right')
     #page-wrapper.gray-bg.
@@ -56,6 +68,6 @@
 +component('inspina-footer')
     .footer
         .pull-right
-            | {{yield right}}
+            | {{>right}}
         div
-            | {{yield left}}
+            | {{>left}}

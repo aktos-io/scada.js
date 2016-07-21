@@ -3,7 +3,7 @@ mixin if(condition)
     block
     != '{{/if}}'
 
-mixin unless(name)
+mixin unless(condition)
     != '{{#unless ' + condition+ '}}'
     block
     != '{{/unless}}'

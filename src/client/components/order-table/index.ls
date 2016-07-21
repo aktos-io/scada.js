@@ -28,9 +28,9 @@ Ractive.components[component-name] = Ractive.extend do
 
 
         filters = @get \filters
-        console.log "ORDER_TABLE: DEBUG: got filters: ", filters
+        #console.log "ORDER_TABLE: DEBUG: got filters: ", filters
         if filters
-            console.log "Setting data filters..."
+            #console.log "Setting data filters..."
             @set \dataFilters, filters
 
 
@@ -45,7 +45,7 @@ Ractive.components[component-name] = Ractive.extend do
 
         db.changes {since: 'now', +live, +include_docs}
             .on \change, (change) ->
-                console.log "order-table change detected!", change
+                #console.log "order-table change detected!", change
                 update-table!
         @on do
             clicked: (args) ->
@@ -56,7 +56,7 @@ Ractive.components[component-name] = Ractive.extend do
                 @set \clickedIndex, index
                 tabledata = @get \tabledata
                 @set \curr, [.. for tabledata when .._id is index].0
-                console.log "Started editing an order: ", (@get \curr)
+                #console.log "Started editing an order: ", (@get \curr)
 
             close-modal: ->
                 __ = @
