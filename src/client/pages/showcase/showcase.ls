@@ -35,7 +35,8 @@ product-data1 =
     * name: "kiraz"
       id: 24
 
-
+get-page-url = ->
+    url = window.location.href
 simulate-data = ->
     reasons =
         "Son kullanma tarihi geçmiş"
@@ -48,10 +49,12 @@ simulate-data = ->
 utc-date = ->
     date = new Date!
     new Date date.getUTCFullYear!, date.getUTCMonth!, date.getUTCDate!, date.getUTCHours!, date.getUTCMinutes!, date.getUTCSeconds!
+x = 2132312
 ractive = new Ractive do
     el: '#main-output'
     template: '#main-template'
     data:
+        page-url: get-page-url!
         my-unix-time: 1454277600000
         db: db
         test:
@@ -80,31 +83,28 @@ ractive = new Ractive do
             show: yes
         button:
             show: yes
-<<<<<<< HEAD
         menu:
             * title: "Showcase"
               icon:"fa fa-th-large"
               sub-menu:
                 * title: "Bar Chart"
-                  url: '#mahmut2'
+                  url: '#bar-chart.html'
                 * title: "Line Chart"
-                  url: 'app/line-chart.html'
+                  url: '#line-chart.html'
                 * title: "Interactive Table"
-                  url: '#'
+                  url: '#interactive-table.html'
             * title: "Order App."
-              url: '#mahmut2'
+              url: '#orders.html'
               icon: "fa fa-diamond"
             * title: "Stacked Bar Chart"
               icon: "fa fa-bar-chart-o"
               sub-menu:
                 * title: "Bar Chart"
-                  url: 'app/bar-chart.html'
+                  url: '#app/bar-chart.html'
                 * title: "Line Chart"
-                  url: '#'
+                  url: '#231'
                 * title: "Interactive Table"
-                  url: '#hilmi'
-x = 1
-=======
+                  url: '#interactive-table.html'
         datatable:
             settings:
                 cols: "a, b, c"
@@ -145,9 +145,7 @@ x = 1
                   key: 'my key 4'
                   value: 'my value 4'
 
-
-
->>>>>>> 7bc38fa0452c98b52a49740945ddbfcaae7bf1bb
+x = 2
 ractive.on \complete, ->
     i = 0
     states =

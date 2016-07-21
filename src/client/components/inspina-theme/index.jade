@@ -22,17 +22,18 @@
                 +each('menu:i')  
                     li(class='{{#if isSelected(.url,selected)}} active {{/if}}')        
                         +unless('.subMenu')
-                            a(href='{{.url}}')
+                            a(href='{{.url}}' on-click='clicked')
                                 i(class='{{.icon}}')
                                 //-span.nav-label {{yield firstpage}}
                                 span.nav-label {{.title}} 
                                 +if('.subMenu')
                                     span.fa.arrow
-                        +if('.subMenu')                            
+                        +if('.subMenu')      
+                            a(href='' on-click='clicked:mahmut')                                              
                             ul.nav.nav-second-level.collapse(class='{{#if isSelectedHere(.subMenu,selected)}} in {{/if}}')
                                 +each('.subMenu')
                                     li(class='{{#if isSelected(.url, selected)}} active {{/if}}')        
-                                        a(href='{{.url}}') {{.title}}
+                                        a(href='{{.url}}' on-click='clicked') {{.title}}
 
                 //-li
                     a(href='minor.html')
