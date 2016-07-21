@@ -31,7 +31,7 @@ server.route do
     path: "/"
     method: "GET"
     handler:
-        file: "#{public-dir}/pages/showcase.html"
+        file: "#{public-dir}/pages/order.html"
 
 server.route do
     path: "/{f*}"
