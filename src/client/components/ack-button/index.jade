@@ -1,0 +1,24 @@
++component('ack-button')
+    | {{state}}
+    btn(on-click='fire('buttonclick', value)')
+        | {{#if state === "waiting"}}
+        div(style='display: inline-block; width: 20px; height: 20px; margin:0 ;padding: 0; -ms-transform: rotate({{ angle }}deg); -webkit-transform: rotate({{ angle }}deg); transform: rotate({{ angle }}deg)')
+            icon-refresh
+        | {{/if}}
+        
+        | {{#if state === "okey"}}
+        div(style='display: inline-block; width: 20px; height: 20px; margin: 0 ;padding: 0;')
+            icon-ok-sign
+        | {{/if}}
+        
+        | {{#if state === "error"}}
+        div(style='display: inline-block; width: 20px; height: 20px; margin: 0 ;padding: 0;')
+            icon-alert
+        | {{/if}}
+        
+        | {{#if state === "normal"}}
+        div(style='display: inline-block;visibility:hidden; width: 20px; height: 20px; margin: 0 ;padding: 0;')
+            icon-refresh
+        | {{/if}}
+
+        | {{>content}}
