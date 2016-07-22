@@ -34,10 +34,9 @@ Ractive.components[component-name] = Ractive.extend do
         curr-url: null
         is-selected: (url, selected) ->
             x = url is selected
-            console.log "is-selected says: ", url, selected, url is selected
-            #console.log "url: ", url
-            #console.log "selected", selected
+            #console.log "is-selected says: ", url, selected, url is selected
             x
+
         is-selected-here: (sub-menu,selected) ->
             selected in [..url for sub-menu]
 
