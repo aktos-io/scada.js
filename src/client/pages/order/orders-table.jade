@@ -35,8 +35,10 @@ order-table(
             .col-md-4
                 | {{#if curr.state === "doing"}}
                 h3 ÜRETİMDE!
+                btn(on-buttonclick="runHandler" value="cancelProduction" type="danger") Üretimi iptal et!
+                btn(on-buttonclick="runHandler" value="productionFinished" type="success") Üretim Tamam!
                 | {{else}}
-                btn(on-buttonclick="handler" value="sendToProduction") Üretime gönder!
+                btn(on-buttonclick="runHandler" value="sendToProduction" type="warning") Üretime gönder!
                 | {{/if}}
                 
     +partial('editForm')
