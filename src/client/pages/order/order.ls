@@ -47,6 +47,9 @@ ractive = new Ractive do
                 doing: (docs) ->
                     [.. for docs when ..state is \doing]
 
+                done: (docs) ->
+                    [.. for docs when ..state is \done]
+
             after-filter: (docs, callback) ->
                 console.log "running after filter..."
 
@@ -61,7 +64,12 @@ ractive = new Ractive do
                         client.name
                         unix-to-readable doc.order-date
                         unix-to-readable doc.due-date
-                    background-color: \red
+                    class: if doc.state is \doing
+                        \warning
+                    else if doc.state is \aborted
+                        \danger
+                    else if doc.state is \done
+                        \success
                     } for doc in docs for client in client-list
                     when client.id is doc.client]
 
@@ -74,20 +82,22 @@ ractive = new Ractive do
                     @observe-once \x, generate-view
 
             handlers:
-                send-to-production: ->
+                set-production-state: (state) ->
                     __ = @
                     curr = @get \curr
                     db = @get \db
 
-                    curr.state = \doing
+                    curr.state = state
 
-                    console.log "Sending to production: ", curr
+                    console.log "changing production state to: ", state
                     err, res <- db.put curr
                     if not err
-                        console.log "SENT TO PRODUCTION!", curr
+                        console.log "CHANGED PRODUCTION STATE!", curr
+                        curr._rev = res.rev
+                        console.log "Updating current order document rev: ", curr._rev
                         __.set \curr, curr
                     else
-                        console.log "Not sent to production: ", err
+                        console.log "ERR on change state: ", err
 
 
 
@@ -103,8 +113,10 @@ ractive = new Ractive do
 
             col-names: "Ürün adı"
             filters:
-                all: (docs, param) ->
-                    [{id: .._id, cols: [..product-name]} for docs]
+                all: (docs, param) -> docs
+
+            after-filter: (docs, on-complete) ->
+                    on-complete [{id: .._id, cols: [..product-name]} for docs]
 
         # CUSTOMERS
         customers-settings:

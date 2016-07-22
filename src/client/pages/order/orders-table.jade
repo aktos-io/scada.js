@@ -13,16 +13,16 @@ order-table(
     +partial('header')
         h3 Filtreler
         row 
-            col-md-3
+            col-md-12
                 btn-group
-                    btn(on-buttonclick="setFilter" value="todaysOrders") Bugün!
                     btn(on-buttonclick="setFilter" value="all") Tümü
-                    btn(on-buttonclick="setFilter" value="doing") Üretimdekiler
-                input(type="text" value="{{ selectedFilter }}")
+                    btn(on-buttonclick="setFilter" value="todaysOrders") Bugün!
+                    btn(on-buttonclick="setFilter" value="doing" type="warning") Üretimdekiler
+                    btn(on-buttonclick="setFilter" value="done" type="success") Tamamlananlar
+                    
         row
             col-md-12
-                textarea(value="{{ JSON.stringify(curr) }}")
-    
+                input(type="text" value="{{ selectedFilter }}")
     +partial('viewForm')
         h1 {{ curr.client }}
         .row 
@@ -35,10 +35,11 @@ order-table(
             .col-md-4
                 | {{#if curr.state === "doing"}}
                 h3 ÜRETİMDE!
-                btn(on-buttonclick="runHandler" value="cancelProduction" type="danger") Üretimi iptal et!
-                btn(on-buttonclick="runHandler" value="productionFinished" type="success") Üretim Tamam!
-                | {{else}}
-                btn(on-buttonclick="runHandler" value="sendToProduction" type="warning") Üretime gönder!
+                btn(on-buttonclick="runHandler" value="{{ ['setProductionState', 'aborted']}}" type="danger") Üretimi iptal et!
+                btn(on-buttonclick="runHandler" value="{{ ['setProductionState', 'done']}}" type="success") Üretim Tamam!
+                | {{/if}}
+                | {{#if curr.state !== 'done' && curr.state !== 'doing'}}
+                btn(on-buttonclick="runHandler" value="{{ ['setProductionState', 'doing']}}" type="warning") Üretime gönder!
                 | {{/if}}
                 
     +partial('editForm')
