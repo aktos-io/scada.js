@@ -1,12 +1,9 @@
 h1 Siparişler:
 order-table(
-    cols="{{ orders.colNames }}"
-    default="{{ orders.default }}"
-    filters="{{ orders.filters }}"
+    settings="{{ orders }}"
     db="{{ db }}"
     view="orders/getOrders"
     gen-entry-id="{{ genEntryId }}"
-    handlers="{{ orders.handlers }}"
     x="{{ customersList }}"
     output="{{ production.tabledata }}"
     )
@@ -18,11 +15,13 @@ order-table(
         row 
             col-md-3
                 btn-group
-                    btn(on-buttonclick="setfilter" value="todaysOrders") Bugün!
-                    btn(on-buttonclick="setfilter" value="all") Tümü
-                    btn(on-buttonclick="setfilter" value="doing") Üretimdekiler
-                input(type="text" value="{{ filterOpts.selected }}")
-            col-md-3
+                    btn(on-buttonclick="setFilter" value="todaysOrders") Bugün!
+                    btn(on-buttonclick="setFilter" value="all") Tümü
+                    btn(on-buttonclick="setFilter" value="doing") Üretimdekiler
+                input(type="text" value="{{ selectedFilter }}")
+        row
+            col-md-12
+                textarea(value="{{ JSON.stringify(curr) }}")
     
     +partial('viewForm')
         h1 {{ curr.client }}
@@ -37,7 +36,7 @@ order-table(
                 | {{#if curr.state === "doing"}}
                 h3 ÜRETİMDE!
                 | {{else}}
-                btn(on-buttonclick="sendToProduction" value="{{ [curr, db] }}") Üretime gönder!
+                btn(on-buttonclick="handler" value="sendToProduction") Üretime gönder!
                 | {{/if}}
                 
     +partial('editForm')
@@ -79,6 +78,7 @@ h1 Üretim Kalemlerinin Toplam Miktarları
 data-table(
     settings="{{ production.settings }}"
     tabledata="{{ production.tabledata }}"
+    output="{{ production.output }}"
     )
     +partial('header')
         //input(value="{{ filterOpts.selected }}")
@@ -89,7 +89,7 @@ data-table(
 h1 Gereken Hammadde Miktarları        
 data-table(
     settings="{{ materialUsage.settings }}"
-    production-list="{{ production.tabledata }}"
+    production-list="{{ production.output }}"
     recipes="{{ materialUsage.recipes }}"
     )
     +partial('header')

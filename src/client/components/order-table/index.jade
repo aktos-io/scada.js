@@ -26,7 +26,7 @@
                         .col-md-9.col-sm-9
                             | {{>header}}
                         | {{/if}}
-            +each('getFiltered(tabledata, filterOpts.params, this):i')
+            +each('tableview:i')
                 tr.input-line(
                     class="{{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}}"
                     on-doubleclick="clicked"

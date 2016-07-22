@@ -1,8 +1,6 @@
 h2 Müşteriler:
 order-table(
-    cols="{{ customers.colNames }}"
-    default="{{ customers.default }}"
-    filters="{{ customers.filters }}"
+    settings="{{ customersSettings }}"
     db="{{ db }}"
     view="customers/getCustomers"
     gen-entry-id="{{ genEntryId }}"

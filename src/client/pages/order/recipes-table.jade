@@ -1,8 +1,6 @@
 h2 Reçeteler:
 order-table(
-    cols="{{ recipes.colNames }}"
-    default="{{ recipes.default }}"
-    filters="{{ recipes.filters }}"
+    settings="{{ recipes }}"
     db="{{ db }}"
     view="primitives/getReceipts"
     gen-entry-id="{{ genEntryId }}"

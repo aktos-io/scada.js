@@ -11,28 +11,16 @@ Ractive.components[component-name] = Ractive.extend do
         if (@get \id) is \will-be-random
             @set \id random.generate 7
 
-        # TODO: ENABLE SETTINGS
         settings = @get \settings
-
-        # column names
+        console.log "ORDER_TABLE: got .............. settings: ", settings
         try
-            col-list = split ',', @get \cols
+            col-names = split ',' settings.col-names
+            @set \columnList, col-names
         catch
-            throw "ORDER_TABLE: Can not get cols list: #{e}"
-
-        @set \columnList, col-list
-
+            console.log "ORDER_TABLE:", "can not get col-names", e
         db = @get \db
         gen-entry-id = @get \gen-entry-id
-
-
-
-        filters = @get \filters
-        #console.log "ORDER_TABLE: DEBUG: got filters: ", filters
-        if filters
-            #console.log "Setting data filters..."
-            @set \dataFilters, filters
-
+        @set \dataFilters, settings.filters
 
         do function update-table
             err, res <- db.query (__.get \view), {+include_docs}
@@ -47,7 +35,33 @@ Ractive.components[component-name] = Ractive.extend do
             .on \change, (change) ->
                 #console.log "order-table change detected!", change
                 update-table!
-        events =
+
+
+        do function create-view param
+            filters = __.get \dataFilters
+            selected-filter = __.get \selectedFilter
+            tabledata = __.get \tabledata
+            try
+                throw "table data is empty" if typeof! tabledata isnt \Array
+                filter = filters[selected-filter]
+                filtered = filter.apply __, [tabledata, param] if typeof filter is \function
+                if typeof settings.after-filter is \function
+                    console.log "ORDER_TABLE: applying after-filter: ", settings.after-filter
+                    settings.after-filter.apply __, [filtered, (view) -> __.set \tableview, view]
+                else
+                    console.log "after-filter is not defined?"
+            catch
+                console.log "Error getting filtered: ", e, tabledata
+                null
+
+        @observe \tabledata, ->
+            console.log "ORDER_TABLE: observing tabledata..."
+            create-view!
+        @observe \selectedFilter, ->
+            console.log "ORDER_TABLE: observing selectedFilter..."
+            create-view!
+
+        @on events =
             clicked: (args) ->
                 context = args.context
                 index = context.id
@@ -126,7 +140,7 @@ Ractive.components[component-name] = Ractive.extend do
                 __.set \curr, editing-doc
 
             delete-order: (index-str) ->
-                [key, index] = split ':', index-str
+                [key, index] = split ':' index-str
                 index = parse-int index
                 console.log "ORDER_TABLE: delete ..#{key}.#{index}"
                 editing-doc = @get \curr
@@ -134,16 +148,19 @@ Ractive.components[component-name] = Ractive.extend do
                 console.log "editing doc: (deleted: )", editing-doc.entries
                 @set \curr, editing-doc
 
-            setfilter: (filter-name) ->
-                console.log "ORDER_TABLE: filter is set to #{filter-name}"
-                @set \filterOpts.selected, filter-name
+            run-handler: (params) ->
+                handlers = settings.handlers
+                handler = params  # maybe we want to run a handler without parameter
+                param = null
+                [handler, ...param] = params if typeof! params is \Array
+                console.log "running handler with params: ", param
 
+                handlers[handler].apply @, param if typeof handlers[handler] is \function
 
-        events `merge` @get \handlers
-        console.log "events: ", events
+            set-filter: (filter-name) ->
+                # this event handler is to be used in template
+                @set \selectedFilter, filter-name
 
-        # register event handlers
-        @on events
 
     data: ->
         __ = @
@@ -165,9 +182,7 @@ Ractive.components[component-name] = Ractive.extend do
         addingNew: no
         view-func: null
         data-filters: {}
-        filter-opts:
-            params: \mahmut
-            selected: \all
+        selected-filter: \all
 
         is-editing-line: (index) ->
             editable = @get \editable
@@ -177,14 +192,3 @@ Ractive.components[component-name] = Ractive.extend do
         is-clicked: (index) ->
             clicked-index = @get \clickedIndex
             index is clicked-index
-
-        get-filtered: (tabledata, param, this_) ->
-            __ = this_.instance
-            filters = __.get \dataFilters
-            filter-opts = __.get \filterOpts
-            try
-                filter = filters[filter-opts.selected]
-                filter(tabledata, param, this_) if typeof filter is \function
-            catch
-                console.log "Error getting filtered: ", e
-                null

@@ -33,62 +33,59 @@ ractive = new Ractive do
                     ...
             col-names: "Müşteri Adı, Sipariş Tarihi, Teslim Tarihi"
             filters:
-                all: (docs, param, __) ->
-                    client-list = __.x
-                    console.log "client list is: ", client-list
-                    conv = unix-to-readable
-                    known = [{id: doc._id, cols: [client.name, doc.order-date, doc.due-date]
-                    } for doc in docs for client in client-list
-                    when client.id is doc.client]
-
+                all: (docs, param) ->
                     # sort by date
-                    x = reverse sort-by (.cols.2), known
-                    [{id: ..id, cols: [..cols.0, conv(..cols.1), conv(..cols.2)]} for x]
+                    reverse sort-by (.due-date), docs
 
-                todays-orders: (docs, param, __this) ->
-                    __ = __this.instance
+                todays-orders: (docs, param) ->
                     now = Date.now!
                     tomorrow = now + 1day * 24hours_per_day * 3600seconds_per_hour * 1000ms_per_second
 
                     console.log "calculated now: ", now
-                    author = (doc) -> (split '-', doc._id).0
+                    [.. for docs when now < ..due-date < tomorrow]
 
-                    filtered-docs = [.. for docs when now < ..due-date < tomorrow]
-                    orders = [{id: .._id, cols: [..client, author .., \selam ]} for filtered-docs]
-                    console.log "Siparişler: found #{orders.length} orders. "
+                doing: (docs) ->
+                    [.. for docs when ..state is \doing]
 
-                    console.log "FILTERED DOCS: ", filtered-docs
-                    try
-                        production-list = flatten [flatten([{id: .._id} `merge ` i for i in ..entries]) for filtered-docs]
-                        console.log "PRODUCTION LIST: ", production-list
+            after-filter: (docs, callback) ->
+                console.log "running after filter..."
 
-                        # order-id, product-name, amount
-                        y = group-by (.product), production-list
-                        x = [{
-                            product-name: product
-                            total-amount: sum [parse-float ..amount for entries]
-                            related-orders: [..id for entries]
-                            } for product, entries of y]
-                        console.log "Production list as groups:", y
-                        console.log "Production list as documents", x
+                # Generate output for production list
+                @set \output, docs
 
-                        #x = [{id: ..id, cols: [..id, ..product, ..amount]} for production-list]
-                        __.set \output, x
-                    catch
-                        console.log "ORDER_TABLE: error: ", e
-                    sort-by (.cols.2), orders
+                function generate-view client-list
+                    console.log "client list is (after): ", client-list
+                    view = [{
+                    id: doc._id
+                    cols:
+                        client.name
+                        unix-to-readable doc.order-date
+                        unix-to-readable doc.due-date
+                    background-color: \red
+                    } for doc in docs for client in client-list
+                    when client.id is doc.client]
 
-                doing: (docs, param, __this) ->
-                    [{id: .._id, cols: [..client, ..order-date, ..due-date]
-                    } for docs when ..state is \doing]
+                    callback view
+
+                client-list = @get \x
+                if typeof! client-list is \Array
+                    generate-view client-list
+                else
+                    @observe-once \x, generate-view
 
             handlers:
-                send-to-production: (params) ->
-                    [curr, db] = params
+                send-to-production: ->
+                    __ = @
+                    curr = @get \curr
+                    db = @get \db
+
                     curr.state = \doing
+
+                    console.log "Sending to production: ", curr
                     err, res <- db.put curr
                     if not err
                         console.log "SENT TO PRODUCTION!", curr
+                        __.set \curr, curr
                     else
                         console.log "Not sent to production: ", err
 
@@ -110,19 +107,25 @@ ractive = new Ractive do
                     [{id: .._id, cols: [..product-name]} for docs]
 
         # CUSTOMERS
-        customers:
+        customers-settings:
             default:
                 type: \customer
+                name: null
+                key: null
             col-names: "Müşteri adı"
             filters:
                 all: (docs, param) ->
-                    console.log "running customers 'all' filter..."
-                    [{id: .._id, cols: [..name]} for docs]
+                    console.log "running customers 'all' filter...", docs
+                    docs
 
+            after-filter: (docs, callback) ->
+                console.log "running after-filter for customers"
+                callback [{id: .._id, cols: [..name]} for docs]
 
-                set-client-id: (key, __) ->
-                    console.log "setting current key to: #{key}", __
-                    try __.instance.set "curr.key", "client-id-#{key.to-lower-case!}"
+            handlers:
+                set-client-id: (key) ->
+                    console.log "setting current key to: #{key}", @
+                    try @set "curr.key", "client-id-#{key.to-lower-case!}"
                     \ok
 
         # PRODUCTION
@@ -130,11 +133,23 @@ ractive = new Ractive do
             settings:
                 cols: "Ürün Adı, Miktar"
                 filters:
-                    all: (docs, param, this_) ->
-                        #rows = [{id: ..id, cols: [..name, ..amount]} for docs]
+                    all: (docs) ->
+                        production-list = flatten [flatten([{id: .._id} `merge ` i for i in ..entries]) for docs]
+                        console.log "PRODUCTION LIST: ", production-list
+                        # order-id, product-name, amount
+                        production-items = group-by (.product), production-list
+                        production-total = [{
+                            product-name: name
+                            total-amount: sum [parse-float ..amount for entries]
+                            related-orders: [..id for entries]
+                            } for name, entries of production-items]
+                        console.log "Production list as groups:", production-items
+                        console.log "Production list as documents", production-total
+                        @set \output, production-total
+
                         i = 0
                         seq-num = (x) -> i++
-                        x = reverse sort-by (.total-amount), docs
+                        x = reverse sort-by (.total-amount), production-total
                         [{id: seq-num(..), cols:[..product-name, "#{..total-amount} kg"]} for x]
 
         # MATERIAL USAGE
@@ -142,8 +157,8 @@ ractive = new Ractive do
             settings:
                 cols: "Hammadde Adı, Miktar"
                 filters:
-                    all: (docs, param, this_) ->
-                        __ = this_.instance
+                    all: (docs) ->
+                        __ = @
 
                         try
                             productions = __.get \production-list
