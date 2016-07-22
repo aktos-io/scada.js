@@ -126,14 +126,14 @@ Ractive.components[component-name] = Ractive.extend do
                         console.log "Updating current order document rev: ", order-doc._rev
                         __.set \curr, order-doc
                     __.set \saving, "OK!"
-                    <- sleep 1000ms
+                    <- sleep 3000ms
                     __.set \saving, ''
 
             add-new-entry: (keypath) ->
                 __ = @
                 editing-doc = __.get \curr
                 console.log "adding new entry to the order: ", editing-doc
-                entry-template = __.get \default [keypath]
+                entry-template = __.get \settings.default [keypath]
                 editing-doc[keypath] ++= entry-template[keypath].0
 
                 #console.log "adding new entry: ", editing-doc
@@ -166,8 +166,8 @@ Ractive.components[component-name] = Ractive.extend do
         __ = @
         instance: @
         new-order: ->
-            console.log "Returning new default value: ", __.get \default
-            unpack pack __.get \default
+            console.log "Returning new default value: ", __.get \settings.default
+            unpack pack __.get \settings.default
         saving: ''
         curr: null
         id: \will-be-random

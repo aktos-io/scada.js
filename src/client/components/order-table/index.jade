@@ -28,7 +28,7 @@
                         | {{/if}}
             +each('tableview:i')
                 tr.input-line(
-                    class="{{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}}"
+                    class="{{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}} {{ .class }} active"
                     on-doubleclick="clicked"
                     )
                     | {{#if isClicked(.id)}}
