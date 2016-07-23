@@ -22,23 +22,23 @@
                 +each('menu:i')  
                     +unless('.subMenu')
                         //- No submenu, use direct links...
-                        li(class='{{#if isSelected(.url,selected)}} active {{/if}}')        
+                        li(class='{{#if isSelected(.url, iselected)}} active {{/if}}')        
                             a(href='{{.url}}' on-click='clicked')
                                 i(class='{{.icon}}')
                                 span.nav-label {{.title}} 
                                 +if('.subMenu')
                                     span.fa.arrow
                     +if('.subMenu')      
-                        li(class='{{#if isSelected(i,selected)}} active {{/if}}')        
+                        li(class='{{#if isSelected(i, iselected)}} active {{/if}}')        
                             a(href='javascript:;' on-click='clicked')
                                 i(class='{{.icon}}')
                                 span.nav-label {{.title}} 
                                 +if('.subMenu')
                                     span.fa.arrow
 
-                            ul.nav.nav-second-level.collapse(class='{{#if isSelected(i,selected) || isSelectedHere(.subMenu, selected)}} in {{/if}}')
+                            ul.nav.nav-second-level.collapse(class='{{#if isSelected(i, iselected) || isSelectedHere(.subMenu, iselected)}} in {{/if}}')
                                 +each('.subMenu')
-                                    li(class='{{#if isSelected(.url, selected)}} active {{/if}}')        
+                                    li(class='{{#if isSelected(.url, iselected)}} active {{/if}}')        
                                         a(href='{{.url}}' on-click='clicked') {{.title}}
 
 

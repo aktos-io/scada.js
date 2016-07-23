@@ -11,6 +11,7 @@ Ractive.components[component-name] = Ractive.extend do
         __ = @
 
         do function hashchange
+            __.set \iselected, window.location.hash
             __.set \selected, window.location.hash
 
         $ document .ready ->
@@ -23,21 +24,22 @@ Ractive.components[component-name] = Ractive.extend do
                 url = context.url
                 console.log "url", url
                 if url
-                    @set \selected, url
+                    @set \iselected, url
+                    @set \selected, url 
                 else
-                    curr = @get \selected
-                    selected = args.index.i
-                    selected = -1 if selected is curr and
-                    console.log "not url; curr, selected: ", curr, selected
-                    @set \selected, selected
+                    curr = @get \iselected
+                    iselected = args.index.i
+                    iselected = -1 if iselected is curr and
+                    console.log "not url; curr, iselected: ", curr, iselected
+                    @set \iselected, iselected
     data: ->
-        is-selected: (url, selected) ->
-            x = url is selected
-            #console.log "is-selected says: ", url, selected, url is selected
+        is-selected: (url, iselected) ->
+            x = url is iselected
+            #console.log "is-iselected says: ", url, iselected, url is iselected
             x
 
-        is-selected-here: (sub-menu,selected) ->
-            selected in [..url for sub-menu]
+        is-selected-here: (sub-menu, iselected) ->
+            iselected in [..url for sub-menu]
 
 component-name = "inspina-right"
 Ractive.components[component-name] = Ractive.extend do
