@@ -54,10 +54,10 @@ ractive = new Ractive do
                 # Generate output for production list
                 @set \output, docs
                 curr-doc = @get \curr
-                console.log "curr doc is: ", curr-doc
+                #console.log "curr doc is: ", curr-doc
 
                 function generate-view client-list
-                    console.log "client list is (after): ", client-list
+                    #console.log "client list is (after): ", client-list
                     view = [{
                     id: doc._id
                     cols:
@@ -73,17 +73,17 @@ ractive = new Ractive do
                     } for doc in docs for client in client-list
                     when client.id is doc.client]
 
-                    console.log "generated view: ", view
+                    #console.log "generated view: ", view
                     callback view
 
                 client-list = @get \x
-                console.log "client list seems: ", client-list
+                #console.log "client list seems: ", client-list
                 if typeof! client-list is \Array
-                    console.log "client list is here: ", client-list
+                    #console.log "client list is here: ", client-list
                     generate-view client-list
                 else
                     @observe-once \x, (val) ->
-                        console.log "client list observed: ", val
+                        #console.log "client list observed: ", val
                         generate-view val
 
             handlers:

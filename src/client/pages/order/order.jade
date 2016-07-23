@@ -10,8 +10,9 @@ block ractive
         inspina-menu(menu="{{menu}}" selected="{{ currPage }}" user="{{ {name: login.user.name, title: 'hehehe'} }}")
         inspina-right
             inspina-header
+                +partial('left')
                 +partial('right')
-                    login(on-login="afterLoggedIn" context="{{ login }}" db="{{ db }}")
+                    login(context="{{ login }}" db="{{ db }}")
             inspina-content  
                 page(name="/", curr="{{ currPage }}")
                     include ./home.jade

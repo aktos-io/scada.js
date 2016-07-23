@@ -32,7 +32,6 @@
                 +each('tableview:i')
                     tr.input-line(
                         class="{{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}} {{ .class }} active"
-                        style="{{#if curr._id == ._id}} background-color: purple {{/if}}"
                         on-doubleclick="clicked"
                         )
                         | {{#if isClicked(.id)}}
