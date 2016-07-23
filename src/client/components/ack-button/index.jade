@@ -1,6 +1,5 @@
 +component('ack-button')
-    | {{state}}
-    btn(on-click='fire('buttonclick', value)')
+    btn(on-buttonclick="buttonClicked" value="{{value}}")
         | {{#if state === "waiting"}}
         div(style='display: inline-block; width: 20px; height: 20px; margin:0 ;padding: 0; -ms-transform: rotate({{ angle }}deg); -webkit-transform: rotate({{ angle }}deg); transform: rotate({{ angle }}deg)')
             icon-refresh

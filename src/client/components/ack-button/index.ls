@@ -1,19 +1,16 @@
-{split, take, join, lists-to-obj, sum} = require 'prelude-ls'
 {sleep} = require "aea"
-
-random = require \randomstring
 
 component-name = "ack-button"
 Ractive.components[component-name] = Ractive.extend do
+    template: "\##{component-name}"
+    isolated: yes
     oninit: ->
         __ = @
         @observe \state, (val) ->
             #console.log "State change dedected!", val
             if val == "waiting"
                 rotate-icon!
-        @on 
-            run-console-log: ->
-                console.log "on-click is running..."
+
         function rotate-icon
             #console.log "rotate function is starting... , test ractive: __" , __
             state-val = __.get \state
@@ -26,7 +23,13 @@ Ractive.components[component-name] = Ractive.extend do
                 #else
                 #    console.log "rotate function is stopped..."
 
-    template: "\##{component-name}"
+        @on do
+            button-clicked: (val) ->
+                #console.log "component detects button click with value: ", val
+                #console.log "what I know is: ", @get \buttonclick
+                @get \buttonclick <| val
+
+
     data: ->
         angle: 0
 
