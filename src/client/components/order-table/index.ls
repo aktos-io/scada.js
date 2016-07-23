@@ -61,6 +61,10 @@ Ractive.components[component-name] = Ractive.extend do
             #console.log "ORDER_TABLE: observing selectedFilter..."
             create-view!
 
+        @observe \curr, ->
+            __.set \saving, ''
+
+
         @on events =
             clicked: (args) ->
                 context = args.context
@@ -126,8 +130,6 @@ Ractive.components[component-name] = Ractive.extend do
                         console.log "Updating current order document rev: ", order-doc._rev
                         __.set \curr, order-doc
                     __.set \saving, "OK!"
-                    <- sleep 3000ms
-                    __.set \saving, ''
 
             add-new-entry: (keypath) ->
                 __ = @
