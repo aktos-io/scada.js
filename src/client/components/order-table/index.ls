@@ -12,7 +12,7 @@ Ractive.components[component-name] = Ractive.extend do
             @set \id random.generate 7
 
         settings = @get \settings
-        console.log "ORDER_TABLE: got .............. settings: ", settings
+        #console.log "ORDER_TABLE: got .............. settings: ", settings
         try
             col-names = split ',' settings.col-names
             @set \columnList, col-names
@@ -46,26 +46,30 @@ Ractive.components[component-name] = Ractive.extend do
                 filter = filters[selected-filter]
                 filtered = filter.apply __, [tabledata, param] if typeof filter is \function
                 if typeof settings.after-filter is \function
-                    console.log "ORDER_TABLE: applying after-filter: ", settings.after-filter
+                    #console.log "ORDER_TABLE: applying after-filter: ", settings.after-filter
                     settings.after-filter.apply __, [filtered, (view) -> __.set \tableview, view]
                 else
                     console.log "after-filter is not defined?"
             catch
-                console.log "Error getting filtered: ", e, tabledata
+                #console.log "Error getting filtered: ", e, tabledata
                 null
 
         @observe \tabledata, ->
-            console.log "ORDER_TABLE: observing tabledata..."
+            #console.log "ORDER_TABLE: observing tabledata..."
             create-view!
         @observe \selectedFilter, ->
-            console.log "ORDER_TABLE: observing selectedFilter..."
+            #console.log "ORDER_TABLE: observing selectedFilter..."
             create-view!
+
+        @observe \curr, ->
+            __.set \saving, ''
+
 
         @on events =
             clicked: (args) ->
                 context = args.context
                 index = context.id
-                console.log "ORDER_TABLE: clicked!!!", args, index
+                #console.log "ORDER_TABLE: clicked!!!", args, index
 
                 @set \clickedIndex, index
                 tabledata = @get \tabledata
@@ -126,8 +130,6 @@ Ractive.components[component-name] = Ractive.extend do
                         console.log "Updating current order document rev: ", order-doc._rev
                         __.set \curr, order-doc
                     __.set \saving, "OK!"
-                    <- sleep 3000ms
-                    __.set \saving, ''
 
             add-new-entry: (keypath) ->
                 __ = @
@@ -152,6 +154,7 @@ Ractive.components[component-name] = Ractive.extend do
                 handlers = settings.handlers
                 handler = params  # maybe we want to run a handler without parameter
                 param = null
+                console.log "DEBUG: PARAMS: ", params
                 [handler, ...param] = params if typeof! params is \Array
                 console.log "running handler with params: ", param
 
@@ -166,7 +169,7 @@ Ractive.components[component-name] = Ractive.extend do
         __ = @
         instance: @
         new-order: ->
-            console.log "Returning new default value: ", __.get \settings.default
+            console.log "ORDER_TABLE: Returning new default value: ", __.get \settings.default
             unpack pack __.get \settings.default
         saving: ''
         curr: null
@@ -192,3 +195,14 @@ Ractive.components[component-name] = Ractive.extend do
         is-clicked: (index) ->
             clicked-index = @get \clickedIndex
             index is clicked-index
+
+        run-handler: (params) ->
+            console.log "RUN HANDLER IS RUNNING: PARAMS: ", params
+            handlers = __.get \settings.handlers
+            handler = params  # maybe we want to run a handler without parameter
+            param = null
+            console.log "DEBUG: PARAMS: ", params
+            [handler, ...param] = params if typeof! params is \Array
+            console.log "running handler with params: ", param
+
+            handlers[handler].apply @, param if typeof handlers[handler] is \function

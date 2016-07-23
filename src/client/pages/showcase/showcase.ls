@@ -83,6 +83,8 @@ ractive = new Ractive do
             show: yes
         button:
             show: yes
+            run-console-log: ->
+                console.log "showcase console log is running ...."
         menu:
             * title: "Showcase"
               icon:"fa fa-th-large"
@@ -145,26 +147,32 @@ ractive = new Ractive do
                   key: 'my key 4'
                   value: 'my value 4'
 
-x = 2
-ractive.on \complete, ->
-    i = 0
-    states =
-        \waiting
-        \normal
-        \error
-        \okey
 
-    unixs = [1554277600000,1354276600000,1254257600000,1054247600000]
+        test-ack-button: (val) ->
+            console.log "ack button in the main instance fired with value: ", val
 
-    <- :lo(op) ->
-        a = i++
-        new-state = states[a]
-        new-unix = unixs[a]
-        #console.log "changing state: ", new-state
-        ractive.set \buttonState, new-state
-        ractive.set \myUnixTime, new-unix
-        #console.log "myUnixTime: ", ractive.get \myUnixTime
-        if i > 3
-            i:=0
-        <- sleep 5000ms
-        lo(op)
+
+x = 23
+ractive.on do
+    complete: ->
+        i = 0
+        states =
+            \waiting
+            \normal
+            \error
+            \okay
+
+        unixs = [1554277600000,1354276600000,1254257600000,1054247600000]
+
+        <- :lo(op) ->
+            a = i++
+            new-state = states[a]
+            new-unix = unixs[a]
+            #console.log "changing state: ", new-state
+            ractive.set \buttonState, new-state
+            ractive.set \myUnixTime, new-unix
+            #console.log "myUnixTime: ", ractive.get \myUnixTime
+            if i > 3
+                i:=0
+            <- sleep 5000ms
+            lo(op)

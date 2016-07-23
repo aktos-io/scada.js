@@ -2,8 +2,8 @@ require! components
 require! 'aea': {PouchDB, sleep, unix-to-readable, merge}
 require! 'prelude-ls': {sum, split, sort-by, flatten, group-by, reverse }
 
-db = new PouchDB 'https://demeter.cloudant.com/cicimeze', skip-setup: yes
-local = new PouchDB \local_db
+db = new PouchDB 'https://demeter.cloudant.com/cicimeze', {+skip-setup, timeout: 15_000ms}
+#local = new PouchDB \local_db
 
 gen-entry-id = ->
     timestamp = new Date!get-time! .to-string 16
@@ -51,13 +51,13 @@ ractive = new Ractive do
                     [.. for docs when ..state is \done]
 
             after-filter: (docs, callback) ->
-                console.log "running after filter..."
-
                 # Generate output for production list
                 @set \output, docs
+                curr-doc = @get \curr
+                console.log "curr doc is: ", curr-doc
 
                 function generate-view client-list
-                    console.log "client list is (after): ", client-list
+                    #console.log "client list is (after): ", client-list
                     view = [{
                     id: doc._id
                     cols:
@@ -82,23 +82,54 @@ ractive = new Ractive do
                     @observe-once \x, generate-view
 
             handlers:
-                set-production-state: (state) ->
-                    __ = @
-                    curr = @get \curr
+                send-to-production: (orders-to-produce) ->
                     db = @get \db
+                    tabledata = @get \tabledata
+                    __ = @
 
-                    curr.state = state
+                    order-list = if orders-to-produce is \all-visible
+                        console.log "WARNING: sending all visible orders to production..."
+                        [..id for @get \tableview]
+                    else if orders-to-produce not in [null, void]
+                        console.log "sending some orders: ", flatten Array orders-to-produce
+                        flatten Array orders-to-produce
+                    else
+                        console.log "nothing will be sent to production... : ", orders-to-produce
+                        []
 
-                    console.log "changing production state to: ", state
-                    err, res <- db.put curr
+
+
+                    orders-edited = [.. `merge` {state: \doing} for tabledata when .._id in order-list]
+                    material-usage = get-material-usage get-production-items [.. for tabledata when .._id in order-list]
+                    console.log "these documents will be sent to production: ", order-list
+                    console.log "following materials will be used for these orders: ", material-usage
+                    updated-materials = [..current-status `merge` {curr-amount: ..current-status.curr-amount - ..usage} for material-usage]
+                    console.log "updated material list is: ", updated-materials
+
+                    err, res <- db.bulk-docs (orders-edited ++ updated-materials), {+all_or_nothing}
                     if not err
-                        console.log "CHANGED PRODUCTION STATE!", curr
-                        curr._rev = res.rev
-                        console.log "Updating current order document rev: ", curr._rev
+                        console.log "All intended orders are sent to production: response: ", res
+                        tabledata `merge` order-list
+                        curr = __.get \curr
+                        curr `merge` [.. for order-list when .._id is curr._id].0
                         __.set \curr, curr
                     else
                         console.log "ERR on change state: ", err
 
+                material-usage: ->
+                    # TEST
+                    tableview = [td for td in (@get \tabledata) for w in (@get \tableview) when td._id is w.id]
+
+                    p-list = get-production-items tableview
+                    console.log "ORDERS TABLE: production list (current all): ", p-list
+
+                    materials = get-material-usage p-list
+                    console.log "ORDERS TABLE: materials needed: ", materials
+
+                get-curr-usage: ->
+                    curr = @get \curr
+                    console.log "GET_CURR_USAGE: current order: ", curr
+                    get-material-usage get-production-items curr
 
 
         # RECIPES
@@ -118,6 +149,19 @@ ractive = new Ractive do
             after-filter: (docs, on-complete) ->
                     on-complete [{id: .._id, cols: [..product-name]} for docs]
 
+        #RAWMATERIALS
+        raw-materials:
+            settings:
+                default:
+                    type: 'raw-material'
+                col-names:"Hammadde Adı, Kritik Miktar, Mevcut Miktar"
+                filters:
+                    all: (docs, param) -> docs
+
+                after-filter: (docs, callback) ->
+                    #console.log "Raw Material has documents: ", docs
+                    callback [{id: .._id, cols: [..name, ..critical-amount, ..curr-amount]} for docs]
+
         # CUSTOMERS
         customers-settings:
             default:
@@ -126,12 +170,9 @@ ractive = new Ractive do
                 key: null
             col-names: "Müşteri adı"
             filters:
-                all: (docs, param) ->
-                    console.log "running customers 'all' filter...", docs
-                    docs
+                all: (docs, param) -> docs
 
             after-filter: (docs, callback) ->
-                console.log "running after-filter for customers"
                 callback [{id: .._id, cols: [..name]} for docs]
 
             handlers:
@@ -146,23 +187,8 @@ ractive = new Ractive do
                 cols: "Ürün Adı, Miktar"
                 filters:
                     all: (docs) ->
-                        production-list = flatten [flatten([{id: .._id} `merge ` i for i in ..entries]) for docs]
-                        console.log "PRODUCTION LIST: ", production-list
-                        # order-id, product-name, amount
-                        production-items = group-by (.product), production-list
-                        production-total = [{
-                            product-name: name
-                            total-amount: sum [parse-float ..amount for entries]
-                            related-orders: [..id for entries]
-                            } for name, entries of production-items]
-                        console.log "Production list as groups:", production-items
-                        console.log "Production list as documents", production-total
-                        @set \output, production-total
-
-                        i = 0
-                        seq-num = (x) -> i++
-                        x = reverse sort-by (.total-amount), production-total
-                        [{id: seq-num(..), cols:[..product-name, "#{..total-amount} kg"]} for x]
+                        x = get-production-items docs
+                        [{id: ..product-name, cols:[..product-name, "#{..total-amount} kg"]} for x]
 
         # MATERIAL USAGE
         material-usage:
@@ -170,49 +196,29 @@ ractive = new Ractive do
                 cols: "Hammadde Adı, Miktar"
                 filters:
                     all: (docs) ->
-                        __ = @
-
-                        try
-                            productions = __.get \production-list
-                            recipes = __.get \recipes
-                            console.log "MATERIAL_USAGE: recipes: ", recipes
-                            console.log "MATERIAL_USAGE: productions: ", productions
-                            material-usage-raw = [{
-                                name: production.product-name
-                                materials: [{material: ..material, amount: parse-float(..amount) * production.total-amount} for recipe.contents]
-                            } for production in productions for recipe in recipes
-                            when production.product-name is recipe.product-name]
-
-                            console.log "material usage: ", material-usage-raw
-                            material-list = group-by (.material), flatten [..materials for material-usage-raw]
-                            console.log "material usage all: ", material-list
-                            i = 0
-                            gen-id = -> i++
-                            x = [{id: gen-id!, cols: [material, "#{sum [..amount for usage]} kg"]} for material, usage of material-list]
-                            console.log "material usage table: ", x
-                            x
-                        catch
-                            console.log "Material usage error: ", e
+                        production-list = @get \production-list
+                        #console.log "MATERIAL_USAGE_TABLE: production-list: ", production-list
+                        x = get-material-usage get-production-items production-list
+                        #console.log "MATERIAL_USAGE TABLE: ", x
+                        [{id: ..id, cols: [..name, "#{..usage} kg"]} for x]
 
         menu:
             * title: "Ayarlar"
               icon:"fa fa-th-large"
               sub-menu:
-                * title: "Tüm Tanımlar"
-                  url: '#/definitions'
                 * title: "Müşteri Tanımla"
                   url: '#/definitions/client'
                 * title: "Reçete Tanımla"
                   url: '#/definitions/recipe'
+                * title: "Hammadde Tanımla"
+                  url: '#/definitions/raw-material'
             * title: "Siparişler"
               icon: "fa fa-bar-chart-o"
               sub-menu:
                 * title: "Sipariş Listesi"
                   url: '#/orders'
-                * title: "Üretim Kalemleri Toplamı"
-                  url: '#/orders/production-items'
-                * title: "Gereken Hammadde Miktarı"
-                  url: '#/orders/raw-material-usage'
+                ...
+
 
 
 feed = null
@@ -225,12 +231,81 @@ ractive.on do
             if err
                 console.log "ERROR customer list: ", err
             else
-                console.log "customer list updated: ", res
+                #console.log "customer list updated: ", res
                 ractive.set \customersList, [{name: ..doc.name, id: ..doc.key} for res.rows]
 
+        db.on \change, (change) ->
+            console.log "db change detected!", change
+            on-change!
+        /*
         feed?.cancel!
         feed := local?.sync db, {+live, +retry, since: \now}
             .on \error, -> feed.cancel!
             .on 'change', (change) ->
                 console.log "change detected!", change
                 on-change!
+        */
+
+function get-production-items docs
+    /*
+        Input:  an array of `type: \order` documents (or one order doc)
+        returns: total production list
+    */
+    #console.log "GETTING PRODUCTION ITEMS... "
+    docs = flatten Array docs
+    production-list = flatten [flatten([{id: .._id} `merge ` i for i in ..entries]) for docs]
+    #console.log "PRODUCTION LIST: ", production-list
+    # order-id, product-name, amount
+    production-items = group-by (.product), production-list
+    production-total = [{
+        product-name: name
+        total-amount: sum [parse-float ..amount for entries]
+        related-orders: [..id for entries]
+        } for name, entries of production-items]
+    #console.log "Production list as groups:", production-items
+    #console.log "Production list as documents", production-total
+    #console.log "GOT PRODUCTION ITEMS... "
+    production-total
+
+
+
+function get-material-usage production-list
+    /*
+        Input: An array of production items and their amounts
+        Returns: Needed raw material for producing these items
+
+        id      : material document id
+        name    : material name
+        key     : material key name
+        usage   : material usage
+    */
+    recipes = ractive.get \materialUsage.recipes
+    stock-materials = ractive.get \rawMaterials.tabledata
+
+    #console.log "GET_MATERIAL_USAGE: recipes: ", recipes
+    #console.log "GET_MATERIAL_USAGE: production-list: ", production-list
+    #console.log "GET_MATERIAL_USAGE: stock material list: ", stock-materials
+
+    # raw material list: no grouping
+    material-usage-raw = [{
+        name: production.product-name
+        materials: [{material: ..material, amount: parse-float(..amount) * parse-float production.total-amount} for recipe.contents]
+    } for production in production-list for recipe in recipes
+    when production.product-name is recipe.product-name]
+    #console.log "GET_MATERIAL_USAGE: material usage RAW: ", material-usage-raw
+
+    # raw material list: group by material
+    material-list = group-by (.material), flatten [..materials for material-usage-raw]
+    #console.log "GET_MATERIAL_USAGE: material usage: ", material-list
+
+    # format the material list
+    x = [{
+        id: stock._id
+        name: material-name
+        key: stock.key
+        usage: sum [parse-float ..amount for usage]
+        current-status: stock
+    } for material-name, usage of material-list for stock in stock-materials
+    when stock.name.to-lower-case! is material-name.to-lower-case!]
+    #console.log "GET_MATERIAL_USAGE: material usage summary: ", x
+    x

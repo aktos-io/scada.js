@@ -1,0 +1,30 @@
+h2 Hammaddeler:
+order-table(
+    settings="{{ rawMaterials.settings }}"
+    db="{{ db }}"
+    view="primitives/raw-material-list"
+    gen-entry-id="{{ genEntryId }}"
+    tabledata="{{ rawMaterials.tabledata }}"
+    )
+    +partial('addnewTitle')
+        | Hammadde Ekle
+    +partial('header')
+    +partial('viewForm')
+        h3 Hammadde: {{ curr.name }}
+        
+    +partial('editForm')
+        panel(title="Hammadde Tanımla" type="primary")
+            //- |{{ JSON.stringify(curr) }}
+            form-vertical
+                form-group
+                    span Hammadde Adı: 
+                    input(value="{{ curr.name }}" )
+                    assign(if-null="true" input="{{ 'rawMaterial-id-' + curr.name.toLowerCase() }}" output="{{ curr.key }}")
+                form-group
+                    span Kritik Miktar: 
+                    input(value="{{ curr.criticalAmount }}" )
+                form-group
+                    span Mevcut Miktar: 
+                    input(value="{{ curr.currAmount }}" )
+            btn(on-buttonclick="newOrderClose") Kapat!
+            btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}

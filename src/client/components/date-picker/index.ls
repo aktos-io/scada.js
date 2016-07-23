@@ -33,6 +33,7 @@ Ractive.components[component-name] = Ractive.extend do
             useCurrent: false
             showTodayButton: true
             ignoreReadonly: true
+            side-by-side: yes
 
         #console.log "x: " , x
 
@@ -47,7 +48,7 @@ Ractive.components[component-name] = Ractive.extend do
 
         __.observe \unix, (val) ->
             #console.log "unix val: ", val
-            display = moment val .format 'DD.MM.YYYY HH:mm'
+            display = moment (new Date val) .format 'DD.MM.YYYY HH:mm'
             #console.log "display: ", display
             dp-fn.date display
 

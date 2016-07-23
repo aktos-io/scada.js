@@ -14,13 +14,18 @@ block ractive
                 login(on-login="afterLoggedIn" context="{{ login }}" db="{{ db }}")
                 p curr page is: {{ currPage }}
             inspina-content  
-                +if('login.ok')
-                    page(name="definitions/client", curr="{{ currPage }}")
-                        include ./customers-table.jade
-                    page(name="definitions/recipe", curr="{{ currPage }}")
-                        include ./recipes-table.jade
-                    page(name="orders", curr="{{ currPage }}")
-                        include ./orders-table.jade
+                | {{#if login.ok}}
+                page(name="definitions/client", curr="{{ currPage }}")
+                    include ./customers-table.jade
+                page(name="definitions/recipe", curr="{{ currPage }}")
+                    include ./recipes-table.jade
+                page(name="orders", curr="{{ currPage }}")
+                    include ./orders-table.jade
+                page(name="definitions/raw-material", curr="{{ currPage }}")
+                    include ./raw-materials.jade
+                | {{else}}
+                p Please login first...
+                | {{/if}}
             inspina-footer
                 +partial('right')
                     span cici meze                    
