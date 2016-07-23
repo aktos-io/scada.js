@@ -23,7 +23,7 @@ order-table(
                                 caret 
                             dd-menu 
                                 dd-item
-                                    btn(on-buttonclick="runHandler" value="sendAllToProduction" type="danger") Tümünü Üretime Gönder!
+                                    btn(on-buttonclick="runHandler" value="{{ ['sendToProduction', 'all-visible'] }}" type="danger") Tümünü Üretime Gönder!
 
                     btn(on-buttonclick="setFilter" value="doing" type="warning") Üretimdekiler
                     btn(on-buttonclick="setFilter" value="done" type="success") Tamamlananlar                    
@@ -44,8 +44,15 @@ order-table(
                 btn(on-buttonclick="runHandler" value="{{ ['setProductionState', 'done']}}" type="success") Üretim Tamam!
                 | {{/if}}
                 | {{#if curr.state !== 'done' && curr.state !== 'doing'}}
-                btn(on-buttonclick="runHandler" value="{{ ['setProductionState', 'doing']}}" type="warning") Üretime gönder!
+                btn(on-buttonclick="runHandler" value="{{ ['sendToProduction', curr._id] }}" type="warning") Üretime gönder!
                 | {{/if}}
+
+                h3 Toplam Hammadde İhtiyacı
+                ul
+                    +each("runHandler('getCurrUsage')")
+                        li {{ .name }} => {{ .usage }}
+                
+                
                 
     +partial('editForm')
         panel(title="Sipariş {{curr._id}}" type="primary")
@@ -91,7 +98,7 @@ data-table(
 h1 Gereken Hammadde Miktarları        
 data-table(
     settings="{{ materialUsage.settings }}"
-    production-list="{{ production.output }}"
+    production-list="{{ production.tabledata }}"
     recipes="{{ materialUsage.recipes }}"
     )
     +partial('header')

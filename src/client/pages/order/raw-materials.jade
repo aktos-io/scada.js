@@ -14,7 +14,7 @@ order-table(
         
     +partial('editForm')
         panel(title="Hammadde Tanımla" type="primary")
-            |{{ JSON.stringify(curr) }}
+            //- |{{ JSON.stringify(curr) }}
             form-vertical
                 form-group
                     span Hammadde Adı: 
@@ -23,5 +23,8 @@ order-table(
                 form-group
                     span Kritik Miktar: 
                     input(value="{{ curr.criticalAmount }}" )
+                form-group
+                    span Mevcut Miktar: 
+                    input(value="{{ curr.currAmount }}" )
             btn(on-buttonclick="newOrderClose") Kapat!
             btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}

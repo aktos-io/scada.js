@@ -69,7 +69,7 @@ Ractive.components[component-name] = Ractive.extend do
             clicked: (args) ->
                 context = args.context
                 index = context.id
-                console.log "ORDER_TABLE: clicked!!!", args, index
+                #console.log "ORDER_TABLE: clicked!!!", args, index
 
                 @set \clickedIndex, index
                 tabledata = @get \tabledata
@@ -154,6 +154,7 @@ Ractive.components[component-name] = Ractive.extend do
                 handlers = settings.handlers
                 handler = params  # maybe we want to run a handler without parameter
                 param = null
+                console.log "DEBUG: PARAMS: ", params
                 [handler, ...param] = params if typeof! params is \Array
                 console.log "running handler with params: ", param
 
@@ -194,3 +195,14 @@ Ractive.components[component-name] = Ractive.extend do
         is-clicked: (index) ->
             clicked-index = @get \clickedIndex
             index is clicked-index
+
+        run-handler: (params) ->
+            console.log "RUN HANDLER IS RUNNING: PARAMS: ", params
+            handlers = __.get \settings.handlers
+            handler = params  # maybe we want to run a handler without parameter
+            param = null
+            console.log "DEBUG: PARAMS: ", params
+            [handler, ...param] = params if typeof! params is \Array
+            console.log "running handler with params: ", param
+
+            handlers[handler].apply @, param if typeof handlers[handler] is \function

@@ -56,7 +56,7 @@ Ractive.components[component-name] = Ractive.extend do
 
         filters = settings.filters
         if filters
-            console.log "Setting data filters..."
+            #console.log "Setting data filters..."
             @set \dataFilters, filters
 
 
@@ -81,9 +81,6 @@ Ractive.components[component-name] = Ractive.extend do
             all: (docs, param) ->
                 #console.log "DATA_TABLE: using default filter (null)!",param, docs
                 []
-
-
-
 
         filter-opts:
             params: \mahmut
