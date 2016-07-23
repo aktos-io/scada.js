@@ -149,7 +149,9 @@ ractive = new Ractive do
 
             col-names: "Ürün adı"
             filters:
-                all: (docs, param) -> docs
+                all: (docs, param) ->
+                    sort-by (.product-name.to-lower-case!), docs
+
 
             after-filter: (docs, on-complete) ->
                     on-complete [{id: .._id, cols: [..product-name]} for docs]
@@ -159,9 +161,11 @@ ractive = new Ractive do
             settings:
                 default:
                     type: 'raw-material'
+                    name: ''
                 col-names:"Hammadde Adı, Kritik Miktar, Mevcut Miktar"
                 filters:
-                    all: (docs, param) -> docs
+                    all: (docs, param) ->
+                        sort-by (.name.to-lower-case!), docs
 
                 after-filter: (docs, callback) ->
                     #console.log "Raw Material has documents: ", docs
@@ -175,7 +179,8 @@ ractive = new Ractive do
                 key: null
             col-names: "Müşteri adı"
             filters:
-                all: (docs, param) -> docs
+                all: (docs, param) -> 
+                    sort-by (.name.to-lower-case!), docs
 
             after-filter: (docs, callback) ->
                 callback [{id: .._id, cols: [..name]} for docs]

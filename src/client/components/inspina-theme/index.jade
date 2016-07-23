@@ -20,14 +20,14 @@
                         //- No submenu, use direct links...
                         li(class='{{#if isSelected(.url, iselected)}} active {{/if}}')        
                             a(href='{{.url}}' on-click='clicked')
-                                i(class='{{.icon}}')
+                                i(class="{{.icon || 'fa fa-th-large'}}")
                                 span.nav-label {{.title}} 
                                 +if('.subMenu')
                                     span.fa.arrow
                     +if('.subMenu')      
                         li(class='{{#if isSelected(i, iselected)}} active {{/if}}')        
                             a(href='javascript:;' on-click='clicked')
-                                i(class='{{.icon}}')
+                                i(class="{{.icon || 'fa fa-th-large'}}")
                                 span.nav-label {{.title}} 
                                 +if('.subMenu')
                                     span.fa.arrow
