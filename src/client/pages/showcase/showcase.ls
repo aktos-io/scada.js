@@ -83,6 +83,8 @@ ractive = new Ractive do
             show: yes
         button:
             show: yes
+            run-console-log: ->
+                console.log "showcase console log is running ...."
         menu:
             * title: "Showcase"
               icon:"fa fa-th-large"
@@ -145,7 +147,7 @@ ractive = new Ractive do
                   key: 'my key 4'
                   value: 'my value 4'
 
-x = 2
+x = 23
 ractive.on \complete, ->
     i = 0
     states =

@@ -2,10 +2,11 @@ row
     col-md-2.col-xs-2   
         p Show/hide button Bound component1
         input(type="checkbox" checked="{{ button.show }}")
+        input(value="{{buttonInput}}")
     col-md-3.col-xs-2
         h3 Bound component1 
         +if('button.show')
-            ack-button(state="{{ buttonState }}") MY BUTTON
+            ack-button(state="{{ buttonInput }}" buttonclick="{{button.runConsoleLog()}}") MY BUTTON
     col-md-3.col-xs-2  
         h3 Bound component2 
         ack-button(state="{{ buttonState }}") MY BUTTON2

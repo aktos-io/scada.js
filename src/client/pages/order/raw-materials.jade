@@ -1,0 +1,25 @@
+h2 Hammaddeler:
+order-table(
+    cols="{{ rawMaterials.colNames }}"
+    default="{{ rawMaterials.default }}"
+    filters="{{ rawMaterials.filters }}"
+    db="{{ db }}"
+    view="primitives/getRawMaterial"
+    gen-entry-id="{{ genEntryId }}"
+    )
+    +partial('addnewTitle')
+        | Hammadde Ekle
+    +partial('header')
+    +partial('viewForm')
+        h3 Hammadde: {{ curr.name }}
+        
+    +partial('editForm')
+        panel(title="Müşteri" type="primary")
+            //- {{ JSON.stringify(curr) }}
+            form-vertical
+                form-group
+                    span Hammadde Adı: 
+                    input(value="{{ curr.name }}" )
+                    //-assign(if-null="true" input="{{ 'rawMaterial-id-' + curr.name.toLowerCase() }}" output="{{ curr.key }}")
+            btn(on-buttonclick="newOrderClose") Kapat!
+            btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}

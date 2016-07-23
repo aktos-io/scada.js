@@ -118,6 +118,16 @@ ractive = new Ractive do
             after-filter: (docs, on-complete) ->
                     on-complete [{id: .._id, cols: [..product-name]} for docs]
 
+        #RAWMATERIALS
+        raw-materials:
+            defaults:
+                type: \rawMaterial
+            col-names:"Hammadde Adı"
+            filters:
+                all: (doc, param) ->
+                    console.log "running raw-materials 'all' filter..."
+                    #[id: .._id, cols: [..name] for docs]
+
         # CUSTOMERS
         customers-settings:
             default:
@@ -204,6 +214,8 @@ ractive = new Ractive do
                   url: '#/definitions/client'
                 * title: "Reçete Tanımla"
                   url: '#/definitions/recipe'
+                * title: "Hammadde Tanımla"
+                  url: '#/definitions/rawMaterial'
             * title: "Siparişler"
               icon: "fa fa-bar-chart-o"
               sub-menu:
@@ -213,6 +225,7 @@ ractive = new Ractive do
                   url: '#/orders/production-items'
                 * title: "Gereken Hammadde Miktarı"
                   url: '#/orders/raw-material-usage'
+
 
 
 feed = null

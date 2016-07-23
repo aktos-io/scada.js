@@ -21,6 +21,8 @@ block ractive
                         include ./recipes-table.jade
                     page(name="orders", curr="{{ currPage }}")
                         include ./orders-table.jade
+                    page(name="definitions/rawMaterial", curr="{{ currPage }}")
+                        include ./raw-materials.jade
             inspina-footer
                 +partial('right')
                     span cici meze                    
