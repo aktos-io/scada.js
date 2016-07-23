@@ -2,8 +2,8 @@ require! components
 require! 'aea': {PouchDB, sleep, unix-to-readable, merge}
 require! 'prelude-ls': {sum, split, sort-by, flatten, group-by, reverse }
 
-db = new PouchDB 'https://demeter.cloudant.com/cicimeze', {+skip-setup, timeout: 15_000ms}
-#local = new PouchDB \local_db
+db = new PouchDB 'https://demeter.cloudant.com/cicimeze', {+skip-setup}
+local = new PouchDB \local_db
 
 gen-entry-id = ->
     timestamp = new Date!get-time! .to-string 16
@@ -57,7 +57,7 @@ ractive = new Ractive do
                 console.log "curr doc is: ", curr-doc
 
                 function generate-view client-list
-                    #console.log "client list is (after): ", client-list
+                    console.log "client list is (after): ", client-list
                     view = [{
                     id: doc._id
                     cols:
@@ -73,13 +73,18 @@ ractive = new Ractive do
                     } for doc in docs for client in client-list
                     when client.id is doc.client]
 
+                    console.log "generated view: ", view
                     callback view
 
                 client-list = @get \x
+                console.log "client list seems: ", client-list
                 if typeof! client-list is \Array
+                    console.log "client list is here: ", client-list
                     generate-view client-list
                 else
-                    @observe-once \x, generate-view
+                    @observe-once \x, (val) ->
+                        console.log "client list observed: ", val
+                        generate-view val
 
             handlers:
                 send-to-production: (orders-to-produce) ->
@@ -229,7 +234,8 @@ ractive = new Ractive do
 
 feed = null
 ractive.on do
-    after-logged-in: ->
+    'login.success': ->
+        console.log "running after logged in..."
         do function on-change
             console.log "running function on-change!"
 
@@ -240,17 +246,12 @@ ractive.on do
                 #console.log "customer list updated: ", res
                 ractive.set \customersList, [{name: ..doc.name, id: ..doc.key} for res.rows]
 
-        db.on \change, (change) ->
-            console.log "db change detected!", change
-            on-change!
-        /*
         feed?.cancel!
         feed := local?.sync db, {+live, +retry, since: \now}
             .on \error, -> feed.cancel!
             .on 'change', (change) ->
                 console.log "change detected!", change
                 on-change!
-        */
 
 function get-production-items docs
     /*
