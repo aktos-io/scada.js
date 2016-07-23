@@ -4,6 +4,6 @@ Ractive.components[component-name] = Ractive.extend do
     isolated: yes
     data: ->
         is-selected: (url) ->
-            console.log "PAGE: url: ", url
-            return true if (url in [void, null, '']) and (@get \name) is '/'
+            console.log "PAGE: url: ", url, url is ''
+            return true if (url is '') and (@get \name) is '/'
             url is "\##{@get 'name'}"

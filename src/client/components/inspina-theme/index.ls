@@ -10,12 +10,14 @@ Ractive.components[component-name] = Ractive.extend do
     oninit: ->
         __ = @
 
-        do function hashchange
-            __.set \iselected, window.location.hash
-            __.set \selected, window.location.hash
+        @set \selected, '#/' if (@get \selected) is void
 
-        $ document .ready ->
-            $ window .on \hashchange, -> hashchange!
+        do function hashchange
+            url = window.location.hash or ''
+            __.set \iselected, url
+            __.set \selected, url
+
+        $ window .on \hashchange, -> hashchange!
 
         @on do
             clicked: (args) ->
@@ -25,7 +27,7 @@ Ractive.components[component-name] = Ractive.extend do
                 console.log "url", url
                 if url
                     @set \iselected, url
-                    @set \selected, url 
+                    @set \selected, url
                 else
                     curr = @get \iselected
                     iselected = args.index.i
