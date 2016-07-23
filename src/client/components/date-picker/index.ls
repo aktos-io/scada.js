@@ -33,6 +33,7 @@ Ractive.components[component-name] = Ractive.extend do
             useCurrent: false
             showTodayButton: true
             ignoreReadonly: true
+            side-by-side: yes
 
         #console.log "x: " , x
 
