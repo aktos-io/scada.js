@@ -12,7 +12,7 @@ Ractive.components[component-name] = Ractive.extend do
             @set \id random.generate 7
 
         settings = @get \settings
-        console.log "ORDER_TABLE: got .............. settings: ", settings
+        #console.log "ORDER_TABLE: got .............. settings: ", settings
         try
             col-names = split ',' settings.col-names
             @set \columnList, col-names
@@ -46,19 +46,19 @@ Ractive.components[component-name] = Ractive.extend do
                 filter = filters[selected-filter]
                 filtered = filter.apply __, [tabledata, param] if typeof filter is \function
                 if typeof settings.after-filter is \function
-                    console.log "ORDER_TABLE: applying after-filter: ", settings.after-filter
+                    #console.log "ORDER_TABLE: applying after-filter: ", settings.after-filter
                     settings.after-filter.apply __, [filtered, (view) -> __.set \tableview, view]
                 else
                     console.log "after-filter is not defined?"
             catch
-                console.log "Error getting filtered: ", e, tabledata
+                #console.log "Error getting filtered: ", e, tabledata
                 null
 
         @observe \tabledata, ->
-            console.log "ORDER_TABLE: observing tabledata..."
+            #console.log "ORDER_TABLE: observing tabledata..."
             create-view!
         @observe \selectedFilter, ->
-            console.log "ORDER_TABLE: observing selectedFilter..."
+            #console.log "ORDER_TABLE: observing selectedFilter..."
             create-view!
 
         @on events =
@@ -166,7 +166,7 @@ Ractive.components[component-name] = Ractive.extend do
         __ = @
         instance: @
         new-order: ->
-            console.log "Returning new default value: ", __.get \settings.default
+            console.log "ORDER_TABLE: Returning new default value: ", __.get \settings.default
             unpack pack __.get \settings.default
         saving: ''
         curr: null
