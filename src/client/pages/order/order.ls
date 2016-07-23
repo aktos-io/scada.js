@@ -84,11 +84,10 @@ ractive = new Ractive do
             handlers:
                 set-production-state: (state) ->
                     __ = @
-                    curr = @get \curr
                     db = @get \db
 
+                    curr = @get \curr
                     curr.state = state
-
                     console.log "changing production state to: ", state
                     err, res <- db.put curr
                     if not err
@@ -98,6 +97,28 @@ ractive = new Ractive do
                         __.set \curr, curr
                     else
                         console.log "ERR on change state: ", err
+
+                send-all-to-production: ->
+                    db = @get \db
+                    order-list = [..id for @get \tableview]
+                    console.log "these documents will be sent to production: ", order-list
+
+                    err, res <- db.bulk-docs [.. `merge` {state: \doing} for (@get \tabledata) when .._id in order-list]
+                    if not err
+                        console.log "All visible orders sent to production: response: ", res
+                    else
+                        console.log "ERR on change state: ", err
+
+                material-usage: ->
+                    tableview = [.. for (@get \tabledata) when ..due-date > Date.now!]
+
+                    p-list = get-production-items tableview
+                    console.log "ORDERS TABLE: production list (current all): ", p-list
+
+                    materials = get-material-usage p-list
+                    console.log "ORDERS TABLE: materials needed: ", materials
+
+
 
 
 
@@ -120,13 +141,16 @@ ractive = new Ractive do
 
         #RAWMATERIALS
         raw-materials:
-            defaults:
-                type: \rawMaterial
-            col-names:"Hammadde Adı"
-            filters:
-                all: (doc, param) ->
-                    console.log "running raw-materials 'all' filter..."
-                    #[id: .._id, cols: [..name] for docs]
+            settings:
+                default:
+                    type: 'raw-material'
+                col-names:"Hammadde Adı, Kritik Miktar"
+                filters:
+                    all: (docs, param) -> docs
+
+                after-filter: (docs, callback) ->
+                    #console.log "Raw Material has documents: ", docs
+                    callback [{id: .._id, cols: [..name, ..critical-amount]} for docs]
 
         # CUSTOMERS
         customers-settings:
@@ -136,9 +160,7 @@ ractive = new Ractive do
                 key: null
             col-names: "Müşteri adı"
             filters:
-                all: (docs, param) ->
-                    console.log "running customers 'all' filter...", docs
-                    docs
+                all: (docs, param) -> docs
 
             after-filter: (docs, callback) ->
                 console.log "running after-filter for customers"
@@ -157,7 +179,7 @@ ractive = new Ractive do
                 filters:
                     all: (docs) ->
                         production-list = flatten [flatten([{id: .._id} `merge ` i for i in ..entries]) for docs]
-                        console.log "PRODUCTION LIST: ", production-list
+                        #console.log "PRODUCTION LIST: ", production-list
                         # order-id, product-name, amount
                         production-items = group-by (.product), production-list
                         production-total = [{
@@ -165,8 +187,8 @@ ractive = new Ractive do
                             total-amount: sum [parse-float ..amount for entries]
                             related-orders: [..id for entries]
                             } for name, entries of production-items]
-                        console.log "Production list as groups:", production-items
-                        console.log "Production list as documents", production-total
+                        #console.log "Production list as groups:", production-items
+                        #console.log "Production list as documents", production-total
                         @set \output, production-total
 
                         i = 0
@@ -185,21 +207,21 @@ ractive = new Ractive do
                         try
                             productions = __.get \production-list
                             recipes = __.get \recipes
-                            console.log "MATERIAL_USAGE: recipes: ", recipes
-                            console.log "MATERIAL_USAGE: productions: ", productions
+                            #console.log "MATERIAL_USAGE: recipes: ", recipes
+                            #console.log "MATERIAL_USAGE: productions: ", productions
                             material-usage-raw = [{
                                 name: production.product-name
                                 materials: [{material: ..material, amount: parse-float(..amount) * production.total-amount} for recipe.contents]
                             } for production in productions for recipe in recipes
                             when production.product-name is recipe.product-name]
 
-                            console.log "material usage: ", material-usage-raw
+                            #console.log "material usage: ", material-usage-raw
                             material-list = group-by (.material), flatten [..materials for material-usage-raw]
-                            console.log "material usage all: ", material-list
+                            #console.log "material usage all: ", material-list
                             i = 0
                             gen-id = -> i++
                             x = [{id: gen-id!, cols: [material, "#{sum [..amount for usage]} kg"]} for material, usage of material-list]
-                            console.log "material usage table: ", x
+                            #console.log "material usage table: ", x
                             x
                         catch
                             console.log "Material usage error: ", e
@@ -208,23 +230,18 @@ ractive = new Ractive do
             * title: "Ayarlar"
               icon:"fa fa-th-large"
               sub-menu:
-                * title: "Tüm Tanımlar"
-                  url: '#/definitions'
                 * title: "Müşteri Tanımla"
                   url: '#/definitions/client'
                 * title: "Reçete Tanımla"
                   url: '#/definitions/recipe'
                 * title: "Hammadde Tanımla"
-                  url: '#/definitions/rawMaterial'
+                  url: '#/definitions/raw-material'
             * title: "Siparişler"
               icon: "fa fa-bar-chart-o"
               sub-menu:
                 * title: "Sipariş Listesi"
                   url: '#/orders'
-                * title: "Üretim Kalemleri Toplamı"
-                  url: '#/orders/production-items'
-                * title: "Gereken Hammadde Miktarı"
-                  url: '#/orders/raw-material-usage'
+                ...
 
 
 
@@ -247,3 +264,59 @@ ractive.on do
             .on 'change', (change) ->
                 console.log "change detected!", change
                 on-change!
+
+function get-production-items docs
+    /*
+        Input:  an array of `type: \order` documents (or one order doc)
+        returns: total production list
+    */
+    console.log "GETTING PRODUCTION ITEMS... "
+    docs = flatten Array docs
+    production-list = flatten [flatten([{id: .._id} `merge ` i for i in ..entries]) for docs]
+    #console.log "PRODUCTION LIST: ", production-list
+    # order-id, product-name, amount
+    production-items = group-by (.product), production-list
+    production-total = [{
+        product-name: name
+        total-amount: sum [parse-float ..amount for entries]
+        related-orders: [..id for entries]
+        } for name, entries of production-items]
+    #console.log "Production list as groups:", production-items
+    #console.log "Production list as documents", production-total
+    console.log "GOT PRODUCTION ITEMS... "
+    production-total
+
+
+
+function get-material-usage production-list
+    /*
+        Input: An array of production items and their amounts
+        Returns: Needed raw material for producing these items
+
+        id      : material document id
+        name    : material name
+        key     : material key name
+        usage   : material usage
+    */
+    recipes = ractive.get \materialUsage.recipes
+    stock-materials = ractive.get \rawMaterials.tabledata
+    #console.log "MATERIAL_USAGE: recipes: ", recipes
+    #console.log "MATERIAL_USAGE: production-list: ", production-list
+    console.log "MATERIAL_USAGE: stock material list: ", stock-materials
+    material-usage-raw = [{
+        name: production.product-name
+        materials: [{material: ..material, amount: parse-float(..amount) * production.total-amount} for recipe.contents]
+    } for production in production-list for recipe in recipes
+    when production.product-name is recipe.product-name]
+
+    console.log "material usage: ", material-usage-raw
+    material-list = group-by (.material), flatten [..materials for material-usage-raw]
+    console.log "material usage all: ", material-list
+    i = 0
+    gen-id = -> i++
+    x = [{id: stock._id, name: material-name, usage: sum [..amount for usage]
+    } for material-name, usage of material-list for stock in stock-materials
+    when stock.name is material-name]
+
+    console.log "material usage summary: ", x
+    x
