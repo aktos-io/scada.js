@@ -10,9 +10,10 @@
         form-group
             btn(on-buttonclick="doLogin") Login!
         | {{else}}
-        form-group 
-            p Welcome {{ context.user.name }}!
-            btn(on-buttonclick="doLogout") Logout
+        //- 
+            form-group 
+                p Welcome {{ context.user.name }}!
+        btn(on-buttonclick="doLogout") Logout
         | {{/if}}
     +if('context.err')
         div(style="position: fixed; top: 10; right: 10")

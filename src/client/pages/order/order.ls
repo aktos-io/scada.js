@@ -203,6 +203,8 @@ ractive = new Ractive do
                         [{id: ..id, cols: [..name, "#{..usage} kg"]} for x]
 
         menu:
+            * title: "Ana Sayfa"
+              url: '#/'
             * title: "Ayarlar"
               icon:"fa fa-th-large"
               sub-menu:
@@ -218,6 +220,10 @@ ractive = new Ractive do
                 * title: "Sipariş Listesi"
                   url: '#/orders'
                 ...
+            * title: "Stok Girişi"
+              url: '#/stock'
+            * title: "Destek"
+              url: '#/help'
 
 
 

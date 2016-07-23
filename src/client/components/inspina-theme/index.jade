@@ -9,16 +9,12 @@
                 li.nav-header
                     //| {{>header}}
                     .dropdown.profile-element
-                        a.dropdown-toggle(data-toggle='dropdown' href='#')
+                        a.dropdown-toggle(data-toggle='dropdown' href='javascript:;')
                             span.clear
                                 span.block.m-t-xs
-                                    strong.font-bold David Williams
-                                span.text-muted.text-xs.block Art Director
-                                    b.caret
-                        ul.dropdown-menu.animated.fadeInRight.m-t-xs
-                            li
-                                a(href='#') Logout                
-                    .logo-element IN+
+                                    strong.font-bold {{ user.name }}
+                                span.text-muted.text-xs.block {{ user.title }}
+                    .logo-element C
                 +each('menu:i')  
                     +unless('.subMenu')
                         //- No submenu, use direct links...
@@ -53,11 +49,8 @@
                 .navbar-header
                     a.navbar-minimalize.minimalize-styl-2.btn.btn-primary(href='javascript:;')
                         i.fa.fa-bars
-                    | {{yield}}
-                ul.nav.navbar-top-links.navbar-right
-                    li
-                        a(href='#')
-                            i.fa.fa-sign-out Logout   
+                .pull-right {{>right}}
+                div {{>left}}
                             
 +component('inspina-content')
     .wrapper.wrapper-content.animated.fadeInRight.
