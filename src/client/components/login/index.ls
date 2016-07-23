@@ -18,7 +18,7 @@ Ractive.components[component-name] = Ractive.extend do
         # check whether we are logged in
         check-login (@get \db), (err) ->
             if not err
-                console.log "Login component says: we are logged in..."
+                #console.log "Login component says: we are logged in..."
                 self.fire \success
             else
                 console.log "Login component says: we are not logged in!"
@@ -48,8 +48,6 @@ Ractive.components[component-name] = Ractive.extend do
                 self.set \context.ok, no if res.ok
 
             success: ->
-                # do more success actions...
-                console.log "whatuyimekayuikeayukieakm"
                 #console.log "LOGIN: Login component success... "
                 db = @get \db
                 self = @
