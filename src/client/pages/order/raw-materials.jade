@@ -1,10 +1,8 @@
 h2 Hammaddeler:
 order-table(
-    cols="{{ rawMaterials.colNames }}"
-    default="{{ rawMaterials.default }}"
-    filters="{{ rawMaterials.filters }}"
+    settings="{{ rawMaterials.settings }}"
     db="{{ db }}"
-    view="primitives/getRawMaterial"
+    view="primitives/raw-material-list"
     gen-entry-id="{{ genEntryId }}"
     )
     +partial('addnewTitle')
@@ -20,6 +18,6 @@ order-table(
                 form-group
                     span Hammadde Adı: 
                     input(value="{{ curr.name }}" )
-                    //-assign(if-null="true" input="{{ 'rawMaterial-id-' + curr.name.toLowerCase() }}" output="{{ curr.key }}")
+                    assign(if-null="true" input="{{ 'rawMaterial-id-' + curr.name.toLowerCase() }}" output="{{ curr.key }}")
             btn(on-buttonclick="newOrderClose") Kapat!
             btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
