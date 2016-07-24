@@ -31,10 +31,14 @@ Ractive.components[component-name] = Ractive.extend do
                 #console.log "Updating table: ", docs
                 __.set \tabledata, docs
 
-        db.changes {since: 'now', +live, +include_docs}
+
+        feed = db.changes {since: 'now', +live, +include_docs}
             .on \change, (change) ->
                 #console.log "order-table change detected!", change
                 update-table!
+
+        # cancel this on teardown
+        __.set \feed, feed
 
 
         do function create-view param
@@ -116,7 +120,8 @@ Ractive.components[component-name] = Ractive.extend do
                 err, res <- db.put order-doc
                 if err
                     console.log "Error putting new order: ", err
-                    __.set \saving, err.reason
+                    __.set \saving, "#{__.get \saving} : #{err}"
+
                 else
                     console.log "New order put in the database", res
                     # if adding new document, clean up current document
@@ -163,6 +168,12 @@ Ractive.components[component-name] = Ractive.extend do
             set-filter: (filter-name) ->
                 # this event handler is to be used in template
                 @set \selectedFilter, filter-name
+
+    onteardown: ->
+        console.log "ORDER_TABLE: TEARDOWN!!!"
+        # cancelling db feed
+        feed = @get \feed
+        feed?.cancel!
 
 
     data: ->
