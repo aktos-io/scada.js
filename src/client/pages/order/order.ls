@@ -3,7 +3,7 @@ require! 'aea': {PouchDB, sleep, unix-to-readable, merge}
 require! 'prelude-ls': {sum, split, sort-by, flatten, group-by, reverse }
 
 db = new PouchDB 'https://demeter.cloudant.com/cicimeze', {+skip-setup}
-local = new PouchDB \local_db
+#local = new PouchDB \local_db
 
 gen-entry-id = ->
     timestamp = new Date!get-time! .to-string 16
@@ -233,8 +233,16 @@ ractive.on do
                 #console.log "customer list updated: ", res
                 ractive.set \customersList, [{name: ..doc.name, id: ..doc.key} for res.rows]
 
+        /*
         feed?.cancel!
         feed := local?.sync db, {+live, +retry, since: \now}
+            .on \error, -> feed.cancel!
+            .on 'change', (change) ->
+                console.log "change detected!", change
+                on-change!
+        */
+        feed?.cancel!
+        feed := db.changes {+live, +retry, since: \now}
             .on \error, -> feed.cancel!
             .on 'change', (change) ->
                 console.log "change detected!", change
