@@ -20,6 +20,25 @@ ractive = new Ractive do
         db: db
         gen-entry-id: gen-entry-id
 
+        # SUPPORT
+        support:
+            default:
+                type: \issue
+                subject: 'Başlık...'
+                date: null
+                entries:
+                    * author: ''
+                      body: ''
+                    ...
+
+            col-names: "Konu"
+            filters:
+                all: (docs, param) ->
+                    docs
+
+            after-filter: (docs, callback) ->
+                callback [{id: .._id, cols: [..subject]} for docs]
+
         # ORDERS
         orders:
             default:
@@ -232,6 +251,16 @@ ractive = new Ractive do
               url: '#/'
             ...
 
+        productList:
+            * name: 'Fıstıklı Yaprak Sarması'
+              id: 1
+            * name: 'Yaprak sarma'
+              id: 2
+            * name: 'Patlıcan salata'
+              id: 3
+            * name: 'Patlıcan ezme'
+              id: 4
+        bbb: null
 
 
 feed = null
@@ -268,6 +297,8 @@ ractive.on do
             * title: "Siparişler"
               icon: "fa fa-bar-chart-o"
               url: '#/orders'
+            * title: "Sevkiyat"
+              url: '#/dispatch'
             * title: "Stok Girişi"
               url: '#/stock'
             * title: "Ayarlar"
@@ -279,6 +310,8 @@ ractive.on do
                   url: '#/definitions/recipe'
                 * title: "Hammadde Tanımla"
                   url: '#/definitions/raw-material'
+            * title: "Ürün Kısaltmaları"
+              url: '#/product-map'
             * title: "Destek"
               url: '#/support'
 

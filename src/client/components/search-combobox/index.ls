@@ -22,6 +22,7 @@ Ractive.components[component-name] = Ractive.extend do
 
         __.observe \selected, (new-val) ->
             selected = __.get \selected
+            __.set \selected-name, [..name for data when ..id is selected].0
             try
                 throw if (Number selected) isnt (parse-int selected)
                 selected = Number selected

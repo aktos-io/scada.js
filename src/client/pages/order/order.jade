@@ -29,6 +29,11 @@ block ractive
                         include ./support.jade
                     page(name="/stock", curr="{{ currPage }}")
                         include ./stock.jade
+                    page(name="/product-map", curr="{{ currPage }}")
+                        include ./product-map.jade
+                    page(name="/dispatch", curr="{{ currPage }}")
+                        include ./dispatch.jade
+                    
             inspina-footer
                 +partial('right')
                     span cici meze                    
