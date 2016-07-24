@@ -280,7 +280,7 @@ ractive.on do
                 * title: "Hammadde Tanımla"
                   url: '#/definitions/raw-material'
             * title: "Destek"
-              url: '#/help'
+              url: '#/support'
 
     'login.logout': ->
         ractive.set \menu, ractive.get \menuPublic
