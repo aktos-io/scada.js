@@ -27,14 +27,6 @@ convert-to-flot =  ->
     #console.log "flot random data is: ", z
     z
 
-product-data1 =
-    * name: "domates"
-      id: 47
-    * name: "patates"
-      id: 12
-    * name: "kiraz"
-      id: 24
-
 get-page-url = ->
     url = window.location.href
 simulate-data = ->
@@ -63,7 +55,6 @@ ractive = new Ractive do
         simulate-data:simulate-data
         pie-data: simulate-data!
         x: 5
-        product-list: product-data1
         y: 1
         example-component:
             show: yes
@@ -73,6 +64,23 @@ ractive = new Ractive do
         combobox:
             show: yes
             bound-selected: 47
+            list1:
+                * name: "domates"
+                  id: 47
+                * name: "patates"
+                  id: 12
+                * name: "kiraz"
+                  id: 24
+            list2:
+                * name: "aaa domates"
+                  id: 47
+                * name: "bbb patates"
+                  id: 12
+                * name: "ccc kiraz"
+                  id: 24
+                * name: "ddd heyy"
+                  id: 25
+
         flot:
             bound1: convert-to-flot!
             bound2: convert-to-flot!
