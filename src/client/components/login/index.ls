@@ -49,6 +49,9 @@ Ractive.components[component-name] = Ractive.extend do
                 self.set \context.err err if err
                 self.fire \logout
 
+            logout: ->
+                console.log "LOGIN: We are logged out..."
+
             success: ->
                 #console.log "LOGIN: Login component success... "
                 db = @get \db
