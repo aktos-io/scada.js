@@ -27,6 +27,7 @@ Ractive.components[component-name] = Ractive.extend do
                     self.set (camelize \design-document), ddoc
 
             put-new-design-document: ->
+                __ = @
                 design-document = @get \designDocument
                 delete design-document._rev
                 console.log "Putting new design document: ", design-document
@@ -35,7 +36,7 @@ Ractive.components[component-name] = Ractive.extend do
                     console.log "Error putting design document: ", err
                 else
                     console.log "Design document uploaded successfully...", res
-                    self.fire camelize \get-design-document
+                    __.fire camelize \get-design-document
 
             compileDesignDocument: ->
                 console.log "Compiling auth document..."
