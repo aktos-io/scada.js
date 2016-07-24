@@ -45,7 +45,8 @@ Ractive.components[component-name] = Ractive.extend do
                 #console.log "LOGIN: Logging out!"
                 err, res <- db.logout!
                 #console.log "LOGIN: Logged out: err: #{err}, res: ", res
-                self.set \context.ok, no if res.ok
+                self.set \context.ok, no if res?.ok
+                self.set \context.err err if err
 
             success: ->
                 #console.log "LOGIN: Login component success... "

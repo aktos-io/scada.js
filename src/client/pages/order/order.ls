@@ -179,7 +179,7 @@ ractive = new Ractive do
                 key: null
             col-names: "Müşteri adı"
             filters:
-                all: (docs, param) -> 
+                all: (docs, param) ->
                     sort-by (.name.to-lower-case!), docs
 
             after-filter: (docs, callback) ->
@@ -215,25 +215,7 @@ ractive = new Ractive do
         menu:
             * title: "Ana Sayfa"
               url: '#/'
-            * title: "Ayarlar"
-              icon:"fa fa-th-large"
-              sub-menu:
-                * title: "Müşteri Tanımla"
-                  url: '#/definitions/client'
-                * title: "Reçete Tanımla"
-                  url: '#/definitions/recipe'
-                * title: "Hammadde Tanımla"
-                  url: '#/definitions/raw-material'
-            * title: "Siparişler"
-              icon: "fa fa-bar-chart-o"
-              sub-menu:
-                * title: "Sipariş Listesi"
-                  url: '#/orders'
-                ...
-            * title: "Stok Girişi"
-              url: '#/stock'
-            * title: "Destek"
-              url: '#/help'
+            ...
 
 
 
@@ -257,6 +239,25 @@ ractive.on do
             .on 'change', (change) ->
                 console.log "change detected!", change
                 on-change!
+
+        menu = ractive.get \menu
+        ractive.set \menu, menu ++ menu-extended =
+            * title: "Siparişler"
+              icon: "fa fa-bar-chart-o"
+              url: '#/orders'
+            * title: "Stok Girişi"
+              url: '#/stock'
+            * title: "Ayarlar"
+              icon:"fa fa-th-large"
+              sub-menu:
+                * title: "Müşteri Tanımla"
+                  url: '#/definitions/client'
+                * title: "Reçete Tanımla"
+                  url: '#/definitions/recipe'
+                * title: "Hammadde Tanımla"
+                  url: '#/definitions/raw-material'
+            * title: "Destek"
+              url: '#/help'
 
 function get-production-items docs
     /*
