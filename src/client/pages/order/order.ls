@@ -276,7 +276,9 @@ function get-production-items docs
         Input:  an array of `type: \order` documents (or one order doc)
         returns: total production list
     */
+    return [] if docs in [null, void]
     #console.log "GETTING PRODUCTION ITEMS... "
+
     docs = flatten Array docs
     production-list = flatten [flatten([{id: .._id} `merge ` i for i in ..entries]) for docs]
     #console.log "PRODUCTION LIST: ", production-list
@@ -304,6 +306,9 @@ function get-material-usage production-list
         key     : material key name
         usage   : material usage
     */
+
+    return [] if production-list is void
+
     recipes = ractive.get \materialUsage.recipes
     stock-materials = ractive.get \rawMaterials.tabledata
 
