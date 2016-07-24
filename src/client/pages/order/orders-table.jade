@@ -27,7 +27,6 @@ order-table(
 
                     btn(on-buttonclick="setFilter" value="doing" type="warning") Üretimdekiler
                     btn(on-buttonclick="setFilter" value="done" type="success") Tamamlananlar                    
-                    btn(on-buttonclick="runHandler" value="materialUsage") TEST                    
     +partial('viewForm')
         h1 {{ curr.client }}
         .row 
@@ -38,16 +37,17 @@ order-table(
                     +each('curr.entries:i')
                         li {{ .['product'] }} -> {{ .['amount'] }}
             .col-md-4
+                //- textarea(value="{{ JSON.stringify(curr) }}" rows="10"  cols="30")
                 | {{#if curr.state === "doing"}}
                 h3 ÜRETİMDE!
-                btn(on-buttonclick="runHandler" value="{{ ['setProductionState', 'aborted']}}" type="danger") Üretimi iptal et!
-                btn(on-buttonclick="runHandler" value="{{ ['setProductionState', 'done']}}" type="success") Üretim Tamam!
+                btn(on-buttonclick="runHandler" value="{{ ['changeProductionState', curr._id, 'aborted']}}" type="danger") Üretimi iptal et!
+                btn(on-buttonclick="runHandler" value="{{ ['changeProductionState', curr._id, 'done']}}" type="success") Üretim Tamam!
                 | {{/if}}
                 | {{#if curr.state !== 'done' && curr.state !== 'doing'}}
                 btn(on-buttonclick="runHandler" value="{{ ['sendToProduction', curr._id] }}" type="warning") Üretime gönder!
                 | {{/if}}
 
-                h3 Toplam Hammadde İhtiyacı
+                h3 Toplam Hammadde Gereksinimi
                 ul
                     +each("runHandler('getCurrUsage')")
                         li {{ .name }} => {{ .usage }}

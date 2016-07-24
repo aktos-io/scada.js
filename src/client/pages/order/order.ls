@@ -87,6 +87,33 @@ ractive = new Ractive do
                         generate-view val
 
             handlers:
+                change-production-state: (order-id, state) ->
+                    if state not in <[ done aborted ]>
+                        console.log "Unauthorized state: ", state
+                        return
+
+
+                    db = @get \db
+                    tabledata = @get \tabledata
+                    __ = @
+
+
+                    orders-edited = [.. `merge` {state: state} for tabledata when .._id is order-id]
+                    console.log "changed state for this document: ", orders-edited
+
+                    err, res <- db.bulk-docs orders-edited, {+all_or_nothing}
+                    if not err
+                        console.log "All intended orders' states are changed. response: ", res
+                        [.. `merge` order for tabledata for order in orders-edited when .._id is order._id]
+
+                        curr = __.get \curr
+                        __.set \curr, x = [.. for orders-edited when .._id is curr._id].0
+                        console.log "current updated document : ", x
+                    else
+                        console.log "ERR on change state: ", err
+
+
+
                 send-to-production: (orders-to-produce) ->
                     db = @get \db
                     tabledata = @get \tabledata
@@ -102,8 +129,6 @@ ractive = new Ractive do
                         console.log "nothing will be sent to production... : ", orders-to-produce
                         []
 
-
-
                     orders-edited = [.. `merge` {state: \doing} for tabledata when .._id in order-list]
                     material-usage = get-material-usage get-production-items [.. for tabledata when .._id in order-list]
                     console.log "these documents will be sent to production: ", order-list
@@ -114,22 +139,12 @@ ractive = new Ractive do
                     err, res <- db.bulk-docs (orders-edited ++ updated-materials), {+all_or_nothing}
                     if not err
                         console.log "All intended orders are sent to production: response: ", res
-                        tabledata `merge` order-list
+                        [.. `merge` order for tabledata for order in orders-edited when .._id is order._id]
+
                         curr = __.get \curr
-                        curr `merge` [.. for order-list when .._id is curr._id].0
-                        __.set \curr, curr
+                        __.set \curr, [.. for orders-edited when .._id is curr._id].0
                     else
                         console.log "ERR on change state: ", err
-
-                material-usage: ->
-                    # TEST
-                    tableview = [td for td in (@get \tabledata) for w in (@get \tableview) when td._id is w.id]
-
-                    p-list = get-production-items tableview
-                    console.log "ORDERS TABLE: production list (current all): ", p-list
-
-                    materials = get-material-usage p-list
-                    console.log "ORDERS TABLE: materials needed: ", materials
 
                 get-curr-usage: ->
                     curr = @get \curr
