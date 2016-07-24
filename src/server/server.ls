@@ -1,44 +1,33 @@
-hapi = require "hapi"
-http-proxy = require 'http-proxy'
+require! <[ fs express path ]>
 
-server = new hapi.Server!
-        ..connection do
-            port: 4001
-            routes:
-                cors: true
-        ..register (require 'h2o2'), ->
-        ..register (require 'inert'), ->
-path = require \path
+production-public = "#{__dirname}/../../__public__"
+development-public = "#{__dirname}/../../build/public"
 
-public-dir = path.join __dirname, "../../build/public"
+try
+    fs.accessSync production-public
+    console.log "----------------------------------------"
+    console.log "        PRODUCTION (__public__)         "
+    console.log "----------------------------------------"
+    console.log "Found production public, using this one."
+    pub-dir = production-public
+catch
+    console.log "----------------------------------------"
+    console.log "        DEVELOPMENT (build/public)      "
+    console.log "----------------------------------------"
+    console.log "production public not found, using development public..."
+    pub-dir = development-public
 
-proxy-as = \db
-server.route do
-    method: '*'
-    path: "/#{proxy-as}/{f*}"
-    handler:
-        proxy:
-            map-uri: (request, callback) ->
-                resource-uri = request.url.path.replace("/#{proxy-as}/", '/')
-                url = "https://demeter.cloudant.com/#{resource-uri}"
-                console.log 'Proxying url: ', url
-                callback(null,url)
+app = express!
+http = require \http .Server app
+# TODO: io = (require "engine.io") http
 
-            pass-through: true
-            xforward: true
 
-server.route do
-    path: "/"
-    method: "GET"
-    handler:
-        file: "#{public-dir}/pages/order.html"
+app.get "/", (req, res) ->
+  res.send-file path.resolve "#{pub-dir}/order.html"
 
-server.route do
-    path: "/{f*}"
-    method: "GET"
-    handler:
-        directory:
-            path: "#{public-dir}/pages"
+i = ''
+console.log "serving static folder: /#{i}..."
+app.use "/#{i}", express.static path.resolve "#{pub-dir}/#{i}"
 
-server.start !->
-    console.log "Server started at: ", server.info.uri
+http.listen 4001 ->
+  console.log "listening on *:4001"

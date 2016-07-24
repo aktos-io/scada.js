@@ -27,7 +27,7 @@ paths.build-folder = "#{__dirname}/build"
 paths.client-public = "#{paths.build-folder}/public"
 paths.client-src = "#{__dirname}/src/client"
 paths.client-tmp = "#{paths.build-folder}/__client-tmp"
-paths.client-pages = "#{paths.client-public}/pages"
+paths.client-pages = "#{paths.client-public}"
 
 paths.lib-src = "#{__dirname}/src/lib"
 paths.lib-tmp = "#{paths.build-folder}/__lib-tmp"
@@ -126,7 +126,7 @@ gulp.task \js, ->
 gulp.task \html, ->
     base = "#{paths.client-src}/pages"
     gulp.src "#{base}/**/*.html", {base: base}
-        .pipe gulp.dest "#{paths.client-public}/pages"
+        .pipe gulp.dest "#{paths.client-public}"
 
 
 # Compile client LiveScript files into temp folder
