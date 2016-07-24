@@ -212,7 +212,7 @@ ractive = new Ractive do
                         #console.log "MATERIAL_USAGE TABLE: ", x
                         [{id: ..id, cols: [..name, "#{..usage} kg"]} for x]
 
-        menu:
+        menu-public:
             * title: "Ana Sayfa"
               url: '#/'
             ...
@@ -240,8 +240,8 @@ ractive.on do
                 console.log "change detected!", change
                 on-change!
 
-        menu = ractive.get \menu
-        ractive.set \menu, menu ++ menu-extended =
+        menu-public = ractive.get \menuPublic
+        ractive.set \menu, menu-public ++ menu-private =
             * title: "Siparişler"
               icon: "fa fa-bar-chart-o"
               url: '#/orders'
@@ -258,6 +258,10 @@ ractive.on do
                   url: '#/definitions/raw-material'
             * title: "Destek"
               url: '#/help'
+
+    'login.logout': ->
+        ractive.set \menu, ractive.get \menuPublic
+
 
 function get-production-items docs
     /*
