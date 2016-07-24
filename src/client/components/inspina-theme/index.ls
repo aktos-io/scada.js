@@ -21,10 +21,10 @@ Ractive.components[component-name] = Ractive.extend do
 
         @on do
             clicked: (args) ->
-                console.log "on-clicked: args: ", args
+                #console.log "on-clicked: args: ", args
                 context = args.context
                 url = context.url
-                console.log "url", url
+                #console.log "url", url
                 if url
                     @set \iselected, url
                     @set \selected, url
@@ -32,7 +32,7 @@ Ractive.components[component-name] = Ractive.extend do
                     curr = @get \iselected
                     iselected = args.index.i
                     iselected = -1 if iselected is curr and
-                    console.log "not url; curr, iselected: ", curr, iselected
+                    #console.log "not url; curr, iselected: ", curr, iselected
                     @set \iselected, iselected
     data: ->
         is-selected: (url, iselected) ->
