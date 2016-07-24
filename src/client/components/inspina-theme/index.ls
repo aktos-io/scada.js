@@ -20,6 +20,11 @@ Ractive.components[component-name] = Ractive.extend do
         $ window .on \hashchange, -> hashchange!
 
         @on do
+            clicked-submenu: (args) ->
+                #console.log "Clicked submenu:", args
+                @set \submenuIndex, args.index.i
+                @update!
+
             clicked: (args) ->
                 #console.log "on-clicked: args: ", args
                 context = args.context
@@ -42,6 +47,11 @@ Ractive.components[component-name] = Ractive.extend do
 
         is-selected-here: (sub-menu, iselected) ->
             iselected in [..url for sub-menu]
+
+        open-submenu: (x) ->
+            #console.log "open submenu param is: ", x
+            submenu-index = @get \submenuIndex
+            x is submenu-index
 
 component-name = "inspina-right"
 Ractive.components[component-name] = Ractive.extend do
