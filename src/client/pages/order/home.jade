@@ -1,3 +1,13 @@
 h1 Hoşgeldiniz...
-
-p Burası ana sayfa...
++unless('login.ok')
+    p Burası ana sayfa...
+    p Lütfen giriş yapınız. 
+    
++if('login.ok')
+    :markdown
+        Sistemimiz test uçuşundadır. 
+        
+        Bu esnada gördüğünüz her türlü problemi doğrudan [Destek](#/support) 
+        sayfası üzerinden bildirebilirsiniz. 
+        
+        İyi uçuşlar. 

@@ -1,7 +1,12 @@
 h1 Ürün kısaltmaları
 
-input(value="{{ aaa }}")
-div
-    search-combobox(data="{{ productList }}" selected-name="{{ bbb }}")
-
-p Bundan sonra {{ aaa }} isimli ürün istediğinizde size {{ bbb }} göndereceğiz. 
+row 
+    col-md-6
+        input(value="{{ aaa }}" style="width: 100%")
+    col-md-6
+        search-combobox(data="{{ productList }}" selected-name="{{ bbb }}" selected="{{ bbbx }}")
+row 
+    col-md-12
+        input(value="{{ bbbx }}")        
+    col-md-12
+        p Bundan sonra <b>{{ aaa }}</b> isimli ürün istediğinizde size <b>{{ bbb }}</b> ({{ bbbx }}) göndereceğiz. 

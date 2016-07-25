@@ -24,7 +24,7 @@ order-table(
                 form-group
                     span Ürün Adı: 
                     input(value="{{ curr.productName }}" )
-                    input(value="{{ curr.key }}" )
+                    assign(if-null="true" input="{{ 'client-id-' + curr.productName.toLowerCase() }}" output="{{ curr.key }}")
                 +each('curr.contents:i')
                     form-group
                         span Hammadde: 

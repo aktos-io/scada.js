@@ -5,8 +5,9 @@ require! 'prelude-ls': {sum, split, sort-by, flatten, group-by, reverse }
 require! './orders-table': {orders, production, material-usage}
 require! './recipes-table': {recipes}
 require! './raw-materials': {raw-materials}
-
 require! './customers-table': {customers}
+require! './support': {support}
+
 
 db = new PouchDB 'https://demeter.cloudant.com/cicimeze', {+skip-setup}
 #local = new PouchDB \local_db
@@ -26,33 +27,15 @@ ractive = new Ractive do
         db: db
         gen-entry-id: gen-entry-id
         changes: 0
-
-        # SUPPORT
-        support:
-            default:
-                type: \issue
-                subject: 'Başlık...'
-                date: null
-                entries:
-                    * author: ''
-                      body: ''
-                    ...
-
-            col-names: "Konu"
-            filters:
-                all: (docs, param) ->
-                    docs
-
-            after-filter: (docs, callback) ->
-                callback [{id: .._id, cols: [..subject]} for docs]
-
         orders: orders
         production: production
         material-usage: material-usage
         recipes: recipes
         raw-materials: raw-materials
         customers: customers
+        support: support
 
+        # MENU
         menu-public:
             * title: "Ana Sayfa"
               url: '#/'
@@ -67,6 +50,7 @@ ractive = new Ractive do
               id: 3
             * name: 'Patlıcan ezme'
               id: 4
+        bbbx: -5
         bbb: null
 
 
