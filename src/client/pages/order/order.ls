@@ -108,14 +108,21 @@ ractive = new Ractive do
 
         #RAWMATERIALS
         raw-materials:
-            defaults:
-                type: \rawMaterial
-            col-names:"Hammadde Adı"
+            default:
+                type: \raw-material
+                key: null
+                name: null
+                critical-amount: null
+            col-names:"Hammadde Adı, Kritik Değer"
             filters:
                 all: (doc, param) ->
                     console.log "running raw-materials 'all' filter..."
                     #[id: .._id, cols: [..name] for docs]
+                    doc
 
+            after-filter: (docs,callback) ->
+                console.log "running after-filter for raw-materials. DOCS: ",docs
+                callback [{id: .._id, cols: [..name, ..critical-amount]} for docs]
         # CUSTOMERS
         customers-settings:
             default:
@@ -130,7 +137,7 @@ ractive = new Ractive do
 
             after-filter: (docs, callback) ->
                 console.log "running after-filter for customers"
-                callback [{id: .._id, cols: [..name]} for docs]
+                #callback [{id: .._id, cols: [..name]} for docs]
 
             handlers:
                 set-client-id: (key) ->
@@ -215,7 +222,7 @@ ractive = new Ractive do
                   url: '#/orders/raw-material-usage'
 
 
-
+x=12
 feed = null
 ractive.on do
     after-logged-in: ->

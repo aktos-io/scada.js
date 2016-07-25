@@ -1,18 +1,16 @@
 h2 Hammaddeler:
 order-table(
-    cols="{{ rawMaterials.colNames }}"
-    default="{{ rawMaterials.default }}"
-    filters="{{ rawMaterials.filters }}"
+    settings="{{ rawMaterials }}"
     db="{{ db }}"
-    view="primitives/getRawMaterial"
+    view="primitives/raw-material-list"
     gen-entry-id="{{ genEntryId }}"
     )
     +partial('addnewTitle')
         | Hammadde Ekle
     +partial('header')
-    +partial('viewForm')
-        h3 Hammadde: {{ curr.name }}
-        
+    //-+partial('viewForm')
+        //-h3 Hammadde Adı: {{ curr.name }}
+        //-h3 Kritik Değer: {{curr.criticalAmount}}
     +partial('editForm')
         panel(title="Müşteri" type="primary")
             //- {{ JSON.stringify(curr) }}
@@ -20,6 +18,7 @@ order-table(
                 form-group
                     span Hammadde Adı: 
                     input(value="{{ curr.name }}" )
-                    //-assign(if-null="true" input="{{ 'rawMaterial-id-' + curr.name.toLowerCase() }}" output="{{ curr.key }}")
+                    span Kritik değer: 
+                    input(value="{{ curr.criticalAmount }}" )
             btn(on-buttonclick="newOrderClose") Kapat!
             btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
