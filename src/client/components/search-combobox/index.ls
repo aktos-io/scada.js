@@ -44,11 +44,11 @@ Ractive.components[component-name] = Ractive.extend do
             $ __.find \* .selectpicker \render
             $ __.find \* .selectpicker \refresh
 
-        <- sleep 1000ms
+        <- sleep 10ms
         __.observe \data, (new-val)->
             observe-data!
 
-        __.set \iselected, __.get \selected 
+        __.set \iselected, __.get \selected
         __.observe \selected, (new-val) ->
             observe-selected!
 
