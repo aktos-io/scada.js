@@ -28,6 +28,7 @@ Ractive.components[component-name] = Ractive.extend do
         @set \dataFilters, settings.filters
 
         do function update-table
+            #console.log "Cols: ", settings.col-names, "changes: ", __.get \changes
             err, res <- db.query (__.get \view), {+include_docs}
             if err
                 console.log "ERROR: order table: ", err
