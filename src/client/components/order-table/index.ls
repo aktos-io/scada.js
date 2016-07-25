@@ -23,12 +23,13 @@ Ractive.components[component-name] = Ractive.extend do
         @set \dataFilters, settings.filters
 
         do function update-table
+            console.log "update-table is running ..."
             err, res <- db.query (__.get \view), {+include_docs}
             if err
                 console.log "ERROR: order table: ", err
             else
                 docs = [..doc for res.rows]
-                #console.log "Updating table: ", docs
+                console.log "Updating table: ", docs
                 __.set \tabledata, docs
 
         db.changes {since: 'now', +live, +include_docs}
@@ -166,8 +167,8 @@ Ractive.components[component-name] = Ractive.extend do
         __ = @
         instance: @
         new-order: ->
-            console.log "Returning new default value: ", __.get \default
-            unpack pack __.get \default
+            console.log "Returning new default value: ", __.get \settings.default
+            unpack pack __.get \settings.default
         saving: ''
         curr: null
         id: \will-be-random
