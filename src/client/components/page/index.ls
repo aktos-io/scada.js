@@ -1,7 +1,7 @@
 component-name = "page"
 Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
-    isolated: yes
+    isolated: no
     data: ->
         is-selected: (url) ->
             #console.log "PAGE: url: ", url, url is ''
