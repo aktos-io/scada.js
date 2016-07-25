@@ -7,47 +7,40 @@
             passwd: user password
 */
 
-require! 'aea': {check-login}
+require! 'aea': {check-login, sleep}
 
 component-name = "login"
 Ractive.components[component-name] = Ractive.extend do
     isolated: yes
     template: "\##{component-name}"
     oninit: ->
-        self = @
-        # check whether we are logged in
-        check-login (@get \db), (err) ->
-            if not err
-                #console.log "Login component says: we are logged in..."
-                self.fire \success
-            else
-                console.log "Login component says: we are not logged in!"
+        __ = @
         @on do
             do-login: ->
-                self = @
+                __ = @
                 db = @get \db
-                user = self.get \context ._user
+                user = __.get \context ._user
                 ajax-opts = ajax: headers:
                     Authorization: "Basic #{window.btoa user.name + ':' + user.password}"
                 #console.log "LOGIN: Logging in with #{user.name} and #{user.password}"
                 err, res <- db.login user.name, user.password, ajax-opts
                 if err
                     #console.log "LOGIN: Error while logging in: ", err
-                    self.set \context.err, {msg: err.message}
+                    __.set \context.err, {msg: err.message}
                 else
                     #console.log "LOGIN: Seems logged in succesfully: ", res
-                    self.set \context.err, null
-                    self.fire \success
+                    __.set \context.err, null
+                    __.fire \success
 
             do-logout: ->
-                self = @
+                __ = @
                 db = @get \db
                 #console.log "LOGIN: Logging out!"
                 err, res <- db.logout!
                 #console.log "LOGIN: Logged out: err: #{err}, res: ", res
-                self.set \context.ok, no if res?.ok
-                self.set \context.err err if err
-                self.fire \logout
+                __.set \context.ok, no if res?.ok
+                __.set \context.err err if err
+                __.fire \logout
 
             logout: ->
                 console.log "LOGIN: We are logged out..."
@@ -55,17 +48,25 @@ Ractive.components[component-name] = Ractive.extend do
             success: ->
                 #console.log "LOGIN: Login component success... "
                 db = @get \db
-                self = @
+                __ = @
                 err, res <- db.get-session
                 try
                     throw if res.user-ctx.name is null
-                    self.set \context.ok, yes
-                    self.set \context.err, null
-                    self.set \context.user, res.user-ctx
+                    __.set \context.ok, yes
+                    __.set \context.err, null
+                    __.set \context.user, res.user-ctx
                 catch
                     #console.log "LOGIN: not logged in, returning: ", e
-                    self.set \context.ok, no
+                    __.set \context.ok, no
 
+        # check whether we are logged in
+        <- sleep 200ms
+        check-login (__.get \db), (err) ->
+            if not err
+                console.log "Login component says: we are logged in..."
+                __.fire \success
+            else
+                console.log "Login component says: we are not logged in!"
 
     data:
         context: null
