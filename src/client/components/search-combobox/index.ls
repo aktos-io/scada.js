@@ -48,7 +48,12 @@ Ractive.components[component-name] = Ractive.extend do
         __.observe \data, (new-val)->
             observe-data!
 
-        __.set \iselected, __.get \selected
+        curr = __.get \selected
+        if curr
+            __.set \iselected, curr
+        else
+            __.set \iselected, -111
+            
         __.observe \selected, (new-val) ->
             observe-selected!
 
