@@ -19,10 +19,6 @@ Ractive.components[component-name] = Ractive.extend do
         catch
             console.log "ORDER_TABLE:", "can not get col-names", e
 
-
-        if settings.col-names is "Müşteri adı"
-            console.log "Customers: ", settings
-
         db = @get \db
         gen-entry-id = @get \gen-entry-id
         @set \dataFilters, settings.filters
