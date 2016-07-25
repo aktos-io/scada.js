@@ -1,15 +1,16 @@
 row
-    col-md-2.col-xs-2   
+    col-md-2
         p Show/hide button Bound component1
         input(type="checkbox" checked="{{ button.show }}")
         input(value="{{buttonInput}}")
-    col-md-3.col-xs-2
+    col-md-5
         h3 Bound component1 
         +if('button.show')
             ack-button(state="{{ buttonInput }}" buttonclick="{{button.runConsoleLog()}}") MY BUTTON
-    col-md-3.col-xs-2  
+    col-md-5  
         h3 Bound component2 
         ack-button(state="{{ buttonState }}") MY BUTTON2
-    col-md-3.col-xs-2  
-        h3 Unbound (free) instance
-        ack-button(state="{{ buttonState }}") MY BUTTON3
+row
+    col-md-12
+        h3 Unbound (free) instance (with event firing)
+        ack-button(state="{{ buttonState }}" buttonclick="{{ testAckButton }}" value="my-test-value") MY BUTTON3

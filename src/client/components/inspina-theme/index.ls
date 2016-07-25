@@ -10,34 +10,48 @@ Ractive.components[component-name] = Ractive.extend do
     oninit: ->
         __ = @
 
-        do function hashchange
-            __.set \selected, window.location.hash
+        @set \selected, '#/' if (@get \selected) is void
 
-        $ document .ready ->
-            $ window .on \hashchange, -> hashchange!
+        do function hashchange
+            url = window.location.hash or ''
+            __.set \iselected, url
+            __.set \selected, url
+
+        $ window .on \hashchange, -> hashchange!
 
         @on do
+            clicked-submenu: (args) ->
+                #console.log "Clicked submenu:", args
+                @set \submenuIndex, args.index.i
+                @update!
+
             clicked: (args) ->
-                console.log "on-clicked: args: ", args
+                #console.log "on-clicked: args: ", args
                 context = args.context
                 url = context.url
-                console.log "url", url
+                #console.log "url", url
                 if url
+                    @set \iselected, url
                     @set \selected, url
                 else
-                    curr = @get \selected
-                    selected = args.index.i
-                    selected = -1 if selected is curr and
-                    console.log "not url; curr, selected: ", curr, selected
-                    @set \selected, selected
+                    curr = @get \iselected
+                    iselected = args.index.i
+                    iselected = -1 if iselected is curr and
+                    #console.log "not url; curr, iselected: ", curr, iselected
+                    @set \iselected, iselected
     data: ->
-        is-selected: (url, selected) ->
-            x = url is selected
-            #console.log "is-selected says: ", url, selected, url is selected
+        is-selected: (url, iselected) ->
+            x = url is iselected
+            #console.log "is-iselected says: ", url, iselected, url is iselected
             x
 
-        is-selected-here: (sub-menu,selected) ->
-            selected in [..url for sub-menu]
+        is-selected-here: (sub-menu, iselected) ->
+            iselected in [..url for sub-menu]
+
+        open-submenu: (x) ->
+            #console.log "open submenu param is: ", x
+            submenu-index = @get \submenuIndex
+            x is submenu-index
 
 component-name = "inspina-right"
 Ractive.components[component-name] = Ractive.extend do

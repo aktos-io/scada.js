@@ -1,11 +1,14 @@
 h1 Siparişler:
 order-table(
-    settings="{{ orders }}"
+    settings="{{ orders.settings }}"
     db="{{ db }}"
     view="orders/getOrders"
     gen-entry-id="{{ genEntryId }}"
     x="{{ customersList }}"
     output="{{ production.tabledata }}"
+    changes="{{ changes }}"
+    recipes="{{ recipes.tabledata }}"
+    stock-materials="{{ rawMaterials.tabledata }}"
     )
     +partial('addnewTitle')
         | Yeni Sipariş Ekle
@@ -13,16 +16,20 @@ order-table(
     +partial('header')
         h3 Filtreler
         row 
-            col-md-3
-                btn-group
-                    btn(on-buttonclick="setFilter" value="todaysOrders") Bugün!
-                    btn(on-buttonclick="setFilter" value="all") Tümü
-                    btn(on-buttonclick="setFilter" value="doing") Üretimdekiler
-                input(type="text" value="{{ selectedFilter }}")
-        row
             col-md-12
-                textarea(value="{{ JSON.stringify(curr) }}")
-    
+                btn-group
+                    btn(on-buttonclick="setFilter" value="all") Tümü
+                    dropdown
+                        btn(on-buttonclick="setFilter" value="todaysOrders") Bugün!
+                        +if('selectedFilter === "todaysOrders"')
+                            btn(dropdown="true")
+                                caret 
+                            dd-menu 
+                                dd-item
+                                    btn(on-buttonclick="runHandler" value="{{ ['sendToProduction', 'all-visible'] }}" type="danger") Tümünü Üretime Gönder!
+
+                    btn(on-buttonclick="setFilter" value="doing" type="warning") Üretimdekiler
+                    btn(on-buttonclick="setFilter" value="done" type="success") Tamamlananlar                    
     +partial('viewForm')
         h1 {{ curr.client }}
         .row 
@@ -33,13 +40,22 @@ order-table(
                     +each('curr.entries:i')
                         li {{ .['product'] }} -> {{ .['amount'] }}
             .col-md-4
+                //- textarea(value="{{ JSON.stringify(curr) }}" rows="10"  cols="30")
                 | {{#if curr.state === "doing"}}
                 h3 ÜRETİMDE!
-                btn(on-buttonclick="runHandler" value="cancelProduction" type="danger") Üretimi iptal et!
-                btn(on-buttonclick="runHandler" value="productionFinished" type="success") Üretim Tamam!
-                | {{else}}
-                btn(on-buttonclick="runHandler" value="sendToProduction" type="warning") Üretime gönder!
+                btn(on-buttonclick="runHandler" value="{{ ['changeProductionState', curr._id, 'aborted']}}" type="danger") Üretimi iptal et!
+                btn(on-buttonclick="runHandler" value="{{ ['changeProductionState', curr._id, 'done']}}" type="success") Üretim Tamam!
                 | {{/if}}
+                | {{#if curr.state !== 'done' && curr.state !== 'doing'}}
+                btn(on-buttonclick="runHandler" value="{{ ['sendToProduction', curr._id] }}" type="warning") Üretime gönder!
+                | {{/if}}
+
+                h3 Toplam Hammadde Gereksinimi
+                ul
+                    +each("runHandler('getCurrUsage')")
+                        li {{ .name }} => {{ .usage }}
+                
+                
                 
     +partial('editForm')
         panel(title="Sipariş {{curr._id}}" type="primary")
@@ -49,19 +65,13 @@ order-table(
                     search-combobox(data="{{ x }}" selected="{{ curr.client }}")
                     p Client id: {{ curr.client }}
                 form-group
-                    row 
-                        .col-md-6.col-xs-6
-                            row 
-                                col-md-4: span Sipariş Tarihi: 
-                                col-md-8
-                                    date-picker(unix="{{ curr.orderDate }}")
-                                    p order date: {{ curr.orderDate }}
-                        .col-md-6.col-xs-6
-                                row 
-                                    col-md-4: span Teslim Tarihi:
-                                    col-md-8
-                                        date-picker(unix="{{ curr.dueDate }}")
-                                        p Due date: {{ curr.dueDate }}
+                    span Sipariş Tarihi: 
+                    date-picker(unix="{{ curr.orderDate }}")
+                    p order date: {{ curr.orderDate }}
+                form-group
+                    span Teslim Tarihi:
+                    date-picker(unix="{{ curr.dueDate }}")
+                    p Due date: {{ curr.dueDate }}
                 +each('curr.entries:i')
                     form-group
                         span Type
@@ -91,8 +101,9 @@ data-table(
 h1 Gereken Hammadde Miktarları        
 data-table(
     settings="{{ materialUsage.settings }}"
-    production-list="{{ production.output }}"
-    recipes="{{ materialUsage.recipes }}"
+    production-list="{{ production.tabledata }}"
+    recipes="{{ recipes.tabledata }}"
+    stock-materials="{{ rawMaterials.tabledata }}"
     )
     +partial('header')
         //input(value="{{ filterOpts.selected }}")

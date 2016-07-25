@@ -1,17 +1,6 @@
 +component('order-table')
     b-table 
-        thead 
-            tr.
-                {{#if clickedIndex !== null}}
-                    <th>Editing...</th>
-                {{else}}
-                    <th>#</th>
-                {{/if}}
-                {{#each columnList}}
-                    <th>{{ . }}</th>
-                {{/each}}
-
-        tbody
+        thead
             tr
                 td(colspan="{{ columnList.length + 1 }}")
                     row 
@@ -23,12 +12,25 @@
                                 btn(on-buttonclick="addNewOrder")
                                     icon-plus
                                     span {{yield addnewTitle}}
-                        .col-md-9.col-sm-9
-                            | {{>header}}
                         | {{/if}}
+            tr
+                td(colspan="{{ columnList.length + 1 }}")
+                    | {{>header}}
+
+            tr.
+                {{#if clickedIndex !== null}}
+                    <th>Editing...</th>
+                {{else}}
+                    <th>#</th>
+                {{/if}}
+                {{#each columnList}}
+                    <th>{{ . }}</th>
+                {{/each}}
+
+        tbody
             +each('tableview:i')
                 tr.input-line(
-                    class="{{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}}"
+                    class="{{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}} {{ .class }} active"
                     on-doubleclick="clicked"
                     )
                     | {{#if isClicked(.id)}}

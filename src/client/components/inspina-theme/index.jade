@@ -9,36 +9,32 @@
                 li.nav-header
                     //| {{>header}}
                     .dropdown.profile-element
-                        a.dropdown-toggle(data-toggle='dropdown' href='#')
+                        a.dropdown-toggle(data-toggle='dropdown' href='javascript:;')
                             span.clear
                                 span.block.m-t-xs
-                                    strong.font-bold David Williams
-                                span.text-muted.text-xs.block Art Director
-                                    b.caret
-                        ul.dropdown-menu.animated.fadeInRight.m-t-xs
-                            li
-                                a(href='#') Logout                
-                    .logo-element IN+
+                                    strong.font-bold {{ user.name }}
+                                span.text-muted.text-xs.block {{ user.title }}
+                    .logo-element C
                 +each('menu:i')  
                     +unless('.subMenu')
                         //- No submenu, use direct links...
-                        li(class='{{#if isSelected(.url,selected)}} active {{/if}}')        
+                        li(class='{{#if isSelected(.url, iselected)}} active {{/if}}')        
                             a(href='{{.url}}' on-click='clicked')
-                                i(class='{{.icon}}')
+                                i(class="{{.icon || 'fa fa-th-large'}}")
                                 span.nav-label {{.title}} 
                                 +if('.subMenu')
                                     span.fa.arrow
                     +if('.subMenu')      
-                        li(class='{{#if isSelected(i,selected)}} active {{/if}}')        
-                            a(href='javascript:;' on-click='clicked')
-                                i(class='{{.icon}}')
+                        li(class='{{#if isSelected(i, iselected)}} active {{/if}}')        
+                            a(href='javascript:;' on-click='clickedSubmenu')
+                                i(class="{{.icon || 'fa fa-th-large'}}")
                                 span.nav-label {{.title}} 
                                 +if('.subMenu')
                                     span.fa.arrow
 
-                            ul.nav.nav-second-level.collapse(class='{{#if isSelected(i,selected) || isSelectedHere(.subMenu, selected)}} in {{/if}}')
+                            ul.nav.nav-second-level.collapse(class='{{#if openSubmenu(i) || isSelectedHere(.subMenu, iselected)}} in {{/if}}')
                                 +each('.subMenu')
-                                    li(class='{{#if isSelected(.url, selected)}} active {{/if}}')        
+                                    li(class='{{#if isSelected(.url, iselected)}} active {{/if}}')        
                                         a(href='{{.url}}' on-click='clicked') {{.title}}
 
 
@@ -51,13 +47,10 @@
     .row.border-bottom
             nav.navbar.navbar-static-top.white-bg(role='navigation' style='margin-bottom: 0')
                 .navbar-header
-                    a.navbar-minimalize.minimalize-styl-2.btn.btn-primary(href='#')
+                    a.navbar-minimalize.minimalize-styl-2.btn.btn-primary(href='javascript:;')
                         i.fa.fa-bars
-                    | {{yield}}
-                ul.nav.navbar-top-links.navbar-right
-                    li
-                        a(href='#')
-                            i.fa.fa-sign-out Logout   
+                .pull-right {{>right}}
+                div {{>left}}
                             
 +component('inspina-content')
     .wrapper.wrapper-content.animated.fadeInRight.

@@ -27,14 +27,6 @@ convert-to-flot =  ->
     #console.log "flot random data is: ", z
     z
 
-product-data1 =
-    * name: "domates"
-      id: 47
-    * name: "patates"
-      id: 12
-    * name: "kiraz"
-      id: 24
-
 get-page-url = ->
     url = window.location.href
 simulate-data = ->
@@ -63,7 +55,6 @@ ractive = new Ractive do
         simulate-data:simulate-data
         pie-data: simulate-data!
         x: 5
-        product-list: product-data1
         y: 1
         example-component:
             show: yes
@@ -73,6 +64,23 @@ ractive = new Ractive do
         combobox:
             show: yes
             bound-selected: 47
+            list1:
+                * name: "domates"
+                  id: 47
+                * name: "patates"
+                  id: 12
+                * name: "kiraz"
+                  id: 24
+            list2:
+                * name: "aaa domates"
+                  id: 47
+                * name: "bbb patates"
+                  id: 12
+                * name: "ccc kiraz"
+                  id: 24
+                * name: "ddd heyy"
+                  id: 25
+
         flot:
             bound1: convert-to-flot!
             bound2: convert-to-flot!
@@ -147,26 +155,32 @@ ractive = new Ractive do
                   key: 'my key 4'
                   value: 'my value 4'
 
+
+        test-ack-button: (val) ->
+            console.log "ack button in the main instance fired with value: ", val
+
+
 x = 23
-ractive.on \complete, ->
-    i = 0
-    states =
-        \waiting
-        \normal
-        \error
-        \okey
+ractive.on do
+    complete: ->
+        i = 0
+        states =
+            \waiting
+            \normal
+            \error
+            \okay
 
-    unixs = [1554277600000,1354276600000,1254257600000,1054247600000]
+        unixs = [1554277600000,1354276600000,1254257600000,1054247600000]
 
-    <- :lo(op) ->
-        a = i++
-        new-state = states[a]
-        new-unix = unixs[a]
-        #console.log "changing state: ", new-state
-        ractive.set \buttonState, new-state
-        ractive.set \myUnixTime, new-unix
-        #console.log "myUnixTime: ", ractive.get \myUnixTime
-        if i > 3
-            i:=0
-        <- sleep 5000ms
-        lo(op)
+        <- :lo(op) ->
+            a = i++
+            new-state = states[a]
+            new-unix = unixs[a]
+            #console.log "changing state: ", new-state
+            ractive.set \buttonState, new-state
+            ractive.set \myUnixTime, new-unix
+            #console.log "myUnixTime: ", ractive.get \myUnixTime
+            if i > 3
+                i:=0
+            <- sleep 5000ms
+            lo(op)

@@ -27,7 +27,7 @@ paths.build-folder = "#{__dirname}/build"
 paths.client-public = "#{paths.build-folder}/public"
 paths.client-src = "#{__dirname}/src/client"
 paths.client-tmp = "#{paths.build-folder}/__client-tmp"
-paths.client-pages = "#{paths.client-public}/pages"
+paths.client-pages = "#{paths.client-public}"
 
 paths.lib-src = "#{__dirname}/src/lib"
 paths.lib-tmp = "#{paths.build-folder}/__lib-tmp"
@@ -91,14 +91,15 @@ gulp.task \default, ->
         "#{paths.lib-src}/**/*.js"
     watch for-browserify, (event) ->
         # changes in components should trigger browserify via removing its cache entry
+
         delete cache.caches['browserify']
         gulp.start <[ browserify ]>
-
     for-browserify-pages =
             "#{paths.client-src}/pages/**/*.ls"
 
     watch for-browserify-pages, (event) ->
         # changes in components should trigger browserify via removing its cache entry
+        delete cache.caches['browserify']
         gulp.start <[ browserify ]>
 
 
@@ -126,7 +127,7 @@ gulp.task \js, ->
 gulp.task \html, ->
     base = "#{paths.client-src}/pages"
     gulp.src "#{base}/**/*.html", {base: base}
-        .pipe gulp.dest "#{paths.client-public}/pages"
+        .pipe gulp.dest "#{paths.client-public}"
 
 
 # Compile client LiveScript files into temp folder

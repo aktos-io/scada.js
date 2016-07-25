@@ -1,10 +1,11 @@
 h2 Reçeteler:
 order-table(
-    settings="{{ recipes }}"
+    settings="{{ recipes.settings }}"
     db="{{ db }}"
     view="primitives/getReceipts"
     gen-entry-id="{{ genEntryId }}"
-    tabledata="{{ materialUsage.recipes }}"
+    tabledata="{{ recipes.tabledata }}"
+    changes="{{ changes }}"
     )
     +partial('addnewTitle')
         | Reçete Ekle

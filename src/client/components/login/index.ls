@@ -11,6 +11,7 @@ require! 'aea': {check-login}
 
 component-name = "login"
 Ractive.components[component-name] = Ractive.extend do
+    isolated: yes
     template: "\##{component-name}"
     oninit: ->
         self = @
@@ -18,9 +19,9 @@ Ractive.components[component-name] = Ractive.extend do
         check-login (@get \db), (err) ->
             if not err
                 #console.log "Login component says: we are logged in..."
-                self.fire \login
+                self.fire \success
             else
-                #console.log "Login component says: we are not logged in!"
+                console.log "Login component says: we are not logged in!"
         @on do
             do-login: ->
                 self = @
@@ -36,7 +37,7 @@ Ractive.components[component-name] = Ractive.extend do
                 else
                     #console.log "LOGIN: Seems logged in succesfully: ", res
                     self.set \context.err, null
-                    self.fire \login
+                    self.fire \success
 
             do-logout: ->
                 self = @
@@ -44,10 +45,14 @@ Ractive.components[component-name] = Ractive.extend do
                 #console.log "LOGIN: Logging out!"
                 err, res <- db.logout!
                 #console.log "LOGIN: Logged out: err: #{err}, res: ", res
-                self.set \context.ok, no if res.ok
+                self.set \context.ok, no if res?.ok
+                self.set \context.err err if err
+                self.fire \logout
 
-            login: ->
-                # do more success actions...
+            logout: ->
+                console.log "LOGIN: We are logged out..."
+
+            success: ->
                 #console.log "LOGIN: Login component success... "
                 db = @get \db
                 self = @

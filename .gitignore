@@ -4,3 +4,4 @@ node_modules
 src/client/components/components.*
 __tmp__
 src/w232/**/*.js
+__public__
