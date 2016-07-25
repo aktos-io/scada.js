@@ -11,9 +11,7 @@ Ractive.components[component-name] = Ractive.extend do
             #console.log "State change dedected!", val
             if val == "waiting"
                 rotate-icon!
-        @on 
-            run-console-log: ->
-                console.log "on-click is running..."
+                
         function rotate-icon
             #console.log "rotate function is starting... , test ractive: __" , __
             state-val = __.get \state
