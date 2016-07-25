@@ -40,6 +40,7 @@ Ractive.components[component-name] = Ractive.extend do
             filters = __.get \dataFilters
             selected-filter = __.get \selectedFilter
             tabledata = __.get \tabledata
+            #console.log "ORDER_TABLE: Running create-view..."
             try
                 throw "table data is empty" if typeof! tabledata isnt \Array
                 filter = filters[selected-filter]
@@ -50,14 +51,11 @@ Ractive.components[component-name] = Ractive.extend do
                 else
                     console.log "after-filter is not defined?"
             catch
-                #console.log "Error getting filtered: ", e, tabledata
+                console.log "Error getting filtered: ", e, tabledata
                 null
 
         @observe \tabledata, ->
             #console.log "ORDER_TABLE: observing tabledata..."
-            create-view!
-        @observe \selectedFilter, ->
-            #console.log "ORDER_TABLE: observing selectedFilter..."
             create-view!
 
         @observe \curr, ->
@@ -130,6 +128,7 @@ Ractive.components[component-name] = Ractive.extend do
                         console.log "Updating current order document rev: ", order-doc._rev
                         __.set \curr, order-doc
                     __.set \saving, "OK!"
+                    __.set \changes, (1 + __.get \changes)
 
             add-new-entry: (keypath) ->
                 __ = @
@@ -162,7 +161,9 @@ Ractive.components[component-name] = Ractive.extend do
 
             set-filter: (filter-name) ->
                 # this event handler is to be used in template
+                console.log "Setting filter to : ", filter-name
                 @set \selectedFilter, filter-name
+                create-view!
 
     onteardown: ->
         console.log "ORDER_TABLE: TEARDOWN!!!"
