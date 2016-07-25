@@ -14,7 +14,7 @@ export orders:
                 * product: "Rus salata"
                   amount: "2kg"
                 ...
-        col-names: "Müşteri Adı, Sipariş Tarihi, Teslim Tarihi"
+        col-names: "Sipariş No, Müşteri Adı, Sipariş Tarihi, Teslim Tarihi"
         filters:
             all: (docs, param) ->
                 # sort by date
@@ -33,6 +33,11 @@ export orders:
             done: (docs) ->
                 [.. for docs when ..state is \done]
 
+            specific: (docs) ->
+                order-num = @get \searchOrderNumber
+                console.log "User wants to get order \##{order-num}..."
+                doc = [.. for (@get 'tabledata') when .._id is order-num]
+
         after-filter: (docs, callback) ->
             # Generate output for production list
             @set \output, docs
@@ -44,6 +49,7 @@ export orders:
                 view = [{
                 id: doc._id
                 cols:
+                    doc._id
                     client.name
                     unix-to-readable doc.order-date
                     unix-to-readable doc.due-date
@@ -141,6 +147,7 @@ export orders:
                 recipes = __.get \recipes
                 stock-materials = __.get \stock-materials
                 get-material-usage (get-production-items curr), recipes, stock-materials
+
 
 # PRODUCTION
 export production:

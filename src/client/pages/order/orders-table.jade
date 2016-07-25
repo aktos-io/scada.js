@@ -27,9 +27,13 @@ order-table(
                             dd-menu 
                                 dd-item
                                     btn(on-buttonclick="runHandler" value="{{ ['sendToProduction', 'all-visible'] }}" type="danger") Tümünü Üretime Gönder!
-
                     btn(on-buttonclick="setFilter" value="doing" type="warning") Üretimdekiler
                     btn(on-buttonclick="setFilter" value="done" type="success") Tamamlananlar                    
+            form-vertical
+                form-group
+                    input(value="{{ searchOrderNumber }}")
+                    btn(on-buttonclick="setFilter" value="specific" type="info") Siparişi getir!
+                    
     +partial('viewForm')
         h1 {{ curr.client }}
         .row 
