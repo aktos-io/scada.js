@@ -10,10 +10,7 @@ export customers:
         col-names: "Müşteri adı"
         filters:
             all: (docs, param) ->
-                console.log "Customers ..", docs
                 x = sort-by (.name), docs
-                console.log "xxxxxxx", x
-                x
 
         after-filter: (docs, callback) ->
             callback [{id: .._id, cols: [..name]} for docs]
