@@ -91,14 +91,15 @@ gulp.task \default, ->
         "#{paths.lib-src}/**/*.js"
     watch for-browserify, (event) ->
         # changes in components should trigger browserify via removing its cache entry
+
         delete cache.caches['browserify']
         gulp.start <[ browserify ]>
-
     for-browserify-pages =
             "#{paths.client-src}/pages/**/*.ls"
 
     watch for-browserify-pages, (event) ->
         # changes in components should trigger browserify via removing its cache entry
+        delete cache.caches['browserify']
         gulp.start <[ browserify ]>
 
 

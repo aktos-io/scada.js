@@ -1,11 +1,14 @@
 h1 Siparişler:
 order-table(
-    settings="{{ orders }}"
+    settings="{{ orders.settings }}"
     db="{{ db }}"
     view="orders/getOrders"
     gen-entry-id="{{ genEntryId }}"
     x="{{ customersList }}"
     output="{{ production.tabledata }}"
+    changes="{{ changes }}"
+    recipes="{{ recipes.tabledata }}"
+    stock-materials="{{ rawMaterials.tabledata }}"
     )
     +partial('addnewTitle')
         | Yeni Sipariş Ekle
@@ -99,7 +102,8 @@ h1 Gereken Hammadde Miktarları
 data-table(
     settings="{{ materialUsage.settings }}"
     production-list="{{ production.tabledata }}"
-    recipes="{{ materialUsage.recipes }}"
+    recipes="{{ recipes.tabledata }}"
+    stock-materials="{{ rawMaterials.tabledata }}"
     )
     +partial('header')
         //input(value="{{ filterOpts.selected }}")

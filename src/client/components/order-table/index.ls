@@ -18,6 +18,11 @@ Ractive.components[component-name] = Ractive.extend do
             @set \columnList, col-names
         catch
             console.log "ORDER_TABLE:", "can not get col-names", e
+
+
+        if settings.col-names is "Müşteri adı"
+            console.log "Customers: ", settings
+
         db = @get \db
         gen-entry-id = @get \gen-entry-id
         @set \dataFilters, settings.filters
@@ -31,15 +36,8 @@ Ractive.components[component-name] = Ractive.extend do
                 #console.log "Updating table: ", docs
                 __.set \tabledata, docs
 
-
-        feed = db.changes {since: 'now', +live, +include_docs}
-            .on \change, (change) ->
-                #console.log "order-table change detected!", change
-                update-table!
-
-        # cancel this on teardown
-        __.set \feed, feed
-
+        @observe \changes, ->
+            update-table!
 
         do function create-view param
             filters = __.get \dataFilters
@@ -171,9 +169,6 @@ Ractive.components[component-name] = Ractive.extend do
 
     onteardown: ->
         console.log "ORDER_TABLE: TEARDOWN!!!"
-        # cancelling db feed
-        feed = @get \feed
-        feed?.cancel!
 
 
     data: ->

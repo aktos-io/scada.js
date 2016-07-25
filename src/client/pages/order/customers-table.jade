@@ -1,9 +1,10 @@
 h2 Müşteriler:
 order-table(
-    settings="{{ customersSettings }}"
+    settings="{{ customers.settings }}"
     db="{{ db }}"
     view="customers/getCustomers"
     gen-entry-id="{{ genEntryId }}"
+    changes="{{ changes }}"
     )
     +partial('addnewTitle')
         | Müşteri Ekle
