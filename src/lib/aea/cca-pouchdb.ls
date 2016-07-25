@@ -25,6 +25,7 @@ export signup = (db, user, callback) ->
         salt: salt
 
     err, res <- db.put new-user
+    console.log "ORIGINAL DOCUMENT: ", new-user if err 
     callback err, res if typeof! callback is \Function
 
 # check whether we are logged in or not
