@@ -1,1 +1,0 @@
-var testCount,testFunc,test2Func;testCount=0,testFunc=function(){return console.log("I AM TEST FUNCTION..."),console.log("Test count: ",++testCount)},test2Func=function(){return console.log("I AM TEST FUNCTION2...")};
