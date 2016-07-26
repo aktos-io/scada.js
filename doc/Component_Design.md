@@ -11,12 +11,11 @@
 
 ## Testing
 
-If not matches with **MOST IMPORTANT**: Your component is alpha, not ready to go.
-If not matches with **IMPORTANT**: Your component is beta, ready to go with parallel development effort
-If not matches with **MEDIUM**: Your component is ready to go, but buggy.
-If not matches with **LOW**: Your component is ready to go, another developer might finalize it.
-
-If matches all: Congratulations! Your component is rock solid!
+* If not matches with **MOST IMPORTANT**: Your component is alpha, not ready to go.
+* If not matches with **IMPORTANT**: Your component is beta, ready to go with parallel development effort
+* If not matches with **MEDIUM**: Your component is ready to go, but buggy.
+* If not matches with **LOW**: Your component is ready to go, another developer might finalize it.
+* If matches all: Congratulations! Your component is rock solid!
 
 | # | Importance     | Task                                                                                                                                                                             | See                                                                                     | Tip                                                                                                                            |
 |---|----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
