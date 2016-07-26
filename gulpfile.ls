@@ -15,6 +15,8 @@ require! 'gulp-tap': tap
 require! 'gulp-cached': cache
 require! 'gulp-clean': clean
 
+argv = require 'yargs' .argv
+
 # Build Settings
 notification-enabled = yes
 
@@ -27,13 +29,14 @@ paths.build-folder = "#{__dirname}/build"
 paths.client-public = "#{paths.build-folder}/public"
 paths.client-src = "#{__dirname}/src/client"
 paths.client-tmp = "#{paths.build-folder}/__client-tmp"
-paths.client-pages = "#{paths.client-public}"
+paths.client-apps = "#{paths.client-public}"
 
 paths.lib-src = "#{__dirname}/src/lib"
 paths.lib-tmp = "#{paths.build-folder}/__lib-tmp"
 
 paths.components-src = "#{paths.client-src}/components"
 paths.components-tmp = "#{paths.client-tmp}/components"
+
 
 console.log "Paths: "
 for p, k of paths
@@ -75,11 +78,15 @@ gulp.task \default, ->
 
     gulp.src \build
         .pipe clean {+force, -read}
-    <- sleep 500ms
+    <- sleep 1000ms
     console.log "build directory cleaned..."
 
     do function run-all
         gulp.start <[ js browserify html vendor vendor-css assets jade ]>
+
+    if argv.compile is true
+        console.log "Gulp compiled only once..."
+        return
 
     for-browserify =
         # include
@@ -94,10 +101,10 @@ gulp.task \default, ->
 
         delete cache.caches['browserify']
         gulp.start <[ browserify ]>
-    for-browserify-pages =
-            "#{paths.client-src}/pages/**/*.ls"
+    for-browserify-apps =
+            "#{paths.client-src}/apps/**/*.ls"
 
-    watch for-browserify-pages, (event) ->
+    watch for-browserify-apps, (event) ->
         # changes in components should trigger browserify via removing its cache entry
         delete cache.caches['browserify']
         gulp.start <[ browserify ]>
@@ -107,7 +114,7 @@ gulp.task \default, ->
         "#{paths.client-src}/components/**/*.jade"
         "!#{paths.client-src}/components/components.jade"
 
-        "#{paths.client-src}/pages/**/*.jade"
+        "#{paths.client-src}/apps/**/*.jade"
         "#{paths.client-src}/templates/**/*.jade"
 
     watch for-jade, ->
@@ -125,7 +132,7 @@ gulp.task \js, ->
         .pipe gulp.dest paths.client-tmp
 
 gulp.task \html, ->
-    base = "#{paths.client-src}/pages"
+    base = "#{paths.client-src}/apps"
     gulp.src "#{base}/**/*.html", {base: base}
         .pipe gulp.dest "#{paths.client-public}"
 
@@ -141,15 +148,15 @@ gulp.task \lsc-components <[ generate-components-module ]> ->
         .pipe gulp.dest paths.client-tmp
 
 
-gulp.task \lsc-pages <[ lsc-components ]> ->
-    console.log "RUNNING LSC_PAGES"
-    base = "#{paths.client-src}/pages"
+gulp.task \lsc-apps <[ lsc-components ]> ->
+    console.log "RUNNING LSC_apps"
+    base = "#{paths.client-src}/apps"
     gulp.src "#{base}/**/*.ls", {base: base}
         .pipe lsc!
         .on \error, (err) ->
             on-error \lsc-lib, err
             @emit \end
-        .pipe gulp.dest "#{paths.client-tmp}/pages"
+        .pipe gulp.dest "#{paths.client-tmp}/apps"
 
 
 gulp.task \generate-components-module ->
@@ -178,33 +185,50 @@ gulp.task \lsc-lib, ->
         .pipe gulp.dest paths.lib-tmp
     console.log "ENDED LSC_LIB"
 
-# Browserify pages/* into public folder
+# Browserify apps/* into public folder
 
-gulp.task \lsc <[ lsc-lib lsc-pages ]>, ->
+gulp.task \lsc <[ lsc-lib lsc-apps ]>, ->
     console.log "RUNNING LSC (which means ended)"
     console.log "lsc ended..."
 
-gulp.task \browserify <[ lsc js]> ->
-    base = "#{paths.client-tmp}/pages"
-    gulp.src "#{base}/**/*.js"
-        .pipe cache \browserify
-        .pipe tap (file) ->
-            filename = path.basename file.path
-            if is-module-index base, file.path
-                console.log "Started Browserifying file: ", path.basename file.path
-                browserify file.path, {paths: [paths.components-tmp, paths.lib-tmp]}
-                    .bundle!
-                    .on \error, (err) ->
-                        on-error \browserify, err
-                        @emit \end
-                    .pipe source filename
-                    .pipe buffer!
-                    #.pipe uglify!
-                    .pipe gulp.dest paths.client-pages
-                    .pipe tap (file) ->
-                        msg = "Finished browserify for file: #{path.basename file.path}"
-                        log-info "Browserify", msg
+gulp.task \browserify <[ lsc js]>, (done) ->
+    base = "#{paths.client-tmp}/apps"
+    files = glob.sync "#{base}/**/*.js"
 
+    files = [.. for files when is-module-index base, ..]
+
+    do function bundle-all
+        console.log "BUNDLE_ALL STARTED..."
+        i = 0
+        <- :lo(op) ->
+            if i >= files.length
+                console.log "returning..."
+                return op!
+            file = files[i]
+            filename = path.basename file
+            console.log "Started Browserifying file: ", path.basename file
+            browserify file, {paths: [paths.components-tmp, paths.lib-tmp]}
+                .bundle!
+                .on \error, (err) ->
+                    on-error \browserify, err
+                    @emit \end
+                .pipe source filename
+                #.pipe buffer!
+                #.pipe uglify!
+                .pipe gulp.dest paths.client-apps
+                .on 'end', ->
+                    console.log "browserify continues"
+                    i++
+                    lo(op)
+
+        console.log "BUNDLE_ALL FINISHED..."
+        for f in files
+            console.log " * #{f}"
+
+        msg = "Finished browserifying..."
+        log-info "Browserify", msg
+
+        #done!
 
 # Concatenate vendor javascript files into public/js/vendor.js
 gulp.task \vendor, ->
@@ -213,22 +237,22 @@ gulp.task \vendor, ->
         .pipe tap (file) ->
             #console.log "VENDOR: ", file.path
         .pipe cat "vendor.js"
-        .pipe gulp.dest "#{paths.client-pages}/js"
+        .pipe gulp.dest "#{paths.client-apps}/js"
 
 # Concatenate vendor css files into public/css/vendor.css
 gulp.task \vendor-css, ->
     gulp.src "#{paths.vendor-folder}/**/*.css"
         .pipe cat "vendor.css"
-        .pipe gulp.dest "#{paths.client-pages}/css"
+        .pipe gulp.dest "#{paths.client-apps}/css"
 
 # Copy assets into the public directory as is
 gulp.task \assets, ->
     gulp.src "#{paths.client-src}/assets/**/*", {base: "#{paths.client-src}/assets"}
-        .pipe gulp.dest paths.client-pages
+        .pipe gulp.dest paths.client-apps
 
 # Compile Jade files in paths.client-src to the paths.client-tmp folder
 gulp.task \jade <[ jade-components ]> ->
-    base = "#{paths.client-src}/pages"
+    base = "#{paths.client-src}/apps"
     files = glob.sync "#{base}/**/*.jade"
     files = [.. for files when is-module-index base, ..]
     gulp.src files
@@ -239,7 +263,7 @@ gulp.task \jade <[ jade-components ]> ->
             on-error \jade, err
             @emit \end
         .pipe flatten!
-        .pipe gulp.dest paths.client-pages
+        .pipe gulp.dest paths.client-apps
 
 
 gulp.task \jade-components ->

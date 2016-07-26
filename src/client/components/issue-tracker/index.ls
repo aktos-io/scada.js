@@ -2,7 +2,7 @@
 {sleep, merge, pack, unpack} = require "aea"
 random = require \randomstring
 
-component-name = "order-table"
+component-name = "issue-tracker"
 Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
     isolated: yes

@@ -1,7 +1,7 @@
 
 +component('search-combobox')
-    select(value='{{selected}}', data-style='btn-success', data-live-search='true', data-width='auto', '{{multiple}}')
+    select(value='{{iselected}}', data-style='btn-success', data-live-search='true', data-width='auto', '{{multiple}}')
         +each("selectionList:i")
-            option(value="{{ .['id'] }}") {{.["name"]}}
+            option(value="{{ .id }}") {{ .name }}
             
             

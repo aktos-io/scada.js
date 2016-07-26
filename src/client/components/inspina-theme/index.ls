@@ -13,7 +13,7 @@ Ractive.components[component-name] = Ractive.extend do
         @set \selected, '#/' if (@get \selected) is void
 
         do function hashchange
-            url = window.location.hash or ''
+            url = window.location.hash
             __.set \iselected, url
             __.set \selected, url
 

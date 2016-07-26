@@ -1,7 +1,7 @@
 require! <[ fs express path ]>
 
-production-public = "#{__dirname}/../../__public__"
-development-public = "#{__dirname}/../../build/public"
+production-public = "#{__dirname}/../../../__public__"
+development-public = "#{__dirname}/../../../build/public"
 
 try
     fs.accessSync production-public
@@ -23,10 +23,10 @@ http = require \http .Server app
 
 
 app.get "/", (req, res) ->
-  res.send-file path.resolve "#{pub-dir}/order.html"
+  res.send-file path.resolve "#{pub-dir}/demeter.html"
 
 i = ''
-console.log "serving static folder: /#{i}..."
+console.log "serving static folder: /#{i}"
 app.use "/#{i}", express.static path.resolve "#{pub-dir}/#{i}"
 
 http.listen 4001 ->

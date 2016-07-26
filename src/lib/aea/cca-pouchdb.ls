@@ -25,6 +25,7 @@ export signup = (db, user, callback) ->
         salt: salt
 
     err, res <- db.put new-user
+    console.log "ORIGINAL DOCUMENT: ", new-user if err
     callback err, res if typeof! callback is \Function
 
 # check whether we are logged in or not
@@ -42,16 +43,19 @@ export function check-login (db, callback)
             'Content-Type':'application/x-www-form-urlencoded'
         success: (data) ->
             try
-                res = JSON.parse data
+                try
+                    res = JSON.parse data
+                catch
+                    res = data 
                 throw "not logged in..." if res.user-ctx.name is null
                 #console.log "We are already logged in as ", res.user-ctx.name
                 callback false if typeof! callback is \Function
             catch
-                #console.log "Check login not succeeded: ", e?.to-string!
+                console.log "Check login not succeeded: ", e?.to-string!, data
                 callback true if typeof! callback is \Function
 
         error: (err) ->
-            #console.log "Something went wrong while checking logged in state: ", err
+            console.log "Something went wrong while checking logged in state: ", err
             callback true if typeof! callback is \Function
 
 

@@ -1,9 +1,9 @@
 component-name = "page"
 Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
-    isolated: yes
+    isolated: no
     data: ->
         is-selected: (url) ->
-            #console.log "PAGE: url: ", url, url is ''
-            return true if (url is '') and (@get \name) is '/'
+            #console.log "PAGE: #{@get 'name'} url: #{url}"
+            return true if (url in ['', void, null]) and (@get \name) is '/'
             url is "\##{@get 'name'}"

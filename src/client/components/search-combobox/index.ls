@@ -6,38 +6,64 @@ Ractive.components[component-name] = Ractive.extend do
     isolated: yes
     oninit: ->
         __ = @
-        data = @get \data
         #console.log "DATA: ", data
+
         # USING EXTERNAL DATA (IE. Not from database directly)
         #console.log "COMBOBOX: using data: ", data
-        <- sleep 10ms
-        __.set \selectionList, data
-        __.observe \data, (new-val)->
+
+        function observe-selected
+            selected = __.get \selected
+            default-data = __.get \defaultData
+            try
+                throw if (Number selected) isnt (parse-int selected)
+                selected = parse-int selected
+
+            data = __.get \data
+            if selected in [..id for data when ..id not in [..id for default-data]]
+                $ __.find \* .selectpicker 'val', selected
+                __.set \selected-name, [..name for data when ..id is selected].0
+                console.log "COMBOBOX selected id:::", selected
+            else
+                console.log "COMBOBOX: selected value is not in dataset, ds: ", selected , [..id for data]
+
+                nonexist = default-data.0.id
+                console.log "non existent entry is: ", nonexist
+                __.set \selected-name, ''
+                __.set \iselected, nonexist
+                __.set \selected, nonexist
+                #$ __.find \* .selectpicker 'val', '-111'
+
+        do function observe-data
             #console.log "COMBOBOX: observing....", new-val
-            __.set \selectionList, new-val
+            default-data = __.get \defaultData
+            data =  __.get \data
+            data = default-data ++ data
+            __.set \selectionList, data
             #$ '.selectpicker' .selectpicker 'refresh'
             #console.log "COMBOBOX: re-rendering!"
             $ __.find \* .selectpicker \render
             $ __.find \* .selectpicker \refresh
 
+        <- sleep 10ms
+        __.observe \data, (new-val)->
+            observe-data!
+
+        curr = __.get \selected
+        if curr
+            __.set \iselected, curr
+        else
+            __.set \iselected, -111
+            
         __.observe \selected, (new-val) ->
-            selected = __.get \selected
-            __.set \selected-name, [..name for data when ..id is selected].0
-            try
-                throw if (Number selected) isnt (parse-int selected)
-                selected = Number selected
+            observe-selected!
 
-            if selected in [..id for data]
-                $ __.find \* .selectpicker 'val', selected
-                console.log "COMBOBOX selected:::", selected
+        __.observe \iselected, (val) ->
+            if val in [..id for (__.get 'data')]
+                console.log "selection is valid: ", val
             else
-                console.log "COMBOBOX: selected value is not in dataset, ds: ", selected , [..id for data]
-                $ __.find \* .selectpicker 'val', null
+                console.log "selection is INVALID: ", val
+            __.set \selected, val
 
-        <- sleep 0ms
-        #console.log "COMBOBOX: first rendering!"
-        $ __.find \* .selectpicker \render
-        $ __.find \* .selectpicker \refresh
 
 
     onteardown: ->
@@ -46,8 +72,9 @@ Ractive.components[component-name] = Ractive.extend do
 
     data: ->
         selected: -1
-        example-data:
-            * name: 'example1'
-              id: 1
-            * name: 'example2'
-              id: 2
+        iselected: -111
+
+        default-data:
+            * id: -111
+              name: "Seçim Yapılmadı"
+            ...
