@@ -5,15 +5,17 @@ export support:
             type: \issue
             subject: 'Başlık...'
             date: null
-            entries:
-                * author: ''
-                  body: ''
-                ...
+            body: null
+            reply-to: null
 
         col-names: "Konu"
+
         filters:
-            all: (docs, param) ->
-                docs
+            all: (docs) -> docs
 
         after-filter: (docs, callback) ->
             callback [{id: .._id, cols: [..subject]} for docs]
+
+        handlers:
+            submit: ->
+                console.log "HANDLER: ", ractive

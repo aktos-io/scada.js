@@ -56,6 +56,9 @@ ractive = new Ractive do
 
 feed = null
 ractive.on do
+    complete: ->
+        @set \menu, @get \menuPublic
+
     'login.success': ->
         __ = @
         console.log "running after logged in..."

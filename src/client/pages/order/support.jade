@@ -18,36 +18,29 @@ h1 Destek
 
 
 
-//- 
-    order-table(
-        settings="{{ support }}"
-        db="{{ db }}"
-        view="support/issues"
-        gen-entry-id="{{ genEntryId }}"
-        )
-        +partial('addnewTitle')
-            | Yeni İstek
+issue-tracker(
+    settings="{{ support.settings }}"
+    db="{{ db }}"
+    view="support/issues"
+    gen-entry-id="{{ genEntryId }}"
+    changes="{{ changes }}"
+    )
+    +partial('addnewTitle')
+        | Yeni İstek
+    
+    +partial('header')
+        h3 Filtreler
+    +partial('viewForm')
+        h1 {{ curr.subject }} 
         
-        +partial('header')
-            h3 Filtreler
-        +partial('viewForm')
-            h1 {{ curr.client }}
-            .row 
-                .col-md-8
-                    h1 | {{ .subject }} | 
-                    ol 
-                        +each('curr.entries:i')
-                            li {{ .body }} 
-                        li 
-                            ace-editor(code="{{ curr.entries[i+1].body }}")
-                            btn(on-buttonclick="newOrderClose") Kapat!
-                            btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
-                            
-        +partial('editForm')
-            panel(title="Ticket {{curr._id}}" type="primary")
-                form-vertical
-                    form-group
-                        ace-editor(code="{{ curr.entries[i+1].body }}")
-                    form-group
-                        btn(on-buttonclick="newOrderClose") Kapat!
-                        btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
+        p {{ curr.body }}
+                        
+    +partial('editForm')
+        panel(title="Ticket {{curr._id}}" type="primary")
+            form-vertical
+                form-group
+                    input(value="{{ curr.subject }}")
+                    ace-editor(code="{{ curr.body }}")
+                form-group
+                    btn(on-buttonclick="newOrderClose") Kapat!
+                    btn(on-buttonclick="addNewOrderSave") Kaydet {{saving}}
