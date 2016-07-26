@@ -15,6 +15,8 @@ require! 'gulp-tap': tap
 require! 'gulp-cached': cache
 require! 'gulp-clean': clean
 
+argv = require 'yargs' .argv
+
 # Build Settings
 notification-enabled = yes
 
@@ -34,6 +36,7 @@ paths.lib-tmp = "#{paths.build-folder}/__lib-tmp"
 
 paths.components-src = "#{paths.client-src}/components"
 paths.components-tmp = "#{paths.client-tmp}/components"
+
 
 console.log "Paths: "
 for p, k of paths
@@ -75,11 +78,15 @@ gulp.task \default, ->
 
     gulp.src \build
         .pipe clean {+force, -read}
-    <- sleep 500ms
+    <- sleep 1000ms
     console.log "build directory cleaned..."
 
     do function run-all
         gulp.start <[ js browserify html vendor vendor-css assets jade ]>
+
+    if argv.compile is true
+        console.log "Gulp compiled only once..."
+        return
 
     for-browserify =
         # include
