@@ -10,7 +10,7 @@ cd "$CURR_DIR/.."
 
 start-tmux-session 0
 run-in-tmux 'gulp'
-run-in-tmux 'cd ./src/server' 'lsc server.ls'
+run-in-tmux 'cd ./src/server/webserver' 'lsc server.ls'
 run-in-tmux 'xdg-open . 2> /dev/null' 'atom .'
 
 # Show in terminal
