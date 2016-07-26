@@ -4,3 +4,6 @@
 [submodule "src/client/apps/demeter"]
 	path = src/client/apps/demeter
 	url = git@github.com:demeter-tel/demeter-app
+[submodule "src/server/demeter"]
+	path = src/server/demeter
+	url = git@github.com:demeter-tel/demeter-services
