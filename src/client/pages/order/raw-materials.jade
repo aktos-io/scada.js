@@ -10,9 +10,9 @@ order-table(
     +partial('addnewTitle')
         | Hammadde Ekle
     +partial('header')
-    //-+partial('viewForm')
-        //-h3 Hammadde Adı: {{ curr.name }}
-        //-h3 Kritik Değer: {{curr.criticalAmount}}
+    +partial('viewForm')
+        h3 Hammadde: {{ curr.name }}
+        
     +partial('editForm')
         panel(title="Hammadde Tanımla" type="primary")
             //- |{{ JSON.stringify(curr) }}

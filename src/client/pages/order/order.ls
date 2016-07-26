@@ -40,6 +40,9 @@ ractive = new Ractive do
 
             col-names: "Konu"
             filters:
+                all: (docs, param) ->
+                    docs
+
             after-filter: (docs, callback) ->
                 callback [{id: .._id, cols: [..subject]} for docs]
 
@@ -66,7 +69,7 @@ ractive = new Ractive do
               id: 4
         bbb: null
 
-x=12
+
 feed = null
 ractive.on do
     'login.success': ->

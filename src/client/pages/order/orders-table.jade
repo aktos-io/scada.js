@@ -76,6 +76,7 @@ order-table(
                     form-group
                         span Type
                         input(value="{{ .['product'] }}")
+                        search-combobox(data="{{ x }}" selected="{{ curr.product }}")
                         input(value="{{ .['amount'] }}")
                         btn(on-buttonclick="deleteOrder" value="entries: {{ i }}")
                             icon-remove

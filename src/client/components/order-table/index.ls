@@ -28,13 +28,12 @@ Ractive.components[component-name] = Ractive.extend do
         @set \dataFilters, settings.filters
 
         do function update-table
-            console.log "update-table is running ..."
             err, res <- db.query (__.get \view), {+include_docs}
             if err
                 console.log "ERROR: order table: ", err
             else
                 docs = [..doc for res.rows]
-                console.log "Updating table: ", docs
+                #console.log "Updating table: ", docs
                 __.set \tabledata, docs
 
         @observe \changes, ->
