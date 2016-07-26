@@ -7,4 +7,5 @@ git pull
 rm -r build 
 gulp --compile
 echo "Copying build/public to __public__"
-rm -r __public__ && cp -a build/public/ __public__
+rm -r __public__ 2> /dev/null
+cp -a build/public/ __public__
