@@ -191,27 +191,44 @@ gulp.task \lsc <[ lsc-lib lsc-apps ]>, ->
     console.log "RUNNING LSC (which means ended)"
     console.log "lsc ended..."
 
-gulp.task \browserify <[ lsc js]> ->
+gulp.task \browserify <[ lsc js]>, (done) ->
     base = "#{paths.client-tmp}/apps"
-    gulp.src "#{base}/**/*.js"
-        .pipe cache \browserify
-        .pipe tap (file) ->
-            filename = path.basename file.path
-            if is-module-index base, file.path
-                console.log "Started Browserifying file: ", path.basename file.path
-                browserify file.path, {paths: [paths.components-tmp, paths.lib-tmp]}
-                    .bundle!
-                    .on \error, (err) ->
-                        on-error \browserify, err
-                        @emit \end
-                    .pipe source filename
-                    .pipe buffer!
-                    #.pipe uglify!
-                    .pipe gulp.dest paths.client-apps
-                    .pipe tap (file) ->
-                        msg = "Finished browserify for file: #{path.basename file.path}"
-                        log-info "Browserify", msg
+    files = glob.sync "#{base}/**/*.js"
 
+    files = [.. for files when is-module-index base, ..]
+
+    do function bundle-all
+        console.log "BUNDLE_ALL STARTED..."
+        i = 0
+        <- :lo(op) ->
+            if i >= files.length
+                console.log "returning..."
+                return op!
+            file = files[i]
+            filename = path.basename file
+            console.log "Started Browserifying file: ", path.basename file
+            browserify file, {paths: [paths.components-tmp, paths.lib-tmp]}
+                .bundle!
+                .on \error, (err) ->
+                    on-error \browserify, err
+                    @emit \end
+                .pipe source filename
+                #.pipe buffer!
+                #.pipe uglify!
+                .pipe gulp.dest paths.client-apps
+                .on 'end', ->
+                    console.log "browserify continues"
+                    i++
+                    lo(op)
+
+        console.log "BUNDLE_ALL FINISHED..."
+        for f in files
+            console.log " * #{f}"
+
+        msg = "Finished browserifying..."
+        log-info "Browserify", msg
+
+        #done!
 
 # Concatenate vendor javascript files into public/js/vendor.js
 gulp.task \vendor, ->
