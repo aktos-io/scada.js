@@ -42,7 +42,7 @@ Ractive.components[component-name] = Ractive.extend do
             tabledata = __.get \tabledata
             #console.log "ORDER_TABLE: Running create-view..."
             try
-                throw "table data is empty" if typeof! tabledata isnt \Array
+                return if typeof! tabledata isnt \Array
                 filter = filters[selected-filter]
                 filtered = filter.apply __, [tabledata, param] if typeof filter is \function
                 if typeof settings.after-filter is \function
