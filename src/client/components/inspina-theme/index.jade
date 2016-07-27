@@ -49,14 +49,18 @@
                 .navbar-header
                     a.navbar-minimalize.minimalize-styl-2.btn.btn-primary(href='javascript:;')
                         i.fa.fa-bars
-                .pull-right {{>right}}
-                div {{>left}}
+                .pull-right 
+                    | {{yield right}}
+                div 
+                    | {{yield left}}
                             
 +component('inspina-content')
     .wrapper.wrapper-content.animated.fadeInRight.
-        {{>content}}
+        {{yield}}
 
 +component('inspina-footer')
     .footer
-        .pull-right {{>right}}
-        div {{>left}}
+        .pull-right 
+            | {{yield right}}
+        div 
+            | {{yield left}}

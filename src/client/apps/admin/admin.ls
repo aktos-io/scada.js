@@ -4,6 +4,7 @@ require! 'aea': {PouchDB, signup}
 
 db = new PouchDB 'https://demeter.cloudant.com/_users', {skip-setup: yes}
 local = new PouchDB \local_db
+product-db = new PouchDB 'https://demeter.cloudant.com/cicimeze', {skip-setup: yes}
 
 # Ractive definition
 ractive = new Ractive do
@@ -16,10 +17,12 @@ ractive = new Ractive do
                 name: \demeter
                 password: \hPwZLjgITAlqk
         db: db
+        product-db: product-db
         design-document:
             _id: '_design/test'
             livescript: null
             javascript: null
+
 
 feed = null
 ractive.on do
@@ -34,10 +37,10 @@ ractive.on do
         else
             console.log "ERROR: Adding new user: ", err
 
-    after-logged-in: ->
+    'login.success': ->
         # Subscribe the changes...
         feed?.cancel!
-        feed := local?.sync db, {+live, +retry, since: \now}
+        feed := local?.sync product-db, {+live, +retry, since: \now}
             .on \error, -> feed.cancel!
             .on 'change', (change) ->
                 console.log "change detected!", change
