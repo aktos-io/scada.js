@@ -8,7 +8,7 @@ Ractive.components[component-name] = Ractive.extend do
         __ = @
         @observe \state, (val) ->
             #console.log "State change dedected!", val
-            if val == "waiting"
+            if val is \doing
                 rotate-icon!
 
         function rotate-icon
@@ -17,26 +17,16 @@ Ractive.components[component-name] = Ractive.extend do
             #console.log "state-val: ", state-val
             __.animate {angle: 360degree}, {duration: 2000ms}
             .then ->
-                __.set 'angle', 1
-                if state-val == "waiting"
+                __.set \angle, 0
+                if state-val is \doing
                     rotate-icon!
-                #else
-                #    console.log "rotate function is stopped..."
 
         @on do
-            button-clicked: (val) ->
-                #console.log "component detects button click with value: ", val
+            myclick: (val) ->
+                console.log "ack-button detects button click with value: ", val
                 #console.log "what I know is: ", @get \buttonclick
-                @get \buttonclick <| val
+                @fire \buttonclick, val
 
 
     data: ->
         angle: 0
-
-/*
-states:
-    waiting
-    okey
-    normal
-    error
-*/
