@@ -201,9 +201,6 @@ gulp.task \browserify <[ lsc js]>, (done) ->
         console.log "BUNDLE_ALL STARTED..."
         i = 0
         <- :lo(op) ->
-            if i >= files.length
-                console.log "returning..."
-                return op!
             file = files[i]
             filename = path.basename file
             console.log "Started Browserifying file: ", path.basename file
@@ -217,13 +214,16 @@ gulp.task \browserify <[ lsc js]>, (done) ->
                 #.pipe uglify!
                 .pipe gulp.dest paths.client-apps
                 .on 'end', ->
-                    console.log "browserify continues"
-                    i++
-                    lo(op)
+                    if ++i >= files.length
+                        console.log "returning..."
+                        return op!
+                    else
+                        console.log "browserify continues"
+                        lo(op)
 
         console.log "BUNDLE_ALL FINISHED..."
         for f in files
-            console.log " * #{f}"
+            console.log " * #{path.basename f}"
 
         msg = "Finished browserifying..."
         log-info "Browserify", msg
