@@ -26,7 +26,10 @@ Ractive.components[component-name] = Ractive.extend do
             @set \columnList, col-list
         catch
             console.log "DATA_TABLE: problem with col-names: ", e
-            return 
+            return
+
+        if settings.debug
+            console.log "HEY HEY"
 
         @set \dataFilters, settings.filters
 
@@ -34,13 +37,13 @@ Ractive.components[component-name] = Ractive.extend do
             filters = __.get \dataFilters
             selected-filter = __.get \selectedFilter
             tabledata = __.get \tabledata
-            #console.log "DATA_TABLE: Running create-view...", tabledata
+            #console.log "DATA_TABLE: Running create-view...", selected-filter if settings.debug
             try
-                throw "tabledata is empty" if typeof! tabledata isnt \Array
-                filter = filters[selected-filter]
-                filtered = filter.apply __, [tabledata, param] if typeof filter is \function
+                #return if typeof! tabledata isnt \Array
+                ffunc = filters[selected-filter]
+                filtered = ffunc.apply __, [tabledata, param] if typeof ffunc is \function
                 if typeof settings.after-filter is \function
-                    #console.log "ORDER_TABLE: applying after-filter: ", settings.after-filter
+                    #console.log "DATA_TABLE: applying after-filter: ", settings.after-filter if settings.debug
                     settings.after-filter.apply __, [filtered, (view) -> __.set \tableview, view]
                 else
                     console.log "after-filter is not defined?", settings.col-names
@@ -48,20 +51,31 @@ Ractive.components[component-name] = Ractive.extend do
                 console.log "DATA_TABLE: Error getting filtered: ", e, tabledata
                 null
 
+        @set \create-view, create-view
+
         @observe \tabledata, ->
             #console.log "ORDER_TABLE: observing tabledata..."
             create-view!
 
         try
-            throw "DATA TABLE: on-change is not a function!" if typeof! settings.on-change isnt \Function
+            throw "on-change is not a function!" if typeof settings.on-change isnt \function
             do on-change = ->
                 settings.on-change.apply __
-
-            @observe \changes, ->
-                on-change!
         catch
-            console.log "Err: ", e
+            console.log "DATA TABLE: INFO: ", e
 
+        @observe \changes, ->
+            if typeof on-change is \function
+                #if settings.debug then console.log "DATA_TABLE: ON-CHANGE IS FUNCTION..."
+                on-change!
+            else
+                create-view!
+
+        # Run post init (from instance)
+        try
+            settings.on-init.apply this if typeof settings.on-init is \function
+        catch
+            console.log "ERROR FROM DATA_TABLE: on-init: ", e
 
 
         @on do
@@ -90,9 +104,11 @@ Ractive.components[component-name] = Ractive.extend do
                 console.log "My id: ", id
                 $ "\##{id}-modal" .modal \show
 
-            setfilter: (filter-name) ->
+            set-filter: (filter-name) ->
+                console.log "AAAAAAAAAAAAAAAAAAAAAAAAAAAa"
                 console.log "ORDER_TABLE: filter is set to #{filter-name}"
-                @set \filterOpts.selected, filter-name
+                @set \selectedFilter, filter-name if filter-name
+                create-view!
 
     data: ->
         __ = @
@@ -122,3 +138,10 @@ Ractive.components[component-name] = Ractive.extend do
         is-clicked: (index) ->
             clicked-index = @get \clickedIndex
             index is clicked-index
+
+        refresh: ->
+            console.log "TABLE IS REFRESHING!!!"
+            __.fire \setFilter, \all
+            x = (__.get \create-view)
+            console.log "TABLE REFRESH HAS FUNC: ", x
+            x!

@@ -34,7 +34,8 @@ Ractive.components[component-name] = Ractive.extend do
                 __.set \tabledata, docs
 
         @observe \changes, ->
-            update-table!
+            update-table! unless __.get \dontWatchChanges
+            __.set \dontWatchChanges, yes
 
         do function create-view param
             filters = __.get \dataFilters
@@ -42,7 +43,7 @@ Ractive.components[component-name] = Ractive.extend do
             tabledata = __.get \tabledata
             #console.log "ORDER_TABLE: Running create-view..."
             try
-                throw "table data is empty" if typeof! tabledata isnt \Array
+                return if typeof! tabledata isnt \Array
                 filter = filters[selected-filter]
                 filtered = filter.apply __, [tabledata, param] if typeof filter is \function
                 if typeof settings.after-filter is \function
@@ -190,6 +191,7 @@ Ractive.components[component-name] = Ractive.extend do
         view-func: null
         data-filters: {}
         selected-filter: \all
+        dont-watch-changes: no
 
         is-editing-line: (index) ->
             editable = @get \editable
@@ -210,3 +212,7 @@ Ractive.components[component-name] = Ractive.extend do
             console.log "running handler with params: ", param
 
             handlers[handler].apply @, param if typeof handlers[handler] is \function
+
+        trigger-change: ->
+            __.set \dontWatchChanges, yes
+            __.set \changes, (1 + __.get \changes)
