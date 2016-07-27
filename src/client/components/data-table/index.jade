@@ -14,7 +14,7 @@
             tr
                 td(colspan="{{ columnList.length + 1 }}").
                     {{>header}}
-            +each('getFiltered(tabledata, filterOpts.params, this):i')
+            +each('tableview:i')
                 tr.input-line(
                     class="{{#if clickedIndex === i}}warning{{/if}}"
                     on-doubleclick="clicked"
