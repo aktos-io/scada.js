@@ -105,8 +105,7 @@ Ractive.components[component-name] = Ractive.extend do
                 $ "\##{id}-modal" .modal \show
 
             set-filter: (filter-name) ->
-                console.log "AAAAAAAAAAAAAAAAAAAAAAAAAAAa"
-                console.log "ORDER_TABLE: filter is set to #{filter-name}"
+                console.log "DATA_TABLE: filter is set to #{filter-name}"
                 @set \selectedFilter, filter-name if filter-name
                 create-view!
 
@@ -142,6 +141,5 @@ Ractive.components[component-name] = Ractive.extend do
         refresh: ->
             console.log "TABLE IS REFRESHING!!!"
             __.fire \setFilter, \all
-            x = (__.get \create-view)
-            console.log "TABLE REFRESH HAS FUNC: ", x
-            x!
+            create-view = __.get \create-view
+            create-view!
