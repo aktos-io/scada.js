@@ -8,7 +8,7 @@ block script
 
 block ractive
     panel(title="Login" type="{{#if login.ok}}primary{{else}}warning{{/if}}")
-        login(on-login="afterLoggedIn" context="{{ login }}" db="{{ db }}")
+        login(context="{{ login }}" db="{{ db }}")
             
     +if('login.ok')
         div Login roles: {{ login.user.roles }}            
@@ -27,8 +27,5 @@ block ractive
                     btn(on-buttonclick="addUser") Add User!
                     
         panel(title="{{designDocument._id}}" type="success")
-            ddoc-editor(document="{{ designDocument }}" db="{{ db }}")
-        
-        ace-editor
-            
+            ddoc-editor(document="{{ designDocument }}" db="{{ productDb }}")
         

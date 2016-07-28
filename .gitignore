@@ -6,3 +6,4 @@ __tmp__
 src/w232/**/*.js
 __public__
 auth.conf
+db/**
