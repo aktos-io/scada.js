@@ -5,18 +5,30 @@ CURR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$CURR_DIR"
 . ./lib/tmux-launch
 
+export PATH="${CURR_DIR}/aktos-espruino-tools:${PATH}"
+export NODE_PATH="${CURR_DIR}/../src/lib:$NODE_PATH"
+
 # run commands
 cd "$CURR_DIR/.."
 
+# EMBEDDED CONSOLE
 start-tmux-session 0
-run-in-tmux 'cd src/w232' './watch.sh'
 run-in-tmux 'xdg-open . 2> /dev/null' 'atom .'
-run-in-tmux 'cd src/w232' 'lsc clear-init.ls'
+run-in-tmux 'cd src/embedded/w232' 'aea-espruino-console'
 
+# W232 SERVER
 # on another terminal window
 start-tmux-session 1
-run-in-tmux 'cd src/server/w232-server' 'lsc device-server.ls'
+run-in-tmux 'cd src/server/demeter/w232-server' 'lsc device-server.ls'
+
+# EMBEDDED CONTROL CONSOLE
+start-tmux-session 2
+run-in-tmux 'cd src/embedded/w232' 'aea-espruino-ctl'
+
 
 # Show in terminal
 x-terminal-emulator -e "tmux attach -t ${SESSION_BASE}-1"
+resolution=$(xdpyinfo | grep dimensions | awk {'print $2'})
+IFS='x' read -a res_arr <<< $resolution
+x-terminal-emulator -geometry 25x10+${res_arr[0]}+${res_arr[1]} -e "tmux attach -t ${SESSION_BASE}-2"
 attach-tmux-session 0
