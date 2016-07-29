@@ -225,7 +225,7 @@ gulp.task \browserify <[ lsc js]>, (done) ->
         for f in files
             console.log " * #{path.basename f}"
 
-        msg = "Finished browserifying..."
+        msg = "Finished!"
         log-info "Browserify", msg
 
         #done!

@@ -23,7 +23,7 @@
     "crypto": "0.0.3",
     "emailjs": "^1.0.5",
     "express": "^4.14.0",
-    "http-proxy": "^1.13.3",
+    "express-http-proxy": "^0.8.0",
     "jquery": "^3.0.0",
     "pouchdb": "^5.4.5",
     "pouchdb-authentication": "^0.5.3",

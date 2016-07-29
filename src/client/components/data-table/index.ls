@@ -20,8 +20,63 @@ Ractive.components[component-name] = Ractive.extend do
         # tabledata: data to display, in [{_id: ..., .....}] format
 
         settings = @get \settings
-        col-list = split ',', settings.cols
-        @set \columnList, col-list
+
+        try
+            col-list = split ',', settings.col-names
+            @set \columnList, col-list
+        catch
+            console.log "DATA_TABLE: problem with col-names: ", e
+            return
+
+        if settings.debug
+            console.log "HEY HEY"
+
+        @set \dataFilters, settings.filters
+
+        do function create-view param
+            filters = __.get \dataFilters
+            selected-filter = __.get \selectedFilter
+            tabledata = __.get \tabledata
+            #console.log "DATA_TABLE: Running create-view...", selected-filter if settings.debug
+            try
+                #return if typeof! tabledata isnt \Array
+                ffunc = filters[selected-filter]
+                filtered = ffunc.apply __, [tabledata, param] if typeof ffunc is \function
+                if typeof settings.after-filter is \function
+                    #console.log "DATA_TABLE: applying after-filter: ", settings.after-filter if settings.debug
+                    settings.after-filter.apply __, [filtered, (view) -> __.set \tableview, view]
+                else
+                    console.log "after-filter is not defined?", settings.col-names
+            catch
+                console.log "DATA_TABLE: Error getting filtered: ", e, tabledata
+                null
+
+        @set \create-view, create-view
+
+        @observe \tabledata, ->
+            #console.log "ORDER_TABLE: observing tabledata..."
+            create-view!
+
+        try
+            throw "on-change is not a function!" if typeof settings.on-change isnt \function
+            do on-change = ->
+                settings.on-change.apply __
+        catch
+            console.log "DATA TABLE: INFO: ", e
+
+        @observe \changes, ->
+            if typeof on-change is \function
+                #if settings.debug then console.log "DATA_TABLE: ON-CHANGE IS FUNCTION..."
+                on-change!
+            else
+                create-view!
+
+        # Run post init (from instance)
+        try
+            settings.on-init.apply this if typeof settings.on-init is \function
+        catch
+            console.log "ERROR FROM DATA_TABLE: on-init: ", e
+
 
         @on do
             clicked: (args) ->
@@ -49,17 +104,10 @@ Ractive.components[component-name] = Ractive.extend do
                 console.log "My id: ", id
                 $ "\##{id}-modal" .modal \show
 
-            setfilter: (filter-name) ->
-                console.log "ORDER_TABLE: filter is set to #{filter-name}"
-                @set \filterOpts.selected, filter-name
-
-
-        filters = settings.filters
-        if filters
-            #console.log "Setting data filters..."
-            @set \dataFilters, filters
-
-
+            set-filter: (filter-name) ->
+                console.log "DATA_TABLE: filter is set to #{filter-name}"
+                @set \selectedFilter, filter-name if filter-name
+                create-view!
 
     data: ->
         __ = @
@@ -78,13 +126,8 @@ Ractive.components[component-name] = Ractive.extend do
         addingNew: no
         view-func: null
         data-filters:
-            all: (docs, param) ->
-                #console.log "DATA_TABLE: using default filter (null)!",param, docs
-                []
-
-        filter-opts:
-            params: \mahmut
-            selected: \all
+            all: (docs) -> docs
+        selected-filter: \all
 
         is-editing-line: (index) ->
             editable = @get \editable
@@ -95,12 +138,8 @@ Ractive.components[component-name] = Ractive.extend do
             clicked-index = @get \clickedIndex
             index is clicked-index
 
-        get-filtered: (tabledata, param) ->
-            filters = __.get \dataFilters
-            filter-opts = __.get \filterOpts
-            try
-                filter = filters[filter-opts.selected]
-                filter.apply __, [tabledata, param] if typeof filter is \function
-            catch
-                console.log "Error getting filtered: ", e
-                null
+        refresh: ->
+            console.log "TABLE IS REFRESHING!!!"
+            __.fire \setFilter, \all
+            create-view = __.get \create-view
+            create-view!

@@ -24,10 +24,10 @@ Ractive.components[component-name] = Ractive.extend do
                 __.set \selected-name, [..name for data when ..id is selected].0
                 console.log "COMBOBOX selected id:::", selected
             else
-                console.log "COMBOBOX: selected value is not in dataset, ds: ", selected , [..id for data]
+                #console.log "COMBOBOX: selected value is not in dataset, ds: ", selected , [..id for data]
 
                 nonexist = default-data.0.id
-                console.log "non existent entry is: ", nonexist
+
                 __.set \selected-name, ''
                 __.set \iselected, nonexist
                 __.set \selected, nonexist
@@ -53,15 +53,13 @@ Ractive.components[component-name] = Ractive.extend do
             __.set \iselected, curr
         else
             __.set \iselected, -111
-            
+
         __.observe \selected, (new-val) ->
             observe-selected!
 
         __.observe \iselected, (val) ->
-            if val in [..id for (__.get 'data')]
-                console.log "selection is valid: ", val
-            else
-                console.log "selection is INVALID: ", val
+            #if val in [..id for (__.get 'data')]
+            #    #console.log "selection is valid: ", val
             __.set \selected, val
 
 

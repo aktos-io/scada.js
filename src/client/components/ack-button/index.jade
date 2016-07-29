@@ -1,11 +1,11 @@
 +component('ack-button')
-    btn(on-buttonclick="buttonClicked" value="{{value}}")
-        | {{#if state === "waiting"}}
+    btn(on-buttonclick="myclick" value="{{value}}")
+        | {{#if state === "doing"}}
         div(style='display: inline-block; width: 20px; height: 20px; margin:0 ;padding: 0; -ms-transform: rotate({{ angle }}deg); -webkit-transform: rotate({{ angle }}deg); transform: rotate({{ angle }}deg)')
             icon-refresh
         | {{/if}}
         
-        | {{#if state === "okey"}}
+        | {{#if state === "done"}}
         div(style='display: inline-block; width: 20px; height: 20px; margin: 0 ;padding: 0;')
             icon-ok-sign
         | {{/if}}
@@ -20,4 +20,4 @@
             icon-refresh
         | {{/if}}
 
-        | {{>content}}
+        | {{yield}}
