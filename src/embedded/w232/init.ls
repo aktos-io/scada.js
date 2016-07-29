@@ -1,255 +1,66 @@
-require! 'aea':{
-    sleep, wait-for, timeout-wait-for, go, is-waiting
-    merge, unpack, pack, repl, config
-}
-
-require! Wifi
-connect-to-wifi = (callback) ->
-    do
-        <- :lo(op) ->
-            try
-                wifi-setting = config.read setting.wifi
-                essid = wifi-setting.essid
-                throw if essid is void
-                passwd = wifi-setting.passwd
-                health = wifi-setting.health  # if health is 0 then wifi network is dead
-            catch
-                # connect to default essid
-                essid = \aea
-                passwd = \084DA789BF
-                health = -1  # last resort
-                console.log "Using default ESSID: ", essid
-
-            #led-connected.att-blink!
-            <- :lo(op) ->
-                apn <- Wifi.scan
-                for i in apn
-                    console.log "Found ESSID: ", i.ssid
-                    if i.ssid is essid
-                        #led-connected.blink!
-                        return op!
-                console.log "ESSID '{#{essid}}' not found, searching again..."
-                <- sleep 2000ms
-                lo(op)
-
-            <- :lo(op) ->
-                console.log "trying to connect to wifi..."
-                err <-! Wifi.connect essid, {password: passwd}
-                console.log "connected? err=", err, "info", Wifi.getIP!
-                if err is null
-                    try
-                        #console.log "trying connecting to server..."
-                        #try-connecting-server!
-                        return op!
-                    catch
-                        console.log "WTF:", e
-                <- sleep 5000ms
-                lo(op)
-            callback! if typeof callback is \function
-
-gen-random-id = (digit) ->
-    if not digit
-        digit = 3
-    Math.floor (Math.random! * Math.pow 10, digit)
-
-!function LongPolling settings
-    __ = this
-    @settings = settings
-    @http = require \http
-    @content =
-        node: settings.id
-    @events =
-        error: []
-        data: []
-        receive: []
-        connect: []
-        disconnect: []
-        code: []
-
-LongPolling::mk-opts = (payload, settings) ->
-    options =
-        host: @settings.host
-        port: @settings.port
-        path: @settings.path
-        method: @settings.method
-        headers:
-            "Content-Type": "application/json"
-            "Content-Length": pack payload .length
-    if settings
-        options = options `merge` settings
-    options
-
-LongPolling::trigger = (name, ...event) ->
-  [..apply @, event for @events[name] when typeof .. is \function ]
-
-LongPolling::send = (msg, callback) ->
-    @send-raw {data: msg}, callback
-
-LongPolling::send-ack = (callback) ->
-    @send-raw {ack: "Mahmut"}, callback
-
-LongPolling::send-raw = (msg, callback) ->
-    __ = @
-    content = msg `merge` @content
-    conn-inf = @mk-opts content
-    console.log \- * 20
-    post-request-id = gen-random-id 3
-    console.log "New POST request: ", post-request-id
-    req = @http.request conn-inf, (res) ->
-        res.on \data, (data) ->
-            got-data = unpack data
-            console.log "POST: #{post-request-id} HTTP> ", got-data
-            console.log "post requestine data gelince : ", process.memory!
-            if got-data.ack
-                #console.log "ACK arrive: ", got-data.ack
-                try
-                    callback!
-            if got-data.data
-                #console.log "ACK arrive: ", got-data.ack
-                try
-                    callback!
-
-        res.on \error, ->
-            console.log "Error: #{post-request-id} ... WTF"
-        res.on \close, ->
-            console.log "Request: #{post-request-id} closed by server.."
-
-    req.on \error, (err) ->
-        __.trigger \error, err, callback
-        callback err.message
-
-    req.write (pack content)
-    req.end!
-    console.log "post requesti acildiktan sonra : ", process.memory!
-
-load-code = void
-LongPolling::send-get = (opts, callback) ->
-    __ = @
-    content = @content `merge` {data: "NABER"}
-    #opts = opts `merge` {method: 'GET', headers: null}
-    opts = opts `merge` {method: 'POST'}
-    conn-inf = @mk-opts content, opts
-    console.log "Connection info: ", conn-inf
-    get-request-id = gen-random-id 3
-    console.log "New GET request: #{get-request-id}"
-
-    req = @http.request conn-inf, (res) ->
-        res.on \data, (data) ->
-            console.log "GET: #{get-request-id} have DATA: ", data, typeof data, data.length
-            load-code := data
-            #TODO: trigger something
-            #callback!
-            console.log "get requestine data gelince : ", process.memory!
-            go \call-error, \got-data
-
-    req.on \error, (err) ->
-        console.log "GET: #{get-request-id} have PROBLEM: ", err
-        if err.message is 'no response'
-            console.log "Error message: ", err.message
-            callback \try-connect-again
-
-        else if err.message is 'connection reset'
-            console.log "Connect olunmali."
-            callback \try-connect-again
-
-        else if is-waiting \call-error
-            console.log "GO with ", err
-            go \call-error, err
-        else
-            console.log "What happened"
-
-        req.write (pack content)
-        req.end!
+require! 'aea': {sleep, pack}
+require! 'config': {Config}
+require! 'connect-to-wifi': {WifiConnect}
+require! 'long-polling': {LongPolling}
 
 
-    console.log "get requesti acildiktan sonra : ", process.memory!
-    reason, param <-timeout-wait-for 30000ms, \call-error
-    if reason is 'has-event'
-        console.log "Has event: ", param
-        callback param
-    else if reason is 'timed-out'
-        console.log "Timeout..."
-        callback \timeout
+log = console.log
 
-LongPolling::connect = (callback)->
-    __ = @
-    err <- @send-ack
-    if not err
-        do
-            console.log "Connect function run correctly.."
-            callback!
-        do
-            <- :lo(op) ->
-                console.log "Receiver is starting asyncronously.."
-                reason <- __.send-get {path: '/al'}
-                if reason is \got-data
-                    console.log "I got data.. I am connecting again for new data: "
-                    <- sleep 3000ms
-                    lo(op)
+wifi = new WifiConnect aktos =
+    essid: \aea
+    passwd: \084DA789BF
 
-                else if reason is \try-connect-again
-                    console.log "I have a problem. I must be connect again: ", reason
-                    lo(op)
-    else
-        console.log "Trying to connect again (2s)..."
-        <- sleep 1000ms
-        __.connect callback
-
-LongPolling::on = (event, callback) ->
-    @events[event] ++= callback
+comm = new LongPolling do
+    host: '192.168.2.103'
+    port: 5656  # aktos-server
+    #port: 5655  # cloudant.com (via proxy (iisexpress))
+    path:
+        db: '/todo'
+        changes: '/todo/_changes'
+        info: "/"
+    id: get-serial!
 
 on-init = ->
-    <- connect-to-wifi
-
-    comm = new LongPolling do
-        host: '192.168.2.107'
-        id: 'abc123'
-        port: 5656
-        path: '/send'
-        method: 'POST'
+    console.log "Started on-init!"
+    err <- wifi.connect
+    if err
+        console.log "err wifi connect: ", err
+        return
+    console.log "Connected to wifi, continuing..."
 
     comm
-        ..on \receive, (data) ->
-            console.log "I received following data: ", data
-
-        ..on \error, (err, callback) ->
-            console.log "COMM-ERR::: ", err.message
+        ..on \error, (err) ->
+            log "COMM-ERR:: ", err
 
         ..on \connect, (info) ->
-            console.log "Connected to server!!! Server info: ", info
+            log "Connected to server. Server info: ", pack info
 
         ..on \disconnect, ->
-            console.log "Disconnected from server!"
-        ..on \code (code) ->
-            console.log "Code is : ", code
-            #eval code
-    console.log "Initialy memory: ", process.memory!
-    <- comm.connect
-    <- sleep 20000ms
-/*
+            log "Disconnected from server!!!"
+
+        ..on \data, (data) ->
+            log "Received DATA: ", pack data
+
+    log "After2 LONG_POLLING: ", process.memory!
+    err <- comm.connect!
+    log "it seems connection is ok, continuing..."
+
+
+    log "sending hello..."
+    <- comm.send {mydata: \hello}
+    log "send hello: ", err
+    # should print an error now: "you MUST connect first!"
+
+    err, data <- comm.get '/todo/mahmut-1'
+    log "err: ", err if err
+    log "data: ", pack data
     do
+        i = 0
         <- :lo(op) ->
-
-            if load-code
-                #console.log "Evaling code,,"
-                eval load-code
-                #load-code = undefined
-            else
-                lo(op)
-    #console.log "following code is starting..."
-*/
-/*
-
-    do
-        <- sleep 1000ms
-
-        <- :lo(op) ->
-            #console.log process.memory!
             err <- comm.send do
-                temperature: Math.random!
+                _id: "embedded-#{i++}"
+                temperature: Math.random! * 100 
             if err
-                console.log "We couldn't send data!"
-            <- timeout-wait-for 10000ms, \temperature-measured
+                log "We couldn't send to data because: ", err
+            <- sleep 10000ms
             lo(op)
-
-*/

@@ -3,7 +3,7 @@ node_modules
 *.zip
 src/client/components/components.*
 __tmp__
-src/w232/**/*.js
+src/embedded/**/*.js
 __public__
 auth.conf
 db/**
