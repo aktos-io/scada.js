@@ -41,26 +41,6 @@ Install scada application:
     cd {{ scada }}/apps
     git clone {{ scada-app }} [custom-name]
     
-# Development
+# Development 
 
-### Linux
-
-To start WebUI development:
-
-```bash
-{{ scada }}/apps/{{ project }}/dev-ui
-```
-
-Then visit [http://localhost:4001](http://localhost:4001)
-
-To start Embedded system development:
-
-```bash
-{{ scada }}/apps/{{ project }}/dev-w232
-```
-
-### Windows
-
-* Open `git BASH`
-* `gulp --project={{ project }}`
-* `cd src/server; lsc server.ls`
+Use your `{{ scada-app }}` scripts in `./apps/{{ scada-app }}`
