@@ -1,5 +1,6 @@
 require! './packing': {pack}
 
+/*
 export function merge (obj1, ...sources)
     for obj2 in sources
         # merge rest one by one
@@ -14,6 +15,24 @@ export function merge (obj1, ...sources)
                 else
                         delete obj1[p]
     obj1
+*/
+
+export function merge (obj1, ...sources)
+    for obj2 in sources
+        # merge rest one by one
+        for p of obj2
+            if typeof obj2[p] is \object
+                if obj1[p]
+                    obj1[p] `merge` obj2[p]
+                else
+                    obj1[p] = obj2[p]
+            else
+                if obj1[p] isnt void
+                    obj1[p] = obj2[p]
+                else
+                    delete obj1[p]
+    obj1
+
 
 tests =
   * ->
@@ -100,7 +119,14 @@ tests =
 try
     for test in tests
         {result, expected} = test!
-        throw if pack(result) isnt pack(expected)
-        #console.log "RESULT: ", result
+        r = pack result
+        e = pack expected
+        eq = e is r
+        throw unless eq
 catch
+    console.log "merge test failed at: "
+    console.log "TEST: ", test
+    console.log "EXPECTED: #{pack expected}..."
+    console.log "RESULT  : #{pack result}..."
+    console.log "===", e
     throw "Test failed in merge.ls!"
