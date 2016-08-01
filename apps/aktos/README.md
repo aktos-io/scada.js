@@ -1,4 +1,4 @@
-# Demeter App
+# Aktos App
 
 # INSTALL
 
