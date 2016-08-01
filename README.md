@@ -31,10 +31,16 @@ Welcome to the realtime, distributed, web-technology oriented SCADA system for I
 
 Install all dependencies:
 
+    git clone {{ scada }}
     sudo npm install gulp livescript -g
-    cd PROJECT_DIRECTORY
+    cd {{ scada }}
     npm install
+    
+Install scada application: 
 
+    cd {{ scada }}/apps
+    git clone {{ scada-app }} [custom-name]
+    
 # Development
 
 ### Linux
@@ -42,7 +48,7 @@ Install all dependencies:
 To start WebUI development:
 
 ```bash
-./tools/dev-ui
+{{ scada }}/apps/{{ project }}/dev-ui
 ```
 
 Then visit [http://localhost:4001](http://localhost:4001)
@@ -50,11 +56,11 @@ Then visit [http://localhost:4001](http://localhost:4001)
 To start Embedded system development:
 
 ```bash
-./tools/dev-w232
+{{ scada }}/apps/{{ project }}/dev-w232
 ```
 
 ### Windows
 
 * Open `git BASH`
-* `gulp`
+* `gulp --project={{ project }}`
 * `cd src/server; lsc server.ls`
