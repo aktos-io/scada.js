@@ -1,6 +1,6 @@
 # Aktos App
 
-# INSTALL
+# Development
 
 ### Linux
 
