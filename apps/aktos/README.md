@@ -15,7 +15,7 @@ Then visit [http://localhost:4002](http://localhost:4002)
 To start Embedded system development:
 
 ```bash
-{{ scada }}/apps/aktos/dev-w232
+{{ scada }}/apps/aktos/dev-nfc
 ```
 
 ### Windows
