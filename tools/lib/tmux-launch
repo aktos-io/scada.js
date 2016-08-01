@@ -1,6 +1,6 @@
 #/bin/bash
 
-# help: 
+# help:
 #
 # background: run in background (good for headless server)
 
@@ -9,6 +9,9 @@ run-in-tmux() {
     list_of_commands=("$@")
     echo "run in tmux: ${SESSION}: $@"
     tmux new-window -t ${SESSION}:${AVAILABLE_WINDOW}
+    tmux send-keys -t ${SESSION}:${AVAILABLE_WINDOW} "PATH=$PATH" C-m
+    tmux send-keys -t ${SESSION}:${AVAILABLE_WINDOW} "NODE_PATH=$NODE_PATH" C-m
+    #tmux send-keys -t ${SESSION}:${AVAILABLE_WINDOW} "clear" C-m
     for i in "${list_of_commands[@]}"; do
         tmux send-keys -t ${SESSION}:${AVAILABLE_WINDOW} "$i" C-m
     done
@@ -31,4 +34,3 @@ attach-tmux-session() {
     echo "Session name is: $SESSION"
     tmux attach -t $SESSION
 }
-

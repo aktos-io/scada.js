@@ -5,6 +5,8 @@ CURR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$CURR_DIR"
 . ./lib/tmux-launch
 
+export NODE_PATH="${CURR_DIR}/../src/lib:$NODE_PATH"
+
 # run commands
 cd "$CURR_DIR/.."
 

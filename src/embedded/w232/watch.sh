@@ -1,3 +1,3 @@
-#!/bin/bash 
+#!/bin/bash
 
-lsc -cwb clear-init.ls 
+lsc -cwb init.ls 
