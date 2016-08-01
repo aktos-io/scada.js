@@ -35,6 +35,11 @@ Install all dependencies:
     cd PROJECT_DIRECTORY
     npm install
 
+# UPDATE
+
+    git pull origin master
+    git submodule update --recursive
+
 # Development
 
 ### Linux
