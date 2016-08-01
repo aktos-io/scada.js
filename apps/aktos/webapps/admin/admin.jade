@@ -1,0 +1,31 @@
+extends ../../templates/template.jade 
+
+block title
+    title Admin Page
+    
+block script 
+    script(src="admin.js")
+
+block ractive
+    panel(title="Login" type="{{#if login.ok}}primary{{else}}warning{{/if}}")
+        login(context="{{ login }}" db="{{ db }}")
+            
+    +if('login.ok')
+        div Login roles: {{ login.user.roles }}            
+        panel(title="Add User")
+            form-vertical
+                form-group
+                    b-label.col-sm-4 Username
+                    col-sm-8: input.form-control(value="{{newUser.name}}")
+                form-group
+                    b-label.col-sm-4 Password
+                    col-sm-8: input.form-control(value="{{newUser.passwd}}")
+                form-group
+                    b-label.col-sm-4 Roles
+                    col-sm-8: input.form-control(value="{{newUser.roles}}")
+                form-group
+                    btn(on-buttonclick="addUser") Add User!
+                    
+        panel(title="{{designDocument._id}}" type="success")
+            ddoc-editor(document="{{ designDocument }}" db="{{ productDb }}")
+        

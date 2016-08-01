@@ -1,0 +1,22 @@
+.row
+    .col-md-2.col-xs-2  
+        p Show/hide flot-chart Bound component1
+        input(type="checkbox" checked="{{ flot.show }}")
+    .col-md-5.col-xs-5
+        h3 Bound component1
+        +if('flot.show')
+            flot-chart(data1="{{ flot.bound1 }}" data2="{{ flot.bound2 }}")
+            p data1: {{ flot.bound1 }}
+            p data2: {{ flot.bound2 }}
+    .col-md-5.col-xs-5
+        h3 Bound component2 
+        flot-chart(data1="{{ flot.bound1 }}" data2="{{ flot.bound2 }}")
+        p data1: {{ flot.bound1 }}
+        p data2: {{ flot.bound2 }}
+                
+.row 
+    .col-md-12
+        h3 Unbound (free) instance
+        flot-chart(data1="{{ flot.unbound1 }}" data2="{{ flot.unbound2 }}")
+        p data1: {{ flot.unbound1 }}
+        p data2: {{ flot.unbound2 }}
