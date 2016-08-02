@@ -73,7 +73,7 @@ Directory structure is as follows:
 │       └── webserver (your webserver) 
 │       │     └── server.ls
 │       ├── ... (your other servers and scripts...)
-├── build
+├── build (temporary build directory, may be deleted at any time) 
 │   ├── ...
 │   └── public
 │       ├── my-web-app.html
@@ -99,7 +99,7 @@ Directory structure is as follows:
 │   └── lib (Libraries used in both server and browser)
 │       └── ...
 └── vendor (Vendor specific js and css files, like Ractive, jQuery, Bootstrap...)
-    ├── 000.jquery
+    ├── 000.jquery (prefixes are important for concatenation priority)
     │   └── jquery-1.12.0.min.js
     └── 000.ractive
         └── ractive.js
