@@ -1,3 +1,11 @@
+argv = require 'yargs' .argv
+
+project = argv.project
+project = \aktos if not project
+console.log "------------------------------------------"
+console.log "Compiling for project: #{project}"
+console.log "------------------------------------------"
+
 require! <[ gulp glob path fs globby]>
 require! 'prelude-ls': {union, join}
 require! 'gulp-livescript': lsc
@@ -15,21 +23,19 @@ require! 'gulp-tap': tap
 require! 'gulp-cached': cache
 require! 'gulp-clean': clean
 
-argv = require 'yargs' .argv
-
 # Build Settings
 notification-enabled = yes
 
 # Project Folder Structure
 paths = {}
 paths.vendor-folder = "#{__dirname}/vendor"
-paths.server-src = "#{__dirname}/src/server"
 paths.build-folder = "#{__dirname}/build"
 
 paths.client-public = "#{paths.build-folder}/public"
 paths.client-src = "#{__dirname}/src/client"
 paths.client-tmp = "#{paths.build-folder}/__client-tmp"
 paths.client-apps = "#{paths.client-public}"
+paths.client-webapps = "#{__dirname}/apps/#{project}/webapps"
 
 paths.lib-src = "#{__dirname}/src/lib"
 paths.lib-tmp = "#{paths.build-folder}/__lib-tmp"
@@ -102,7 +108,7 @@ gulp.task \default, ->
         delete cache.caches['browserify']
         gulp.start <[ browserify ]>
     for-browserify-apps =
-            "#{paths.client-src}/apps/**/*.ls"
+            "#{paths.client-webapps}/**/*.ls"
 
     watch for-browserify-apps, (event) ->
         # changes in components should trigger browserify via removing its cache entry
@@ -114,7 +120,7 @@ gulp.task \default, ->
         "#{paths.client-src}/components/**/*.jade"
         "!#{paths.client-src}/components/components.jade"
 
-        "#{paths.client-src}/apps/**/*.jade"
+        "#{paths.client-webapps}/**/*.jade"
         "#{paths.client-src}/templates/**/*.jade"
 
     watch for-jade, ->
@@ -132,7 +138,7 @@ gulp.task \js, ->
         .pipe gulp.dest paths.client-tmp
 
 gulp.task \html, ->
-    base = "#{paths.client-src}/apps"
+    base = "#{paths.client-webapps}"
     gulp.src "#{base}/**/*.html", {base: base}
         .pipe gulp.dest "#{paths.client-public}"
 
@@ -150,7 +156,7 @@ gulp.task \lsc-components <[ generate-components-module ]> ->
 
 gulp.task \lsc-apps <[ lsc-components ]> ->
     console.log "RUNNING LSC_apps"
-    base = "#{paths.client-src}/apps"
+    base = "#{paths.client-webapps}"
     gulp.src "#{base}/**/*.ls", {base: base}
         .pipe lsc!
         .on \error, (err) ->
@@ -252,7 +258,7 @@ gulp.task \assets, ->
 
 # Compile Jade files in paths.client-src to the paths.client-tmp folder
 gulp.task \jade <[ jade-components ]> ->
-    base = "#{paths.client-src}/apps"
+    base = "#{paths.client-webapps}"
     files = glob.sync "#{base}/**/*.jade"
     files = [.. for files when is-module-index base, ..]
     gulp.src files

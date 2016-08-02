@@ -24,10 +24,10 @@ export !function LongPolling settings
     @max-interval = 5000ms
 
 LongPolling::on = (event, callback) ->
-    @events[event] ++= callback
+    @events[event] = callback
 
 LongPolling::trigger = (name, ...event) ->
-    [..apply @, event for @events[name] when typeof .. is \function]
+    @events[name].apply this, event 
 
 LongPolling::send = (p1, p2, p3) ->
     /*
@@ -190,9 +190,11 @@ LongPolling::put-raw = (msg, path, callback) ->
                 # log "#{request-id} Response Error: ", err
                 throw "RES.ON ERROR???"
 
+            /*
             res.on \close, ->
                 # INFO: This handler is fired on a successfull communication end
                 # in Espruino, not in Node.js
+            */
 
         req.on \error, (err) ->
             # called when we closed server with Ctrl+C
@@ -210,7 +212,6 @@ LongPolling::put-raw = (msg, path, callback) ->
 LongPolling::connect = (next-step) ->
     __ = @
     # log = get-logger \CONNECT
-
     @connecting = yes
 
     interval = @retry-count * @retry-interval
@@ -238,10 +239,12 @@ LongPolling::connect = (next-step) ->
         __.connected = yes
         __.connecting = no
         __.receive-loop!
+        <- sleep 0
         __.trigger \connect, data
-        next-step! if typeof next-step is \function
+        <- sleep 0
+        next-step!
     catch
-        console.log "LongPolling: Connect error : ", e
+        #console.log "LongPolling: Connect error : ", e
         <- sleep 10ms # sleep for no reason
         __.connecting = no
         __.connect!
@@ -263,5 +266,7 @@ LongPolling::receive-loop = ->
             return op!
         else
             # log "got data: ", pack res
+            <- sleep 0
             __.trigger \data, res
+            <- sleep 1500ms
             lo(op)

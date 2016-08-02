@@ -1,9 +1,3 @@
 [submodule "tools/aktos-espruino-tools"]
 	path = tools/aktos-espruino-tools
 	url = git@github.com:aktos-io/aktos-espruino-tools
-[submodule "src/client/apps/demeter"]
-	path = src/client/apps/demeter
-	url = git@github.com:demeter-tel/demeter-app
-[submodule "src/server/demeter"]
-	path = src/server/demeter
-	url = git@github.com:demeter-tel/demeter-services
