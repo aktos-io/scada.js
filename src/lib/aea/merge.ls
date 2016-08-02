@@ -1,7 +1,6 @@
 require! './packing': {pack}
 
-/*
-export function merge (obj1, ...sources)
+export function merge_1 (obj1, ...sources)
     for obj2 in sources
         # merge rest one by one
         for p of obj2
@@ -15,7 +14,6 @@ export function merge (obj1, ...sources)
                 else
                         delete obj1[p]
     obj1
-*/
 
 export function merge (obj1, ...sources)
     for obj2 in sources
@@ -27,16 +25,18 @@ export function merge (obj1, ...sources)
                 else
                     obj1[p] = obj2[p]
             else
-                if obj1[p] isnt void
+                if obj2[p] isnt void
                     obj1[p] = obj2[p]
                 else
                     delete obj1[p]
     obj1
 
 
+
+
+
 tests =
-  * ->
-        # simple merge
+  'simple merge': ->
         a=
           a: 1
           b: 2
@@ -57,7 +57,7 @@ tests =
                 cb: 5
 
         {result, expected}
-  * ->
+  'deleting something': ->
         # delete
         a=
           a: 1
@@ -73,7 +73,7 @@ tests =
             b: 2
 
         {result, expected}
-  * ->
+  'force overwrite': ->
         # force overwrite
         a=
           a: 1
@@ -94,7 +94,7 @@ tests =
                 cb: 5
 
         {result, expected}
-  * ->
+  'merging object with functions': ->
         # object with functions
         a=
           a: 1
@@ -116,17 +116,13 @@ tests =
                 cb: (x) -> x
 
         {result, expected}
+
 try
-    for test in tests
+    for name, test of tests
         {result, expected} = test!
-        r = pack result
-        e = pack expected
-        eq = e is r
-        throw unless eq
+        throw if (pack expected) isnt pack(result)
 catch
-    console.log "merge test failed at: "
-    console.log "TEST: ", test
-    console.log "EXPECTED: #{pack expected}..."
-    console.log "RESULT  : #{pack result}..."
-    console.log "===", e
-    throw "Test failed in merge.ls!"
+    console.log "merge test failed test: ", name
+    console.log "EXPECTED: ", expected
+    console.log "RESULT  : ", result
+    throw "Test failed in merge.ls!, test: #{name}"
