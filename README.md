@@ -34,12 +34,10 @@ Install all dependencies:
 # Starting a New Project 
 
 1. Create your project directory (eg. `myproject`) in `{{ scada }}/apps`
-2. Place any README, scripts and source codes in this directory. 
+2. Place any README, scripts and source codes in your project directory. 
 3. Place your browser applications (webapps) in `{{ myproject }}/webapps` directory 
 4. Start Gulp by passing your project name as parameter: `gulp --project=myproject`
 5. The browser applications (`.html`, `.js` and `.css` files) will be created under `{{ scada }}/build/public` directory 
-
-# Directory Structure 
 
 Directory structure is as follows:
 
@@ -75,6 +73,18 @@ Directory structure is as follows:
 │       ├── webserver (your webserver) 
 │       │     └── server.ls
 │       ... (your other servers and scripts...)
+...
+```
+
+# Rest of Directory Structure
+
+Other Directories are as follows: 
+
+```
+...
+├── README.md
+├── gulpfile.ls
+├── package.json
 ├── build (temporary build directory, may be deleted at any time) 
 │   ├── ...
 │   └── public
@@ -87,9 +97,6 @@ Directory structure is as follows:
 │       ├── js
 │       │   └── vendor.js
 │       ... (more assets and other projects here)
-├── gulpfile.ls
-├── package.json
-├── README.md
 ├── src
 │   ├── client
 │   │   ├── assets (files that are directly copied to {{ scada }}/build/public
