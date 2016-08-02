@@ -21,12 +21,6 @@ Welcome to the realtime, distributed, web-technology oriented SCADA system for I
 * Supports tools and documentation for [DRY](https://en.wikipedia.org/wiki/Don't_repeat_yourself) and [TTD](https://en.wikipedia.org/wiki/Test-driven_development) in mind.
 * Supports build system via [Gulp](http://gulpjs.com) ([in LiveScript](./gulpfile.ls))
 
-# TODO
-
-* Add native cross platform desktop app support via [electron](http://electron.atom.io/)
-* Add native mobile app support via [PhoneGap](http://phonegap.com/)
-* Add OPC support
-
 # INSTALL
 
 Install all dependencies:
@@ -118,3 +112,11 @@ Your directory structure should look like so:
 # Examples 
 
 You can start a new project by copying `./apps/aktos` as `./apps/myproject`
+
+# TODO/ROADMAP
+
+* Add native cross platform desktop app support via [electron](http://electron.atom.io/)
+* Add native mobile app support via [PhoneGap](http://phonegap.com/)
+* Add OPC support
+
+
