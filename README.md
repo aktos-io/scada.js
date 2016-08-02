@@ -69,14 +69,12 @@ Directory structure is as follows:
 │       │   │   ├── README.md
 │       │   │   ├── my-web-app.jade
 │       │   │   ├── my-web-app.ls
-│       │   │   ├── ... (more files here)
-│       │   │   ...
+│       │   │   ... (more files here)
 │       │   ├── (more webapps here...)
 │       │   ...
-│       └── webserver (your webserver) 
+│       ├── webserver (your webserver) 
 │       │     └── server.ls
-│       ├── ... (your other servers and scripts...)
-│       ...
+│       ... (your other servers and scripts...)
 ├── build (temporary build directory, may be deleted at any time) 
 │   ├── ...
 │   └── public
@@ -88,28 +86,26 @@ Directory structure is as follows:
 │       │   └── vendor.css
 │       ├── js
 │       │   └── vendor.js
-│       ├── (more assets and other projects here)
-│       ...
+│       ... (more assets and other projects here)
 ├── gulpfile.ls
 ├── package.json
 ├── README.md
 ├── src
 │   ├── client
-│   │   ├── assets (directly goes to {{ scada }}/build/public
-│   │   │   ├── ...
+│   │   ├── assets (files that are directly copied to {{ scada }}/build/public
+│   │   │   ... 
 │   │   ├── components (Ractive Components)
-│   │   │   ├── ...
+│   │   │   ... 
 │   │   └── templates (Jade stuff)
-│   │       ├── ...
-│   └── lib (Libraries used in both server and browser)
-│       └── ...
+│   │       ... 
+│   └── lib 
+│       ... (Libraries used in both server and browser)
 └── vendor (Vendor specific js and css files, like Ractive, jQuery, Bootstrap...)
-    ├── 000.jquery (prefixes are important for concatenation priority)
+    ├── 000.jquery 
     │   └── jquery-1.12.0.min.js
-    └── 000.ractive
+    ├── 000.ractive
     │   └── ractive.js
-    ├── ...
-    ...
+    ... (prefixes are important for concatenation priority)
 ```
 
 # Examples 
