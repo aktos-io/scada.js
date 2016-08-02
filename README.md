@@ -76,29 +76,26 @@ Your directory structure should look like so:
 │   └── public
 │       ├── my-web-app.html
 │       ├── my-web-app.js
+│       ├── showcase.html
+│       ├── showcase.js
 │       ├── css
 │       │   └── vendor.css
 │       ├── js
 │       │   └── vendor.js
-│       ├── showcase.html
-│       ├── showcase.js
-│       └── (more assets goes here)
+│       └── (more assets and projects here)
 ├── gulpfile.ls
 ├── package.json
 ├── README.md
 ├── src
 │   ├── client
-│   │   ├── assets
+│   │   ├── assets (directly goes to {{ scada }}/build/public
 │   │   │   ├── ...
 │   │   ├── components
-│   │   │   ├── ace-editor
-│   │   │   │   ├── index.jade
-│   │   │   │   ├── index.ls
-│   │   │   │   └── README.md
-│   │   │   └── ...
-│   │   └── templates
-│   │       ├── mixins.jade
-│   │       └── template.jade
+│   │   │   ├── ...
+│   │   │   ...
+│   │   └── templates (Jade stuff)
+│   │       ├── ...
+│   │       ...
 │   └── lib
 │       └── ...
 └── vendor
