@@ -36,11 +36,85 @@ Install all dependencies:
     cd {{ scada }}
     npm install
     
-Install scada application: 
-
-    cd {{ scada }}/apps
-    git clone {{ scada-app }} [custom-name]
     
-# Development 
+# Starting a New Project 
 
-Use your `{{ scada-app }}` scripts in `./apps/{{ scada-app }}`
+1. Create your project directory (eg. `myproject`) in `{{ scada }}/apps`
+2. Place any README, scripts and source codes in this directory. 
+3. Place your browser applications (webapps) in `{{ myproject }}/webapps` directory 
+4. Start Gulp by passing your project name as parameter: `gulp --project=myproject`
+5. The browser applications (`.html` pages) will be created under `{{ scada }}/build/public` directory 
+
+Your directory structure should look like so: 
+
+```
+{{ scada }}
+├── apps
+│   ├── aktos
+│   │   ├── README.md
+│   │   ├── my-custom-script.sh
+│   │   ├── webapps
+│   │   │   └── showcase
+│   │   │       ├── ack-button.jade
+│   │   │       ├── data-table.jade
+│   │   │       ├── date-picker.jade
+│   │   │       ├── example-component.jade
+│   │   │       ├── flot-chart.jade
+│   │   │       ├── pie-chart.jade
+│   │   │       ├── search-combobox.jade
+│   │   │       ├── showcase.jade
+│   │   │       └── showcase.ls
+│   │   └── webserver
+│   │       └── server.ls
+│   └── myproject 
+│       ├── README.md
+│       ├── ...
+│       ├── webapps
+│       │   └── my-web-app
+│       │       ├── README.md
+│       │       ├── my-web-app.jade
+│       │       ├── my-web-app.ls
+│       │       ├── ...
+│       └── webserver
+│           └── server.ls
+├── build
+│   ├── ...
+│   └── public
+│       ├── my-web-app.html
+│       ├── my-web-app.js
+│       ├── css
+│       │   └── vendor.css
+│       ├── js
+│       │   └── vendor.js
+│       ├── showcase.html
+│       ├── showcase.js
+│       └── (more assets goes here)
+├── gulpfile.ls
+├── package.json
+├── README.md
+├── src
+│   ├── client
+│   │   ├── assets
+│   │   │   ├── ...
+│   │   ├── components
+│   │   │   ├── ace-editor
+│   │   │   │   ├── index.jade
+│   │   │   │   ├── index.ls
+│   │   │   │   └── README.md
+│   │   │   └── ...
+│   │   └── templates
+│   │       ├── mixins.jade
+│   │       └── template.jade
+│   └── lib
+│       └── ...
+└── vendor
+    ├── 000.jquery
+    │   └── jquery-1.12.0.min.js
+    └── 000.ractive
+        └── ractive.js
+
+```
+
+# Examples 
+
+You can start a new project by copying `./apps/aktos` as `./apps/myproject`
