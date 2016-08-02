@@ -39,7 +39,9 @@ Install all dependencies:
 4. Start Gulp by passing your project name as parameter: `gulp --project=myproject`
 5. The browser applications (`.html` pages) will be created under `{{ scada }}/build/public` directory 
 
-Your directory structure should look like so: 
+# Directory Structure 
+
+Directory structure is as follows:
 
 ```
 {{ scada }}
