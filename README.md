@@ -37,7 +37,7 @@ Install all dependencies:
 2. Place any README, scripts and source codes in this directory. 
 3. Place your browser applications (webapps) in `{{ myproject }}/webapps` directory 
 4. Start Gulp by passing your project name as parameter: `gulp --project=myproject`
-5. The browser applications (`.html` pages) will be created under `{{ scada }}/build/public` directory 
+5. The browser applications (`.html`, `.js` and `.css` files) will be created under `{{ scada }}/build/public` directory 
 
 # Directory Structure 
 
@@ -50,7 +50,7 @@ Directory structure is as follows:
 │   │   ├── README.md
 │   │   ├── my-custom-script.sh
 │   │   ├── webapps
-│   │   │   └── showcase (web application name)
+│   │   │   └── showcase
 │   │   │       ├── ack-button.jade
 │   │   │       ├── data-table.jade
 │   │   │       ├── date-picker.jade
@@ -58,21 +58,25 @@ Directory structure is as follows:
 │   │   │       ├── flot-chart.jade
 │   │   │       ├── pie-chart.jade
 │   │   │       ├── search-combobox.jade
-│   │   │       ├── showcase.jade (web application main html file (same basename with its directory)
-│   │   │       └── showcase.ls   (web application main js file (same basename with its directory)
+│   │   │       ├── showcase.jade (main html file (entry point))
+│   │   │       └── showcase.ls   (main js file (entry point))
 │   │   └── webserver
 │   │       └── server.ls
 │   └── myproject 
 │       ├── README.md
 │       ├── webapps
 │       │   └── my-web-app
-│       │       ├── README.md
-│       │       ├── my-web-app.jade
-│       │       ├── my-web-app.ls
-│       │       ├── ... (more files here, use by `require('./example')` in js; and `include ./example.jade` in Jade 
+│       │   │   ├── README.md
+│       │   │   ├── my-web-app.jade
+│       │   │   ├── my-web-app.ls
+│       │   │   ├── ... (more files here)
+│       │   │   ...
+│       │   ├── (more webapps here...)
+│       │   ...
 │       └── webserver (your webserver) 
 │       │     └── server.ls
 │       ├── ... (your other servers and scripts...)
+│       ...
 ├── build (temporary build directory, may be deleted at any time) 
 │   ├── ...
 │   └── public
@@ -84,7 +88,8 @@ Directory structure is as follows:
 │       │   └── vendor.css
 │       ├── js
 │       │   └── vendor.js
-│       └── (more assets and projects here)
+│       ├── (more assets and other projects here)
+│       ...
 ├── gulpfile.ls
 ├── package.json
 ├── README.md
@@ -102,8 +107,9 @@ Directory structure is as follows:
     ├── 000.jquery (prefixes are important for concatenation priority)
     │   └── jquery-1.12.0.min.js
     └── 000.ractive
-        └── ractive.js
-
+    │   └── ractive.js
+    ├── ...
+    ...
 ```
 
 # Examples 
