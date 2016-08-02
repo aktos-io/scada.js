@@ -105,7 +105,7 @@ Directory structure is as follows:
     │   └── jquery-1.12.0.min.js
     ├── 000.ractive
     │   └── ractive.js
-    ... (prefixes are important for concatenation priority)
+    ... (prefixes are used to determine concatenation order)
 ```
 
 # Examples 
