@@ -50,7 +50,7 @@ Directory structure is as follows:
 │   │   ├── README.md
 │   │   ├── my-custom-script.sh
 │   │   ├── webapps
-│   │   │   └── showcase
+│   │   │   └── showcase (web application name)
 │   │   │       ├── ack-button.jade
 │   │   │       ├── data-table.jade
 │   │   │       ├── date-picker.jade
@@ -58,21 +58,21 @@ Directory structure is as follows:
 │   │   │       ├── flot-chart.jade
 │   │   │       ├── pie-chart.jade
 │   │   │       ├── search-combobox.jade
-│   │   │       ├── showcase.jade
-│   │   │       └── showcase.ls
+│   │   │       ├── showcase.jade (web application main html file (same basename with its directory)
+│   │   │       └── showcase.ls   (web application main js file (same basename with its directory)
 │   │   └── webserver
 │   │       └── server.ls
 │   └── myproject 
 │       ├── README.md
-│       ├── ...
 │       ├── webapps
 │       │   └── my-web-app
 │       │       ├── README.md
 │       │       ├── my-web-app.jade
 │       │       ├── my-web-app.ls
-│       │       ├── ...
-│       └── webserver
-│           └── server.ls
+│       │       ├── ... (more files here, use by `require('./example')` in js; and `include ./example.jade` in Jade 
+│       └── webserver (your webserver) 
+│       │     └── server.ls
+│       ├── ... (your other servers and scripts...)
 ├── build
 │   ├── ...
 │   └── public
@@ -92,15 +92,13 @@ Directory structure is as follows:
 │   ├── client
 │   │   ├── assets (directly goes to {{ scada }}/build/public
 │   │   │   ├── ...
-│   │   ├── components
+│   │   ├── components (Ractive Components)
 │   │   │   ├── ...
-│   │   │   ...
 │   │   └── templates (Jade stuff)
 │   │       ├── ...
-│   │       ...
-│   └── lib
+│   └── lib (Libraries used in both server and browser)
 │       └── ...
-└── vendor
+└── vendor (Vendor specific js and css files, like Ractive, jQuery, Bootstrap...)
     ├── 000.jquery
     │   └── jquery-1.12.0.min.js
     └── 000.ractive
