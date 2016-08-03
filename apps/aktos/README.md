@@ -7,15 +7,15 @@
 To start WebUI development:
 
 ```bash
-{{ scada }}/apps/aktos/dev-ui
+./dev-ui
 ```
 
 Then visit [http://localhost:4002](http://localhost:4002)
 
-To start Embedded system development:
+To start embedded development:
 
 ```bash
-{{ scada }}/apps/aktos/dev-nfc
+./aktos/dev-nfc
 ```
 
 ### Windows
