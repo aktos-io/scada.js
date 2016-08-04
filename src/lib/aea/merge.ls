@@ -1,5 +1,6 @@
 require! './packing': {pack}
 
+/*
 export function merge_1 (obj1, ...sources)
     for obj2 in sources
         # merge rest one by one
@@ -14,21 +15,31 @@ export function merge_1 (obj1, ...sources)
                 else
                         delete obj1[p]
     obj1
+*/
 
-export function merge (obj1, ...sources)
+export function merge obj1, obj2
+    for p of obj2
+        if typeof! obj2[p] is \Object
+            if obj1[p]
+                obj1[p] `merge` obj2[p]
+            else
+                obj1[p] = obj2[p]
+        else
+            if (Array.isArray obj1[p]) and (Array.isArray obj2[p])
+                # array, merge with current one
+                for i in obj2[p]
+                    if i not in obj1[p]
+                        obj1[p] ++= i
+            else if obj2[p] isnt void
+                obj1[p] = obj2[p]
+            else
+                delete obj1[p]
+    obj1
+
+export function merge-all (obj1, ...sources)
     for obj2 in sources
         # merge rest one by one
-        for p of obj2
-            if typeof obj2[p] is \object
-                if obj1[p]
-                    obj1[p] `merge` obj2[p]
-                else
-                    obj1[p] = obj2[p]
-            else
-                if obj2[p] isnt void
-                    obj1[p] = obj2[p]
-                else
-                    delete obj1[p]
+        obj1 `merge` obj2
     obj1
 
 
@@ -37,6 +48,23 @@ export function merge (obj1, ...sources)
 
 tests =
   'simple merge': ->
+        a=
+          a: 1
+          b: 2
+
+        b=
+          c: 5
+
+        result = a `merge` b
+
+        expected =
+            a: 1
+            b: 2
+            c: 5
+
+        {result, expected}
+
+  'simple merge2': ->
         a=
           a: 1
           b: 2
@@ -57,6 +85,25 @@ tests =
                 cb: 5
 
         {result, expected}
+
+  'merge lists': ->
+        a=
+          a: 1
+          b: 2
+          c: [1, 2]
+        b=
+          b: 8
+          c: [1, 4]
+
+        result = a `merge` b
+
+        expected =
+            a: 1
+            b: 8
+            c: [1, 2, 4]
+
+        {result, expected}
+
   'deleting something': ->
         # delete
         a=
@@ -85,7 +132,7 @@ tests =
           c:  # do not merge, force overwrite
             cb: 5
 
-        result = merge a, {c: void}, b
+        result = merge-all a, {c: void}, b
 
         expected =
             a: 1
