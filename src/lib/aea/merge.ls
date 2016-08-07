@@ -1,13 +1,13 @@
 require! './packing': {pack}
 
-/* */
+/* * /
 export function merge (obj1, obj2)
     for p of obj2
         try
             throw if typeof! obj2[p] isnt \Object
             throw if typeof! obj1[p] isnt \Object
             # if and only if second hand is object
-            obj1[p] = obj1[p] `merge` obj2[p]
+            obj1[p] `merge` obj2[p]
         catch
             if Array.isArray obj1[p]
                 # array, merge with current one
@@ -20,16 +20,18 @@ export function merge (obj1, obj2)
                 delete obj1[p]
     obj1
 
-/* * /
+/* */
+
 export function merge obj1, obj2
     for p of obj2
+        t-obj1 = typeof! obj1[p]
         if typeof! obj2[p] is \Object
-            if obj1[p]
+            if t-obj1 is \Object
                 obj1[p] `merge` obj2[p]
             else
                 obj1[p] = obj2[p]
         else
-            if Array.isArray obj1[p]
+            if t-obj1 is \Array
                 # array, merge with current one
                 for i, j of obj2[p]
                     if obj1[p].index-of(j) is -1
@@ -188,14 +190,18 @@ tests =
 
         {result, expected}
 
-try
-    for name, test of tests
-        {result, expected} = test!
-        throw if result is undefined
-        throw if expected is undefined
-        throw if (pack expected) isnt pack(result)
-catch
-    console.log "merge test failed test: ", name
-    console.log "EXPECTED: ", expected
-    console.log "RESULT  : ", result
-    throw "Test failed in merge.ls!, test: #{name}"
+#console.log "Merge tests started..."
+start = Date.now!
+for i from 0 to 1
+    try
+        for name, test of tests
+            {result, expected} = test!
+            throw if result is undefined
+            throw if expected is undefined
+            throw if (pack expected) isnt pack(result)
+    catch
+        console.log "merge test failed test: ", name
+        console.log "EXPECTED: ", expected
+        console.log "RESULT  : ", result
+        throw "Test failed in merge.ls!, test: #{name}"
+#console.log "Merge tests took: #{Date.now! - start} milliseconds..."
