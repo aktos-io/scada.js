@@ -31,7 +31,7 @@
                         btn(type="info" on-buttonclick="endEditing"): icon-remove
                     | {{else}}
                     td.
-                        {{i+1}}
+                        {{ parseInt(.no) + 1 }}
                     | {{/if}}
                     //- rest of columns (data)
                     | {{#if isEditingLine(.id)}}
@@ -42,4 +42,14 @@
                     +each(".cols")
                         td {{.}}
                     | {{/if}}
-                    
+        
+        +if('settings.pageSize > 0')
+            +if('(tableview_all.length / settings.pageSize) > 1')
+                tfoot
+                    tr
+                        td(colspan="{{ columnList.length + 1 }}")
+                            btn-group
+                                +each('range(1, Math.ceil(tableview_all.length / settings.pageSize)):i')
+                                    btn(on-buttonclick="selectPage" value="{{ i }}") {{ . }}
+    
+                        

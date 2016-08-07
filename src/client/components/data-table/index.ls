@@ -28,9 +28,6 @@ Ractive.components[component-name] = Ractive.extend do
             console.log "DATA_TABLE: problem with col-names: ", e
             return
 
-        if settings.debug
-            console.log "HEY HEY"
-
         @set \dataFilters, settings.filters
 
         do function create-view param
@@ -40,11 +37,36 @@ Ractive.components[component-name] = Ractive.extend do
             #console.log "DATA_TABLE: Running create-view...", selected-filter if settings.debug
             try
                 #return if typeof! tabledata isnt \Array
+                #throw "tabledata empty" if tabledata.length is 0
                 ffunc = filters[selected-filter]
                 filtered = ffunc.apply __, [tabledata, param] if typeof ffunc is \function
                 if typeof settings.after-filter is \function
                     #console.log "DATA_TABLE: applying after-filter: ", settings.after-filter if settings.debug
-                    settings.after-filter.apply __, [filtered, (view) -> __.set \tableview, view]
+
+                    generate-visible = (view) ->
+                        console.log "orig view size: ", view.length
+                        return if view.length < 1
+                        __.set \tableview_all, view
+                        if settings.page-size > 0
+                            curr-page = __.get \currPage
+                            items-per-page = view.length / settings.page-size
+                            console.log "generating visible part, page-size: ", settings.page-size, view.length, items-per-page
+                            min = (x, y) ->
+                                if x < y
+                                    x
+                                else
+                                    y
+                            items =
+                                from: curr-page * settings.page-size
+                                to: min ((curr-page + 1) * settings.page-size) - 1, (view.length - 1)
+                            console.log "generating visible part, items:", items
+
+                            __.set \tableview, [.. for view when items.from <= ..no <= items.to ]
+                        else
+                            __.set \tableview, view
+
+                    #settings.after-filter.apply __, [filtered, (view) -> __.set \tableview, view]
+                    settings.after-filter.apply __, [filtered, generate-visible]
                 else
                     console.log "after-filter is not defined?", settings.col-names
             catch
@@ -70,6 +92,9 @@ Ractive.components[component-name] = Ractive.extend do
                 on-change!
             else
                 create-view!
+
+        @observe \settings.pageSize, -> 
+            create-view!
 
         # Run post init (from instance)
         try
@@ -109,6 +134,10 @@ Ractive.components[component-name] = Ractive.extend do
                 @set \selectedFilter, filter-name if filter-name
                 create-view!
 
+            select-page: (page-num) ->
+                @set \currPage, page-num
+                create-view!
+
     data: ->
         __ = @
         instance: __
@@ -117,7 +146,9 @@ Ractive.components[component-name] = Ractive.extend do
             unpack pack __.get \default
         curr: null
         id: \will-be-random
-        tabledata: null
+        tabledata: []
+        tableview: []
+        tableview_all: []
         editable: false
         clicked-index: null
         cols: null
@@ -128,7 +159,7 @@ Ractive.components[component-name] = Ractive.extend do
         data-filters:
             all: (docs) -> docs
         selected-filter: \all
-
+        curr-page: 0
         is-editing-line: (index) ->
             editable = @get \editable
             clicked-index = @get \clickedIndex
@@ -143,3 +174,10 @@ Ractive.components[component-name] = Ractive.extend do
             __.fire \setFilter, \all
             create-view = __.get \create-view
             create-view!
+
+        range: (_from, _to) ->
+            try
+                range = [i for i from parse-int(_from) to parse-int(_to)]
+                range
+            catch
+                console.log "error in range generator: ", _from, _to
