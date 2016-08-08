@@ -6,7 +6,23 @@
         tableview: [{id: column-id, cols: [col1, col2, col3, ...], background-color: css-color} for rows]
 +component('data-table')
     b-table 
-        thead 
+        thead
+            tr
+                td(colspan="{{ columnList.length + 1 }}")
+                    row 
+                        | {{#if addingNew}}
+                        |   {{>editForm}}
+                        | {{else}}
+                        .col-md-3.col-sm-3
+                            +unless('addingNew')
+                                btn(on-buttonclick="addNewOrder")
+                                    icon-plus
+                                    span {{yield addnewTitle}}
+                        | {{/if}}
+            tr
+                td(colspan="{{ columnList.length + 1 }}")
+                    | {{>header}}
+
             tr.
                 {{#if clickedIndex !== null}}
                     <th>Editing...</th>
@@ -16,11 +32,9 @@
                 {{#each columnList}}
                     <th>{{ . }}</th>
                 {{/each}}
+
         tbody
-            tr
-                td(colspan="{{ columnList.length + 1 }}").
-                    {{>header}}
-            +each('tableview:i')
+            +each('tableview_visible:i')
                 tr.input-line(
                     class="{{#if clickedIndex === i}}warning{{/if}}"
                     on-doubleclick="clicked"
@@ -28,7 +42,16 @@
                     //- first column (numbering or controls)
                     | {{#if isClicked(.id)}}
                     td
-                        btn(type="info" on-buttonclick="endEditing"): icon-remove
+                        btn-group-vertical 
+                            btn(
+                                on-buttonclick="toggleEditing"
+                                type="{{#if editTooltip }}danger{{else}}default{{/if}}"
+                                active="{{editable}}"
+                                )
+                                | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
+                                icon-pencil 
+                            btn(type="success" on-buttonclick="saveAndExit"): icon-ok
+                            btn(type="info" on-buttonclick="newOrderClose"): icon-remove
                     | {{else}}
                     td.
                         {{ parseInt(.no) + 1 }}
@@ -44,12 +67,12 @@
                     | {{/if}}
         
         +if('settings.pageSize > 0')
-            +if('(tableview_all.length / settings.pageSize) > 1')
+            +if('(tableview.length / settings.pageSize) > 1')
                 tfoot
                     tr
                         td(colspan="{{ columnList.length + 1 }}")
                             btn-group
-                                +each('range(1, Math.ceil(tableview_all.length / settings.pageSize)):i')
+                                +each('range(1, Math.ceil(tableview.length / settings.pageSize)):i')
                                     btn(on-buttonclick="selectPage" value="{{ i }}") {{ . }}
     
                         
