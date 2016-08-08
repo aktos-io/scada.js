@@ -30,6 +30,12 @@ Ractive.components[component-name] = Ractive.extend do
         db = @get \db
         gen-entry-id = @get \gen-entry-id
 
+        @set \readonly, if @partials.editForm
+            no
+        else
+            yes
+
+
         @set \dataFilters, settings.filters
 
         do function create-view param
@@ -225,6 +231,7 @@ Ractive.components[component-name] = Ractive.extend do
             unpack pack __.get \settings.default
         curr: null
         id: \will-be-random
+        readonly: no
         tabledata: []
         tableview: []
         tableview_visible: []

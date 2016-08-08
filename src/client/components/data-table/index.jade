@@ -7,18 +7,19 @@
 +component('data-table')
     b-table 
         thead
-            tr
-                td(colspan="{{ columnList.length + 1 }}")
-                    row 
-                        | {{#if addingNew}}
-                        |   {{>editForm}}
-                        | {{else}}
-                        .col-md-3.col-sm-3
-                            +unless('addingNew')
-                                btn(on-buttonclick="addNewOrder")
-                                    icon-plus
-                                    span {{yield addnewTitle}}
-                        | {{/if}}
+            +unless('readonly')
+                tr
+                    td(colspan="{{ columnList.length + 1 }}")
+                        row 
+                            | {{#if addingNew}}
+                            |   {{>editForm}}
+                            | {{else}}
+                            .col-md-3.col-sm-3
+                                +unless('addingNew')
+                                    btn(on-buttonclick="addNewOrder")
+                                        icon-plus
+                                        span {{yield addnewTitle}}
+                            | {{/if}}
             tr
                 td(colspan="{{ columnList.length + 1 }}")
                     | {{>header}}
@@ -43,6 +44,7 @@
                     | {{#if isClicked(.id)}}
                     td
                         btn-group-vertical 
+                            | {{#unless readonly}}
                             btn(
                                 on-buttonclick="toggleEditing"
                                 type="{{#if editTooltip }}danger{{else}}default{{/if}}"
@@ -50,6 +52,7 @@
                                 )
                                 | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
                                 icon-pencil 
+                            | {{/unless}}
                             btn(type="success" on-buttonclick="saveAndExit"): icon-ok
                             btn(type="info" on-buttonclick="newOrderClose"): icon-remove
                     | {{else}}
