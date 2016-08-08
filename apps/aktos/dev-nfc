@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# include libs
+CURR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ROOT_DIR="$CURR_DIR/../.."
+TOOLS_DIR="$ROOT_DIR/tools"
+PROJECT_NAME="$(basename $CURR_DIR)"
+. "${TOOLS_DIR}/lib/tmux-launch"
+
+# exports
+export PATH="${TOOLS_DIR}/aktos-espruino-tools:${PATH}"
+export NODE_PATH="${ROOT_DIR}/src/lib:$NODE_PATH"
+
+cd "$ROOT_DIR"
+
+# run commands
+# EMBEDDED CONSOLE
+start-tmux-session 0
+run-in-tmux "cd $CURR_DIR/nfc-embedded" 'aea-espruino-console'
+
+# W232 SERVER
+# on another terminal window
+start-tmux-session 1
+run-in-tmux 'xdg-open . 2> /dev/null' 'atom .'
+run-in-tmux "cd $CURR_DIR/nfc-server" 'lsc socket-server.ls'
+
+# EMBEDDED CONTROL CONSOLE
+start-tmux-session 2
+run-in-tmux "cd $CURR_DIR/nfc-embedded" 'aea-espruino-ctl'
+
+
+# Show in terminal
+x-terminal-emulator -e "tmux attach -t ${SESSION_BASE}-1"
+resolution=$(xdpyinfo | grep dimensions | awk {'print $2'})
+IFS='x' read -a res_arr <<< $resolution
+x-terminal-emulator -geometry 25x10+${res_arr[0]}+${res_arr[1]} -e "tmux attach -t ${SESSION_BASE}-2"
+attach-tmux-session 0

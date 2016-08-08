@@ -21,19 +21,17 @@ Welcome to the realtime, distributed, web-technology oriented SCADA system for I
 * Supports tools and documentation for [DRY](https://en.wikipedia.org/wiki/Don't_repeat_yourself) and [TTD](https://en.wikipedia.org/wiki/Test-driven_development) in mind.
 * Supports build system via [Gulp](http://gulpjs.com) ([in LiveScript](./gulpfile.ls))
 
-# TODO
-
-* Add native cross platform desktop app support via [electron](http://electron.atom.io/)
-* Add native mobile app support via [PhoneGap](http://phonegap.com/)
-* Add OPC support
-
 # INSTALL
 
 Install all dependencies:
 
+    git clone {{ scada }}
     sudo npm install gulp livescript -g
-    cd PROJECT_DIRECTORY
+    cd {{ scada }}
     npm install
+    
+    
+# Starting a New Project 
 
 # UPDATE
 
@@ -43,23 +41,97 @@ Install all dependencies:
 # Development
 
 ### Linux
+=======
+1. Create your project directory (eg. `myproject`) in `{{ scada }}/apps`
+2. Place any README, scripts and source codes in your project directory. 
+3. Place your browser applications (webapps) in `{{ myproject }}/webapps` directory 
+4. Start Gulp by passing your project name as parameter: `gulp --project=myproject`
+5. The browser applications (`.html`, `.js` and `.css` files) will be created under `{{ scada }}/build/public` directory 
 
-To start WebUI development:
+Directory structure is as follows:
 
-```bash
-./tools/dev-ui
+```
+{{ scada }}
+├── apps
+│   ├── aktos
+│   │   ├── README.md
+│   │   ├── my-custom-script.sh
+│   │   ├── webapps
+│   │   │   └── showcase
+│   │   │       ├── ack-button.jade
+│   │   │       ├── data-table.jade
+│   │   │       ├── date-picker.jade
+│   │   │       ├── example-component.jade
+│   │   │       ├── flot-chart.jade
+│   │   │       ├── pie-chart.jade
+│   │   │       ├── search-combobox.jade
+│   │   │       ├── showcase.jade (main html file (entry point))
+│   │   │       └── showcase.ls   (main js file (entry point))
+│   │   └── webserver
+│   │       └── server.ls
+│   └── myproject 
+│       ├── README.md
+│       ├── webapps
+│       │   └── my-web-app
+│       │   │   ├── README.md
+│       │   │   ├── my-web-app.jade
+│       │   │   ├── my-web-app.ls
+│       │   │   ... (more files here)
+│       │   ├── (more webapps here...)
+│       │   ...
+│       ├── webserver (your webserver) 
+│       │     └── server.ls
+│       ... (your other servers and scripts...)
+...
 ```
 
-Then visit [http://localhost:4001](http://localhost:4001)
+# Rest of Directory Structure
 
-To start Embedded system development:
+Other Directories are as follows: 
 
-```bash
-./tools/dev-w232
+```
+...
+├── README.md
+├── gulpfile.ls
+├── package.json
+├── build (temporary build directory, may be deleted at any time) 
+│   ├── ...
+│   └── public
+│       ├── my-web-app.html
+│       ├── my-web-app.js
+│       ├── showcase.html
+│       ├── showcase.js
+│       ├── css
+│       │   └── vendor.css
+│       ├── js
+│       │   └── vendor.js
+│       ... (more assets and other projects here)
+├── src
+│   ├── client
+│   │   ├── assets (files that are directly copied to {{ scada }}/build/public
+│   │   │   ... 
+│   │   ├── components (Ractive Components)
+│   │   │   ... 
+│   │   └── templates (Jade stuff)
+│   │       ... 
+│   └── lib 
+│       ... (Libraries used in both server and browser)
+└── vendor (Vendor specific js and css files, like Ractive, jQuery, Bootstrap...)
+    ├── 000.jquery 
+    │   └── jquery-1.12.0.min.js
+    ├── 000.ractive
+    │   └── ractive.js
+    ... (prefixes are used to determine concatenation order)
 ```
 
-### Windows
+# Examples 
 
-* Open `git BASH`
-* `gulp`
-* `cd src/server; lsc server.ls`
+You can start a new project by copying `./apps/aktos` as `./apps/myproject`
+
+# TODO/ROADMAP
+
+* Add native cross platform desktop app support via [electron](http://electron.atom.io/)
+* Add native mobile app support via [PhoneGap](http://phonegap.com/)
+* Add OPC support
+
+
