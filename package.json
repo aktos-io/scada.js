@@ -25,6 +25,7 @@
     "express": "^4.14.0",
     "express-http-proxy": "^0.8.0",
     "jquery": "^3.0.0",
+    "jstransformer-marked": "^1.0.1",
     "pouchdb": "^5.4.5",
     "pouchdb-authentication": "^0.5.3",
     "prelude-ls": "^1.1.2",
