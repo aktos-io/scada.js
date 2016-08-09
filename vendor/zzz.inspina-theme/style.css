@@ -587,6 +587,7 @@ body.canvas-menu.mini-navbar nav.navbar-static-side {
     display: block !important;
   }
 }
+/*
 .btn {
   border-radius: 3px;
 }
@@ -1034,6 +1035,9 @@ button.dim:active:before {
 .btn:focus {
   outline: none !important;
 }
+
+
+*/
 .label {
   background-color: #d1dade;
   color: #5e5e5e;
