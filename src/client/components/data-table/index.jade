@@ -37,7 +37,7 @@
         tbody
             +each('tableview_visible:i')
                 tr.input-line(
-                    class="{{#if clickedIndex === i}}warning{{/if}}"
+                    class="{{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}} {{ .class }} {{ .background-color }} active"
                     on-doubleclick="clicked"
                     )
                     //- first column (numbering or controls)
