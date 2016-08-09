@@ -1,6 +1,29 @@
+//- 
+    parameters: 
+        ... TODO
+        
+    internals: 
+        tableview: [{id: column-id, cols: [col1, col2, col3, ...], background-color: css-color} for rows]
 +component('data-table')
     b-table 
-        thead 
+        thead
+            +unless('readonly')
+                tr
+                    td(colspan="{{ columnList.length + 1 }}")
+                        row 
+                            | {{#if addingNew}}
+                            |   {{>editForm}}
+                            | {{else}}
+                            .col-md-3.col-sm-3
+                                +unless('addingNew')
+                                    btn(on-buttonclick="addNewOrder")
+                                        icon-plus
+                                        span {{yield addnewTitle}}
+                            | {{/if}}
+            tr
+                td(colspan="{{ columnList.length + 1 }}")
+                    | {{>header}}
+
             tr.
                 {{#if clickedIndex !== null}}
                     <th>Editing...</th>
@@ -10,22 +33,31 @@
                 {{#each columnList}}
                     <th>{{ . }}</th>
                 {{/each}}
+
         tbody
-            tr
-                td(colspan="{{ columnList.length + 1 }}").
-                    {{>header}}
-            +each('tableview:i')
+            +each('tableview_visible:i')
                 tr.input-line(
-                    class="{{#if clickedIndex === i}}warning{{/if}}"
+                    class="{{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}} {{ .class }} {{ .background-color }} active"
                     on-doubleclick="clicked"
                     )
                     //- first column (numbering or controls)
                     | {{#if isClicked(.id)}}
                     td
-                        btn(type="info" on-buttonclick="endEditing"): icon-remove
+                        btn-group-vertical 
+                            | {{#unless readonly}}
+                            btn(
+                                on-buttonclick="toggleEditing"
+                                type="{{#if editTooltip }}danger{{else}}default{{/if}}"
+                                active="{{editable}}"
+                                )
+                                | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
+                                icon-pencil 
+                            | {{/unless}}
+                            btn(type="success" on-buttonclick="saveAndExit"): icon-ok
+                            btn(type="info" on-buttonclick="newOrderClose"): icon-remove
                     | {{else}}
                     td.
-                        {{i+1}}
+                        {{ parseInt(.no) + 1 }}
                     | {{/if}}
                     //- rest of columns (data)
                     | {{#if isEditingLine(.id)}}
@@ -36,4 +68,14 @@
                     +each(".cols")
                         td {{.}}
                     | {{/if}}
-                    
+        
+        +if('settings.pageSize > 0')
+            +if('(tableview.length / settings.pageSize) > 1')
+                tfoot
+                    tr
+                        td(colspan="{{ columnList.length + 1 }}")
+                            btn-group
+                                +each('range(1, Math.ceil(tableview.length / settings.pageSize)):i')
+                                    btn(on-buttonclick="selectPage" value="{{ i }}") {{ . }}
+    
+                        
