@@ -2870,7 +2870,8 @@ a.forum-item-title:hover {
 }
 .tabs-container .tabs-left .tab-pane .panel-body,
 .tabs-container .tabs-right .tab-pane .panel-body {
-  border-top: 1px solid #e7eaec;
+  /*border-top: 1px solid #e7eaec;
+  */
 }
 .tabs-container .nav-tabs > li a:hover {
   background: transparent;
@@ -3871,6 +3872,7 @@ table.table-mail tr td {
 .black-bg {
   background-color: #262626;
 }
+/*
 .panel-primary {
   border-color: #1ab394;
 }
@@ -3910,6 +3912,7 @@ table.table-mail tr td {
   border-color: #ed5565;
   color: #ffffff;
 }
+*/
 .progress-bar {
   background-color: #1ab394;
 }

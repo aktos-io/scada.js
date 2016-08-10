@@ -3,7 +3,8 @@ var path = require( 'path' );
 var Ractive = require( 'ractive' );
 var cheerio = require( 'cheerio' );
 
-var content = fs.readFileSync( './public/index.html' ).toString();
+var content = fs.readFileSync( '../build/public/demeter.html' ).toString();
+return
 var $ = cheerio.load(content);
 var template = $('#app').html();
 fs.writeFileSync( './public/ractive.html', template);
