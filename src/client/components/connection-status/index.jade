@@ -1,0 +1,13 @@
++component('connection-status')
+    | {{#if connectionOk === true }}
+    btn(on-buttonclick="showDetails")
+        div(class="fa fa-long-arrow-down fa-2x" style="color: orange")
+        div(class="fa fa-long-arrow-up fa-2x" style="color: green")    
+    | {{/if}}
+
+    | {{#if connectionOk === false }}
+    btn(on-buttonclick="showDetails")
+        div(class="fa fa-pulse fa-spinner fa-2x" style="color: red")
+    | {{/if}}
+    
+    
