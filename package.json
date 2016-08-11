@@ -30,7 +30,8 @@
     "pouchdb-authentication": "^0.5.3",
     "prelude-ls": "^1.1.2",
     "ractive": "^0.7.3",
-    "randomstring": "^1.1.5"
+    "randomstring": "^1.1.5",
+    "soap": "^0.16.0"
   },
   "devDependencies": {
     "browserify": "^13.0.1",
