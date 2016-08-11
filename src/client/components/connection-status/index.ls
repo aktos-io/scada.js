@@ -16,7 +16,7 @@ Ractive.components[component-name] = Ractive.extend do
                 __.set \connectionOk, not err
                 #__.set \dbInfo, db-info if db-info
                 <- sleep 5000ms
-                console.log "Heartbeat (5ms): Database connection.. "
+                #console.log "Heartbeat (5ms): Database connection.. "
                 lo(op)
 
 
