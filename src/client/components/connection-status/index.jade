@@ -1,13 +1,18 @@
 +component('connection-status')
-    | {{#if connectionOk === true }}
-    span(class="glyphicon glyphicon-transfer"
-        aria-hidden="true"
-        style="color: green; font-size: 40px; -ms-transform: rotate(90deg); -webkit-transform: rotate(90deg); transform: rotate(90deg)"
-    )
-    | {{/if}}
+    button(
+        type="button" 
+        class="btn" 
+        style="background-color: #428bca;"
+        )
+        | {{#if connectionOk === true }}
+        span(class="glyphicon glyphicon-transfer"
+            aria-hidden="true"
+            style="color: white; font-size: 20px; -ms-transform: rotate(90deg); -webkit-transform: rotate(90deg); transform: rotate(90deg)"
+        )
+        | {{/if}}
 
-    | {{#if connectionOk === false }}
-    span(class="fa fa-pulse fa-spinner fa-3x" style="color: red")
-    | {{/if}}
-    
+        | {{#if connectionOk === false }}
+        span(class="fa fa-pulse fa-spinner fa-3x" style="color: white; font-size: 20px;")
+        | {{/if}}
+        
     
