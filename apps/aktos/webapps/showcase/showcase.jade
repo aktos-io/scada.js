@@ -13,7 +13,9 @@ block ractive
             inspina-header      
                 span AKTOS.io
                 input(value="{{testMenu.selected}}")            
-            inspina-content  
+            inspina-content 
+                include ./bar-chart.jade 
+                include ./stacked-bar-chart.jade
                 include ./ack-button.jade
                 include ./data-table.jade
                 include ./example-component.jade
@@ -21,6 +23,7 @@ block ractive
                 include ./date-picker.jade
                 include ./pie-chart.jade 
                 include ./flot-chart.jade 
+
             inspina-footer
                 +partial('right')
                     span aktos.io

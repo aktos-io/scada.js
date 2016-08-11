@@ -33,6 +33,15 @@ Install all dependencies:
     
 # Starting a New Project 
 
+# UPDATE
+
+    git pull origin master
+    git submodule update --recursive
+
+# Development
+
+### Linux
+=======
 1. Create your project directory (eg. `myproject`) in `{{ scada }}/apps`
 2. Place any README, scripts and source codes in your project directory. 
 3. Place your browser applications (webapps) in `{{ myproject }}/webapps` directory 
