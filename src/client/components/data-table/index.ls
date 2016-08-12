@@ -200,6 +200,8 @@ Ractive.components[component-name] = Ractive.extend do
                 editing-doc = __.get \curr
                 console.log "adding new entry to the order: ", editing-doc
                 entry-template = __.get \settings.default [keypath]
+                if typeof! editing-doc[keypath] isnt \Array
+                    editing-doc[keypath] = []
                 editing-doc[keypath] ++= entry-template[keypath].0
 
                 #console.log "adding new entry: ", editing-doc
@@ -230,7 +232,7 @@ Ractive.components[component-name] = Ractive.extend do
         instance: @
         new-order: ->
             console.log "ORDER_TABLE: Returning new default value: ", __.get \settings.default
-            unpack pack __.get \settings.default
+            try unpack pack __.get \settings.default
         curr: null
         id: \will-be-random
         readonly: no
