@@ -1,4 +1,4 @@
-require! 'aea': {sleep}
+require! 'aea': {sleep, is-db-alive}
 component-name = "connection-status"
 
 Ractive.components[component-name] = Ractive.extend do
@@ -9,10 +9,9 @@ Ractive.components[component-name] = Ractive.extend do
         __ = @
 
         db = @get \db
-
         do
             <- :lo(op) ->
-                err, db-info <- db.info
+                err <- is-db-alive db
                 __.set \connectionOk, not err
                 #__.set \dbInfo, db-info if db-info
                 <- sleep 5000ms

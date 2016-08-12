@@ -46,7 +46,7 @@ export function check-login (db, callback)
                 try
                     res = JSON.parse data
                 catch
-                    res = data 
+                    res = data
                 throw "not logged in..." if res.user-ctx.name is null
                 #console.log "We are already logged in as ", res.user-ctx.name
                 callback false if typeof! callback is \Function
@@ -57,6 +57,26 @@ export function check-login (db, callback)
         error: (err) ->
             console.log "Something went wrong while checking logged in state: ", err
             callback true if typeof! callback is \Function
+
+export function is-db-alive (db, callback)
+    session-db = db._db_name.split '/'
+        ..[session-db.length - 1] = ''
+
+    session-url = join "/" session-db
+    #console.log "Checking sessoni with url: ", session-url
+    $.ajax do
+        type: \GET
+        url: session-url
+        headers:
+            'Content-Type':'application/x-www-form-urlencoded'
+
+        success: (data) ->
+            #console.log "DB is alive: ", res
+            callback err = false, data if typeof! callback is \Function
+
+        error: (err) ->
+            #console.log "Something went wrong while checking db status", err
+            callback err = true if typeof! callback is \Function
 
 
 export function make-design-doc (obj)
