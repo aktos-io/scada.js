@@ -20,6 +20,10 @@ Ractive.components[component-name] = Ractive.extend do
 
         settings = @get \settings
 
+        if typeof! settings isnt \Object
+            console.log "No settings found!"
+            return
+
         try
             col-list = split ',', settings.col-names
             @set \columnList, col-list
@@ -35,6 +39,8 @@ Ractive.components[component-name] = Ractive.extend do
         else
             yes
 
+        unless @get \readonly
+            throw "GEN_ENTRY_ID: NOT FOUND!!!" if typeof! gen-entry-id isnt \Function
 
         @set \dataFilters, settings.filters
 
@@ -44,30 +50,24 @@ Ractive.components[component-name] = Ractive.extend do
             tabledata = __.get \tabledata
             #console.log "DATA_TABLE: Running create-view...", selected-filter if settings.debug
             try
-                #return if typeof! tabledata isnt \Array
-                #throw "tabledata empty" if tabledata.length is 0
+                return if typeof! tabledata isnt \Array
+                throw "tabledata empty" if tabledata.length is 0
                 ffunc = filters[selected-filter]
                 filtered = ffunc.apply __, [tabledata, param] if typeof ffunc is \function
                 if typeof settings.after-filter is \function
                     #console.log "DATA_TABLE: applying after-filter: ", settings.after-filter if settings.debug
 
                     generate-visible = (view) ->
-                        console.log "orig view size: ", view.length
-                        return if view.length < 1
+                        #console.log "orig view size: ", view.length
+                        #return if view.length < 1
                         __.set \tableview, view
                         if settings.page-size > 0
                             curr-page = __.get \currPage
-                            items-per-page = view.length / settings.page-size
-                            console.log "generating visible part, page-size: ", settings.page-size, view.length, items-per-page
-                            min = (x, y) ->
-                                if x < y
-                                    x
-                                else
-                                    y
+                            min = (x, y) -> if x < y then x else y
                             items =
                                 from: curr-page * settings.page-size
                                 to: min ((curr-page + 1) * settings.page-size) - 1, (view.length - 1)
-                            console.log "generating visible part, items:", items
+                            #console.log "generating visible part, items:", items
 
                             __.set \tableview_visible, [.. for view when items.from <= ..no <= items.to ]
                         else
@@ -78,7 +78,7 @@ Ractive.components[component-name] = Ractive.extend do
                 else
                     console.log "after-filter is not defined?", settings.col-names
             catch
-                console.log "DATA_TABLE: Error getting filtered: ", e, tabledata
+                #console.log "DATA_TABLE: Error getting filtered: ", e, tabledata
                 null
 
         @set \create-view, create-view
@@ -139,7 +139,9 @@ Ractive.components[component-name] = Ractive.extend do
             set-filter: (filter-name) ->
                 console.log "DATA_TABLE: filter is set to #{filter-name}"
                 @set \selectedFilter, filter-name if filter-name
+                @set \currPage, 0
                 create-view!
+
 
             select-page: (page-num) ->
                 @set \currPage, page-num
