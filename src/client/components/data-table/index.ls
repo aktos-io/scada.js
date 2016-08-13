@@ -198,23 +198,22 @@ Ractive.components[component-name] = Ractive.extend do
             add-new-entry: (keypath) ->
                 __ = @
                 editing-doc = __.get \curr
-                console.log "adding new entry to the order: ", editing-doc
-                entry-template = __.get \settings.default [keypath]
+                template = unpack pack __.get "settings.default.#{keypath}.0"
                 if typeof! editing-doc[keypath] isnt \Array
+                    console.log "Keypath is not an array, converting to array"
                     editing-doc[keypath] = []
-                editing-doc[keypath] ++= entry-template[keypath].0
+                editing-doc[keypath] ++= template
 
-                #console.log "adding new entry: ", editing-doc
+                console.log "adding new entry: ", template
                 __.set \curr, editing-doc
 
             delete-order: (index-str) ->
                 [key, index] = split ':' index-str
                 index = parse-int index
-                console.log "ORDER_TABLE: delete ..#{key}.#{index}"
                 editing-doc = @get \curr
                 editing-doc[key].splice index, 1
-                console.log "editing doc: (deleted: )", editing-doc.entries
                 @set \curr, editing-doc
+
 
             run-handler: (params) ->
                 handlers = settings.handlers
