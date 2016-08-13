@@ -156,8 +156,8 @@ Ractive.components[component-name] = Ractive.extend do
                 @fire \endEditing
 
             add-new-order: ->
-                @set \addingNew, true
                 @set \curr, (@get \newOrder)!
+                @set \addingNew, true
                 console.log "adding brand-new order!", (@get \curr)
 
             new-order-close: ->
