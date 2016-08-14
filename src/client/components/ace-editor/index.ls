@@ -18,8 +18,8 @@ Ractive.components['ace-editor'] = Ractive.extend do
         e.$blockScrolling = Infinity
         ace.require "ace/edit_session" .EditSession.prototype.$useWorker = no
 
-        console.log "ace editor running..."
-        
+        #console.log "ace editor running..."
+
         setting = null
         getting = null
         __.observe \code, (val) ->
