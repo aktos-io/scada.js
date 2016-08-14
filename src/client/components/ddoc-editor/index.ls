@@ -7,7 +7,7 @@ Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
     isolated: yes
     oninit: ->
-        console.log "ddoc editor initializing..."
+        #console.log "ddoc editor initializing..."
         db = @get \db
         design-document = (@get \document)
         @set (camelize \design-document), design-document
