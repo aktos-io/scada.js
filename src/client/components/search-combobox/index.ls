@@ -20,6 +20,8 @@ Ractive.components[component-name] = Ractive.extend do
                 selected = parse-int selected
                 data = [{id: parse-int(..id), name: ..name} for data]
 
+            return if not data or data.length is 0 
+
             if selected in [..id for data when ..id not in [..id for default-data]]
                 $ __.find \* .selectpicker 'val', selected
                 __.set \selected-name, [..name for data when ..id is selected].0
