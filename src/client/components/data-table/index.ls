@@ -1,4 +1,4 @@
-require! 'prelude-ls': {split, take, join, lists-to-obj, sum}
+require! 'prelude-ls': {split, take, join, lists-to-obj, sum, filter}
 require! 'aea': {sleep, merge, pack, unpack}
 require! 'randomstring': random
 
@@ -92,7 +92,7 @@ Ractive.components[component-name] = Ractive.extend do
             do on-change = ->
                 settings.on-change.apply __
         catch
-            console.log "DATA TABLE: INFO: ", e
+            #console.log "DATA TABLE: INFO: ", e
 
         @observe \changes, ->
             if typeof on-change is \function
@@ -216,14 +216,8 @@ Ractive.components[component-name] = Ractive.extend do
 
 
             run-handler: (params) ->
-                handlers = settings.handlers
-                handler = params  # maybe we want to run a handler without parameter
-                param = null
-                console.log "DEBUG: PARAMS: ", params
-                [handler, ...param] = params if typeof! params is \Array
-                console.log "running handler with params: ", param
-
-                handlers[handler].apply @, param if typeof handlers[handler] is \function
+                console.log "Running run-handler event"
+                (@get \runHandler) params
 
 
     data: ->
@@ -261,15 +255,16 @@ Ractive.components[component-name] = Ractive.extend do
             index is clicked-index
 
         run-handler: (params) ->
-            console.log "RUN HANDLER IS RUNNING: PARAMS: ", params
             handlers = __.get \settings.handlers
             handler = params  # maybe we want to run a handler without parameter
             param = null
-            console.log "DEBUG: PARAMS: ", params
             [handler, ...param] = params if typeof! params is \Array
-            console.log "running handler with params: ", param
 
-            handlers[handler].apply @, param if typeof handlers[handler] is \function
+            if typeof handlers[handler] is \function
+                console.log "RUNNING HANDLER: #{handler}(#{param})"
+                return handlers[handler].apply __, param
+            else
+                console.log "no handler found with the name: ", handler
 
         trigger-change: ->
             __.set \dontWatchChanges, yes
@@ -287,3 +282,7 @@ Ractive.components[component-name] = Ractive.extend do
                 range
             catch
                 console.log "error in range generator: ", _from, _to
+
+        curr-view: ->
+            curr = __.get \curr
+            filter (.id is curr._id), __.get \tableview .0

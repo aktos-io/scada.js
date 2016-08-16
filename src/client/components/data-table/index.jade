@@ -37,7 +37,7 @@
         tbody
             +each('tableview_visible:i')
                 tr.input-line(
-                    style="{{#if isClicked(.id)}}border: 2px solid gray;{{/if}}{{#if isEditingLine(.id)}}border: 2px dashed red;{{/if}} {{.style}}"
+                    style="{{#if isClicked(.id)}}border: 2px solid white;{{/if}}{{#if isEditingLine(.id)}}border: 2px dashed white;{{/if}} {{.style}}"
                     on-doubleclick="clicked"
                     )
                     //- first column (numbering or controls)
