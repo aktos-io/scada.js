@@ -77,15 +77,17 @@ is-module-index = (base, file) ->
     #console.log "not a module index: #{file} (filename: #{filename}, ext: #{ext})"
     return false
 
+
+# Clean the build directory
+gulp.task \clean, ->
+    gulp.src \build
+        .pipe clean {+force, -read}
+
+
 # Organize Tasks
 gulp.task \default, ->
     console.log "task lsc is running.."
     console.log "cleaning build directory"
-
-    gulp.src \build
-        .pipe clean {+force, -read}
-    <- sleep 1000ms
-    console.log "build directory cleaned..."
 
     do function run-all
         gulp.start <[ js browserify html vendor vendor-css assets jade ]>

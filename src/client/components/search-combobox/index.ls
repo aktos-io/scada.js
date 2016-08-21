@@ -14,15 +14,17 @@ Ractive.components[component-name] = Ractive.extend do
         function observe-selected
             selected = __.get \selected
             default-data = __.get \defaultData
+            data = __.get \data
             try
                 throw if (Number selected) isnt (parse-int selected)
                 selected = parse-int selected
+                data = [{id: parse-int(..id), name: ..name} for data]
 
-            data = __.get \data
+            return if not data or data.length is 0 
+
             if selected in [..id for data when ..id not in [..id for default-data]]
                 $ __.find \* .selectpicker 'val', selected
                 __.set \selected-name, [..name for data when ..id is selected].0
-                console.log "COMBOBOX selected id:::", selected
             else
                 #console.log "COMBOBOX: selected value is not in dataset, ds: ", selected , [..id for data]
 
@@ -54,12 +56,10 @@ Ractive.components[component-name] = Ractive.extend do
         else
             __.set \iselected, -111
 
-        __.observe \selected, (new-val) ->
+        __.observe \selected, (val) ->
             observe-selected!
 
         __.observe \iselected, (val) ->
-            #if val in [..id for (__.get 'data')]
-            #    #console.log "selection is valid: ", val
             __.set \selected, val
 
 

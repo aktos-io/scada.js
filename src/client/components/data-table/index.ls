@@ -1,4 +1,4 @@
-require! 'prelude-ls': {split, take, join, lists-to-obj, sum}
+require! 'prelude-ls': {split, take, join, lists-to-obj, sum, filter}
 require! 'aea': {sleep, merge, pack, unpack}
 require! 'randomstring': random
 
@@ -20,6 +20,10 @@ Ractive.components[component-name] = Ractive.extend do
 
         settings = @get \settings
 
+        if typeof! settings isnt \Object
+            console.log "No settings found!"
+            return
+
         try
             col-list = split ',', settings.col-names
             @set \columnList, col-list
@@ -35,6 +39,8 @@ Ractive.components[component-name] = Ractive.extend do
         else
             yes
 
+        unless @get \readonly
+            throw "GEN_ENTRY_ID: NOT FOUND!!!" if typeof! gen-entry-id isnt \Function
 
         @set \dataFilters, settings.filters
 
@@ -44,30 +50,24 @@ Ractive.components[component-name] = Ractive.extend do
             tabledata = __.get \tabledata
             #console.log "DATA_TABLE: Running create-view...", selected-filter if settings.debug
             try
-                #return if typeof! tabledata isnt \Array
-                #throw "tabledata empty" if tabledata.length is 0
+                return if typeof! tabledata isnt \Array
+                throw "tabledata empty" if tabledata.length is 0
                 ffunc = filters[selected-filter]
                 filtered = ffunc.apply __, [tabledata, param] if typeof ffunc is \function
                 if typeof settings.after-filter is \function
                     #console.log "DATA_TABLE: applying after-filter: ", settings.after-filter if settings.debug
 
                     generate-visible = (view) ->
-                        console.log "orig view size: ", view.length
-                        return if view.length < 1
+                        #console.log "orig view size: ", view.length
+                        #return if view.length < 1
                         __.set \tableview, view
                         if settings.page-size > 0
                             curr-page = __.get \currPage
-                            items-per-page = view.length / settings.page-size
-                            console.log "generating visible part, page-size: ", settings.page-size, view.length, items-per-page
-                            min = (x, y) ->
-                                if x < y
-                                    x
-                                else
-                                    y
+                            min = (x, y) -> if x < y then x else y
                             items =
                                 from: curr-page * settings.page-size
                                 to: min ((curr-page + 1) * settings.page-size) - 1, (view.length - 1)
-                            console.log "generating visible part, items:", items
+                            #console.log "generating visible part, items:", items
 
                             __.set \tableview_visible, [.. for view when items.from <= ..no <= items.to ]
                         else
@@ -78,7 +78,7 @@ Ractive.components[component-name] = Ractive.extend do
                 else
                     console.log "after-filter is not defined?", settings.col-names
             catch
-                console.log "DATA_TABLE: Error getting filtered: ", e, tabledata
+                #console.log "DATA_TABLE: Error getting filtered: ", e, tabledata
                 null
 
         @set \create-view, create-view
@@ -92,7 +92,7 @@ Ractive.components[component-name] = Ractive.extend do
             do on-change = ->
                 settings.on-change.apply __
         catch
-            console.log "DATA TABLE: INFO: ", e
+            #console.log "DATA TABLE: INFO: ", e
 
         @observe \changes, ->
             if typeof on-change is \function
@@ -139,7 +139,9 @@ Ractive.components[component-name] = Ractive.extend do
             set-filter: (filter-name) ->
                 console.log "DATA_TABLE: filter is set to #{filter-name}"
                 @set \selectedFilter, filter-name if filter-name
+                @set \currPage, 0
                 create-view!
+
 
             select-page: (page-num) ->
                 @set \currPage, page-num
@@ -154,8 +156,8 @@ Ractive.components[component-name] = Ractive.extend do
                 @fire \endEditing
 
             add-new-order: ->
-                @set \addingNew, true
                 @set \curr, (@get \newOrder)!
+                @set \addingNew, true
                 console.log "adding brand-new order!", (@get \curr)
 
             new-order-close: ->
@@ -196,31 +198,26 @@ Ractive.components[component-name] = Ractive.extend do
             add-new-entry: (keypath) ->
                 __ = @
                 editing-doc = __.get \curr
-                console.log "adding new entry to the order: ", editing-doc
-                entry-template = __.get \settings.default [keypath]
-                editing-doc[keypath] ++= entry-template[keypath].0
+                template = unpack pack __.get "settings.default.#{keypath}.0"
+                if typeof! editing-doc[keypath] isnt \Array
+                    console.log "Keypath is not an array, converting to array"
+                    editing-doc[keypath] = []
+                editing-doc[keypath] ++= template
 
-                #console.log "adding new entry: ", editing-doc
+                console.log "adding new entry: ", template
                 __.set \curr, editing-doc
 
             delete-order: (index-str) ->
                 [key, index] = split ':' index-str
                 index = parse-int index
-                console.log "ORDER_TABLE: delete ..#{key}.#{index}"
                 editing-doc = @get \curr
                 editing-doc[key].splice index, 1
-                console.log "editing doc: (deleted: )", editing-doc.entries
                 @set \curr, editing-doc
 
-            run-handler: (params) ->
-                handlers = settings.handlers
-                handler = params  # maybe we want to run a handler without parameter
-                param = null
-                console.log "DEBUG: PARAMS: ", params
-                [handler, ...param] = params if typeof! params is \Array
-                console.log "running handler with params: ", param
 
-                handlers[handler].apply @, param if typeof handlers[handler] is \function
+            run-handler: (params) ->
+                console.log "Running run-handler event"
+                (@get \runHandler) params
 
 
     data: ->
@@ -228,7 +225,7 @@ Ractive.components[component-name] = Ractive.extend do
         instance: @
         new-order: ->
             console.log "ORDER_TABLE: Returning new default value: ", __.get \settings.default
-            unpack pack __.get \settings.default
+            try unpack pack __.get \settings.default
         curr: null
         id: \will-be-random
         readonly: no
@@ -258,15 +255,16 @@ Ractive.components[component-name] = Ractive.extend do
             index is clicked-index
 
         run-handler: (params) ->
-            console.log "RUN HANDLER IS RUNNING: PARAMS: ", params
             handlers = __.get \settings.handlers
             handler = params  # maybe we want to run a handler without parameter
             param = null
-            console.log "DEBUG: PARAMS: ", params
             [handler, ...param] = params if typeof! params is \Array
-            console.log "running handler with params: ", param
 
-            handlers[handler].apply @, param if typeof handlers[handler] is \function
+            if typeof handlers[handler] is \function
+                console.log "RUNNING HANDLER: #{handler}(#{param})"
+                return handlers[handler].apply __, param
+            else
+                console.log "no handler found with the name: ", handler
 
         trigger-change: ->
             __.set \dontWatchChanges, yes
@@ -284,3 +282,7 @@ Ractive.components[component-name] = Ractive.extend do
                 range
             catch
                 console.log "error in range generator: ", _from, _to
+
+        curr-view: ->
+            curr = __.get \curr
+            filter (.id is curr._id), __.get \tableview .0

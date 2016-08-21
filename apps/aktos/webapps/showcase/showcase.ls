@@ -27,6 +27,16 @@ convert-to-flot =  ->
     #console.log "flot random data is: ", z
     z
 
+simulate-bar-data = ->
+    reasons =
+        "Son kullanma tarihi geçmiş"
+        "Müşteri İade"
+        "Hatalı Sipariş"
+        "Hayat zor"
+
+    random = -> parse-int (Math.random! * 100)
+    x = [{name: .., amount: random!} for reasons]
+
 get-page-url = ->
     url = window.location.href
 simulate-data = ->
@@ -35,9 +45,9 @@ simulate-data = ->
         "Müşteri İade"
         "Hatalı Sipariş"
         "Hayat zor"
-
     random = -> parse-int (Math.random! * 100)
     x = [random! for reasons]
+
 utc-date = ->
     date = new Date!
     new Date date.getUTCFullYear!, date.getUTCMonth!, date.getUTCDate!, date.getUTCHours!, date.getUTCMinutes!, date.getUTCSeconds!
@@ -89,6 +99,10 @@ ractive = new Ractive do
             show: yes
         pie:
             show: yes
+        bar:
+            show: yes
+            bound: simulate-bar-data!
+            unbound: simulate-bar-data!
         button:
             show: yes
             run-console-log: ->
@@ -160,7 +174,7 @@ ractive = new Ractive do
             console.log "ack button in the main instance fired with value: ", val
 
 
-x = 23
+x = 235484545
 ractive.on do
     complete: ->
         i = 0
