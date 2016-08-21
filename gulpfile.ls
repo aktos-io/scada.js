@@ -21,7 +21,6 @@ require! './src/lib/aea': {sleep}
 require! 'gulp-flatten': flatten
 require! 'gulp-tap': tap
 require! 'gulp-cached': cache
-require! 'gulp-clean': clean
 
 # Build Settings
 notification-enabled = yes
@@ -78,17 +77,8 @@ is-module-index = (base, file) ->
     return false
 
 
-# Clean the build directory
-gulp.task \clean, ->
-    gulp.src \build
-        .pipe clean {+force, -read}
-
-
 # Organize Tasks
 gulp.task \default, ->
-    console.log "task lsc is running.."
-    console.log "cleaning build directory"
-
     do function run-all
         gulp.start <[ js browserify html vendor vendor-css assets jade ]>
 
