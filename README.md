@@ -131,7 +131,7 @@ You can start a new project by copying `./apps/aktos` as `./apps/myproject`
 # TODO/ROADMAP
 
 * Add native cross platform desktop app support via [electron](http://electron.atom.io/)
-* Add native mobile app support via [PhoneGap](http://phonegap.com/)
+* Add native mobile app support via Service Worker
 * Add OPC support
 
 
