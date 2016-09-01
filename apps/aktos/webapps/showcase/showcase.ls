@@ -1,16 +1,12 @@
-{sleep} = require "aea"
-require! {
-    'prelude-ls': {
-        group-by
-        sort-by
-    }
-}
+require! 'prelude-ls': {group-by, sort-by}
 require! components
-require! 'aea': {PouchDB}
-Ractive.DEBUG = /unminified/.test -> /*unminified*/
+require! 'aea': {PouchDB, sleep}
+
+
 
 db = new PouchDB 'https://demeter.cloudant.com/cicimeze', skip-setup: yes
 
+console.log "lan......", db
 
 data1 = [[0,4],[1,8],[2,5],[3,10],[4,4]]
 data2 = [[0,1],[1,0],[2,2]]

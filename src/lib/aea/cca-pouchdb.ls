@@ -59,6 +59,7 @@ export function check-login (db, callback)
             callback true if typeof! callback is \Function
 
 export function is-db-alive (db, callback)
+    return unless db 
     session-db = db._db_name.split '/'
         ..[session-db.length - 1] = ''
 
