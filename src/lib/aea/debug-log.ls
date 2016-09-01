@@ -6,6 +6,10 @@ export debug-log = (...x) ->
 function align-left width, inp
     x = (inp + " " * width).slice 0, width
 
-export get-logger = (src) ->
+export get-logger = (src, opts={}) ->
     (...x) ->
-        console.log.apply this, [(new Date! .get-time! - st) + "ms : ", (align-left 15, "#{src}") + ":"] ++ x
+        if opts.incremental
+            timestamp = (new Date! .get-time! - st) + "ms"
+        else
+            timestamp = Date!
+        console.log.apply this, ["#{timestamp}:", (align-left 15, "#{src}") + ":"] ++ x
