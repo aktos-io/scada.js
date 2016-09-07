@@ -2,23 +2,31 @@ require! 'prelude-ls': {group-by, keys}
 require! './merge': {merge}
 x =
     * client: \eee
-      a:
-          * x: 11    # mold-type
-            y: 2     # recipe
-            z: \cc   # lot
-          * x: 12
-            y: 2
-            z: \bb
+      entries:
+          * product:
+                container:
+                    inlet-mold-type: 11    # mold-type
+                product-id: _id: 2     # recipe
+            lot: _id: \cc   # lot
+          * product:
+                container:
+                    inlet-mold-type: 12
+                product-id: _id: 2
+            lot: _id: \bb
       b: 2
 
     * client: \iii
-      a:
-          * x: 12
-            y: 3
-            z: \aa
-          * x: 14
-            y: 5
-            z: \aa
+      entries:
+          * product:
+                container:
+                    inlet-mold-type: 12
+                product-id: _id: 3
+            lot: _id: \aa
+          * product:
+                container:
+                    inlet-mold-type: 14
+                product-id: _id: 5
+            lot: _id: \aa
       b: 3
 
 vres =
@@ -26,56 +34,50 @@ vres =
         2:
             cc:
                 client: \eee
-                a:
-                    * x: 11
-                      y: 2
-                      z: \cc
+                entries:
+                    * product:
+                          container:
+                              inlet-mold-type: 11
+                          product-id: _id: 2
+                      lot: _id: \cc
                     ...
     12:
         2:
             bb:
                 client: \eee
-                a:
-                    * x: 12
-                      y: 2
-                      z: \bb
+                entries:
+                    * product:
+                          container:
+                              inlet-mold-type: 12
+                          product-id: _id: 2
+                      lot: _id: \bb
                     ...
 
         3:
             aa:
                 client: \iii
-                a:
-                    * x: 12
-                      y: 3
-                      z: \aa
+                entries:
+                    * product:
+                          container:
+                              inlet-mold-type: 12
+                          product-id: _id: 3
+                      lot: _id: \aa
                     ...
 
     14:
         5:
             aa:
                 client: \iii
-                a:
-                    * x: 14
-                      y: 5
-                      z: \aa
+                entries:
+                    * product:
+                          container:
+                              inlet-mold-type: 14
+                          product-id: _id: 5
+                      lot: _id: \aa
                     ...
 
 
 obj-copy = (x) -> JSON.parse JSON.stringify x
-/*
-
-for i in x
-    for j in i.a
-        console.log "j.x is: ", j.x
-
-        if j.x of res
-            m = obj-copy i
-            m.a = [.. for m.a when ..x ]
-            res[j.x].push m.a
-        else
-            res[j.x] = [5]
-
-*/
 
 attach = (arr, key, val) ->
     if key of arr
@@ -85,25 +87,24 @@ attach = (arr, key, val) ->
 
 res = {}
 for o in x
-    o.a = group-by (.x), o.a
+    o.entries = group-by (.product.container.inlet-mold-type), o.entries
 
-    for i in keys o.a
+    for i in keys o.entries
         o__ = obj-copy o
-        o__.a = o.a[i]
+        o__.entries = o.entries[i]
         attach res, i, o__
 
 console.log "res: ", JSON.stringify res, null, 2
 
 
-return 0 
 res2 = {}
 for k, oo of res
     for o in oo
-        o.a = group-by (.y), o.a
+        o.entries = group-by (.product.product-id._id), o.entries
 
-        for i in keys o.a
+        for i in keys o.entries
             o__ = obj-copy o
-            o__.a = o.a[i]
+            o__.entries = o.entries[i]
             res2 `merge` {"#{k}": "#{i}": o__}
 
 console.log "res2: ", JSON.stringify res2, null, 2
@@ -111,10 +112,10 @@ console.log "res2: ", JSON.stringify res2, null, 2
 res3 = {}
 for k, oo of res2
     for kk, o of oo
-        o.a = group-by (.z), o.a
-        for i in keys o.a
+        o.entries = group-by (.lot._id), o.entries
+        for i in keys o.entries
             o__ = obj-copy o
-            o__.a = o.a[i]
+            o__.entries = o.entries[i]
             x =  {"#{k}": "#{kk}": "#{i}": o__}
             res3 `merge` x
 
