@@ -62,26 +62,6 @@ vres =
 
 
 obj-copy = (x) -> JSON.parse JSON.stringify x
-/*
-
-for i in x
-    for j in i.a
-        console.log "j.x is: ", j.x
-
-        if j.x of res
-            m = obj-copy i
-            m.a = [.. for m.a when ..x ]
-            res[j.x].push m.a
-        else
-            res[j.x] = [5]
-
-*/
-
-attach = (arr, key, val) ->
-    if key of arr
-        arr[key].push val
-    else
-        arr[key] = [val]
 
 res = {}
 for o in x
@@ -119,5 +99,3 @@ for k, oo of res2
             res3 `merge` x
 
 console.log "res3: ", JSON.stringify res3, null, 2
-
-console.log (JSON.stringify res) is (JSON.stringify res2)
