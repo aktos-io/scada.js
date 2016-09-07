@@ -63,7 +63,7 @@
                     | {{#if isEditingLine(.id)}}
                     td(colspan="{{ columnList.length }}") {{>editForm}}
                     | {{elseif isClicked(.id)}}
-                    td(colspan="{{ columnList.length }}") {{>viewForm}}
+                    td(colspan="{{ columnList.length }}" style="color: black") {{>viewForm}}
                     | {{else}}
                     +each(".cols")
                         td {{.}}

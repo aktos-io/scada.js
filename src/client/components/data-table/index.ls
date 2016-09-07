@@ -113,14 +113,19 @@ Ractive.components[component-name] = Ractive.extend do
 
         @on do
             clicked: (args) ->
-                context = args.context
-                index = context.id
-                console.log "ORDER_TABLE: clicked!!!", args, index
+                unless @get \clickedIndex
+                    context = args.context
+                    index = context.id
+                    console.log "ORDER_TABLE: clicked!!!", args, index
 
-                @set \clickedIndex, index
-                tabledata = @get \tabledata
-                @set \curr, [.. for tabledata when .._id is index].0
-                console.log "Clicked a row: ", (@get \curr)
+                    @set \clickedIndex, index
+                    tabledata = @get \tabledata
+                    curr = [.. for tabledata when .._id is index].0
+                    @set \curr, curr
+                    #console.log "Clicked a row: ", (@get \curr)
+
+                    if typeof! settings.on-create-view is \Function
+                        settings.on-create-view.call this, curr 
 
             end-editing: ->
                 @set \clickedIndex, null
@@ -261,7 +266,7 @@ Ractive.components[component-name] = Ractive.extend do
             [handler, ...param] = params if typeof! params is \Array
 
             if typeof handlers[handler] is \function
-                console.log "RUNNING HANDLER: #{handler}(#{param})"
+                #console.log "RUNNING HANDLER: #{handler}(#{param})"
                 return handlers[handler].apply __, param
             else
                 console.log "no handler found with the name: ", handler
