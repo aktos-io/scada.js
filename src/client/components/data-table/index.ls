@@ -113,9 +113,10 @@ Ractive.components[component-name] = Ractive.extend do
 
         @on do
             clicked: (args) ->
-                unless @get \clickedIndex
-                    context = args.context
-                    index = context.id
+                context = args.context
+                index = context.id
+                unless (@get \clickedIndex) is index
+                    # trigger only if there is a change
                     console.log "ORDER_TABLE: clicked!!!", args, index
 
                     @set \clickedIndex, index
@@ -125,7 +126,7 @@ Ractive.components[component-name] = Ractive.extend do
                     #console.log "Clicked a row: ", (@get \curr)
 
                     if typeof! settings.on-create-view is \Function
-                        settings.on-create-view.call this, curr 
+                        settings.on-create-view.call this, curr
 
             end-editing: ->
                 @set \clickedIndex, null
