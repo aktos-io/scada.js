@@ -31,7 +31,7 @@
                     <th>#</th>
                 {{/if}}
                 {{#each columnList}}
-                    <th>{{ . }}</th>
+                    <th>{{{ . }}}</th>
                 {{/each}}
 
         tbody
@@ -66,7 +66,7 @@
                     td(colspan="{{ columnList.length }}" style="color: black") {{>viewForm}}
                     | {{else}}
                     +each(".cols")
-                        td {{.}}
+                        td {{{.}}}
                     | {{/if}}
         
         +if('settings.pageSize > 0')
