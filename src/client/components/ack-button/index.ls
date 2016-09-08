@@ -23,9 +23,8 @@ Ractive.components[component-name] = Ractive.extend do
 
         @on do
             myclick: (val) ->
-                console.log "ack-button detects button click with value: ", val
-                #console.log "what I know is: ", @get \buttonclick
-                @fire \buttonclick, val
+                #console.log "ack-button detects button click with value: ", val
+                @fire \buttonclick, val, {component: this}
 
 
     data: ->
