@@ -123,7 +123,7 @@ Ractive.components[component-name] = Ractive.extend do
                     tabledata = @get \tabledata
                     curr = [.. for tabledata when .._id is index].0
                     @set \curr, curr
-                    #console.log "Clicked a row: ", (@get \curr)
+                    console.log "Clicked a row: ", (@get \curr)
 
                     if typeof! settings.on-create-view is \Function
                         settings.on-create-view.call this, curr

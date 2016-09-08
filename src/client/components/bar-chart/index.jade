@@ -1,0 +1,21 @@
++component('bar-chart')
+    svg.chart(width='420', height='250', aria-labelledby='title desc', role='img')
+        +each("data :i")
+            g.bar
+                rect( width='48', height='{{amount}}', x='{{i*50}}', y='{{ 80 - amount }}', fill='{{ getColor(i) }}')
+            g
+                text(transform='rotate(270)', text-anchor='right', x='-150' y='{{ i*50 + 20 }}', dx='.35em') {{ getShortName(.['name']) }}
+
+
+style.
+    .bar {
+    transition: fill .3s ease;
+    cursor: pointer;
+    }
+    .bar text {
+        color: black;
+    }
+    .bar:hover,
+    .bar:focus {
+        border: 1px solid red;
+    }
