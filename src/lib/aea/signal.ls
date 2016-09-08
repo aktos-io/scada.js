@@ -1,4 +1,5 @@
 {sleep, after, clear-timer} = require './sleep'
+require! './debug-log': {get-logger}
 
 
 wait-events = {}
@@ -68,4 +69,33 @@ do
     go \mahmut, 5
     console.log "fired mahmut event!"
 
+*/
+
+export watchdog = (name, timeout, callback) ->
+    <- :lo(op) ->
+         reason <- timeout-wait-for timeout, name
+         if reason is \timed-out
+             callback!
+             return op!
+         lo(op)
+
+export watchdog-kick = (name) ->
+    go name
+
+
+/*
+log = get-logger "WATCHDOG"
+do
+    log "started watchdog"
+    <- watchdog \hey, 1000ms
+    log "watchdog barked!"
+
+
+do
+    i = 0
+    <- :lo(op) ->
+        log "kicking watchdog, i: ", i
+        watchdog-kick \hey
+        <- sleep 500ms + (i++ * 100ms)
+        lo(op)
 */
