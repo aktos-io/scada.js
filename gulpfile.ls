@@ -48,6 +48,8 @@ for p, k of paths
     console.log "PATH for #{p} is: #{k}"
 console.log "---------------------------"
 
+notifier.notify {title: "aktos-scada2" message: "Project #{project} started!"}
+
 on-error = (source, err) ->
     msg = "GULP ERROR: #{source} :: #{err?.to-string!}"
     notifier.notify {title: "GULP.#{source}", message: msg} if notification-enabled
