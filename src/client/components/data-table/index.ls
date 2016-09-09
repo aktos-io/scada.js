@@ -222,7 +222,7 @@ Ractive.components[component-name] = Ractive.extend do
 
 
             run-handler: (params) ->
-                console.log "Running run-handler event"
+                console.log "Running run-handler event, params: ", params
                 (@get \runHandler) params
 
 
@@ -262,17 +262,33 @@ Ractive.components[component-name] = Ractive.extend do
 
         run-handler: (params) ->
             handlers = __.get \settings.handlers
+            param = null
 
+            console.log "orig run-handler: params: ", params
             if params.args
                 # this is from ack-button
-                handler = params.args
+                if typeof! params.args is \Array
+                    console.log "lann???"
+                    args = unpack pack params.args
+                    handler = args.shift!
+                    params.args = args
+                    console.log "heyecan yok, sakin..."
+                else
+                    handler = params.args
+                    params.args = null
+
                 param = [params]
-            else if typeof! params is \Array
-                # from normal button, as array
-                [handler, ...param] = params
+
             else
-                # from normal button, without args
-                param = [] 
+                # this is from normal button
+                if typeof! params is \Array
+                    # from normal button, as array
+                    [handler, ...param] = params
+                else
+                    handler = params
+
+            console.log "Handler: ", handler
+            console.log "Param: ", param
 
             if typeof handlers[handler] is \function
                 #console.log "RUNNING HANDLER: #{handler}(#{param})"
