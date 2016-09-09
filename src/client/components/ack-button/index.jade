@@ -1,5 +1,5 @@
 +component('ack-button')
-    btn(on-buttonclick="myclick" value="{{value}}")
+    btn(on-buttonclick="myclick" value="{{value}}" title="{{ reason }}")
         | {{#if state === "doing"}}
         div(style='display: inline-block; width: 20px; height: 20px; margin:0 ;padding: 0; -ms-transform: rotate({{ angle }}deg); -webkit-transform: rotate({{ angle }}deg); transform: rotate({{ angle }}deg)')
             icon-refresh
@@ -11,8 +11,11 @@
         | {{/if}}
         
         | {{#if state === "error"}}
-        div(style='display: inline-block; width: 20px; height: 20px; margin: 0 ;padding: 0;')
+        div(
+            style='display: inline-block; width: 20px; height: 20px; margin: 0 ;padding: 0;'
+            )            
             icon-alert
+            
         | {{/if}}
         
         | {{#if state === "normal"}}

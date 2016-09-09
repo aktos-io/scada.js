@@ -8,13 +8,13 @@
             b-label.col-sm-4 Password
             col-sm-8: input.form-control(value="{{context._user.password}}")
         form-group
-            ack-button(on-buttonclick="doLogin" state="{{ loginState }}") Login
+            ack-button(on-buttonclick="doLogin") Login
 
         | {{else}}
         //- 
             form-group 
                 p Welcome {{ context.user.name }}!
-        ack-button(on-buttonclick="doLogout" state="{{ logoutState }}") Logout
+        ack-button(on-buttonclick="doLogout") Logout
         | {{/if}}
     +if('context.err')
         div(style="position: fixed; top: 10; right: 10")
