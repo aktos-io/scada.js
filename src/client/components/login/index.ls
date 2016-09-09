@@ -16,9 +16,9 @@ Ractive.components[component-name] = Ractive.extend do
     oninit: ->
         __ = @
         @on do
-            do-login: ->
+            do-login: (e) ->
                 __ = @
-                @set \loginState, \doing
+                e.component.set \state, \doing
                 db = @get \db
                 user = __.get \context ._user
                 ajax-opts = ajax: headers:
@@ -27,35 +27,38 @@ Ractive.components[component-name] = Ractive.extend do
                 err, res <- db.login user.name, user.password, ajax-opts
                 if err
                     #console.log "LOGIN: Error while logging in: ", err
-                    __.set \loginState, \error
+                    e.component.set \state, \error
+                    e.component.set \reason, err.message
+
                     __.set \context.err, {msg: err.message}
                 else
                     #console.log "LOGIN: Seems logged in succesfully: ", res
-                    __.set \loginState, \done
+                    e.component.set \state, \done
                     <- sleep 1000ms
                     __.set \context.err, null
                     __.fire \success
-                    __.set \loginState, \normal
+                    e.component.set \state, \normal
 
 
-            do-logout: ->
+
+            do-logout: (e) ->
                 __ = @
-                __.set \logoutState, \doing
+                e.component.set \state, \doing
                 db = @get \db
                 #console.log "LOGIN: Logging out!"
                 err, res <- db.logout!
                 #console.log "LOGIN: Logged out: err: #{err}, res: ", res
                 if err
-                    __.set \logoutState, \error
+                    e.component.set \state, \error
+                    e.component.set \reason, err.message
                     __.set \context.err err
                 else
-                    __.set \logoutState, \done
+                    e.component.set \state, \done
                     __.set \context.ok, no if res?.ok
                     __.fire \logout
 
             logout: ->
                 console.log "LOGIN: We are logged out..."
-                @set \logoutState, \normal
 
             success: ->
                 #console.log "LOGIN: Login component success... "

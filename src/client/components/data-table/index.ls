@@ -262,9 +262,17 @@ Ractive.components[component-name] = Ractive.extend do
 
         run-handler: (params) ->
             handlers = __.get \settings.handlers
-            handler = params  # maybe we want to run a handler without parameter
-            param = null
-            [handler, ...param] = params if typeof! params is \Array
+
+            if params.args
+                # this is from ack-button
+                handler = params.args
+                param = [params]
+            else if typeof! params is \Array
+                # from normal button, as array
+                [handler, ...param] = params
+            else
+                # from normal button, without args
+                param = [] 
 
             if typeof handlers[handler] is \function
                 #console.log "RUNNING HANDLER: #{handler}(#{param})"

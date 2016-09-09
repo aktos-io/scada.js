@@ -1,4 +1,5 @@
 {sleep} = require "aea"
+require! "randomstring":random
 
 component-name = "ack-button"
 Ractive.components[component-name] = Ractive.extend do
@@ -10,6 +11,11 @@ Ractive.components[component-name] = Ractive.extend do
             #console.log "State change dedected!", val
             if val is \doing
                 rotate-icon!
+            if val isnt \error
+                __.set \reason, ''
+
+
+        tooltip-id = @get \tooltipId
 
         function rotate-icon
             #console.log "rotate function is starting... , test ractive: __" , __
@@ -23,9 +29,11 @@ Ractive.components[component-name] = Ractive.extend do
 
         @on do
             myclick: (val) ->
-                #console.log "ack-button detects button click with value: ", val
-                @fire \buttonclick, val, {component: this}
+                console.log "ack-button detects button click with value: ", val
+                @fire \buttonclick, {component: this, args: val}
 
 
     data: ->
         angle: 0
+        reason: ''
+        tooltip-id: random.generate {length: 4}

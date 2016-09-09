@@ -30,9 +30,9 @@ Ractive.components['btn'] = Ractive.extend({
 	},
 	template: function() {
 		if( this.get('href') )
-			return      "<a class='btn btn-{{type.replace(/ +/g,\" btn-\")}} {{#disabled}}disabled{{/}} {{#active}}active{{/}} {{#dropdown}}dropdown-toggle{{/}}' {{#dropdown}}data-toggle='dropdown'{{/}} href='{{href}}' style='{{style}}'>{{yield}}</a>"
+			return      "<a class='btn btn-{{type.replace(/ +/g,\" btn-\")}} {{#disabled}}disabled{{/}} {{#active}}active{{/}} {{#dropdown}}dropdown-toggle{{/}}' {{#dropdown}}data-toggle='dropdown'{{/}} href='{{href}}'  style='{{style}}' title='{{title}}'>{{yield}}</a>"
 		else
-			return "<button type='button' class='btn btn-{{type.replace(/ +/g,\" btn-\")}} {{#disabled}}disabled{{/}} {{#active}}active{{/}} {{#dropdown}}dropdown-toggle{{/}}' {{#dropdown}}data-toggle='dropdown'{{/}} onclick='{{onclick}}' on-click=\"fire('buttonclick', value)\" style='{{style}}'>{{yield}}</button>"
+			return "<button type='button' class='btn btn-{{type.replace(/ +/g,\" btn-\")}} {{#disabled}}disabled{{/}} {{#active}}active{{/}} {{#dropdown}}dropdown-toggle{{/}}' {{#dropdown}}data-toggle='dropdown'{{/}} onclick='{{onclick}}' on-click=\"fire('buttonclick', value)\" style='{{style}}' title='{{title}}'>{{yield}}</button>"
 	}
 })
 
@@ -398,7 +398,7 @@ var icons = [
 	"menu-up"
 ]
 
-Ractive.components['icon'] = Ractive.extend({template: "<span class='glyphicon glyphicon-{{name}}' aria-hidden='true'></span>"})
+Ractive.components['icon'] = Ractive.extend({template: "<span class='glyphicon glyphicon-{{name}}' aria-hidden='true' title='{{title}}'></span>"})
 for( var i in icons ) {
 	Ractive.components['icon-' + icons[i]] = Ractive.extend({template: "<icon/>", data: {name: icons[i]}})
 }
