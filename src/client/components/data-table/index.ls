@@ -222,7 +222,7 @@ Ractive.components[component-name] = Ractive.extend do
 
 
             run-handler: (params) ->
-                console.log "Running run-handler event"
+                console.log "Running run-handler event with params: ", params
                 (@get \runHandler) params
 
 
@@ -265,14 +265,19 @@ Ractive.components[component-name] = Ractive.extend do
 
             if params.args
                 # this is from ack-button
-                handler = params.args
+                if typeof! params.args is 'Array'
+                    handler = params.args.0
+                    #params.args.shift!
+                else
+                    handler = params.args
+
                 param = [params]
             else if typeof! params is \Array
                 # from normal button, as array
                 [handler, ...param] = params
             else
                 # from normal button, without args
-                param = [] 
+                param = []
 
             if typeof handlers[handler] is \function
                 #console.log "RUNNING HANDLER: #{handler}(#{param})"
