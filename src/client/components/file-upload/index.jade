@@ -1,9 +1,11 @@
 +component('file-upload')
     p file upload thing
+    
+    p document id: #[input(value="{{ docId }}")]
+    p filename: #[input(value="{{ filename }}")]
+    
     input(type="file")
+    ack-button(on-buttonclick="uploadFile") Upload!
     .preview
         p preview: 
         img 
-    .verify 
-        p verify: 
-        img

@@ -5,17 +5,22 @@ Ractive.components[component-name] = Ractive.extend do
     isolated: yes
     template: "\##{component-name}"
     onrender: ->
+        __ = @
         p = $ @find \p
-        file-input = $ @find \input
+        file-input = $ @find "input[type='file']"
         img-preview = $ @find '.preview > img'
-        img-verify = $ @find '.verify > img'
         db = @get \db
+
+        @set \docId, \mydoc
 
         p.text "This is the file input"
 
-        file-input.on \change, ->
+        file = null
 
-            file = file-input.prop \files .0
+        file-input.on \change, ->
+            console.log "changed file input..."
+
+            file := file-input.prop \files .0
             console.log "file is: ", file
 
 
@@ -25,48 +30,37 @@ Ractive.components[component-name] = Ractive.extend do
                 img-preview.attr \src, e.target.result
             reader.read-as-dataURL file
 
+            x = "mydoc/#{file.name}"
+            console.log "setting filename: ", x
+            __.set \filename, x
 
 
-            doc =
-                _id: 'mydoc'
-                _attachments:
-                  "file":
-                    type: file.type
-                    data: file
+        @on do
+            upload-file: (e) ->
+                console.log "uploading!!!"
+                e.component.set \state, \doing
 
-            err, res <- db.get \mydoc
-            if not err
-                console.log "updating revision: ", res
-                doc._rev = res._rev
+                doc =
+                    _id: __.get \docId
+                    _attachments:
+                      "#{file.name}":
+                        content_type: file.type
+                        data: file
 
-            err, res <- db.put doc
+                err, res <- db.get doc._id
+                if not err
+                    console.log "updating revision: ", res
+                    doc._rev = res._rev
 
-            if err
-                console.log "err: ", err
-            else
-                console.log "ok: ", res
+                attachment = doc._attachments[file.name]
 
+                err, res <- db.put-attachment doc._id, file.name, res._rev, attachment.data, attachment.type
+                #err, res <- db.put doc
 
-            console.log "file is: ", file
-
-
-            err, res <- db.get-attachment \mydoc, \file
-            if err
-                console.log "can not get attachment", err
-            else
-                console.log "here is the attachment: ", res
-
-            img-verify.attr \src, URL.createObjectURL res
-
-
-            /*
-            # Tested, working; but may be inefficient:
-            # --------------------------
-            err, res <- db.get 'mydoc', {+attachments, +include_docs}
-            if err
-                console.log "error getting mydoc: ", err
-            else
-                console.log "mydoc is: ", res
-
-            img.attr \src, "data:img/png;base64, #{res._attachments.file.data}"
-            */
+                if err
+                    console.log "err: ", err
+                    e.component.set \state, \err
+                    e.component.set \reason, err
+                else
+                    console.log "ok: ", res
+                    e.component.set \state, \done
