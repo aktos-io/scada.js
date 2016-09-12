@@ -30,9 +30,9 @@ Ractive.components['btn'] = Ractive.extend({
 	},
 	template: function() {
 		if( this.get('href') )
-			return      "<a class='btn btn-{{type.replace(/ +/g,\" btn-\")}} {{#disabled}}disabled{{/}} {{#active}}active{{/}} {{#dropdown}}dropdown-toggle{{/}}' {{#dropdown}}data-toggle='dropdown'{{/}} href='{{href}}'  style='{{style}}' title='{{title}}'>{{yield}}</a>"
+			return      "<a class='btn btn-{{type.replace(/ +/g,\" btn-\")}} {{#disabled}}disabled{{/}} {{#active}}active{{/}} {{#dropdown}}dropdown-toggle{{/}} {{ class }}' {{#dropdown}}data-toggle='dropdown'{{/}} href='{{href}}'  style='{{style}}' title='{{title}}'>{{yield}}</a>"
 		else
-			return "<button type='button' class='btn btn-{{type.replace(/ +/g,\" btn-\")}} {{#disabled}}disabled{{/}} {{#active}}active{{/}} {{#dropdown}}dropdown-toggle{{/}}' {{#dropdown}}data-toggle='dropdown'{{/}} onclick='{{onclick}}' on-click=\"fire('buttonclick', value)\" style='{{style}}' title='{{title}}'>{{yield}}</button>"
+			return "<button type='button' class='btn btn-{{type.replace(/ +/g,\" btn-\")}} {{#disabled}}disabled{{/}} {{#active}}active{{/}} {{#dropdown}}dropdown-toggle{{/}} {{ class }}' {{#dropdown}}data-toggle='dropdown'{{/}} onclick='{{onclick}}' on-click=\"fire('buttonclick', value)\" style='{{style}}' title='{{title}}'>{{yield}}</button>"
 	}
 })
 
