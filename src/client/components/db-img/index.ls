@@ -14,6 +14,7 @@ Ractive.components[component-name] = Ractive.extend do
 
         do get-img = ->
             src = __.get \src
+            return unless src 
             if src is __.get \lastSrc
                 console.log "db-img: same source, returning..."
                 return
