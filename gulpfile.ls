@@ -264,6 +264,9 @@ gulp.task \jade <[ jade-components ]> ->
             @emit \end
         .pipe flatten!
         .pipe gulp.dest paths.client-apps
+        .pipe tap (file) ->
+            log-info \jade, "Jade finished"
+
 
 
 gulp.task \jade-components ->
