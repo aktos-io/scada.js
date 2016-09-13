@@ -32,7 +32,10 @@ Ractive.components[component-name] = Ractive.extend do
             return
 
         db = @get \db
-        gen-entry-id = @get \gen-entry-id
+        gen-entry-id = if typeof! db.gen-entry-id is \Function
+            db.gen-entry-id
+        else
+            @get \gen-entry-id
 
         @set \readonly, if @partials.editForm
             no
@@ -199,7 +202,7 @@ Ractive.components[component-name] = Ractive.extend do
                     t = __.get \tabledata
                     if order-doc._id not in [.._id for t]
                         __.set \tabledata ([order-doc] ++ t)
-                        
+
                     if order-doc._rev is void
                         console.log "refreshing new order...."
                         __.set \curr, (__.get \newOrder)!
