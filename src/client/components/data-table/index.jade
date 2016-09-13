@@ -49,15 +49,19 @@
                                 on-buttonclick="toggleEditing"
                                 type="{{#if editTooltip }}danger{{else}}default{{/if}}"
                                 active="{{editable}}"
+                                tooltip="Düzenle"
                                 )
                                 | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
                                 icon-pencil 
                             | {{/unless}}
-                            btn(type="success" on-buttonclick="saveAndExit"): icon-ok
-                            btn(type="info" on-buttonclick="newOrderClose"): icon-remove
+                            btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
                     | {{else}}
                     td.
-                        {{ parseInt(.no) + 1 }}
+                        {{#if isLastClicked(.id) }}
+                            <tag>{{ parseInt(.no) + 1 }}</tag>
+                        {{else}}
+                            {{ parseInt(.no) + 1 }}
+                        {{/if}}
                     | {{/if}}
                     //- rest of columns (data)
                     | {{#if isEditingLine(.id)}}

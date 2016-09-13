@@ -117,11 +117,13 @@ Ractive.components[component-name] = Ractive.extend do
                 index = context.id
                 unless (@get \clickedIndex) is index
                     # trigger only if there is a change
-                    console.log "ORDER_TABLE: clicked!!!", args, index
-
+                    #console.log "ORDER_TABLE: clicked!!!", args, index
                     @set \clickedIndex, index
+                    @set \lastIndex, index
+
                     tabledata = @get \tabledata
                     curr = [.. for tabledata when .._id is index].0
+
                     @set \curr, curr
                     console.log "Clicked a row: ", (@get \curr)
 
@@ -166,7 +168,7 @@ Ractive.components[component-name] = Ractive.extend do
                 new-order._id = gen-entry-id!
 
                 @set \curr, new-order
-                
+
                 @set \addingNew, true
                 console.log "adding brand-new order!", (@get \curr)
 
@@ -194,6 +196,10 @@ Ractive.components[component-name] = Ractive.extend do
                     console.log "New order put in the database", res
                     # if adding new document, clean up current document
                     console.log "order putting database: ", order-doc
+                    t = __.get \tabledata
+                    if order-doc._id not in [.._id for t]
+                        __.set \tabledata ([order-doc] ++ t)
+                        
                     if order-doc._rev is void
                         console.log "refreshing new order...."
                         __.set \curr, (__.get \newOrder)!
@@ -244,6 +250,7 @@ Ractive.components[component-name] = Ractive.extend do
         tableview_visible: []
         editable: false
         clicked-index: null
+        last-index: null
         cols: null
         column-list: null
         editTooltip: no
@@ -263,6 +270,10 @@ Ractive.components[component-name] = Ractive.extend do
         is-clicked: (index) ->
             clicked-index = @get \clickedIndex
             index is clicked-index
+
+        is-last-clicked: (index) ->
+            x = index is @get \lastIndex
+
 
         run-handler: (params) ->
             handlers = __.get \settings.handlers
