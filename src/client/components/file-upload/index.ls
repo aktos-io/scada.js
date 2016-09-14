@@ -8,8 +8,7 @@ Ractive.components[component-name] = Ractive.extend do
         img-preview = $ @find '.preview > img'
         db = @get \db
 
-        unless @get \doc_id
-            @set \doc_id, \mydoc
+        img-preview.hide!
 
         file = null
 
@@ -24,6 +23,8 @@ Ractive.components[component-name] = Ractive.extend do
 
             __.set \attachment_name, file.name
 
+            img-preview.show!
+
         @on do
             upload-file: (e) ->
                 console.log "uploading!!!"
@@ -31,6 +32,11 @@ Ractive.components[component-name] = Ractive.extend do
 
                 filename = __.get \attachment_name
                 doc_id = __.get \doc_id
+
+                unless doc_id
+                    e.component.set \state, \error
+                    e.component.set \reason, "Need Document ID!"
+                    return
 
                 err, res <- db.get doc_id
                 if not err
