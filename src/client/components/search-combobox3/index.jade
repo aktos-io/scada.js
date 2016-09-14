@@ -1,0 +1,7 @@
+
++component('search-combobox3')
+    select(value='{{iselected}}', data-style='btn-primary', data-live-search='true', data-width='auto', '{{multiple}}')
+        +each("selectionList:i")
+            option(value="{{ .id }}") {{ .name }}
+            
+            
