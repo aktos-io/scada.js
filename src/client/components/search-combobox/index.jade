@@ -1,7 +1,9 @@
-
 +component('search-combobox')
-    select(value='{{iselected}}', data-style='btn-primary', data-live-search='true', data-width='auto', '{{multiple}}')
-        +each("selectionList:i")
-            option(value="{{ .id }}") {{ .name }}
-            
+    btn.face {{ selectedText }}
+    +if('slVisible')
+        .selection-list(style="position: absolute; z-index: 99999")
+            .btn-group-vertical
+                input.searchbox(value="{{ searchedText }}" style="width: 100%; height: 25px")
+                +each('filtered')
+                    btn(on-buttonclick="select" value="{{ .id }}") {{ .name }}
             
