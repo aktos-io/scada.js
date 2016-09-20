@@ -21,6 +21,8 @@ require! 'gulp-flatten': flatten
 require! 'gulp-tap': tap
 require! 'gulp-cached': cache
 require! 'gulp-sourcemaps': sourcemaps
+require! 'browserify-livescript'
+
 
 # Build Settings
 notification-enabled = yes
@@ -249,8 +251,8 @@ gulp.task \browserify, <[ generate-components-module ]> !->
         package-cache: {}
         plugin: [watchify]
 
-    bundler.transform \anyify, {ls: 'livescript?compile'}
-
+    #bundler.transform \anyify, {ls: 'livescript?compile'}
+    bundler.transform \browserify-livescript
 
     do function bundle
         bundler
