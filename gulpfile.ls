@@ -6,7 +6,7 @@ console.log "------------------------------------------"
 console.log "Compiling for project: #{project}"
 console.log "------------------------------------------"
 
-require! <[ gulp glob path fs globby]>
+require! <[ watchify gulp browserify anyify glob path fs globby]>
 require! 'prelude-ls': {union, join}
 require! 'gulp-livescript': lsc
 require! 'vinyl-source-stream': source
@@ -15,12 +15,12 @@ require! 'gulp-watch': watch
 require! 'gulp-jade': jade
 require! 'node-notifier': notifier
 require! 'gulp-concat': cat
-require! 'browserify': browserify
 require! 'gulp-uglify': uglify
 require! './src/lib/aea': {sleep}
 require! 'gulp-flatten': flatten
 require! 'gulp-tap': tap
 require! 'gulp-cached': cache
+require! 'gulp-sourcemaps': sourcemaps
 
 # Build Settings
 notification-enabled = yes
@@ -96,19 +96,23 @@ gulp.task \default, ->
 
         "#{paths.lib-src}/**/*.ls"
         "#{paths.lib-src}/**/*.js"
+    /*
     watch for-browserify, (event) ->
         # changes in components should trigger browserify via removing its cache entry
 
         delete cache.caches['browserify']
         gulp.start <[ browserify ]>
+
+    */
     for-browserify-apps =
             "#{paths.client-webapps}/**/*.ls"
 
+    /*
     watch for-browserify-apps, (event) ->
         # changes in components should trigger browserify via removing its cache entry
         delete cache.caches['browserify']
         gulp.start <[ browserify ]>
-
+    */
 
     for-jade =
         "#{paths.client-src}/components/**/*.jade"
@@ -129,7 +133,7 @@ gulp.task \default, ->
 # Copy js and html files as is
 gulp.task \js, ->
     gulp.src "#{paths.client-src}/**/*.js", {base: paths.client-src}
-        .pipe gulp.dest paths.client-tmp
+        .pipe gulp.dest paths.client-apps
 
 gulp.task \html, ->
     base = "#{paths.client-webapps}"
@@ -191,44 +195,80 @@ gulp.task \lsc <[ lsc-lib lsc-apps ]>, ->
     console.log "RUNNING LSC (which means ended)"
     console.log "lsc ended..."
 
-gulp.task \browserify <[ lsc js]>, (done) ->
-    base = "#{paths.client-tmp}/apps"
-    files = glob.sync "#{base}/**/*.js"
 
-    files = [.. for files when is-module-index base, ..]
+if false
+    gulp.task \browserify <[ lsc js]>, (done) ->
+        base = "#{paths.client-tmp}/apps"
+        files = glob.sync "#{base}/**/*.js"
 
-    do function bundle-all
-        console.log "BUNDLE_ALL STARTED..."
-        i = 0
-        <- :lo(op) ->
-            file = files[i]
-            filename = path.basename file
-            console.log "Started Browserifying file: ", path.basename file
-            browserify file, {paths: [paths.components-tmp, paths.lib-tmp]}
-                .bundle!
-                .on \error, (err) ->
-                    on-error \browserify, err
-                    @emit \end
-                .pipe source filename
-                #.pipe buffer!
-                #.pipe uglify!
-                .pipe gulp.dest paths.client-apps
-                .on 'end', ->
-                    if ++i >= files.length
-                        console.log "returning..."
-                        return op!
-                    else
-                        console.log "browserify continues"
-                        lo(op)
+        files = [.. for files when is-module-index base, ..]
 
-        console.log "BUNDLE_ALL FINISHED..."
-        for f in files
-            console.log " * #{path.basename f}"
+        do function bundle-all
+            console.log "BUNDLE_ALL STARTED..."
+            i = 0
+            <- :lo(op) ->
+                file = files[i]
+                filename = path.basename file
+                console.log "Started Browserifying file: ", path.basename file
+                browserify file, {paths: [paths.components-tmp, paths.lib-tmp]}
+                    .bundle!
+                    .on \error, (err) ->
+                        on-error \browserify, err
+                        @emit \end
+                    .pipe source filename
+                    #.pipe buffer!
+                    #.pipe uglify!
+                    .pipe gulp.dest paths.client-apps
+                    .on 'end', ->
+                        if ++i >= files.length
+                            console.log "returning..."
+                            return op!
+                        else
+                            console.log "browserify continues"
+                            lo(op)
 
-        msg = "Finished!"
-        log-info "Browserify", msg
+            console.log "BUNDLE_ALL FINISHED..."
+            for f in files
+                console.log " * #{path.basename f}"
 
-        #done!
+            msg = "Finished!"
+            log-info "Browserify", msg
+
+            #done!
+
+gulp.task \browserify, <[ generate-components-module ]> !->
+    bundler = browserify do
+        entries: ["#{__dirname}/apps/demeter/webapps/demeter/demeter.ls"]
+        debug: true
+        paths:
+            "#{__dirname}/src/client/components"
+            "#{__dirname}/src/lib"
+            "#{__dirname}/apps/demeter/webapps/demeter"
+        extensions: <[ .ls ]>
+        cache: {}
+        package-cache: {}
+        plugin: [watchify]
+
+    bundler.transform \anyify, {ls: 'livescript?compile'}
+
+
+    do function bundle
+        bundler
+            .bundle!
+            .on \error, (err) ->
+                on-error \browserify, err
+                console.log "err stack: ", err.stack
+                @emit \end
+            .pipe source \public/demeter.js
+            .pipe buffer!
+            .pipe sourcemaps.init {+load-maps}
+            .pipe sourcemaps.write './'
+            .pipe gulp.dest './build'
+            .pipe tap (file) ->
+                log-info \browserify, "Browserify finished"
+
+
+    bundler.on \update, bundle
 
 # Concatenate vendor javascript files into public/js/vendor.js
 gulp.task \vendor, ->
