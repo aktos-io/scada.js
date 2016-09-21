@@ -1,9 +1,25 @@
 +component('search-combobox')
-    btn.face {{ selectedText }}
-    +if('slVisible')
-        .selection-list(style="position: absolute; z-index: 99999")
-            .btn-group-vertical
-                input.searchbox(value="{{ searchedText }}" style="width: 100%; height: 25px")
-                +each('filtered')
-                    btn(on-buttonclick="select" value="{{ .id }}") {{ .name }}
-            
+    +unless('inInputGroup')
+        .dropdown
+            button.face.btn.btn-default.dropdown-toggle(type="button" data-toggle="dropdown").
+                {{ selectedText }} #[span.caret]
+            ul.dropdown-menu(role="menu")
+                .dropdown-item
+                    input.searchbox(value="{{ searchedText }}" placeholder="Ara..." style="width: 100%")
+                li
+                    .btn-group-vertical(style="width: 100%")
+                        +each('filtered')
+                            btn(on-buttonclick="select" value="{{ .id }}" type="primary") 
+                                span {{ .name }}            
+
+    +if('inInputGroup')
+        button.face.btn.btn-default.dropdown-toggle(type="button" data-toggle="dropdown").
+            {{ selectedText }} #[span.caret]
+        ul.dropdown-menu(role="menu")
+            .dropdown-item
+                input.searchbox(value="{{ searchedText }}" placeholder="Ara..." style="width: 100%")
+            li
+                .btn-group-vertical(style="width: 100%")
+                    +each('filtered')
+                        btn(on-buttonclick="select" value="{{ .id }}" type="primary")
+                            span {{ .name }}         
