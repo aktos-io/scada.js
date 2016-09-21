@@ -28,11 +28,10 @@ Ractive.components[component-name] = Ractive.extend do
                     rotate-icon!
 
         @on do
-            myclick: (val) ->
+            click: ->
+                val = __.get \value
                 console.log "ack-button detects button click with value: ", val
                 @fire \buttonclick, {component: this, args: val}
-
-
     data: ->
         angle: 0
         reason: ''

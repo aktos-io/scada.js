@@ -13,12 +13,26 @@ component-name = "login"
 Ractive.components[component-name] = Ractive.extend do
     isolated: yes
     template: "\##{component-name}"
-    oninit: ->
+    onrender: ->
         __ = @
+
+        username-input = $ @find \.username-input
+        password-input = $ @find \.password-input
+        login-button = @find-component \ack-button
+        enter-key = 13
+
+        username-input.on \keypress, (key) ->
+            if key.key-code is enter-key
+                password-input.focus!
+
+        password-input.on \keypress, (key) ->
+            if key.key-code is enter-key
+                login-button.fire \click
+
         @on do
             do-login: (e) ->
                 __ = @
-                e.component.set \state, \doing
+                try e.component.set \state, \doing
                 db = @get \db
                 user = __.get \context ._user
                 ajax-opts = ajax: headers:
@@ -27,17 +41,18 @@ Ractive.components[component-name] = Ractive.extend do
                 err, res <- db.login user.name, user.password, ajax-opts
                 if err
                     #console.log "LOGIN: Error while logging in: ", err
-                    e.component.set \state, \error
-                    e.component.set \reason, err.message
+                    try
+                        e.component.set \state, \error
+                        e.component.set \reason, err.message
 
                     __.set \context.err, {msg: err.message}
                 else
                     #console.log "LOGIN: Seems logged in succesfully: ", res
-                    e.component.set \state, \done
+                    try e.component.set \state, \done
                     <- sleep 1000ms
                     __.set \context.err, null
                     __.fire \success
-                    e.component.set \state, \normal
+                    try e.component.set \state, \normal
 
 
 

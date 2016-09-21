@@ -111,7 +111,6 @@ tests =
         {result, expected}
 
   'deleting something': ->
-        # delete
         a=
           a: 1
           b: 2
@@ -127,7 +126,6 @@ tests =
 
         {result, expected}
   'force overwrite': ->
-        # force overwrite
         a=
           a: 1
           b: 2
@@ -148,7 +146,6 @@ tests =
 
         {result, expected}
   'merging object with functions': ->
-        # object with functions
         a=
           a: 1
           b: 2
@@ -171,7 +168,6 @@ tests =
         {result, expected}
 
   'Field or method does not already exist, and cant create it on String': ->
-        # object with functions
         a=
           a: 1
           b: 2
@@ -190,18 +186,16 @@ tests =
 
         {result, expected}
 
-#console.log "Merge tests started..."
 start = Date.now!
-for i from 0 to 1
-    try
-        for name, test of tests
-            {result, expected} = test!
-            throw if result is undefined
-            throw if expected is undefined
-            throw if (pack expected) isnt pack(result)
-    catch
-        console.log "merge test failed test: ", name
-        console.log "EXPECTED: ", expected
-        console.log "RESULT  : ", result
-        throw "Test failed in merge.ls!, test: #{name}"
-#console.log "Merge tests took: #{Date.now! - start} milliseconds..."
+test-count = 1  # use 5_000 for a significiant amount of time
+for i from 0 to test-count
+    for name, test of tests
+        {result, expected} = test!
+        if pack(expected) isnt pack(result)
+            console.log "merge test failed test: ", name
+            console.log "EXPECTED: ", expected
+            console.log "RESULT  : ", result
+            throw "Test failed in merge.ls!, test: #{name}"
+
+if test-count > 1 
+    console.log "Merge tests took: #{Date.now! - start} milliseconds..."

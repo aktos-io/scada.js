@@ -2,13 +2,11 @@
     form-vertical
         | {{#if !context.ok}}
         form-group
-            b-label.col-sm-4 Username
-            col-sm-8: input.form-control(value="{{context._user.name}}")
+            input.form-control.username-input(value="{{context._user.name}}" placeholder="Username")
         form-group
-            b-label.col-sm-4 Password
-            col-sm-8: input.form-control(value="{{context._user.password}}")
+            input.form-control.password-input(value="{{context._user.password}}" type="password" placeholder="Password")
         form-group
-            ack-button(on-buttonclick="doLogin") Login
+            ack-button(on-buttonclick="doLogin" class="btn-lg btn-block btn-signin") Login
 
         | {{else}}
         //- 
