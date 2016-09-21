@@ -6,7 +6,7 @@ console.log "------------------------------------------"
 console.log "Compiling for project: #{project}"
 console.log "------------------------------------------"
 
-require! <[ watchify gulp browserify anyify glob path fs globby]>
+require! <[ watchify gulp browserify glob path fs globby]>
 require! 'prelude-ls': {union, join}
 require! 'gulp-livescript': lsc
 require! 'vinyl-source-stream': source
