@@ -28,6 +28,7 @@ Ractive.components[component-name] = Ractive.extend do
             __.set \filtered, filtered
 
         @observe \searchedText, filter-selection
+        @observe \data, filter-selection
 
         @on do
             select: (val) ->
