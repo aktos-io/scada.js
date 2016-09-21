@@ -19,9 +19,6 @@ Ractive.components[component-name] = Ractive.extend do
         username-input = $ @find \.username-input
         password-input = $ @find \.password-input
         login-button = @find-component \ack-button
-
-        console.log "this: ", @
-        console.log "login button: ", login-button
         enter-key = 13
 
         username-input.on \keypress, (key) ->
@@ -30,7 +27,7 @@ Ractive.components[component-name] = Ractive.extend do
 
         password-input.on \keypress, (key) ->
             if key.key-code is enter-key
-                login-button.fire \click 
+                login-button.fire \click
 
         @on do
             do-login: (e) ->
