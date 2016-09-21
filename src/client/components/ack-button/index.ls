@@ -32,8 +32,6 @@ Ractive.components[component-name] = Ractive.extend do
                 val = __.get \value
                 console.log "ack-button detects button click with value: ", val
                 @fire \buttonclick, {component: this, args: val}
-
-
     data: ->
         angle: 0
         reason: ''
