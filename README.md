@@ -5,7 +5,7 @@ Welcome to the realtime, distributed, web-technology oriented SCADA system for I
 
 # Key features
 
-* First-class support for [LiveScript](http://livescript.net)
+* First-class support for [LiveScript](http://livescript.net) with Sourcemaps!
 * Supports [Ractive.js](http://ractivejs.com) with a custom [component mechanizm](./src/client/components)
 * Supports [Jade](http://jade-lang.com) for composing html documents
 * Uses Distributed NoSQL database ([CouchDB](http://couchdb.apache.org/) in mind) via
