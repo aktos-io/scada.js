@@ -6,7 +6,7 @@ console.log "------------------------------------------"
 console.log "Compiling for project: #{project}"
 console.log "------------------------------------------"
 
-require! <[ watchify gulp browserify anyify glob path fs globby]>
+require! <[ watchify gulp browserify glob path fs globby]>
 require! 'prelude-ls': {union, join}
 require! 'gulp-livescript': lsc
 require! 'vinyl-source-stream': source
@@ -28,21 +28,19 @@ require! 'browserify-livescript'
 notification-enabled = yes
 
 # Project Folder Structure
+
 paths = {}
 paths.vendor-folder = "#{__dirname}/vendor"
 paths.build-folder = "#{__dirname}/build"
 
 paths.client-public = "#{paths.build-folder}/public"
 paths.client-src = "#{__dirname}/src/client"
-paths.client-tmp = "#{paths.build-folder}/__client-tmp"
 paths.client-apps = "#{paths.client-public}"
 paths.client-webapps = "#{__dirname}/apps/#{project}/webapps"
 
 paths.lib-src = "#{__dirname}/src/lib"
-paths.lib-tmp = "#{paths.build-folder}/__lib-tmp"
 
 paths.components-src = "#{paths.client-src}/components"
-paths.components-tmp = "#{paths.client-tmp}/components"
 
 
 console.log "Paths: "
@@ -84,37 +82,26 @@ is-module-index = (base, file) ->
 # Organize Tasks
 gulp.task \default, ->
     do function run-all
-        gulp.start <[ js browserify html vendor vendor-css assets jade ]>
+        gulp.start <[ browserify html vendor vendor-css assets jade ]>
 
     if argv.compile is true
         console.log "Gulp compiled only once..."
         return
 
-    for-browserify =
-        # include
-        "#{paths.client-src}/components/**/*.ls"
-        "#{paths.client-src}/components/**/*.js"
-        "!#{paths.client-src}/components/components.ls"
+    if argv.clean is true
+        console.log "Clearing build directory..."
 
-        "#{paths.lib-src}/**/*.ls"
-        "#{paths.lib-src}/**/*.js"
-    /*
-    watch for-browserify, (event) ->
-        # changes in components should trigger browserify via removing its cache entry
-
-        delete cache.caches['browserify']
-        gulp.start <[ browserify ]>
-
-    */
-    for-browserify-apps =
-            "#{paths.client-webapps}/**/*.ls"
-
-    /*
-    watch for-browserify-apps, (event) ->
-        # changes in components should trigger browserify via removing its cache entry
-        delete cache.caches['browserify']
-        gulp.start <[ browserify ]>
-    */
+        deleteFolderRecursive = (path) ->
+            if fs.existsSync(path)
+                fs.readdirSync(path).forEach (file,index) ->
+                    curPath = path + "/" + file
+                    if(fs.lstatSync(curPath).isDirectory())  # recurse
+                      deleteFolderRecursive(curPath)
+                    else
+                        # delete file
+                        fs.unlinkSync(curPath)
+                fs.rmdirSync(path)
+        deleteFolderRecursive paths.build-folder
 
     for-jade =
         "#{paths.client-src}/components/**/*.jade"
@@ -129,11 +116,9 @@ gulp.task \default, ->
     watch "#{paths.vendor-folder}/**", (event) ->
         gulp.start <[ vendor vendor-css ]>
 
-    watch "./node_modules/**", (event) ->
-        run-all!
 
 # Copy js and html files as is
-gulp.task \js, ->
+gulp.task \copy-js, ->
     gulp.src "#{paths.client-src}/**/*.js", {base: paths.client-src}
         .pipe gulp.dest paths.client-apps
 
@@ -141,28 +126,6 @@ gulp.task \html, ->
     base = "#{paths.client-webapps}"
     gulp.src "#{base}/**/*.html", {base: base}
         .pipe gulp.dest "#{paths.client-public}"
-
-
-# Compile client LiveScript files into temp folder
-gulp.task \lsc-components <[ generate-components-module ]> ->
-    console.log "RUNNING LSC_COMPONENTS"
-    gulp.src ["#{paths.components-src}/*/*.ls", "#{paths.components-src}/components.ls"], {base: paths.client-src}
-        .pipe lsc!
-        .on \error, (err) ->
-            on-error \lsc-lib, err
-            @emit \end
-        .pipe gulp.dest paths.client-tmp
-
-
-gulp.task \lsc-apps <[ lsc-components ]> ->
-    console.log "RUNNING LSC_apps"
-    base = "#{paths.client-webapps}"
-    gulp.src "#{base}/**/*.ls", {base: base}
-        .pipe lsc!
-        .on \error, (err) ->
-            on-error \lsc-lib, err
-            @emit \end
-        .pipe gulp.dest "#{paths.client-tmp}/apps"
 
 
 gulp.task \generate-components-module ->
@@ -180,78 +143,21 @@ gulp.task \generate-components-module ->
 
 
 
-# Compile library modules into library temp folder
-gulp.task \lsc-lib, ->
-    console.log "RUNNING LSC_LIB"
-    gulp.src "#{paths.lib-src}/**/*.ls", {base: paths.lib-src}
-        .pipe lsc!
-        .on \error, (err) ->
-            on-error \lsc-lib, err
-            @emit \end
-        .pipe gulp.dest paths.lib-tmp
-    console.log "ENDED LSC_LIB"
-
-# Browserify apps/* into public folder
-
-gulp.task \lsc <[ lsc-lib lsc-apps ]>, ->
-    console.log "RUNNING LSC (which means ended)"
-    console.log "lsc ended..."
-
-
-if false
-    gulp.task \browserify <[ lsc js]>, (done) ->
-        base = "#{paths.client-tmp}/apps"
-        files = glob.sync "#{base}/**/*.js"
-
-        files = [.. for files when is-module-index base, ..]
-
-        do function bundle-all
-            console.log "BUNDLE_ALL STARTED..."
-            i = 0
-            <- :lo(op) ->
-                file = files[i]
-                filename = path.basename file
-                console.log "Started Browserifying file: ", path.basename file
-                browserify file, {paths: [paths.components-tmp, paths.lib-tmp]}
-                    .bundle!
-                    .on \error, (err) ->
-                        on-error \browserify, err
-                        @emit \end
-                    .pipe source filename
-                    #.pipe buffer!
-                    #.pipe uglify!
-                    .pipe gulp.dest paths.client-apps
-                    .on 'end', ->
-                        if ++i >= files.length
-                            console.log "returning..."
-                            return op!
-                        else
-                            console.log "browserify continues"
-                            lo(op)
-
-            console.log "BUNDLE_ALL FINISHED..."
-            for f in files
-                console.log " * #{path.basename f}"
-
-            msg = "Finished!"
-            log-info "Browserify", msg
-
-            #done!
-
-gulp.task \browserify, <[ generate-components-module ]> !->
+gulp.task \browserify, <[ copy-js generate-components-module ]> !->
     bundler = browserify do
-        entries: ["#{__dirname}/apps/demeter/webapps/demeter/demeter.ls"]
+        entries:
+            "#{__dirname}/apps/demeter/webapps/demeter/demeter.ls"
+            ...
         debug: true
         paths:
-            "#{__dirname}/src/client/components"
-            "#{__dirname}/src/lib"
-            "#{__dirname}/apps/demeter/webapps/demeter"
+            paths.components-src
+            paths.lib-src
+            paths.client-webapps
         extensions: <[ .ls ]>
         cache: {}
         package-cache: {}
         plugin: [watchify]
 
-    #bundler.transform \anyify, {ls: 'livescript?compile'}
     bundler.transform \browserify-livescript
 
     do function bundle
@@ -268,7 +174,6 @@ gulp.task \browserify, <[ generate-components-module ]> !->
             .pipe gulp.dest './build'
             .pipe tap (file) ->
                 log-info \browserify, "Browserify finished"
-
 
     bundler.on \update, bundle
 
@@ -290,7 +195,7 @@ gulp.task \vendor-css, ->
 # Copy assets into the public directory as is
 gulp.task \assets, ->
     gulp.src "#{paths.client-src}/assets/**/*", {base: "#{paths.client-src}/assets"}
-        .pipe gulp.dest paths.client-apps
+        .pipe gulp.dest paths.client-public
 
 # Compile Jade files in paths.client-src to the paths.client-tmp folder
 gulp.task \jade <[ jade-components ]> ->
