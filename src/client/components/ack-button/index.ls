@@ -17,6 +17,9 @@ Ractive.components[component-name] = Ractive.extend do
 
         tooltip-id = @get \tooltipId
 
+        @observe \tooltip, (new-val) ->
+            __.set \reason, new-val
+
         function rotate-icon
             #console.log "rotate function is starting... , test ractive: __" , __
             state-val = __.get \state

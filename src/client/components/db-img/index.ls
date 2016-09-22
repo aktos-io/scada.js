@@ -8,13 +8,18 @@ Ractive.components[component-name] = Ractive.extend do
         __ = @
         img = $ @find \img
         db = @get \db
+        err-box = $ @find \span
         src = @get \src # src is: document_name/attachment_name
 
 
+        if db is void
+            console.error "no database connection provided to db-img!"
+            img.attr \alt, "IMG ERR: DB NOT FOUND (1)"
+            return
 
         do get-img = ->
             src = __.get \src
-            return unless src 
+            return unless src
             if src is __.get \lastSrc
                 console.log "db-img: same source, returning..."
                 return
@@ -33,8 +38,9 @@ Ractive.components[component-name] = Ractive.extend do
             console.log "db-img getting attachment: ", doc-name, ":::", att-name
             err, res <- db.get-attachment doc-name, att-name
             if err
-                console.log "can not get attachment", err
+                console.warn "can not get attachment", err
                 img.attr \alt, "IMG NOT FOUND"
+                err-box.text 'IMAGE NOT FOUND'
             else
                 console.log "db-img: here is the attachment: ", res
                 img.attr \src, URL.createObjectURL new Blob [res], {type: "image/png"}
@@ -61,3 +67,5 @@ Ractive.components[component-name] = Ractive.extend do
 
     data: ->
         last-src: null
+        db: void
+        error: no

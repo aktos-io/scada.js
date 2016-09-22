@@ -39,10 +39,13 @@ Ractive.components[component-name] = Ractive.extend do
                     return
 
                 err, res <- db.get doc_id
+
+                doc-rev = null
                 if not err
                     console.log "updating revision: ", res
+                    doc-rev = res._rev
 
-                err, res <- db.put-attachment doc_id, filename, res._rev, file, file.type
+                err, res <- db.put-attachment doc_id, filename, doc-rev, file, file.type
                 if err
                     console.log "err: ", err
                     e.component.set \state, \err

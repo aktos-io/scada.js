@@ -8,7 +8,6 @@ console.log "------------------------------------------"
 
 require! <[ watchify gulp browserify glob path fs globby]>
 require! 'prelude-ls': {union, join}
-require! 'gulp-livescript': lsc
 require! 'vinyl-source-stream': source
 require! 'vinyl-buffer': buffer
 require! 'gulp-watch': watch
@@ -115,6 +114,14 @@ gulp.task \default, ->
 
     watch "#{paths.vendor-folder}/**", (event) ->
         gulp.start <[ vendor vendor-css ]>
+
+
+    for-components =
+        "#{paths.client-src}/components/**/*.ls"
+        "!#{paths.client-src}/components/components.ls"
+
+    watch for-components, ->
+        gulp.start \generate-components-module
 
 
 # Copy js and html files as is
