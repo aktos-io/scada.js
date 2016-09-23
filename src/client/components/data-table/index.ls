@@ -1,4 +1,7 @@
-require! 'prelude-ls': {split, take, join, lists-to-obj, sum, filter}
+require! 'prelude-ls': {
+    split, take, join, lists-to-obj, sum, filter
+    camelize
+}
 require! 'aea': {sleep, merge, pack, unpack}
 require! 'randomstring': random
 
@@ -30,6 +33,12 @@ Ractive.components[component-name] = Ractive.extend do
         catch
             console.log "DATA_TABLE: problem with col-names: ", e
             return
+
+        handlers = {}
+        for handler, func of settings.handlers
+            handlers[handler] = func
+            
+        @set \handlers, handlers
 
         db = @get \db
         gen-entry-id = if typeof! db.gen-entry-id is \Function
@@ -131,7 +140,7 @@ Ractive.components[component-name] = Ractive.extend do
                     #console.log "Clicked a row: ", (@get \curr)
 
                     if typeof! settings.on-create-view is \Function
-                        settings.on-create-view.call this, curr
+                        settings.on-create-view.call __, curr
 
             end-editing: ->
                 @set \clickedIndex, null
