@@ -36,8 +36,8 @@ Ractive.components[component-name] = Ractive.extend do
 
         handlers = {}
         for handler, func of settings.handlers
-            handlers[handler] = func
-            
+            handlers[handler] = func.bind this
+
         @set \handlers, handlers
 
         db = @get \db
