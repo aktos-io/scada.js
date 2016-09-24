@@ -1,6 +1,7 @@
 +component('login')
     form-vertical
         | {{#if !context.ok}}
+        .alert.alert-info.check-state Checking if we are already logged in... 
         form-group
             input.form-control.username-input(value="{{context._user.name}}" placeholder="Username")
         form-group

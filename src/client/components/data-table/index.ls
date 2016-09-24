@@ -123,7 +123,7 @@ Ractive.components[component-name] = Ractive.extend do
             console.log "ERROR FROM DATA_TABLE: on-init: ", e
 
 
-        @on do
+        events =
             clicked: (args) ->
                 context = args.context
                 index = context.id
@@ -140,7 +140,7 @@ Ractive.components[component-name] = Ractive.extend do
                     #console.log "Clicked a row: ", (@get \curr)
 
                     if typeof! settings.on-create-view is \Function
-                        settings.on-create-view.call __, curr
+                        settings.on-create-view.call this, curr
 
             end-editing: ->
                 @set \clickedIndex, null
@@ -246,6 +246,8 @@ Ractive.components[component-name] = Ractive.extend do
             run-handler: (params) ->
                 console.log "Running run-handler event, params: ", params
                 (@get \runHandler) params
+
+        @on events `merge` handlers
 
 
     data: ->
