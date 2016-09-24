@@ -20,6 +20,7 @@ Ractive.components[component-name] = Ractive.extend do
         password-input = $ @find \.password-input
         login-button = @find-component \ack-button
         enter-key = 13
+        checking-logged-in = $ @find \.check-state
 
         username-input.on \keypress, (key) ->
             if key.key-code is enter-key
@@ -97,6 +98,7 @@ Ractive.components[component-name] = Ractive.extend do
                 __.fire \success
             else
                 console.log "Login component says: we are not logged in!"
+            checking-logged-in.hide!
 
     data:
         context: null

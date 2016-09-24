@@ -1,4 +1,7 @@
-require! 'prelude-ls': {split, take, join, lists-to-obj, sum, filter}
+require! 'prelude-ls': {
+    split, take, join, lists-to-obj, sum, filter
+    camelize
+}
 require! 'aea': {sleep, merge, pack, unpack}
 require! 'randomstring': random
 
@@ -30,6 +33,12 @@ Ractive.components[component-name] = Ractive.extend do
         catch
             console.log "DATA_TABLE: problem with col-names: ", e
             return
+
+        handlers = {}
+        for handler, func of settings.handlers
+            handlers[handler] = func.bind this
+
+        @set \handlers, handlers
 
         db = @get \db
         gen-entry-id = if typeof! db.gen-entry-id is \Function
@@ -114,7 +123,7 @@ Ractive.components[component-name] = Ractive.extend do
             console.log "ERROR FROM DATA_TABLE: on-init: ", e
 
 
-        @on do
+        events =
             clicked: (args) ->
                 context = args.context
                 index = context.id
@@ -237,6 +246,8 @@ Ractive.components[component-name] = Ractive.extend do
             run-handler: (params) ->
                 console.log "Running run-handler event, params: ", params
                 (@get \runHandler) params
+
+        @on events `merge` handlers
 
 
     data: ->
