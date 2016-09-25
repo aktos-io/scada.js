@@ -24,7 +24,7 @@ Ractive.components[component-name] = Ractive.extend do
             #console.log "rotate function is starting... , test ractive: __" , __
             state-val = __.get \state
             #console.log "state-val: ", state-val
-            __.animate {angle: 360degree}, {duration: 2000ms}
+            __.animate \angle, 360degree, {duration: 2000ms}
             .then ->
                 __.set \angle, 0
                 if state-val is \doing
