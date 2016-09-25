@@ -78,15 +78,10 @@ is-module-index = (base, file) ->
     return false
 
 
+only-compile = yes if argv.compile is true
+
 # Organize Tasks
 gulp.task \default, ->
-    do function run-all
-        gulp.start <[ browserify html vendor vendor-css assets jade ]>
-
-    if argv.compile is true
-        console.log "Gulp compiled only once..."
-        return
-
     if argv.clean is true
         console.log "Clearing build directory..."
 
@@ -101,6 +96,15 @@ gulp.task \default, ->
                         fs.unlinkSync(curPath)
                 fs.rmdirSync(path)
         deleteFolderRecursive paths.build-folder
+        return
+
+    do function run-all
+        gulp.start <[ browserify html vendor vendor-css assets jade ]>
+
+    if only-compile
+        console.log "Gulp will compile only once..."
+        return
+
 
     for-jade =
         "#{paths.client-src}/components/**/*.jade"
@@ -163,7 +167,7 @@ gulp.task \browserify, <[ copy-js generate-components-module ]> !->
         extensions: <[ .ls ]>
         cache: {}
         package-cache: {}
-        plugin: [watchify]
+        plugin: [watchify unless only-compile]
 
     bundler.transform \browserify-livescript
 
@@ -182,7 +186,8 @@ gulp.task \browserify, <[ copy-js generate-components-module ]> !->
             .pipe tap (file) ->
                 log-info \browserify, "Browserify finished"
 
-    bundler.on \update, bundle
+    unless only-compile
+        bundler.on \update, bundle
 
 # Concatenate vendor javascript files into public/js/vendor.js
 gulp.task \vendor, ->
