@@ -1,6 +1,8 @@
+component-name = 'ace-editor'
+
 modes = ace.require \ace/ext/modelist
 
-Ractive.components['ace-editor'] = Ractive.extend do
+Ractive.components[component-name] = Ractive.extend do
     template: '<div class="editor"></div>'
     isolated: yes
     onrender: ->

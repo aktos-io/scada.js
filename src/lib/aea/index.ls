@@ -8,6 +8,12 @@ require! {
     './formatting': {unix-to-readable, readable-to-unix}
 }
 
+export function assert (condition, message)
+    unless condition
+        message = message or "Assertion failed"
+        if (typeof Error) isnt void
+            throw new Error message
+        throw message  # Fallback
 
 module.exports = {
     signup, PouchDB, make-design-doc, check-login, is-db-alive
@@ -17,4 +23,5 @@ module.exports = {
     debug-log, get-logger
     pack, unpack
     unix-to-readable, readable-to-unix
+    assert 
 }

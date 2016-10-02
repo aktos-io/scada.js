@@ -1,4 +1,3 @@
-
 /* Alerts */
 
 Ractive.components['alert'] = Ractive.extend({
