@@ -15,6 +15,28 @@ export function assert (condition, message)
             throw new Error message
         throw message  # Fallback
 
+
+export obj-copy = (x) -> JSON.parse JSON.stringify x
+
+export dynamic-obj = (...x) ->
+    o = {}
+    val = x.pop!
+    key = x.pop!
+
+    #console.log "key, val: ", x, key, val
+    if key
+        o[key] = val
+    else
+        return val
+    dynamic-obj.apply this, (x ++ o)
+
+export attach = (obj, key, val) ->
+    if key of arr
+        obj[key].push val
+    else
+        obj[key] = [val]
+
+
 module.exports = {
     signup, PouchDB, make-design-doc, check-login, is-db-alive
     sleep, after, clear-timer
@@ -23,5 +45,6 @@ module.exports = {
     debug-log, get-logger
     pack, unpack
     unix-to-readable, readable-to-unix
-    assert 
+    assert
+    obj-copy, dynamic-obj, attach
 }
