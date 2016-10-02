@@ -1,25 +1,29 @@
-+component('search-combobox')
-    +unless('inInputGroup')
-        .dropdown
-            button.face.btn.btn-default.dropdown-toggle(type="button" data-toggle="dropdown").
-                {{ selectedText }} #[span.caret]
-            ul.dropdown-menu(role="menu")
-                .dropdown-item
-                    input.searchbox(value="{{ searchedText }}" placeholder="Ara..." style="width: 100%")
-                li
-                    .btn-group-vertical(style="width: 100%")
-                        +each('filtered')
-                            btn(on-buttonclick="select" value="{{ .id }}" type="primary") 
-                                span {{ .name }}            
 
-    +if('inInputGroup')
-        button.face.btn.btn-default.dropdown-toggle(type="button" data-toggle="dropdown").
-            {{ selectedText }} #[span.caret]
-        ul.dropdown-menu(role="menu")
-            .dropdown-item
-                input.searchbox(value="{{ searchedText }}" placeholder="Ara..." style="width: 100%")
-            li
-                .btn-group-vertical(style="width: 100%")
-                    +each('filtered')
-                        btn(on-buttonclick="select" value="{{ .id }}" type="primary")
-                            span {{ .name }}         
++component('search-combobox')
+    
+    |    {{#if inInputGroup}} 
+    button.face.btn.btn-default.dropdown-toggle(type="button" data-toggle="dropdown").
+        {{ selectedText }} #[span.caret]
+    ul.dropdown-menu(role="menu")
+        .dropdown-item
+            input.searchbox(value="{{ searchedText }}" placeholder="Ara..." style="width: 100%")
+        li
+            .btn-group-vertical(style="width: 100%")
+                +each('filtered')
+                    btn(on-buttonclick="select" value="{{ .id }}" type="primary") 
+                        span {{ .name }}            
+    |    {{else}}
+    |        <div class="dropdown"> 
+    button.face.btn.btn-default.dropdown-toggle(type="button" data-toggle="dropdown").
+        {{ selectedText }} #[span.caret]
+    ul.dropdown-menu(role="menu")
+        .dropdown-item
+            input.searchbox(value="{{ searchedText }}" placeholder="Ara..." style="width: 100%")
+        li
+            .btn-group-vertical(style="width: 100%")
+                +each('filtered')
+                    btn(on-buttonclick="select" value="{{ .id }}" type="primary") 
+                        span {{ .name }}            
+
+    |        </div>
+    |    {{/if}}

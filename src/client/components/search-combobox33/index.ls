@@ -1,6 +1,6 @@
 require! aea: {sleep}
 
-component-name = "search-combobox3"
+component-name = "search-combobox33"
 Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
     isolated: yes
@@ -10,10 +10,24 @@ Ractive.components[component-name] = Ractive.extend do
 
         # USING EXTERNAL DATA (IE. Not from database directly)
         #console.log "COMBOBOX: using data: ", data
+        select = $ @find \select
+        nonexist = @get \defaultData
 
+        # observe `data`, sync with `selection-list`
+        do function observe-data
+            #console.log "COMBOBOX: observing....", new-val
+            data =  __.get \data
+            __.set \selectionList, data
+            select.selectpicker \render
+            select.selectpicker \refresh
+
+        __.observe \data, ->
+            observe-data!
+
+
+        return
         function observe-selected
             selected = __.get \selected
-            default-data = __.get \defaultData
             data = __.get \data
             try
                 throw if (Number selected) isnt (parse-int selected)
@@ -22,39 +36,23 @@ Ractive.components[component-name] = Ractive.extend do
 
             return if not data or data.length is 0
 
-            if selected in [..id for data when ..id not in [..id for default-data]]
+            if selected in [..id for data]
                 $ __.find \* .selectpicker 'val', selected
                 __.set \selected-name, [..name for data when ..id is selected].0
             else
                 #console.log "COMBOBOX: selected value is not in dataset, ds: ", selected , [..id for data]
 
-                nonexist = default-data.0.id
 
-                __.set \selected-name, ''
-                __.set \iselected, nonexist
-                __.set \selected, nonexist
-                #$ __.find \* .selectpicker 'val', '-111'
+                __.set \selected-name, nonexist.name
+                __.set \iselected, nonexist.id
+                __.set \selected, nonexist.id
 
-        do function observe-data
-            #console.log "COMBOBOX: observing....", new-val
-            default-data = __.get \defaultData
-            data =  __.get \data
-            data = default-data ++ data
-            __.set \selectionList, data
-            #$ '.selectpicker' .selectpicker 'refresh'
-            #console.log "COMBOBOX: re-rendering!"
-            $ __.find \* .selectpicker \render
-            $ __.find \* .selectpicker \refresh
-
-        <- sleep 10ms
-        __.observe \data, (new-val)->
-            observe-data!
 
         curr = __.get \selected
         if curr
             __.set \iselected, curr
         else
-            __.set \iselected, -111
+            __.set \iselected, undefined
 
         __.observe \selected, (val) ->
             observe-selected!
@@ -66,13 +64,11 @@ Ractive.components[component-name] = Ractive.extend do
 
     onteardown: ->
         console.log "destroying select picker..."
-        $ @find \* .selectpicker \destroy
+        $ @find \select .selectpicker \destroy
 
     data: ->
-        selected: -1
-        iselected: -111
-
+        selected: undefined
         default-data:
-            * id: -111
-              name: "Seçim Yapılmadı"
+            * id: void
+              name: "Seçim YAPILMADI (555)"
             ...

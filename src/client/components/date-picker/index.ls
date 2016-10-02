@@ -1,7 +1,6 @@
 {split, take, join, lists-to-obj, sum} = require 'prelude-ls'
 {sleep} = require "aea"
 
-random = require \randomstring
 
 component-name = "date-picker"
 Ractive.components[component-name] = Ractive.extend do
@@ -16,16 +15,9 @@ Ractive.components[component-name] = Ractive.extend do
             display -> eg: "27.10.2016 13:15 (Istanbul)"
     */
 
-    oninit: ->
+    onrender: ->
         __ = @
-
-        if (@get \id) is \will-be-random
-            @set \id random.generate 7
-            #console.log "picker id is: ", @get \id
-
-        #console.log "date-time-picker starting..."
-        <- sleep 0ms
-        jq = $ "\##{__.get 'id'}"
+        jq = $ @find \.date
         dp = jq.datetimepicker do
             # daysOfWeekDisabled: [6, 7]
             format: 'DD.MM.YYYY HH:mm'
@@ -37,7 +29,7 @@ Ractive.components[component-name] = Ractive.extend do
 
         #console.log "x: " , x
 
-        dp-fn = $ "\##{__.get 'id'}" .data \DateTimePicker
+        dp-fn = jq.data \DateTimePicker
         #console.log "dp func: ", dp-fn
 
         dp.on "dp.change" , ->
@@ -51,6 +43,3 @@ Ractive.components[component-name] = Ractive.extend do
             display = moment (new Date val) .format 'DD.MM.YYYY HH:mm'
             #console.log "display: ", display
             dp-fn.date display
-
-    data: ->
-        id: \will-be-random

@@ -13,7 +13,7 @@ Ractive.components[component-name] = Ractive.extend do
 
 
         if db is void
-            console.error "no database connection provided to db-img!"
+            #console.error "no database connection provided to db-img!"
             img.attr \alt, "IMG ERR: DB NOT FOUND (1)"
             return
 
@@ -21,36 +21,36 @@ Ractive.components[component-name] = Ractive.extend do
             src = __.get \src
             return unless src
             if src is __.get \lastSrc
-                console.log "db-img: same source, returning..."
+                #console.log "db-img: same source, returning..."
                 return
             __.set \lastSrc, src
 
             try
                 [doc-name, att-name] = src.split '/'
                 throw unless doc-name and att-name
-                console.log "db-img getting: #{doc-name}/#{att-name}"
+                #console.log "db-img getting: #{doc-name}/#{att-name}"
             catch
-                console.log "db-img err: ", e
+                #console.log "db-img err: ", e
                 img.attr \alt, "no src specified!"
                 return
 
 
-            console.log "db-img getting attachment: ", doc-name, ":::", att-name
+            #console.log "db-img getting attachment: ", doc-name, ":::", att-name
             err, res <- db.get-attachment doc-name, att-name
             if err
-                console.warn "can not get attachment", err
+                #console.warn "can not get attachment", err
                 img.attr \alt, "IMG NOT FOUND"
                 err-box.text 'IMAGE NOT FOUND'
             else
-                console.log "db-img: here is the attachment: ", res
+                #console.log "db-img: here is the attachment: ", res
                 img.attr \src, URL.createObjectURL new Blob [res], {type: "image/png"}
 
         @observe \db.lastChange, (n) ->
-            console.log "last change is: ", n
+            #console.log "last change is: ", n
             get-img!
 
         @observe \src, ->
-            console.log "db-img src changed, retrying!"
+            #console.log "db-img src changed, retrying!"
             get-img!
 
         /*

@@ -182,10 +182,10 @@ Ractive.components[component-name] = Ractive.extend do
                 @set \curr, new-order
 
                 @set \addingNew, true
-                console.log "adding brand-new order!", (@get \curr)
+                #console.log "adding brand-new order!", (@get \curr)
 
             new-order-close: ->
-                console.log "ORDER_TABLE: Closing edit form..."
+                #console.log "ORDER_TABLE: Closing edit form..."
                 @set \addingNew, false
                 @fire \endEditing
 
@@ -293,15 +293,13 @@ Ractive.components[component-name] = Ractive.extend do
             handlers = __.get \settings.handlers
             param = null
 
-            console.log "orig run-handler: params: ", params
+            #console.log "orig run-handler: params: ", params
             if params.args
                 # this is from ack-button
                 if typeof! params.args is \Array
-                    console.log "lann???"
                     args = unpack pack params.args
                     handler = args.shift!
                     params.args = args
-                    console.log "heyecan yok, sakin..."
                 else
                     handler = params.args
                     params.args = null
@@ -316,8 +314,8 @@ Ractive.components[component-name] = Ractive.extend do
                 else
                     handler = params
 
-            console.log "Handler: ", handler
-            console.log "Param: ", param
+            #console.log "Handler: ", handler
+            #console.log "Param: ", param
 
             if typeof handlers[handler] is \function
                 #console.log "RUNNING HANDLER: #{handler}(#{param})"

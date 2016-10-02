@@ -1,0 +1,9 @@
+
++component('search-combobox33')
+    span selected: {{ selected }} 
+    textarea(twoway="false" value="{{ JSON.stringify(selectionList, null, 2) }}")
+    select(value='{{iselected}}', data-style='btn-primary', data-live-search='true', data-width='auto')
+        +each("selectionList:i")
+            option(value="{{ .id }}") {{ .name }}
+            
+            
