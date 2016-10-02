@@ -15,6 +15,7 @@ Ractive.components[component-name] = Ractive.extend do
         button = $ @find '.face'
         container = $ @find \.selection-list
         searchbox = $ @find \.searchbox
+        dd = $ @find \.dropdown
 
         get-data = ->
             __.get(\data) or []
@@ -36,6 +37,10 @@ Ractive.components[component-name] = Ractive.extend do
                 selected-text = [..name for get-data! when ..id is val].0 or __.get \selectedText
                 __.set \selected, val
                 __.set \selectedText, selected-text
+                try
+                    #dd.dropdown "toggle"
+                catch
+                    debugger
 
 
         selected = @get \selected
