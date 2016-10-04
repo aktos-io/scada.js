@@ -184,6 +184,11 @@ Ractive.components[component-name] = Ractive.extend do
                 @set \addingNew, true
                 #console.log "adding brand-new order!", (@get \curr)
 
+
+                if typeof! settings.on-create-view is \Function
+                    settings.on-create-view.call this, new-order
+
+
             new-order-close: ->
                 #console.log "ORDER_TABLE: Closing edit form..."
                 @set \addingNew, false
@@ -194,34 +199,47 @@ Ractive.components[component-name] = Ractive.extend do
                 order-doc = @get \curr
 
                 __.set \saving, "Kaydediyor..."
-                console.log "Saving new order document: ", order-doc
-                if not order-doc._id?
-                    console.log "Generating new id for the document!"
-                    order-doc = order-doc `merge` {_id: gen-entry-id!}
+                save = __.get \handlers.save
+                if typeof save is \function
+                    try
+                        save order-doc
+                        __.set \saving, "OK!"
+                        <- sleep 2000ms
+                        __.set \saving, ""
 
-                err, res <- db.put order-doc
-                if err
-                    console.log "Error putting new order: ", err
-                    __.set \saving, "#{__.get \saving} : #{err}"
-
+                    catch
+                        __.set \saving, "#{__.get \saving} : #{e}"
                 else
-                    console.log "New order put in the database", res
-                    # if adding new document, clean up current document
-                    console.log "order putting database: ", order-doc
-                    t = __.get \tabledata
-                    if order-doc._id not in [.._id for t]
-                        __.set \tabledata ([order-doc] ++ t)
+                    debugger
+                    console.log "Saving new order document: ", order-doc
+                    if not order-doc._id?
+                        console.log "Generating new id for the document!"
+                        order-doc = order-doc `merge` {_id: gen-entry-id!}
 
-                    if order-doc._rev is void
-                        console.log "refreshing new order...."
-                        __.set \curr, (__.get \newOrder)!
+                    err, res <- db.put order-doc
+                    if err
+                        console.log "Error putting new order: ", err
+                        __.set \saving, "#{__.get \saving} : #{err}"
+
                     else
-                        console.log "order had rev: ", order-doc._rev
-                        order-doc._rev = res.rev
-                        console.log "Updating current order document rev: ", order-doc._rev
-                        __.set \curr, order-doc
-                    __.set \saving, "OK!"
-                    __.set \changes, (1 + __.get \changes)
+                        console.log "New order put in the database", res
+                        # if adding new document, clean up current document
+                        console.log "order putting database: ", order-doc
+                        t = __.get \tabledata
+                        if order-doc._id not in [.._id for t]
+                            __.set \tabledata ([order-doc] ++ t)
+
+                        if order-doc._rev is void
+                            console.log "refreshing new order...."
+                            __.set \curr, (__.get \newOrder)!
+                        else
+                            console.log "order had rev: ", order-doc._rev
+                            order-doc._rev = res.rev
+                            console.log "Updating current order document rev: ", order-doc._rev
+                            __.set \curr, order-doc
+                        __.set \saving, "OK!"
+                        # TODO: use "kick-changes! function"
+                        __.set \changes, (1 + __.get \changes)
 
             add-new-entry: (keypath) ->
                 __ = @
@@ -234,6 +252,7 @@ Ractive.components[component-name] = Ractive.extend do
 
                 console.log "adding new entry: ", template
                 __.set \curr, editing-doc
+
 
             delete-order: (index-str) ->
                 [key, index] = split ':' index-str
