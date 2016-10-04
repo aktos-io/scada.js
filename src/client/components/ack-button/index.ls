@@ -39,3 +39,6 @@ Ractive.components[component-name] = Ractive.extend do
         angle: 0
         reason: ''
         tooltip-id: random.generate {length: 4}
+        type: ""
+        value: ""
+        class: ""
