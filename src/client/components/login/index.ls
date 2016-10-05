@@ -47,6 +47,8 @@ Ractive.components[component-name] = Ractive.extend do
                     else
                         #console.log "LOGIN: Seems logged in succesfully: ", res
                         e.component.fire \state, \done...
+                        username-input.val ''
+                        password-input.val ''
                         __.set \context.err, null
                         __.fire \success
                 catch ex
@@ -65,9 +67,10 @@ Ractive.components[component-name] = Ractive.extend do
                     e.component.fire \state, \error, err.message
                     __.set \context.err err
                 else
-                    e.component.fire \state, \done...
-                    __.set \context.ok, no if res?.ok
-                    __.fire \logout
+                    if res.ok
+                        __.set \context.ok, no
+                        __.fire \logout
+                        e.component.fire \state, \done...
 
             logout: ->
                 console.log "LOGIN: We are logged out..."
