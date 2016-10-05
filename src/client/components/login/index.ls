@@ -33,43 +33,39 @@ Ractive.components[component-name] = Ractive.extend do
         @on do
             do-login: (e) ->
                 __ = @
-                try e.component.set \state, \doing
-                db = @get \db
-                user = __.get \context ._user
-                ajax-opts = ajax: headers:
-                    Authorization: "Basic #{window.btoa user.name + ':' + user.password}"
-                console.log "LOGIN: Logging in with #{user.name} and #{user.password}"
-                err, res <- db.login user.name, user.password, ajax-opts
-                if err
-                    #console.log "LOGIN: Error while logging in: ", err
-                    try
-                        e.component.set \state, \error
-                        e.component.set \reason, err.message
-
-                    __.set \context.err, {msg: err.message}
-                else
-                    #console.log "LOGIN: Seems logged in succesfully: ", res
-                    try e.component.set \state, \done
-                    <- sleep 1000ms
-                    __.set \context.err, null
-                    __.fire \success
-                    try e.component.set \state, \normal
+                try
+                    e.component.fire \state, \doing
+                    db = @get \db
+                    user = __.get \context ._user
+                    ajax-opts = ajax: headers:
+                        Authorization: "Basic #{window.btoa user.name + ':' + user.password}"
+                    console.log "LOGIN: Logging in with #{user.name} and #{user.password}"
+                    err, res <- db.login user.name, user.password, ajax-opts
+                    if err
+                        e.component.fire \state, \error, err.message
+                        __.set \context.err, {msg: err.message}
+                    else
+                        #console.log "LOGIN: Seems logged in succesfully: ", res
+                        e.component.fire \state, \done...
+                        __.set \context.err, null
+                        __.fire \success
+                catch ex
+                    e.component.fire \state, \error, ex
 
 
 
             do-logout: (e) ->
                 __ = @
-                e.component.set \state, \doing
+                e.component.fire \state, \doing
                 db = @get \db
                 #console.log "LOGIN: Logging out!"
                 err, res <- db.logout!
                 #console.log "LOGIN: Logged out: err: #{err}, res: ", res
                 if err
-                    e.component.set \state, \error
-                    e.component.set \reason, err.message
+                    e.component.fire \state, \error, err.message
                     __.set \context.err err
                 else
-                    e.component.set \state, \done
+                    e.component.fire \state, \done...
                     __.set \context.ok, no if res?.ok
                     __.fire \logout
 
