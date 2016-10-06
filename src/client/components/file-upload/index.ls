@@ -28,14 +28,13 @@ Ractive.components[component-name] = Ractive.extend do
         @on do
             upload-file: (e) ->
                 console.log "uploading!!!"
-                e.component.set \state, \doing
+                e.component.fire \state, \doing
 
                 filename = __.get \attachment_name
                 doc_id = __.get \doc_id
 
                 unless doc_id
-                    e.component.set \state, \error
-                    e.component.set \reason, "Need Document ID!"
+                    e.component.fire \state, \error, "Need Document ID!"
                     return
 
                 err, res <- db.get doc_id
@@ -48,9 +47,12 @@ Ractive.components[component-name] = Ractive.extend do
                 err, res <- db.put-attachment doc_id, filename, doc-rev, file, file.type
                 if err
                     console.log "err: ", err
-                    e.component.set \state, \err
-                    e.component.set \reason, err
+                    e.component.fire \state, \error, err.message
                 else
                     console.log "ok: ", res
                     __.set \filename, "#{doc_id}/#{filename}"
-                    e.component.set \state, \done
+                    e.component.fire \state, \done...
+
+    data: ->
+        attachment_name: ''
+        doc_id: ''
