@@ -1,6 +1,6 @@
 require! 'prelude-ls': {
     split, take, join, lists-to-obj, sum, filter
-    camelize
+    camelize, find
 }
 require! 'aea': {sleep, merge, pack, unpack}
 require! 'randomstring': random
@@ -121,13 +121,14 @@ Ractive.components[component-name] = Ractive.extend do
                     @set \lastIndex, index
 
                     tabledata = @get \tabledata
-                    curr = [.. for tabledata when .._id is index].0
+                    curr = find (._id is index), tabledata
+                    if curr
+                        @set \curr, curr
+                    else
+                        curr = index
 
-                    @set \curr, curr
-                    #console.log "Clicked a row: ", (@get \curr)
+                    settings.on-create-view.call this, curr if typeof! settings.on-create-view is \Function
 
-                    if typeof! settings.on-create-view is \Function
-                        settings.on-create-view.call this, curr
 
             end-editing: ->
                 @set \clickedIndex, null
@@ -181,52 +182,47 @@ Ractive.components[component-name] = Ractive.extend do
                 @set \addingNew, false
                 @fire \endEditing
 
-            add-new-order-save: ->
+            save: (e) ->
                 __ = @
                 order-doc = @get \curr
 
+                button-state = (state, msg) ->
+                    e.component.fire \state, state, msg if e
+
                 __.set \saving, "Kaydediyor..."
-                save = __.get \handlers.save
-                if typeof save is \function
-                    try
-                        save order-doc
-                        __.set \saving, "OK!"
-                        <- sleep 2000ms
-                        __.set \saving, ""
+                button-state \doing
 
-                    catch
-                        __.set \saving, "#{__.get \saving} : #{e}"
+                console.log "Saving new order document: ", order-doc
+                if not order-doc._id?
+                    console.log "Generating new id for the document!"
+                    order-doc = order-doc `merge` {_id: gen-entry-id!}
+
+                err, res <- db.put order-doc
+                if err
+                    console.log "Error putting new order: ", err
+                    __.set \saving, "#{__.get \saving} : #{err.message}"
+                    button-state \error, err.message
                 else
-                    debugger
-                    console.log "Saving new order document: ", order-doc
-                    if not order-doc._id?
-                        console.log "Generating new id for the document!"
-                        order-doc = order-doc `merge` {_id: gen-entry-id!}
+                    console.log "New order put in the database", res
+                    # if adding new document, clean up current document
+                    console.log "order putting database: ", order-doc
+                    t = __.get \tabledata
+                    if order-doc._id not in [.._id for t]
+                        __.set \tabledata ([order-doc] ++ t)
 
-                    err, res <- db.put order-doc
-                    if err
-                        console.log "Error putting new order: ", err
-                        __.set \saving, "#{__.get \saving} : #{err}"
-
+                    if order-doc._rev is void
+                        console.log "refreshing new order...."
+                        __.set \curr, (__.get \newOrder)!
                     else
-                        console.log "New order put in the database", res
-                        # if adding new document, clean up current document
-                        console.log "order putting database: ", order-doc
-                        t = __.get \tabledata
-                        if order-doc._id not in [.._id for t]
-                            __.set \tabledata ([order-doc] ++ t)
+                        console.log "order had rev: ", order-doc._rev
+                        order-doc._rev = res.rev
+                        console.log "Updating current order document rev: ", order-doc._rev
+                        __.set \curr, order-doc
 
-                        if order-doc._rev is void
-                            console.log "refreshing new order...."
-                            __.set \curr, (__.get \newOrder)!
-                        else
-                            console.log "order had rev: ", order-doc._rev
-                            order-doc._rev = res.rev
-                            console.log "Updating current order document rev: ", order-doc._rev
-                            __.set \curr, order-doc
-                        __.set \saving, "OK!"
-                        # TODO: use "kick-changes! function"
-                        __.set \changes, (1 + __.get \changes)
+                    __.set \saving, "OK!"
+                    button-state \done...
+                    # TODO: use "kick-changes! function"
+                    __.set \changes, (1 + __.get \changes)
 
             add-new-entry: (keypath) ->
                 __ = @
