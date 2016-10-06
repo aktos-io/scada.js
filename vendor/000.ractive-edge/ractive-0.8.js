@@ -1,6 +1,6 @@
 /*
 	Ractive.js v0.8.0-edge
-	Tue Sep 27 2016 05:03:51 GMT+0000 (UTC) - commit 9c5873e9fa2bf71066432af68f2ad5da7490ca8e
+	Wed Oct 05 2016 18:21:35 GMT+0000 (UTC) - commit d05727dd2a7eda8206e65fa5441ff9de0bba937e
 
 	http://ractivejs.org
 	http://twitter.com/RactiveJS
@@ -432,13 +432,13 @@
   var welcome;
   if ( hasConsole ) {
   	var welcomeIntro = [
-  		("%cRactive.js %c0.8.0-edge-9c5873e9fa2bf71066432af68f2ad5da7490ca8e %cin debug mode, %cmore..."),
+  		("%cRactive.js %c0.8.0-edge-d05727dd2a7eda8206e65fa5441ff9de0bba937e %cin debug mode, %cmore..."),
   		'color: rgb(114, 157, 52); font-weight: normal;',
   		'color: rgb(85, 85, 85); font-weight: normal;',
   		'color: rgb(85, 85, 85); font-weight: normal;',
   		'color: rgb(82, 140, 224); font-weight: normal; text-decoration: underline;'
   	];
-  	var welcomeMessage = "You're running Ractive 0.8.0-edge-9c5873e9fa2bf71066432af68f2ad5da7490ca8e in debug mode - messages will be printed to the console to help you fix problems and optimise your application.\n\nTo disable debug mode, add this line at the start of your app:\n  Ractive.DEBUG = false;\n\nTo disable debug mode when your app is minified, add this snippet:\n  Ractive.DEBUG = /unminified/.test(function(){/*unminified*/});\n\nGet help and support:\n  http://docs.ractivejs.org\n  http://stackoverflow.com/questions/tagged/ractivejs\n  http://groups.google.com/forum/#!forum/ractive-js\n  http://twitter.com/ractivejs\n\nFound a bug? Raise an issue:\n  https://github.com/ractivejs/ractive/issues\n\n";
+  	var welcomeMessage = "You're running Ractive 0.8.0-edge-d05727dd2a7eda8206e65fa5441ff9de0bba937e in debug mode - messages will be printed to the console to help you fix problems and optimise your application.\n\nTo disable debug mode, add this line at the start of your app:\n  Ractive.DEBUG = false;\n\nTo disable debug mode when your app is minified, add this snippet:\n  Ractive.DEBUG = /unminified/.test(function(){/*unminified*/});\n\nGet help and support:\n  http://docs.ractivejs.org\n  http://stackoverflow.com/questions/tagged/ractivejs\n  http://groups.google.com/forum/#!forum/ractive-js\n  http://twitter.com/ractivejs\n\nFound a bug? Raise an issue:\n  https://github.com/ractivejs/ractive/issues\n\n";
 
   	welcome = function () {
   		var hasGroup = !!console.groupCollapsed;
@@ -2059,6 +2059,7 @@
   function handleChange       ( x ) { x.handleChange(); }
   function mark               ( x ) { x.mark(); }
   function marked             ( x ) { x.marked(); }
+  function notifiedUpstream   ( x ) { x.notifiedUpstream(); }
   function render             ( x ) { x.render(); }
   function teardown           ( x ) { x.teardown(); }
   function unbind             ( x ) { x.unbind(); }
@@ -2360,6 +2361,7 @@
   	var parent = this.parent, prev = this;
   	while ( parent ) {
   		if ( parent.patternObservers.length ) parent.patternObservers.forEach( function ( o ) { return o.notify( prev.key ); } );
+  		parent.links.forEach( notifiedUpstream );
   		parent.deps.forEach( handleChange );
   		prev = parent;
   		parent = parent.parent;
@@ -2647,6 +2649,11 @@
 
   		this.deps.forEach( handleChange );
   		this.clearUnresolveds();
+  	};
+
+  	LinkModel.prototype.notifiedUpstream = function notifiedUpstream$1 () {
+  		this.links.forEach( notifiedUpstream );
+  		this.deps.forEach( handleChange );
   	};
 
   	LinkModel.prototype.relinked = function relinked () {
@@ -7910,7 +7917,7 @@
   	};
   }
 
-  var partialDefinitionSectionPattern = /^#\s*partial\s+/;
+  var partialDefinitionSectionPattern = /^\s*#\s*partial\s+/;
 
   function readPartialDefinitionSection ( parser ) {
   	var start, name, content, child, closed;
@@ -7934,6 +7941,7 @@
   		parser.error( 'expected legal partial name' );
   	}
 
+  	parser.allowWhitespace();
   	if ( !parser.matchString( delimiters[1] ) ) {
   		parser.error( ("Expected closing delimiter '" + (delimiters[1]) + "'") );
   	}
@@ -16898,7 +16906,7 @@
   	magic:          { value: magicSupported },
 
   	// version
-  	VERSION:        { value: '0.8.0-edge-9c5873e9fa2bf71066432af68f2ad5da7490ca8e' },
+  	VERSION:        { value: '0.8.0-edge-d05727dd2a7eda8206e65fa5441ff9de0bba937e' },
 
   	// plugins
   	adaptors:       { writable: true, value: {} },

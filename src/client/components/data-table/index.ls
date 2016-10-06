@@ -1,6 +1,6 @@
 require! 'prelude-ls': {
     split, take, join, lists-to-obj, sum, filter
-    camelize
+    camelize, find
 }
 require! 'aea': {sleep, merge, pack, unpack}
 require! 'randomstring': random
@@ -9,17 +9,14 @@ component-name = "data-table"
 Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
     isolated: yes
-    oninit: ->
+    onrender: ->
         __ = @
+        db = @get \db
+        console.error "No database object is passed to data-table!" unless db
+
         if (@get \id) is \will-be-random
             # then make it random
             @set \id random.generate 7
-
-        # get settings
-        # ------------
-        # cols
-        # filters: returns data in [{id: .., cols: [.....]}] format
-        # tabledata: data to display, in [{_id: ..., .....}] format
 
         settings = @get \settings
 
@@ -31,7 +28,7 @@ Ractive.components[component-name] = Ractive.extend do
             col-list = split ',', settings.col-names
             @set \columnList, col-list
         catch
-            console.log "DATA_TABLE: problem with col-names: ", e
+            console.warn "DATA_TABLE: problem with col-names: ", e
             return
 
         handlers = {}
@@ -40,64 +37,54 @@ Ractive.components[component-name] = Ractive.extend do
 
         @set \handlers, handlers
 
-        db = @get \db
-        gen-entry-id = if typeof! db.gen-entry-id is \Function
-            db.gen-entry-id
-        else
-            @get \gen-entry-id
+        gen-entry-id = db.gen-entry-id
 
         @set \readonly, if @partials.editForm
             no
         else
             yes
 
-        unless @get \readonly
-            throw "GEN_ENTRY_ID: NOT FOUND!!!" if typeof! gen-entry-id isnt \Function
-
         @set \dataFilters, settings.filters
 
-        do function create-view param
+        @observe \tabledata, create-view = ->
             filters = __.get \dataFilters
             selected-filter = __.get \selectedFilter
             tabledata = __.get \tabledata
-            #console.log "DATA_TABLE: Running create-view...", selected-filter if settings.debug
             try
-                return if typeof! tabledata isnt \Array
-                throw "tabledata empty" if tabledata.length is 0
-                ffunc = filters[selected-filter]
-                filtered = ffunc.apply __, [tabledata, param] if typeof ffunc is \function
-                if typeof settings.after-filter is \function
-                    #console.log "DATA_TABLE: applying after-filter: ", settings.after-filter if settings.debug
-
-                    generate-visible = (view) ->
-                        #console.log "orig view size: ", view.length
-                        #return if view.length < 1
-                        __.set \tableview, view
-                        if settings.page-size > 0
-                            curr-page = __.get \currPage
-                            min = (x, y) -> if x < y then x else y
-                            items =
-                                from: curr-page * settings.page-size
-                                to: min ((curr-page + 1) * settings.page-size) - 1, (view.length - 1)
-                            #console.log "generating visible part, items:", items
-
-                            __.set \tableview_visible, [.. for view when items.from <= ..no <= items.to ]
-                        else
-                            __.set \tableview_visible, view
-
-                    #settings.after-filter.apply __, [filtered, (view) -> __.set \tableview, view]
-                    settings.after-filter.apply __, [filtered, generate-visible]
-                else
-                    console.log "after-filter is not defined?", settings.col-names
+                throw if tabledata.length is 0
             catch
-                #console.log "DATA_TABLE: Error getting filtered: ", e, tabledata
-                null
+                return
+
+            unless typeof settings.after-filter is \function
+                console.error "after-filter is not defined?", settings.col-names
+                return
+
+            ffunc = filters[selected-filter]
+            filtered = ffunc.apply __, [tabledata] if typeof ffunc is \function
+            generate-visible = (view) ->
+                try
+                    __.set \tableview, view
+                    if settings.page-size > 0
+                        curr-page = __.get \currPage
+                        min = (x, y) -> if x < y then x else y
+                        items =
+                            from: curr-page * settings.page-size
+                            to: min ((curr-page + 1) * settings.page-size) - 1, (view.length - 1)
+
+                        __.set \tableview_visible, [.. for view when items.from <= ..no <= items.to ]
+                    else
+                        __.set \tableview_visible, view
+                catch
+                    debugger
+
+            unless filtered
+                console.warn "Filtered data is undefined! "
+            else
+                settings.after-filter.apply __, [filtered, generate-visible]
+
 
         @set \create-view, create-view
 
-        @observe \tabledata, ->
-            #console.log "ORDER_TABLE: observing tabledata..."
-            create-view!
 
         try
             throw "on-change is not a function!" if typeof settings.on-change isnt \function
@@ -134,13 +121,14 @@ Ractive.components[component-name] = Ractive.extend do
                     @set \lastIndex, index
 
                     tabledata = @get \tabledata
-                    curr = [.. for tabledata when .._id is index].0
+                    curr = find (._id is index), tabledata
+                    if curr
+                        @set \curr, curr
+                    else
+                        curr = index
 
-                    @set \curr, curr
-                    #console.log "Clicked a row: ", (@get \curr)
+                    settings.on-create-view.call this, curr if typeof! settings.on-create-view is \Function
 
-                    if typeof! settings.on-create-view is \Function
-                        settings.on-create-view.call this, curr
 
             end-editing: ->
                 @set \clickedIndex, null
@@ -194,52 +182,47 @@ Ractive.components[component-name] = Ractive.extend do
                 @set \addingNew, false
                 @fire \endEditing
 
-            add-new-order-save: ->
+            save: (e) ->
                 __ = @
                 order-doc = @get \curr
 
+                button-state = (state, msg) ->
+                    e.component.fire \state, state, msg if e
+
                 __.set \saving, "Kaydediyor..."
-                save = __.get \handlers.save
-                if typeof save is \function
-                    try
-                        save order-doc
-                        __.set \saving, "OK!"
-                        <- sleep 2000ms
-                        __.set \saving, ""
+                button-state \doing
 
-                    catch
-                        __.set \saving, "#{__.get \saving} : #{e}"
+                console.log "Saving new order document: ", order-doc
+                if not order-doc._id?
+                    console.log "Generating new id for the document!"
+                    order-doc = order-doc `merge` {_id: gen-entry-id!}
+
+                err, res <- db.put order-doc
+                if err
+                    console.log "Error putting new order: ", err
+                    __.set \saving, "#{__.get \saving} : #{err.message}"
+                    button-state \error, err.message
                 else
-                    debugger
-                    console.log "Saving new order document: ", order-doc
-                    if not order-doc._id?
-                        console.log "Generating new id for the document!"
-                        order-doc = order-doc `merge` {_id: gen-entry-id!}
+                    console.log "New order put in the database", res
+                    # if adding new document, clean up current document
+                    console.log "order putting database: ", order-doc
+                    t = __.get \tabledata
+                    if order-doc._id not in [.._id for t]
+                        __.set \tabledata ([order-doc] ++ t)
 
-                    err, res <- db.put order-doc
-                    if err
-                        console.log "Error putting new order: ", err
-                        __.set \saving, "#{__.get \saving} : #{err}"
-
+                    if order-doc._rev is void
+                        console.log "refreshing new order...."
+                        __.set \curr, (__.get \newOrder)!
                     else
-                        console.log "New order put in the database", res
-                        # if adding new document, clean up current document
-                        console.log "order putting database: ", order-doc
-                        t = __.get \tabledata
-                        if order-doc._id not in [.._id for t]
-                            __.set \tabledata ([order-doc] ++ t)
+                        console.log "order had rev: ", order-doc._rev
+                        order-doc._rev = res.rev
+                        console.log "Updating current order document rev: ", order-doc._rev
+                        __.set \curr, order-doc
 
-                        if order-doc._rev is void
-                            console.log "refreshing new order...."
-                            __.set \curr, (__.get \newOrder)!
-                        else
-                            console.log "order had rev: ", order-doc._rev
-                            order-doc._rev = res.rev
-                            console.log "Updating current order document rev: ", order-doc._rev
-                            __.set \curr, order-doc
-                        __.set \saving, "OK!"
-                        # TODO: use "kick-changes! function"
-                        __.set \changes, (1 + __.get \changes)
+                    __.set \saving, "OK!"
+                    button-state \done...
+                    # TODO: use "kick-changes! function"
+                    __.set \changes, (1 + __.get \changes)
 
             add-new-entry: (keypath) ->
                 __ = @
@@ -260,11 +243,6 @@ Ractive.components[component-name] = Ractive.extend do
                 editing-doc = @get \curr
                 editing-doc[key].splice index, 1
                 @set \curr, editing-doc
-
-
-            run-handler: (params) ->
-                console.log "Running run-handler event, params: ", params
-                (@get \runHandler) params
 
         @on events `merge` handlers
 
@@ -306,7 +284,6 @@ Ractive.components[component-name] = Ractive.extend do
 
         is-last-clicked: (index) ->
             x = index is @get \lastIndex
-
 
         run-handler: (params) ->
             handlers = __.get \settings.handlers

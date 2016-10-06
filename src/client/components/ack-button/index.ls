@@ -34,11 +34,31 @@ Ractive.components[component-name] = Ractive.extend do
             click: ->
                 val = __.get \value
                 console.log "ack-button detects button click with value: ", val
-                @fire \buttonclick, {component: this, args: val}
+
+                # TODO: fix sending args twice!
+                @fire \buttonclick, {component: this, args: val}, val
+
+            state: (s, msg) ->
+                if s in <[ ok done ]>
+                    __.set \state, \done
+
+                if s in <[ done... ok... ]>
+                    __.set \state, \done
+                    <- sleep 5000ms
+                    __.set \state, ''
+
+                if s in <[ doing ]>
+                    __.set \state, \doing
+
+                if s in <[ error ]>
+                    __.set \state, \error
+                    __.set \reason, msg
+
     data: ->
+        __ = @
         angle: 0
         reason: ''
         tooltip-id: random.generate {length: 4}
-        type: ""
+        type: "default"
         value: ""
         class: ""
