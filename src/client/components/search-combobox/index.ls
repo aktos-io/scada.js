@@ -58,3 +58,4 @@ Ractive.components[component-name] = Ractive.extend do
     data: ->
         sl-visible: no
         selected-text: "Seçim Yapılmadı"
+        searched-text: '' 
