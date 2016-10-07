@@ -11,7 +11,7 @@ style.
     }
 
 +component('coll-panel').
-    <div class="panel panel-default">
+    <div class="panel panel-{{ type }}">
         <div class="panel-heading">
             <div class="panel-title">{{title}}</div>
             <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-{{#if collapsed}}down{{else}}up{{/if}}"></i></span>

@@ -254,6 +254,7 @@ Ractive.components[component-name] = Ractive.extend do
             console.log "ORDER_TABLE: Returning new default value: ", __.get \settings.default
             try unpack pack __.get \settings.default
         curr: null
+        handlers: {}
         id: \will-be-random
         readonly: no
         tabledata: []

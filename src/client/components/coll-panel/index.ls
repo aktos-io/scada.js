@@ -37,4 +37,5 @@ Ractive.components[component-name] = Ractive.extend do
                 __.set \collapsed, yes
 
     data: ->
-        collapsed: no
+        collapsed: yes
+        type: \default
