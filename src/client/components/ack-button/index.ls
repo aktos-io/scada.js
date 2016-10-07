@@ -44,7 +44,7 @@ Ractive.components[component-name] = Ractive.extend do
 
                 if s in <[ done... ok... ]>
                     __.set \state, \done
-                    <- sleep 5000ms
+                    <- sleep 3000ms
                     __.set \state, ''
 
                 if s in <[ doing ]>
