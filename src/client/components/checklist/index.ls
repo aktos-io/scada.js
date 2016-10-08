@@ -10,11 +10,11 @@ Ractive.components[component-name] = Ractive.extend do
         @observe \items, (items) ->
             completed = (and-list [..checked for items])
             __.set \completed, completed
-            __.fire \complete if completed 
+            __.fire \complete if completed
 
     data: ->
         items:
-            * id: 1
-              name: "aaa"
-            * id: 2
-              name: "bbb"
+            * id: null
+              name: "NO CHECKLIST SPECIFIED"
+            ...
+        completed: no 

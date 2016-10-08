@@ -165,11 +165,15 @@ Ractive.components[component-name] = Ractive.extend do
 
             add-new-order: ->
                 new-order = (@get \newOrder)!
-                new-order._id = gen-entry-id!
+                new-order._id = db.gen-entry-id!
 
                 @set \curr, new-order
 
                 @set \addingNew, true
+
+                tabledata = @get \tabledata
+                @set \tabledata, (tabledata ++ new-order)
+                (@get \create-view)!
                 #console.log "adding brand-new order!", (@get \curr)
 
 
@@ -227,7 +231,11 @@ Ractive.components[component-name] = Ractive.extend do
             add-new-entry: (keypath) ->
                 __ = @
                 editing-doc = __.get \curr
-                template = unpack pack __.get "settings.default.#{keypath}.0"
+                try
+                    template = unpack pack __.get "settings.default.#{keypath}.0"
+                catch
+                    console.error "Problem with keypath: #{keypath}"
+                    
                 if typeof! editing-doc[keypath] isnt \Array
                     console.log "Keypath is not an array, converting to array"
                     editing-doc[keypath] = []
