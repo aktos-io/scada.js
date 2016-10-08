@@ -1,0 +1,13 @@
+//- 
+    items = 
+      * id: ...
+        name: ...
+        checked: true/false 
+      ... 
+      
++component('checklist')
+    ul
+        +each('items')
+            li
+                checkbox(checked="{{ .checked }}") {{ .name }}
+            
