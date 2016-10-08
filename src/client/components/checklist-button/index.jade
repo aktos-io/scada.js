@@ -54,18 +54,17 @@
 
       
 +component('checklist-button')
-    span(style="color: white") {{ items }}
     checklist(items="{{ items }}" completed="{{ completed }}")
     ack-button(
         on-buttonclick="success" 
         type="success" 
-        value="{{ value }}"
+        value="{{ @this.get('success-value') }}"
         disabled="{{ !completed }}"
         ) {{ @this.get('success-text') }}
     ack-button(
         on-buttonclick="fail" 
         type="danger" 
-        value="{{ value }}"
+        value="{{ @this.get('fail-value') }}"
         disabled="{{ completed }}"
         ) {{ @this.get('fail-text') }}
-    //span Completed: {{ acompleted }}
+    span Completed: {{ completed }}
