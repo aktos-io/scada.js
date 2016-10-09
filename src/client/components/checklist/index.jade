@@ -44,5 +44,4 @@
     ul.list-group
         +each('items')
             li.list-group-item
-                checkbox(checked="{{ .checked }}") {{ .name }}
-            
+                checkbox(checked="{{ .checked }}" style="width: 100%") {{ .name }}                                
