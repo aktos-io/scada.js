@@ -1,0 +1,24 @@
+style. 
+    .panel-heading span
+    {
+        margin-top: -20px;
+        font-size: 15px;
+    }
+
+    .clickable
+    {
+        cursor: pointer;
+    }
+
++component('coll-panel').
+    <div class="panel panel-{{ type }}">
+        <div class="panel-heading clickable">
+            <div class="panel-title">{{title}}</div>
+            <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-{{#if collapsed}}down{{else}}up{{/if}}"></i></span>
+        </div>
+        {{#unless collapsed}}
+            <div class="panel-body" intro-outro='slide'>
+                {{yield}}
+            </div>
+        {{/unless}}
+    </div>

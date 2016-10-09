@@ -33,7 +33,7 @@ Ractive.components[component-name] = Ractive.extend do
         @on do
             click: ->
                 val = __.get \value
-                console.log "ack-button detects button click with value: ", val
+                #console.log "ack-button detects button click with value: ", val
 
                 # TODO: fix sending args twice!
                 @fire \buttonclick, {component: this, args: val}, val
@@ -44,7 +44,7 @@ Ractive.components[component-name] = Ractive.extend do
 
                 if s in <[ done... ok... ]>
                     __.set \state, \done
-                    <- sleep 5000ms
+                    <- sleep 3000ms
                     __.set \state, ''
 
                 if s in <[ doing ]>
@@ -62,3 +62,4 @@ Ractive.components[component-name] = Ractive.extend do
         type: "default"
         value: ""
         class: ""
+        disabled: no 

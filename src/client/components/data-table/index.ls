@@ -127,6 +127,8 @@ Ractive.components[component-name] = Ractive.extend do
                     else
                         curr = index
 
+                    @set \currView, context 
+
                     settings.on-create-view.call this, curr if typeof! settings.on-create-view is \Function
 
 
@@ -165,11 +167,15 @@ Ractive.components[component-name] = Ractive.extend do
 
             add-new-order: ->
                 new-order = (@get \newOrder)!
-                new-order._id = gen-entry-id!
+                new-order._id = db.gen-entry-id!
 
                 @set \curr, new-order
 
                 @set \addingNew, true
+
+                tabledata = @get \tabledata
+                @set \tabledata, (tabledata ++ new-order)
+                (@get \create-view)!
                 #console.log "adding brand-new order!", (@get \curr)
 
 
@@ -227,7 +233,11 @@ Ractive.components[component-name] = Ractive.extend do
             add-new-entry: (keypath) ->
                 __ = @
                 editing-doc = __.get \curr
-                template = unpack pack __.get "settings.default.#{keypath}.0"
+                try
+                    template = unpack pack __.get "settings.default.#{keypath}.0"
+                catch
+                    console.error "Problem with keypath: #{keypath}"
+
                 if typeof! editing-doc[keypath] isnt \Array
                     console.log "Keypath is not an array, converting to array"
                     editing-doc[keypath] = []
@@ -254,6 +264,7 @@ Ractive.components[component-name] = Ractive.extend do
             console.log "ORDER_TABLE: Returning new default value: ", __.get \settings.default
             try unpack pack __.get \settings.default
         curr: null
+        handlers: {}
         id: \will-be-random
         readonly: no
         tabledata: []
@@ -336,7 +347,3 @@ Ractive.components[component-name] = Ractive.extend do
                 range
             catch
                 console.log "error in range generator: ", _from, _to
-
-        curr-view: ->
-            curr = __.get \curr
-            filter (.id is curr._id), __.get \tableview .0
