@@ -24,7 +24,7 @@ Ractive.components[component-name] = Ractive.extend do
             });
             */
 
-        expand-button = $ @find \span.clickable
+        expand-button = $ @find \.clickable
         panel-body = $ @find \.panel.panel-body
         #icon = $
 
