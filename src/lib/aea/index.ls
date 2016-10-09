@@ -31,7 +31,7 @@ export dynamic-obj = (...x) ->
     dynamic-obj.apply this, (x ++ o)
 
 export attach = (obj, key, val) ->
-    if key of arr
+    if key of obj
         obj[key].push val
     else
         obj[key] = [val]
