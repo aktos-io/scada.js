@@ -8,4 +8,5 @@ export function unpack x
     try
         JSON.parse x
     catch
+        debugger 
         throw "Error while unpacking: #{e}"
