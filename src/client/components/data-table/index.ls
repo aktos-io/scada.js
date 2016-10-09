@@ -127,6 +127,8 @@ Ractive.components[component-name] = Ractive.extend do
                     else
                         curr = index
 
+                    @set \currView, context 
+
                     settings.on-create-view.call this, curr if typeof! settings.on-create-view is \Function
 
 
@@ -235,7 +237,7 @@ Ractive.components[component-name] = Ractive.extend do
                     template = unpack pack __.get "settings.default.#{keypath}.0"
                 catch
                     console.error "Problem with keypath: #{keypath}"
-                    
+
                 if typeof! editing-doc[keypath] isnt \Array
                     console.log "Keypath is not an array, converting to array"
                     editing-doc[keypath] = []
@@ -310,7 +312,3 @@ Ractive.components[component-name] = Ractive.extend do
                 range
             catch
                 console.log "error in range generator: ", _from, _to
-
-        curr-view: ->
-            curr = __.get \curr
-            filter (.id is curr._id), __.get \tableview .0
