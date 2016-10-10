@@ -14,6 +14,12 @@ Ractive.components[component-name] = Ractive.extend do
         db = @get \db
         console.error "No database object is passed to data-table!" unless db
 
+        if (@get \id) is \will-be-random
+            # then make it random
+            @set \id random.generate 7
+
+        settings = @get \settings
+
         open-row = ->
             new-url = __.get \curr-url
             if new-url
@@ -23,17 +29,15 @@ Ractive.components[component-name] = Ractive.extend do
                         rel-entry = find (.id is part), tableview
                         if rel-entry
                             console.warn "I know this guy: ", part
+                            if settings.page-size and settings.page-size > 0
+                                curr-page = Math.floor (rel-entry.no / settings.page-size)
+                                __.fire \selectPage, curr-page
                             __.set \clickedIndex, null
                             __.fire \clicked, {context: rel-entry}
                             __.update!
 
-        @observe \curr-url, open-row
-
-        if (@get \id) is \will-be-random
-            # then make it random
-            @set \id random.generate 7
-
-        settings = @get \settings
+        @observe \curr-url, ->
+            open-row!
 
         if typeof! settings isnt \Object
             console.log "No settings found!"
@@ -96,7 +100,7 @@ Ractive.components[component-name] = Ractive.extend do
                 console.warn "Filtered data is undefined! "
             else
                 settings.after-filter.apply __, [filtered, generate-visible]
-                open-row!
+                #open-row!
 
 
         @set \create-view, create-view
