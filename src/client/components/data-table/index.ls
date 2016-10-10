@@ -189,8 +189,6 @@ Ractive.components[component-name] = Ractive.extend do
 
                 @set \addingNew, true
 
-                tabledata = @get \tabledata
-                @set \tabledata, (tabledata ++ new-order)
                 (@get \create-view)!
                 #console.log "adding brand-new order!", (@get \curr)
 
