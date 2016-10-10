@@ -11,7 +11,7 @@
             .btn-group-vertical(style="width: 100%")
                 +each('filtered')
                     btn(on-buttonclick="select" value="{{ .id }}" type="primary") 
-                        span {{ .name }}            
+                        span.pull-left {{ .name }}            
     |    {{else}}
     |        <div class="dropdown"> 
     button.face.btn.btn-default.dropdown-toggle(type="button" data-toggle="dropdown").
@@ -23,7 +23,7 @@
             .btn-group-vertical(style="width: 100%")
                 +each('filtered')
                     btn(on-buttonclick="select" value="{{ .id }}" type="primary") 
-                        span {{ .name }}            
+                        span.pull-left {{ .name }}            
 
     |        </div>
     |    {{/if}}
