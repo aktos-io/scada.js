@@ -14,6 +14,21 @@ Ractive.components[component-name] = Ractive.extend do
         db = @get \db
         console.error "No database object is passed to data-table!" unless db
 
+        open-row = ->
+            new-url = __.get \curr-url
+            if new-url
+                tableview = __.get \tableview
+                if tableview
+                    for part in new-url.split '/'
+                        rel-entry = find (.id is part), tableview
+                        if rel-entry
+                            console.warn "I know this guy: ", part
+                            __.set \clickedIndex, null
+                            __.fire \clicked, {context: rel-entry}
+                            __.update!
+
+        @observe \curr-url, open-row
+
         if (@get \id) is \will-be-random
             # then make it random
             @set \id random.generate 7
@@ -81,6 +96,7 @@ Ractive.components[component-name] = Ractive.extend do
                 console.warn "Filtered data is undefined! "
             else
                 settings.after-filter.apply __, [filtered, generate-visible]
+                open-row!
 
 
         @set \create-view, create-view
@@ -127,7 +143,7 @@ Ractive.components[component-name] = Ractive.extend do
                     else
                         curr = index
 
-                    @set \currView, context 
+                    @set \currView, context
 
                     settings.on-create-view.call this, curr if typeof! settings.on-create-view is \Function
 
@@ -173,8 +189,6 @@ Ractive.components[component-name] = Ractive.extend do
 
                 @set \addingNew, true
 
-                tabledata = @get \tabledata
-                @set \tabledata, (tabledata ++ new-order)
                 (@get \create-view)!
                 #console.log "adding brand-new order!", (@get \curr)
 

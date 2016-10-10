@@ -22,6 +22,7 @@
     "body-parser": "^1.15.2",
     "cheerio": "^0.20.0",
     "crypto": "0.0.3",
+    "csv-parse": "^1.1.7",
     "emailjs": "^1.0.5",
     "express": "^4.14.0",
     "express-http-proxy": "^0.8.0",
@@ -29,12 +30,12 @@
     "http-proxy": "^1.14.0",
     "jquery": "^3.0.0",
     "jstransformer-marked": "^1.0.1",
+    "livescript": "~1.4.0",
     "pouchdb": "^5.4.5",
     "pouchdb-authentication": "^0.5.3",
     "prelude-ls": "^1.1.2",
     "randomstring": "^1.1.5",
     "serialport": "^4.0.1",
-    "livescript": "~1.4.0",
     "soap": "^0.16.0"
   },
   "devDependencies": {
