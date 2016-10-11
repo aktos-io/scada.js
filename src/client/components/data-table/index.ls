@@ -90,7 +90,6 @@ Ractive.components[component-name] = Ractive.extend do
                         items =
                             from: curr-page * settings.page-size
                             to: min ((curr-page + 1) * settings.page-size) - 1, (view.length - 1)
-
                         __.set \tableview_visible, [.. for view when items.from <= ..no <= items.to ]
                     else
                         __.set \tableview_visible, view
@@ -302,6 +301,8 @@ Ractive.components[component-name] = Ractive.extend do
         selected-filter: \all
         curr-page: 0
         dont-watch-changes: no
+        two-digit: (n) ->
+            (Math.round (n * 100)) / 100
 
         is-editing-line: (index) ->
             editable = @get \editable
