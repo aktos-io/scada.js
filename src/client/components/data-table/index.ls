@@ -20,7 +20,7 @@ Ractive.components[component-name] = Ractive.extend do
 
         settings = @get \settings
 
-        open-row = ->
+        open-row = (no-need-updating) ->
             new-url = __.get \curr-url
             if new-url
                 tableview = __.get \tableview
@@ -31,8 +31,9 @@ Ractive.components[component-name] = Ractive.extend do
                             console.warn "I know this guy: ", part
                             if settings.page-size and settings.page-size > 0
                                 curr-page = Math.floor (rel-entry.no / settings.page-size)
-                                __.fire \selectPage, curr-page
+                                __.set \currPage, curr-page
                             __.set \clickedIndex, null
+
                             __.fire \clicked, {context: rel-entry}
                             __.update!
 
@@ -100,7 +101,7 @@ Ractive.components[component-name] = Ractive.extend do
                 console.warn "Filtered data is undefined! "
             else
                 settings.after-filter.apply __, [filtered, generate-visible]
-                #open-row!
+                open-row yes
 
 
         @set \create-view, create-view
