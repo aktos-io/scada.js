@@ -4,3 +4,4 @@ Ractive.components[component-name] = Ractive.extend do
     isolated: yes
     data: ->
         completed: no
+        disabled: no 
