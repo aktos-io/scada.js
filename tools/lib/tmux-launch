@@ -7,7 +7,7 @@
 AVAILABLE_WINDOW=0
 run-in-tmux() {
     list_of_commands=("$@")
-    echo "run in tmux: ${SESSION}: $@"
+    #echo "run in tmux: ${SESSION}: $@"
     tmux new-window -t ${SESSION}:${AVAILABLE_WINDOW}
     tmux send-keys -t ${SESSION}:${AVAILABLE_WINDOW} "PATH=$PATH" C-m
     tmux send-keys -t ${SESSION}:${AVAILABLE_WINDOW} "NODE_PATH=$NODE_PATH" C-m
@@ -23,7 +23,7 @@ SESSION_BASE="$(basename "$0")"
 start-tmux-session() {
     SESSION_NUMBER=$1
     SESSION="${SESSION_BASE}-$1"
-    echo "Session name is: $SESSION"
+    #echo "Session name is: $SESSION"
     tmux start-server
     tmux new-session -d -s ${SESSION}
 }
@@ -31,6 +31,6 @@ start-tmux-session() {
 attach-tmux-session() {
     SESSION_NUMBER=$1
     SESSION="${SESSION_BASE}-$1"
-    echo "Session name is: $SESSION"
+    #echo "Session name is: $SESSION"
     tmux attach -t $SESSION
 }
