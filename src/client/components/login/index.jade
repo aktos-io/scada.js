@@ -3,9 +3,9 @@
         | {{#if !context.ok}}
         .alert.alert-info.check-state Checking if we are already logged in... 
         form-group
-            input.form-control.username-input(value="{{context._user.name}}" placeholder="Username")
+            input.form-control.username-input(value="{{context._user.name}}" placeholder="{{ usernamePlaceholder }}")
         form-group
-            input.form-control.password-input(value="{{context._user.password}}" type="password" placeholder="Password")
+            input.form-control.password-input(value="{{context._user.password}}" type="password" placeholder="{{ passwordPlaceholder }}")
         form-group
             ack-button(on-buttonclick="doLogin" class="btn-lg btn-block btn-signin") Login
 

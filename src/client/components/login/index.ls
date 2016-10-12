@@ -102,3 +102,5 @@ Ractive.components[component-name] = Ractive.extend do
     data:
         context: null
         db: null
+        username-placeholder: \Username
+        password-placeholder: \Password 
