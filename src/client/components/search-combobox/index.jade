@@ -1,21 +1,29 @@
 
 +component('search-combobox')
-    +partial('c')
-        button.face.btn.btn-default.dropdown-toggle(type="button" data-toggle="dropdown").
-            {{ selectedText }} #[span.caret]
-        +if('slVisible')
-            ul.dropdown-menu(role="menu")
-                .dropdown-item
-                    input.searchbox(value="{{ searchedText }}" placeholder="Ara..." style="width: 100%")
-                li
-                    .btn-group-vertical(style="width: 100%")
-                        +each('filtered')
-                            btn(on-buttonclick="select" value="{{ .id }}" type="primary") 
-                                span.pull-left {{ .name }}            
-    | {{#if inInputGroup}} 
-    |   {{>c}}
-    | {{else}}
-    |   <div class="dropdown"> 
-    |       {{>c}}  
-    |   </div>
-    | {{/if}}
+    //-
+        +partial('c')
+            .search-combobox
+                .search-combobox-inner
+                    button.face.btn.btn-default.dropdown-toggle(type="button" data-toggle="dropdown").
+                        {{ selectedText }} #[span.caret]
+                    +if('slVisible')
+                        ul.dropdown-menu(role="menu" style="height: auto; max-height: 300px; overflow-x: hidden")
+                            li 
+                                input.searchbox(value="{{ searchedText }}" placeholder="Ara..." style="width: 100%; font-size: 1.2em; position: fixed; top: 0; left: 0")
+                            +each('filtered')
+                                li
+                                    .btn-group-vertical(style="width: 100%")
+                                            btn(on-buttonclick="select" value="{{ .id }}" type="primary") 
+                                                span.pull-left {{ .name }}            
+        | {{#if inInputGroup}} 
+        |   {{>c}}
+        | {{else}}
+        |   <div class="dropdown"> 
+        |       {{>c}}  
+        |   </div>
+        | {{/if}}
+
+    select(placeholder="Seçim Yapın...")
+        option(value="") ...
+        +each('data')          
+            option(value="{{ .id }}") {{ .name }}
