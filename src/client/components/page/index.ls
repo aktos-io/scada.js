@@ -8,7 +8,6 @@ Ractive.components[component-name] = Ractive.extend do
             this-page = @get \name
             if this-page is '/'
                 if url in ['', void, null, '/']
-                    debugger
                     return true
             else
                 first-part = url.substring 0, (this-page.length + 1)
