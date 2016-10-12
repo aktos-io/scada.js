@@ -12,13 +12,17 @@ Ractive.components[component-name] = Ractive.extend do
     isolated: yes
     onrender: ->
         __ = @
-        button = $ @find '.face'
+        face = $ @find '.face'
         container = $ @find \.selection-list
         searchbox = $ @find \.searchbox
         dd = $ @find \.dropdown
 
         get-data = ->
             __.get(\data) or []
+
+        face.on \click, ->
+            opened = __.get \slVisible
+            __.set \slVisible, not opened
 
         do filter-selection = (new-val) ->
             orig-data = get-data!
@@ -37,10 +41,7 @@ Ractive.components[component-name] = Ractive.extend do
                 selected-text = [..name for get-data! when ..id is val].0 or __.get \selectedText
                 __.set \selected, val
                 __.set \selectedText, selected-text
-                try
-                    #dd.dropdown "toggle"
-                catch
-                    debugger
+                __.set \slVisible, no 
 
 
         selected = @get \selected
@@ -58,4 +59,4 @@ Ractive.components[component-name] = Ractive.extend do
     data: ->
         sl-visible: no
         selected-text: "Seçim Yapılmadı"
-        searched-text: '' 
+        searched-text: ''
