@@ -25,7 +25,7 @@ Ractive.components[component-name] = Ractive.extend do
                 ddoc = res
                 ddoc.livescript = res.src
                 self.set (camelize \design-document), ddoc
-                e.component.fire \state, \done
+                e.component.fire \state, \done...
 
             new-design-document: (e) ->
                 __ = @
@@ -45,7 +45,7 @@ Ractive.components[component-name] = Ractive.extend do
                 try
                     js = lsc.compile (@get \designDocument.livescript), {+bare, -header}
                     console.log "Compiled output: ", js
-                    e.component.fire \state, \done
+                    e.component.fire \state, \done...
                 catch err
                     js = err.to-string!
                     e.component.fire \state, \error, "See Output Textarea"
@@ -74,6 +74,7 @@ Ractive.components[component-name] = Ractive.extend do
                     console.log "ddoc-src document uploaded successfully", res
                     # update _rev field for the following updates
                     self.fire (camelize \get-design-document), e
+
     data: ->
         db: null
         design-document:

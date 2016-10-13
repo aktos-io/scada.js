@@ -15,7 +15,6 @@ Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
     onrender: ->
         __ = @
-
         username-input = $ @find \.username-input
         password-input = $ @find \.password-input
         login-button = @find-component \ack-button
@@ -33,53 +32,48 @@ Ractive.components[component-name] = Ractive.extend do
         @on do
             do-login: (e) ->
                 __ = @
-                try
-                    e.component.fire \state, \doing
-                    db = @get \db
-                    user = __.get \context ._user
-                    ajax-opts = ajax: headers:
-                        Authorization: "Basic #{window.btoa user.name + ':' + user.password}"
-                    console.log "LOGIN: Logging in with #{user.name} and #{user.password}"
-                    err, res <- db.login user.name, user.password, ajax-opts
-                    if err
-                        e.component.fire \state, \error, err.message
-                        __.set \context.err, {msg: err.message}
-                    else
-                        #console.log "LOGIN: Seems logged in succesfully: ", res
-                        e.component.fire \state, \done...
-                        username-input.val ''
-                        password-input.val ''
-                        __.set \context.err, null
-                        __.fire \success
-                catch ex
-                    e.component.fire \state, \error, ex
+                e.component.fire \state, \doing
+                user = __.get \context ._user
+                ajax-opts = ajax: headers:
+                    Authorization: "Basic #{window.btoa user.name + ':' + user.password}"
+                console.log "LOGIN: Logging in with #{user.name} and #{user.password}"
+                err, res <- __.get \db .login user.name, user.password, ajax-opts
+                if err
+                    e.component.fire \state, \error, err.message
+                    __.set \context.err, {msg: err.message}
+                else
+                    #console.log "LOGIN: Seems logged in succesfully: ", res
+                    e.component.fire \state, \done...
+                    username-input.val ''
+                    password-input.val ''
+                    __.set \context.err, null
+                    __.fire \success
+
 
 
 
             do-logout: (e) ->
                 __ = @
                 e.component.fire \state, \doing
-                db = @get \db
                 #console.log "LOGIN: Logging out!"
-                err, res <- db.logout!
+                err, res <- __.get \db .logout!
                 #console.log "LOGIN: Logged out: err: #{err}, res: ", res
                 if err
                     e.component.fire \state, \error, err.message
                     __.set \context.err err
-                else
-                    if res.ok
-                        __.set \context.ok, no
-                        __.fire \logout
-                        e.component.fire \state, \done...
+                    return
+
+                if res.ok
+                    __.set \context.ok, no
+                    __.fire \logout
+                    e.component.fire \state, \done...
 
             logout: ->
                 console.log "LOGIN: We are logged out..."
 
             success: ->
                 #console.log "LOGIN: Login component success... "
-                db = @get \db
-                __ = @
-                err, res <- db.get-session
+                err, res <- __.get \db .get-session
                 try
                     throw if res.user-ctx.name is null
                     __.set \context.ok, yes
@@ -91,7 +85,7 @@ Ractive.components[component-name] = Ractive.extend do
 
         # check whether we are logged in
         <- sleep 200ms
-        check-login (__.get \db), (err) ->
+        check-login __.get(\db), (err) ->
             if not err
                 console.log "Login component says: we are logged in..."
                 __.fire \success
@@ -103,4 +97,4 @@ Ractive.components[component-name] = Ractive.extend do
         context: null
         db: null
         username-placeholder: \Username
-        password-placeholder: \Password 
+        password-placeholder: \Password
