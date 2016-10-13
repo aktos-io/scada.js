@@ -25,13 +25,22 @@ export signup = (db, user, callback) ->
         salt: salt
 
     err, res <- db.put new-user
-    console.log "ORIGINAL DOCUMENT: ", new-user if err
+    console.error "Error while adding user. doc: ", new-user if err
     callback err, res if typeof! callback is \Function
 
 # check whether we are logged in or not
 export function check-login (db, callback)
-    session-db = db._db_name.split '/'
-        ..[session-db.length - 1] = '_session'
+    url = if db._db_name
+        db._db_name
+    else
+        db.name
+
+    try
+        session-db = url.split '/'
+            ..[session-db.length - 1] = '_session'
+    catch
+        console.error e
+        debugger
 
     session-url = join "/" session-db
     #console.log "Checking sessoni with url: ", session-url
@@ -59,12 +68,21 @@ export function check-login (db, callback)
             callback true if typeof! callback is \Function
 
 export function is-db-alive (db, callback)
-    return unless db 
-    session-db = db._db_name.split '/'
-        ..[session-db.length - 1] = ''
+    return unless db
+    url = if db._db_name
+        db._db_name
+    else
+        db.name
+
+    try
+        session-db = url.split '/'
+            ..[session-db.length - 1] = '_session'
+    catch
+        console.error e
+        debugger
 
     session-url = join "/" session-db
-    #console.log "Checking sessoni with url: ", session-url
+
     $.ajax do
         type: \GET
         url: session-url
