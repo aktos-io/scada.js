@@ -106,12 +106,9 @@ Ractive.components[component-name] = Ractive.extend do
         @set \create-view, create-view
 
 
-        try
-            throw "on-change is not a function!" if typeof settings.on-change isnt \function
+        if typeof settings.on-change is \function
             do on-change = ->
                 settings.on-change.apply __
-        catch
-            #console.log "DATA TABLE: INFO: ", e
 
         @observe \changes, ->
             if typeof on-change is \function
@@ -127,7 +124,7 @@ Ractive.components[component-name] = Ractive.extend do
         try
             settings.on-init.apply this if typeof settings.on-init is \function
         catch
-            console.log "ERROR FROM DATA_TABLE: on-init: ", e
+            console.error "ERROR FROM DATA_TABLE: on-init: ", e
 
 
         events =
@@ -279,8 +276,11 @@ Ractive.components[component-name] = Ractive.extend do
         __ = @
         instance: @
         new-order: ->
-            console.log "ORDER_TABLE: Returning new default value: ", __.get \settings.default
-            try unpack pack __.get \settings.default
+            try
+                unpack pack __.get \settings.default
+            catch
+                console.error e
+                
         curr: null
         handlers: {}
         id: \will-be-random
