@@ -14,7 +14,13 @@ Ractive.components[component-name] = Ractive.extend do
         db = @get \db
         console.error "No database object is passed to data-table!" unless db
 
-        open-row = ->
+        if (@get \id) is \will-be-random
+            # then make it random
+            @set \id random.generate 7
+
+        settings = @get \settings
+
+        open-row = (no-need-updating) ->
             new-url = __.get \curr-url
             if new-url
                 tableview = __.get \tableview
@@ -23,17 +29,16 @@ Ractive.components[component-name] = Ractive.extend do
                         rel-entry = find (.id is part), tableview
                         if rel-entry
                             console.warn "I know this guy: ", part
+                            if settings.page-size and settings.page-size > 0
+                                curr-page = Math.floor (rel-entry.no / settings.page-size)
+                                __.set \currPage, curr-page
                             __.set \clickedIndex, null
+
                             __.fire \clicked, {context: rel-entry}
                             __.update!
 
-        @observe \curr-url, open-row
-
-        if (@get \id) is \will-be-random
-            # then make it random
-            @set \id random.generate 7
-
-        settings = @get \settings
+        @observe \curr-url, ->
+            open-row!
 
         if typeof! settings isnt \Object
             console.log "No settings found!"
@@ -85,7 +90,6 @@ Ractive.components[component-name] = Ractive.extend do
                         items =
                             from: curr-page * settings.page-size
                             to: min ((curr-page + 1) * settings.page-size) - 1, (view.length - 1)
-
                         __.set \tableview_visible, [.. for view when items.from <= ..no <= items.to ]
                     else
                         __.set \tableview_visible, view
@@ -96,7 +100,7 @@ Ractive.components[component-name] = Ractive.extend do
                 console.warn "Filtered data is undefined! "
             else
                 settings.after-filter.apply __, [filtered, generate-visible]
-                open-row!
+                open-row yes
 
 
         @set \create-view, create-view
@@ -297,6 +301,8 @@ Ractive.components[component-name] = Ractive.extend do
         selected-filter: \all
         curr-page: 0
         dont-watch-changes: no
+        two-digit: (n) ->
+            (Math.round (n * 100)) / 100
 
         is-editing-line: (index) ->
             editable = @get \editable

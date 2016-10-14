@@ -59,11 +59,11 @@
         on-buttonclick="success" 
         type="success" 
         value="{{ @this.get('success-value') }}"
-        disabled="{{ !completed }}"
+        disabled="{{ !completed || disabled }}"
         ) {{ @this.get('success-text') }}
     ack-button(
         on-buttonclick="fail" 
         type="danger" 
         value="{{ @this.get('fail-value') }}"
-        disabled="{{ completed }}"
+        disabled="{{ completed || disabled }}"
         ) {{ @this.get('fail-text') }}
