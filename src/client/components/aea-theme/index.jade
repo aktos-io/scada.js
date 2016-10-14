@@ -11,9 +11,9 @@
                         span.icon-bar 
                         span.icon-bar 
                         span.icon-bar 
-                    span.visible-xs.navbar-brand Demeter 
                 .navbar-collapse.collapse.sidebar-navbar-collapse 
                     ul.nav.navbar-nav
+                        li {{yield}}
                         li.hidden-xs: a(href="#") Demeter
                         +each('menu')
                             | {{#if ! .subMenu}}
