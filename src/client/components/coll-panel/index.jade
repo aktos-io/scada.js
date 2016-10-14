@@ -1,10 +1,4 @@
 style. 
-    .panel-heading span
-    {
-        margin-top: -20px;
-        font-size: 15px;
-    }
-
     .clickable
     {
         cursor: pointer;
@@ -18,7 +12,7 @@ style.
         .panel-heading
             | {{yield heading}} 
         
-        +if('showBody')
+        +if('showBody === true')
             btn.clickable(type="{{ type }} sm block" style="margin-top: 0; padding-top: 0")
                 caret 
         +unless('collapsed')

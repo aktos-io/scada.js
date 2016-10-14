@@ -1,13 +1,8 @@
-{split, take, join, lists-to-obj, sum} = require 'prelude-ls'
-{sleep} = require "aea"
-
-random = require \randomstring
-
 component-name = "menu"
 Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
     isolated: yes
-    oninit: ->
+    onrender: ->
         @on do
             toggle-menu: ->
                 @set \showMenu, not (@get \showMenu)
@@ -19,23 +14,8 @@ Ractive.components[component-name] = Ractive.extend do
     data: ->
         hide-menu-value: true
         menu:
-            * title: "Bar Chart"
+            * title: "Set Menu Variable"
               url: 'app/bar-chart.html'
               icon: "resize-horizontal"
-            * title: "Pie Chart"
-              url: 'app/pie-chart.html'
-              icon: "fire"
-            * title: "Stacked Bar Chart"
-              url: 'app/stacked-bar-chart.html'
-              icon: "signal"
-            * title: "Line Chart"
-              url: 'app/line-chart.html'
-              icon: "arrow-right"
-            * title: "Interactive Table"
-              url: 'app/table.html'
-              icon: "random "
-            * title: "Urun Iade Page"
-              url: 'app/urun-iade.html'
-              icon: "thumbs-up"
-
+            ...
         show-menu: true

@@ -1,32 +1,47 @@
 +component('menu')
-    table
-        tr
-            td(style="{{#if hideMenuValue}}width:{{showMenu ? '200px' : '80px'}}{{/if}}")
-                div(style='position: fixed')
-                    btn(on-buttonclick='hideMenu')
-                        p(style='font-size: 1.5em', align='left')
-                            | <icon-inbox/>
-                div(style='{{#if hideMenuValue}}position: fixed; visibility:visible{{else}}visibility: hidden{{/if}};height:100%; overflow-y: auto')
-                    div(style='display:inline-block; height:1px')
-                        | {{#if hideMenuValue}}
-                        btn-group-vertical
-                            btn(on-buttonclick='toggleMenu')
-                                p(style='font-size: 1.5em', align='left')
-                                    icon-th-list
-                            | {{#menu:i}}
-                            btn(href="{{.['url']}}", type='primary')
-                                | {{#if showMenu}} 
-                                p(align='left')
-                                span.glyphicon(class='glyphicon-{{icon}}', aria-hidden='true')
-                                | {{title}}
-                                | {{else}} 
-                                span.glyphicon(class='glyphicon-{{icon}}', aria-hidden='true')
-                                | {{/if}}
-                            | {{/menu}}
-                            btn(on-buttonclick='hideMenu')  {{#if hideMenuValue}}Hide{{else}}Show{{/if}}
-                        | {{/if}}
-            td(style='vertical-align:top; padding-left: 80px; {{#if hideMenuValue}}{{else}}padding-top: 100px{{/if}}')
-                page-header
-                    h1
-                        | Index Page 
-                        small aktos.io
+    // 
+        btn-group-vertical
+            btn(on-buttonclick='hideMenu')
+                span(style='font-size: 1.5em')
+                    icon-inbox
+            btn(on-buttonclick='toggleMenu')
+                span(style='font-size: 1.5em')
+                    icon-th-list
+            +each('menu')
+                btn(href="{{ .url }}", type='primary').
+                    {{#if .icon}}
+                        #[span.pull-left(class='glyphicon glyphicon-{{ .icon }}')] 
+                    {{else}}
+                        #[span.pull-left(class='glyphicon glyphicon-option-horizontal')] {{#if showMenu}}{{ .title }}{{/if}}
+                    {{/if}}
+                    
+                        
+            btn(on-buttonclick='hideMenu') {{#if hideMenuValue}}Hide{{else}}Show{{/if}}
+
+
+
+    .navbar(role="navigation")
+        ul.nav.nav-pills.nav-stacked 
+            li
+                btn(on-buttonclick='toggleMenu')
+                    span(style='font-size: 1.5em')
+                        icon-th-list
+
+            +each('menu')
+                li
+                    btn(href="{{ .url }}") 
+                        span(align="left")
+                            icon-th-list 
+                            | {{#if showMenu}}{{ .title }}{{/if}}
+        
+// 
+   <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
+     <ul class="dropdown-menu" role="menu">
+      <li><a href="#">Sub Menu1</a></li>
+      <li><a href="#">Sub Menu2</a></li>
+      <li><a href="#">Sub Menu3</a></li>
+      <li class="divider"></li>
+      <li><a href="#">Sub Menu4</a></li>
+      <li><a href="#">Sub Menu5</a></li>
+     </ul>
+   </li>

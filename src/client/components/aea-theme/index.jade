@@ -1,0 +1,34 @@
++component('aea-theme')
+    .row {{ yield }}
+
++component('aea-menu')
+    .col-sm-2
+        .sidebar-nav 
+            .navbar.navbar-default(role="navigation")
+                .navbar-header
+                    button.navbar-toggle(type="button" data-toggle="collapse" data-target=".sidebar-navbar-collapse")
+                        span.sr-only Toggle Navigation 
+                        span.icon-bar 
+                        span.icon-bar 
+                        span.icon-bar 
+                    span.visible-xs.navbar-brand Demeter 
+                .navbar-collapse.collapse.sidebar-navbar-collapse 
+                    ul.nav.navbar-nav
+                        li.hidden-xs: a(href="#") Demeter
+                        +each('menu')
+                            | {{#if ! .subMenu}}
+                            li(class="{{#if selected === .url}}active{{/if}}"): a(href="{{ .url }}") {{ .title }}
+                            | {{else}}
+                            // this is submenu 
+                            li.dropdown 
+                                a.dropdown-toggle(href="#" data-toggle="dropdown") {{.title}} #[b.caret]
+                                ul.dropdown-menu 
+                                    +each('subMenu')
+                                        li
+                                            a(href="{{.url}}") {{.title}} 
+                            
+                            | {{/if}}
+                            
++component('aea-content')
+    .col-sm-10.animated.fadeInRight.
+        {{yield}}

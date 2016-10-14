@@ -47,10 +47,7 @@ Ractive.components[component-name] = Ractive.extend do
                     username-input.val ''
                     password-input.val ''
                     __.set \context.err, null
-                    __.fire \success
-
-
-
+                    __.fire \success_
 
             do-logout: (e) ->
                 __ = @
@@ -71,24 +68,29 @@ Ractive.components[component-name] = Ractive.extend do
             logout: ->
                 console.log "LOGIN: We are logged out..."
 
-            success: ->
+            success_: ->
                 #console.log "LOGIN: Login component success... "
                 err, res <- __.get \db .get-session
                 try
                     throw if res.user-ctx.name is null
-                    __.set \context.ok, yes
-                    __.set \context.err, null
-                    __.set \context.user, res.user-ctx
+                    context =
+                        ok: yes
+                        err: null
+                        user: res.user-ctx
+
+                    __.set \context, context
+                    __.fire \success, context
                 catch
                     #console.log "LOGIN: not logged in, returning: ", e
                     __.set \context.ok, no
+
 
         # check whether we are logged in
         <- sleep 200ms
         check-login __.get(\db), (err) ->
             if not err
                 console.log "Login component says: we are logged in..."
-                __.fire \success
+                __.fire \success_
             else
                 console.log "Login component says: we are not logged in!"
             checking-logged-in.hide!
