@@ -9,7 +9,7 @@ Ractive.components[component-name] = Ractive.extend do
     onrender: ->
         __ = @
         user = __.get \user
-        
+
     data: ->
         __ = @
         is-role-match: (groups, roles) ->
@@ -18,6 +18,7 @@ Ractive.components[component-name] = Ractive.extend do
                     return true
             return false
         user: null
+        expand: yes 
 
 component-name = "aea-content"
 Ractive.components[component-name] = Ractive.extend do

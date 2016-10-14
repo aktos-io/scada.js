@@ -1,8 +1,9 @@
 +component('aea-theme')
-    .row {{ yield }}
+    .content
+        .row(style="margin: 0; padding: 0") {{ yield }}
 
 +component('aea-menu')
-    .col-sm-2
+    .col-sm-2(style="padding: 0; margin-left: 0; margin-top: 0; margin-bottom: 0")
         .sidebar-nav 
             .navbar.navbar-default(role="navigation")
                 .navbar-header
@@ -14,14 +15,13 @@
                 .navbar-collapse.collapse.sidebar-navbar-collapse 
                     ul.nav.navbar-nav
                         li {{yield}}
-                        li.hidden-xs: a(href="#") Demeter
                         +each('menu')
                             | {{#if ! .subMenu}}
-                            li(class="{{#if selected === .url}}active{{/if}}"): a(href="{{ .url }}") {{ .title }}
+                            li(class="{{#if selected === .url}}active{{/if}}"): a(href="{{ .url }}") {{#if expand}}{{ .title }}{{/if}}
                             | {{else}}
                             // this is submenu 
                             li.dropdown 
-                                a.dropdown-toggle(href="#" data-toggle="dropdown") {{.title}} #[b.caret]
+                                a.dropdown-toggle(href="#" data-toggle="dropdown") {{#if expand}} {{.title}} #[b.caret] {{/if}}
                                 ul.dropdown-menu 
                                     +each('subMenu')
                                         li
@@ -30,5 +30,5 @@
                             | {{/if}}
                             
 +component('aea-content')
-    .col-sm-10.animated.fadeInRight.
-        {{yield}}
+    .col-sm-10 {{yield}}
+        
