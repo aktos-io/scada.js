@@ -1,4 +1,3 @@
 +component('page')
-    div(name="{{ name }}" style="{{#unless isSelected(curr)}} display: none {{/unless}}").
+    div(name="{{ name }}" style="{{#unless isSelected(curr)}} display: none {{/unless}}; margin: 0; padding: 0; border: 0").
         {{yield}}
-        
