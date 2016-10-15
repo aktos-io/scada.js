@@ -29,6 +29,11 @@
                             
                             | {{/if}}
                             
+    
 +component('aea-content')
-    .col-sm-10 {{yield}}
+    .col-sm-10 
+        .row(style="margin: 0; padding: 0").
+            {{yield header}}
+        .row(style="margin: 0; padding: 0").
+            {{yield body}}
         
