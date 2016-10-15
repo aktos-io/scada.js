@@ -25,18 +25,16 @@ Ractive.components[component-name] = Ractive.extend do
             console.log "selected: ", id, "value: ", value
 
         box = select.0.selectize
+        default-selected = __.get \selected
 
         @observe \data, (new-data, old-data) ->
             if new-data
                 box
                     ..add-option new-data
-                    ..refresh-items!
+                    ..refresh-options false 
+                    ..set-value default-selected if default-selected
 
 
-        # set initial value
-        selected = @get \selected
-        if selected
-            box.set-value selected
 
     data: ->
         selected: null
