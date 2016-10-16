@@ -1,11 +1,10 @@
 {sleep} = require "aea"
-require! "randomstring":random
 
 component-name = "ack-button"
 Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
     isolated: yes
-    oninit: ->
+    onrender: ->
         __ = @
         @observe \state, (val) ->
             #console.log "State change dedected!", val
@@ -14,8 +13,6 @@ Ractive.components[component-name] = Ractive.extend do
             if val isnt \error
                 __.set \reason, ''
 
-
-        tooltip-id = @get \tooltipId
 
         @observe \tooltip, (new-val) ->
             __.set \reason, new-val
@@ -58,8 +55,7 @@ Ractive.components[component-name] = Ractive.extend do
         __ = @
         angle: 0
         reason: ''
-        tooltip-id: random.generate {length: 4}
         type: "default"
         value: ""
         class: ""
-        disabled: no 
+        disabled: no
