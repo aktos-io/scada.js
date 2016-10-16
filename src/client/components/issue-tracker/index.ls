@@ -20,21 +20,7 @@ Ractive.components[component-name] = Ractive.extend do
             console.log "ORDER_TABLE:", "can not get col-names", e
 
         db = @get \db
-        gen-entry-id = @get \gen-entry-id
         @set \dataFilters, settings.filters
-
-        do function update-table
-            #console.log "Cols: ", settings.col-names, "changes: ", __.get \changes
-            err, res <- db.query (__.get \view), {+include_docs}
-            if err
-                console.log "ERROR: order table: ", err
-            else
-                docs = [..doc for res.rows]
-                #console.log "Updating table: ", docs
-                __.set \tabledata, docs
-
-        @observe \changes, ->
-            update-table!
 
         do function create-view param
             filters = __.get \dataFilters
@@ -108,7 +94,7 @@ Ractive.components[component-name] = Ractive.extend do
                 console.log "Saving new order document: ", order-doc
                 if not order-doc._id?
                     console.log "Generating new id for the document!"
-                    order-doc = order-doc `merge` {_id: gen-entry-id!}
+                    order-doc = order-doc `merge` {_id: db.gen-entry-id!}
 
                 err, res <- db.put order-doc
                 if err
@@ -177,8 +163,6 @@ Ractive.components[component-name] = Ractive.extend do
             unpack pack __.get \settings.default
         saving: ''
         curr: null
-        id: \will-be-random
-        gen-entry-id: null
         db: null
         tabledata: null
         editable: false
