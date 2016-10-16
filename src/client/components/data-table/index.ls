@@ -66,7 +66,7 @@ Ractive.components[component-name] = Ractive.extend do
 
         @set \dataFilters, settings.filters
 
-        @observe \tabledata, create-view = ->
+        create-view = (curr) ->
             filters = __.get \dataFilters
             selected-filter = __.get \selectedFilter
             tabledata = __.get \tabledata
@@ -74,6 +74,12 @@ Ractive.components[component-name] = Ractive.extend do
                 throw if tabledata.length is 0
             catch
                 return
+
+            if curr
+                unless find (._id is curr._id), tabledata
+                    # tabledata does not contain curr, add it to the beginning
+                    tabledata.unshift curr
+                    __.set \tabledata, tabledata
 
             unless typeof settings.after-filter is \function
                 console.error "after-filter is not defined?", settings.col-names
@@ -103,6 +109,8 @@ Ractive.components[component-name] = Ractive.extend do
                 open-row yes
 
 
+        @observe \tabledata, ->
+            create-view!
         @set \create-view, create-view
 
 
@@ -187,12 +195,9 @@ Ractive.components[component-name] = Ractive.extend do
                 new-order._id = db.gen-entry-id!
 
                 @set \curr, new-order
-
                 @set \addingNew, true
 
-                (@get \create-view)!
                 #console.log "adding brand-new order!", (@get \curr)
-
 
                 if typeof! settings.on-create-view is \Function
                     settings.on-create-view.call this, new-order
@@ -218,7 +223,7 @@ Ractive.components[component-name] = Ractive.extend do
                     console.log "Generating new id for the document!"
                     order-doc = order-doc `merge` {_id: gen-entry-id!}
 
-                err, res <- db.put order-doc
+                err, res <- db.save order-doc
                 if err
                     console.log "Error putting new order: ", err
                     __.set \saving, "#{__.get \saving} : #{err.message}"
@@ -227,9 +232,7 @@ Ractive.components[component-name] = Ractive.extend do
                     console.log "New order put in the database", res
                     # if adding new document, clean up current document
                     console.log "order putting database: ", order-doc
-                    t = __.get \tabledata
-                    if order-doc._id not in [.._id for t]
-                        __.set \tabledata ([order-doc] ++ t)
+                    (__.get \create-view) order-doc
 
                     if order-doc._rev is void
                         console.log "refreshing new order...."
@@ -280,7 +283,7 @@ Ractive.components[component-name] = Ractive.extend do
                 unpack pack __.get \settings.default
             catch
                 console.error e
-                
+
         curr: null
         handlers: {}
         id: \will-be-random
@@ -320,11 +323,11 @@ Ractive.components[component-name] = Ractive.extend do
             __.set \dontWatchChanges, yes
             __.set \changes, (1 + __.get \changes)
 
-        refresh: ->
+        refresh: (curr) ->
             console.log "TABLE IS REFRESHING!!!"
             __.fire \setFilter, \all
             create-view = __.get \create-view
-            create-view!
+            create-view curr
 
         range: (_from, _to) ->
             try
