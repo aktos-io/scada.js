@@ -58,4 +58,5 @@ Ractive.components[component-name] = Ractive.extend do
         type: "default"
         value: ""
         class: ""
+        style: ""
         disabled: no
