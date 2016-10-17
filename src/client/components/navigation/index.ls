@@ -7,6 +7,8 @@ Ractive.components[component-name] = Ractive.extend do
         @set \selected, '#/' if (@get \selected) is void
 
         do function hashchange
-            __.set \selected, window.location.hash
+            hash = window.location.hash
+            hash = '/' unless hash
+            __.set \selected, hash
 
         $ window .on \hashchange, -> hashchange!
