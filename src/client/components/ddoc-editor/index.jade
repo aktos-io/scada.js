@@ -10,8 +10,6 @@
                     btn-group
                         ack-button(on-buttonclick="getDesignDocument" type="primary").
                             Get Document!
-                        ack-button(on-buttonclick="newDesignDocument" type="danger").
-                            New Document!
         ace-editor(code="{{ designDocument.livescript }}" mode="livescript" theme="xcode")
     btn-group
         ack-button(on-buttonclick="putDesignDocument" type="success").
