@@ -42,7 +42,7 @@ Ractive.components[component-name] = Ractive.extend do
                 __ = @
                 # setup db
                 db-opts =
-                    cache: no
+                    cache: yes
                     raw: no
                     force-save: yes
                     retries: 3
@@ -86,7 +86,7 @@ Ractive.components[component-name] = Ractive.extend do
                         callback res
 
                 res <- get-credentials
-                
+
                 context =
                     ok: yes
                     err: null
