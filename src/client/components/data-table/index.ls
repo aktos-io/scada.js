@@ -2,7 +2,7 @@ require! 'prelude-ls': {
     split, take, join, lists-to-obj, sum, filter
     camelize, find
 }
-require! 'aea': {sleep, merge, pack, unpack}
+require! 'aea': {sleep, merge, pack, unpack, unix-to-readable}
 require! 'randomstring': random
 
 component-name = "data-table"
@@ -305,9 +305,6 @@ Ractive.components[component-name] = Ractive.extend do
         selected-filter: \all
         curr-page: 0
         dont-watch-changes: no
-        two-digit: (n) ->
-            (Math.round (n * 100)) / 100
-
         is-editing-line: (index) ->
             editable = @get \editable
             clicked-index = @get \clickedIndex
@@ -330,9 +327,16 @@ Ractive.components[component-name] = Ractive.extend do
             create-view = __.get \create-view
             create-view curr
 
+        # utility functions
+        # ---------------------------------------------------------------
         range: (_from, _to) ->
             try
                 range = [i for i from parse-int(_from) to parse-int(_to)]
                 range
             catch
                 console.log "error in range generator: ", _from, _to
+
+        two-digit: (n) ->
+            (Math.round (n * 100)) / 100
+
+        unix-to-readable: unix-to-readable

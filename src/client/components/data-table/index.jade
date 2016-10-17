@@ -26,7 +26,7 @@
 
             tr.
                 {{#if clickedIndex !== null}}
-                    <th>Editing...</th>
+                    <th>...</th>
                 {{else}}
                     <th>#</th>
                 {{/if}}
@@ -41,9 +41,20 @@
                     on-doubleclick="clicked"
                     )
                     //- first column (numbering or controls)
-                    | {{#if isClicked(.id)}}
-                    td
-                        btn-group-vertical
+                    | {{#unless isClicked(.id)}}
+                    td.
+                        {{#if isLastClicked(.id) }}
+                            <tag>{{ parseInt(.no) + 1 }}</tag>
+                        {{else}}
+                            {{ parseInt(.no) + 1 }}
+                        {{/if}}
+                    | {{/unless}}
+                    //- rest of columns (data)
+                    | {{#if isEditingLine(.id)}}
+
+                    // edit form 
+                    td(colspan="{{ columnList.length + 1 }}")
+                        btn-group
                             | {{#unless readonly}}
                             btn(
                                 on-buttonclick="toggleEditing"
@@ -55,19 +66,26 @@
                                 icon-pencil 
                             | {{/unless}}
                             btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
-                    | {{else}}
-                    td.
-                        {{#if isLastClicked(.id) }}
-                            <tag>{{ parseInt(.no) + 1 }}</tag>
-                        {{else}}
-                            {{ parseInt(.no) + 1 }}
-                        {{/if}}
-                    | {{/if}}
-                    //- rest of columns (data)
-                    | {{#if isEditingLine(.id)}}
-                    td(colspan="{{ columnList.length }}") {{>editForm}}
+                        hr
+                        | {{>editForm}}
                     | {{elseif isClicked(.id)}}
-                    td(colspan="{{ columnList.length }}" style="color: black") {{>viewForm}}
+                    
+                    // view form 
+                    td(colspan="{{ columnList.length + 1 }}" style="color: black") 
+                        btn-group
+                            | {{#unless readonly}}
+                            btn(
+                                on-buttonclick="toggleEditing"
+                                type="{{#if editTooltip }}danger{{else}}default{{/if}}"
+                                active="{{editable}}"
+                                tooltip="Düzenle"
+                                )
+                                | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
+                                icon-pencil 
+                            | {{/unless}}
+                            btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
+                        hr
+                        | {{>viewForm}}
                     | {{else}}
                     +each(".cols")
                         td {{{.}}}
