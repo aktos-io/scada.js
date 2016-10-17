@@ -35,7 +35,7 @@ Ractive.components[component-name] = Ractive.extend do
                             __.set \clickedIndex, null
 
                             __.fire \clicked, {context: rel-entry}
-                            __.update!
+                            __.update! unless no-need-updating
 
         @observe \curr-url, ->
             open-row!
@@ -106,6 +106,7 @@ Ractive.components[component-name] = Ractive.extend do
                 console.warn "Filtered data is undefined! "
             else
                 settings.after-filter.apply __, [filtered, generate-visible]
+                console.warn "After filter runs so many times???"
                 open-row yes
 
 
