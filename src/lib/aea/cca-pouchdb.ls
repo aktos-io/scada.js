@@ -8,9 +8,8 @@ export PouchDB
 
 #console.log "PouchDB adapters: ", PouchDB.adapters
 
-export signup = (db, user, callback) ->
+export make-user-doc = (user) ->
     require! \crypto
-
     salt = crypto.randomBytes(16).toString('hex')
     hash = crypto.createHash('sha1')
     hash.update(user.passwd + salt)
@@ -23,10 +22,6 @@ export signup = (db, user, callback) ->
         type: \user
         password_sha: password-sha
         salt: salt
-
-    err, res <- db.put new-user
-    console.error "Error while adding user. doc: ", new-user if err
-    callback err, res if typeof! callback is \Function
 
 # check whether we are logged in or not
 export function check-login (db, callback)

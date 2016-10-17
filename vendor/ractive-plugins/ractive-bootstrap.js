@@ -603,5 +603,5 @@ Ractive.components['pill'] = Ractive.components['tab'] // They are identical
 
 /* Tags & Badges */
 
-Ractive.components['tag'] = Ractive.extend({isolated: true, data: {type: 'default'}, template: "<span class='label label-{{type}}'>{{yield}}</span>"})
+Ractive.components['tag'] = Ractive.extend({isolated: true, data: {type: 'default'}, template: "<span class='label label-{{type}}' style='{{#if size}}font-size: {{size}}; {{/if}}' >{{yield}}</span>"})
 Ractive.components['badge'] = Ractive.extend({isolated: true, template: "<span class='badge'>{{yield}}</span>"})

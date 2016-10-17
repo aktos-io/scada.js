@@ -1,7 +1,6 @@
 +component('login')
     form-vertical
         | {{#if !context.ok}}
-        .alert.alert-info.check-state Checking if we are already logged in... 
         form-group
             input.form-control.username-input(value="{{context._user.name}}" placeholder="{{ usernamePlaceholder }}")
         form-group
@@ -15,6 +14,7 @@
                 p Welcome {{ context.user.name }}!
         ack-button(on-buttonclick="doLogout") Logout
         | {{/if}}
-    +if('context.err')
-        div(style="position: fixed; top: 10; right: 10")
-            alert(type="danger" closable="true") {{ context.err.msg }}
+    //.alert.alert-info.check-state Checking if we are already logged in... 
+    .alert.alert-danger.fade.in(role="alert" style="width: 100%; position: fixed; top: 0; left: 0").
+        <a href="#" class="close" on-click="closeAlert" aria-label="close">&times;</a>
+        {{{ context.err.msg }}}
