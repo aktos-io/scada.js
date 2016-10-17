@@ -33,7 +33,7 @@ Ractive.components[component-name] = Ractive.extend do
                 design-document = @get \designDocument
                 delete design-document._rev
                 console.log "Putting new design document: ", design-document
-                err, res <- db.put design-document
+                err, res <- db.save design-document
                 return e.component.fire \state, \error, err.message if err
 
                 console.log "Design document uploaded successfully...", res
@@ -65,7 +65,7 @@ Ractive.components[component-name] = Ractive.extend do
                 ddoc.src = ddoc.livescript
                 ddoc = make-design-doc ddoc
                 console.log "Full document to upload: ", ddoc
-                err, res <- db.put ddoc
+                err, res <- db.save ddoc
                 if err
                     e.component.fire \state, \error, err.message
                     console.error "Error uploading ddoc-src document: ", err
