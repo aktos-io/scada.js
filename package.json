@@ -21,7 +21,7 @@
     "bases": "^0.2.1",
     "body-parser": "^1.15.2",
     "cheerio": "^0.20.0",
-    "cradle": "^0.7.1",
+    "cradle": "git://github.com/ceremcem/cradle.git#patch-1",
     "crypto": "0.0.3",
     "csv-parse": "^1.1.7",
     "emailjs": "^1.0.5",
