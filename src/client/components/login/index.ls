@@ -7,7 +7,7 @@
             passwd: user password
 */
 
-require! 'aea': {gen-entry-id, sleep, pack}
+require! 'aea': {gen-entry-id, hash, sleep, pack}
 require! \cradle
 
 component-name = "login"
@@ -60,6 +60,7 @@ Ractive.components[component-name] = Ractive.extend do
                 conn = new(cradle.Connection) "https://demeter.cloudant.com", 443, db-opts
                 db = conn.database \domates
                 db.gen-entry-id = gen-entry-id
+                db.hash = hash 
 
                 get-credentials = (callback) ->
                     unless user.name is \demeter

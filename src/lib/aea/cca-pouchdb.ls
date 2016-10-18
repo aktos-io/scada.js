@@ -156,7 +156,7 @@ convert-base = (value, from-base, to-base) ->
 
 export gen-entry-id = ->
     timestamp = new Date!get-time!
-    random = Math.floor Math.random! * 100
+    random = Math.floor Math.random! * 1000
 
     stamp = "#{timestamp}#{random}"
     encoded = convert-base stamp, 10, 27
@@ -167,3 +167,15 @@ export gen-entry-id = ->
         throw err
     #console.log "stamp: #{stamp}, encoded: #{encoded}"
     encoded
+
+
+require! 'crypto'
+require! 'bases'
+require! 'prelude-ls': {take}
+
+export hash = (inp) ->
+    x = crypto.create-hash \sha256 .update inp .digest \base64
+    y = bases.to-alphabet (bases.from-base64 x), charset
+    take 8, y
+
+console.log "hash of hello world is: ", hash "hello world"

@@ -1,5 +1,5 @@
 require! {
-    './cca-pouchdb': {PouchDB, make-user-doc, make-design-doc, check-login, is-db-alive, gen-entry-id}
+    './cca-pouchdb': {PouchDB, make-user-doc, make-design-doc, check-login, is-db-alive, gen-entry-id, hash}
     './merge': {merge}
     './sleep': {sleep, after, clear-timer}
     './signal': {wait-for, timeout-wait-for, go, is-waiting}
@@ -38,7 +38,7 @@ export attach = (obj, key, val) ->
 
 
 module.exports = {
-    make-user-doc, PouchDB, make-design-doc, check-login, is-db-alive, gen-entry-id
+    make-user-doc, PouchDB, make-design-doc, check-login, is-db-alive, gen-entry-id, hash
     sleep, after, clear-timer
     merge
     wait-for, timeout-wait-for, go, is-waiting

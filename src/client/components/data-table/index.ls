@@ -21,6 +21,7 @@ Ractive.components[component-name] = Ractive.extend do
         settings = @get \settings
 
         open-row = (no-need-updating) ->
+            console.warn "open row disabled..."
             new-url = __.get \curr-url
             if new-url
                 tableview = __.get \tableview
@@ -106,7 +107,7 @@ Ractive.components[component-name] = Ractive.extend do
                 console.warn "Filtered data is undefined! "
             else
                 settings.after-filter.apply __, [filtered, generate-visible]
-                console.warn "After filter runs so many times???"
+                #console.warn "After filter runs so many times???"
                 open-row yes
 
 
@@ -268,6 +269,7 @@ Ractive.components[component-name] = Ractive.extend do
 
             delete-order: (index-str) ->
                 [key, index] = split ':' index-str
+                debugger
                 index = parse-int index
                 editing-doc = @get \curr
                 editing-doc[key].splice index, 1
