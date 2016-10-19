@@ -21,7 +21,7 @@ Ractive.components[component-name] = Ractive.extend do
             id = x.target.value
             value = x.target.text-content
             __.set \selected, id
-            __.set \selectedText, value
+            #__.set \selectedText, value
             console.log "selected: ", id, "value: ", value
 
         box = select.0.selectize
@@ -31,8 +31,13 @@ Ractive.components[component-name] = Ractive.extend do
             if new-data
                 box
                     ..add-option new-data
-                    ..refresh-options false 
+                    ..refresh-options false
                     ..set-value default-selected if default-selected
+
+        @observe \selected, (new-val) ->
+            box.set-value new-val
+            debugger 
+
 
 
 
