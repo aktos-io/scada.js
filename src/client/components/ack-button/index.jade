@@ -1,5 +1,5 @@
 +component('ack-button')
-    btn(on-buttonclick="click" value="{{value}}" title="{{reason}}" class="{{ class }}" type="{{ type }}" disabled="{{ disabled }}" style="{{ style }}")
+    btn(on-buttonclick="click" value="{{value}}" title="{{reason}}" class="{{ class }} ack-button" type="{{ type }}" disabled="{{ disabled }}" style="{{ style }}" )
         | {{#if state === "doing"}}
         div(style='display: inline-block; width: 20px; height: 20px; margin:0 ;padding: 0; -ms-transform: rotate({{ angle }}deg); -webkit-transform: rotate({{ angle }}deg); transform: rotate({{ angle }}deg)')
             icon-refresh

@@ -173,9 +173,14 @@ require! 'crypto'
 require! 'bases'
 require! 'prelude-ls': {take}
 
-export hash = (inp) ->
+export hash8 = (inp) ->
     x = crypto.create-hash \sha256 .update inp .digest \base64
     y = bases.to-alphabet (bases.from-base64 x), charset
     take 8, y
 
-console.log "hash of hello world is: ", hash "hello world"
+export hash8n = (inp) ->
+    hash = crypto.createHash('sha1')
+    hash.update(inp)
+    sha = hash.digest!
+
+console.log "Hash of hello world : ", hash8n "hello world"

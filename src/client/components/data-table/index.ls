@@ -1,6 +1,6 @@
 require! 'prelude-ls': {
     split, take, join, lists-to-obj, sum, filter
-    camelize, find
+    camelize, find, reject
 }
 require! 'aea': {sleep, merge, pack, unpack, unix-to-readable}
 require! 'randomstring': random
@@ -148,7 +148,7 @@ Ractive.components[component-name] = Ractive.extend do
                     @set \lastIndex, index
 
                     tabledata = @get \tabledata
-                    curr = find (._id is index), tabledata
+                    curr = unpack pack find (._id is index), tabledata
                     if curr
                         @set \curr, curr
                     else
@@ -269,11 +269,23 @@ Ractive.components[component-name] = Ractive.extend do
 
             delete-order: (index-str) ->
                 [key, index] = split ':' index-str
-                debugger
                 index = parse-int index
                 editing-doc = @get \curr
                 editing-doc[key].splice index, 1
                 @set \curr, editing-doc
+
+            delete-document: (e) ->
+                __ = @
+                e.component.fire \state, \doing
+                curr = @get \curr
+                curr.type = "_deleted_#{curr.type}"
+                err, res <- db.save curr
+                return e.component.fire \state, \error, err.message  if err
+                e.component.fire \state, \done
+
+                tabledata = reject (._id is curr._id), __.get \tabledata
+                __.set \tabledata, tabledata
+                (__.get \create-view)!
 
         @on events `merge` handlers
 
