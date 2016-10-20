@@ -77,10 +77,15 @@ Ractive.components[component-name] = Ractive.extend do
                 return
 
             if curr
-                unless find (._id is curr._id), tabledata
+                curr-in-table = find (._id is curr._id), tabledata
+                unless curr-in-table
                     # tabledata does not contain curr, add it to the beginning
                     tabledata.unshift curr
-                    __.set \tabledata, tabledata
+                else
+                    # update curr in tabledata
+                    curr-in-table `merge` curr
+                __.set \tabledata, tabledata
+
 
             unless typeof settings.after-filter is \function
                 console.error "after-filter is not defined?", settings.col-names
@@ -295,7 +300,11 @@ Ractive.components[component-name] = Ractive.extend do
         instance: @
         new-order: ->
             try
-                unpack pack __.get \settings.default
+                def = __.get \settings.default
+                if typeof def is \function
+                    return def!
+                else
+                    unpack pack def
             catch
                 console.error e
 
