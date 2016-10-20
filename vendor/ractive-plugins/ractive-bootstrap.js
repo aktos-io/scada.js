@@ -28,6 +28,7 @@ Ractive.components['btn'] = Ractive.extend({
 		type: 'default',
 		value: '',
 		class: '',
+		style: '',
 		disabled: false
 	},
 	template: function() {

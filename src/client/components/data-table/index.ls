@@ -1,6 +1,6 @@
 require! 'prelude-ls': {
     split, take, join, lists-to-obj, sum, filter
-    camelize, find
+    camelize, find, reject
 }
 require! 'aea': {sleep, merge, pack, unpack, unix-to-readable}
 require! 'randomstring': random
@@ -21,6 +21,7 @@ Ractive.components[component-name] = Ractive.extend do
         settings = @get \settings
 
         open-row = (no-need-updating) ->
+            console.warn "open row disabled..."
             new-url = __.get \curr-url
             if new-url
                 tableview = __.get \tableview
@@ -76,10 +77,15 @@ Ractive.components[component-name] = Ractive.extend do
                 return
 
             if curr
-                unless find (._id is curr._id), tabledata
+                curr-in-table = find (._id is curr._id), tabledata
+                unless curr-in-table
                     # tabledata does not contain curr, add it to the beginning
                     tabledata.unshift curr
-                    __.set \tabledata, tabledata
+                else
+                    # update curr in tabledata
+                    curr-in-table `merge` curr
+                __.set \tabledata, tabledata
+
 
             unless typeof settings.after-filter is \function
                 console.error "after-filter is not defined?", settings.col-names
@@ -106,7 +112,7 @@ Ractive.components[component-name] = Ractive.extend do
                 console.warn "Filtered data is undefined! "
             else
                 settings.after-filter.apply __, [filtered, generate-visible]
-                console.warn "After filter runs so many times???"
+                #console.warn "After filter runs so many times???"
                 open-row yes
 
 
@@ -147,7 +153,7 @@ Ractive.components[component-name] = Ractive.extend do
                     @set \lastIndex, index
 
                     tabledata = @get \tabledata
-                    curr = find (._id is index), tabledata
+                    curr = unpack pack find (._id is index), tabledata
                     if curr
                         @set \curr, curr
                     else
@@ -273,6 +279,19 @@ Ractive.components[component-name] = Ractive.extend do
                 editing-doc[key].splice index, 1
                 @set \curr, editing-doc
 
+            delete-document: (e) ->
+                __ = @
+                e.component.fire \state, \doing
+                curr = @get \curr
+                curr.type = "_deleted_#{curr.type}"
+                err, res <- db.save curr
+                return e.component.fire \state, \error, err.message  if err
+                e.component.fire \state, \done
+
+                tabledata = reject (._id is curr._id), __.get \tabledata
+                __.set \tabledata, tabledata
+                (__.get \create-view)!
+
         @on events `merge` handlers
 
 
@@ -281,7 +300,11 @@ Ractive.components[component-name] = Ractive.extend do
         instance: @
         new-order: ->
             try
-                unpack pack __.get \settings.default
+                def = __.get \settings.default
+                if typeof def is \function
+                    return def!
+                else
+                    unpack pack def
             catch
                 console.error e
 

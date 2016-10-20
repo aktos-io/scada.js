@@ -7,10 +7,8 @@
             passwd: user password
 */
 
-require! 'aea': {check-login, sleep, pack}
+require! 'aea': {gen-entry-id, hash8, sleep, pack}
 require! \cradle
-require! 'randomstring':random
-charlist = "abcdefghijkmnprstxyz" + "ABCDEFGHJKLMNPRSTXYZ" + "23456789"
 
 component-name = "login"
 Ractive.components[component-name] = Ractive.extend do
@@ -47,6 +45,8 @@ Ractive.components[component-name] = Ractive.extend do
                     force-save: yes
                     retries: 3
                     retryTimeout: 30_000ms
+                    request:
+                        jar: true
 
                 e.component.fire \state, \doing
                 user = __.get \context ._user
@@ -57,19 +57,14 @@ Ractive.components[component-name] = Ractive.extend do
                     username: user.name
                     password: user.password
 
-                c = new(cradle.Connection) "https://demeter.cloudant.com", 443, db-opts
-                cc = new(cradle.Connection) "https://demeter.cloudant.com", 443, db-opts
-                userdb = cc.database(\_users)
-
-                db = c.database \domates
-                db.gen-entry-id = ->
-                    timestamp = new Date!get-time! .to-string 16
-                    "#{timestamp}.#{random.generate {charlist: charlist, length: 4}}"
-
+                conn = new(cradle.Connection) "https://demeter.cloudant.com", 443, db-opts
+                db = conn.database \domates
+                db.gen-entry-id = gen-entry-id
+                db.hash = hash8
 
                 get-credentials = (callback) ->
                     unless user.name is \demeter
-                        err, res <- userdb.get "org.couchdb.user:#{user.name}"
+                        err, res <- conn.database \_users .get "org.couchdb.user:#{user.name}"
                         if err
                             console.error err
                             e.component.fire \state, \error, err.message

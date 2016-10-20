@@ -1,9 +1,12 @@
+require! 'aea':{sleep}
+
 component-name = "page"
 Ractive.components[component-name] = Ractive.extend do
     template: "\##{component-name}"
     isolated: no
     data: ->
         is-selected: (url) ->
+            __ = @
             #console.log "PAGE: #{@get 'name'} url: #{url}"
             this-page = @get \name
             landing-page = @get 'landing-page'
@@ -12,4 +15,4 @@ Ractive.components[component-name] = Ractive.extend do
                     return true
 
             first-part = url.substring 0, (this-page.length + 1)
-            return first-part is ('#' + this-page)
+            show-page = first-part is ('#' + this-page)

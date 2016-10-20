@@ -105,12 +105,82 @@ export function make-design-doc (obj)
     obj
 
 
-/*
-x =
-    a: 1
-    b: 2
-    c:
-        d: -> \naber
 
-console.log "make design doc: ", make-design-doc x
+charset = "0123456789" + "ACDEFHJKLMNPRTXYZ" # "abcdefhkmnrtxz"
+/*
+B, 8 -> 8
+I, 1 -> 1
+gjyp -> has tails, removed
+i -> has dot, may be erased physically
+Q, W, q w -> hard to pronounce
+S -> can be confused by 5 in hand writing
 */
+
+/*
+
+function convertBase(value, from_base, to_base) {
+  var range = charset.split('');
+  var from_range = range.slice(0, from_base);
+  var to_range = range.slice(0, to_base);
+
+  var dec_value = value.split('').reverse().reduce(function (carry, digit, index) {
+    if (from_range.indexOf(digit) === -1) throw new Error('Invalid digit `'+digit+'` for base '+from_base+'.');
+    return carry += from_range.indexOf(digit) * (Math.pow(from_base, index));
+  }, 0);
+
+  var new_value = '';
+  while (dec_value > 0) {
+    new_value = to_range[dec_value % to_base] + new_value;
+    dec_value = (dec_value - (dec_value % to_base)) / to_base;
+  }
+  return new_value || '0';
+};
+
+*/
+
+convert-base = (value, from-base, to-base) ->
+    range = charset.split ''
+    from-range = range.slice 0, from-base
+    to-range = range.slice 0, to-base
+
+    dec-value = value.split '' .reverse!reduce ((carry, digit, index) ->
+        if from-range.index-of(digit) is -1 then throw new Error "Invalid digit #{digit} for base #{from-base}."
+        return carry += (from-range.index-of digit) * (Math.pow from-base, index)), 0
+
+    new-value = ''
+    while dec-value > 0
+        new-value = to-range[dec-value % to-base] + new-value
+        dec-value = (dec-value - (dec-value % to-base)) / to-base
+
+    new-value or 0
+
+export gen-entry-id = ->
+    timestamp = new Date!get-time!
+    random = Math.floor Math.random! * 1000
+
+    stamp = "#{timestamp}#{random}"
+    encoded = convert-base stamp, 10, 27
+    decoded = convert-base encoded, 27, 10
+    if decoded isnt stamp
+        err = "Decoded (#{decoded}) and original input (#{stamp}) is not the same!"
+        console.error err
+        throw err
+    #console.log "stamp: #{stamp}, encoded: #{encoded}"
+    encoded
+
+
+require! 'crypto'
+require! 'bases'
+require! 'prelude-ls': {take}
+
+export hash8 = (inp) ->
+    x = crypto.create-hash \sha256 .update inp .digest \base64
+    y = bases.to-alphabet (bases.from-base64 x), charset
+    take 8, y
+
+export hash8n = (inp) ->
+    hash = crypto.createHash('sha1')
+    hash.update(inp)
+    sha = hash.digest!
+
+console.log "Hash of hello world : ", hash8n "hello world"
