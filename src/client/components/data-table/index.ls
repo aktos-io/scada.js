@@ -160,7 +160,6 @@ Ractive.components[component-name] = Ractive.extend do
                         curr = index
 
                     @set \currView, context
-
                     settings.on-create-view.call this, curr if typeof! settings.on-create-view is \Function
 
 
