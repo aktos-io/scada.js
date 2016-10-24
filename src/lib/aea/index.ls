@@ -6,6 +6,7 @@ require! {
     './debug-log': {debug-log, get-logger}
     './packing': {pack, unpack}
     './formatting': {unix-to-readable, readable-to-unix}
+    './couch-nano': {CouchNano}
 }
 
 export function assert (condition, message)
@@ -39,6 +40,7 @@ export attach = (obj, key, val) ->
 
 module.exports = {
     make-user-doc, PouchDB, make-design-doc, check-login, is-db-alive, gen-entry-id, hash8, hash8n
+    CouchNano
     sleep, after, clear-timer
     merge
     wait-for, timeout-wait-for, go, is-waiting
