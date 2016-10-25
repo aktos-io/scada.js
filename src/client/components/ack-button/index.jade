@@ -1,4 +1,17 @@
 +component('ack-button')
+    .modal.modal-error.fade(tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
+        .modal-dialog(role="document")
+            .modal-content.modal-danger
+                .modal-header.
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Grr...</h4>
+                    
+                .modal-body {{reason}}
+
+                .modal-footer
+
     btn(on-buttonclick="click" value="{{value}}" title="{{reason}}" class="{{ class }} ack-button" type="{{ type }}" disabled="{{ disabled }}" style="{{ style }}" )
         | {{#if state === "doing"}}
         div(style='display: inline-block; width: 20px; height: 20px; margin:0 ;padding: 0; -ms-transform: rotate({{ angle }}deg); -webkit-transform: rotate({{ angle }}deg); transform: rotate({{ angle }}deg)')

@@ -18,10 +18,19 @@ Ractive.components[component-name] = Ractive.extend do
             # then make it random
             @set \id random.generate 7
 
+
+        modal-error = $ @find \.modal-error
+
+        modal-error.modal do
+            keyboard: yes
+            focus: yes
+            show: no
+
         settings = @get \settings
 
         open-row = (no-need-updating) ->
-            console.warn "open row disabled..."
+            #console.warn "open row disabled..."
+            return
             new-url = __.get \curr-url
             if new-url
                 tableview = __.get \tableview
@@ -291,6 +300,13 @@ Ractive.components[component-name] = Ractive.extend do
                 __.set \tabledata, tabledata
                 (__.get \create-view)!
 
+            show-error: (err-message) ->
+                type = modal-error.TYPE_DANGER
+                @set \errorMessage, err-message
+                modal-error.modal \show
+
+
+
         @on events `merge` handlers
 
 
@@ -327,6 +343,8 @@ Ractive.components[component-name] = Ractive.extend do
         selected-filter: \all
         curr-page: 0
         dont-watch-changes: no
+        error-message: null
+
         is-editing-line: (index) ->
             editable = @get \editable
             clicked-index = @get \clickedIndex
@@ -395,5 +413,8 @@ Ractive.components[component-name] = Ractive.extend do
 
         two-digit: (n) ->
             (Math.round (n * 100)) / 100
+
+        five-digit: (n) ->
+            (Math.round (n * 100000)) / 100000
 
         unix-to-readable: unix-to-readable

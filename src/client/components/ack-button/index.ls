@@ -6,6 +6,14 @@ Ractive.components[component-name] = Ractive.extend do
     isolated: yes
     onrender: ->
         __ = @
+
+        modal-error = $ @find \.modal-error
+
+        modal-error.modal do
+            keyboard: yes
+            focus: yes
+            show: no
+
         @observe \state, (val) ->
             #console.log "State change dedected!", val
             if val is \doing
@@ -50,6 +58,7 @@ Ractive.components[component-name] = Ractive.extend do
                 if s in <[ error ]>
                     __.set \state, \error
                     __.set \reason, msg
+                    modal-error.modal \show
 
     data: ->
         __ = @

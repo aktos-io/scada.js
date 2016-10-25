@@ -5,6 +5,19 @@
     internals: 
         tableview: [{id: column-id, cols: [col1, col2, col3, ...], background-color: css-color} for rows]
 +component('data-table')
+    .modal.modal-error.fade(tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
+        .modal-dialog(role="document")
+            .modal-content.modal-danger
+                .modal-header.
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Hata</h4>
+                    
+                .modal-body {{errorMessage}}
+
+                .modal-footer
+
     b-table 
         thead
             +unless('readonly')

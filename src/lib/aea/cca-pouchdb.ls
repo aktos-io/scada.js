@@ -165,8 +165,8 @@ export gen-entry-id = ->
         err = "Decoded (#{decoded}) and original input (#{stamp}) is not the same!"
         console.error err
         throw err
-    #console.log "stamp: #{stamp}, encoded: #{encoded}"
-    encoded
+
+    return encoded
 
 
 require! 'crypto'
@@ -183,4 +183,4 @@ export hash8n = (inp) ->
     hash.update(inp)
     sha = hash.digest!
 
-console.log "Hash of hello world : ", hash8n "hello world"
+#console.log "Hash of hello world : ", hash8n "hello world"
