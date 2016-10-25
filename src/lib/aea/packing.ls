@@ -9,4 +9,5 @@ export function unpack x
         JSON.parse x
     catch
         console.error "Error while unpacking: #{e}, param: ", x
-        debugger
+        #debugger
+        throw e 
