@@ -26,6 +26,12 @@ Ractive.components[component-name] = Ractive.extend do
             focus: yes
             show: no
 
+        modal-new = $ @find \.modal-new
+        modal-new.modal do
+            keyboard: no
+            focus: yes
+            show: no
+
         settings = @get \settings
 
         open-row = (no-need-updating) ->
@@ -151,6 +157,17 @@ Ractive.components[component-name] = Ractive.extend do
             console.error "ERROR FROM DATA_TABLE: on-init: ", e
 
 
+        get-default-document = ->
+            try
+                def = __.get \settings.default
+                if typeof def is \function
+                    return def!
+                else
+                    unpack pack def
+            catch
+                console.error e
+
+
         events =
             clicked: (args) ->
                 context = args.context
@@ -207,11 +224,12 @@ Ractive.components[component-name] = Ractive.extend do
                 @fire \endEditing
 
             add-new-order: ->
-                new-order = (@get \newOrder)!
+                new-order = get-default-document!
                 new-order._id = db.gen-entry-id!
 
                 @set \curr, new-order
                 @set \addingNew, true
+                modal-new.modal \show
 
                 #console.log "adding brand-new order!", (@get \curr)
 
@@ -268,9 +286,12 @@ Ractive.components[component-name] = Ractive.extend do
                 __ = @
                 editing-doc = __.get \curr
                 try
-                    template = unpack pack __.get "settings.default.#{keypath}.0"
+                    template = (get-default-document!)[keypath].0
                 catch
-                    console.error "Problem with keypath: #{keypath}"
+                    err-message = "Problem with keypath: #{keypath}: #{e}"
+                    console.error err-message
+                    __.fire \showError, err-message
+                    return
 
                 if typeof! editing-doc[keypath] isnt \Array
                     console.log "Keypath is not an array, converting to array"
@@ -308,22 +329,23 @@ Ractive.components[component-name] = Ractive.extend do
 
 
 
-        @on events `merge` handlers
+        events `merge` handlers
+        # modify "save" handler
+        _save = events.save
+        events.save = (...args) ->
+            e = args.0
+            _save.apply __, args
+            if __.get \addingNew
+                #e.component.
+                modal-new.modal \hide
+                __.set \addingNew, false
+
+        @on events
 
 
     data: ->
         __ = @
         instance: @
-        new-order: ->
-            try
-                def = __.get \settings.default
-                if typeof def is \function
-                    return def!
-                else
-                    unpack pack def
-            catch
-                console.error e
-
         curr: null
         handlers: {}
         id: \will-be-random
