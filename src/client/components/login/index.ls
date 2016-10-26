@@ -7,8 +7,12 @@
             passwd: user password
 */
 
-require! 'aea': {gen-entry-id, hash8, sleep, pack}
+require! 'aea': {gen-entry-id, hash8, sleep, pack, CouchNano}
 require! \cradle
+
+db-conf =
+    url: "https://demeter.cloudant.com"
+    database: 'domates2'
 
 component-name = "login"
 Ractive.components[component-name] = Ractive.extend do
@@ -18,7 +22,6 @@ Ractive.components[component-name] = Ractive.extend do
         __ = @
         username-input = $ @find \.username-input
         password-input = $ @find \.password-input
-        error-box = $ @find \.alert.alert-danger
         login-button = @find-component \ack-button
         enter-key = 13
         checking-logged-in = $ @find \.check-state
@@ -31,14 +34,23 @@ Ractive.components[component-name] = Ractive.extend do
             if key.key-code is enter-key
                 login-button.fire \click
 
-        error-box.hide!
 
-
-
+        /*
+        server = CouchNano do
+            url: "https://demeter.cloudant.com"
+            user:
+                name: 'cca'
+                password: '3ijLODU'
+        */
         @on do
             do-login: (e) ->
                 __ = @
                 # setup db
+
+                #err, key <- server.open-session
+                #debugger
+                #return
+
                 db-opts =
                     cache: yes
                     raw: no
@@ -58,8 +70,8 @@ Ractive.components[component-name] = Ractive.extend do
                     username: user.name
                     password: user.password
 
-                conn = new(cradle.Connection) "https://demeter.cloudant.com", 443, db-opts
-                db = conn.database \domates
+                conn = new(cradle.Connection) db-conf.url, 443, db-opts
+                db = conn.database db-conf.database
                 db.gen-entry-id = gen-entry-id
                 db.hash = hash8
 
@@ -69,8 +81,6 @@ Ractive.components[component-name] = Ractive.extend do
                         if err
                             console.error err
                             e.component.fire \state, \error, err.message
-                            __.set \context.err.msg, err.message
-                            error-box.show!
                             return
                         callback res
                     else
@@ -96,9 +106,6 @@ Ractive.components[component-name] = Ractive.extend do
                 __.set \context, context
                 __.fire \success
                 e.component.fire \state, \done...
-
-            close-alert: (x) ->
-                error-box.hide!
 
             do-logout: (e) ->
                 __ = @

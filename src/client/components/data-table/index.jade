@@ -18,21 +18,29 @@
 
                 .modal-footer
 
+    .modal.modal-new.fade(tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
+        .modal-dialog(role="document")
+            .modal-content.modal-danger
+                .modal-header.
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Yeni Kayıt</h4>
+                    
+                    
+                .modal-body {{#if addingNew}}{{>editForm}}{{/if}}
+
+                .modal-footer
     b-table 
         thead
             +unless('readonly')
                 tr
                     td(colspan="{{ columnList.length + 1 }}")
                         row 
-                            | {{#if addingNew}}
-                            |   {{>editForm}}
-                            | {{else}}
                             .col-md-3.col-sm-3
-                                +unless('addingNew')
-                                    btn(on-buttonclick="addNewOrder")
-                                        icon-plus
-                                        span {{yield addnewTitle}}
-                            | {{/if}}
+                                btn(on-buttonclick="addNewOrder")
+                                    icon-plus
+                                    span {{yield addnewTitle}}
             tr
                 td(colspan="{{ columnList.length + 1 }}")
                     | {{>header}}

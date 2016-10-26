@@ -46,11 +46,17 @@ Ractive.components[component-name] = Ractive.extend do
             state: (s, msg) ->
                 if s in <[ ok done ]>
                     __.set \state, \done
+                    f = __.get \onDone
+                    f! if typeof f is \function
+                    __.set \onDone, null
 
                 if s in <[ done... ok... ]>
                     __.set \state, \done
                     <- sleep 3000ms
                     __.set \state, ''
+                    f = __.get \onDone
+                    f! if typeof f is \function
+                    __.set \onDone, null
 
                 if s in <[ doing ]>
                     __.set \state, \doing
@@ -69,3 +75,4 @@ Ractive.components[component-name] = Ractive.extend do
         class: ""
         style: ""
         disabled: no
+        on-done: null

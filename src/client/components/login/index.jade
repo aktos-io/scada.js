@@ -15,6 +15,7 @@
         ack-button(on-buttonclick="doLogout") Logout
         | {{/if}}
     //.alert.alert-info.check-state Checking if we are already logged in... 
-    .alert.alert-danger.fade.in(role="alert" style="width: 100%; position: fixed; top: 0; left: 0").
-        <a href="#" class="close" on-click="closeAlert" aria-label="close">&times;</a>
-        {{{ context.err.msg }}}
+    //-
+        .alert.alert-danger.fade.in(role="alert" style="width: 100%; position: fixed; top: 0; left: 0").
+            <a href="#" class="close" on-click="closeAlert" aria-label="close">&times;</a>
+            {{{ context.err.msg }}}
