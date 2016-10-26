@@ -66,8 +66,8 @@
                     td.
                         {{#if isLastClicked(.id) }}
                             <tag>{{ parseInt(.no) + 1 }}</tag>
-                        {{else}}
-                            {{ parseInt(.no) + 1 }}
+                        {{! else}}
+                            {{! parseInt(.no) + 1 }}
                         {{/if}}
                     | {{/unless}}
                     //- rest of columns (data)
