@@ -36,7 +36,6 @@ Ractive.components[component-name] = Ractive.extend do
 
         open-row = (no-need-updating) ->
             #console.warn "open row disabled..."
-            return
             new-url = __.get \curr-url
             if new-url
                 tableview = __.get \tableview

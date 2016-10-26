@@ -10,6 +10,10 @@
 require! 'aea': {gen-entry-id, hash8, sleep, pack, CouchNano}
 require! \cradle
 
+db-conf =
+    url: "https://demeter.cloudant.com"
+    database: 'domates2'
+
 component-name = "login"
 Ractive.components[component-name] = Ractive.extend do
     isolated: yes
@@ -31,12 +35,13 @@ Ractive.components[component-name] = Ractive.extend do
                 login-button.fire \click
 
 
+        /*
         server = CouchNano do
             url: "https://demeter.cloudant.com"
             user:
                 name: 'cca'
                 password: '3ijLODU'
-
+        */
         @on do
             do-login: (e) ->
                 __ = @
@@ -64,8 +69,8 @@ Ractive.components[component-name] = Ractive.extend do
                     username: user.name
                     password: user.password
 
-                conn = new(cradle.Connection) "https://demeter.cloudant.com", 443, db-opts
-                db = conn.database \domates
+                conn = new(cradle.Connection) db-conf.url, 443, db-opts
+                db = conn.database db-conf.database
                 db.gen-entry-id = gen-entry-id
                 db.hash = hash8
 
