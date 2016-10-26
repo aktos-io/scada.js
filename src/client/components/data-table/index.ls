@@ -270,7 +270,7 @@ Ractive.components[component-name] = Ractive.extend do
 
                     if order-doc._rev is void
                         console.log "refreshing new order...."
-                        __.set \curr, (__.get \newOrder)!
+                        __.set \curr, get-default-document!
                     else
                         console.log "order had rev: ", order-doc._rev
                         order-doc._rev = res.rev
@@ -335,10 +335,11 @@ Ractive.components[component-name] = Ractive.extend do
         events.save = (...args) ->
             e = args.0
             _save.apply __, args
-            if __.get \addingNew
-                #e.component.
-                modal-new.modal \hide
-                __.set \addingNew, false
+            e.component.set \onDone, ->
+                if __.get \addingNew
+                    #e.component.
+                    modal-new.modal \hide
+                    __.set \addingNew, false
 
         @on events
 
