@@ -12,7 +12,7 @@ require! \cradle
 
 db-conf =
     url: "https://demeter.cloudant.com"
-    database: 'domates2'
+    database: 'domates22'
 
 component-name = "login"
 Ractive.components[component-name] = Ractive.extend do
