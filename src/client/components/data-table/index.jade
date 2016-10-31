@@ -41,16 +41,15 @@
                                 btn(on-buttonclick="addNewOrder")
                                     icon-plus
                                     span {{yield addnewTitle}}
+                                    
+                        .row
+                            .col-md-12.
+                                 {{#if addingNew}}{{>editForm}}{{/if}}
             tr
                 td(colspan="{{ columnList.length + 1 }}")
                     | {{>header}}
 
             tr.
-                {{#if clickedIndex !== null}}
-                    <th>...</th>
-                {{else}}
-                    <th>#</th>
-                {{/if}}
                 {{#each columnList}}
                     <th>{{{ . }}}</th>
                 {{/each}}
@@ -61,18 +60,7 @@
                     style="{{#if isClicked(.id)}}border: 2px solid white;{{/if}}{{#if isEditingLine(.id)}}border: 2px dashed white;{{/if}} {{.style}}"
                     on-doubleclick="clicked"
                     )
-                    //- first column (numbering or controls)
-                    | {{#unless isClicked(.id)}}
-                    td.
-                        {{#if isLastClicked(.id) }}
-                            <tag>{{ parseInt(.no) + 1 }}</tag>
-                        {{! else}}
-                            {{! parseInt(.no) + 1 }}
-                        {{/if}}
-                    | {{/unless}}
-                    //- rest of columns (data)
                     | {{#if isEditingLine(.id)}}
-
                     // edit form 
                     td(colspan="{{ columnList.length + 1 }}")
                         btn-group
