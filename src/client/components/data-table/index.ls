@@ -228,9 +228,7 @@ Ractive.components[component-name] = Ractive.extend do
 
                 @set \curr, new-order
                 @set \addingNew, true
-                modal-new.modal \show
-
-                #console.log "adding brand-new order!", (@get \curr)
+                #modal-new.modal \show
 
                 if typeof! settings.on-create-view is \Function
                     settings.on-create-view.call this, new-order
