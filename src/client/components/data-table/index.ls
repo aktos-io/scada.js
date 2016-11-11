@@ -342,6 +342,7 @@ Ractive.components[component-name] = Ractive.extend do
 
     data: ->
         __ = @
+        deleteDocuments: no
         instance: @
         curr: null
         handlers: {}

@@ -51,7 +51,7 @@
 
             tr.
                 {{#each columnList}}
-                    <th>{{{ . }}}</th>
+                    <th>{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</th>
                 {{/each}}
 
         tbody
@@ -96,8 +96,8 @@
                         hr
                         | {{>viewForm}}
                     | {{else}}
-                    +each(".cols")
-                        td {{{.}}}
+                    +each(".cols").
+                        <td>{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</td>
                     | {{/if}}
         
         +if('settings.pageSize > 0')
