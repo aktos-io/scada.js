@@ -35,7 +35,7 @@ Ractive.components['btn'] = Ractive.extend({
 		if( this.get('href') )
 			return      "<a class='btn btn-{{type.replace(/ +/g,\" btn-\")}} {{#disabled}}disabled{{/}} {{#active}}active{{/}} {{#dropdown}}dropdown-toggle{{/}} {{ class }}' {{#dropdown}}data-toggle='dropdown'{{/}} href='{{href}}'  style='{{style}}' title='{{title}}'>{{yield}}</a>"
 		else
-			return "<button type='button' class='btn btn-{{type.replace(/ +/g,\" btn-\")}} {{#disabled}}disabled{{/}} {{#active}}active{{/}} {{#dropdown}}dropdown-toggle{{/}} {{ class }}' {{#dropdown}}data-toggle='dropdown'{{/}} onclick='onclick' {{#if ! disabled}}on-click=\"fire('buttonclick', value)\" {{/if}} style='{{style}}' title='{{title}}{{tooltip}}'>{{yield}}</button>"
+			return "<button type='button' class='btn btn-{{type.replace(/ +/g,\" btn-\")}} {{#disabled}}disabled{{/}} {{#active}}active{{/}} {{#dropdown}}dropdown-toggle{{/}} {{ class }}' {{#dropdown}}data-toggle='dropdown'{{/}} onclick='onclick' {{#if ! disabled}}on-click=\"@this.fire('buttonclick', value)\" {{/if}} style='{{style}}' title='{{title}}{{tooltip}}'>{{yield}}</button>"
 	}
 })
 
@@ -48,7 +48,7 @@ Ractive.components['dropup'] = Ractive.extend({isolated: true, template: "<div c
 Ractive.components['dd-toggle'] = Ractive.extend({isolated: true, template: "<div data-toggle='dropdown'>{{yield}}</div>"})
 Ractive.components['dd-menu'] = Ractive.extend({isolated: true, template: "<ul class='dropdown-menu' role='menu'>{{yield}}</ul>"})
 Ractive.components['dd-menu-right'] = Ractive.extend({isolated: true, template: "<ul class='dropdown-menu dropdown-menu-right' role='menu'>{{yield}}</ul>"})
-Ractive.components['dd-item'] = Ractive.extend({isolated: true, template: "<li><a href='{{href}}' onclick='{{onclick}}' on-click=\"fire('select')\">{{yield}}</a></li>"})
+Ractive.components['dd-item'] = Ractive.extend({isolated: true, template: "<li><a href='{{href}}' onclick='{{onclick}}' on-click=\"@this.fire('select')\">{{yield}}</a></li>"})
 Ractive.components['dd-header'] = Ractive.extend({isolated: true, template: "<li class='dropdown-header'>{{yield}}</li>"})
 Ractive.components['dd-divider'] = Ractive.extend({isolated: true, template: "<li class='divider'></li>"})
 

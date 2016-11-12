@@ -1,6 +1,6 @@
 /*
-	Ractive.js v0.8.0-edge
-	Sat Oct 08 2016 18:25:36 GMT+0000 (UTC) - commit 7c01d1418d335a9a33c57929b24b8bac7c9c421a
+	Ractive.js v0.8.1
+	Thu Oct 20 2016 16:12:51 GMT-0400 (EDT) - commit fd141daa3bb45f2d176cf5268e71483436039727
 
 	http://ractivejs.org
 	http://twitter.com/RactiveJS
@@ -33,6 +33,7 @@
   	preserveWhitespace:     false,
   	sanitize:               false,
   	stripComments:          true,
+  	contextLines:           0,
 
   	// data & binding:
   	data:                   {},
@@ -432,18 +433,23 @@
   var welcome;
   if ( hasConsole ) {
   	var welcomeIntro = [
-  		("%cRactive.js %c0.8.0-edge-7c01d1418d335a9a33c57929b24b8bac7c9c421a %cin debug mode, %cmore..."),
+  		("%cRactive.js %c0.8.1 %cin debug mode, %cmore..."),
   		'color: rgb(114, 157, 52); font-weight: normal;',
   		'color: rgb(85, 85, 85); font-weight: normal;',
   		'color: rgb(85, 85, 85); font-weight: normal;',
   		'color: rgb(82, 140, 224); font-weight: normal; text-decoration: underline;'
   	];
-  	var welcomeMessage = "You're running Ractive 0.8.0-edge-7c01d1418d335a9a33c57929b24b8bac7c9c421a in debug mode - messages will be printed to the console to help you fix problems and optimise your application.\n\nTo disable debug mode, add this line at the start of your app:\n  Ractive.DEBUG = false;\n\nTo disable debug mode when your app is minified, add this snippet:\n  Ractive.DEBUG = /unminified/.test(function(){/*unminified*/});\n\nGet help and support:\n  http://docs.ractivejs.org\n  http://stackoverflow.com/questions/tagged/ractivejs\n  http://groups.google.com/forum/#!forum/ractive-js\n  http://twitter.com/ractivejs\n\nFound a bug? Raise an issue:\n  https://github.com/ractivejs/ractive/issues\n\n";
+  	var welcomeMessage = "You're running Ractive 0.8.1 in debug mode - messages will be printed to the console to help you fix problems and optimise your application.\n\nTo disable debug mode, add this line at the start of your app:\n  Ractive.DEBUG = false;\n\nTo disable debug mode when your app is minified, add this snippet:\n  Ractive.DEBUG = /unminified/.test(function(){/*unminified*/});\n\nGet help and support:\n  http://docs.ractivejs.org\n  http://stackoverflow.com/questions/tagged/ractivejs\n  http://groups.google.com/forum/#!forum/ractive-js\n  http://twitter.com/ractivejs\n\nFound a bug? Raise an issue:\n  https://github.com/ractivejs/ractive/issues\n\n";
 
   	welcome = function () {
+  		if ( Ractive.WELCOME_MESSAGE === false ) {
+  			welcome = noop;
+  			return;
+  		}
+  		var message = 'WELCOME_MESSAGE' in Ractive ? Ractive.WELCOME_MESSAGE : welcomeMessage;
   		var hasGroup = !!console.groupCollapsed;
-  		console[ hasGroup ? 'groupCollapsed' : 'log' ].apply( console, welcomeIntro );
-  		console.log( welcomeMessage );
+  		if ( hasGroup ) console.groupCollapsed.apply( console, welcomeIntro );
+  		console.log( message );
   		if ( hasGroup ) {
   			console.groupEnd( welcomeIntro );
   		}
@@ -1277,7 +1283,9 @@
 
   		// TODO deprecate this. It's annoying and serves no useful function
   		var ractive = fragment.ractive;
-  		changeHook.fire( ractive, ractive.viewmodel.changes );
+  		if ( Object.keys( ractive.viewmodel.changes ).length ) {
+  			changeHook.fire( ractive, ractive.viewmodel.changes );
+  		}
   		ractive.viewmodel.changes = {};
   		removeFromArray( ractives, ractive );
 
@@ -1307,7 +1315,7 @@
   	// If updating the view caused some model blowback - e.g. a triple
   	// containing <option> elements caused the binding on the <select>
   	// to update - then we start over
-  	if ( batch.fragments.length || batch.immediateObservers.length || batch.deferredObservers.length || batch.ractives.length ) return flushChanges();
+  	if ( batch.fragments.length || batch.immediateObservers.length || batch.deferredObservers.length || batch.ractives.length || batch.tasks.length ) return flushChanges();
   }
 
   var refPattern = /\[\s*(\*|[0-9]|[1-9][0-9]+)\s*\]/g;
@@ -1908,7 +1916,7 @@
   	subscribers = subscribers.slice();
 
   	for ( var i = 0, len = subscribers.length; i < len; i += 1 ) {
-  		if ( subscribers[ i ].apply( ractive, args ) === false ) {
+  		if ( !subscribers[ i ].off && subscribers[ i ].apply( ractive, args ) === false ) {
   			stopEvent = true;
   		}
   	}
@@ -2358,12 +2366,12 @@
   };
 
   ModelBase.prototype.notifyUpstream = function notifyUpstream () {
-  	var parent = this.parent, prev = this;
+  	var parent = this.parent, path = [ this.key ];
   	while ( parent ) {
-  		if ( parent.patternObservers.length ) parent.patternObservers.forEach( function ( o ) { return o.notify( prev.key ); } );
+  		if ( parent.patternObservers.length ) parent.patternObservers.forEach( function ( o ) { return o.notify( path.slice() ); } );
+  		path.unshift( parent.key );
   		parent.links.forEach( notifiedUpstream );
   		parent.deps.forEach( handleChange );
-  		prev = parent;
   		parent = parent.parent;
   	}
   };
@@ -2686,12 +2694,17 @@
   	};
 
   	LinkModel.prototype.shuffle = function shuffle ( newIndices ) {
-  		// let the real model handle firing off shuffles
+  		// watch for extra shuffles caused by a shuffle in a downstream link
   		var this$1 = this;
 
+  		if ( this.shuffling ) return;
+
+  		// let the real model handle firing off shuffles
   		if ( !this.target.shuffling ) {
   			this.target.shuffle( newIndices );
   		} else {
+  			this.shuffling = true;
+
   			var i = newIndices.length;
   			while ( i-- ) {
   				var idx = newIndices[ i ];
@@ -2723,7 +2736,10 @@
   			this.marked();
 
   			if ( upstream ) this.notifyUpstream();
+
+  			this.shuffling = false;
   		}
+
   	};
 
   	LinkModel.prototype.source = function source () {
@@ -2927,8 +2943,6 @@
   	function Model ( parent, key ) {
   		ModelBase.call( this, parent );
 
-  		this.value = undefined;
-
   		this.ticker = null;
 
   		if ( parent ) {
@@ -2957,7 +2971,7 @@
   		// Exit early if no adaptors
   		if ( len === 0 ) return;
 
-  		var value = this.value;
+  		var value = this.wrapper ? ( 'newValue' in this.wrapper ? this.wrapper.newValue : this.wrapper.value ) : this.value;
 
   		// TODO remove this legacy nonsense
   		var ractive = this.root.ractive;
@@ -2965,7 +2979,7 @@
 
   		// tear previous adaptor down if present
   		if ( this.wrapper ) {
-  			var shouldTeardown = !this.wrapper.reset || this.wrapper.reset( value ) === false;
+  			var shouldTeardown = this.wrapper.value === value ? false : !this.wrapper.reset || this.wrapper.reset( value ) === false;
 
   			if ( shouldTeardown ) {
   				this.wrapper.teardown();
@@ -2974,9 +2988,11 @@
   				// don't branch for undefined values
   				if ( this.value !== undefined ) {
   					var parentValue = this.parent.value || this.parent.createBranch( this.key );
-  					if ( parentValue[ this.key ] !== this.value ) parentValue[ this.key ] = value;
+  					if ( parentValue[ this.key ] !== value ) parentValue[ this.key ] = value;
   				}
   			} else {
+  				delete this.wrapper.newValue;
+  				this.wrapper.value = value;
   				this.value = this.wrapper.get();
   				return;
   			}
@@ -2988,7 +3004,7 @@
   			var adaptor = adaptors[i];
   			if ( adaptor.filter( value, keypath, ractive ) ) {
   				this$1.wrapper = adaptor.wrap( ractive, value, keypath, getPrefixer( keypath ) );
-  				this$1.wrapper.value = this$1.value;
+  				this$1.wrapper.value = value;
   				this$1.wrapper.__model = this$1; // massive temporary hack to enable array adaptor
 
   				this$1.value = this$1.wrapper.get();
@@ -3038,9 +3054,10 @@
   			this.parent.value = this.parent.wrapper.get();
 
   			this.value = this.parent.value[ this.key ];
+  			if ( this.wrapper ) this.wrapper.newValue = this.value;
   			this.adapt();
   		} else if ( this.wrapper ) {
-  			this.value = value;
+  			this.wrapper.newValue = value;
   			this.adapt();
   		} else {
   			var parentValue = this.parent.value || this.parent.createBranch( this.key );
@@ -3115,7 +3132,10 @@
   			this.value = value;
 
   			// make sure the wrapper stays in sync
-  			if ( old !== value || this.rewrap ) this.adapt();
+  			if ( old !== value || this.rewrap ) {
+  				if ( this.wrapper ) this.wrapper.newValue = value;
+  				this.adapt();
+  			}
 
   			// keep track of array lengths
   			if ( isArray( value ) ) this.length = value.length;
@@ -3563,7 +3583,11 @@
   var updateHook = new Hook( 'update' );
 
   function update$2 ( ractive, model ) {
-  	if ( model.parent && model.parent.wrapper ) return update$2( ractive, model.parent );
+  	// if the parent is wrapped, the adaptor will need to be updated before
+  	// updating on this keypath
+  	if ( model.parent && model.parent.wrapper ) {
+  		model.parent.adapt();
+  	}
 
   	var promise = runloop.start( ractive, true );
 
@@ -3997,7 +4021,10 @@
   		Object.keys( map ).forEach( function ( keypath ) {
   			var callback = map[ keypath ];
 
-  			keypath.split( ' ' ).forEach( function ( keypath ) {
+  			var keypaths = keypath.split( ' ' );
+  			if ( keypaths.length > 1 ) keypaths = keypaths.filter( function ( k ) { return k; } );
+
+  			keypaths.forEach( function ( keypath ) {
   				observers.push( createObserver( this$1, keypath, callback, options ) );
   			});
   		});
@@ -4013,6 +4040,8 @@
   		} else {
   			keypaths = keypath.split( ' ' );
   		}
+
+  		if ( keypaths.length > 1 ) keypaths = keypaths.filter( function ( k ) { return k; } );
 
   		keypaths.forEach( function ( keypath ) {
   			observers.push( createObserver( this$1, keypath, callback, options || {} ) );
@@ -4266,6 +4295,7 @@
   		// handle case where previously extant keypath no longer exists -
   		// observer should still fire, with undefined as new value
   		// TODO huh. according to the test suite that's not the case...
+  		// NOTE: I don't think this will work with partial updates
   		// Object.keys( this.oldValues ).forEach( keypath => {
   		// this.newValues[ keypath ] = undefined;
   		// });
@@ -4277,17 +4307,23 @@
   			});
   			this.partial = false;
   		} else {
+  			var count = 0;
   			var ok = this.baseModel.isRoot ?
-  				this.changed :
-  				this.changed.map( function ( key ) { return this$1.baseModel.getKeypath( this$1.ractive ) + '.' + escapeKey( key ); } );
+  				this.changed.map( function ( keys ) { return keys.map( escapeKey ).join( '.' ); } ) :
+  				this.changed.map( function ( keys ) { return this$1.baseModel.getKeypath( this$1.ractive ) + '.' + keys.map( escapeKey ).join( '.' ); } );
 
   			this.baseModel.findMatches( this.keys ).forEach( function ( model ) {
   				var keypath = model.getKeypath( this$1.ractive );
   				// is this model on a changed keypath?
-  				if ( ok.filter( function ( k ) { return keypath.indexOf( k ) === 0 && ( keypath.length === k.length || keypath[k.length] === '.' ); } ).length ) {
+  				if ( ok.filter( function ( k ) { return keypath.indexOf( k ) === 0 || k.indexOf( keypath ) === 0; } ).length ) {
+  					count++;
   					this$1.newValues[ keypath ] = model.get();
   				}
   			});
+
+  			// no valid change triggered, so bail to avoid breakage
+  			if ( !count ) return;
+
   			this.partial = true;
   		}
 
@@ -4435,6 +4471,9 @@
   			if ( subscribers ) {
   				// ...if a callback was specified, only remove that
   				if ( callback ) {
+  					// flag this callback as off so that any in-flight firings don't call
+  					// a cancelled handler - this is _slightly_ hacky
+  					callback.off = true;
   					var index = subscribers.indexOf( callback );
   					if ( index !== -1 ) {
   						subscribers.splice( index, 1 );
@@ -4644,7 +4683,7 @@
   }
 
   var selectorsPattern = /(?:^|\})?\s*([^\{\}]+)\s*\{/g;
-  var commentsPattern = /\/\*.*?\*\//g;
+  var commentsPattern = /\/\*[\s\S]*?\*\//g;
   var selectorUnitPattern = /((?:(?:\[[^\]+]\])|(?:[^\s\+\>~:]))+)((?:::?[^\s\+\>\~\(:]+(?:\([^\)]+\))?)*\s*[\s\+\>\~]?)\s*/g;
   var excludePattern = /^(?:@|\d+%)/;
   var dataRvcGuidPattern = /\[data-ractive-css~="\{[a-z0-9-]+\}"]/g;
@@ -4988,6 +5027,40 @@
   		return null;
   	},
 
+  	getContextMessage: function ( pos, message ) {
+  		var ref = this.getLinePos( pos ), lineNum = ref[0], columnNum = ref[1];
+  		if ( this.options.contextLines === -1 ) {
+  			return [ lineNum, columnNum, ("" + message + " at line " + lineNum + " character " + columnNum) ];
+  		}
+
+  		var line = this.lines[ lineNum - 1 ];
+
+  		var contextUp = '';
+  		var contextDown = '';
+  		if ( this.options.contextLines ) {
+  			var start = lineNum - 1 - this.options.contextLines < 0 ? 0 : lineNum - 1 - this.options.contextLines;
+  			contextUp = this.lines.slice( start, lineNum - 1 - start ).join( '\n' ).replace( /\t/g, '  ' );
+  			contextDown = this.lines.slice( lineNum, lineNum + this.options.contextLines ).join( '\n' ).replace( /\t/g, '  ' );
+  			if ( contextUp ) {
+  				contextUp += '\n';
+  			}
+  			if ( contextDown ) {
+  				contextDown = '\n' + contextDown;
+  			}
+  		}
+
+  		var numTabs = 0;
+  		var annotation = contextUp + line.replace( /\t/g, function ( match, char ) {
+  			if ( char < columnNum ) {
+  				numTabs += 1;
+  			}
+
+  			return '  ';
+  		}) + '\n' + new Array( columnNum + numTabs ).join( ' ' ) + '^----' + contextDown;
+
+  		return [ lineNum, columnNum, ("" + message + " at line " + lineNum + " character " + columnNum + ":\n" + annotation) ];
+  	},
+
   	getLinePos: function ( char ) {
   		var this$1 = this;
 
@@ -5003,24 +5076,12 @@
   	},
 
   	error: function ( message ) {
-  		var pos = this.getLinePos( this.pos );
-  		var lineNum = pos[0];
-  		var columnNum = pos[1];
+  		var ref = this.getContextMessage( this.pos, message ), lineNum = ref[0], columnNum = ref[1], msg = ref[2];
 
-  		var line = this.lines[ pos[0] - 1 ];
-  		var numTabs = 0;
-  		var annotation = line.replace( /\t/g, function ( match, char ) {
-  			if ( char < pos[1] ) {
-  				numTabs += 1;
-  			}
+  		var error = new ParseError( msg );
 
-  			return '  ';
-  		}) + '\n' + new Array( pos[1] + numTabs ).join( ' ' ) + '^----';
-
-  		var error = new ParseError( ("" + message + " at line " + lineNum + " character " + columnNum + ":\n" + annotation) );
-
-  		error.line = pos[0];
-  		error.character = pos[1];
+  		error.line = lineNum;
+  		error.character = columnNum;
   		error.shortMessage = message;
 
   		throw error;
@@ -6291,13 +6352,14 @@
   		parsed;
 
   	if ( typeof tokens === 'string' ) {
+  		var pos = parentParser.pos - tokens.length;
   		if ( type === DECORATOR || type === TRANSITION ) {
   			var parser = new ExpressionParser( ("[" + tokens + "]") );
   			return { a: flattenExpression( parser.result[0] ) };
   		}
 
   		if ( type === EVENT && ( match = methodCallPattern.exec( tokens ) ) ) {
-  			warnOnceIfDebug( ("Unqualified method events are deprecated. Prefix methods with '@this.' to call methods on the current Ractive instance.") );
+  			warnIfDebug( parentParser.getContextMessage( pos, ("Unqualified method events are deprecated. Prefix methods with '@this.' to call methods on the current Ractive instance.") )[2] );
   			tokens = "@this." + (match[1]) + "" + (tokens.substr(match[1].length));
   		}
 
@@ -6305,12 +6367,14 @@
   			var parser$1 = new ExpressionParser( '[' + tokens + ']' );
   			if ( parser$1.result && parser$1.result[0] ) {
   				if ( parser$1.remaining().length ) {
+  					parentParser.pos = pos + tokens.length - parser$1.remaining().length;
   					parentParser.error( ("Invalid input after event expression '" + (parser$1.remaining()) + "'") );
   				}
   				return { x: flattenExpression( parser$1.result[0] ) };
   			}
 
   			if ( tokens.indexOf( ':' ) > tokens.indexOf( '(' ) || !~tokens.indexOf( ':' ) ) {
+  				parentParser.pos = pos;
   				parentParser.error( ("Invalid input in event expression '" + tokens + "'") );
   			}
 
@@ -6382,8 +6446,8 @@
   		result = directiveName;
   	}
 
-  	if ( directiveArgs.length ) {
-  		warnOnceIfDebug( ("Proxy events with arguments are deprecated. You can fire events with arguments using \"@this.fire('eventName', arg1, arg2, ...)\".") );
+  	if ( directiveArgs.length && type ) {
+  		warnIfDebug( parentParser.getContextMessage( parentParser.pos, ("Proxy events with arguments are deprecated. You can fire events with arguments using \"@this.fire('eventName', arg1, arg2, ...)\".") )[2] );
   	}
 
   	return result;
@@ -7225,9 +7289,12 @@
 
   	conditions = [];
 
+  	var pos;
   	do {
+  		pos = parser.pos;
   		if ( child = readClosing( parser, tag ) ) {
   			if ( expectedClose && child.r !== expectedClose ) {
+  				parser.pos = pos;
   				parser.error( ("Expected " + (tag.open) + "/" + expectedClose + "" + (tag.close)) );
   			}
 
@@ -8081,6 +8148,8 @@
   			{ isStatic: true,  isTriple: true,  open: staticTripleDelimiters[0],  close: staticTripleDelimiters[1],  readers: TRIPLE_READERS }
   		];
 
+  		this.contextLines = options.contextLines || 0;
+
   		this.sortMustacheTags();
 
   		this.sectionDepth = 0;
@@ -8152,7 +8221,8 @@
   	'interpolate',
   	'preserveWhitespace',
   	'sanitize',
-  	'stripComments'
+  	'stripComments',
+  	'contextLines'
   ];
 
   var TEMPLATE_INSTRUCTIONS = "Either preparse or use a ractive runtime source that includes the parser. ";
@@ -8830,6 +8900,7 @@
 
   			return model;
   		});
+  		this.dependencies = [];
 
   		this.shuffle = undefined;
 
@@ -8858,6 +8929,7 @@
   		if ( this.dirty ) {
   			this.dirty = false;
   			this.value = this.getValue();
+  			if ( this.wrapper ) this.wrapper.newValue = this.value;
   			this.adapt();
   		}
 
@@ -8897,9 +8969,16 @@
   		}
 
   		var dependencies = stopCapturing();
-  		if ( this.dependencies ) this.dependencies.forEach( function ( d ) { return d.unregister( this$1 ); } );
-  		this.dependencies = dependencies;
-  		this.dependencies.forEach( function ( d ) { return d.register( this$1 ); } );
+  		// remove missing deps
+  		this.dependencies.filter( function ( d ) { return !~dependencies.indexOf( d ); } ).forEach( function ( d ) {
+  			d.unregister( this$1 );
+  			removeFromArray( this$1.dependencies, d );
+  		});
+  		// register new deps
+  		dependencies.filter( function ( d ) { return !~this$1.dependencies.indexOf( d ); } ).forEach( function ( d ) {
+  			d.register( this$1 );
+  			this$1.dependencies.push( d );
+  		});
 
   		return result;
   	};
@@ -10563,6 +10642,7 @@
   		if ( this.dirty ) {
   			this.dirty = false;
   			this.value = this.getValue();
+  			if ( this.wrapper ) this.wrapper.newValue = this.value;
   			this.adapt();
   		}
 
@@ -10593,6 +10673,12 @@
 
   		var dependencies = stopCapturing();
   		this.setDependencies( dependencies );
+
+  		// if not the first computation and the value is not the same,
+  		// register the change for change events
+  		if ( 'value' in this && result !== this.value ) {
+  			this.registerChange( this.getKeypath(), result );
+  		}
 
   		return result;
   	};
@@ -10633,6 +10719,7 @@
   		}
 
   		this.signature.setter( value );
+  		this.mark();
   	};
 
   	Computation.prototype.setDependencies = function setDependencies ( dependencies ) {
@@ -10869,7 +10956,7 @@
   	};
 
   	RootModel.prototype.retrieve = function retrieve () {
-  		return this.value;
+  		return this.wrapper ? this.wrapper.get() : this.value;
   	};
 
   	RootModel.prototype.update = function update () {
@@ -12015,6 +12102,10 @@
   		// noop
   	};
 
+  	Doctype.prototype.update = function update () {
+  		// noop
+  	};
+
   	return Doctype;
   }(Item));
 
@@ -13021,11 +13112,13 @@
   			}
   		});
 
-  		this.attributes.push( new ConditionalAttribute({
-  			owner: this,
-  			parentFragment: this.parentFragment,
-  			template: leftovers
-  		}) );
+  		if ( leftovers.length ) {
+  			this.attributes.push( new ConditionalAttribute({
+  				owner: this,
+  				parentFragment: this.parentFragment,
+  				template: leftovers
+  			}) );
+  		}
 
   		var i = this.attributes.length;
   		while ( i-- ) {
@@ -16240,11 +16333,13 @@
   	// search for the next node going forward
   	var this$1 = this;
 
+  		if ( item ) {
   		for ( var i = item.index + 1; i < this$1.items.length; i++ ) {
-  		if ( !this$1.items[ i ] ) continue;
+  			if ( !this$1.items[ i ] ) continue;
 
-  		var node = this$1.items[ i ].firstNode( true );
-  		if ( node ) return node;
+  			var node = this$1.items[ i ].firstNode( true );
+  			if ( node ) return node;
+  		}
   	}
 
   	// if this is the root fragment, and there are no more items,
@@ -16259,7 +16354,7 @@
   		return null;
   	}
 
-  	return this.owner.findNextNode( this ); // the argument is in case the parent is a RepeatedFragment
+  	if ( this.parent ) return this.owner.findNextNode( this ); // the argument is in case the parent is a RepeatedFragment
   };
 
   Fragment.prototype.findParentNode = function findParentNode () {
@@ -16359,7 +16454,7 @@
 
   		if ( wasRendered ) {
   			var parentNode = this.findParentNode();
-  			var anchor = this.parent ? this.parent.findNextNode( this.owner ) : null;
+  			var anchor = this.findNextNode();
 
   			if ( anchor ) {
   				var docFrag = createDocumentFragment();
@@ -16909,7 +17004,7 @@
   	magic:          { value: magicSupported },
 
   	// version
-  	VERSION:        { value: '0.8.0-edge-7c01d1418d335a9a33c57929b24b8bac7c9c421a' },
+  	VERSION:        { value: '0.8.1' },
 
   	// plugins
   	adaptors:       { writable: true, value: {} },

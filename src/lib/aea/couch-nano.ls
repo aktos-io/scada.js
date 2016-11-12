@@ -3,6 +3,13 @@ require! 'prelude-ls': {
 }
 require! 'superagent': request
 
+/*
+
+user:
+    name: ...
+    password: ...
+*/
+
 export class CouchNano
     (cfg) ~>
         @cfg = cfg
@@ -31,16 +38,21 @@ export class CouchNano
 
 
     open-session: (callback) ~>
+        __ = @
         request
-            .post "#{@cfg.url}/_session"
+            .post "#{__.cfg.url}/_session"
+            #.get "#{__.cfg.url}/_session"
             .set 'Content-type', 'application/json'
-            .set "Content-type", 'application/x-www-form-urlencoded'
-            .type \form 
             .send do
-                name: @cfg.user.name
-                password: @cfg.user.password
+                name: __.cfg.user.name
+                password: __.cfg.user.password
             .end (err, res) ->
                 debugger
+                request
+                    #.set 'Access-Control-Allow-Credentials', 'true'
+                    .with-credentials!
+                    .end (err, res) ->
+                        debugger
 
         return
         conn = nano do

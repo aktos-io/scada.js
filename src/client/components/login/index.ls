@@ -42,14 +42,16 @@ Ractive.components[component-name] = Ractive.extend do
                 name: 'cca'
                 password: '3ijLODU'
         */
+
         @on do
             do-login: (e) ->
                 __ = @
-                # setup db
 
-                #err, key <- server.open-session
-                #debugger
-                #return
+                /* test CouchNano * /
+                err, key <- server.open-session
+                debugger
+                return
+                /* end of test CouchNano */
 
                 db-opts =
                     cache: yes
