@@ -12,7 +12,7 @@ require! \cradle
 
 db-conf =
     url: "https://demeter.cloudant.com"
-    database: 'domates22'
+    database: 'domates33'
 
 component-name = "login"
 Ractive.components[component-name] = Ractive.extend do
@@ -42,16 +42,14 @@ Ractive.components[component-name] = Ractive.extend do
                 name: 'cca'
                 password: '3ijLODU'
         */
-
         @on do
             do-login: (e) ->
                 __ = @
+                # setup db
 
-                /* test CouchNano * /
-                err, key <- server.open-session
-                debugger
-                return
-                /* end of test CouchNano */
+                #err, key <- server.open-session
+                #debugger
+                #return
 
                 db-opts =
                     cache: yes
