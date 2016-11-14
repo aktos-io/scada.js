@@ -12,7 +12,7 @@ require! \cradle
 
 db-conf =
     url: "https://demeter.cloudant.com"
-    database: 'domates22'
+    database: 'domates2'
 
 component-name = "login"
 Ractive.components[component-name] = Ractive.extend do
@@ -63,8 +63,7 @@ Ractive.components[component-name] = Ractive.extend do
                         jar: true
 
                 e.component.fire \state, \doing
-                #user = __.get \context ._user
-                user = {name:'sultan', password: \PFb1U6UH2s}
+                user = __.get \context ._user
                 unless user
                     return e.component.fire \state, \error, "Kullanıcı adı/şifre boş olamaz!"
 
