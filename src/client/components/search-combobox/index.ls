@@ -22,18 +22,19 @@ Ractive.components[component-name] = Ractive.extend do
         select.on \change, (x) ->
             id = x.target.value
             value = x.target.text-content
-            #__.set \selected, id
+            __.set \selected, id
+            /*
             multi = []
             for option in x.target
                 multi.push(option.value)
 
             __.set \selected, multi
+            */
             #__.set \selectedText, value
             #console.log "selected: ", id, "value: ", value
 
         box = select.0.selectize
         default-selected = __.get \selected
-        default-multi-selected = __.get \multiSelected
 
         @observe \data, (new-data, old-data) ->
             if new-data
