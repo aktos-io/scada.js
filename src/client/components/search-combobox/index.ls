@@ -22,14 +22,15 @@ Ractive.components[component-name] = Ractive.extend do
         select.on \change, (x) ->
             id = x.target.value
             value = x.target.text-content
-            __.set \selected, id
-            /*
-            multi = []
-            for option in x.target
-                multi.push(option.value)
+            if multiple is 1
+                __.set \selected, id
+            else
+                multi = []
+                for option in x.target
+                    multi.push(option.value)
 
-            __.set \selected, multi
-            */
+                __.set \selected, multi
+
             #__.set \selectedText, value
             #console.log "selected: ", id, "value: ", value
 
