@@ -178,7 +178,13 @@ Ractive.components[component-name] = Ractive.extend do
                     @set \lastIndex, index
 
                     tabledata = @get \tabledata
-                    curr = unpack pack find (._id is index), tabledata
+                    if typeof! tabledata is \Object 
+                        for key, value of tabledata
+                            if index is value._id
+                                curr = unpack pack tabledata[key]
+                    else
+                        curr = unpack pack find (._id is index), tabledata
+
                     if curr
                         @set \curr, curr
                     else
