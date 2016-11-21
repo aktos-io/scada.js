@@ -44,6 +44,8 @@ Ractive.components[component-name] = Ractive.extend do
                 @fire \buttonclick, {component: this, args: val}, val
 
             state: (s, msg) ->
+                self-disabled = no
+
                 if s in <[ ok done ]>
                     __.set \state, \done
                     f = __.get \onDone
@@ -60,11 +62,16 @@ Ractive.components[component-name] = Ractive.extend do
 
                 if s in <[ doing ]>
                     __.set \state, \doing
+                    self-disabled = yes
 
                 if s in <[ error ]>
                     __.set \state, \error
                     __.set \reason, msg
                     modal-error.modal \show
+
+                __.set \selfDisabled, self-disabled
+
+
 
     data: ->
         __ = @
@@ -76,3 +83,4 @@ Ractive.components[component-name] = Ractive.extend do
         style: ""
         disabled: no
         on-done: null
+        self-disabled: no
