@@ -10,7 +10,7 @@
                     
                 .modal-body(style="font-size:1.5rem") {{reason}}
 
-                .modal-footer naber
+                .modal-footer
 
     btn(on-buttonclick="click" value="{{value}}" title="{{reason}}" class="{{ class }} ack-button" type="{{ type }}" disabled="{{ disabled || selfDisabled }}" style="{{ style }}" )
         | {{#if state === "doing"}}
