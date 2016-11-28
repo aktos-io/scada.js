@@ -7,7 +7,7 @@ console.log "Compiling for project: #{project}"
 console.log "------------------------------------------"
 
 require! <[ watchify gulp browserify glob path fs globby]>
-require! 'prelude-ls': {union, join}
+require! 'prelude-ls': {union, join, keys}
 require! 'vinyl-source-stream': source
 require! 'vinyl-buffer': buffer
 require! 'gulp-watch': watch
@@ -21,6 +21,7 @@ require! 'gulp-tap': tap
 require! 'gulp-cached': cache
 require! 'gulp-sourcemaps': sourcemaps
 require! 'browserify-livescript'
+require! './preparse': {preparseRactive}
 
 
 # Build Settings
@@ -225,6 +226,9 @@ gulp.task \jade <[ jade-components ]> ->
         .pipe gulp.dest paths.client-apps
         .pipe tap (file) ->
             log-info \jade, "Jade finished"
+            preparseRactive!
+            console.log "preparsing finished?"
+
 
 
 

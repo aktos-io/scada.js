@@ -37,6 +37,7 @@
     "pouchdb": "^6.0.6",
     "pouchdb-authentication": "^0.5.5",
     "prelude-ls": "^1.1.2",
+    "ractive": "^0.8.5",
     "randomstring": "^1.1.5",
     "serialport": "^4.0.1",
     "soap": "^0.16.0"
@@ -44,6 +45,7 @@
   "devDependencies": {
     "browserify": "^13.1.1",
     "browserify-livescript": "^0.2.3",
+    "cheerio": "^0.20.0",
     "electron-prebuilt": "^1.2.8",
     "glob": "^7.0.5",
     "globby": "^5.0.0",
