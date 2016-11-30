@@ -167,11 +167,13 @@ Ractive.components[component-name] = Ractive.extend do
 
                 catch
                     console.error "ERROR FROM DATA_TABLE: on-init: ", e
-            else if _old is off and _new is on and __.get(\firsRunDone)
+            else if _old is off and _new is on and __.get(\firstRunDone)
                 console.log "rising edge of enable, trigger change: #{settings.col-names}"
                 changes = __.get \changes
                 __.set \changes, ++changes
                 refresh-view!
+            else if not _old and _new 
+                console.warn "Ignoring toggle of enabled in data-table for #{settings.col-names}"
 
         @observe \changes, ->
             if (__.get \enabled) and (__.get \firstRunDone)
