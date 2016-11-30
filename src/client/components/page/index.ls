@@ -12,6 +12,7 @@ Ractive.components[component-name] = Ractive.extend do
             landing-page = @get 'landing-page'
             if this-page is '/' or landing-page
                 if url in ['', void, null, '/']
+                    @set \visible, true
                     return true
 
             first-part = url.substring 0, (this-page.length + 1)
