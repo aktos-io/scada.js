@@ -69,3 +69,4 @@ Ractive.components[component-name] = Ractive.extend do
         last-src: null
         db: void
         error: no
+        src: void

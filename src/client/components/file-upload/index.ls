@@ -56,3 +56,4 @@ Ractive.components[component-name] = Ractive.extend do
     data: ->
         attachment_name: ''
         doc_id: ''
+        filename: ''

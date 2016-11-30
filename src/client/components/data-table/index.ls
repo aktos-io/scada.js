@@ -81,7 +81,18 @@ Ractive.components[component-name] = Ractive.extend do
 
         @set \dataFilters, settings.filters
 
+        first-run-done = no
+        first-run-started = no
         create-view = (curr) ->
+            unless first-run-done
+                console.warn "data-table: create-view is called before first run!"
+                return
+
+            # for debugging purposes
+            c = __.get \createViewCounter
+            __.set \createViewCounter, (c + 1)
+            # end of debugging purposes
+
             filters = __.get \dataFilters
             selected-filter = __.get \selectedFilter
             tabledata = __.get \tabledata
@@ -130,30 +141,46 @@ Ractive.components[component-name] = Ractive.extend do
                 open-row yes
 
 
-        @observe \tabledata, ->
-            create-view!
-        @set \create-view, create-view
-
-
-        if typeof settings.on-change is \function
-            do on-change = ->
-                settings.on-change.apply __
-
-        @observe \changes, ->
+        refresh-view = ->
             if typeof on-change is \function
                 #if settings.debug then console.log "DATA_TABLE: ON-CHANGE IS FUNCTION..."
-                on-change!
+                settings.on-change.apply __
             else
                 create-view!
 
-        @observe \settings.pageSize, ->
-            create-view!
 
-        # Run post init (from instance)
-        try
-            settings.on-init.apply this if typeof settings.on-init is \function
-        catch
-            console.error "ERROR FROM DATA_TABLE: on-init: ", e
+        @set \create-view, create-view
+
+
+        @observe \enabled, (_new, _old) ->
+            if _new and not first-run-done and not first-run-started
+                # Run post init (from instance)
+                first-run-started := yes 
+                console.log "Initializing tabledata with columns: #{settings.col-names}"
+                try
+                    if typeof settings.on-init is \function
+                        settings.on-init.call this, ->
+                            first-run-done := yes
+                            refresh-view!
+                            console.log "finished initialization #{settings.col-names}"
+                        console.log "started initialization: #{settings.col-names}"
+
+
+                catch
+                    console.error "ERROR FROM DATA_TABLE: on-init: ", e
+            else if _old is off and _new is on
+                console.log "rising edge of enable, trigger change: #{settings.col-names}"
+                refresh-view!
+
+        @observe \changes, ->
+            if (__.get \enabled) and first-run-done
+                console.log "Refreshing because of changes changed: #{settings.col-names}"
+                refresh-view!
+
+        @observe \tabledata, ->
+            if (__.get \enabled) and first-run-done
+                console.log "Refreshing because tabledata changed...: #{settings.col-names}"
+                refresh-view!
 
 
         get-default-document = ->
@@ -178,7 +205,7 @@ Ractive.components[component-name] = Ractive.extend do
                     @set \lastIndex, index
 
                     tabledata = @get \tabledata
-                    if typeof! tabledata is \Object 
+                    if typeof! tabledata is \Object
                         for key, value of tabledata
                             if index is value._id
                                 curr = unpack pack tabledata[key]
@@ -371,7 +398,9 @@ Ractive.components[component-name] = Ractive.extend do
         curr-page: 0
         dont-watch-changes: no
         error-message: null
-
+        enabled: no
+        create-view-counter: 0
+        changes: 0
         is-editing-line: (index) ->
             editable = @get \editable
             clicked-index = @get \clickedIndex

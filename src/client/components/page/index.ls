@@ -16,3 +16,8 @@ Ractive.components[component-name] = Ractive.extend do
 
             first-part = url.substring 0, (this-page.length + 1)
             show-page = first-part is ('#' + this-page)
+
+            @set \visible, show-page
+            return show-page
+
+        visible: no
