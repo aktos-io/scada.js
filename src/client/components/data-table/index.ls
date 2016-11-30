@@ -81,10 +81,9 @@ Ractive.components[component-name] = Ractive.extend do
 
         @set \dataFilters, settings.filters
 
-        first-run-done = no
         first-run-started = no
         create-view = (curr) ->
-            unless first-run-done
+            unless __.get \firstRunDone
                 console.warn "data-table: create-view is called before first run!"
                 return
 
@@ -153,32 +152,34 @@ Ractive.components[component-name] = Ractive.extend do
 
 
         @observe \enabled, (_new, _old) ->
-            if _new and not first-run-done and not first-run-started
+            if _new and not __.get(\firsRunDone) and not first-run-started
                 # Run post init (from instance)
-                first-run-started := yes 
+                first-run-started := yes
                 console.log "Initializing tabledata with columns: #{settings.col-names}"
                 try
                     if typeof settings.on-init is \function
                         settings.on-init.call this, ->
-                            first-run-done := yes
-                            refresh-view!
+                            __.set \firstRunDone, yes
                             console.log "finished initialization #{settings.col-names}"
+                            refresh-view!
                         console.log "started initialization: #{settings.col-names}"
 
 
                 catch
                     console.error "ERROR FROM DATA_TABLE: on-init: ", e
-            else if _old is off and _new is on
+            else if _old is off and _new is on and __.get(\firsRunDone)
                 console.log "rising edge of enable, trigger change: #{settings.col-names}"
+                changes = __.get \changes
+                __.set \changes, ++changes
                 refresh-view!
 
         @observe \changes, ->
-            if (__.get \enabled) and first-run-done
+            if (__.get \enabled) and (__.get \firstRunDone)
                 console.log "Refreshing because of changes changed: #{settings.col-names}"
                 refresh-view!
 
         @observe \tabledata, ->
-            if (__.get \enabled) and first-run-done
+            if (__.get \enabled) and (__.get \firstRunDone)
                 console.log "Refreshing because tabledata changed...: #{settings.col-names}"
                 refresh-view!
 
@@ -401,6 +402,7 @@ Ractive.components[component-name] = Ractive.extend do
         enabled: no
         create-view-counter: 0
         changes: 0
+        first-run-done: no
         is-editing-line: (index) ->
             editable = @get \editable
             clicked-index = @get \clickedIndex
