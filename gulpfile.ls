@@ -6,7 +6,7 @@ console.log "------------------------------------------"
 console.log "Compiling for project: #{project}"
 console.log "------------------------------------------"
 
-require! <[ watchify gulp browserify glob path fs globby]>
+require! <[ watchify gulp browserify glob path fs globby run-sequence ]>
 require! 'prelude-ls': {union, join, keys}
 require! 'vinyl-source-stream': source
 require! 'vinyl-buffer': buffer

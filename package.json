@@ -60,6 +60,7 @@
     "gulp-uglify": "^1.5.4",
     "gulp-watch": "^4.3.8",
     "node-notifier": "^4.6.1",
+    "run-sequence": "^1.2.2",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.7.0",
