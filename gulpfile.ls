@@ -181,7 +181,7 @@ gulp.task \browserify, run-sequence \copy-js, \generate-components-module, !->
                 @emit \end
             .pipe source \public/demeter.js
             .pipe buffer!
-            .pipe sourcemaps.init {+load-maps}
+            .pipe sourcemaps.init {+load-maps,+largeFile}
             .pipe sourcemaps.write './'
             .pipe gulp.dest './build'
             .pipe tap (file) ->

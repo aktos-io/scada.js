@@ -7,12 +7,13 @@
             passwd: user password
 */
 
-require! 'aea': {gen-entry-id, hash8, sleep, pack, CouchNano}
+require! 'aea': {gen-entry-id, hash8, sleep, pack, CouchNano, merge}
 require! \cradle
 
 db-conf =
     url: "https://demeter.cloudant.com"
     database: 'domates2'
+    #database: 'domates33'
 
 
 component-name = "login"
@@ -62,7 +63,8 @@ Ractive.components[component-name] = Ractive.extend do
                         jar: true
 
                 e.component.fire \state, \doing
-                user = __.get \context ._user
+                user = {name: \sultan, password:"PFb1U6UH2s" }
+                #user = __.get \context ._user
                 unless user
                     return e.component.fire \state, \error, "Kullanıcı adı/şifre boş olamaz!"
 
@@ -96,7 +98,7 @@ Ractive.components[component-name] = Ractive.extend do
                 context =
                     ok: yes
                     err: null
-                    user: res
+                    user: res `merge` {roles: <[ cici production_manager dev ]>}
 
                 # FIXME: workaround for not being login via cookie
                 #username-input.val ''
