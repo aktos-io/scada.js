@@ -174,7 +174,8 @@ Ractive.components[component-name] = Ractive.extend do
                 __.set \changes, ++changes
                 refresh-view!
             else if not _old and _new
-                console.warn "Ignoring toggle of enabled in data-table for #{settings.col-names}"
+                a = 1
+                #console.warn "Ignoring toggle of enabled in data-table for #{settings.col-names}"
 
         @observe \changes, ->
             if (__.get \enabled) and (__.get \firstRunDone)
