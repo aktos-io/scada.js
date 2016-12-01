@@ -155,7 +155,7 @@ gulp.task \generate-components-module ->
 
 
 
-gulp.task \browserify, <[ copy-js generate-components-module ]> !->
+gulp.task \browserify, run-sequence \copy-js, \generate-components-module, !->
     bundler = browserify do
         entries:
             "#{__dirname}/apps/demeter/webapps/demeter/demeter.ls"
@@ -211,7 +211,7 @@ gulp.task \assets, ->
         .pipe gulp.dest paths.client-public
 
 # Compile Jade files in paths.client-src to the paths.client-tmp folder
-gulp.task \jade <[ jade-components ]> ->
+gulp.task \jade, -> run-sequence \browserify, \jade-components, ->
     base = "#{paths.client-webapps}"
     files = glob.sync "#{base}/**/*.jade"
     files = [.. for files when is-module-index base, ..]
