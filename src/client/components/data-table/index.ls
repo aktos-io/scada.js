@@ -200,14 +200,12 @@ Ractive.components[component-name] = Ractive.extend do
 
         events =
             clicked: (args) ->
+                __ = @
                 context = args.context
                 index = context.id
                 unless (@get \clickedIndex) is index
                     # trigger only if there is a change
                     #console.log "ORDER_TABLE: clicked!!!", args, index
-                    @set \clickedIndex, index
-                    @set \lastIndex, index
-
                     tabledata = @get \tabledata
                     if typeof! tabledata is \Object
                         for key, value of tabledata
@@ -222,7 +220,18 @@ Ractive.components[component-name] = Ractive.extend do
                         curr = index
 
                     @set \currView, context
-                    settings.on-create-view.call this, curr if typeof! settings.on-create-view is \Function
+                    @set \openingRow, yes
+                    @set \clickedIndex, index
+                    @set \lastIndex, index
+
+                    if typeof! settings.on-create-view is \Function
+                        settings.on-create-view.call this, curr, ->
+                            __.set \openingRow, no
+                    else
+                        __.set \openingRow, no
+
+
+
 
 
             end-editing: ->
@@ -406,6 +415,7 @@ Ractive.components[component-name] = Ractive.extend do
         create-view-counter: 0
         changes: 0
         first-run-done: no
+        opening-row: no
         is-editing-line: (index) ->
             editable = @get \editable
             clicked-index = @get \clickedIndex
