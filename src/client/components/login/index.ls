@@ -96,7 +96,7 @@ Ractive.components[component-name] = Ractive.extend do
                 context =
                     ok: yes
                     err: null
-                    user: res `merge` {roles: <[ cici production_manager dev buyer orderer ]>}
+                    user: res
 
                 # FIXME: workaround for not being login via cookie
                 #username-input.val ''
