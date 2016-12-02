@@ -15,6 +15,7 @@ db-conf =
     database: 'domates2'
 
 
+
 component-name = "login"
 Ractive.components[component-name] = Ractive.extend do
     isolated: yes
@@ -96,8 +97,8 @@ Ractive.components[component-name] = Ractive.extend do
                 context =
                     ok: yes
                     err: null
-                    user: res
-                    
+                    user: res 
+
                 # FIXME: workaround for not being login via cookie
                 #username-input.val ''
                 #password-input.val ''
