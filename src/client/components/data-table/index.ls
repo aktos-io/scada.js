@@ -152,7 +152,6 @@ Ractive.components[component-name] = Ractive.extend do
 
 
         @observe \enabled, (_new, _old) ->
-            console.log "enabled is observed: #{settings.col-names}", _old, _new, __.get(\firstRunDone)
             if _new and not __.get(\firstRunDone) and not first-run-started
                 # Run post init (from instance)
                 first-run-started := yes
@@ -174,7 +173,7 @@ Ractive.components[component-name] = Ractive.extend do
                 __.set \changes, ++changes
                 refresh-view!
             else if not _old and _new
-                a = 1
+                1
                 #console.warn "Ignoring toggle of enabled in data-table for #{settings.col-names}"
 
         @observe \changes, ->

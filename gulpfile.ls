@@ -181,7 +181,7 @@ gulp.task \browserify, run-sequence \copy-js, \generate-components-module, !->
                 @emit \end
             .pipe source \public/demeter.js
             .pipe buffer!
-            .pipe sourcemaps.init {+load-maps,+largeFile}
+            .pipe sourcemaps.init {+load-maps, +large-file}
             .pipe sourcemaps.write './'
             .pipe gulp.dest './build'
             .pipe tap (file) ->
@@ -226,8 +226,12 @@ gulp.task \jade, -> run-sequence \browserify, \jade-components, ->
         .pipe gulp.dest paths.client-apps
         .pipe tap (file) ->
             log-info \jade, "Jade finished"
-            preparseRactive!
-            console.log "preparsing finished?"
+            if only-compile
+                preparseRactive!
+                console.log "preparsing finished..."
+            else
+                console.log "DEVELOPMENT MODE: PREPARSING DISABLED!"
+                try fs.unlinkSync("#{paths.client-public}/demeter-preparsed.js")
 
 
 

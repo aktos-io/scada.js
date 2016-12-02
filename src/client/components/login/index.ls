@@ -63,8 +63,8 @@ Ractive.components[component-name] = Ractive.extend do
                         jar: true
 
                 e.component.fire \state, \doing
-                user = {name: \sultan, password:"PFb1U6UH2s" }
-                #user = __.get \context ._user
+                user = __.get \context ._user
+
                 unless user
                     return e.component.fire \state, \error, "Kullanıcı adı/şifre boş olamaz!"
 
