@@ -226,13 +226,8 @@ gulp.task \jade, -> run-sequence \browserify, \jade-components, ->
         .pipe gulp.dest paths.client-apps
         .pipe tap (file) ->
             log-info \jade, "Jade finished"
-            if only-compile
-                preparseRactive!
-                console.log "preparsing finished..."
-            else
-                console.log "DEVELOPMENT MODE: PREPARSING DISABLED!"
-                try fs.unlinkSync("#{paths.client-public}/demeter-preparsed.js")
-
+            preparseRactive!
+            console.log "preparsing finished..."
 
 
 
