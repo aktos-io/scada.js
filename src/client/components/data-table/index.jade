@@ -94,7 +94,12 @@
                             | {{/unless}}
                             btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
                         hr
-                        | {{>viewForm}}
+                        div.
+                            {{#if openingRow}}
+                            #[strong Opening row...]
+                            {{else}}
+                            {{>viewForm}}
+                            {{/if}}
                     | {{else}}
                     +each(".cols").
                         <td>{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</td>

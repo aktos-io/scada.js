@@ -181,7 +181,7 @@ gulp.task \browserify, run-sequence \copy-js, \generate-components-module, !->
                 @emit \end
             .pipe source \public/demeter.js
             .pipe buffer!
-            .pipe sourcemaps.init {+load-maps,+largeFile}
+            .pipe sourcemaps.init {+load-maps, +large-file}
             .pipe sourcemaps.write './'
             .pipe gulp.dest './build'
             .pipe tap (file) ->
@@ -227,8 +227,7 @@ gulp.task \jade, -> run-sequence \browserify, \jade-components, ->
         .pipe tap (file) ->
             log-info \jade, "Jade finished"
             preparseRactive!
-            console.log "preparsing finished?"
-
+            console.log "preparsing finished..."
 
 
 
