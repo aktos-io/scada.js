@@ -13,7 +13,6 @@ require! \cradle
 db-conf =
     url: "https://demeter.cloudant.com"
     database: 'domates2'
-    #database: 'domates33'
 
 
 component-name = "login"
@@ -64,7 +63,6 @@ Ractive.components[component-name] = Ractive.extend do
 
                 e.component.fire \state, \doing
                 user = __.get \context ._user
-
                 unless user
                     return e.component.fire \state, \error, "Kullanıcı adı/şifre boş olamaz!"
 
@@ -98,7 +96,7 @@ Ractive.components[component-name] = Ractive.extend do
                 context =
                     ok: yes
                     err: null
-                    user: res `merge` {roles: <[ cici production_manager dev ]>}
+                    user: res `merge` {roles: <[ cici production_manager dev buyer orderer ]>}
 
                 # FIXME: workaround for not being login via cookie
                 #username-input.val ''
