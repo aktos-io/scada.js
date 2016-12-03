@@ -4,12 +4,11 @@
         filename="generated file's filename"
         tabledata="tableview formatted data (see data-table component)"
 
-+component('export-to-file')
-    a(
-        class="download-link"
-        href="data:attachment/csv,{{ fileContent }}"
-        target="_blank"
-        download="{{ filename }}"
-        on-click="prepareDownload"
-        )
-        | {{yield}}
+a(
+    class="download-link"
+    href="data:attachment/csv,{{ fileContent }}"
+    target="_blank"
+    download="{{ filename }}"
+    on-click="prepareDownload"
+    )
+    | {{yield}}

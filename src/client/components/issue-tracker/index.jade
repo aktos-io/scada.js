@@ -1,52 +1,53 @@
-+component('issue-tracker')
-    b-table 
-        thead
-            tr
-                td(colspan="{{ columnList.length + 1 }}")
-                    row 
-                        | {{#if addingNew}}
-                        |   {{>editForm}}
-                        | {{else}}
-                        .col-md-3.col-sm-3
-                            +unless('addingNew')
-                                btn(on-buttonclick="addNewOrder")
-                                    icon-plus
-                                    span {{yield addnewTitle}}
-                        | {{/if}}
-            tr
-                td(colspan="{{ columnList.length + 1 }}")
-                    | {{>header}}
+include ../../templates/mixins.jade
 
-            tr.
-                {{#if clickedIndex !== null}}
-                    <th>Editing...</th>
-                {{else}}
-                    <th>#</th>
-                {{/if}}
-                {{#each columnList}}
-                    <th>{{ . }}</th>
-                {{/each}}
+b-table 
+    thead
+        tr
+            td(colspan="{{ columnList.length + 1 }}")
+                row 
+                    | {{#if addingNew}}
+                    |   {{>editForm}}
+                    | {{else}}
+                    .col-md-3.col-sm-3
+                        +unless('addingNew')
+                            btn(on-buttonclick="addNewOrder")
+                                icon-plus
+                                span {{yield addnewTitle}}
+                    | {{/if}}
+        tr
+            td(colspan="{{ columnList.length + 1 }}")
+                | {{>header}}
 
-        tbody
-            +each('tableview:i')
-                tr.input-line(
-                    class="{{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}} {{ .class }} active"
-                    on-doubleclick="clicked"
-                    )
-                    | {{#if isClicked(.id)}}
-                    td
-                        btn-group-vertical 
-                            btn(type="info" on-buttonclick="newOrderClose"): icon-minus
-                    | {{else}}
-                    td {{i+1}}
-                    | {{/if}}
-                    
-                    | {{#if isEditingLine(.id)}}
-                    td(colspan="{{ columnList.length }}") {{>editForm}}
-                    | {{elseif isClicked(.id)}}
-                    td(colspan="{{ columnList.length }}") {{>viewForm}}
-                    | {{else}}
-                    +each(".cols")
-                        td {{.}}
-                    | {{/if}}
-                    
+        tr.
+            {{#if clickedIndex !== null}}
+                <th>Editing...</th>
+            {{else}}
+                <th>#</th>
+            {{/if}}
+            {{#each columnList}}
+                <th>{{ . }}</th>
+            {{/each}}
+
+    tbody
+        +each('tableview:i')
+            tr.input-line(
+                class="{{#if isEditingLine(i)}}danger{{/if}} {{#if clickedIndex === i}}warning{{/if}} {{ .class }} active"
+                on-doubleclick="clicked"
+                )
+                | {{#if isClicked(.id)}}
+                td
+                    btn-group-vertical 
+                        btn(type="info" on-buttonclick="newOrderClose"): icon-minus
+                | {{else}}
+                td {{i+1}}
+                | {{/if}}
+                
+                | {{#if isEditingLine(.id)}}
+                td(colspan="{{ columnList.length }}") {{>editForm}}
+                | {{elseif isClicked(.id)}}
+                td(colspan="{{ columnList.length }}") {{>viewForm}}
+                | {{else}}
+                +each(".cols")
+                    td {{.}}
+                | {{/if}}
+                

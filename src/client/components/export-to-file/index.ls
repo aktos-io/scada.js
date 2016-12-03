@@ -1,6 +1,6 @@
 component-name = "export-to-file"
 Ractive.components[component-name] = Ractive.extend do
-    template: "\##{component-name}"
+    template: RACTIVE_PREPARSE('index.jade')
     isolated: yes
     oninit: ->
         @on do

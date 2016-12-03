@@ -1,3 +1,4 @@
+include ../../templates/mixins.jade
 style. 
     .clickable
     {
@@ -7,14 +8,13 @@ style.
 
 
 
-+component('coll-panel')
-    panel-custom(type="{{ type }}")
-        .panel-heading
-            | {{yield heading}} 
-        
-        +if('showBody === true')
-            btn.clickable(type="{{ type }} sm block" style="margin-top: 0; padding-top: 0")
-                caret 
-        +unless('collapsed')
-            .panel-body
-                | {{yield body}}
+panel-custom(type="{{ type }}")
+    .panel-heading
+        | {{yield heading}} 
+    
+    +if('showBody === true')
+        btn.clickable(type="{{ type }} sm block" style="margin-top: 0; padding-top: 0")
+            caret 
+    +unless('collapsed')
+        .panel-body
+            | {{yield body}}

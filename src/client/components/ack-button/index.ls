@@ -2,7 +2,7 @@
 
 component-name = "ack-button"
 Ractive.components[component-name] = Ractive.extend do
-    template: "\##{component-name}"
+    template: RACTIVE_PREPARSE('index.jade')
     isolated: yes
     onrender: ->
         __ = @

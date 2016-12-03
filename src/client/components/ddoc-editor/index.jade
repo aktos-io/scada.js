@@ -1,19 +1,18 @@
-+component('ddoc-editor')
-    form-horizontal
-        form-group
-            row
-                col-sm-2
-                    b-label Document ID
-                col-sm-4
-                    input.form-control(value="{{designDocument._id}}")
-                col-sm-6    
-                    btn-group
-                        ack-button(on-buttonclick="getDesignDocument" type="primary").
-                            Get Document!
-        ace-editor(code="{{ designDocument.livescript }}" mode="livescript" theme="xcode")
-    btn-group
-        ack-button(on-buttonclick="putDesignDocument" type="success").
-            Put Auth Document!
-        ack-button(on-buttonclick="compileDesignDocument" type="info").
-            Compile
-    ace-editor(code="{{ designDocument.javascript }}" mode="javascript" theme="xcode")
+form-horizontal
+    form-group
+        row
+            col-sm-2
+                b-label Document ID
+            col-sm-4
+                input.form-control(value="{{designDocument._id}}")
+            col-sm-6    
+                btn-group
+                    ack-button(on-buttonclick="getDesignDocument" type="primary").
+                        Get Document!
+    ace-editor(code="{{ designDocument.livescript }}" mode="livescript" theme="xcode")
+btn-group
+    ack-button(on-buttonclick="putDesignDocument" type="success").
+        Put Auth Document!
+    ack-button(on-buttonclick="compileDesignDocument" type="info").
+        Compile
+ace-editor(code="{{ designDocument.javascript }}" mode="javascript" theme="xcode")

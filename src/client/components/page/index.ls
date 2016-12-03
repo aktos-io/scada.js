@@ -2,7 +2,7 @@ require! 'aea':{sleep}
 
 component-name = "page"
 Ractive.components[component-name] = Ractive.extend do
-    template: "\##{component-name}"
+    template: RACTIVE_PREPARSE('index.jade')
     isolated: no
     data: ->
         is-selected: (url) ->

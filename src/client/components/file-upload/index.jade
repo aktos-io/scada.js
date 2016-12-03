@@ -16,18 +16,17 @@ style.
         filter: alpha(opacity=0);
     }
     
-+component('file-upload')
-    .input-group 
-        .input-group-btn
-            .fileUpload.btn.btn-primary
-                span Choose File
-                input.upload(type="file" capture="camera")
-                    
-        
-        input.form-control(value="{{ doc_id }}" placeholder="Document Name")
-        span.input-group-addon(style="font-weight: bold") /
-        input.form-control(value="{{ attachment_name }}" placeholder="Attachment Name")   
-        .input-group-btn
-            ack-button(on-buttonclick="uploadFile") Upload!
-    .preview
-        img.img-thumbnail
+.input-group 
+    .input-group-btn
+        .fileUpload.btn.btn-primary
+            span Choose File
+            input.upload(type="file" capture="camera")
+                
+    
+    input.form-control(value="{{ doc_id }}" placeholder="Document Name")
+    span.input-group-addon(style="font-weight: bold") /
+    input.form-control(value="{{ attachment_name }}" placeholder="Attachment Name")   
+    .input-group-btn
+        ack-button(on-buttonclick="uploadFile") Upload!
+.preview
+    img.img-thumbnail

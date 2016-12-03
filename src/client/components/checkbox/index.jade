@@ -1,16 +1,9 @@
-//- 
-    +component('checkbox')
-        .checkbox 
-            label
-                input(type="checkbox" checked="{{ checked }}")
-                | {{ yield }}
-                
-+component('checkbox')
-    btn(
-        on-buttonclick="toggleChecked"
-        tooltip="Düzenle"
-        style="{{ style }}"
-        )
-        .pull-left
-            | {{#if checked}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
-            | {{ yield }}
+
+btn(
+    on-buttonclick="toggleChecked"
+    tooltip="Düzenle"
+    style="{{ style }}"
+    )
+    .pull-left
+        | {{#if checked}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
+        | {{ yield }}

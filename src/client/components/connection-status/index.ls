@@ -2,7 +2,7 @@ require! 'aea': {sleep, is-db-alive}
 component-name = "connection-status"
 
 Ractive.components[component-name] = Ractive.extend do
-    template: "\##{component-name}"
+    template: RACTIVE_PREPARSE('index.jade')
     isolated: yes
 
     oninit: ->

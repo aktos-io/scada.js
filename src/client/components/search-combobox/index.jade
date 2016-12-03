@@ -1,7 +1,7 @@
-// http://selectize.github.io/selectize.js/
+include ../../templates/mixins.jade
+//- http://selectize.github.io/selectize.js/
 
-+component('search-combobox')
-    select(placeholder="Seçim Yapın...")
-        option(value="") ...
-        +each('data')          
-            option(value="{{ .id }}") {{ .name }}
+select(placeholder="Seçim Yapın...")
+    option(value="") ...
+    +each('data')          
+        option(value="{{ .id }}") {{ .name }}

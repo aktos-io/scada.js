@@ -1,3 +1,4 @@
+include ../../templates/mixins.jade
 //- 
     items = 
       * id: ...
@@ -40,8 +41,7 @@
 
 
       
-+component('checklist')
-    ul.list-group
-        +each('items')
-            li.list-group-item
-                checkbox(checked="{{ .checked }}" style="width: 100%") {{ .name }}                                
+ul.list-group
+    +each('items')
+        li.list-group-item
+            checkbox(checked="{{ .checked }}" style="width: 100%") {{ .name }}                                

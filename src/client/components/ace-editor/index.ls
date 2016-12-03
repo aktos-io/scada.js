@@ -3,7 +3,7 @@ component-name = 'ace-editor'
 modes = ace.require \ace/ext/modelist
 
 Ractive.components[component-name] = Ractive.extend do
-    template: '<div class="editor"></div>'
+    template: RACTIVE_PREPARSE('index.jade')
     isolated: yes
     onrender: ->
         __ = @

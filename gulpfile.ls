@@ -16,6 +16,7 @@ require! 'node-notifier': notifier
 require! 'gulp-concat': cat
 require! 'gulp-uglify': uglify
 require! './src/lib/aea': {sleep}
+require! './src/lib/aea/ractive-preparserify'
 require! 'gulp-flatten': flatten
 require! 'gulp-tap': tap
 require! 'gulp-cached': cache
@@ -165,12 +166,13 @@ gulp.task \browserify, run-sequence \copy-js, \generate-components-module, !->
             paths.components-src
             paths.lib-src
             paths.client-webapps
-        extensions: <[ .ls ]>
+        extensions: <[ .ls .jade ]>
         cache: {}
         package-cache: {}
         plugin: [watchify unless only-compile]
 
     bundler.transform \browserify-livescript
+    bundler.transform ractive-preparserify
 
     do function bundle
         bundler
@@ -226,12 +228,13 @@ gulp.task \jade, -> run-sequence \browserify, \jade-components, ->
         .pipe gulp.dest paths.client-apps
         .pipe tap (file) ->
             log-info \jade, "Jade finished"
-            preparseRactive!
-            console.log "preparsing finished..."
+            #preparseRactive!
+            #console.log "preparsing finished..."
 
 
 
 gulp.task \jade-components ->
+    return
     # create a file which includes all jade file includes in it
     console.log "STARTED JADE_COMPONENTS"
 

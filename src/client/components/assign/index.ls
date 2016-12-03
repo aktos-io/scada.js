@@ -1,7 +1,7 @@
 component-name = "assign"
 Ractive.components[component-name] = Ractive.extend do
     isolated: yes
-    template: "\##{component-name}"
+    template: RACTIVE_PREPARSE('index.jade')
     onrender: ->
         try
             if @get \if-null
