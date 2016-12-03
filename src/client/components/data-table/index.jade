@@ -41,6 +41,8 @@
                                 btn(on-buttonclick="addNewOrder")
                                     icon-plus
                                     span {{yield addnewTitle}}
+                            .col-md-6
+                            .col-md-3
                                     
                         .row
                             .col-md-12.
@@ -48,6 +50,10 @@
             tr
                 td(colspan="{{ columnList.length + 1 }}")
                     | {{>header}}
+            tr
+                td(colspan="{{ columnList.length + 1 }}")
+                    ack-button(on-buttonclick="kickChanges") Yenile ({{ createViewCounter }})
+
 
             tr.
                 {{#each columnList}}

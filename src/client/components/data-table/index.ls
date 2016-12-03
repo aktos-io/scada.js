@@ -369,6 +369,14 @@ Ractive.components[component-name] = Ractive.extend do
                 @set \errorMessage, err-message
                 modal-error.modal \show
 
+            kick-changes: (ev) ->
+                console.log "kicking changes..."
+                ev.component.fire \state, \doing
+                c = @get \changes
+                @set \changes, ++c
+                @observe-once \createViewCounter, ->
+                    ev.component.fire \state, \done...
+
 
 
         events `merge` handlers
