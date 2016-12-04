@@ -1,8 +1,10 @@
 argv = require 'yargs' .argv
 
 project = argv.project or \aktos
+app = argv.app or project
 console.log "------------------------------------------"
-console.log "Compiling for project: #{project}"
+console.log "Project\t: #{project}"
+console.log "App\t: #{app}"
 console.log "------------------------------------------"
 
 require! <[ watchify gulp browserify glob path fs globby ]>
@@ -21,6 +23,7 @@ require! 'gulp-tap': tap
 require! 'gulp-cached': cache
 require! 'gulp-sourcemaps': sourcemaps
 require! 'browserify-livescript'
+require! 'run-sequence'
 
 # Build Settings
 notification-enabled = yes
@@ -38,7 +41,7 @@ paths.lib-src = "#{__dirname}/src/lib"
 paths.components-src = "#{paths.client-src}/components"
 
 
-notifier.notify {title: "aktos-scada2" message: "Project #{project} started!"}
+notifier.notify {title: "aktos-scada2" message: "Project #{project}:#{app} started!"}
 
 on-error = (source, err) ->
     msg = "GULP ERROR: #{source} :: #{err?.to-string!}"
@@ -50,23 +53,10 @@ log-info = (source, msg) ->
     notifier.notify {title: "GULP.#{source}", message: msg} if notification-enabled
     console.log console-msg
 
-is-module-index = (base, file) ->
-    if base is path.dirname file
-        #console.log "this is a simple file: ", file
-        return true
-
+is-entry-point = (file) ->
     [filename, ext] = path.basename file .split '.'
-
-    if filename is "#{path.basename path.dirname file}"
-        #console.log "this is custom module: ", file
-        return true
-
-    if file is "#{path.dirname file}/index.#{ext}"
-        #console.log "this is a standart module", file
-        return true
-
-    #console.log "not a module index: #{file} (filename: #{filename}, ext: #{ext})"
-    return false
+    base-dirname = path.basename path.dirname file
+    is-main-file = filename is base-dirname
 
 deleteFolderRecursive = (path) ->
     if fs.existsSync(path)
@@ -80,6 +70,9 @@ deleteFolderRecursive = (path) ->
         fs.rmdirSync(path)
 
 only-compile = yes if argv.compile is true
+
+pug-entry-files = [.. for glob.sync("#{paths.client-webapps}/**/#{app}/*.pug") when is-entry-point ..]
+ls-entry-files = [.. for glob.sync "#{paths.client-webapps}/**/#{app}/*.ls" when is-entry-point ..]
 
 # Organize Tasks
 gulp.task \default, ->
@@ -95,10 +88,7 @@ gulp.task \default, ->
         console.log "Gulp will compile only once..."
         return
 
-    for-pug =
-        "#{paths.client-webapps}/**/#{project}.pug"
-
-    watch for-pug, ->
+    watch pug-entry-files, ->
         gulp.start \pug
 
     watch "#{paths.vendor-folder}/**", (event) ->
@@ -106,8 +96,8 @@ gulp.task \default, ->
 
 
     for-browserify =
-        "#{paths.client-webapps}/**/*.ls"
-        "#{paths.client-webapps}/**/*.pug"
+        "#{paths.client-webapps}/#{app}/**/*.ls"
+        "#{paths.client-webapps}/#{app}/**/*.pug"
         "#{paths.client-src}/**/*.pug"
         "#{paths.client-src}/**/*.ls"
 
@@ -125,10 +115,9 @@ gulp.task \html, ->
         .pipe gulp.dest "#{paths.client-public}"
 
 
-files = glob.sync "#{paths.client-webapps}/**/#{project}/#{project}.ls"
 
 bundler = browserify do
-    entries: files
+    entries: ls-entry-files
     debug: true
     paths:
         paths.components-src
@@ -149,7 +138,7 @@ function bundle
             on-error \browserify, err
             console.log "err stack: ", err.stack
             @emit \end
-        .pipe source "public/#{project}.js"
+        .pipe source "public/#{app}.js"
         .pipe buffer!
         .pipe sourcemaps.init {+load-maps, +large-files}
         .pipe sourcemaps.write '.'
@@ -157,7 +146,7 @@ function bundle
         .pipe tap (file) ->
             log-info \browserify, "Browserify finished"
 
-gulp.task \browserify, <[ copy-js ]>, !->
+gulp.task \browserify, -> run-sequence \copy-js, ->
     bundle!
 
 # Concatenate vendor javascript files into public/js/vendor.js
@@ -182,9 +171,7 @@ gulp.task \assets, ->
 
 # Compile pug files in paths.client-src to the paths.client-tmp folder
 gulp.task \pug ->
-    base = "#{paths.client-webapps}"
-    files = glob.sync "#{base}/**/#{project}.pug"
-    gulp.src files
+    gulp.src pug-entry-files
         .pipe tap (file) ->
             #console.log "pug: compiling file: ", path.basename file.path
         .pipe pug {pretty: yes}
