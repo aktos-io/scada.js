@@ -135,8 +135,8 @@ bundler = browserify do
         paths.lib-src
         paths.client-webapps
     extensions: <[ .ls ]>
-    cache: {}
-    package-cache: {}
+    #cache: {}
+    #package-cache: {}
     plugin: [watchify unless only-compile]
 
 bundler.transform \browserify-livescript
