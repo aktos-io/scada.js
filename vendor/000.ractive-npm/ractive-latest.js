@@ -1,6 +1,8 @@
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function (global){
 /*
-	Ractive.js v0.8.1
-	Thu Oct 20 2016 16:12:51 GMT-0400 (EDT) - commit fd141daa3bb45f2d176cf5268e71483436039727
+	Ractive.js v0.8.5
+	Sun Nov 13 2016 17:56:27 GMT+0000 (UTC) - commit d533d91f155a4f042c1acc87136459141c2c8af9
 
 	http://ractivejs.org
 	http://twitter.com/RactiveJS
@@ -433,13 +435,13 @@
   var welcome;
   if ( hasConsole ) {
   	var welcomeIntro = [
-  		("%cRactive.js %c0.8.1 %cin debug mode, %cmore..."),
+  		("%cRactive.js %c0.8.5 %cin debug mode, %cmore..."),
   		'color: rgb(114, 157, 52); font-weight: normal;',
   		'color: rgb(85, 85, 85); font-weight: normal;',
   		'color: rgb(85, 85, 85); font-weight: normal;',
   		'color: rgb(82, 140, 224); font-weight: normal; text-decoration: underline;'
   	];
-  	var welcomeMessage = "You're running Ractive 0.8.1 in debug mode - messages will be printed to the console to help you fix problems and optimise your application.\n\nTo disable debug mode, add this line at the start of your app:\n  Ractive.DEBUG = false;\n\nTo disable debug mode when your app is minified, add this snippet:\n  Ractive.DEBUG = /unminified/.test(function(){/*unminified*/});\n\nGet help and support:\n  http://docs.ractivejs.org\n  http://stackoverflow.com/questions/tagged/ractivejs\n  http://groups.google.com/forum/#!forum/ractive-js\n  http://twitter.com/ractivejs\n\nFound a bug? Raise an issue:\n  https://github.com/ractivejs/ractive/issues\n\n";
+  	var welcomeMessage = "You're running Ractive 0.8.5 in debug mode - messages will be printed to the console to help you fix problems and optimise your application.\n\nTo disable debug mode, add this line at the start of your app:\n  Ractive.DEBUG = false;\n\nTo disable debug mode when your app is minified, add this snippet:\n  Ractive.DEBUG = /unminified/.test(function(){/*unminified*/});\n\nGet help and support:\n  http://docs.ractivejs.org\n  http://stackoverflow.com/questions/tagged/ractivejs\n  http://groups.google.com/forum/#!forum/ractive-js\n  http://twitter.com/ractivejs\n\nFound a bug? Raise an issue:\n  https://github.com/ractivejs/ractive/issues\n\n";
 
   	welcome = function () {
   		if ( Ractive.WELCOME_MESSAGE === false ) {
@@ -2971,7 +2973,7 @@
   		// Exit early if no adaptors
   		if ( len === 0 ) return;
 
-  		var value = this.wrapper ? ( 'newValue' in this.wrapper ? this.wrapper.newValue : this.wrapper.value ) : this.value;
+  		var value = this.wrapper ? ( 'newWrapperValue' in this ? this.newWrapperValue : this.wrapperValue ) : this.value;
 
   		// TODO remove this legacy nonsense
   		var ractive = this.root.ractive;
@@ -2979,7 +2981,7 @@
 
   		// tear previous adaptor down if present
   		if ( this.wrapper ) {
-  			var shouldTeardown = this.wrapper.value === value ? false : !this.wrapper.reset || this.wrapper.reset( value ) === false;
+  			var shouldTeardown = this.wrapperValue === value ? false : !this.wrapper.reset || this.wrapper.reset( value ) === false;
 
   			if ( shouldTeardown ) {
   				this.wrapper.teardown();
@@ -2991,8 +2993,8 @@
   					if ( parentValue[ this.key ] !== value ) parentValue[ this.key ] = value;
   				}
   			} else {
-  				delete this.wrapper.newValue;
-  				this.wrapper.value = value;
+  				delete this.newWrapperValue;
+  				this.wrapperValue = value;
   				this.value = this.wrapper.get();
   				return;
   			}
@@ -3004,7 +3006,7 @@
   			var adaptor = adaptors[i];
   			if ( adaptor.filter( value, keypath, ractive ) ) {
   				this$1.wrapper = adaptor.wrap( ractive, value, keypath, getPrefixer( keypath ) );
-  				this$1.wrapper.value = value;
+  				this$1.wrapperValue = value;
   				this$1.wrapper.__model = this$1; // massive temporary hack to enable array adaptor
 
   				this$1.value = this$1.wrapper.get();
@@ -3054,10 +3056,10 @@
   			this.parent.value = this.parent.wrapper.get();
 
   			this.value = this.parent.value[ this.key ];
-  			if ( this.wrapper ) this.wrapper.newValue = this.value;
+  			if ( this.wrapper ) this.newWrapperValue = this.value;
   			this.adapt();
   		} else if ( this.wrapper ) {
-  			this.wrapper.newValue = value;
+  			this.newWrapperValue = value;
   			this.adapt();
   		} else {
   			var parentValue = this.parent.value || this.parent.createBranch( this.key );
@@ -3095,7 +3097,7 @@
   		if ( shouldCapture ) capture( this );
   		// if capturing, this value needs to be unwrapped because it's for external use
   		if ( opts && opts.virtual ) return this.getVirtual( false );
-  		return ( shouldCapture || ( opts && opts.unwrap ) ) && this.wrapper ? this.wrapper.value : this.value;
+  		return ( shouldCapture || ( opts && opts.unwrap ) ) && this.wrapper ? this.wrapperValue : this.value;
   	};
 
   	Model.prototype.getKeypathModel = function getKeypathModel ( ractive ) {
@@ -3133,7 +3135,7 @@
 
   			// make sure the wrapper stays in sync
   			if ( old !== value || this.rewrap ) {
-  				if ( this.wrapper ) this.wrapper.newValue = value;
+  				if ( this.wrapper ) this.newWrapperValue = value;
   				this.adapt();
   			}
 
@@ -5323,7 +5325,7 @@
   	}
 
   	// code points 128-159 are dealt with leniently by browsers, but they're incorrect. We need
-  	// to correct the mistake or we'll end up with missing â‚¬ signs and so on
+  	// to correct the mistake or we'll end up with missing € signs and so on
   	if ( code <= 159 ) {
   		return controlCharacters[ code - 128 ];
   	}
@@ -7385,7 +7387,7 @@
 
   	start = parser.pos;
 
-  	if ( !parser.matchString( OPEN_COMMENT ) ) {
+  	if ( parser.textOnlyMode || !parser.matchString( OPEN_COMMENT ) ) {
   		return null;
   	}
 
@@ -7695,7 +7697,7 @@
 
   	start = parser.pos;
 
-  	if ( parser.inside || parser.inAttribute ) {
+  	if ( parser.inside || parser.inAttribute || parser.textOnlyMode ) {
   		return null;
   	}
 
@@ -8489,7 +8491,7 @@
 
   	Object.keys( registry ).forEach( function ( key ) {
   		var item = registry[ key ];
-
+  			
   		if ( item._fn ) {
   			if ( item._fn.isOwner ) {
   				registry[key] = item._fn;
@@ -8798,7 +8800,9 @@
   	}
   };
 
-  Item.prototype.destroyed = function destroyed () {};
+  Item.prototype.destroyed = function destroyed () {
+  	if ( this.fragment ) this.fragment.destroyed();
+  };
 
   Item.prototype.find = function find () {
   	return null;
@@ -8846,6 +8850,7 @@
   	ComputationChild.prototype.handleChange = function handleChange$1 () {
   		this.dirty = true;
 
+  		this.links.forEach( marked );
   		this.deps.forEach( handleChange );
   		this.children.forEach( handleChange );
   		this.clearUnresolveds(); // TODO is this necessary?
@@ -8929,11 +8934,11 @@
   		if ( this.dirty ) {
   			this.dirty = false;
   			this.value = this.getValue();
-  			if ( this.wrapper ) this.wrapper.newValue = this.value;
+  			if ( this.wrapper ) this.newWrapperValue = this.value;
   			this.adapt();
   		}
 
-  		return shouldCapture && this.wrapper ? this.wrapper.value : this.value;
+  		return shouldCapture && this.wrapper ? this.wrapperValue : this.value;
   	};
 
   	ExpressionProxy.prototype.getKeypath = function getKeypath () {
@@ -9427,14 +9432,19 @@
   	return Alias;
   }(Item));
 
-  function findElement( start, orComponent ) {
+  function findElement( start, orComponent, name ) {
   	if ( orComponent === void 0 ) orComponent = true;
 
-  	while ( start && start.type !== ELEMENT && ( !orComponent || start.type !== COMPONENT ) ) {
+  	while ( start && ( start.type !== ELEMENT || ( name && start.name !== name ) ) && ( !orComponent || start.type !== COMPONENT ) ) {
+  		// start is a fragment - look at the owner
   		if ( start.owner ) start = start.owner;
-  		else if ( start.component ) start = start.component.parentFragment;
+  		// start is a component or yielder - look at the container
+  		else if ( start.component ) start = start.containerFragment || start.component.parentFragment;
+  		// start is an item - look at the parent
   		else if ( start.parent ) start = start.parent;
+  		// start is an item without a parent - look at the parent fragment
   		else if ( start.parentFragment ) start = start.parentFragment;
+
   		else start = undefined;
   	}
 
@@ -9958,13 +9968,23 @@
   			return;
   		}
 
-  		// Special case â€“ bound radio `name` attributes
+  		// Special case – bound radio `name` attributes
   		if ( this.name === 'name' && this.element.name === 'input' && this.interpolator && this.element.getAttribute( 'type' ) === 'radio' ) {
   			return ("name=\"{{" + (this.interpolator.model.getKeypath()) + "}}\"");
   		}
 
   		// Special case - style and class attributes and directives
   		if ( this.owner === this.element && ( this.name === 'style' || this.name === 'class' || this.styleName || this.inlineClass ) ) {
+  			return;
+  		}
+
+  		if ( !this.rendered && this.owner === this.element && ( !this.name.indexOf( 'style-' ) || !this.name.indexOf( 'class-' ) ) ) {
+  			if ( !this.name.indexOf( 'style-' ) ) {
+  				this.styleName = camelize( this.name.substr( 6 ) );
+  			} else {
+  				this.inlineClass = this.name.substr( 6 );
+  			}
+
   			return;
   		}
 
@@ -10267,7 +10287,8 @@
   	};
 
   	defineProperty( patchedArrayProto, methodName, {
-  		value: method
+  		value: method,
+  		configurable: true
   	});
   });
 
@@ -10642,12 +10663,12 @@
   		if ( this.dirty ) {
   			this.dirty = false;
   			this.value = this.getValue();
-  			if ( this.wrapper ) this.wrapper.newValue = this.value;
+  			if ( this.wrapper ) this.newWrapperValue = this.value;
   			this.adapt();
   		}
 
   		// if capturing, this value needs to be unwrapped because it's for external use
-  		return shouldCapture && this.wrapper ? this.wrapper.value : this.value;
+  		return shouldCapture && this.wrapper ? this.wrapperValue : this.value;
   	};
 
   	Computation.prototype.getValue = function getValue () {
@@ -11062,24 +11083,30 @@
   	}
   }
 
-  function combine$2 ( a, b ) {
-  	var c = a.slice();
-  	var i = b.length;
+  function combine$2 ( arrays ) {
+  	var res = [];
+  	var args = res.concat.apply( res, arrays );
 
+  	var i = args.length;
   	while ( i-- ) {
-  		if ( !~c.indexOf( b[i] ) ) {
-  			c.push( b[i] );
+  		if ( !~res.indexOf( args[i] ) ) {
+  			res.unshift( args[i] );
   		}
   	}
 
-  	return c;
+  	return res;
   }
 
   function getAdaptors ( ractive, protoAdapt, options ) {
   	protoAdapt = protoAdapt.map( lookup );
   	var adapt = ensureArray( options.adapt ).map( lookup );
 
-  	adapt = combine$2( protoAdapt, adapt );
+  	var builtins = [];
+  	var srcs = [ protoAdapt, adapt ];
+  	if ( ractive.parent && !ractive.isolated ) {
+  		srcs.push( ractive.parent.viewmodel.adaptors );
+  	}
+  	srcs.push( builtins );
 
   	var magic = 'magic' in options ? options.magic : ractive.magic;
   	var modifyArrays = 'modifyArrays' in options ? options.modifyArrays : ractive.modifyArrays;
@@ -11090,17 +11117,17 @@
   		}
 
   		if ( modifyArrays ) {
-  			adapt.push( magicArrayAdaptor );
+  			builtins.push( magicArrayAdaptor );
   		}
 
-  		adapt.push( magicAdaptor$1 );
+  		builtins.push( magicAdaptor$1 );
   	}
 
   	if ( modifyArrays ) {
-  		adapt.push( arrayAdaptor );
+  		builtins.push( arrayAdaptor );
   	}
 
-  	return adapt;
+  	return combine$2( srcs );
 
 
   	function lookup ( adaptor ) {
@@ -11486,7 +11513,7 @@
   				}
 
   				if ( model.wrapper ) {
-  					return values.push( model.wrapper.value );
+  					return values.push( model.wrapperValue );
   				}
 
   				values.push( model.get() );
@@ -11501,10 +11528,14 @@
   		var result = this.fn.apply( ractive, values ).pop();
 
   		// Auto prevent and stop if return is explicitly false
-  		var original;
-  		if ( result === false && ( original = event.original ) ) {
-  			original.preventDefault && original.preventDefault();
-  			original.stopPropagation && original.stopPropagation();
+  		if ( result === false ) {
+  			var original = event ? event.original : undefined;
+  			if ( original ) {
+  				original.preventDefault && original.preventDefault();
+  				original.stopPropagation && original.stopPropagation();
+  			} else {
+  				warnOnceIfDebug( ("handler '" + (this.template.n) + "' returned false, but there is no event available to cancel") );
+  			}
   		}
 
   		ractive.event = oldEvent;
@@ -12131,15 +12162,6 @@
   	} while ( instance = instance.parent );
   }
 
-  // TODO element.parent currently undefined
-  function findParentForm ( element ) {
-  	while ( element = element.parent ) {
-  		if ( element.name === 'form' ) {
-  			return element;
-  		}
-  	}
-  }
-
   function warnAboutAmbiguity ( description, ractive ) {
   	warnOnceIfDebug( ("The " + description + " being used for two-way binding is ambiguous, and may cause unexpected results. Consider initialising your data to eliminate the ambiguity"), { ractive: ractive });
   }
@@ -12163,18 +12185,18 @@
   		model = interpolator.model;
 
   		warnAboutAmbiguity( ("'" + (interpolator.template.r) + "' reference"), this.ractive );
-  	}
+  		}
 
-  	else if ( model.isUnresolved ) {
-  		// reference expressions (e.g. foo[bar])
-  		model.forceResolution();
-  		warnAboutAmbiguity( 'expression', this.ractive );
+  		else if ( model.isUnresolved ) {
+  			// reference expressions (e.g. foo[bar])
+  			model.forceResolution();
+  			warnAboutAmbiguity( 'expression', this.ractive );
   	}
 
   	// TODO include index/key/keypath refs as read-only
   	else if ( model.isReadonly ) {
   		var keypath = model.getKeypath().replace( /^@/, '' );
-  			warnOnceIfDebug( ("Cannot use two-way binding on <" + (element.name) + "> element: " + keypath + " is read-only. To suppress this warning use <" + (element.name) + " twoway='false'...>"), { ractive: this.ractive });
+  		warnOnceIfDebug( ("Cannot use two-way binding on <" + (element.name) + "> element: " + keypath + " is read-only. To suppress this warning use <" + (element.name) + " twoway='false'...>"), { ractive: this.ractive });
   		return false;
   	}
 
@@ -12189,8 +12211,9 @@
   		value = this.getInitialValue();
   		model.set( value );
   	}
+  	this.lastVal( true, value );
 
-  	var parentForm = findParentForm( element );
+  	var parentForm = findElement( this.element, false, 'form' );
   	if ( parentForm ) {
   		this.resetValue = value;
   		parentForm.formBindings.push( this );
@@ -12232,7 +12255,7 @@
   		this.model = next;
   		runloop.scheduleTask( function () { return next.registerTwowayBinding( this$1 ); } );
   	}
-     };
+  };
 
   Binding.prototype.render = function render () {
   	this.node = this.element.node;
@@ -12240,8 +12263,8 @@
   	this.rendered = true; // TODO is this used anywhere?
   };
 
-  Binding.prototype.setFromNode = function setFromNode ( node ) {
-  	this.model.set( node.value );
+  	Binding.prototype.setFromNode = function setFromNode ( node ) {
+  		this.model.set( node.value );
   };
 
   Binding.prototype.unbind = function unbind () {
@@ -12249,8 +12272,8 @@
   };
 
   Binding.prototype.unrender = function unrender () {
-  	// noop?
-  };
+  		// noop?
+  	};
 
   // This is the handler for DOM events that would lead to a change in the model
   // (i.e. change, sometimes, input, and occasionally click and keyup)
@@ -12604,6 +12627,34 @@
   	return GenericBinding;
   }(Binding));
 
+  var FileBinding = (function (GenericBinding) {
+  	function FileBinding () {
+  		GenericBinding.apply(this, arguments);
+  	}
+
+  	FileBinding.prototype = Object.create( GenericBinding && GenericBinding.prototype );
+  	FileBinding.prototype.constructor = FileBinding;
+
+  	FileBinding.prototype.getInitialValue = function getInitialValue () {
+  		return undefined;
+  	};
+
+  	FileBinding.prototype.getValue = function getValue () {
+  		return this.node.files;
+  	};
+
+  	FileBinding.prototype.render = function render () {
+  		this.element.lazy = false;
+  		GenericBinding.prototype.render.call(this);
+  	};
+
+  	FileBinding.prototype.setFromNode = function setFromNode( node ) {
+  		this.model.set( node.files );
+  	};
+
+  	return FileBinding;
+  }(GenericBinding));
+
   function getSelectedOptions ( select ) {
       return select.selectedOptions
   		? toArray( select.selectedOptions )
@@ -12849,6 +12900,7 @@
   	};
 
   	RadioNameBinding.prototype.lastVal = function lastVal ( setting, value ) {
+  		if ( !this.group ) return;
   		if ( setting ) this.group.lastValue = value;
   		else return this.group.lastValue;
   	};
@@ -13040,7 +13092,7 @@
   		}
 
   		if ( type === 'file' && isBindable( attributes.value ) ) {
-  			return Binding;
+  			return FileBinding;
   		}
 
   		if ( isBindable( attributes.value ) ) {
@@ -13802,13 +13854,6 @@
   	}
   }
 
-  function findParentSelect ( element ) {
-  	while ( element ) {
-  		if ( element.name === 'select' ) return element;
-  		element = element.parent;
-  	}
-  }
-
   var Option = (function (Element) {
   	function Option ( options ) {
   		var template = options.template;
@@ -13822,7 +13867,7 @@
 
   		Element.call( this, options );
 
-  		this.select = findParentSelect( this.parent );
+  		this.select = findElement( this.parent || this.parentFragment, false, 'select' );
   	}
 
   	Option.prototype = Object.create( Element && Element.prototype );
@@ -13850,7 +13895,7 @@
   	Option.prototype.bubble = function bubble () {
   		// if we're using content as value, may need to update here
   		var value = this.getAttribute( 'value' );
-  		if ( this.node.value !== value ) {
+  		if ( this.node && this.node.value !== value ) {
   			this.node._ractive.value = value;
   		}
   		Element.prototype.bubble.call(this);
@@ -14038,10 +14083,6 @@
   			owner: this,
   			template: this.partialTemplate
   		}).bind();
-  	};
-
-  	Partial.prototype.destroyed = function destroyed () {
-  		this.fragment.destroyed();
   	};
 
   	Partial.prototype.detach = function detach () {
@@ -14665,10 +14706,6 @@
   		}
   	};
 
-  	Section.prototype.destroyed = function destroyed () {
-  		if ( this.fragment ) this.fragment.destroyed();
-  	};
-
   	Section.prototype.detach = function detach () {
   		return this.fragment ? this.fragment.detach() : createDocumentFragment();
   	};
@@ -14704,7 +14741,7 @@
   	Section.prototype.isTruthy = function isTruthy () {
   		if ( this.subordinate && this.sibling.isTruthy() ) return true;
   		var value = !this.model ? undefined : this.model.isRoot ? this.model.value : this.model.get();
-  		return !!value && !isEmpty( value );
+  		return !!value && ( this.templateSectionType === SECTION_IF_WITH || !isEmpty( value ) );
   	};
 
   	Section.prototype.rebinding = function rebinding ( next, previous, safe ) {
@@ -14767,69 +14804,35 @@
 
   		var newFragment;
 
-  		if ( this.sectionType === SECTION_EACH ) {
+  		var fragmentShouldExist = this.sectionType === SECTION_EACH || // each always gets a fragment, which may have no iterations
+  		                            this.sectionType === SECTION_WITH || // with (partial context) always gets a fragment
+  		                            ( siblingFalsey && ( this.sectionType === SECTION_UNLESS ? !this.isTruthy() : this.isTruthy() ) ); // if, unless, and if-with depend on siblings and the condition
+
+  		if ( fragmentShouldExist ) {
   			if ( this.fragment ) {
   				this.fragment.update();
   			} else {
-  				// TODO can this happen?
-  				newFragment = new RepeatedFragment({
-  					owner: this,
-  					template: this.template.f,
-  					indexRef: this.template.i
-  				}).bind( this.model );
-  			}
-  		}
-
-  		// WITH is now IF_WITH; WITH is only used for {{>partial context}}
-  		else if ( this.sectionType === SECTION_WITH ) {
-  			if ( this.fragment ) {
-  				this.fragment.update();
-  			} else {
-  				newFragment = new Fragment({
-  					owner: this,
-  					template: this.template.f
-  				}).bind( this.model );
-  			}
-  		}
-
-  		else if ( this.sectionType === SECTION_IF_WITH ) {
-  			if ( this.fragment ) {
-  				if ( isEmpty( value ) ) {
-  					if ( this.rendered ) {
-  						this.fragment.unbind().unrender( true );
-  					}
-
-  					this.fragment = null;
+  				if ( this.sectionType === SECTION_EACH ) {
+  					newFragment = new RepeatedFragment({
+  						owner: this,
+  						template: this.template.f,
+  						indexRef: this.template.i
+  					}).bind( this.model );
   				} else {
-  					this.fragment.update();
+  	 				// only with and if-with provide context - if and unless do not
+  					var context = this.sectionType !== SECTION_IF && this.sectionType !== SECTION_UNLESS ? this.model : null;
+  					newFragment = new Fragment({
+  						owner: this,
+  						template: this.template.f
+  					}).bind( context );
   				}
-  			} else if ( !isEmpty( value ) ) {
-  				newFragment = new Fragment({
-  					owner: this,
-  					template: this.template.f
-  				}).bind( this.model );
   			}
-  		}
-
-  		else {
-  			var fragmentShouldExist = siblingFalsey && ( this.sectionType === SECTION_UNLESS ? isEmpty( value ) : !!value && !isEmpty( value ) );
-
-  			if ( this.fragment ) {
-  				if ( fragmentShouldExist ) {
-  					this.fragment.update();
-  				} else {
-  					if ( this.rendered ) {
-  						this.fragment.unbind().unrender( true );
-  					}
-
-  					this.fragment = null;
-  				}
-  			} else if ( fragmentShouldExist ) {
-  				newFragment = new Fragment({
-  					owner: this,
-  					template: this.template.f
-  				}).bind( null );
+  		} else {
+  			if ( this.fragment && this.rendered ) {
+  				this.fragment.unbind().unrender( true );
   			}
+
+  			this.fragment = null;
   		}
 
   		if ( newFragment ) {
@@ -15936,6 +15939,9 @@
   			var anchor = this.parentFragment.findNextNode( this );
 
   			parentNode.insertBefore( docFrag, anchor );
+  		} else {
+  			// make sure to reset the dirty flag even if not rendered
+  			this.dirty = false;
   		}
   	};
 
@@ -15999,7 +16005,7 @@
   	};
 
   	Yielder.prototype.findAll = function findAll ( selector, queryResult ) {
-  		this.fragment.find( selector, queryResult );
+  		this.fragment.findAll( selector, queryResult );
   	};
 
   	Yielder.prototype.findComponent = function findComponent ( name ) {
@@ -16172,7 +16178,7 @@
 
   		values[ placeholderId ] = model ?
   			model.wrapper ?
-  				model.wrapper.value :
+  				model.wrapperValue :
   				model.get() :
   			undefined;
 
@@ -16643,6 +16649,10 @@
   	return this.fragment.toString( true );
   }
 
+  function toText () {
+  	return this.fragment.toString( false );
+  }
+
   function Ractive$transition ( name, node, params ) {
 
   	if ( node instanceof HTMLElement ) {
@@ -16768,6 +16778,7 @@
   	toCss: Ractive$toCSS,
   	toHTML: Ractive$toHTML,
   	toHtml: Ractive$toHTML,
+  	toText: toText,
   	transition: Ractive$transition,
   	unlink: unlink$1,
   	unrender: Ractive$unrender,
@@ -17004,7 +17015,7 @@
   	magic:          { value: magicSupported },
 
   	// version
-  	VERSION:        { value: '0.8.1' },
+  	VERSION:        { value: '0.8.5' },
 
   	// plugins
   	adaptors:       { writable: true, value: {} },
@@ -17020,3 +17031,8 @@
   return Ractive;
 
 }));
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],2:[function(require,module,exports){
+window.Ractive = require('ractive');
+
+},{"ractive":1}]},{},[2]);
