@@ -1,4 +1,5 @@
-Ractive.components.checkbox = Ractive.extend do
+
+Ractive.components[\checkbox] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     oninit: ->

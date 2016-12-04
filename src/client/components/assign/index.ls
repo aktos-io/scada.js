@@ -1,3 +1,4 @@
+
 component-name = "assign"
 Ractive.components[component-name] = Ractive.extend do
     isolated: yes
