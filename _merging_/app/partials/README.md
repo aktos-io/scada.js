@@ -4,13 +4,13 @@
 
         mkdir your-widget
 
-2. run `./update-partial-includes.sh` to refresh `ractive-partials.ls` and `ractive-partials.jade`
+2. run `./update-partial-includes.sh` to refresh `ractive-partials.ls` and `ractive-partials.pug`
 3. Edit your files' contents accordingly.
 4. Test your widget.
 
 # Testing Widget
 
-1. Place your widget into `scada-drawing-area`, as in the `demos-showcase.jade` page.
+1. Place your widget into `scada-drawing-area`, as in the `demos-showcase.pug` page.
 2. Your widget SHOULD be resizable.
 3. Your widget SHOULD be draggable.
 

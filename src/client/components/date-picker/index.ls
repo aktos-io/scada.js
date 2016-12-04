@@ -5,7 +5,7 @@
 component-name = "date-picker"
 Ractive.components[component-name] = Ractive.extend do
     isolated: yes
-    template: RACTIVE_PREPARSE('index.jade')
+    template: RACTIVE_PREPARSE('index.pug')
 
 
     /*

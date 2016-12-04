@@ -1,0 +1,7 @@
+include ../../templates/mixins.pug
+//- http://selectize.github.io/selectize.js/
+
+select(placeholder="Seçim Yapın...")
+    option(value="") ...
+    +each('data')          
+        option(value="{{ .id }}") {{ .name }}

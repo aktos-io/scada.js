@@ -1,10 +1,10 @@
 component-name = "aea-theme"
 Ractive.components[component-name] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.jade', '#aea-theme')
+    template: RACTIVE_PREPARSE('index.pug', '#aea-theme')
 
 component-name = "aea-menu"
 Ractive.components[component-name] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.jade', '#aea-menu')
+    template: RACTIVE_PREPARSE('index.pug', '#aea-menu')
     isolated: yes
     onrender: ->
         __ = @
@@ -22,4 +22,4 @@ Ractive.components[component-name] = Ractive.extend do
 
 component-name = "aea-content"
 Ractive.components[component-name] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.jade', '#aea-content')
+    template: RACTIVE_PREPARSE('index.pug', '#aea-content')

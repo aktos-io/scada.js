@@ -1,6 +1,5 @@
-component-name = "checkbox"
-Ractive.components[component-name] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.jade')
+Ractive.components.checkbox = Ractive.extend do
+    template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     oninit: ->
         __ = @

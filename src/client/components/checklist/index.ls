@@ -3,7 +3,7 @@ require! 'prelude-ls': {
 }
 component-name = "checklist"
 Ractive.components[component-name] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.jade')
+    template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     oninit: ->
         __ = @

@@ -19,7 +19,7 @@ db-conf =
 component-name = "login"
 Ractive.components[component-name] = Ractive.extend do
     isolated: yes
-    template: RACTIVE_PREPARSE('index.jade')
+    template: RACTIVE_PREPARSE('index.pug')
     onrender: ->
         __ = @
         username-input = $ @find \.username-input

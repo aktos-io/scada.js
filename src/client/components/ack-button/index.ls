@@ -1,12 +1,10 @@
 {sleep} = require "aea"
 
-component-name = "ack-button"
-Ractive.components[component-name] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.jade')
+Ractive.components[\ack-button] = Ractive.extend do
+    template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->
         __ = @
-
         modal-error = $ @find \.modal-error
 
         modal-error.modal do

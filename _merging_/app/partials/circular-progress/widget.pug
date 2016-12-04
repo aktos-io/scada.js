@@ -1,0 +1,8 @@
+include ../../templates/mixins.pug
+    
++partial('circular-progress')
+  .circular-progress
+    .circular-progress__inner
+      strong {{ .val }}
+        i {{ .val ? .unit : '' }}
+    

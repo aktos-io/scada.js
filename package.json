@@ -20,6 +20,7 @@
   "dependencies": {
     "bases": "^0.2.1",
     "body-parser": "^1.15.2",
+    "browserify-incremental": "^3.1.1",
     "cheerio": "^0.20.0",
     "cradle": "git://github.com/ceremcem/cradle.git#patch-1",
     "crypto": "0.0.3",
@@ -40,13 +41,13 @@
     "ractive": "^0.8.5",
     "randomstring": "^1.1.5",
     "serialport": "^4.0.1",
-    "soap": "^0.16.0"
+    "soap": "^0.16.0",
+    "superagent": "^3.1.0"
   },
   "devDependencies": {
     "browserify": "^13.1.1",
     "browserify-livescript": "^0.2.3",
     "cheerio": "^0.20.0",
-    "electron-prebuilt": "^1.2.8",
     "glob": "^7.0.5",
     "globby": "^5.0.0",
     "gulp": "^3.9.1",
@@ -54,7 +55,7 @@
     "gulp-clean": "^0.3.2",
     "gulp-concat": "^2.6.0",
     "gulp-flatten": "^0.3.0",
-    "gulp-jade": "^1.1.0",
+    "gulp-pug": "^3.2.0",
     "gulp-sourcemaps": "^1.9.1",
     "gulp-tap": "^0.1.3",
     "gulp-uglify": "^1.5.4",
