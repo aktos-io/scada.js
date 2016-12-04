@@ -5,7 +5,7 @@ console.log "------------------------------------------"
 console.log "Compiling for project: #{project}"
 console.log "------------------------------------------"
 
-require! <[ watchify gulp browserify glob path fs globby run-sequence ]>
+require! <[ watchify gulp browserify glob path fs globby ]>
 require! 'prelude-ls': {union, join, keys}
 require! 'vinyl-source-stream': source
 require! 'vinyl-buffer': buffer
@@ -135,6 +135,8 @@ bundler = browserify do
         paths.lib-src
         paths.client-webapps
     extensions: <[ .ls ]>
+    cache: {}
+    package-cache: {}
     plugin: [watchify unless only-compile]
 
 bundler.transform \browserify-livescript
@@ -149,8 +151,8 @@ function bundle
             @emit \end
         .pipe source "public/#{project}.js"
         .pipe buffer!
-        .pipe sourcemaps.init!
-        .pipe sourcemaps.write './'
+        .pipe sourcemaps.init {+load-maps, +large-files}
+        .pipe sourcemaps.write '.'
         .pipe gulp.dest './build'
         .pipe tap (file) ->
             log-info \browserify, "Browserify finished"
@@ -184,12 +186,10 @@ gulp.task \pug ->
     files = glob.sync "#{base}/**/#{project}.pug"
     gulp.src files
         .pipe tap (file) ->
-            console.log "pug: compiling file: ", path.basename file.path
+            #console.log "pug: compiling file: ", path.basename file.path
         .pipe pug {pretty: yes}
         .on \error, (err) ->
             on-error \pug, err
             @emit \end
         .pipe flatten!
         .pipe gulp.dest paths.client-apps
-        .pipe tap (file) ->
-            log-info \pug, "pug finished"

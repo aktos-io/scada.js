@@ -1,11 +1,5 @@
 require! 'prelude-ls': {join}
 
-PouchDB = require \pouchdb
-    ..plugin require \pouchdb-authentication
-    #..plugin require \pouchdb-adapter-node-websql
-
-export PouchDB
-
 #console.log "PouchDB adapters: ", PouchDB.adapters
 
 export make-user-doc = (user) ->
