@@ -61,6 +61,7 @@
     "node-notifier": "^4.6.1",
     "pug": "^2.0.0-beta6",
     "run-sequence": "^1.2.2",
+    "through2": "^2.0.3",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.7.0",
