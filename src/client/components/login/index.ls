@@ -19,7 +19,7 @@ db-conf =
 component-name = "login"
 Ractive.components[component-name] = Ractive.extend do
     isolated: yes
-    template: "\##{component-name}"
+    template: RACTIVE_PREPARSE('index.pug')
     onrender: ->
         __ = @
         username-input = $ @find \.username-input
@@ -97,7 +97,7 @@ Ractive.components[component-name] = Ractive.extend do
                 context =
                     ok: yes
                     err: null
-                    user: res 
+                    user: res
 
                 # FIXME: workaround for not being login via cookie
                 #username-input.val ''

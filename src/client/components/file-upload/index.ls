@@ -1,7 +1,7 @@
 component-name = "file-upload"
 Ractive.components[component-name] = Ractive.extend do
     isolated: yes
-    template: "\##{component-name}"
+    template: RACTIVE_PREPARSE('index.pug')
     onrender: ->
         __ = @
         file-input = $ @find "input[type='file']"

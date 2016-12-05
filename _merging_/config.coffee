@@ -33,7 +33,7 @@ exports.config =
       formatPath: (path) ->
         console.log "path is: ", path
         try
-          p = path.match(/^app(\/|\\)static(\/|\\)([^\\]+)\.jade$/)
+          p = path.match(/^app(\/|\\)static(\/|\\)([^\\]+)\.pug$/)
           #console.log "path match: ", p
           return p[3]
         catch

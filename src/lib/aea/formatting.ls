@@ -102,7 +102,7 @@ formatter-tests =
     result = f 12.123456 .str
     expected = '0012.123 m/s'
     {result, expected}
-
+/*
 start = Date.now!
 test-count = 1  # use 5_000 for a significiant amount of time
 for i from 0 to test-count
@@ -118,3 +118,4 @@ for i from 0 to test-count
 
 if test-count > 1
     console.log "formatting.ls: tests took: #{Date.now! - start} milliseconds..."
+*/

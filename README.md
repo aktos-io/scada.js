@@ -58,14 +58,14 @@ Directory structure is as follows:
 │   │   ├── my-custom-script.sh
 │   │   ├── webapps
 │   │   │   └── showcase
-│   │   │       ├── ack-button.jade
-│   │   │       ├── data-table.jade
-│   │   │       ├── date-picker.jade
-│   │   │       ├── example-component.jade
-│   │   │       ├── flot-chart.jade
-│   │   │       ├── pie-chart.jade
-│   │   │       ├── search-combobox.jade
-│   │   │       ├── showcase.jade (main html file (entry point))
+│   │   │       ├── ack-button.pug
+│   │   │       ├── data-table.pug
+│   │   │       ├── date-picker.pug
+│   │   │       ├── example-component.pug
+│   │   │       ├── flot-chart.pug
+│   │   │       ├── pie-chart.pug
+│   │   │       ├── search-combobox.pug
+│   │   │       ├── showcase.pug (main html file (entry point))
 │   │   │       └── showcase.ls   (main js file (entry point))
 │   │   └── webserver
 │   │       └── server.ls
@@ -74,7 +74,7 @@ Directory structure is as follows:
 │       ├── webapps
 │       │   └── my-web-app
 │       │   │   ├── README.md
-│       │   │   ├── my-web-app.jade
+│       │   │   ├── my-web-app.pug
 │       │   │   ├── my-web-app.ls
 │       │   │   ... (more files here)
 │       │   ├── (more webapps here...)

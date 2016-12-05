@@ -1,0 +1,13 @@
+include ../../templates/mixins.pug
+    
++partial('b-vertical-progress-bar')
+  .b-vertical-progress-bar
+    .b-vertical-progress-bar__inner
+      .progress.progress-vertical(style="height: 100%;")
+        .progress-bar(
+          role="progressbar"
+          aria-valuenow="{{ .val }}"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          style="height: {{ .val ? .val : 0 }}%"
+          )

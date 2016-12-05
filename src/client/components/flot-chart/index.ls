@@ -3,6 +3,7 @@ random = require \randomstring
 
 component-name = "flot-chart"
 Ractive.components[component-name] = Ractive.extend do
+    template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     oninit: ->
 
@@ -56,6 +57,5 @@ Ractive.components[component-name] = Ractive.extend do
                     }
             )
 
-    template: "\##{component-name}"
     data:
         id: \will-be-random

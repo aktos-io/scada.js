@@ -1,0 +1,9 @@
+include ../../templates/mixins.pug
+    
++partial('justgage')
+  .justgage.
+    <div class="justgage-gauge" id='{{ .actor_id }}'></div>
+    <h3>{{ .val }}</h3>
+    {{#if .debug}}
+      <p>actor id: {{ .actor_id }} </p>
+    {{/if}}

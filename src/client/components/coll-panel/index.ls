@@ -1,6 +1,6 @@
 component-name = "coll-panel"
 Ractive.components[component-name] = Ractive.extend do
-    template: "\##{component-name}"
+    template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->
         __ = @
@@ -16,4 +16,4 @@ Ractive.components[component-name] = Ractive.extend do
     data: ->
         collapsed: yes
         type: \default
-        show-body: yes 
+        show-body: yes

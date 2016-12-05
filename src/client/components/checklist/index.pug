@@ -1,0 +1,47 @@
+include ../../templates/mixins.pug
+//- 
+    items = 
+      * id: ...
+        name: ...
+        checked: true/false 
+      ... 
+      
+
+    Example usage: 
+    
+        Example Data: 
+        
+            xitems:
+                * id: 1
+                  name: "rengine baktın mı "
+                  checked: yes
+                * id: 2
+                  name: "kokusu uygun mu "
+                * id: 3
+                  name: "ambalajı açılmış mı?"
+                * id: 4
+                  name: "seri numarası var mı "
+                * id: 5
+                  name: "hoşuna gitti mi"    
+    
+        JADE: 
+        
+            checklist(
+                items="{{ xitems }}" 
+                completed="{{ xcompleted }}" 
+                on-complete="checklistCompleted")
+
+            p checklist completed? {{ xcompleted }}
+            
+        LS: 
+        
+            checklist-completed: ->
+                console.log "completed..."
+
+
+
+      
+ul.list-group
+    +each('items')
+        li.list-group-item
+            checkbox(checked="{{ .checked }}" style="width: 100%") {{ .name }}                                
