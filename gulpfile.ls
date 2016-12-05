@@ -8,7 +8,7 @@ console.log "App\t: #{app}"
 console.log "------------------------------------------"
 
 require! <[ watchify gulp browserify glob path fs globby ]>
-require! 'prelude-ls': {union, join, keys}
+require! 'prelude-ls': {union, join, keys, map}
 require! 'vinyl-source-stream': source
 require! 'vinyl-buffer': buffer
 require! 'gulp-watch': watch
@@ -160,7 +160,11 @@ gulp.task \vendor, ->
 
 # Concatenate vendor css files into public/css/vendor.css
 gulp.task \vendor-css, ->
-    gulp.src "#{paths.vendor-folder}/**/*.css"
+    vendor-css = "#{paths.vendor-folder}/**/*.css"
+    components-css = "#{paths.client-src}/**/*.css"
+    css-folders = [vendor-css, components-css]
+
+    gulp.src css-folders
         .pipe cat "vendor.css"
         .pipe gulp.dest "#{paths.client-apps}/css"
 
