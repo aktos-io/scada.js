@@ -44,9 +44,9 @@ paths.components-src = "#{paths.client-src}/components"
 notifier.notify {title: "aktos-scada2" message: "Project #{project}:#{app} started!"}
 
 on-error = (source, err) ->
-    msg = "GULP ERROR: #{source} :: #{err?.to-string!}"
-    notifier.notify {title: "GULP.#{source}", message: msg} if notification-enabled
-    console.log msg
+    msg = "GULP ERROR: #{source} :: "
+    notifier.notify {title: "GULP.#{source}", message: [ msg, err]} if notification-enabled
+    console.log msg, err
 
 log-info = (source, msg) ->
     console-msg = "GULP INFO: #{source} : #{msg}"

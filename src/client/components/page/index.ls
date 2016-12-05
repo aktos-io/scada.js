@@ -22,3 +22,5 @@ Ractive.components[component-name] = Ractive.extend do
             return show-page
 
         visible: no
+        curr: ''
+        
