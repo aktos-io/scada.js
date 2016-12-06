@@ -65,8 +65,10 @@ include ../../templates/mixins.pug
                     on-doubleclick="clicked"
                     )
                     | {{#if isEditingLine(.id)}}
-                    // edit form
-                    td(colspan="{{ columnList.length + 1 }}")
+                    //- -----------------------------------------------
+                    //- edit form
+                    //- -----------------------------------------------
+                    td(colspan="{{ columnList.length + 1 }}" style="width: 1%; white-space: nowrap;")
                         btn-group
                             | {{#unless readonly}}
                             btn(
@@ -80,32 +82,37 @@ include ../../templates/mixins.pug
                             | {{/unless}}
                             btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
                         hr
-                        | {{>editForm}}
-                    | {{elseif isClicked(.id)}}
+                        div(style="width: 95vw")
+                            | {{>editForm}}
 
-                    // view form
-                    td(colspan="{{ columnList.length + 1 }}" style="color: black")
+                    | {{elseif isClicked(.id)}}
+                    //- -----------------------------------------------
+                    //- view form
+                    //- -----------------------------------------------
+                    td(colspan="{{ columnList.length + 1 }}" style="width: 1%; white-space: nowrap;")
                         | {{#if openingRow}}
                         strong Opening row...
                         | {{else}}
-                        div(style="max-width: 100%")
-                            btn-group
-                                | {{#unless readonly}}
-                                btn(
-                                    on-buttonclick="toggleEditing"
-                                    type="{{#if editTooltip }}danger{{else}}default{{/if}}"
-                                    active="{{editable}}"
-                                    tooltip="Düzenle"
-                                    )
-                                    | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
-                                    icon-pencil
-                                | {{/unless}}
-                                btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
-                            hr
-                            div.
-                                {{>viewForm}}
+                        btn-group
+                            | {{#unless readonly}}
+                            btn(
+                                on-buttonclick="toggleEditing"
+                                type="{{#if editTooltip }}danger{{else}}default{{/if}}"
+                                active="{{editable}}"
+                                tooltip="Düzenle"
+                                )
+                                | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
+                                icon-pencil
+                            | {{/unless}}
+                            btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
+                        hr
+                        div(style="width: 95vw")
+                            | {{>viewForm}}
                         | {{/if}}
                     | {{else}}
+                    //- -----------------------------------------------
+                    //- columns
+                    //- -----------------------------------------------
                     +each(".cols").
                         <td>{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</td>
                     | {{/if}}
