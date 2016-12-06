@@ -31,6 +31,7 @@ Ractive.components[component-name] = Ractive.extend do
             keyboard: no
             focus: yes
             show: no
+            backdrop: \static
 
         settings = @get \settings
 
@@ -273,10 +274,10 @@ Ractive.components[component-name] = Ractive.extend do
 
                 @set \curr, new-order
                 @set \addingNew, true
-                #modal-new.modal \show
+                modal-new.modal \show
 
                 if typeof! settings.on-create-view is \Function
-                    settings.on-create-view.call this, new-order
+                    settings.on-create-view.call this, new-order, -> 
 
 
             new-order-close: ->

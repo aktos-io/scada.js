@@ -1,24 +1,19 @@
 include ../../templates/mixins.pug
-//- 
-    parameters: 
+//-
+    parameters:
         ... TODO
-        
-    internals: 
+
+    internals:
         tableview: [{id: column-id, cols: [col1, col2, col3, ...], background-color: css-color} for rows]
 .modal.modal-error.fade(tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
     .modal-dialog(role="document")
         .modal-content.modal-danger
             .modal-header.
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
                 <h4 class="modal-title">Hata</h4>
-                
             .modal-body {{errorMessage}}
-
             .modal-footer
 
-.modal.modal-new.fade(tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
+.modal.modal-new.fade(tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true")
     .modal-dialog(role="document")
         .modal-content.modal-danger
             .modal-header.
@@ -26,97 +21,99 @@ include ../../templates/mixins.pug
                   <span aria-hidden="true">&times;</span>
                 </button>
                 <h4 class="modal-title">Yeni Kayıt</h4>
-                
-                
-            .modal-body {{#if addingNew}}{{>editForm}}{{/if}}
+
+            .modal-body(
+                style="max-height: calc(100vh - 200px); overflow-y: auto;")
+                | {{#if addingNew}}
+                | {{>editForm}}
+                | {{/if}}
 
             .modal-footer
-b-table 
-    thead
-        +unless('readonly')
-            tr
-                td(colspan="{{ columnList.length + 1 }}")
-                    row 
-                        .col-md-3.col-sm-3
-                            btn(on-buttonclick="addNewOrder")
-                                icon-plus
-                                span {{yield addnewTitle}}
-                        .col-md-6
-                        .col-md-3
-                                
-                    .row
-                        .col-md-12.
-                             {{#if addingNew}}{{>editForm}}{{/if}}
-        tr
-            td(colspan="{{ columnList.length + 1 }}")
-                | {{>header}}
-        tr
-            td(colspan="{{ columnList.length + 1 }}")
-                ack-button(on-buttonclick="kickChanges") Yenile ({{ createViewCounter }})
 
-
-        tr.
-            {{#each columnList}}
-                <th>{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</th>
-            {{/each}}
-
-    tbody
-        +each('tableview_visible:i')
-            tr.input-line(
-                style="{{#if isClicked(.id)}}border: 2px solid white;{{/if}}{{#if isEditingLine(.id)}}border: 2px dashed white;{{/if}} {{.style}}"
-                on-doubleclick="clicked"
-                )
-                | {{#if isEditingLine(.id)}}
-                // edit form 
-                td(colspan="{{ columnList.length + 1 }}")
-                    btn-group
-                        | {{#unless readonly}}
-                        btn(
-                            on-buttonclick="toggleEditing"
-                            type="{{#if editTooltip }}danger{{else}}default{{/if}}"
-                            active="{{editable}}"
-                            tooltip="Düzenle"
-                            )
-                            | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
-                            icon-pencil 
-                        | {{/unless}}
-                        btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
-                    hr
-                    | {{>editForm}}
-                | {{elseif isClicked(.id)}}
-                
-                // view form 
-                td(colspan="{{ columnList.length + 1 }}" style="color: black") 
-                    btn-group
-                        | {{#unless readonly}}
-                        btn(
-                            on-buttonclick="toggleEditing"
-                            type="{{#if editTooltip }}danger{{else}}default{{/if}}"
-                            active="{{editable}}"
-                            tooltip="Düzenle"
-                            )
-                            | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
-                            icon-pencil 
-                        | {{/unless}}
-                        btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
-                    hr
-                    div.
-                        {{#if openingRow}}
-                        #[strong Opening row...]
-                        {{else}}
-                        {{>viewForm}}
-                        {{/if}}
-                | {{else}}
-                +each(".cols").
-                    <td>{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</td>
-                | {{/if}}
-    
-    +if('settings.pageSize > 0')
-        +if('(tableview.length / settings.pageSize) > 1')
-            tfoot
+| {{>header}}
+.table-responsive
+    b-table
+        thead
+            +unless('readonly')
                 tr
                     td(colspan="{{ columnList.length + 1 }}")
+                        row
+                            .col-md-3.col-sm-3
+                                btn(on-buttonclick="addNewOrder")
+                                    icon-plus
+                                    span {{yield addnewTitle}}
+                            .col-md-6
+                            .col-md-3
+                    //-
+                        .row
+                            .col-md-12.
+                                 {{#if addingNew}}{{>editForm}}{{/if}}
+            tr
+                td(colspan="{{ columnList.length + 1 }}")
+                    ack-button(on-buttonclick="kickChanges") Yenile ({{ createViewCounter }})
+
+
+            tr.
+                {{#each columnList}}
+                    <th>{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</th>
+                {{/each}}
+
+        tbody
+            +each('tableview_visible:i')
+                tr.input-line(
+                    style="{{#if isClicked(.id)}}border: 2px solid white;{{/if}}{{#if isEditingLine(.id)}}border: 2px dashed white;{{/if}} {{.style}}"
+                    on-doubleclick="clicked"
+                    )
+                    | {{#if isEditingLine(.id)}}
+                    // edit form
+                    td(colspan="{{ columnList.length + 1 }}")
                         btn-group
-                            +each('range(1, Math.ceil(tableview.length / settings.pageSize)):i')
-                                btn(on-buttonclick="selectPage" value="{{ i }}") {{ . }}
-                    
+                            | {{#unless readonly}}
+                            btn(
+                                on-buttonclick="toggleEditing"
+                                type="{{#if editTooltip }}danger{{else}}default{{/if}}"
+                                active="{{editable}}"
+                                tooltip="Düzenle"
+                                )
+                                | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
+                                icon-pencil
+                            | {{/unless}}
+                            btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
+                        hr
+                        | {{>editForm}}
+                    | {{elseif isClicked(.id)}}
+
+                    // view form
+                    td(colspan="{{ columnList.length + 1 }}" style="color: black")
+                        btn-group
+                            | {{#unless readonly}}
+                            btn(
+                                on-buttonclick="toggleEditing"
+                                type="{{#if editTooltip }}danger{{else}}default{{/if}}"
+                                active="{{editable}}"
+                                tooltip="Düzenle"
+                                )
+                                | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
+                                icon-pencil
+                            | {{/unless}}
+                            btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
+                        hr
+                        div.
+                            {{#if openingRow}}
+                            #[strong Opening row...]
+                            {{else}}
+                            {{>viewForm}}
+                            {{/if}}
+                    | {{else}}
+                    +each(".cols").
+                        <td>{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</td>
+                    | {{/if}}
+
+        +if('settings.pageSize > 0')
+            +if('(tableview.length / settings.pageSize) > 1')
+                tfoot
+                    tr
+                        td(colspan="{{ columnList.length + 1 }}")
+                            btn-group
+                                +each('range(1, Math.ceil(tableview.length / settings.pageSize)):i')
+                                    btn(on-buttonclick="selectPage" value="{{ i }}") {{ . }}
