@@ -54,3 +54,4 @@ Ractive.components[component-name] = Ractive.extend do
         selected-text: ''
         multiple: 1
         multi-selected: null
+        placeholder: "Seçim yapın..."
