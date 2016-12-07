@@ -18,12 +18,16 @@ require! 'gulp-concat': cat
 require! 'gulp-uglify': uglify
 require! './src/lib/aea': {sleep}
 require! './src/lib/aea/ractive-preparserify'
+require! './src/lib/aea/browserify-optimize-js'
 require! 'gulp-flatten': flatten
 require! 'gulp-tap': tap
 require! 'gulp-cached': cache
 require! 'gulp-sourcemaps': sourcemaps
 require! 'browserify-livescript'
 require! 'run-sequence'
+require! 'through2':through
+require! 'optimize-js'
+
 
 # Build Settings
 notification-enabled = yes
@@ -130,6 +134,7 @@ bundler = browserify do
 
 bundler.transform \browserify-livescript
 bundler.transform ractive-preparserify
+bundler.transform browserify-optimize-js
 
 function bundle
     bundler
@@ -141,6 +146,7 @@ function bundle
         .pipe source "public/#{app}.js"
         .pipe buffer!
         .pipe sourcemaps.init {+load-maps, +large-files}
+        .pipe uglify!
         .pipe sourcemaps.write '.'
         .pipe gulp.dest './build'
         .pipe tap (file) ->
@@ -149,13 +155,21 @@ function bundle
 gulp.task \browserify, -> run-sequence \copy-js, ->
     bundle!
 
+
 # Concatenate vendor javascript files into public/js/vendor.js
 gulp.task \vendor, ->
     files = glob.sync "./vendor/**/*.js"
     gulp.src files
-        .pipe tap (file) ->
-            #console.log "VENDOR: ", file.path
         .pipe cat "vendor.js"
+        .pipe uglify!
+        .pipe through.obj (file, enc, cb) ->
+            console.log "optimize-js... #{file.path}"
+            contents = file.contents.to-string!
+            optimized = optimize-js contents
+            optimized = "//optimized by optimize.js\n" + optimized
+            file.contents = new Buffer optimized
+
+            cb null, file
         .pipe gulp.dest "#{paths.client-apps}/js"
 
 # Concatenate vendor css files into public/css/vendor.css
