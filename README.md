@@ -100,7 +100,7 @@ Other Directories are as follows:
 
 # Examples
 
-You can start a new project by copying `./apps/example` as `./apps/myproject`
+You can start a new project by copying [`./apps/example`](./apps/example) as `./apps/myproject`
 
 # TODO/ROADMAP
 
