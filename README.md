@@ -31,14 +31,15 @@ Install all dependencies:
 
 # Starting a New Project
 
-# UPDATE
+## Updating
 
     git pull origin master
     git submodule update --recursive
 
-# Development
+## Development
 
-### Linux
+You can start a new project by copying [`./apps/example`](./apps/example) as `./apps/myproject`: 
+
 =======
 1. Create your project directory (eg. `myproject`) in `{{ scada }}/apps`
 2. Place any README, scripts and source codes in your project directory.
@@ -64,9 +65,8 @@ Directory structure is as follows:
 ...
 ```
 
-# Rest of Directory Structure
+**Rest of Directory Structure as follows: **
 
-Other Directories are as follows:
 
 ```
 ...
@@ -97,10 +97,6 @@ Other Directories are as follows:
     │   └── ractive.js
     ... (prefixes are used to determine concatenation order)
 ```
-
-# Examples
-
-You can start a new project by copying [`./apps/example`](./apps/example) as `./apps/myproject`
 
 # TODO/ROADMAP
 
