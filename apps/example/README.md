@@ -1,6 +1,6 @@
-# Aktos App
+# Example Project
 
-# Development
+# Starting Development
 
 ### Linux
 

@@ -24,23 +24,24 @@ Welcome to the realtime, distributed, web-technology oriented SCADA system for I
 Install all dependencies:
 
     git clone {{ scada }}
-    sudo npm install gulp livescript -g
     cd {{ scada }}
     npm install
 
+# Running example
 
-# Starting a New Project
+See [`./apps/example/README.md`](./apps/example/README.md).
 
-## Updating
+# Updating
 
     git pull origin master
     git submodule update --recursive
 
-## Development
+# Starting a New Project
 
-You can start a new project by copying [`./apps/example`](./apps/example) as `./apps/myproject`: 
+You can start a new project by simply copying [`./apps/example`](./apps/example) as `./apps/myproject` or create project layout by scratch:
 
 =======
+
 1. Create your project directory (eg. `myproject`) in `{{ scada }}/apps`
 2. Place any README, scripts and source codes in your project directory.
 3. Place your browser applications (webapps) in `{{ myproject }}/webapps` directory
