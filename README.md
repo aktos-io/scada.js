@@ -99,8 +99,3 @@ Directory structure is as follows:
     │   └── ractive.js
     ... (prefixes are used to determine concatenation order)
 ```
-
-# TODO/ROADMAP
-
-* Add native mobile app support via Service Worker
-* Add OPC support
