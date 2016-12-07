@@ -19,6 +19,10 @@ ractive = new Ractive do
                   name: \world
                 * id: \3
                   name: \heyy!
+                * id: \4
+                  name: "çalış öğün"
+                * id: \5
+                  name: "ÇALIŞ ÖĞÜN"
             boundSelected: null
         date-picker:
             show: yes
