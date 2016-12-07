@@ -28,6 +28,7 @@ require! 'run-sequence'
 require! 'through2':through
 require! 'optimize-js'
 require! 'gulp-if-else': if-else
+require! 'gulp-rename': rename
 
 
 # Build Settings
@@ -61,7 +62,11 @@ log-info = (source, msg) ->
 is-entry-point = (file) ->
     [filename, ext] = path.basename file .split '.'
     base-dirname = path.basename path.dirname file
-    is-main-file = filename is base-dirname
+    if filename is base-dirname
+        return true
+    if filename is \index
+        return true
+    return false
 
 deleteFolderRecursive = (path) ->
     if fs.existsSync(path)
@@ -76,7 +81,7 @@ deleteFolderRecursive = (path) ->
 
 only-compile = yes if argv.compile is true
 
-pug-entry-files = [.. for glob.sync("#{paths.client-webapps}/**/#{app}/*.pug") when is-entry-point ..]
+pug-entry-files = [.. for glob.sync("#{paths.client-webapps}/**/#{app}/index.pug")]
 ls-entry-files = [.. for glob.sync "#{paths.client-webapps}/**/#{app}/*.ls" when is-entry-point ..]
 
 # Organize Tasks
@@ -164,7 +169,6 @@ gulp.task \vendor, ->
         .pipe cat "vendor.js"
         .pipe uglify!
         .pipe through.obj (file, enc, cb) ->
-            console.log "optimize-js... #{file.path}"
             contents = file.contents.to-string!
             optimized = optimize-js contents
             optimized = "//optimized by optimize.js\n" + optimized
@@ -197,5 +201,6 @@ gulp.task \pug ->
         .on \error, (err) ->
             on-error \pug, err
             @emit \end
+        .pipe rename basename: app
         .pipe flatten!
-        .pipe gulp.dest paths.client-apps
+        .pipe gulp.dest paths.client-public
