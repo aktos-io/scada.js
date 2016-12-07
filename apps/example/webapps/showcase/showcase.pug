@@ -1,0 +1,20 @@
+include ../../../../src/client/templates/mixins.pug
+aea-theme
+    aea-menu(menu="{{menu}}" selected="{{testMenu.selected}}")
+    aea-content
+        +partial('header')
+            p hi! this is header!
+        +partial('body')
+            //include ./bar-chart.pug
+            //include ./stacked-bar-chart.pug
+            include ./ack-button.pug
+            include ./example-component.pug
+            include ./search-combobox.pug
+            include ./date-picker.pug
+
+    aea-footer
+        +partial('right')
+            span aktos.io
+
+        +partial('left')
+            span showcase page

@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# define constants
+CURR_FILE="${BASH_SOURCE[0]}"
+CURR_DIR="$( cd "$( dirname "$CURR_FILE" )" && pwd )"
+PROJECT_NAME="$(basename $CURR_DIR)_$(basename $CURR_FILE)"
+SESSION_NAME="${PROJECT_NAME%%.*}"
+[[ -f "tmux-launch" ]] && LIB_DIR="$CURR_DIR" || LIB_DIR="/etc/aktos/service-runner"
+
+# include lib(s)
+source "${LIB_DIR}/tmux-launch"
+
+# change working directory
+cd $CURR_DIR
+SCADA_ROOT="$CURR_DIR/../.."
+
+# start new tmux session (if there is no duplicate)
+start-tmux-session "$SESSION_NAME"
+
+# run commands in tmux session
+run-in-tmux "cd $SCADA_ROOT" "gulp --project example --app showcase"
+run-in-tmux "cd $CURR_DIR/webserver" './run-development'
+run-in-tmux "cd $SCADA_ROOT" 'xdg-open . 2> /dev/null' 'atom .'
+
+# Show in terminal if not `--headless`
+attach-tmux-session "$SESSION_NAME"

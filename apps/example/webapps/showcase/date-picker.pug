@@ -1,0 +1,33 @@
+//-
+    Match with Design Guide status:
+
+        [x] 1. Example implementation
+        [x] 2. Simple variable
+        [x] 3. Unbound instances
+        [x] 4. Bound instances and/or live feed
+        [x] 5. {{#if }} ... {{/if}} block
+        [ ] 6. Test on mobile
+        [ ] 7. Change sizes
+        [x] 8. Match theme
+        [x] 9. This checklist
+panel(type="info" title="date-picker")
+    .content
+        .row
+            .col-md-12
+                pre date-picker(unix="\{{ datepicker.date1 }}")
+            .col-md-12
+                checkbox(checked="{{ datepicker.show }}") Show/hide Bound component 1
+        .row
+            .col-md-4
+                h3 Bound component1
+                +if('datepicker.show')
+                    date-picker(unix="{{ datepicker.date1 }}")
+                    p unix (in ms.): {{ datepicker.date1  }}
+            .col-md-4
+                h3 Bound component2
+                date-picker(unix="{{ datepicker.date1 }}")
+                p unix (in ms.): {{ datepicker.date1  }}
+            .col-md-4
+                h3 Unbound instance
+                date-picker(unix="{{ datepicker.date2 }}")
+                p unix (in ms.): {{ datepicker.date2  }}
