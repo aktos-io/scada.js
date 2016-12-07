@@ -23,6 +23,13 @@ ractive = new Ractive do
                   name: "çalış öğün"
                 * id: \5
                   name: "ÇALIŞ ÖĞÜN"
+            list2:
+                * id: \aaa
+                  name: \totally
+                * id: \bbb
+                  name: \different
+                * id: \ccc
+                  name: \list
             boundSelected: null
         date-picker:
             show: yes
