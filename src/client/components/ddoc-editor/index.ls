@@ -57,7 +57,11 @@ Ractive.components[component-name] = Ractive.extend do
                 console.log "Putting design document!"
                 console.log "Uploading design document..."
                 ddoc = self.get \designDocument
+                id = ddoc._id
+                if id.split('/').1 is ''
+                    return e.component.fire \state, \error, "Design document name cannot be empty: #{id}" 
                 ddoc-js = eval ddoc.javascript
+
                 # convert special functions to strings
                 ddoc.views = ddoc-js.views
                 ddoc.lists = ddoc-js.lists
