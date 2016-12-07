@@ -35,7 +35,7 @@
     "mkdirp": "^0.5.1",
     "nano": "git+https://github.com/aktos-io/nano.git",
     "prelude-ls": "^1.1.2",
-    "ractive": "^0.8.5",
+    "ractive": "^0.8.7",
     "randomstring": "^1.1.5",
     "serialport": "^4.0.1",
     "serve-index": "^1.8.0",
