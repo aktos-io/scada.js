@@ -82,7 +82,7 @@ include ../../templates/mixins.pug
                             | {{/unless}}
                             btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
                         hr
-                        div(style="width: 95vw")
+                        div(style="width: 75vw")
                             | {{>editForm}}
 
                     | {{elseif isClicked(.id)}}
@@ -106,7 +106,7 @@ include ../../templates/mixins.pug
                             | {{/unless}}
                             btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
                         hr
-                        div(style="width: 95vw")
+                        div(style="width: 75vw")
                             | {{>viewForm}}
                         | {{/if}}
                     | {{else}}
