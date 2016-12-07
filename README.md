@@ -101,6 +101,5 @@ Directory structure is as follows:
 
 # TODO/ROADMAP
 
-* Add native cross platform desktop app support via [electron](http://electron.atom.io/)
 * Add native mobile app support via Service Worker
 * Add OPC support
