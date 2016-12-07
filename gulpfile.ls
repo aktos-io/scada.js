@@ -27,6 +27,7 @@ require! 'browserify-livescript'
 require! 'run-sequence'
 require! 'through2':through
 require! 'optimize-js'
+require! 'gulp-if-else': if-else
 
 
 # Build Settings
@@ -146,7 +147,7 @@ function bundle
         .pipe source "public/#{app}.js"
         .pipe buffer!
         .pipe sourcemaps.init {+load-maps, +large-files}
-        .pipe uglify!
+        .pipe if-else only-compile, uglify
         .pipe sourcemaps.write '.'
         .pipe gulp.dest './build'
         .pipe tap (file) ->
