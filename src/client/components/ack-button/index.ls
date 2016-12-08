@@ -82,5 +82,6 @@ Ractive.components[\ack-button] = Ractive.extend do
         class: ""
         style: ""
         disabled: no
-        on-done: null
         self-disabled: no
+        enabled: yes
+        on-done: null
