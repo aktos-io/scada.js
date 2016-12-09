@@ -1,0 +1,22 @@
+include ../../../../src/client/templates/mixins.pug
+
+
+ack-button(
+    on-buttonclick="addNewItem"
+    tooltip="naber"
+    value="{{ newEntry }}"
+    ) + Add New Item
+
+input(value="{{ newEntry.content }}" placeholder="content...")
+input(value="{{ newEntry.id }}" placeholder="id")
+
+ul.list-group
+    +each('todos')
+        li.list-group-item
+            //- checkbox(checked="{{ .done }}") {{ .content }} is done: {{ .done ? 'yes' : 'no'}}
+            todo-item(timestamp="{{ .doneTimestamp }}").
+                {{ .content }}
+            span.
+                {{#if .doneTimestamp }}
+                    (done at: {{unixToReadable(.doneTimestamp)}})
+                {{/if}}
