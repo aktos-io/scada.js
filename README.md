@@ -1,14 +1,9 @@
-# Overview
-
-Welcome to the realtime, distributed, web-technology oriented SCADA system for Industrial usage. The SCADA system focuses on fast development and cross-platform (cross-browser and mobile) compatibility.
-
-
 # Key features
 
 * First-class support for [LiveScript](http://livescript.net) with Sourcemaps!
-* Supports [Ractive.js](http://ractivejs.com) with a [custom component mechanizm](./src/client/components)
+* Supports [RactiveJS](http://ractivejs.com) with a [custom component mechanizm](./src/client/components)
 * Supports [Pug](https://pugjs.org) for composing html documents
-* Supports desktop apps via [ELECTRON](http://electron.atom.io/).
+* Supports desktop apps via [ElectronJS](http://electron.atom.io/).
 * Uses Distributed NoSQL database ([CouchDB](http://couchdb.apache.org/) in mind)
 * Supports variety of network and industrial protocol [servers](./src/server), including
     * http
