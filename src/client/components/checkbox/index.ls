@@ -9,3 +9,4 @@ Ractive.components[\checkbox] = Ractive.extend do
                 __.set \checked, (not __.get \checked)
     data: ->
         checked: no
+        style: '' 
