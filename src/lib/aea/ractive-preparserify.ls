@@ -31,17 +31,25 @@ Example:
 
 module.exports = (file) ->
     through (buf, enc, next) ->
+        __ = this
         content = buf.to-string \utf8
         dirname = path.dirname file
         preparse-jade = (m, params-str) ->
             [jade-file, template-id] = params-str.split ',' |> map (.replace /["'\s]+/g, '')
 
             jade-file-full-path = path.join dirname, jade-file
-            html = try
-                pug.render-file jade-file-full-path
-            catch
-                console.error "ERROR: ractive-parserify: #{e}"
-                ''
+            try
+                html = pug.render-file jade-file-full-path
+            catch _ex
+                e = {}
+                #console.error "ERROR: ractive-parserify: #{e}"
+                e.name = 'Ractive Preparse Error'
+                e.message = _ex.message
+                e.fileName = jade-file-full-path
+                __.emit 'error', e
+                return
+
+
 
             template-html = if template-id
                 $ = cheerio.load html

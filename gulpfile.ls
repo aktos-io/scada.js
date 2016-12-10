@@ -144,6 +144,9 @@ bundler.transform browserify-optimize-js
 
 function bundle
     bundler
+        .on \error, (err) ->
+            console.log "some nice error..."
+            @emit \end
         .bundle!
         .on \error, (err) ->
             on-error \browserify, err
