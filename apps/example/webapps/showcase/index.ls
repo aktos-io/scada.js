@@ -4,7 +4,7 @@ require! 'aea': {sleep}
 
 ractive = new Ractive do
     el: '#main-output'
-    template: RACTIVE_PREPARSE('showcase.pug')
+    template: RACTIVE_PREPARSE('layout.pug')
     data:
         button:
             show: yes
