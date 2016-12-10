@@ -21,13 +21,9 @@ Install all dependencies:
 
     git clone {{ scada }}
     cd {{ scada }}
-    npm install
-   
-Optional (aea-way): 
-
-* install tmux: apt-get install tmux
-* install https://github.com/aktos-io/service-runner
+    npm install    
     
+...and optionally [follow the aea-way](#aea-way).
 
 # Running example
 
@@ -68,7 +64,7 @@ Directory structure is as follows:
 ...
 ```
 
-**Rest of Directory Structure as follows: **
+Rest of Directory Structure as follows: 
 
 
 ```
@@ -100,3 +96,18 @@ Directory structure is as follows:
     │   └── ractive.js
     ... (prefixes are used to determine concatenation order)
 ```
+
+# aea-way
+
+ScadaJS does not enforce any editors or platform, but we prefer Linux and some other nice tools. In order to follow this way, you need to 
+
+### Install 
+
+* Install a 64bit Linux distro (preferably Debian)
+* install tmux: `apt-get install tmux`
+* install https://atom.io
+* install https://github.com/aktos-io/service-runner
+
+### Follow
+
+* https://github.com/gkz/LiveScript-style-guide
