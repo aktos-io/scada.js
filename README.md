@@ -22,6 +22,8 @@ Install all dependencies:
     git clone {{ scada }}
     cd {{ scada }}
     npm install    
+    npm install -g gulp livescript 
+    sudo apt-get install libnotify-bin
     
 ...and optionally [follow the aea-way](#aea-way).
 
