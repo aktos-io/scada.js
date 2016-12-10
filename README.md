@@ -23,7 +23,7 @@ Install all dependencies:
     cd {{ scada }}
     npm install    
     
-Optional: follow [aea-way](
+Optional: follow [aea-way](#aea-way)
 
 # Running example
 
