@@ -22,6 +22,12 @@ Install all dependencies:
     git clone {{ scada }}
     cd {{ scada }}
     npm install
+   
+Optional (aea-way): 
+
+* install tmux: apt-get install tmux
+* install https://github.com/aktos-io/service-runner
+    
 
 # Running example
 
