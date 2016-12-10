@@ -81,8 +81,8 @@ deleteFolderRecursive = (path) ->
 
 only-compile = yes if argv.compile is true
 
-pug-entry-files = [.. for glob.sync("#{paths.client-webapps}/**/#{app}/index.pug")]
-ls-entry-files = [.. for glob.sync "#{paths.client-webapps}/**/#{app}/*.ls" when is-entry-point ..]
+pug-entry-files = glob.sync "#{paths.client-webapps}/**/#{app}/index.pug"
+ls-entry-files = glob.sync "#{paths.client-webapps}/**/#{app}/index.ls"
 
 # Organize Tasks
 gulp.task \default, ->
@@ -153,6 +153,7 @@ function bundle
         .pipe buffer!
         .pipe sourcemaps.init {+load-maps, +large-files}
         .pipe if-else only-compile, uglify
+        .pipe rename basename: app
         .pipe sourcemaps.write '.'
         .pipe gulp.dest './build'
         .pipe tap (file) ->
@@ -197,7 +198,10 @@ gulp.task \pug ->
     gulp.src pug-entry-files
         .pipe tap (file) ->
             #console.log "pug: compiling file: ", path.basename file.path
-        .pipe pug {pretty: yes}
+        .pipe pug do
+            pretty: yes
+            locals:
+                app: app
         .on \error, (err) ->
             on-error \pug, err
             @emit \end

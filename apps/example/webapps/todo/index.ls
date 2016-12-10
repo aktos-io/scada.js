@@ -7,7 +7,7 @@ require! './todo-item'
 
 ractive = new Ractive do
     el: '#main-output'
-    template: RACTIVE_PREPARSE('todo.pug')
+    template: RACTIVE_PREPARSE('home-page.pug')
     data:
         new-entry:
             id: null

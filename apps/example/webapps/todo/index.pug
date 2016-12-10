@@ -1,7 +1,7 @@
 extends ../../../../src/client/templates/template.pug
 
 block title
-    title ToDo
+    title #{app}
 
 block script
-    script(src="todo.js")
+    script(src=app + '.js')
