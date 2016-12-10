@@ -97,13 +97,11 @@ Directory structure is as follows:
     ... (prefixes are used to determine concatenation order)
 ```
 
-# `aea-way`
+# aea-way
 
 ScadaJS does not enforce any editors or platform, but we prefer Linux and some other nice tools. In order to follow this way, you need to 
 
 ### Install 
-
-Optional (aea-way): 
 
 * install tmux: apt-get install tmux
 * install https://atom.io
