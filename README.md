@@ -64,7 +64,7 @@ Directory structure is as follows:
 ...
 ```
 
-**Rest of Directory Structure as follows: **
+Rest of Directory Structure as follows: 
 
 
 ```
@@ -103,6 +103,7 @@ ScadaJS does not enforce any editors or platform, but we prefer Linux and some o
 
 ### Install 
 
-* install tmux: apt-get install tmux
+* Install a 64bit Linux distro (preferably Debian)
+* install tmux: `apt-get install tmux`
 * install https://atom.io
 * install https://github.com/aktos-io/service-runner
