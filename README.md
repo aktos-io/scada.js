@@ -107,3 +107,7 @@ ScadaJS does not enforce any editors or platform, but we prefer Linux and some o
 * install tmux: `apt-get install tmux`
 * install https://atom.io
 * install https://github.com/aktos-io/service-runner
+
+### Follow
+
+* https://github.com/gkz/LiveScript-style-guide
