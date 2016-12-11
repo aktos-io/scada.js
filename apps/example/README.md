@@ -6,16 +6,14 @@
 
 if you follow [aea-way](../../README.md#aea-way): 
 
-To start WebUI development:
-
-```bash
-./ui-dev.service
-```
+   ```bash
+   ./ui-dev.service
+   ```
 else 
 
-* run `gulp --project example --app showcase` in `{{scada}}` directory 
-* run `./run-development` in  "cd $CURR_DIR/webserver" 
-* Then visit [http://localhost:4001/showcase.html](http://localhost:4001/showcase.html)
+   * run `gulp --project example --app showcase` in `{{scada}}` directory 
+   * run `./run-development` in  "cd $CURR_DIR/webserver" 
+   * Then visit [http://localhost:4001/showcase.html](http://localhost:4001/showcase.html)
 
 ### Windows
 
