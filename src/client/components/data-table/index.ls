@@ -88,11 +88,6 @@ Ractive.components[component-name] = Ractive.extend do
                 console.warn "data-table: create-view is called before first run!"
                 return
 
-            # for debugging purposes
-            c = __.get \createViewCounter
-            __.set \createViewCounter, (c + 1)
-            # end of debugging purposes
-
             filters = __.get \dataFilters
             selected-filter = __.get \selectedFilter
             tabledata = __.get \tabledata
@@ -140,6 +135,11 @@ Ractive.components[component-name] = Ractive.extend do
                 #console.warn "After filter runs so many times???"
                 open-row yes
 
+                # for debugging purposes
+                c = __.get \createViewCounter
+                __.set \createViewCounter, (c + 1)
+                # end of debugging purposes
+
 
         refresh-view = ->
             if typeof on-change is \function
@@ -156,20 +156,20 @@ Ractive.components[component-name] = Ractive.extend do
             if _new and not __.get(\firstRunDone) and not first-run-started
                 # Run post init (from instance)
                 first-run-started := yes
-                console.log "Initializing tabledata with columns: #{settings.col-names}"
+                # debug: console.log "Initializing tabledata with columns: #{settings.col-names}"
                 try
                     if typeof settings.on-init is \function
                         settings.on-init.call this, ->
                             __.set \firstRunDone, yes
-                            console.log "finished initialization #{settings.col-names}"
+                            # debug: console.log "finished initialization #{settings.col-names}"
                             refresh-view!
-                        console.log "started initialization: #{settings.col-names}"
+                        # debug: console.log "started initialization: #{settings.col-names}"
 
 
                 catch
                     console.error "ERROR FROM DATA_TABLE: on-init: ", e
             else if _old is off and _new is on and __.get(\firstRunDone)
-                console.log "rising edge of enable, trigger change: #{settings.col-names}"
+                # debug: console.log "rising edge of enable, trigger change: #{settings.col-names}"
                 changes = __.get \changes
                 __.set \changes, ++changes
                 refresh-view!
@@ -277,7 +277,7 @@ Ractive.components[component-name] = Ractive.extend do
                 modal-new.modal \show
 
                 if typeof! settings.on-create-view is \Function
-                    settings.on-create-view.call this, new-order, -> 
+                    settings.on-create-view.call this, new-order, ->
 
 
             new-order-close: ->
