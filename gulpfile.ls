@@ -84,6 +84,11 @@ only-compile = yes if argv.compile is true
 pug-entry-files = glob.sync "#{paths.client-webapps}/**/#{app}/index.pug"
 ls-entry-files = glob.sync "#{paths.client-webapps}/**/#{app}/index.ls"
 
+for-css =
+    "#{paths.vendor-folder}/**/*.css"
+    "#{paths.client-src}/**/*.css"
+
+
 # Organize Tasks
 gulp.task \default, ->
     if argv.clean is true
@@ -101,8 +106,11 @@ gulp.task \default, ->
     watch pug-entry-files, ->
         gulp.start \pug
 
+    watch for-css, (event) ->
+        gulp.start <[ vendor-css ]>
+
     watch "#{paths.vendor-folder}/**", (event) ->
-        gulp.start <[ vendor vendor-css ]>
+        gulp.start <[ vendor ]>
 
 
     for-browserify =
@@ -183,11 +191,7 @@ gulp.task \vendor, ->
 
 # Concatenate vendor css files into public/css/vendor.css
 gulp.task \vendor-css, ->
-    vendor-css = "#{paths.vendor-folder}/**/*.css"
-    components-css = "#{paths.client-src}/**/*.css"
-    css-folders = [vendor-css, components-css]
-
-    gulp.src css-folders
+    gulp.src for-css
         .pipe cat "vendor.css"
         .pipe gulp.dest "#{paths.client-apps}/css"
 
