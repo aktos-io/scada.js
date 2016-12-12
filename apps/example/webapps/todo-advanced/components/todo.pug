@@ -1,0 +1,19 @@
+include ../../../../../src/client/templates/mixins.pug
+
+h1 Todo List
+
+h2 {{ doneTodosCount }} out of {{ todosCount }} todos done
+//- todo progress
+.todo-progress-bar(style='height: 20px; position: relative; background-color: lime;')
+    span(style='display: block; overflow: hidden; position: relative; background-color: red; height: 100%; width: {{ (100 * doneTodosCount) / todosCount }}%')
+
+div
+    h3 Add New Todo
+    input(type='text', value='{{ newTodoTitle }}')
+    button(type='button', on-click='addNewTodo') ADD
+
+ul.todo-list
+    +each('todos')
+        li.todo-item
+            input(type='checkbox', checked='{{ .isCompleted }}')
+            span {{ .title }}
