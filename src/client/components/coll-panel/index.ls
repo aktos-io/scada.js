@@ -17,3 +17,4 @@ Ractive.components[component] = Ractive.extend do
         collapsed: yes
         type: \default
         show-body: yes
+        style: ""

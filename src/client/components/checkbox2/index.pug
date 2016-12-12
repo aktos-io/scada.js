@@ -1,9 +1,19 @@
+.modal.modal-error.fade(tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
+    .modal-dialog(role="document")
+        .modal-content.modal-danger
+            .modal-header.
+                <h4 class="modal-title">Grr...</h4>
+
+            .modal-body(style="font-size:1.5rem") {{reason}}
+
+            .modal-footer
 
 btn(
     on-buttonclick="toggleChecked"
     tooltip="{{tooltip}}"
     style="{{ style }}"
     disabled="{{ (disabled || selfDisabled) || !(enabled) }}"
+    type="{{type}}"
     )
     .pull-left.
         {{#if state === 'checked'}}
@@ -11,7 +21,6 @@ btn(
         {{elseif state === 'unchecked'}}
             <icon-unchecked />
         {{elseif state === 'doing'}}
-            <icon-refresh spin="true" />
+            <icon-cog spin="true" />
         {{/if}}
-
-        {{yield}}
+         {{yield}}

@@ -91,6 +91,8 @@ include ../../templates/mixins.pug
                     //- -----------------------------------------------
                     td(colspan="{{ columnList.length + 1 }}" style="width: 1%; white-space: nowrap;")
                         | {{#if openingRow}}
+                        icon-cog(spin="true")
+                        | 
                         strong Opening row...
                         | {{else}}
                         btn-group

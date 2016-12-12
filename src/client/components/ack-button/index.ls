@@ -42,7 +42,6 @@ Ractive.components[component] = Ractive.extend do
                 if s in <[ error ]>
                     __.set \state, \error
                     __.set \reason, msg
-                    console.warn "ack-button: ", msg
                     modal-error.modal \show
 
                 __.set \selfDisabled, self-disabled

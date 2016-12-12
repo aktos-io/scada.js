@@ -51,9 +51,8 @@ ractive.on do
         <- sleep 3000ms
         ev.component.fire \state, \done
 
-    checkboxchanged: (ev, curr-state, value) ->
+    checkboxchanged: (ev, curr-state, intended-state, value) ->
         console.log "checkbox event fired, curr: #{curr-state}"
-        intended-state = if curr-state is \checked then \unchecked else \checked
         ev.component.fire \state, \doing
         <- sleep 2000ms
         ev.component.fire \state, intended-state

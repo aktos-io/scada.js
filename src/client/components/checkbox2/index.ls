@@ -4,19 +4,25 @@ Ractive.components[component] = Ractive.extend do
     isolated: yes
     onrender: ->
         __ = @
+        modal-error = $ @find \.modal-error
+
+        modal-error.modal do
+            keyboard: yes
+            focus: yes
+            show: no
 
         @observe \checked, (_new, _old) ->
-            console.log "checked status changed: #{_new}"
             __.set \state, if _new then 'checked' else 'unchecked'
 
         @on do
             toggleChecked: ->
-                curr-state = if __.get(\checked) then \checked else \unchecked
+                if __.get(\checked) then
+                    [curr-state, intended-state] = <[ checked unchecked ]>
+                else
+                    [curr-state, intended-state] = <[ unchecked checked ]>
                 parameter = __.get(\value)
-                __.fire \statechange, {component: __}, curr-state, parameter
 
-            statechange: (ev, msg) ->
-                console.log "inner state change fired"
+                __.fire \statechange, {component: __}, curr-state, intended-state, parameter
 
             state: (s, msg) ->
                 self-disabled = no
@@ -33,13 +39,9 @@ Ractive.components[component] = Ractive.extend do
                     __.set \state, \doing
                     self-disabled = yes
 
-                /*
                 if s in <[ error ]>
-                    __.set \state, \error
                     __.set \reason, msg
-                    console.warn "ack-button: ", msg
                     modal-error.modal \show
-                */
 
                 __.set \selfDisabled, self-disabled
 
@@ -55,3 +57,4 @@ Ractive.components[component] = Ractive.extend do
         self-disabled: no
         enabled: yes
         angle: 0
+        tooltip: ''
