@@ -33,11 +33,14 @@ ractive = new Ractive do
             boundSelected: null
         date-picker:
             show: yes
+        checkbox:
+            checked1: no
+            checked2: no
 
 ractive.on do
     test-ack-button1: (ev, value) ->
         ev.component.fire \state, \doing
-        <- sleep 3000ms
+        <- sleep 5000ms
         ractive.set \button.sendValue, value
         ev.component.fire \state, \done...
 
@@ -47,3 +50,10 @@ ractive.on do
         ev.component.fire \state, \error, "handler 2 got message: #{value}"
         <- sleep 3000ms
         ev.component.fire \state, \done
+
+    checkboxchanged: (ev, curr-state, value) ->
+        console.log "checkbox event fired, curr: #{curr-state}"
+        intended-state = if curr-state is \checked then \unchecked else \checked
+        ev.component.fire \state, \doing
+        <- sleep 2000ms
+        ev.component.fire \state, intended-state
