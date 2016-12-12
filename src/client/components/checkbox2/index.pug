@@ -1,0 +1,17 @@
+
+btn(
+    on-buttonclick="toggleChecked"
+    tooltip="{{tooltip}}"
+    style="{{ style }}"
+    disabled="{{ (disabled || selfDisabled) || !(enabled) }}"
+    )
+    .pull-left.
+        {{#if state === 'checked'}}
+            <icon-check/>
+        {{elseif state === 'unchecked'}}
+            <icon-unchecked />
+        {{elseif state === 'doing'}}
+            <icon-refresh spin="true" />
+        {{/if}}
+
+        {{yield}}
