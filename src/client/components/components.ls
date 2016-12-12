@@ -24,33 +24,4 @@ require! './navigation'
 require! './page'
 require! './pie-chart'
 require! './search-combobox'
-require! './verify-btn'
-module.exports = {
-    ace-editor
-    ack-button
-    aea-theme
-    assign
-    checkbox
-    checklist-button
-    checklist
-    coll-panel
-    connection-status
-    data-table
-    date-picker
-    db-img
-    ddoc-editor
-    debug-obj
-    example-component
-    export-to-csv
-    file-upload
-    flot-chart
-    issue-tracker
-    key-value-grid
-    login
-    menu
-    navigation
-    page
-    pie-chart
-    search-combobox
-    verify-btn
-}
+require! './checkbox2'

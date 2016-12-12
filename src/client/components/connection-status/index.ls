@@ -1,7 +1,7 @@
 require! 'aea': {sleep, is-db-alive}
-component-name = "connection-status"
+component = require \path .basename __dirname
 
-Ractive.components[component-name] = Ractive.extend do
+Ractive.components[component] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
 

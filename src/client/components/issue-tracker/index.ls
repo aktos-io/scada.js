@@ -2,8 +2,8 @@
 {sleep, merge, pack, unpack} = require "aea"
 random = require \randomstring
 
-component-name = "issue-tracker"
-Ractive.components[component-name] = Ractive.extend do
+component = require \path .basename __dirname
+Ractive.components[component] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     oninit: ->

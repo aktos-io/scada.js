@@ -1,12 +1,12 @@
-
-Ractive.components[\checkbox] = Ractive.extend do
+component = require \path .basename __dirname
+Ractive.components[component] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     oninit: ->
         __ = @
         @on do
             toggleChecked: ->
-                __.set \checked, (not __.get \checked)
+                __.toggle \checked
     data: ->
         checked: no
-        style: '' 
+        style: ''

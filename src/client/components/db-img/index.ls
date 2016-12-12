@@ -1,7 +1,7 @@
 require! 'aea': {merge}
 
-component-name = "db-img"
-Ractive.components[component-name] = Ractive.extend do
+component = require \path .basename __dirname
+Ractive.components[component] = Ractive.extend do
     isolated: yes
     template: RACTIVE_PREPARSE('index.pug')
     onrender: ->
