@@ -4,7 +4,7 @@
 
 ### Linux
 
-if you follow [aea-way](../../README.md#aea-way): 
+if you follow [aea-way](../../doc/aea-way.md): 
 
    ```bash
    ./ui-dev.service
