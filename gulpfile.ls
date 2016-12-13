@@ -87,6 +87,7 @@ ls-entry-files = glob.sync "#{paths.client-webapps}/**/#{app}/index.ls"
 for-css =
     "#{paths.vendor-folder}/**/*.css"
     "#{paths.client-src}/**/*.css"
+    "#{paths.client-webapps}/**/*.css"
 
 
 # Organize Tasks
