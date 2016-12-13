@@ -25,7 +25,7 @@ Install all dependencies:
     npm install -g gulp livescript 
     sudo apt-get install libnotify-bin
     
-...and optionally [follow the aea-way](#aea-way).
+...and optionally [follow the aea-way](doc/aea-way.md).
 
 # Running example
 
@@ -38,7 +38,7 @@ See [`./apps/example/README.md`](./apps/example/README.md).
 
 # Starting a New Project
 
-You can start a new project by simply copying [`./apps/example`](./apps/example) as `./apps/myproject` or create project layout by scratch:
+You can start a new project by simply copying [`./apps/template`](./apps/template) as `./apps/myproject` or create project layout by scratch:
 
 =======
 
@@ -53,63 +53,11 @@ Directory structure is as follows:
 ```
 {{ scada }}
 ├── apps
-│   ├── example
+│   ├── template
 │   │   ├── README.md
-│   │   ├── my-custom-script.sh
 │   │   ├── webapps
-│   │   │   └── showcase
+│   │   │   └── example-page
 │   │   │       ├── index.pug (the html file to be served to the client)
-│   │   │       ...
-│   │   │       └── showcase.ls   (main js file (entry point))
-│   │   └── webserver
-│   │       └── server.ls (webserver for this app)
+│   │   │       └── index.ls   (main js file (entry point))
 ...
 ```
-
-Rest of Directory Structure as follows: 
-
-
-```
-...
-├── README.md
-├── gulpfile.ls
-├── package.json
-├── build (temporary build directory, may be deleted at any time)
-│   └── public
-│       ├── showcase.html
-│       ├── showcase.js
-│       ├── css
-│       │   └── vendor.css
-│       ├── js
-│       │   └── vendor.js
-│       ...
-├── src
-│   ├── client
-│   │   ├── assets (files that are directly copied to {{ scada }}/build/public
-│   │   ├── components (Ractive Components)
-│   │   └── templates (Pug stuff)
-│   │       ...
-│   └── lib
-│       ... (Libraries used in both server and browser)
-└── vendor (Vendor specific js and css files, like Ractive, jQuery, Bootstrap...)
-    ├── 000.jquery
-    │   └── jquery-1.12.0.min.js
-    ├── 000.ractive
-    │   └── ractive.js
-    ... (prefixes are used to determine concatenation order)
-```
-
-# aea-way
-
-ScadaJS does not enforce any editors or platform, but we prefer Linux and some other nice tools. In order to follow this way, you need to 
-
-### Install 
-
-* Install a 64bit Linux distro (preferably Debian)
-* install tmux: `apt-get install tmux`
-* install https://atom.io
-* install https://github.com/aktos-io/service-runner
-
-### Follow
-
-* https://github.com/gkz/LiveScript-style-guide
