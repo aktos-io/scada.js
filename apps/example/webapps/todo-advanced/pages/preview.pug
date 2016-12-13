@@ -1,0 +1,10 @@
+todo(
+    checklist={{ myChecklist }}
+    log={{ myChecklistLog }}
+    )
+
+p some html here
+
+ul
+    +each('myChecklistLog')
+        li {{ .event }} {{ .action }} {{ .timestamp }}
