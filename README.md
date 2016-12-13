@@ -27,14 +27,9 @@ Install all dependencies:
     
 ...and optionally [follow the aea-way](doc/aea-way.md).
 
-# Running example
+# Running the Examples
 
 See [`./apps/example/README.md`](./apps/example/README.md).
-
-# Updating
-
-    git pull origin master
-    git submodule update --recursive
 
 # Starting a New Project
 
