@@ -14,10 +14,10 @@ panel(type="info" title="checkbox")
         .row
             .col-md-4
                 h3 Event triggering checkbox (using on-change event)
-                checkbox2(checked="{{checkbox.checked1}}" on-statechange="checkboxchanged" value="hi!") My Checkbox2 (with event)
+                checkbox(checked="{{checkbox.checked1}}" on-statechange="checkboxchanged" value="hi!" async) My Checkbox2 (with event)
             .col-md-4
                 h3 No event
-                checkbox2(checked="{{checkbox.checked1}}") My Checkbox2 (no event)
+                checkbox(checked="{{checkbox.checked1}}") My Checkbox2 (no event)
 
             .col-md-4
                 p My checkbox state is: {{ checkbox.checked1 ? 'checked!' : 'not checked...' }}
