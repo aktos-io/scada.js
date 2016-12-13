@@ -4,7 +4,7 @@
 
 ### Linux
 
-if you follow [aea-way](../../README.md#aea-way): 
+if you follow [aea-way](../../doc/aea-way.md): 
 
    ```bash
    ./ui-dev.service
@@ -12,7 +12,7 @@ if you follow [aea-way](../../README.md#aea-way):
 else 
 
    * run `gulp --project example --app showcase` in `{{scada}}` directory 
-   * run `./run-development` in  "cd $CURR_DIR/webserver" 
+   * run `./run-development` in  `webserver` directory  
    * Then visit [http://localhost:4001/showcase.html](http://localhost:4001/showcase.html)
 
 ### Windows
