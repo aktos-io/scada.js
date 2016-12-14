@@ -1,17 +1,15 @@
-include ../../../../src/client/templates/mixins.pug
 aea-theme
     aea-menu(menu="{{menu}}" selected="{{testMenu.selected}}")
     aea-content
         +partial('header')
             p hi! this is header!
         +partial('body')
-            //include ./bar-chart.pug
-            //include ./stacked-bar-chart.pug
-            include ./checkbox.pug
-            include ./ack-button.pug
-            include ./example-component.pug
-            include ./search-combobox.pug
-            include ./date-picker.pug
+            include ./previews/checkbox.pug
+            include ./previews/ack-button.pug
+            include ./previews/example-component.pug
+            include ./previews/search-combobox.pug
+            include ./previews/date-picker.pug
+            include ./previews/test-data-table/my-table.pug
 
     aea-footer
         +partial('right')

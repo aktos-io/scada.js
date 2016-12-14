@@ -1,0 +1,70 @@
+panel(type="info" title="data-table")
+    data-table(
+        settings="{{ myTable.settings }}"
+        db="{{ db }}"
+        lastchange="{{ changes }}"
+        curr-url="{{ currPage }}"
+        enabled="{{ true }}"
+        )
+        +partial('addnewTitle')
+            | Add my new document
+
+        //- -------------------------------------------------------------------------
+        //- ------------------------- HEADER -------------------------------------
+        //- -------------------------------------------------------------------------
+        +partial('header')
+            h3 This partial goes to header!
+            .row
+                .col-md-12
+                    btn(on-buttonclick="setFilter" value="all") Show all
+                    btn(on-buttonclick="setFilter" value="pink" type="info") Show only pinks
+
+            debug-obj(obj="{{ tabledata }}")
+        //- -------------------------------------------------------------------------
+        //- ------------------------- VIEW FORM -------------------------------------
+        //- -------------------------------------------------------------------------
+        +partial('viewForm')
+            debug-obj(obj="{{ curr }}")
+            h3 This is viewForm!
+            p Any html design here is shown when you doubleclick a row.
+
+            p Our document looks like as follows:
+
+            key-value-grid(key="document type") {{ curr.type }}
+
+            key-value-grid(key="timestamp: ") {{ curr.timestamp }}
+
+            key-value-grid(key="timestamp (human readable): ") {{ unixToReadable(curr.timestamp) }}
+
+            h3 Entries:
+
+            ul
+                +each('curr.entries')
+                    li Product: {{ .product }} with amount of: {{ .amount }}
+
+        +partial('editForm')
+            h3 This is editForm!
+            debug-obj(obj="{{ curr }}")
+            key-value-grid(key="set your document type")
+                input(value="{{ curr.type }}" placeholder="document type")
+
+            h3 Entries:
+                ul
+                    +each('curr.entries')
+                        li.
+                            Product: #[input(value="{{ .product }}")]
+                            Amount: #[input(value="{{ .amount }}")]
+                             (#[btn(on-buttonclick="deleteOrder" value="entries: {{ i }}"): icon-remove])
+
+            //- use `addNewEntry` method to add a new default entry to `entries`:
+            btn(on-buttonclick="addNewEntry" value="entries")
+                icon-plus
+                span Add new entry
+
+            hr
+
+            //- use `newOrderClose` method to close the row
+            btn(on-buttonclick="newOrderClose") Kapat!
+
+            //- use an ack-button to save your document
+            ack-button(on-buttonclick="save" value="{{ curr }}") Save

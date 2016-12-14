@@ -1,11 +1,15 @@
 require! 'prelude-ls': {group-by, sort-by}
 require! components
 require! 'aea': {sleep}
+require! './simulate-db': {db}
+require! './previews/test-data-table/my-table': {my-table}
 
 ractive = new Ractive do
     el: '#main-output'
     template: RACTIVE_PREPARSE('layout.pug')
     data:
+        db: db
+        my-table: my-table
         button:
             show: yes
             send-value: ''
