@@ -103,7 +103,12 @@ Ractive.components[component] = Ractive.extend do
                     tabledata.unshift curr
                 else
                     # update curr in tabledata
-                    curr-in-table `merge` curr
+                    # replace all properties with new one
+                    for i of curr-in-table
+                        delete curr-in-table[i]
+                    for i of curr
+                        curr-in-table[i] = curr[i]
+
                 __.set \tabledata, tabledata
 
 
@@ -122,9 +127,13 @@ Ractive.components[component] = Ractive.extend do
                         items =
                             from: curr-page * settings.page-size
                             to: min ((curr-page + 1) * settings.page-size) - 1, (view.length - 1)
-                        __.set \tableview_visible, [.. for view when items.from <= ..no <= items.to ]
+
+                        __.set \tableview_visible, [view[index] for index of view when items.from <= index <= items.to ]
                     else
                         __.set \tableview_visible, view
+
+                    # for debugging purposes
+                    __.add \createViewCounter
                 catch
                     debugger
 
@@ -134,11 +143,6 @@ Ractive.components[component] = Ractive.extend do
                 settings.after-filter.apply __, [filtered, generate-visible]
                 #console.warn "After filter runs so many times???"
                 open-row yes
-
-                # for debugging purposes
-                c = __.get \createViewCounter
-                __.set \createViewCounter, (c + 1)
-                # end of debugging purposes
 
 
         refresh-view = ->
@@ -306,24 +310,13 @@ Ractive.components[component] = Ractive.extend do
                     __.set \saving, "#{__.get \saving} : #{err.message}"
                     button-state \error, err.message
                 else
-                    console.log "New order put in the database", res
-                    # if adding new document, clean up current document
-                    console.log "order putting database: ", order-doc
                     (__.get \create-view) order-doc
+                    order-doc._rev = res.rev
+                    __.set \curr, order-doc
 
-                    if order-doc._rev is void
-                        console.log "refreshing new order...."
-                        __.set \curr, get-default-document!
-                    else
-                        console.log "order had rev: ", order-doc._rev
-                        order-doc._rev = res.rev
-                        console.log "Updating current order document rev: ", order-doc._rev
-                        __.set \curr, order-doc
-
-                    __.set \saving, "OK!"
                     button-state \done...
                     # TODO: use "kick-changes! function"
-                    __.set \changes, (1 + __.get \changes)
+                    __.add \changes
 
             add-new-entry: (keypath) ->
                 __ = @
@@ -425,6 +418,7 @@ Ractive.components[component] = Ractive.extend do
         changes: 0
         first-run-done: no
         opening-row: no
+        opening-row-msg: 'Opening row...'
         is-editing-line: (index) ->
             editable = @get \editable
             clicked-index = @get \clickedIndex
