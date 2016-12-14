@@ -51,6 +51,8 @@ include ../../templates/mixins.pug
             tr
                 td(colspan="{{ columnList.length + 1 }}")
                     ack-button(on-buttonclick="kickChanges") Yenile ({{ createViewCounter }})
+                    span
+                    span(style="color: gray") {{#unless openingRow}}{{ openingRowMsg }}{{/unless}}
 
 
             tr.

@@ -232,8 +232,10 @@ Ractive.components[component] = Ractive.extend do
                     if typeof! settings.on-create-view is \Function
                         settings.on-create-view.call this, curr, ->
                             __.set \openingRow, no
+                            __.set \openingRowMsg, ""
                     else
                         __.set \openingRow, no
+                        __.set \openingRowMsg, ""
 
 
 
@@ -418,7 +420,7 @@ Ractive.components[component] = Ractive.extend do
         changes: 0
         first-run-done: no
         opening-row: no
-        opening-row-msg: 'Opening row...'
+        opening-row-msg: ''
         is-editing-line: (index) ->
             editable = @get \editable
             clicked-index = @get \clickedIndex
