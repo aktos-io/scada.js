@@ -4,7 +4,5 @@ Your webapps go to `webapps/` directory. Your other files, such as webservers, b
 
 # How to build
 
-1. Compile your source code into html, css and js files:  
-    1. Go to {{SCADA_ROOT}}
-    2. Run `gulp --project template --app example-page`
-2. See your page: open `{{SCADA_ROOT}}/build/public/example-page.html` with your favorite browser.
+See [html/javascript template](./webapps/html-js-template/README.md) for basic template and
+ [html/livescript template](./webapps/html-ls-template/README.md) for livescript based template. 

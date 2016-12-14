@@ -82,7 +82,7 @@ deleteFolderRecursive = (path) ->
 only-compile = yes if argv.compile is true
 
 pug-entry-files = glob.sync "#{paths.client-webapps}/**/#{app}/index.pug"
-ls-entry-files = glob.sync "#{paths.client-webapps}/**/#{app}/index.ls"
+ls-entry-files = glob.sync "#{paths.client-webapps}/**/#{app}/index.{ls,js}"
 html-entry-files = glob.sync "#{paths.client-webapps}/#{app}/index.html"
 
 for-css =

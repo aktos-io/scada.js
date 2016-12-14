@@ -1,5 +1,5 @@
 ractive = new Ractive do
     el: '#main-output'
-    template: RACTIVE_PREPARSE('layout.html')
+    template: RACTIVE_PREPARSE('content.html')
     data:
         name: "guest"
