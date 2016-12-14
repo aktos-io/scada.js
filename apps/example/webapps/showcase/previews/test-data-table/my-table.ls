@@ -12,7 +12,7 @@ export my-table =
                 * product: ""
                   amount: ""
                 ...
-        col-names: "ID of document, Name, Number of entries"
+        col-names: "ID of document, Name, Number of entries, some, more, columns"
 
         on-init: (next) ->
             # fetch your data to `tabledata` variable here
@@ -87,6 +87,9 @@ export my-table =
                     .._id
                     ..name
                     my-reduce ..entries
+                    \hello
+                    \world
+                    \again!
                 } for docs]
 
             # call next method when finished:

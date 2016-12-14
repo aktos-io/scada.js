@@ -31,100 +31,99 @@ include ../../templates/mixins.pug
             .modal-footer
 
 | {{>header}}
-.table-responsive
-    b-table
-        thead
-            +unless('readonly')
-                tr
-                    td(colspan="{{ columnList.length + 1 }}")
-                        row
-                            .col-md-3.col-sm-3
-                                btn(on-buttonclick="addNewOrder")
-                                    icon-plus
-                                    span {{yield addnewTitle}}
-                            .col-md-6
-                            .col-md-3
-                    //-
-                        .row
-                            .col-md-12.
-                                 {{#if addingNew}}{{>editForm}}{{/if}}
+table.rwd-table
+    thead
+        +unless('readonly')
             tr
                 td(colspan="{{ columnList.length + 1 }}")
-                    ack-button(on-buttonclick="kickChanges") Yenile ({{ createViewCounter }})
-                    span(style="color: lightgray; margin-left: 20px") {{#unless openingRow}}{{ openingRowMsg }}{{/unless}}
+                    row
+                        .col-md-3.col-sm-3
+                            btn(on-buttonclick="addNewOrder")
+                                icon-plus
+                                span {{yield addnewTitle}}
+                        .col-md-6
+                        .col-md-3
+                //-
+                    .row
+                        .col-md-12.
+                             {{#if addingNew}}{{>editForm}}{{/if}}
+        tr
+            td(colspan="{{ columnList.length + 1 }}")
+                ack-button(on-buttonclick="kickChanges") Yenile ({{ createViewCounter }})
+                span(style="color: lightgray; margin-left: 20px") {{#unless openingRow}}{{ openingRowMsg }}{{/unless}}
 
 
-            tr.
-                {{#each columnList}}
-                    <th>{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</th>
-                {{/each}}
+        tr.
+            {{#each columnList}}
+                <th>{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</th>
+            {{/each}}
 
-        tbody
-            +each('tableview_visible:i')
-                tr.input-line(
-                    style="{{#if isClicked(.id)}}border: 2px solid white;{{/if}}{{#if isEditingLine(.id)}}border: 2px dashed white;{{/if}} {{.style}}"
-                    on-doubleclick="clicked"
-                    )
-                    | {{#if isEditingLine(.id)}}
-                    //- -----------------------------------------------
-                    //- edit form
-                    //- -----------------------------------------------
-                    td(colspan="{{ columnList.length + 1 }}" style="width: 1%; white-space: nowrap;")
-                        btn-group
-                            | {{#unless readonly}}
-                            btn(
-                                on-buttonclick="toggleEditing"
-                                type="{{#if editTooltip }}danger{{else}}default{{/if}}"
-                                active="{{editable}}"
-                                tooltip="Düzenle"
-                                )
-                                | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
-                                icon-pencil
-                            | {{/unless}}
-                            btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
-                        hr
-                        div(style="width: 75vw")
-                            | {{>editForm}}
+    tbody
+        +each('tableview_visible:i')
+            tr.input-line(
+                style="{{#if isClicked(.id)}}border: 2px solid white;{{/if}}{{#if isEditingLine(.id)}}border: 2px dashed white;{{/if}} {{.style}}"
+                on-doubleclick="clicked"
+                )
+                | {{#if isEditingLine(.id)}}
+                //- -----------------------------------------------
+                //- edit form
+                //- -----------------------------------------------
+                td(colspan="{{ columnList.length + 1 }}" style="width: 1%; white-space: nowrap;")
+                    btn-group
+                        | {{#unless readonly}}
+                        btn(
+                            on-buttonclick="toggleEditing"
+                            type="{{#if editTooltip }}danger{{else}}default{{/if}}"
+                            active="{{editable}}"
+                            tooltip="Düzenle"
+                            )
+                            | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
+                            icon-pencil
+                        | {{/unless}}
+                        btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
+                    hr
+                    div(style="width: 75vw")
+                        | {{>editForm}}
 
-                    | {{elseif isClicked(.id)}}
-                    //- -----------------------------------------------
-                    //- view form
-                    //- -----------------------------------------------
-                    td(colspan="{{ columnList.length + 1 }}" style="width: 1%; white-space: nowrap;")
-                        | {{#if openingRow}}
-                        icon-cog(spin="true")
-                        | &nbsp;
-                        strong {{ openingRowMsg }}
-                        | {{else}}
-                        btn-group
-                            | {{#unless readonly}}
-                            btn(
-                                on-buttonclick="toggleEditing"
-                                type="{{#if editTooltip }}danger{{else}}default{{/if}}"
-                                active="{{editable}}"
-                                tooltip="Düzenle"
-                                )
-                                | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
-                                icon-pencil
-                            | {{/unless}}
-                            btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
-                        hr
-                        div(style="width: 75vw")
-                            | {{>viewForm}}
-                        | {{/if}}
+                | {{elseif isClicked(.id)}}
+                //- -----------------------------------------------
+                //- view form
+                //- -----------------------------------------------
+                td(colspan="{{ columnList.length + 1 }}" style="width: 1%; white-space: nowrap;")
+                    | {{#if openingRow}}
+                    icon-cog(spin="true")
+                    | &nbsp;
+                    strong {{ openingRowMsg }}
                     | {{else}}
-                    //- -----------------------------------------------
-                    //- columns
-                    //- -----------------------------------------------
-                    +each(".cols").
-                        <td>{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</td>
+                    btn-group
+                        | {{#unless readonly}}
+                        btn(
+                            on-buttonclick="toggleEditing"
+                            type="{{#if editTooltip }}danger{{else}}default{{/if}}"
+                            active="{{editable}}"
+                            tooltip="Düzenle"
+                            )
+                            | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
+                            icon-pencil
+                        | {{/unless}}
+                        btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
+                    hr
+                    div(style="width: 75vw")
+                        | {{>viewForm}}
                     | {{/if}}
+                | {{else}}
+                //- -----------------------------------------------
+                //- columns
+                //- -----------------------------------------------
+                +each(".cols:i").
+                    <td data-th="{{columnList[i]}}">{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</td>
+                | {{/if}}
 
-        +if('settings.pageSize > 0')
-            +if('(tableview.length / settings.pageSize) > 1')
-                tfoot
-                    tr
-                        td(colspan="{{ columnList.length + 1 }}")
-                            btn-group
-                                +each('range(1, Math.ceil(tableview.length / settings.pageSize)):i')
-                                    btn(on-buttonclick="selectPage" value="{{ i }}") {{ . }}
+    +if('settings.pageSize > 0')
+        +if('(tableview.length / settings.pageSize) > 1')
+            tfoot
+                tr
+                    td(colspan="{{ columnList.length + 1 }}")
+                        btn-group
+                            +each('range(1, Math.ceil(tableview.length / settings.pageSize)):i')
+                                btn(on-buttonclick="selectPage" value="{{ i }}") {{ . }}
