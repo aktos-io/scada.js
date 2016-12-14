@@ -39,7 +39,12 @@ module.exports = (file) ->
 
             ext = path.extname template-file
             template-full-path = path.join dirname, template-file
-            template-contents = fs.read-file-sync template-full-path .to-string!
+            try
+                template-contents = fs.read-file-sync template-full-path .to-string!
+            catch
+                __.emit 'error', e.message
+                return
+
 
             if ext is \.html
                 template-html = template-contents
@@ -78,7 +83,12 @@ module.exports = (file) ->
             #console.log "DEBUG: ractive-preparsify: compiling template: #{path.basename path.dirname file}/#{jade-file} #{template-id or \ALL_HTML }"
             # End of debug
 
-            parsed-template = Ractive.parse template-part
+            try
+                parsed-template = Ractive.parse template-part
+            catch
+                __.emit 'error', e.message
+                return
+
             JSON.stringify parsed-template
 
         this.push(content.replace /RACTIVE_PREPARSE\(([^\)]+)\)/g, preparse-jade)

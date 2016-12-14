@@ -49,10 +49,10 @@ paths.components-src = "#{paths.client-src}/components"
 
 notifier.notify {title: "aktos-scada2" message: "Project #{project}:#{app} started!"}
 
-on-error = (source, err) ->
-    msg = "GULP ERROR: #{source} :: "
-    notifier.notify {title: "GULP.#{source}", message: [ msg, err]} if notification-enabled
-    console.log msg, err
+on-error = (source, msg) ->
+    console-msg = "GULP ERROR: #{source} : #{msg}"
+    notifier.notify {title: console-msg, message: msg} if notification-enabled
+    console.log console-msg
 
 log-info = (source, msg) ->
     console-msg = "GULP INFO: #{source} : #{msg}"
@@ -83,6 +83,7 @@ only-compile = yes if argv.compile is true
 
 pug-entry-files = glob.sync "#{paths.client-webapps}/**/#{app}/index.pug"
 ls-entry-files = glob.sync "#{paths.client-webapps}/**/#{app}/index.ls"
+html-entry-files = glob.sync "#{paths.client-webapps}/#{app}/index.html"
 
 for-css =
     "#{paths.vendor-folder}/**/*.css"
@@ -107,6 +108,9 @@ gulp.task \default, ->
     watch pug-entry-files, ->
         gulp.start \pug
 
+    watch html-entry-files, ->
+        gulp.start \html
+
     watch for-css, (event) ->
         gulp.start <[ vendor-css ]>
 
@@ -119,6 +123,8 @@ gulp.task \default, ->
         "#{paths.client-webapps}/#{app}/**/*.pug"
         "#{paths.client-src}/**/*.pug"
         "#{paths.client-src}/**/*.ls"
+        "#{paths.client-webapps}/#{app}/**/*.html"
+        "#{paths.client-src}/**/*.html"
 
     watch for-browserify, ->
         gulp.start \browserify
@@ -129,9 +135,10 @@ gulp.task \copy-js, ->
         .pipe gulp.dest paths.client-apps
 
 gulp.task \html, ->
-    base = "#{paths.client-webapps}"
-    gulp.src "#{base}/**/*.html", {base: base}
-        .pipe gulp.dest "#{paths.client-public}"
+    gulp.src html-entry-files
+        .pipe rename basename: app
+        .pipe flatten!
+        .pipe gulp.dest paths.client-public
 
 
 
@@ -147,19 +154,16 @@ bundler = browserify do
     #package-cache: {}
     plugin: [watchify unless only-compile]
 
-bundler.transform \browserify-livescript
+bundler.transform browserify-livescript
 bundler.transform ractive-preparserify
 bundler.transform browserify-optimize-js
 
 function bundle
     bundler
-        .on \error, (err) ->
-            console.log "some nice error..."
-            @emit \end
         .bundle!
         .on \error, (err) ->
             on-error \browserify, err
-            console.log "err stack: ", err.stack
+            #console.log "err stack: ", err.stack
             @emit \end
         .pipe source "public/#{app}.js"
         .pipe buffer!
