@@ -19,18 +19,18 @@ panel(type="info" title="data-table")
                     btn(on-buttonclick="setFilter" value="all") Show all
                     btn(on-buttonclick="setFilter" value="pink" type="info") Show only pinks
 
-            debug-obj(obj="{{ tabledata }}")
         //- -------------------------------------------------------------------------
         //- ------------------------- VIEW FORM -------------------------------------
         //- -------------------------------------------------------------------------
         +partial('viewForm')
-            debug-obj(obj="{{ curr }}")
             h3 This is viewForm!
             p Any html design here is shown when you doubleclick a row.
 
             p Our document looks like as follows:
 
             key-value-grid(key="document type") {{ curr.type }}
+
+            key-value-grid(key="document name") {{ curr.name }}
 
             key-value-grid(key="timestamp: ") {{ curr.timestamp }}
 
@@ -44,10 +44,12 @@ panel(type="info" title="data-table")
 
         +partial('editForm')
             h3 This is editForm!
-            debug-obj(obj="{{ curr }}")
             key-value-grid(key="set your document type")
                 input(value="{{ curr.type }}" placeholder="document type")
 
+            key-value-grid(key="document name")
+                input(value="{{ curr.name }}" placeholder="name")
+                    
             h3 Entries:
                 ul
                     +each('curr.entries')
