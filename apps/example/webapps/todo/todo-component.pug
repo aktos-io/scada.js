@@ -1,19 +1,18 @@
-panel(title="Add new item")
+panel(title="{{ yield }}")
     input(value="{{ newEntry.content }}" placeholder="content...")
 
     ack-button(
         on-buttonclick="addNewItem"
         ) Add New Item
 
+    br
+    span {{ doneItemsLength }} out of {{ itemsLength }} items done.
+
     ul.list-group
         +each('checklist')
             li.list-group-item
                 checkbox(
-                    checked="{{#if .doneTimestamp !== null}}true{{else}}false{{/if}}"
-                    on-statechange="stateChanged"
-                    ) {{ .content }}
-
-    ul
-        +each('log')
-            li
-                span "{{ .action }}" action taken with id {{ .targetId }} on {{ unixToReadable(.timestamp) }}
+                    checked="{{ .isDone }}"
+                    on-statechange="statechanged"
+                    value="{{ .id }}"
+                    async) {{ .content }}
