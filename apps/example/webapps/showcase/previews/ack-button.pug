@@ -1,0 +1,27 @@
+panel(type="info" title="ack-button")
+    .content
+        .row
+            .col-md-12
+                pre ack-button(on-buttonclick="testAckButton1" value="\{{ button.boundVal }}") MY BUTTON
+            .col-md-12
+                checkbox(checked="{{ button.show }}") Show/hide Bound component 1
+        .row
+            .col-md-6
+                h3 Bound component1
+                +if('button.show')
+                    ack-button(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") MY BUTTON
+                hr
+                p
+                    span Button will send
+                    input(value="{{ button.boundVal }}" placeholder="this")
+                    span value to here => #[tag {{ button.sendValue }}] after 3 seconds...
+                p Button state: {{ button.state1 }}
+            .col-md-6
+                h3 Bound component2
+                ack-button(on-buttonclick="testAckButton1" value="{{ button.boundVal }}") MY BUTTON2
+                p Button will send "{{ button.boundVal }}" after click.
+        .row
+            .col-md-12
+                h3 Unbound (free) instance
+                ack-button(state="{{ button.unboundState }}" on-buttonclick="testAckButton2" value="my-test-value") MY BUTTON3
+                p Button State: {{ button.unboundState }}

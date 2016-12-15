@@ -1,5 +1,7 @@
-.form-group.row
-    label.col-xs-2.col-form-label 
-        b {{ key }}
-    .col-xs-10
-        | {{yield}}
+//- http://getbootstrap.com.vn/examples/equal-height-columns/
+.container-fluid
+    .row.row-eq-height(style="margin-top: 1.6em; padding-bottom: 8px;  border-bottom: 1px solid lightgray")
+        .col-md-3
+            b {{ key }}
+        .col-md-9(style="max-width: 100%")
+            | {{yield}}

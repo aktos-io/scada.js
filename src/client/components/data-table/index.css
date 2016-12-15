@@ -1,0 +1,79 @@
+/* @import "http://fonts.googleapis.com/css?family=Montserrat:300,400,700";
+*/
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.rwd-table {
+  margin: 1em 0;
+  min-width: 300px;
+}
+.rwd-table tr {
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+.rwd-table th {
+  display: none;
+}
+.rwd-table td {
+  display: block;
+}
+.rwd-table td:first-child {
+  padding-top: .5em;
+}
+.rwd-table td:last-child {
+  padding-bottom: .5em;
+}
+.rwd-table tr:nth-child(odd) {
+    background-color: rgb(0, 80, 50, 0.05);
+}
+
+.rwd-table td:before {
+  content: attr(data-th) " ";
+  font-weight: bold;
+  display: inline-block;
+}
+.rwd-table th, .rwd-table td {
+  text-align: left;
+}
+.rwd-table {
+  border-radius: .4em;
+  overflow: hidden;
+}
+.rwd-table tr {
+  border-color: #46637f;
+}
+.rwd-table th, .rwd-table td {
+  margin: .5em 1em;
+}
+.rwd-table th, .rwd-table td:before {
+  color: black;
+}
+
+
+
+
+
+@media (min-width: 800px) {
+  .rwd-table th, .rwd-table td {
+    padding: 1em !important;
+  }
+}
+@media (min-width: 800px) {
+  .rwd-table th, .rwd-table td {
+    display: table-cell;
+    padding: .25em .5em;
+  }
+  .rwd-table th:first-child, .rwd-table td:first-child {
+    padding-left: 0;
+  }
+  .rwd-table th:last-child, .rwd-table td:last-child {
+    padding-right: 0;
+  }
+}
+@media (min-width: 800px) {
+  .rwd-table td:before {
+    display: none;
+  }
+}

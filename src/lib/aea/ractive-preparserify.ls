@@ -1,5 +1,5 @@
 require! 'through2': through
-require! <[ pug path cheerio ]>
+require! <[ pug path cheerio fs ]>
 require! 'ractive':Ractive
 require! 'prelude-ls': {map}
 
@@ -31,33 +31,64 @@ Example:
 
 module.exports = (file) ->
     through (buf, enc, next) ->
+        __ = this
         content = buf.to-string \utf8
         dirname = path.dirname file
         preparse-jade = (m, params-str) ->
-            [jade-file, template-id] = params-str.split ',' |> map (.replace /["'\s]+/g, '')
+            [template-file, template-id] = params-str.split ',' |> map (.replace /["'\s]+/g, '')
 
-            jade-file-full-path = path.join dirname, jade-file
-            html = try
-                pug.render-file jade-file-full-path
+            ext = path.extname template-file
+            template-full-path = path.join dirname, template-file
+            try
+                template-contents = fs.read-file-sync template-full-path .to-string!
             catch
-                console.error "ERROR: ractive-parserify: #{e}"
-                ''
+                __.emit 'error', e.message
+                return
 
-            template-html = if template-id
-                $ = cheerio.load html
+
+            if ext is \.html
+                template-html = template-contents
+            else if ext is \.pug
+                try
+                    # include templates/mixins.pug file
+                    mixin-relative = path.relative dirname, process.cwd!
+                    mixin-include = "include #{mixin-relative}/src/client/templates/mixins.pug\n"
+                    template-contents = mixin-include + template-contents
+                    fn = pug.compile template-contents, {filename: file}
+                    template-html = fn!
+                catch _ex
+                    e = {}
+                    #console.error "ERROR: ractive-parserify: #{e}"
+                    e.name = 'Ractive Preparse Error'
+                    e.message = _ex.message
+                    e.fileName = template-full-path
+                    console.log "cwd: ", process.cwd!
+                    console.log "err file: ", template-full-path
+                    __.emit 'error', _ex.message
+                    return
+
+
+
+            template-part = if template-id
+                $ = cheerio.load template-html
                 try
                     $ template-id .html!
                 catch
                     console.error "ERROR: ractive-preparserify: can not get template id: #{template-id} from ", html
                     ''
             else
-                html
+                template-html
 
             # Debug
             #console.log "DEBUG: ractive-preparsify: compiling template: #{path.basename path.dirname file}/#{jade-file} #{template-id or \ALL_HTML }"
             # End of debug
 
-            parsed-template = Ractive.parse template-html
+            try
+                parsed-template = Ractive.parse template-part
+            catch
+                __.emit 'error', e.message
+                return
+
             JSON.stringify parsed-template
 
         this.push(content.replace /RACTIVE_PREPARSE\(([^\)]+)\)/g, preparse-jade)

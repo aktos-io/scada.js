@@ -1,5 +1,5 @@
-component-name = "coll-panel"
-Ractive.components[component-name] = Ractive.extend do
+component = require \path .basename __dirname
+Ractive.components[component] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->
@@ -17,3 +17,4 @@ Ractive.components[component-name] = Ractive.extend do
         collapsed: yes
         type: \default
         show-body: yes
+        style: ""

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+CURR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ROOT_DIR="$CURR_DIR/../../.."
+
+export NODE_PATH="${ROOT_DIR}/src/lib:$NODE_PATH"
+
+lsc server.ls --port=4002 --target=production

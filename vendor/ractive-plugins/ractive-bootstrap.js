@@ -401,9 +401,9 @@ var icons = [
 	"menu-up"
 ]
 
-Ractive.components['icon'] = Ractive.extend({template: "<span class='glyphicon glyphicon-{{name}}' aria-hidden='true' title='{{title}}'></span>"})
+Ractive.components['icon'] = Ractive.extend({template: "<span class='glyphicon glyphicon-{{name}} {{#spin}}gly-spin{{/spin}}' aria-hidden='true' title='{{title}}'></span>"})
 for( var i in icons ) {
-	Ractive.components['icon-' + icons[i]] = Ractive.extend({template: "<icon/>", data: {name: icons[i]}})
+	Ractive.components['icon-' + icons[i]] = Ractive.extend({template: "<icon spin='{{spin}}'/>", data: {name: icons[i], spin: false}})
 }
 
 icons = undefined
@@ -605,5 +605,5 @@ Ractive.components['pill'] = Ractive.components['tab'] // They are identical
 
 /* Tags & Badges */
 
-Ractive.components['tag'] = Ractive.extend({isolated: true, data: {type: 'default', size: null}, template: "<span class='label label-{{type}}' style='{{#if size}}font-size: {{size}}; {{/if}}' >{{yield}}</span>"})
+Ractive.components['tag'] = Ractive.extend({isolated: true, data: {type: 'default', size: null}, template: "<span class='label label-{{type}}' style='{{#if size}}font-size: {{size}}; line-height: {{size}} {{/if}}' >{{yield}}</span>"})
 Ractive.components['badge'] = Ractive.extend({isolated: true, template: "<span class='badge'>{{yield}}</span>"})

@@ -1,5 +1,5 @@
-component-name = "bar-chart"
-Ractive.components[component-name] = Ractive.extend do
+component = require \path .basename __dirname
+Ractive.components[component] = Ractive.extend do
     isolated: yes
     template: "\##{component-name}"
     oninit: ->

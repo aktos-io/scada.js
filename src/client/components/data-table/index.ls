@@ -5,8 +5,8 @@ require! 'prelude-ls': {
 require! 'aea': {sleep, merge, pack, unpack, unix-to-readable}
 require! 'randomstring': random
 
-component-name = "data-table"
-Ractive.components[component-name] = Ractive.extend do
+component = require \path .basename __dirname
+Ractive.components[component] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->
@@ -31,6 +31,7 @@ Ractive.components[component-name] = Ractive.extend do
             keyboard: no
             focus: yes
             show: no
+            backdrop: \static
 
         settings = @get \settings
 
@@ -87,11 +88,6 @@ Ractive.components[component-name] = Ractive.extend do
                 console.warn "data-table: create-view is called before first run!"
                 return
 
-            # for debugging purposes
-            c = __.get \createViewCounter
-            __.set \createViewCounter, (c + 1)
-            # end of debugging purposes
-
             filters = __.get \dataFilters
             selected-filter = __.get \selectedFilter
             tabledata = __.get \tabledata
@@ -107,7 +103,12 @@ Ractive.components[component-name] = Ractive.extend do
                     tabledata.unshift curr
                 else
                     # update curr in tabledata
-                    curr-in-table `merge` curr
+                    # replace all properties with new one
+                    for i of curr-in-table
+                        delete curr-in-table[i]
+                    for i of curr
+                        curr-in-table[i] = curr[i]
+
                 __.set \tabledata, tabledata
 
 
@@ -126,9 +127,13 @@ Ractive.components[component-name] = Ractive.extend do
                         items =
                             from: curr-page * settings.page-size
                             to: min ((curr-page + 1) * settings.page-size) - 1, (view.length - 1)
-                        __.set \tableview_visible, [.. for view when items.from <= ..no <= items.to ]
+
+                        __.set \tableview_visible, [view[index] for index of view when items.from <= index <= items.to ]
                     else
                         __.set \tableview_visible, view
+
+                    # for debugging purposes
+                    __.add \createViewCounter
                 catch
                     debugger
 
@@ -155,20 +160,20 @@ Ractive.components[component-name] = Ractive.extend do
             if _new and not __.get(\firstRunDone) and not first-run-started
                 # Run post init (from instance)
                 first-run-started := yes
-                console.log "Initializing tabledata with columns: #{settings.col-names}"
+                # debug: console.log "Initializing tabledata with columns: #{settings.col-names}"
                 try
                     if typeof settings.on-init is \function
                         settings.on-init.call this, ->
                             __.set \firstRunDone, yes
-                            console.log "finished initialization #{settings.col-names}"
+                            # debug: console.log "finished initialization #{settings.col-names}"
                             refresh-view!
-                        console.log "started initialization: #{settings.col-names}"
+                        # debug: console.log "started initialization: #{settings.col-names}"
 
 
                 catch
                     console.error "ERROR FROM DATA_TABLE: on-init: ", e
             else if _old is off and _new is on and __.get(\firstRunDone)
-                console.log "rising edge of enable, trigger change: #{settings.col-names}"
+                # debug: console.log "rising edge of enable, trigger change: #{settings.col-names}"
                 changes = __.get \changes
                 __.set \changes, ++changes
                 refresh-view!
@@ -227,8 +232,10 @@ Ractive.components[component-name] = Ractive.extend do
                     if typeof! settings.on-create-view is \Function
                         settings.on-create-view.call this, curr, ->
                             __.set \openingRow, no
+                            __.set \openingRowMsg, ""
                     else
                         __.set \openingRow, no
+                        __.set \openingRowMsg, ""
 
 
 
@@ -273,10 +280,10 @@ Ractive.components[component-name] = Ractive.extend do
 
                 @set \curr, new-order
                 @set \addingNew, true
-                #modal-new.modal \show
+                modal-new.modal \show
 
                 if typeof! settings.on-create-view is \Function
-                    settings.on-create-view.call this, new-order
+                    settings.on-create-view.call this, new-order, ->
 
 
             new-order-close: ->
@@ -305,24 +312,13 @@ Ractive.components[component-name] = Ractive.extend do
                     __.set \saving, "#{__.get \saving} : #{err.message}"
                     button-state \error, err.message
                 else
-                    console.log "New order put in the database", res
-                    # if adding new document, clean up current document
-                    console.log "order putting database: ", order-doc
                     (__.get \create-view) order-doc
+                    order-doc._rev = res.rev
+                    __.set \curr, order-doc
 
-                    if order-doc._rev is void
-                        console.log "refreshing new order...."
-                        __.set \curr, get-default-document!
-                    else
-                        console.log "order had rev: ", order-doc._rev
-                        order-doc._rev = res.rev
-                        console.log "Updating current order document rev: ", order-doc._rev
-                        __.set \curr, order-doc
-
-                    __.set \saving, "OK!"
                     button-state \done...
                     # TODO: use "kick-changes! function"
-                    __.set \changes, (1 + __.get \changes)
+                    __.add \changes
 
             add-new-entry: (keypath) ->
                 __ = @
@@ -424,6 +420,7 @@ Ractive.components[component-name] = Ractive.extend do
         changes: 0
         first-run-done: no
         opening-row: no
+        opening-row-msg: ''
         is-editing-line: (index) ->
             editable = @get \editable
             clicked-index = @get \clickedIndex

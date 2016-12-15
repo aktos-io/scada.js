@@ -1,5 +1,5 @@
-component-name = "search-combobox"
-Ractive.components[component-name] = Ractive.extend do
+component = require \path .basename __dirname
+Ractive.components[component] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->
@@ -18,6 +18,7 @@ Ractive.components[component-name] = Ractive.extend do
             labelField: \name
             searchField: \name
 
+        @set \__selectize__, select
 
         select.on \change, (x) ->
             id = x.target.value
@@ -48,9 +49,14 @@ Ractive.components[component-name] = Ractive.extend do
                 box.set-value new-val
 
 
+    onteardown: ->
+        selectize = @get \__selectize__ .0.selectize
+        selectize.destroy!
 
     data: ->
         selected: null
         selected-text: ''
         multiple: 1
         multi-selected: null
+        placeholder: "Seçim yapın..."
+        __selectize__: null

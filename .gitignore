@@ -17,4 +17,5 @@ passwords.ls
 # project specific directories
 db
 /apps/*
-!/apps/aktos
+!/apps/example
+!/apps/template

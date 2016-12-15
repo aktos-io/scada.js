@@ -13,10 +13,12 @@ html(lang="en-GB" moznomarginboxes mozdisallowselectionprint)
         link(rel="icon" href="/favicon.ico")
         block title
             title My Example Page
-        block head 
+        block head
+        script if (typeof module === 'object') {window.module = module; module = undefined;}
         script(src="js/vendor.js")
+        script if (window.module) module = window.module;
         link(rel="stylesheet", href="css/vendor.css")
     body
-        #main-output. 
+        #main-output.
             Loading...
-        block script 
+        block script

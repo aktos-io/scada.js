@@ -1,9 +1,8 @@
 {split, take, join, lists-to-obj, sum} = require 'prelude-ls'
 {sleep} = require "aea"
 
-
-component-name = "date-picker"
-Ractive.components[component-name] = Ractive.extend do
+component = require \path .basename __dirname
+Ractive.components[component] = Ractive.extend do
     isolated: yes
     template: RACTIVE_PREPARSE('index.pug')
 

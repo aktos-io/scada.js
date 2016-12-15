@@ -1,24 +1,19 @@
 include ../../templates/mixins.pug
-//- 
-    parameters: 
+//-
+    parameters:
         ... TODO
-        
-    internals: 
+
+    internals:
         tableview: [{id: column-id, cols: [col1, col2, col3, ...], background-color: css-color} for rows]
 .modal.modal-error.fade(tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
     .modal-dialog(role="document")
         .modal-content.modal-danger
             .modal-header.
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
                 <h4 class="modal-title">Hata</h4>
-                
             .modal-body {{errorMessage}}
-
             .modal-footer
 
-.modal.modal-new.fade(tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
+.modal.modal-new.fade(tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true")
     .modal-dialog(role="document")
         .modal-content.modal-danger
             .modal-header.
@@ -26,33 +21,36 @@ include ../../templates/mixins.pug
                   <span aria-hidden="true">&times;</span>
                 </button>
                 <h4 class="modal-title">Yeni Kayıt</h4>
-                
-                
-            .modal-body {{#if addingNew}}{{>editForm}}{{/if}}
+
+            .modal-body(
+                style="max-height: calc(100vh - 200px); overflow-y: auto;")
+                | {{#if addingNew}}
+                | {{>editForm}}
+                | {{/if}}
 
             .modal-footer
-b-table 
+
+| {{>header}}
+table.rwd-table
     thead
         +unless('readonly')
             tr
                 td(colspan="{{ columnList.length + 1 }}")
-                    row 
+                    row
                         .col-md-3.col-sm-3
                             btn(on-buttonclick="addNewOrder")
                                 icon-plus
                                 span {{yield addnewTitle}}
                         .col-md-6
                         .col-md-3
-                                
+                //-
                     .row
                         .col-md-12.
                              {{#if addingNew}}{{>editForm}}{{/if}}
         tr
             td(colspan="{{ columnList.length + 1 }}")
-                | {{>header}}
-        tr
-            td(colspan="{{ columnList.length + 1 }}")
                 ack-button(on-buttonclick="kickChanges") Yenile ({{ createViewCounter }})
+                span(style="color: lightgray; margin-left: 20px") {{#unless openingRow}}{{ openingRowMsg }}{{/unless}}
 
 
         tr.
@@ -63,12 +61,14 @@ b-table
     tbody
         +each('tableview_visible:i')
             tr.input-line(
-                style="{{#if isClicked(.id)}}border: 2px solid white;{{/if}}{{#if isEditingLine(.id)}}border: 2px dashed white;{{/if}} {{.style}}"
+                style="{{#if isClicked(.id)}}{{#if isEditingLine(.id)}}border: 2px dashed white;{{else}}border: 2px solid white; {{/if}}{{elseif clickedIndex !== null}}opacity: 0.4; background-color: gray;{{/if}}{{.style}}"
                 on-doubleclick="clicked"
                 )
                 | {{#if isEditingLine(.id)}}
-                // edit form 
-                td(colspan="{{ columnList.length + 1 }}")
+                //- -----------------------------------------------
+                //- edit form
+                //- -----------------------------------------------
+                td(colspan="{{ columnList.length + 1 }}" )
                     btn-group
                         | {{#unless readonly}}
                         btn(
@@ -78,15 +78,23 @@ b-table
                             tooltip="Düzenle"
                             )
                             | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
-                            icon-pencil 
+                            icon-pencil
                         | {{/unless}}
                         btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
                     hr
-                    | {{>editForm}}
+                    div(style="width: 75vw")
+                        | {{>editForm}}
+
                 | {{elseif isClicked(.id)}}
-                
-                // view form 
-                td(colspan="{{ columnList.length + 1 }}" style="color: black") 
+                //- -----------------------------------------------
+                //- view form
+                //- -----------------------------------------------
+                td(colspan="{{ columnList.length + 1 }}" )
+                    | {{#if openingRow}}
+                    icon-cog(spin="true")
+                    | &nbsp;
+                    strong {{ openingRowMsg }}
+                    | {{else}}
                     btn-group
                         | {{#unless readonly}}
                         btn(
@@ -96,21 +104,21 @@ b-table
                             tooltip="Düzenle"
                             )
                             | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
-                            icon-pencil 
+                            icon-pencil
                         | {{/unless}}
                         btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
                     hr
-                    div.
-                        {{#if openingRow}}
-                        #[strong Opening row...]
-                        {{else}}
-                        {{>viewForm}}
-                        {{/if}}
+                    div(style="width: 75vw")
+                        | {{>viewForm}}
+                    | {{/if}}
                 | {{else}}
-                +each(".cols").
-                    <td>{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</td>
+                //- -----------------------------------------------
+                //- columns
+                //- -----------------------------------------------
+                +each(".cols:i").
+                    <td data-th="{{columnList[i]}}">{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</td>
                 | {{/if}}
-    
+
     +if('settings.pageSize > 0')
         +if('(tableview.length / settings.pageSize) > 1')
             tfoot
@@ -119,4 +127,3 @@ b-table
                         btn-group
                             +each('range(1, Math.ceil(tableview.length / settings.pageSize)):i')
                                 btn(on-buttonclick="selectPage" value="{{ i }}") {{ . }}
-                    

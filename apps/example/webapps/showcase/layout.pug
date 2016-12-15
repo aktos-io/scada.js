@@ -1,0 +1,19 @@
+aea-theme
+    aea-menu(menu="{{menu}}" selected="{{testMenu.selected}}")
+    aea-content
+        +partial('header')
+            p hi! this is header!
+        +partial('body')
+            include ./previews/checkbox.pug
+            include ./previews/ack-button.pug
+            include ./previews/example-component.pug
+            include ./previews/search-combobox.pug
+            include ./previews/date-picker.pug
+            include ./previews/test-data-table/my-table.pug
+
+    aea-footer
+        +partial('right')
+            span aktos.io
+
+        +partial('left')
+            span showcase page
