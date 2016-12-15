@@ -4,7 +4,7 @@ require! 'aea': {
     sleep,
     # unix-to-readable
 }
-require! './todo-component'
+require! './todo'
 
 unix-to-readable-ms = (unix) ->
   display = moment (new Date unix) .format 'DD.MM.YYYY HH:mm.ss'

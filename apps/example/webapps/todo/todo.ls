@@ -54,7 +54,7 @@ enable-dependants = (list, id) !->
     return list
 
 Ractive.components['todo'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('todo-component.pug')
+    template: RACTIVE_PREPARSE('todo.pug')
     isolated: true
     oninit: ->
         items = @get \checklist
