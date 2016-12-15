@@ -2,13 +2,9 @@ require! 'prelude-ls': {group-by, sort-by}
 require! components
 require! 'aea': {
     sleep,
-    # unix-to-readable
+    unix-to-readable
 }
 require! './todo'
-
-unix-to-readable-ms = (unix) ->
-  display = moment (new Date unix) .format 'DD.MM.YYYY HH:mm.ss'
-  display
 
 ractive = new Ractive do
     el: '#main-output'
@@ -43,4 +39,4 @@ ractive = new Ractive do
               depends-on: [3, 5]
         log: []
 
-        unix-to-readable: unix-to-readable-ms
+        unix-to-readable: unix-to-readable

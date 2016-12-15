@@ -1,6 +1,6 @@
 require! 'prelude-ls': {group-by, sort-by}
 require! components
-require! 'aea': {sleep}
+require! 'aea': {sleep, unix-to-readable}
 require! './simulate-db': {db}
 require! './previews/test-data-table/my-table': {my-table}
 
@@ -40,6 +40,27 @@ ractive = new Ractive do
         checkbox:
             checked1: no
             checked2: no
+        todos:
+            * id: 1
+              content: 'This is done by default'
+              done-timestamp: 1481778240000
+            * id: 2
+              content: 'This is done by default too'
+              done-timestamp: 1481778242000
+            * id: 3
+              content: 'This can not be undone'
+              can-undone: false
+            * id: 4
+              content: 'This has a due time'
+              due-timestamp: 1481778240000
+            * id: 5
+              content: 'This depends on 1 and 2'
+              depends-on: [1, 2]
+            * id: 6
+              content: 'This depends on 3 and 5 (above one)'
+              depends-on: [3, 5]
+        log: []
+        unix-to-readable: unix-to-readable
 
 ractive.on do
     test-ack-button1: (ev, value) ->
@@ -60,3 +81,14 @@ ractive.on do
         ev.component.fire \state, \doing
         <- sleep 2000ms
         ev.component.fire \state, intended-state
+
+    todostatechanged: (ev, list, item-index) ->
+        console.log "todo item with id of " + " state's changed from " + " to " + ""
+        console.log ev
+
+    todocompletion: ->
+        console.log "all todo items has been done"
+
+    todotimeout: (item) ->
+        console.log "an item in todo list had been timed out"
+        console.log item

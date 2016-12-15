@@ -1,0 +1,20 @@
+panel(type="info" title="todo")
+    .content
+        .row
+            .col-md-8
+                .row
+                    .col-md-12
+                        todo(
+                            checklist="{{ todos }}"
+                            log="{{ log }}"
+                            on-statechange="todostatechanged"
+                            on-completion="todocompletion"
+                            on-timeout="todotimeout"
+                            ) My TODO list HEADER
+                .row
+                    .col-md-12
+                        h2 Log
+                        ul
+                            +each('log')
+                                li
+                                    span "{{ .action }}" action taken with id {{ .targetId }} on {{ unixToReadable(.timestamp) }}
