@@ -1,22 +1,19 @@
-span this is the todo component
+panel(title="Add new item")
+    input(value="{{ newEntry.content }}" placeholder="content...")
 
-//- panel(title="Add new item")
-//-     input(value="{{ newEntry.id }}" placeholder="id")
-//-     input(value="{{ newEntry.content }}" placeholder="content...")
+    ack-button(
+        on-buttonclick="addNewItem"
+        ) Add New Item
 
-//-     ack-button(
-//-         on-buttonclick="addNewItem"
-//-         tooltip="naber"
-//-         value="{{ newEntry }}"
-//-         ) Add New Item
+    ul.list-group
+        +each('checklist')
+            li.list-group-item
+                checkbox(
+                    checked="{{#if .doneTimestamp !== null}}true{{else}}false{{/if}}"
+                    on-statechange="stateChanged"
+                    ) {{ .content }}
 
-//- ul.list-group
-//-     +each('checklist')
-//-         li.list-group-item
-//-             //- checkbox(checked="{{ .done }}") {{ .content }} is done: {{ .done ? 'yes' : 'no'}}
-//-             todo-item(timestamp="{{ .doneTimestamp }}" checked="{{ .done }}").
-//-                 {{ .content }}
-//-             span.
-//-                 {{#if .done }}
-//-                     (done at: {{unixToReadable(.doneTimestamp)}})
-//-                 {{/if}}
+    ul
+        +each('log')
+            li
+                span "{{ .action }}" action taken with id {{ .targetId }} on {{ unixToReadable(.timestamp) }}
