@@ -59,15 +59,6 @@ log-info = (source, msg) ->
     notifier.notify {title: "GULP.#{source}", message: msg} if notification-enabled
     console.log console-msg
 
-is-entry-point = (file) ->
-    [filename, ext] = path.basename file .split '.'
-    base-dirname = path.basename path.dirname file
-    if filename is base-dirname
-        return true
-    if filename is \index
-        return true
-    return false
-
 deleteFolderRecursive = (path) ->
     if fs.existsSync(path)
         fs.readdirSync(path).forEach (file,index) ->
