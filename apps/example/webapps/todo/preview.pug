@@ -1,20 +1,5 @@
-panel(title="Add new item")
-    input(value="{{ newEntry.id }}" placeholder="id")
-    input(value="{{ newEntry.content }}" placeholder="content...")
+include todo
 
-    ack-button(
-        on-buttonclick="addNewItem"
-        tooltip="naber"
-        value="{{ newEntry }}"
-        ) Add New Item
-
-ul.list-group
-    +each('todos')
-        li.list-group-item
-            //- checkbox(checked="{{ .done }}") {{ .content }} is done: {{ .done ? 'yes' : 'no'}}
-            todo-item(timestamp="{{ .doneTimestamp }}" checked="{{ .done }}").
-                {{ .content }}
-            span.
-                {{#if .done }}
-                    (done at: {{unixToReadable(.doneTimestamp)}})
-                {{/if}}
+todo(
+    checklist="{{ todos }}"
+    )
