@@ -3,7 +3,7 @@ require! components
 require! 'aea': {
     sleep, unix-to-readable
 }
-require! todo
+# require! './todo-component'
 
 ractive = new Ractive do
     el: '#main-output'

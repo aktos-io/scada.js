@@ -1,5 +1,5 @@
 Ractive.components['todo'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('todo.pug')
+    template: RACTIVE_PREPARSE('todo-component.pug')
     isolated: true
     onrender: ->
         console.log 'a new instance of todo component initialized'
