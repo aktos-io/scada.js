@@ -11,4 +11,5 @@ Ractive.components['text-button'] = Ractive.extend do
         value: null
         disabled: no
         enabled: yes
-        type: "text"
+        inputType: "text"
+        buttonType: "info"
