@@ -25,3 +25,9 @@ panel(type="info" title="ack-button")
                 h3 Unbound (free) instance
                 ack-button(state="{{ button.unboundState }}" on-buttonclick="testAckButton2" value="my-test-value") MY BUTTON3
                 p Button State: {{ button.unboundState }}
+        .row
+            .col-md-12
+                h3 Unbound (free) info instance
+                input(value="{{ button.info }}" placeholder="This info will be shown")
+                ack-button(state="{{ button.unboundStateInfo }}" on-buttonclick="testAckButton3" info="{{ button.info }}" value="my-test-value") MY BUTTON4
+                p Button State: {{ button.unboundStateInfo }}

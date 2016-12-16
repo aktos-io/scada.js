@@ -8,6 +8,19 @@
 
             .modal-footer
 
+.modal.modal-confirmation.fade(tabindex="-1" role="dialog" aria-labelledby="confirmation-modal" aria-hidden="true")
+    .modal-dialog(role="document")
+        .modal-content
+            .modal-header
+                h4.modal-title {{ infoTitle }}
+
+            .modal-body
+                p {{ infoMessage }}
+
+            //- .modal-footer.
+            //-     <button type="button" class="btn btn-default" data-dismiss="confirmation-modal">Close</button>
+            //-     <button type="button" class="btn btn-primary">Save changes</button>
+
 btn(
     on-buttonclick="click"
     value="{{value}}"

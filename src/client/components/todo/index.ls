@@ -11,7 +11,7 @@ empty-item =
     can-undone: true
     depends-on: [] # id list of this item dependencies - this item can not bu done unless dependencies are done
     enabled: true # since default depends-on is empty, this must be true
-    editing: false
+    is-editing: false
 
 # TODO use aea.merge instead
 defaults-merge = (obj, src) !->
@@ -77,6 +77,12 @@ Ractive.components['todo'] = Ractive.extend do
         @set \checklist new-list
 
         @on do
+            click: ->
+                # TODO experimental
+                # {{#if isEditable}}editItem{{/if}}:{{ .id }}
+                if @get \is-editable
+                    @fire \edit-item, this, this.id
+
             addNewItem: ->
                 new-entry-content = @get \newEntryContent
                 checklist = @get \checklist
@@ -106,7 +112,7 @@ Ractive.components['todo'] = Ractive.extend do
 
                 the-item.new-content = the-item.content
                 the-item.new-due-timestamp = the-item.due-timestamp
-                the-item.editing = true;
+                the-item.is-editing = true;
 
                 @update \checklist
 
@@ -135,7 +141,7 @@ Ractive.components['todo'] = Ractive.extend do
                     the-item.due-timestamp = the-item.new-due-timestamp
                     the-item.new-due-timestamp = null
 
-                the-item.editing = false
+                the-item.is-editing = false
 
                 if additional.length > 0
                     log.unshift do
@@ -153,7 +159,7 @@ Ractive.components['todo'] = Ractive.extend do
 
                 the-item.new-content = null
 
-                the-item.editing = false
+                the-item.is-editing = false
 
                 @update \checklist
 
@@ -194,8 +200,25 @@ Ractive.components['todo'] = Ractive.extend do
                 @fire \statechange ev, checklist, the-index
 
                 @fire \completion if checklist.length == @get \doneItemsLength
+
+        @observe \is-editable, (new-value, old-value) ->
+            # TODO If is-editable set to false, un-edit any currently is-editing items
+            console.log \zaa
+            # if new-value is no
+            #     checklist = @get \checklist
+            #     for item in checklist
+            #         console.log item
+            #         if item.is-editing
+            #             # un-edit the item and flush all changes
+            #             item.new-content = null
+            #             item.new-due-timestamp = null
+
+            #             item.is-editing = false
+
+            #     @update \checklist
     data: ->
         title: 'Todo List'
+        is-editable: false
         checklist:
             * id: 0
               content: 'Dummy Todo'
@@ -203,7 +226,7 @@ Ractive.components['todo'] = Ractive.extend do
               done-timestamp: null
               due-timestamp: null
               enabled: false
-              editing: false
+              is-editing: false
             ...
         log: []
         new-entry-content: null

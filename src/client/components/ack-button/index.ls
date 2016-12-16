@@ -14,6 +14,13 @@ Ractive.components[component] = Ractive.extend do
             focus: yes
             show: no
 
+        modal-confirmation = $ @find \.modal-confirmation
+
+        modal-confirmation.modal do
+            keyboard: yes
+            focus: yes
+            show: no
+
         @observe \tooltip, (new-val) ->
             __.set \reason, new-val
 
@@ -44,6 +51,13 @@ Ractive.components[component] = Ractive.extend do
                     __.set \reason, msg
                     modal-error.modal \show
 
+                if s in <[ info ]>
+                    __.set \state, \info
+
+                    @set \infoTitle msg.title
+                    @set \infoMessage msg.message
+                    modal-confirmation.modal \show
+
                 __.set \selfDisabled, self-disabled
 
 
@@ -60,3 +74,5 @@ Ractive.components[component] = Ractive.extend do
         self-disabled: no
         enabled: yes
         state: ''
+        info-title: ''
+        info-message: ''

@@ -86,6 +86,11 @@ ractive.on do
         <- sleep 3000ms
         ev.component.fire \state, \done
 
+    test-ack-button3: (ev, value) ->
+        ev.component.fire \state, \info, {title: 'My Title', message: 'Hello there'}
+        <- sleep 3000ms
+        ev.component.fire \state, \done
+
     checkboxchanged: (ev, curr-state, intended-state, value) ->
         console.log "checkbox event fired, curr: #{curr-state}"
         ev.component.fire \state, \doing

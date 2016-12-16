@@ -6,11 +6,16 @@ panel(title="{{ yield }}")
         ) Add New Item
 
     br
+    checkbox(
+        checked="{{ isEditable }}"
+        ) Editable
+
+    br
     span {{ doneItemsLength }} out of {{ itemsLength }} items done.
 
     ul.list-group
         +each('checklist')
-            li.list-group-item(class="{{#if .isDone}}checklist-item-done{{/if}} {{#if .editing}}checklist-item-editing{{/if}}")
+            li.list-group-item(class="{{#if .isDone}}checklist-item-done{{/if}} {{#if .isEditing}}checklist-item-editing{{/if}}")
                 checkbox(
                     checked="{{ .isDone }}"
                     on-statechange="statechanged"
@@ -20,12 +25,13 @@ panel(title="{{ yield }}")
                 button(
                     type="button"
                     value="{{ .id }}"
-                    on-click="editItem:{{ .id }}"
-                    disabled="{{ .editing }}"
+                    on-click="click"
+                    disabled="{{ .isEditing }}"
+                    hidden="{{ !isEditable }}"
                     ) Edit
 
                 div.
-                    {{#if .editing}}
+                    {{#if .isEditing}}
                         <input type="text" value="{{ .newContent }}" />
                         <date-picker unix="{{ .newDueTimestamp }}" mode="popup"></date-picker>
                         <button type="button" value="{{ .id }}" on-click="saveChanges:{{ .id }}">Save</button>
