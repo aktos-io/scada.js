@@ -61,14 +61,14 @@ table.rwd-table
     tbody
         +each('tableview_visible:i')
             tr.input-line(
-                style="{{#if isClicked(.id)}}{{#if isEditingLine(.id)}}border: 2px dashed white;{{else}}border: 2px solid white; {{/if}}{{elseif clickedIndex !== null}}opacity: 0.4; background-color: gray;{{/if}}{{.style}}"
+                style="{{#if isClicked(.id)}}{{#if isEditingLine(.id)}}border: 2px dashed white;{{else}}border: 2px solid white; {{/if}}{{elseif clickedIndex !== null}}opacity: 0.4; background-color: gray;{{/if}}{{.style}}{{#if isLastClicked(.id)}}border: 2px solid #4285F4;{{/if}}"
                 on-doubleclick="clicked"
                 )
                 | {{#if isEditingLine(.id)}}
                 //- -----------------------------------------------
                 //- edit form
                 //- -----------------------------------------------
-                td(colspan="{{ columnList.length + 1 }}" )
+                td(colspan="{{ columnList.length + 1 }}" style="margin: 2px")
                     btn-group
                         | {{#unless readonly}}
                         btn(
@@ -89,7 +89,7 @@ table.rwd-table
                 //- -----------------------------------------------
                 //- view form
                 //- -----------------------------------------------
-                td(colspan="{{ columnList.length + 1 }}" )
+                td(colspan="{{ columnList.length + 1 }}" style="margin: 2px")
                     | {{#if openingRow}}
                     icon-cog(spin="true")
                     | &nbsp;
