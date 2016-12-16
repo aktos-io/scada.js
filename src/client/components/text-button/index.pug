@@ -1,5 +1,5 @@
 .input-group
-    input.form-control(value="{{ amount }}" style="min-width: 50px" type="number")
+    input.form-control(value="{{ amount }}" style="min-width: 50px" type="{{ type }}")
     span.input-group-btn
         ack-button(
             on-buttonclick="_buttonclick"
