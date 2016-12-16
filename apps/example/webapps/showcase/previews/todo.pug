@@ -1,20 +1,51 @@
 panel(type="info" title="todo")
     .content
         .row
+            .col-md-12
+                pre todo(checklist="\{{ list }}" log="\{{ log }}" on-statechange="statechanged" on-completion="completed" on-timeout="timedout")
+        .row
+            .col-md-12
+                checkbox(checked="{{ todo.show }}") Show/hide todo Bound component1
+        .row
+            .col-md-4
+                h3 Bound component1
+                +if('todo.show')
+                    todo(
+                        checklist="{{ todo.todos1 }}"
+                        log="{{ todos.log1 }}"
+                        on-statechange="todostatechanged"
+                        on-completion="todocompletion"
+                        on-timeout="todotimeout"
+                        ) todo Bound component1
+            .col-md-4
+                h3 Bound component2
+                todo(
+                    checklist="{{ todo.todos1 }}"
+                    log="{{ todos.log1 }}"
+                    on-statechange="todostatechanged"
+                    on-completion="todocompletion"
+                    on-timeout="todotimeout"
+                    ) todo Bound component2
+            .col-md-4
+                h3 UnBound (free) instance
+                todo(
+                    checklist="{{ todo.todos2 }}"
+                    log="{{ todos.log2 }}"
+                    on-statechange="todostatechanged2"
+                    on-completion="todocompletion2"
+                    on-timeout="todotimeout2"
+                    ) todo UnBound (free) instance
+        .row
             .col-md-8
-                .row
-                    .col-md-12
-                        todo(
-                            checklist="{{ todos }}"
-                            log="{{ log }}"
-                            on-statechange="todostatechanged"
-                            on-completion="todocompletion"
-                            on-timeout="todotimeout"
-                            ) My TODO list HEADER
-                .row
-                    .col-md-12
-                        h2 Log
-                        ul
-                            +each('log')
-                                li
-                                    span "{{ .action }}" action taken with id {{ .targetId }} on {{ unixToReadable(.timestamp) }}
+                h2 Log1
+                ul
+                    +each('todos.log1')
+                        li
+                            span "{{ .action }}" action taken with id {{ .targetId }} on {{ unixToReadable(.timestamp) }}
+
+            .col-md-4
+                h2 Log2
+                ul
+                    +each('todos.log2')
+                        li
+                            span "{{ .action }}" action taken with id {{ .targetId }} on {{ unixToReadable(.timestamp) }}
