@@ -1,5 +1,4 @@
-component = require \path .basename __dirname
-Ractive.components[component] = Ractive.extend do
+Ractive.components['file-upload'] = Ractive.extend do
     isolated: yes
     template: RACTIVE_PREPARSE('index.pug')
     onrender: ->

@@ -14,10 +14,7 @@ db-conf =
     url: "https://demeter.cloudant.com"
     database: 'domates2'
 
-
-
-component = require \path .basename __dirname
-Ractive.components[component] = Ractive.extend do
+Ractive.components['login'] = Ractive.extend do
     isolated: yes
     template: RACTIVE_PREPARSE('index.pug')
     onrender: ->

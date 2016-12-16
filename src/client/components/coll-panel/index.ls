@@ -1,5 +1,4 @@
-component = require \path .basename __dirname
-Ractive.components[component] = Ractive.extend do
+Ractive.components['coll-panel'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->
