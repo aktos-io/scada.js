@@ -62,7 +62,7 @@ table.rwd-table
         +each('tableview_visible:i')
             tr.input-line(
                 style="{{#if isClicked(.id)}}{{#if isEditingLine(.id)}}border: 2px dashed white;{{else}}border: 2px solid white; {{/if}}{{elseif clickedIndex !== null}}opacity: 0.4; background-color: gray;{{/if}}{{.style}}{{#if isLastClicked(.id)}}border: 2px solid #4285F4;{{/if}}"
-                on-doubleclick="clicked"
+                on-dblclick="dblclicked"
                 )
                 | {{#if isEditingLine(.id)}}
                 //- -----------------------------------------------

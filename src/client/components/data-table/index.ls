@@ -204,7 +204,7 @@ Ractive.components[component] = Ractive.extend do
 
 
         events =
-            clicked: (args) ->
+            dblclicked: (args) ->
                 __ = @
                 context = args.context
                 index = context.id
@@ -245,6 +245,7 @@ Ractive.components[component] = Ractive.extend do
                 @set \clickedIndex, null
                 @set \editable, no
                 @set \editingDoc, null
+                # DO NOT ADD THIS AGAIN: (@get \create-view) (@get \curr)
 
             toggle-editing: ->
                 editable = @get \editable
