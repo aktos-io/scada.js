@@ -105,10 +105,7 @@ Ractive.components['todo'] = Ractive.extend do
                 the-item = get-item-via-id checklist, item-id
 
                 the-item.new-content = the-item.content
-                if theItem.dueTimestamp !== null && theItem.dueTimestamp.toString().length < 13
-                    the-item.new-due-timestamp = the-item.due-timestamp * 1000
-                else
-                    the-item.new-due-timestamp = the-item.due-timestamp
+                the-item.new-due-timestamp = the-item.due-timestamp
                 the-item.editing = true;
 
                 @update \checklist
