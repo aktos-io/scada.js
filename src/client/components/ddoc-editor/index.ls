@@ -2,8 +2,7 @@ require! 'livescript': lsc
 require! 'prelude-ls': {camelize}
 require! 'aea': {merge, make-design-doc}
 
-component = require \path .basename __dirname
-Ractive.components[component] = Ractive.extend do
+Ractive.components['ddoc-editor'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     oninit: ->

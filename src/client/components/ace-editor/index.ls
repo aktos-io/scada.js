@@ -1,7 +1,6 @@
 modes = ace.require \ace/ext/modelist
 
-component = require \path .basename __dirname
-Ractive.components[component] = Ractive.extend do
+Ractive.components['ace-editor'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->
