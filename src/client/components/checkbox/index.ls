@@ -10,11 +10,20 @@ Ractive.components['checkbox'] = Ractive.extend do
             focus: yes
             show: no
 
+        @set \checked, (@get \ichecked)
+
         @observe \checked, (_new, _old) ->
             __.set \state, if _new then 'checked' else 'unchecked'
 
+        states =
+            checked: 1
+            unchecked: 0
         @on do
+            ichecked: (state) ->
+                __.set \ichecked, states[state]
+
             toggleChecked: ->
+                __.set \timestamp, Date.now!
                 if __.get(\async)
                     if __.get(\checked) then
                         [curr-state, intended-state] = <[ checked unchecked ]>
@@ -50,6 +59,7 @@ Ractive.components['checkbox'] = Ractive.extend do
 
     data: ->
         checked: no
+        ichecked: no
         style: ''
         reason: ''
         type: "default"
@@ -60,3 +70,4 @@ Ractive.components['checkbox'] = Ractive.extend do
         enabled: yes
         angle: 0
         tooltip: ''
+        timestamp: null

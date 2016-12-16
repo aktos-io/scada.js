@@ -1,0 +1,10 @@
+.input-group
+    input.form-control(value="{{ amount }}" style="min-width: 50px" type="number")
+    span.input-group-btn
+        ack-button(
+            on-buttonclick="_buttonclick"
+            value="{{ value }}"
+            disabled="{{ disabled }}"
+            enabled="{{ enabled }}"
+            )
+            | {{yield}}
