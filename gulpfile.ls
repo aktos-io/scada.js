@@ -50,23 +50,22 @@ paths.components-src = "#{paths.client-src}/components"
 notifier.notify {title: "aktos-scada2" message: "Project #{project}:#{app} started!"}
 
 on-error = (source, msg) ->
+    msg = try
+        msg.to-string!
+    catch
+        "unknown message: #{e}"
     console-msg = "GULP ERROR: #{source} : #{msg}"
     notifier.notify {title: console-msg, message: msg} if notification-enabled
     console.log console-msg
 
 log-info = (source, msg) ->
+    msg = try
+        msg.to-string!
+    catch
+        "unknown message: #{e}"
     console-msg = "GULP INFO: #{source} : #{msg}"
     notifier.notify {title: "GULP.#{source}", message: msg} if notification-enabled
     console.log console-msg
-
-is-entry-point = (file) ->
-    [filename, ext] = path.basename file .split '.'
-    base-dirname = path.basename path.dirname file
-    if filename is base-dirname
-        return true
-    if filename is \index
-        return true
-    return false
 
 deleteFolderRecursive = (path) ->
     if fs.existsSync(path)
@@ -162,8 +161,11 @@ function bundle
     bundler
         .bundle!
         .on \error, (err) ->
-            on-error \browserify, err
-            #console.log "err stack: ", err.stack
+            msg = try
+                err.message
+            catch
+                err
+            on-error \browserify, msg
             @emit \end
         .pipe source "public/#{app}.js"
         .pipe buffer!

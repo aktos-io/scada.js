@@ -42,6 +42,7 @@ module.exports = (file) ->
             try
                 template-contents = fs.read-file-sync template-full-path .to-string!
             catch
+                console.log "Preparserify error: ", e
                 __.emit 'error', e.message
                 return
 
@@ -86,6 +87,7 @@ module.exports = (file) ->
             try
                 parsed-template = Ractive.parse template-part
             catch
+                console.log "Preparserify Error: ", e
                 __.emit 'error', e.message
                 return
 

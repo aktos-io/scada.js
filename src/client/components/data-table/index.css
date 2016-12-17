@@ -8,6 +8,7 @@ body {
 .rwd-table {
   margin: 1em 0;
   min-width: 300px;
+  width: 100% !important; 
 }
 .rwd-table tr {
   border-top: 1px solid #ddd;
