@@ -17,14 +17,31 @@ Ractive.components[component-name] = Ractive.extend do
                 #a = @find "download-link"
 
                 # generate file content
-                content = ''
-                col-names = __.get \col-names
-                if col-names
-                    content += "#{col-names}\n"
+                col-names = try
+                    x = __.get \col-names
+                    throw unless x
+                    x
+                catch
+                    try
+                        throw unless res.col-names
+                        if typeof res.col-names is \string
+                            res.col-names
+                        else
+                            res.col-names.join ','
+                    catch
+                        ''
 
+                content = "#{col-names}\r\n"
                 for row in res.content
-                    col-str = row.join ','
-                    content += col-str + '\r\n'
+                    for j, col of row
+                        inner-value = col?.to-string!
+                        result = inner-value.replace /"/g, '""'
+                        if result.search(/("|,|\n)/g) >= 0
+                            result = "\"#{result}\""
+                        content += ',' if j > 0
+                        content += result
+                    content += '\n'
+
 
                 # create content
                 filename = res.filename or "file-#{Date.now!}.csv"
