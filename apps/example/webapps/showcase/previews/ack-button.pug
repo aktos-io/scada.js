@@ -28,6 +28,17 @@ panel(type="info" title="ack-button")
         .row
             .col-md-12
                 h3 Unbound (free) info instance
-                input(value="{{ button.info }}" placeholder="This info will be shown")
-                ack-button(state="{{ button.unboundStateInfo }}" on-buttonclick="testAckButton3" info="{{ button.info }}" value="my-test-value") MY BUTTON4
+                input(value="{{ button.infoTitle }}" placeholder="Info title")
+                input(value="{{ button.infoMessage }}" placeholder="Info message")
+                ack-button(state="{{ button.unboundStateInfo }}" on-buttonclick="testAckButton3" info-title="{{ button.infoTitle }}" info-message="{{ button.infoMessage }}" value="my-test-value") MY BUTTON4
                 p Button State: {{ button.unboundStateInfo }}
+        .row
+            .col-md-6
+                h3 Bound instance with confirmation
+                ack-button(state="{{ button.unboundStateConfirm }}" on-buttonclick="testAckButton4" value="my-test-value") MY BUTTON5
+                p Button State: {{ button.unboundStateConfirm }}
+            .col-md-6
+                +if('button.show')
+                    h3 Bound instance with confirmation
+                    ack-button(state="{{ button.unboundStateConfirm }}" on-buttonclick="testAckButton4" value="my-test-value") MY BUTTON5
+                    p Button State: {{ button.unboundStateConfirm }}

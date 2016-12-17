@@ -14,6 +14,8 @@ ractive = new Ractive do
             show: yes
             send-value: ''
             bound-val: ''
+            info-title: ''
+            info-message: ''
         combobox:
             show: yes
             list1:
@@ -87,9 +89,20 @@ ractive.on do
         ev.component.fire \state, \done
 
     test-ack-button3: (ev, value) ->
-        ev.component.fire \state, \info, {title: 'My Title', message: 'Hello there'}
+        info-obj =
+            title: @get \button.infoTitle
+            message: @get \button.infoMessage
+        ev.component.fire \state, \info, info-obj
         <- sleep 3000ms
         ev.component.fire \state, \done
+
+    test-ack-button4: (ev, value) ->
+        confirmation-obj =
+            title: 'Are you sure to proceed?'
+            message: 'Do you really want to take the button\'s action?'
+            type: 'yesno' # TODO yesno, random[, pass]
+        ev.component.fire \confirm, confirmation-obj, (was-confirmed, input-value) -> # confirmation-callback
+            console.log [was-confirmed, input-value]
 
     checkboxchanged: (ev, curr-state, intended-state, value) ->
         console.log "checkbox event fired, curr: #{curr-state}"

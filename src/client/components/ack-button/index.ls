@@ -53,13 +53,41 @@ Ractive.components['ack-button'] = Ractive.extend do
                 if s in <[ info ]>
                     __.set \state, \info
 
-                    @set \infoTitle msg.title
-                    @set \infoMessage msg.message
+                    @set \infoTitle, msg.title
+                    @set \infoMessage, msg.message
                     modal-confirmation.modal \show
+                    # TODO Reset `infoTitle` and `infoMessage` on modal dismiss
 
                 __.set \selfDisabled, self-disabled
 
+            confirm: (confirmation-obj, callback) ->
+                @set \infoTitle, confirmationObj.title
+                @set \infoMessage, confirmationObj.message
+                @set \confirmationType, confirmationObj.type
+                @set \confirmationCallback, callback
+                modal-confirmation.modal \show
 
+            # TODO What if confirmation modal dismissed?
+
+            confirmed: ->
+                callback = @get \confirmationCallback
+                callback yes, this
+
+                # Reset relevant props for next confirmation
+                @set \confirmationType, null
+                @set \confirmationCallback, null
+                @set \confirmationInput, null
+                modal-confirmation.modal \hide
+
+            notConfirmed: ->
+                callback = @get \confirmationCallback
+                callback no, this
+
+                # Reset relevant props for next confirmation
+                @set \confirmationType, null
+                @set \confirmationCallback, null
+                @set \confirmationInput, null
+                modal-confirmation.modal \hide
 
     data: ->
         __ = @
@@ -75,3 +103,6 @@ Ractive.components['ack-button'] = Ractive.extend do
         state: ''
         info-title: ''
         info-message: ''
+        confirmation-type: null
+        confirmation-callback: null
+        confirmation-input: null
