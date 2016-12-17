@@ -169,10 +169,10 @@ function bundle
             @emit \end
         .pipe source "public/#{app}.js"
         .pipe buffer!
-        .pipe sourcemaps.init {+load-maps, +large-files}
+        #.pipe sourcemaps.init {+load-maps, +large-files}
         .pipe if-else only-compile, uglify
         .pipe rename basename: app
-        .pipe sourcemaps.write '.'
+        #.pipe sourcemaps.write '.'
         .pipe gulp.dest './build'
         .pipe tap (file) ->
             log-info \browserify, "Browserify finished"
