@@ -47,7 +47,7 @@ paths.lib-src = "#{__dirname}/src/lib"
 paths.components-src = "#{paths.client-src}/components"
 
 
-notifier.notify {title: "aktos-scada2" message: "Project #{project}:#{app} started!"}
+notifier.notify {title: "ScadaJS" message: "Project #{project}:#{app} started!"}
 
 on-error = (source, msg) ->
     msg = try
@@ -169,10 +169,10 @@ function bundle
             @emit \end
         .pipe source "public/#{app}.js"
         .pipe buffer!
-        .pipe sourcemaps.init {+load-maps, +large-files}
+        #.pipe sourcemaps.init {+load-maps, +large-files}
         .pipe if-else only-compile, uglify
         .pipe rename basename: app
-        .pipe sourcemaps.write '.'
+        #.pipe sourcemaps.write '.'
         .pipe gulp.dest './build'
         .pipe tap (file) ->
             log-info \browserify, "Browserify finished"

@@ -8,7 +8,7 @@ body {
 .rwd-table {
   margin: 1em 0;
   min-width: 300px;
-  width: 100% !important; 
+  width: 100% !important;
 }
 .rwd-table tr {
   border-top: 1px solid #ddd;
@@ -55,13 +55,16 @@ body {
 
 
 
+/* ------------------------------------------------------------------------ */
+/* Min with should be LESS THAN 600px if you want to print as normal table! */
+/* ------------------------------------------------------------------------ */
 
-@media (min-width: 800px) {
+@media (min-width: 480px) {
   .rwd-table th, .rwd-table td {
     padding: 1em !important;
   }
 }
-@media (min-width: 800px) {
+@media (min-width: 480px) {
   .rwd-table th, .rwd-table td {
     display: table-cell;
     padding: .25em .5em;
@@ -73,7 +76,7 @@ body {
     padding-right: 0;
   }
 }
-@media (min-width: 800px) {
+@media (min-width: 480px) {
   .rwd-table td:before {
     display: none;
   }

@@ -134,6 +134,7 @@ Ractive.components['data-table'] = Ractive.extend do
                     # for debugging purposes
                     __.add \createViewCounter
                 catch
+                    console.error e 
                     debugger
 
             unless filtered
@@ -368,8 +369,7 @@ Ractive.components['data-table'] = Ractive.extend do
             kick-changes: (ev) ->
                 console.log "kicking changes..."
                 ev.component.fire \state, \doing
-                c = @get \changes
-                @set \changes, ++c
+                @add \changes
                 @observe-once \createViewCounter, ->
                     ev.component.fire \state, \done...
 

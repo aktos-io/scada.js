@@ -15,6 +15,7 @@ Ractive.components['checkbox'] = Ractive.extend do
 
         @on do
             toggleChecked: ->
+                __.set \timestamp, Date.now! 
                 if __.get(\async)
                     if __.get(\checked) then
                         [curr-state, intended-state] = <[ checked unchecked ]>
@@ -60,3 +61,4 @@ Ractive.components['checkbox'] = Ractive.extend do
         enabled: yes
         angle: 0
         tooltip: ''
+        timestamp: null
