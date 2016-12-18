@@ -134,7 +134,7 @@ Ractive.components['data-table'] = Ractive.extend do
                     # for debugging purposes
                     __.add \createViewCounter
                 catch
-                    console.error e 
+                    console.error e
                     debugger
 
             unless filtered
