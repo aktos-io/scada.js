@@ -69,19 +69,9 @@ Ractive.components['ack-button'] = Ractive.extend do
 
             # TODO What if confirmation modal dismissed?
 
-            confirmed: ->
+            modalClosing: (ev, status) ->
                 callback = @get \confirmationCallback
-                callback yes, this
-
-                # Reset relevant props for next confirmation
-                @set \confirmationType, null
-                @set \confirmationCallback, null
-                @set \confirmationInput, null
-                modal-confirmation.modal \hide
-
-            notConfirmed: ->
-                callback = @get \confirmationCallback
-                callback no, this
+                callback status, this
 
                 # Reset relevant props for next confirmation
                 @set \confirmationType, null

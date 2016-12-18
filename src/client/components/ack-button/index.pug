@@ -23,8 +23,8 @@
             .
                 {{#if confirmationType !== null}}
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" on-click="confirmed">Yes</button>
-                    <button type="button" class="btn btn-danger" on-click="notConfirmed">No</button>
+                    <button type="button" class="btn btn-success" on-click="modalClosing:yes">Yes</button>
+                    <button type="button" class="btn btn-danger" on-click="modalClosing:no">No</button>
                 </div>
                 {{/if}}
 
