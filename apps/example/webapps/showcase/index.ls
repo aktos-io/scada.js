@@ -16,6 +16,7 @@ ractive = new Ractive do
             bound-val: ''
             info-title: ''
             info-message: ''
+            output: 'hello'
         combobox:
             show: yes
             list1:
@@ -89,20 +90,25 @@ ractive.on do
         ev.component.fire \state, \done
 
     test-ack-button3: (ev, value) ->
-        info-obj =
-            title: @get \button.infoTitle
-            message: @get \button.infoMessage
-        ev.component.fire \state, \info, info-obj
-        <- sleep 3000ms
-        ev.component.fire \state, \done
+        ev.component.fire \info, do
+            title: "this is an example info"
+            message: value or "test info..."
 
     test-ack-button4: (ev, value) ->
-        confirmation-obj =
-            title: 'Are you sure to proceed?'
-            message: 'Do you really want to take the button\'s action?'
-            type: 'yesno' # TODO yesno, random[, pass]
-        ev.component.fire \confirm, confirmation-obj, (was-confirmed, input-value) -> # confirmation-callback
-            console.log [was-confirmed, input-value]
+        console.log "asking if yes or no"
+        ok <- ev.component.fire \yesno, do
+            title: 'well...'
+            message: value or 'are you sure?'
+
+        unless ok
+            msg = "User says it's not OK to continue!"
+            ev.component.fire \output, msg
+            console.error msg
+            return
+
+        msg = "It's OK to go..."
+        console.log msg
+        ev.component.fire \output, msg
 
     checkboxchanged: (ev, curr-state, intended-state, value) ->
         console.log "checkbox event fired, curr: #{curr-state}"

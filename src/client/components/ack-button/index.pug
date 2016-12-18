@@ -1,8 +1,8 @@
 .modal.modal-error.fade(tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
     .modal-dialog(role="document")
         .modal-content.modal-danger
-            .modal-header.
-                <h4 class="modal-title">Grr...</h4>
+            .modal-header
+                h4.modal-title: icon-alert
 
             .modal-body(style="font-size:1.5rem") {{reason}}
 
@@ -12,21 +12,17 @@
     .modal-dialog(role="document")
         .modal-content
             .modal-header
-                .
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                button.close(type="button" data-dismiss="modal" aria-label="Close"): span(aria-hidden="true") &times;
                 h4.modal-title {{ infoTitle }}
 
             .modal-body
-                p {{ infoMessage }}
+                | {{ infoMessage }}
                 //- TODO Add random equation and input (w/ answer) here
 
-            .
-                {{#if confirmationType !== null}}
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" on-click="modalClosing:yes">Yes</button>
-                    <button type="button" class="btn btn-danger" on-click="modalClosing:no">No</button>
-                </div>
-                {{/if}}
+            +if('confirmationType !== null')
+                .modal-footer
+                    button.btn.btn-success(type="button" on-click='@this.fire("closeYesNo", true)') Evet
+                    button.btn.btn-danger(type="button" on-click='@this.fire("closeYesNo", false)') Hayır
 
 btn(
     on-buttonclick="click"
