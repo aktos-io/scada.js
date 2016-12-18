@@ -60,10 +60,10 @@ Ractive.components['ack-button'] = Ractive.extend do
 
                 __.set \selfDisabled, self-disabled
 
-            confirm: (confirmation-obj, callback) ->
-                @set \infoTitle, confirmationObj.title
-                @set \infoMessage, confirmationObj.message
-                @set \confirmationType, confirmationObj.type
+            confirm: (o, callback) ->
+                @set \infoTitle, o.title
+                @set \infoMessage, o.message
+                @set \confirmationType, o.type
                 @set \confirmationCallback, callback
                 modal-confirmation.modal \show
 
