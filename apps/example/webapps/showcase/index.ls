@@ -1,6 +1,6 @@
 require! 'prelude-ls': {group-by, sort-by}
 require! components
-require! 'aea': {sleep}
+require! 'aea': {sleep, unix-to-readable}
 require! './simulate-db': {db}
 require! './previews/test-data-table/my-table': {my-table}
 
@@ -14,6 +14,8 @@ ractive = new Ractive do
             show: yes
             send-value: ''
             bound-val: ''
+            info-title: ''
+            info-message: ''
         combobox:
             show: yes
             list1:
@@ -40,6 +42,37 @@ ractive = new Ractive do
         checkbox:
             checked1: no
             checked2: no
+        todo:
+            show: yes
+            todos1:
+                * id: 1
+                  content: 'This is done by default'
+                  done-timestamp: 1481778240000
+                * id: 2
+                  content: 'This is done by default too'
+                  done-timestamp: 1481778242000
+                * id: 3
+                  content: 'This can not be undone'
+                  can-undone: false
+                * id: 4
+                  content: 'This has a due time'
+                  due-timestamp: 1481778240000
+                * id: 5
+                  content: 'This depends on 1 and 2'
+                  depends-on: [1, 2]
+                * id: 6
+                  content: 'This depends on 3 and 5 (above one)'
+                  depends-on: [3, 5]
+            log1: []
+            todos2:
+                * id: 1
+                  content: 'Do this'
+                * id: 2
+                  content: 'Do that'
+                * id: 3
+                  content: 'Finally do this'
+            log2: []
+        unix-to-readable: unix-to-readable
 
 ractive.on do
     test-ack-button1: (ev, value) ->
@@ -55,8 +88,50 @@ ractive.on do
         <- sleep 3000ms
         ev.component.fire \state, \done
 
+    test-ack-button3: (ev, value) ->
+        info-obj =
+            title: @get \button.infoTitle
+            message: @get \button.infoMessage
+        ev.component.fire \state, \info, info-obj
+        <- sleep 3000ms
+        ev.component.fire \state, \done
+
+    test-ack-button4: (ev, value) ->
+        confirmation-obj =
+            title: 'Are you sure to proceed?'
+            message: 'Do you really want to take the button\'s action?'
+            type: 'yesno' # TODO yesno, random[, pass]
+        ev.component.fire \confirm, confirmation-obj, (was-confirmed, input-value) -> # confirmation-callback
+            console.log [was-confirmed, input-value]
+
     checkboxchanged: (ev, curr-state, intended-state, value) ->
         console.log "checkbox event fired, curr: #{curr-state}"
         ev.component.fire \state, \doing
         <- sleep 2000ms
         ev.component.fire \state, intended-state
+
+    todostatechanged: (ev, list, item-index) ->
+        the-item = list[item-index]
+        new-state = if the-item.is-done then \checked else \unchecked
+        old-state = if new-state is \checked then \unchecked else \checked
+        console.log "Bound components: todo item with id of '" + the-item.id + "' state's changed from '" + old-state + "' to '" + new-state + "'"
+
+    todocompletion: ->
+        console.log "Bound components: all todo items has been done"
+
+    todotimeout: (item) ->
+        console.log "Bound components: item with id of '" + item.id + "' in the list had been timed out"
+        console.log item
+
+    todostatechanged2: (ev, list, item-index) ->
+        the-item = list[item-index]
+        new-state = if the-item.is-done then \checked else \unchecked
+        old-state = if new-state is \checked then \unchecked else \checked
+        console.log "UnBound instance: todo item with id of '" + the-item.id + "' state's changed from '" + old-state + "' to '" + new-state + "'"
+
+    todocompletion2: ->
+        console.log "UnBound instance: all todo items has been done"
+
+    todotimeout2: (item) ->
+        console.log "UnBound instance: item with id of '" + item.id + "' in the list had been timed out"
+        console.log item

@@ -14,13 +14,15 @@ source "${LIB_DIR}/tmux-launch"
 cd $CURR_DIR
 SCADA_ROOT="$CURR_DIR/../.."
 
+export run-editor
+
 # start new tmux session (if there is no duplicate)
 start-tmux-session "$SESSION_NAME"
 
 # run commands in tmux session
 run-in-tmux "cd $SCADA_ROOT" "gulp --project example --app showcase"
 run-in-tmux "cd $CURR_DIR/webserver" './run-development'
-run-in-tmux "cd $SCADA_ROOT" 'xdg-open . 2> /dev/null' 'atom .'
+run-in-tmux "cd $SCADA_ROOT" 'xdg-open . 2> /dev/null' 'atom . 2> /dev/null' 'subl . 2> /dev/null'
 
 # Show in terminal if not `--headless`
 attach-tmux-session "$SESSION_NAME"

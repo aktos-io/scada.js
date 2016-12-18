@@ -8,6 +8,26 @@
 
             .modal-footer
 
+.modal.modal-confirmation.fade(tabindex="-1" role="dialog" aria-labelledby="confirmation-modal" aria-hidden="true")
+    .modal-dialog(role="document")
+        .modal-content
+            .modal-header
+                .
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                h4.modal-title {{ infoTitle }}
+
+            .modal-body
+                p {{ infoMessage }}
+                //- TODO Add random equation and input (w/ answer) here
+
+            .
+                {{#if confirmationType !== null}}
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" on-click="modalClosing:yes">Yes</button>
+                    <button type="button" class="btn btn-danger" on-click="modalClosing:no">No</button>
+                </div>
+                {{/if}}
+
 btn(
     on-buttonclick="click"
     value="{{value}}"

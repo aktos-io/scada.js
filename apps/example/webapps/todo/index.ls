@@ -1,39 +1,42 @@
 require! 'prelude-ls': {group-by, sort-by}
 require! components
 require! 'aea': {
-    sleep, unix-to-readable
+    sleep,
+    unix-to-readable
 }
-require! './todo-item'
+require! './todo'
 
 ractive = new Ractive do
     el: '#main-output'
     template: RACTIVE_PREPARSE('preview.pug')
+    onrender: ->
+        @on do
+            # statechanged: (ev, checklist, current-index) ->
+            #     console.log [ev, checklist, current-index]
+            myhandler: ->
+                console.log 'all done'
+            myTimeoutHandler: (item) ->
+                console.log 'timed out...'
     data:
-        new-entry:
-            id: null
-            content: null
-            done-timestamp: null
-
         todos:
             * id: 1
-              content: \foo
-              done-timestamp: null
+              content: 'This is done by default'
+              done-timestamp: 1481778240000
             * id: 2
-              content: \bar
-              done-timestamp: null
+              content: 'This is done by default too'
+              done-timestamp: 1481778242000
             * id: 3
-              content: \baz
-              done-timestamp: null
+              content: 'This can not be undone'
+              can-undone: false
+            * id: 4
+              content: 'This has a due time'
+              due-timestamp: 1481778240000
+            * id: 5
+              content: 'This depends on 1 and 2'
+              depends-on: [1, 2]
+            * id: 6
+              content: 'This depends on 3 and 5 (above one)'
+              depends-on: [3, 5]
+        log: []
 
         unix-to-readable: unix-to-readable
-
-ractive.on do
-    'addNewItem': (ev, val) ->
-        ev.component.fire \state, \doing
-        if val.content is \hello
-            return ev.component.fire \state, \error, "hi!"
-        <- sleep 1000ms
-        todos = ractive.get \todos
-        todos.push JSON.parse JSON.stringify val
-        ractive.set \todos, todos
-        ev.component.fire \state, \done...
