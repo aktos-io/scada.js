@@ -10,4 +10,4 @@ export function unpack x
     catch
         console.error "Error while unpacking: #{e}, param: ", x
         #debugger
-        throw e 
+        throw e

@@ -9,7 +9,7 @@ panel(type="info" title="ack-button")
             .col-md-6
                 h3 Bound component1
                 +if('button.show')
-                    ack-button(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") MY BUTTON
+                    ack-button(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") MY BUTTON 1
                 hr
                 p
                     span Button will send
@@ -18,27 +18,26 @@ panel(type="info" title="ack-button")
                 p Button state: {{ button.state1 }}
             .col-md-6
                 h3 Bound component2
-                ack-button(on-buttonclick="testAckButton1" value="{{ button.boundVal }}") MY BUTTON2
+                ack-button(on-buttonclick="testAckButton1" value="{{ button.boundVal }}") MY BUTTON 1
                 p Button will send "{{ button.boundVal }}" after click.
         .row
             .col-md-12
                 h3 Unbound (free) instance
-                ack-button(state="{{ button.unboundState }}" on-buttonclick="testAckButton2" value="my-test-value") MY BUTTON3
+                ack-button(state="{{ button.unboundState }}" on-buttonclick="testAckButton2" value="my-test-value") MY BUTTON 2
                 p Button State: {{ button.unboundState }}
         .row
             .col-md-12
-                h3 Unbound (free) info instance
-                input(value="{{ button.infoTitle }}" placeholder="Info title")
-                input(value="{{ button.infoMessage }}" placeholder="Info message")
-                ack-button(state="{{ button.unboundStateInfo }}" on-buttonclick="testAckButton3" info-title="{{ button.infoTitle }}" info-message="{{ button.infoMessage }}" value="my-test-value") MY BUTTON4
-                p Button State: {{ button.unboundStateInfo }}
+                h3 Show some info via button event
+                p
+                    input(value="{{ button.infoMessage }}" placeholder="Info message")
+                    ack-button(on-buttonclick="testAckButton3" value="{{ button.infoMessage }}") MY BUTTON 3
+                h3 This is text-button (an ack-button with input)
+                text-button(on-buttonclick="testAckButton3") MY BUTTON 3
+
+
         .row
-            .col-md-6
-                h3 Bound instance with confirmation
-                ack-button(state="{{ button.unboundStateConfirm }}" on-buttonclick="testAckButton4" value="my-test-value") MY BUTTON5
-                p Button State: {{ button.unboundStateConfirm }}
-            .col-md-6
-                +if('button.show')
-                    h3 Bound instance with confirmation
-                    ack-button(state="{{ button.unboundStateConfirm }}" on-buttonclick="testAckButton4" value="my-test-value") MY BUTTON5
-                    p Button State: {{ button.unboundStateConfirm }}
+            .col-md-12
+                h3 Ask yes or no (check also console for return value)
+                input(value="{{ button.askMessage }}" placeholder="ask for something...")
+                ack-button(on-buttonclick="testAckButton4" value="{{ button.askMessage }}" output="{{ button.output }}") MY BUTTON 4
+                p User says: {{ button.output }}

@@ -1,241 +1,96 @@
-require! 'prelude-ls': {filter, each}
-
-empty-item =
-    id: null
-    content: null
-    new-content: null
-    is-done: false
-    done-timestamp: null
-    due-timestamp: null
-    new-due-timestamp: null
-    can-undone: true
-    depends-on: [] # id list of this item dependencies - this item can not bu done unless dependencies are done
-    enabled: true # since default depends-on is empty, this must be true
-    is-editing: false
-
-# TODO use aea.merge instead
-defaults-merge = (obj, src) !->
-    for key of src
-        obj[key] = src[key] if not obj.hasOwnProperty key
-    return obj
-
-get-index-via-id = (list, id) !->
-    for index from 0 to list.length
-        return index if list[index].id is id
-    return -1
-
-get-item-via-id = (list, id) !->
-    for index from 0 to list.length
-        return list[index] if list[index].id is id
-    return null
-
-dependencies-done = (list, id) !->
-    the-index = get-index-via-id list, id
-    the-item = list[the-index]
-
-    for dep-id in the-item.depends-on
-        dep = get-item-via-id list, dep-id
-        return false if not dep.is-done
-    return true
-
-# TODO rename this
-enable-dependants = (list, id) !->
-    for item in list
-        if (item.depends-on.indexOf id) > -1
-            item-index = get-index-via-id list, item.id
-            if dependencies-done list, item.id
-                # TODO Call appropriate callbacks
-                list[item-index].enabled = true
-            else
-                # TODO Call appropriate callbacks
-                list[item-index].enabled = false
-                # TODO Uncheck this is necessary
-
-    return list
+require! 'prelude-ls': {filter, each, find}
+require! 'aea': {merge, unix-to-readable}
 
 Ractive.components['todo'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
-    isolated: true
-    oninit: ->
-        items = @get \checklist
-
-        # Normalize each and every items in the checklist
-        for item in items
-            item = defaults-merge item, empty-item
-
-        # Iterate through checklist and set is-done to true if done-timestamp was set
-        items
-            |> filter (.done-timestamp !== null)
-            |> each (.is-done = true)
-
-        @update \checklist
+    isolated: yes
 
     onrender: ->
-        checklist = @get \checklist
-        for item in checklist
-            new-list = enable-dependants checklist, item.id
-        @set \checklist new-list
-
         @on do
-            click: ->
-                # TODO experimental
-                # {{#if isEditable}}editItem{{/if}}:{{ .id }}
-                if @get \is-editable
-                    @fire \edit-item, this, this.id
+            startEditing: (ev, id)->
+                orig = find (.id is id), @get \checklist
+                @set \editingItem, id
+                @set \editingContent, orig.content
+                @set \newDueTimestamp, orig.due-timestamp
 
-            addNewItem: ->
-                new-entry-content = @get \newEntryContent
+            addNewItem: (ev, value) ->
+                # TODO: fire external handler for async handling of saving data
                 checklist = @get \checklist
-                log = @get \log
 
                 # add new todo to the list
                 new-entry-id = checklist.length + 1
-                temp =
+
+                checklist.push do
                     id: new-entry-id
-                    content: new-entry-content
-                checklist[*] = defaults-merge temp, empty-item
-                @update \checklist
+                    content: value
+
+                @set \checklist, checklist
 
                 # reset input via new-entry
-                @set \newEntry, empty-item
+                ev.component.fire \value, ''
 
                 # add new action to the log
+                log = @get \log
                 log.unshift do
                     action: \new
                     target-id: new-entry-id
                     timestamp: Date.now()
-                @update \log
+                @set \log, log
 
-            editItem: (ev, item-id) ->
-                checklist = @get \checklist
-                the-item = get-item-via-id checklist, item-id
+            saveChanges: (ev, orig) ->
+                _new =
+                    content: @get \editingContent
+                    due-timestamp: @get \newDueTimestamp
 
-                the-item.new-content = the-item.content
-                the-item.new-due-timestamp = the-item.due-timestamp
-                the-item.is-editing = true;
-
-                @update \checklist
-
-            saveChanges: (ev, item-id) ->
-                checklist = @get \checklist
                 log = @get \log
-                the-item = get-item-via-id checklist, item-id
-
-                additional = []
-
-                if the-item.new-content is not the-item.content
-                    additional[*] =
-                        what: \content
-                        old-value: the-item.content
-                        new-value: the-item.new-content
-
-                    the-item.content = the-item.new-content
-                    the-item.new-content = null
-
-                if the-item.new-due-timestamp > 0 && the-item.new-due-timestamp is not the-item.due-timestamp
-                    additional[*] =
+                log.unshift do
+                    action: \edit
+                    summary:
                         what: \due-timestamp
-                        old-value: the-item.due-timestamp
-                        new-value: the-item.new-due-timestamp
+                        old-value: orig.due-timestamp
+                        new-value: _new.due-timestamp
+                    target-id: orig.id
+                    timestamp: Date.now!
 
-                    the-item.due-timestamp = the-item.new-due-timestamp
-                    the-item.new-due-timestamp = null
-
-                the-item.is-editing = false
-
-                if additional.length > 0
-                    log.unshift do
-                        action: \edit
-                        additional: additional
-                        target-id: item-id
-                        timestamp: Date.now()
-                    @update \log
-
+                orig `merge` _new
                 @update \checklist
 
-            cancelEdit: (ev, item-id) ->
-                checklist = @get \checklist
-                the-item = get-item-via-id checklist, item-id
+                # close edit window
+                @set \editingItem, -1
 
-                the-item.new-content = null
-
-                the-item.is-editing = false
-
-                @update \checklist
+            cancelEdit: (ev) ->
+                @set \editingItem, -1
 
             statechanged: (ev, curr-state, intended-state, item-id) ->
-                checklist = @get \checklist
-                log = @get \log
-                the-index = get-index-via-id checklist, item-id
-                the-item = checklist[the-index]
-
-                # change relevant todo's state
-                if intended-state is \checked
-                    # check if due-date passed, if so call the callback
-                    if the-item.due-timestamp is not null and Date.now() > the-item.due-timestamp
-                        @fire \timeout, the-item
-
-                    if not the-item.can-undone
-                        ev.component.set \disabled, true
-
-                    the-item.isDone = true
-                    the-item.doneTimestamp = Date.now()
-                else
-                    the-item.isDone = false
-                    the-item.doneTimestamp = null
-
-                checklist[the-index] = the-item
-                # @update \checklist
-
-                new-list = enable-dependants checklist, item-id
-                @set \checklist new-list
-
                 # add new action to the log
+                item = find (.id is item-id), @get \checklist
+                item.is-done = intended-state is \checked
+                log = @get \log
                 log.unshift do
                     action: intended-state
                     target-id: item-id
-                    timestamp: Date.now()
-                @update \log
+                    timestamp: Date.now!
+                @set \log, log
+                @update \checklist
 
-                @fire \statechange ev, checklist, the-index
-
-                @fire \completion if checklist.length == @get \doneItemsLength
-
-        @observe \is-editable, (new-value, old-value) ->
-            # TODO If is-editable set to false, un-edit any currently is-editing items
-            console.log \zaa
-            # if new-value is no
-            #     checklist = @get \checklist
-            #     for item in checklist
-            #         console.log item
-            #         if item.is-editing
-            #             # un-edit the item and flush all changes
-            #             item.new-content = null
-            #             item.new-due-timestamp = null
-
-            #             item.is-editing = false
-
-            #     @update \checklist
     data: ->
+        unix-to-readable: unix-to-readable
         title: 'Todo List'
         is-editable: false
-        checklist:
-            * id: 0
-              content: 'Dummy Todo'
-              is-done: false
-              done-timestamp: null
-              due-timestamp: null
-              enabled: false
-              is-editing: false
-            ...
+        editing-item: -1
+        newContent: ''
+        editingContent: ''
+        newDueTimestamp: 0
+        checklist: {}
         log: []
-        new-entry-content: null
-        on-completion: null
-        on-statechange: null
+        is-editing: (id) ->
+            id is @get \editingItem
+
     computed:
         itemsLength: ->
             @get \checklist .length
+
         doneItemsLength: ->
             items = @get \checklist
             doneItems = filter (.isDone), items
-            return doneItems.length
+            doneItems.length 
