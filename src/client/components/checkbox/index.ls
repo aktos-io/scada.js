@@ -1,3 +1,5 @@
+require! 'aea': {pack}
+
 Ractive.components['checkbox'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
@@ -15,7 +17,7 @@ Ractive.components['checkbox'] = Ractive.extend do
 
         @on do
             toggleChecked: ->
-                __.set \timestamp, Date.now! 
+                __.set \timestamp, Date.now!
                 if __.get(\async)
                     if __.get(\checked) then
                         [curr-state, intended-state] = <[ checked unchecked ]>

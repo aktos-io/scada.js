@@ -1,12 +1,28 @@
 .modal.modal-error.fade(tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
     .modal-dialog(role="document")
         .modal-content.modal-danger
-            .modal-header.
-                <h4 class="modal-title">Grr...</h4>
+            .modal-header
+                h4.modal-title: icon-alert
 
             .modal-body(style="font-size:1.5rem") {{reason}}
 
             .modal-footer
+
+.modal.modal-confirmation.fade(tabindex="-1" role="dialog" aria-labelledby="confirmation-modal" aria-hidden="true")
+    .modal-dialog(role="document")
+        .modal-content
+            .modal-header
+                button.close(type="button" data-dismiss="modal" aria-label="Close"): span(aria-hidden="true") &times;
+                h4.modal-title {{ infoTitle }}
+
+            .modal-body
+                | {{ infoMessage }}
+                //- TODO Add random equation and input (w/ answer) here
+
+            +if('confirmationType !== null')
+                .modal-footer
+                    button.btn.btn-success(type="button" on-click='@this.fire("closeYesNo", true)') Evet
+                    button.btn.btn-danger(type="button" on-click='@this.fire("closeYesNo", false)') Hayır
 
 btn(
     on-buttonclick="click"

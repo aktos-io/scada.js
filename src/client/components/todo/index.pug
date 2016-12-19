@@ -1,0 +1,41 @@
+panel(title="{{ yield }}")
+    p
+        input(value="{{ newContent }}" placeholder="content...")
+        ack-button(on-buttonclick="addNewItem" value="{{ newContent }}") Add New Item
+    p
+        checkbox(checked="{{ isEditable }}") Editable
+
+    p {{ doneItemsLength }} out of {{ itemsLength }} items done.
+
+    //-
+        .panel.panel-danger
+            .panel-heading Debug
+            .panel-body
+                p editing item: {{ editingItem }}
+
+
+    ul.list-group
+        +each('checklist')
+            li.list-group-item(class="{{#if .isDone}}checklist-item-done{{/if}} {{#if .isEditing}}checklist-item-editing{{/if}}")
+                checkbox(
+                    checked="{{ .isDone }}"
+                    async
+                    on-statechange="statechanged"
+                    value="{{ .id }}"
+                    )
+                    | {{#if isEditing(.id) && isEditable }}
+                    input(value="{{ editingContent }}")
+                    | {{else}}
+                    | {{ .content }} ({{ unixToReadable(.dueTimestamp)}})
+                    | {{/if}}
+                +if('isEditable')
+                    ack-button(
+                        on-buttonclick="startEditing"
+                        value="{{ .id }}"
+                        disabled="{{ isEditing(.id) }}"
+                        ) Edit
+
+                    +if('isEditing(.id)')
+                        date-picker(unix="{{ newDueTimestamp }}" mode="popup")
+                        ack-button(value="{{ . }}" on-buttonclick="saveChanges") Save
+                        ack-button(on-buttonclick="cancelEdit") Cancel

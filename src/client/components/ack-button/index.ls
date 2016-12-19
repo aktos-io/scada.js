@@ -13,6 +13,13 @@ Ractive.components['ack-button'] = Ractive.extend do
             focus: yes
             show: no
 
+        modal-confirmation = $ @find \.modal-confirmation
+
+        modal-confirmation.modal do
+            keyboard: yes
+            focus: yes
+            show: no
+
         @observe \tooltip, (new-val) ->
             __.set \reason, new-val
 
@@ -45,7 +52,35 @@ Ractive.components['ack-button'] = Ractive.extend do
 
                 __.set \selfDisabled, self-disabled
 
+            output: (o) ->
+                @set \output, o
 
+            value: (o) ->
+                @set \value, o
+
+            info: (msg) ->
+                @set \infoTitle, msg.title
+                @set \infoMessage, msg.message
+                modal-confirmation.modal \show
+                # TODO Reset `infoTitle` and `infoMessage` on modal dismiss
+
+            yesno: (opt, callback) ->
+                @set \infoTitle, (opt.title or 'o_O')
+                @set \infoMessage, (opt.message or 'Are you sure?')
+                @set \confirmationType, opt.type
+                @set \confirmationCallback, callback
+                modal-confirmation.modal \show
+                # TODO What if confirmation modal dismissed?
+
+            closeYesNo: (answer) ->
+                callback = @get \confirmationCallback
+                modal-confirmation.modal \hide
+                callback answer
+
+                # Reset relevant props for next confirmation
+                @set \confirmationType, null
+                @set \confirmationCallback, null
+                @set \confirmationInput, null
 
     data: ->
         __ = @
@@ -59,3 +94,9 @@ Ractive.components['ack-button'] = Ractive.extend do
         self-disabled: no
         enabled: yes
         state: ''
+        info-title: ''
+        info-message: ''
+        confirmation-type: null
+        confirmation-callback: null
+        confirmation-input: null
+        output: void
