@@ -92,6 +92,8 @@ table.rwd-table
                     | {{#if openingRow}}
                     btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
                     | &nbsp;
+                    tag {{ .id }}                    
+                    | &nbsp;
                     icon-cog(spin="true")
                     | &nbsp;
                     strong {{ openingRowMsg }}

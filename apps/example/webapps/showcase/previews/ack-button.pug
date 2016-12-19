@@ -28,8 +28,13 @@ panel(type="info" title="ack-button")
         .row
             .col-md-12
                 h3 Show some info via button event
-                input(value="{{ button.infoMessage }}" placeholder="Info message")
-                ack-button(on-buttonclick="testAckButton3" value="{{ button.infoMessage }}") MY BUTTON 3
+                p
+                    input(value="{{ button.infoMessage }}" placeholder="Info message")
+                    ack-button(on-buttonclick="testAckButton3" value="{{ button.infoMessage }}") MY BUTTON 3
+                h3 This is text-button (an ack-button with input)
+                text-button(on-buttonclick="testAckButton3") MY BUTTON 3
+
+
         .row
             .col-md-12
                 h3 Ask yes or no (check also console for return value)

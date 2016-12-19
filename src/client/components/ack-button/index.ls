@@ -7,13 +7,13 @@ Ractive.components['ack-button'] = Ractive.extend do
     onrender: ->
         __ = @
         modal-error = $ @find \.modal-error
+        modal-confirmation = $ @find \.modal-confirmation
 
         modal-error.modal do
             keyboard: yes
             focus: yes
             show: no
 
-        modal-confirmation = $ @find \.modal-confirmation
 
         modal-confirmation.modal do
             keyboard: yes
@@ -59,8 +59,10 @@ Ractive.components['ack-button'] = Ractive.extend do
                 @set \value, o
 
             info: (msg) ->
-                @set \infoTitle, msg.title
-                @set \infoMessage, msg.message
+                @set \infoTitle, (msg.title or \info)
+                @set \infoMessage, (msg.message)
+                console.log "info title: ", (@get \infoTitle)
+                console.log "info message: ", (@get \infoMessage)
                 modal-confirmation.modal \show
                 # TODO Reset `infoTitle` and `infoMessage` on modal dismiss
 
