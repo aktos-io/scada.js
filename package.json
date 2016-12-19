@@ -31,6 +31,7 @@
     "hashids": "^1.1.1",
     "http-proxy": "^1.14.0",
     "jstransformer-marked": "^1.0.1",
+    "livescript": "^1.4.0",
     "mkdirp": "^0.5.1",
     "nano": "git+https://github.com/aktos-io/nano.git",
     "prelude-ls": "^1.1.2",
