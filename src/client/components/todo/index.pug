@@ -1,39 +1,41 @@
 panel(title="{{ yield }}")
-    input(value="{{ newEntryContent }}" placeholder="content...")
+    p
+        input(value="{{ newContent }}" placeholder="content...")
+        ack-button(on-buttonclick="addNewItem" value="{{ newContent }}") Add New Item
+    p
+        checkbox(checked="{{ isEditable }}") Editable
 
-    ack-button(
-        on-buttonclick="addNewItem"
-        ) Add New Item
+    p {{ doneItemsLength }} out of {{ itemsLength }} items done.
 
-    br
-    checkbox(
-        checked="{{ isEditable }}"
-        ) Editable
+    //-
+        .panel.panel-danger
+            .panel-heading Debug
+            .panel-body
+                p editing item: {{ editingItem }}
 
-    br
-    span {{ doneItemsLength }} out of {{ itemsLength }} items done.
 
     ul.list-group
         +each('checklist')
             li.list-group-item(class="{{#if .isDone}}checklist-item-done{{/if}} {{#if .isEditing}}checklist-item-editing{{/if}}")
                 checkbox(
                     checked="{{ .isDone }}"
+                    async
                     on-statechange="statechanged"
                     value="{{ .id }}"
-                    disabled="{{ !(.enabled) }}"
-                    async) {{ .content }}
-                button(
-                    type="button"
-                    value="{{ .id }}"
-                    on-click="click"
-                    disabled="{{ .isEditing }}"
-                    hidden="{{ !isEditable }}"
-                    ) Edit
+                    )
+                    | {{#if isEditing(.id) && isEditable }}
+                    input(value="{{ editingContent }}")
+                    | {{else}}
+                    | {{ .content }} ({{ unixToReadable(.dueTimestamp)}})
+                    | {{/if}}
+                +if('isEditable')
+                    ack-button(
+                        on-buttonclick="startEditing"
+                        value="{{ .id }}"
+                        disabled="{{ isEditing(.id) }}"
+                        ) Edit
 
-                div.
-                    {{#if .isEditing}}
-                        <input type="text" value="{{ .newContent }}" />
-                        <date-picker unix="{{ .newDueTimestamp }}" mode="popup"></date-picker>
-                        <button type="button" value="{{ .id }}" on-click="saveChanges:{{ .id }}">Save</button>
-                        <button type="button" value="{{ .id }}" on-click="cancelEdit:{{ .id }}">Cancel</button>
-                    {{/if}}
+                    +if('isEditing(.id)')
+                        date-picker(unix="{{ newDueTimestamp }}" mode="popup")
+                        ack-button(value="{{ . }}" on-buttonclick="saveChanges") Save
+                        ack-button(on-buttonclick="cancelEdit") Cancel

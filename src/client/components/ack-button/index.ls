@@ -55,6 +55,9 @@ Ractive.components['ack-button'] = Ractive.extend do
             output: (o) ->
                 @set \output, o
 
+            value: (o) ->
+                @set \value, o
+
             info: (msg) ->
                 @set \infoTitle, msg.title
                 @set \infoMessage, msg.message

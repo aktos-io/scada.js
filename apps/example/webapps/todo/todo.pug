@@ -20,7 +20,7 @@ panel(title="{{ yield }}")
                 button(
                     type="button"
                     value="{{ .id }}"
-                    on-click="editItem:{{ .id }}"
+                    on-click="@this.fire('editItem', .id)"
                     disabled="{{ .editing }}"
                     ) Edit
 
@@ -28,6 +28,6 @@ panel(title="{{ yield }}")
                     {{#if .editing}}
                         <input type="text" value="{{ .newContent }}" />
                         <date-picker unix="{{ .newDueTimestamp }}" mode="popup"></date-picker>
-                        <button type="button" value="{{ .id }}" on-click="saveChanges:{{ .id }}">Save</button>
-                        <button type="button" value="{{ .id }}" on-click="cancelEdit:{{ .id }}">Cancel</button>
+                        <button type="button" value="{{ .id }}" on-click="@this.fire('saveChanges', .id)">Save</button>
+                        <button type="button" value="{{ .id }}" on-click="@this.fire('cancelEdit', .id)">Cancel</button>
                     {{/if}}

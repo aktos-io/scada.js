@@ -60,10 +60,9 @@ ractive = new Ractive do
                   due-timestamp: 1481778240000
                 * id: 5
                   content: 'This depends on 1 and 2'
-                  depends-on: [1, 2]
                 * id: 6
                   content: 'This depends on 3 and 5 (above one)'
-                  depends-on: [3, 5]
+
             log1: []
             todos2:
                 * id: 1
