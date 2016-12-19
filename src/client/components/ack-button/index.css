@@ -1,10 +1,3 @@
-.ack-button {
-    white-space:normal !important;
-    word-wrap:break-word;
-}
-.ack-button .pull-left {
-    display: inline;
-}
 .gly-spin {
   -webkit-animation: spin 2s infinite linear;
   -moz-animation: spin 2s infinite linear;
