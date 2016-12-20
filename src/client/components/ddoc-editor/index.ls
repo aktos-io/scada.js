@@ -1,6 +1,6 @@
 require! 'livescript': lsc
 require! 'prelude-ls': {camelize}
-require! 'aea': {merge, make-design-doc}
+require! 'aea': {merge, make-design-doc, pack}
 
 Ractive.components['ddoc-editor'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
@@ -25,6 +25,16 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                 ddoc.livescript = res.src
                 self.set (camelize \design-document), ddoc
                 e.component.fire \state, \done...
+
+            get-all-design-documents: (ev) ->
+                __ = @
+                ev.component.fire \state, \doing
+                err, res <- db.all {startkey: "_design/", endkey: "_design0", +include_docs}
+                return ev.component.fire \state, \error, err.message if err
+
+                __.set \allDesignDocs, ["\n\n\# ID: #{..doc._id} \n\n #{JSON.stringify(..doc, null, 2)}" for res].join('')
+
+                ev.component.fire \state, \done
 
             new-design-document: (e) ->
                 __ = @
@@ -84,3 +94,5 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
             _id: '_design/my-test-document'
             livescript: "testing"
             javascript: "compiled testing"
+
+        allDesignDocs: ''

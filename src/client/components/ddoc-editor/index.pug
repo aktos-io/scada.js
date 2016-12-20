@@ -16,3 +16,10 @@ btn-group
     ack-button(on-buttonclick="compileDesignDocument" type="info").
         Compile
 ace-editor(code="{{ designDocument.javascript }}" mode="javascript" theme="xcode")
+
+.panel.panel-info
+    .panel-heading
+        Get All Design Documents
+    .panel-body
+        ack-button(on-buttonclick="getAllDesignDocuments") Get All Documents
+        ace-editor(code="{{ allDesignDocs }}")
