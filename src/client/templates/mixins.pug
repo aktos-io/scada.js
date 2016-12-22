@@ -13,6 +13,11 @@ mixin each(name)
     block
     != '{{/each}}'
 
+mixin with(name)
+    != '{{#with ' + name + '}}'
+    block
+    != '{{/with}}'
+
 mixin partial(name)
     != '{{#partial ' + name + '}}'
     block
