@@ -25,11 +25,16 @@ Ractive.components['login'] = Ractive.extend do
         enter-key = 13
         checking-logged-in = $ @find \.check-state
 
-        username-input.on \keypress, (key) ->
+        username-input.on \keyup, (key) ->
             if key.key-code is enter-key
                 password-input.focus!
+            <- sleep 10ms
+            inp = username-input.val!
+            lower = inp.to-lower-case!
+            __.set \warnCapslock, (inp isnt lower)
+            username-input.val lower
 
-        password-input.on \keypress, (key) ->
+        password-input.on \keyup, (key) ->
             if key.key-code is enter-key
                 login-button.fire \click
 
@@ -134,3 +139,4 @@ Ractive.components['login'] = Ractive.extend do
         db: null
         username-placeholder: \Username
         password-placeholder: \Password
+        warn-capslock: no
