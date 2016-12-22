@@ -52,17 +52,14 @@ Ractive.components['ack-button'] = Ractive.extend do
 
                 __.set \selfDisabled, self-disabled
 
-            output: (o) ->
-                @set \output, o
-
-            value: (o) ->
-                @set \value, o
-
             info: (msg) ->
-                @set \infoTitle, (msg.title or \info)
-                @set \infoMessage, (msg.message)
-                console.log "info title: ", (@get \infoTitle)
-                console.log "info message: ", (@get \infoMessage)
+                __ = @
+                <- sleep 1000ms
+                __.set \infoTitle, (msg.title or \info)
+                __.set \infoMessage, (msg.message)
+                __.set \confirmationType, null
+                console.log "info title: ", (__.get \infoTitle)
+                console.log "info message: ", (__.get \infoMessage)
                 modal-confirmation.modal \show
                 # TODO Reset `infoTitle` and `infoMessage` on modal dismiss
 

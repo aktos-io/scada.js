@@ -10,6 +10,7 @@ Ractive.components['data-table'] = Ractive.extend do
     isolated: yes
     onrender: ->
         __ = @
+
         db = @get \db
         console.error "No database object is passed to data-table!" unless db
 
