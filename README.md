@@ -1,3 +1,5 @@
+![ScadaJS](https://github.com/aktos-io/scada.js/blob/master/src/client/assets/scadajs.png)
+
 # Key features
 
 * First-class support for [LiveScript](http://livescript.net) with Sourcemaps!
