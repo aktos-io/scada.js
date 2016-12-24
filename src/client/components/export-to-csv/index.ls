@@ -1,6 +1,7 @@
 require! 'prelude-ls': {
     map
 }
+require! 'aea': {copyToClipboard}
 
 base64 = (s) -> window.btoa unescape encodeURIComponent s
 
@@ -31,7 +32,10 @@ Ractive.components[component-name] = Ractive.extend do
                     catch
                         ''
 
-                content = "#{col-names}\r\n"
+                # convert array of arrays to csv
+                content = ""
+                if col-names isnt ""
+                    content = "#{col-names}\r\n"                
                 for row in res.content
                     for j, col of row
                         inner-value = col?.to-string!
@@ -43,16 +47,21 @@ Ractive.components[component-name] = Ractive.extend do
                     content += '\n'
 
 
-                # create content
-                filename = res.filename or "file-#{Date.now!}.csv"
-                filecontent = "data:attachment/csv;base64,77u/#{base64 content}"
+                # copy to clipboard or dowload as csv
+                if __.get \clipboard
+                    copyToClipboard content
+                    console.log "copied to clipboard???"
+                else
+                    # create content
+                    filename = res.filename or "file-#{Date.now!}.csv"
+                    filecontent = "data:attachment/csv;base64,77u/#{base64 content}"
 
-                # start download
-                a = document.createElement \a
-                document.body.append-child a
-                a.download = filename
-                a.href = filecontent
-                a.click!
+                    # start download
+                    a = document.createElement \a
+                    document.body.append-child a
+                    a.download = filename
+                    a.href = filecontent
+                    a.click!
 
     data: ->
         data: []
