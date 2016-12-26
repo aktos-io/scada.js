@@ -11,8 +11,13 @@ require! 'aea': {gen-entry-id, hash8, sleep, pack, CouchNano, merge}
 require! \cradle
 
 db-conf =
-    url: "https://demeter.cloudant.com"
-    database: 'domates2'
+    url: "http://10.0.9.92"
+    port: 5984
+    #url: "https://demeter.cloudant.com"
+    #port: 443
+    #url: "http://10.0.9.92"
+    #port: 5984
+    database: "domates2"
 
 Ractive.components['login'] = Ractive.extend do
     isolated: yes
@@ -73,14 +78,14 @@ Ractive.components['login'] = Ractive.extend do
                     username: user.name
                     password: user.password
 
-                conn = new(cradle.Connection) db-conf.url, 443, db-opts
+                conn = new(cradle.Connection) db-conf.url, db-conf.port, db-opts
                 db = conn.database db-conf.database
                 db.gen-entry-id = gen-entry-id
                 db.hash = hash8
 
                 get-credentials = (callback) ->
                     unless user.name is \demeter
-                        err, res <- conn.database \_users .get "org.couchdb.user:#{user.name}"
+                        err, res <- conn.database "_users" .get "org.couchdb.user:#{user.name}"
                         if err
                             console.error err
                             e.component.fire \state, \error, err.message
