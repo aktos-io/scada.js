@@ -72,7 +72,7 @@ create a document in _replicator db, like so:
 {
   "_id": "197d5186-402d-4de4-8d4b-d3acf90157b7",
   "source": "https://theadmin:theadminpassword@example.cloudant.com/sourcedb",
-  "target": "yourtargetdb",
+  "target": "http://foo:bar@127.0.0.1/targetdb",
   "create_target": true,
   "continuous": true
 }
