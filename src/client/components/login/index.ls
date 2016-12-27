@@ -10,14 +10,16 @@
 require! 'aea': {gen-entry-id, hash8, sleep, pack, CouchNano, merge}
 require! \cradle
 
-db-conf =
+db-conf0 =
+    url: "https://demeter.cloudant.com"
+    port: 443
+    database: "domates2"
+
+
+db-conf1 =
     url: "http://10.0.9.92"
     port: 5984
-    #url: "https://demeter.cloudant.com"
-    #port: 443
-    #url: "http://10.0.9.92"
-    #port: 5984
-    database: "domates2"
+    database: "domates5"
 
 Ractive.components['login'] = Ractive.extend do
     isolated: yes
@@ -44,15 +46,13 @@ Ractive.components['login'] = Ractive.extend do
                 login-button.fire \click
 
 
-        /*
-        server = CouchNano do
-            url: "https://demeter.cloudant.com"
-            user:
-                name: 'cca'
-                password: '3ijLODU'
-        */
+        db-conf = db-conf0
         @on do
-            do-login: (e) ->
+            do-login1: (e) ->
+                db-conf := db-conf1
+                __.fire \doLogin0, e
+
+            do-login0: (e) ->
                 __ = @
                 # setup db
 

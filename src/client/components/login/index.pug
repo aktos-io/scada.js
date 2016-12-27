@@ -4,11 +4,20 @@ form-vertical
     form-group
         input.form-control.password-input(value="{{context._user.password}}" type="password" placeholder="{{ passwordPlaceholder }}")
     form-group
+
         ack-button(
-            on-buttonclick="doLogin"
+            on-buttonclick="doLogin1"
             class="btn-lg btn-block btn-signin"
             type!="{{#if warnCapslock}}warning{{else}}primary{{/if}}"
-            ) Login
+            ) Login (Cici Meze)
+
+        hr
+
+        ack-button(
+            on-buttonclick="doLogin0"
+            class="btn-lg btn-block btn-signin"
+            type!="{{#if warnCapslock}}warning{{else}}primary{{/if}}"
+            ) Login0
 
 | {{#if warnCapslock}}
 .alert.alert-warning
