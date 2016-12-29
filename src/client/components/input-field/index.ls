@@ -6,8 +6,8 @@ Ractive.components['input-field'] = Ractive.extend do
             dakika saniye saat
             kg gr
             """
-
-        if @get('unit').to-lower-case! in number-units.split ' '
+        unit = @get \unit
+        if unit and unit.to-lower-case! in number-units.split ' '
             @set \type, \number
 
         if @get('type') is \number
@@ -18,3 +18,6 @@ Ractive.components['input-field'] = Ractive.extend do
 
     data: ->
         type: \number
+        unit: null
+        value: null
+        placeholder: ''
