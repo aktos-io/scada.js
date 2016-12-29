@@ -10,16 +10,16 @@
 require! 'aea': {gen-entry-id, hash8, sleep, pack, CouchNano, merge}
 require! \cradle
 
-db-conf0 =
-    url: "https://demeter.cloudant.com"
-    port: 443
-    database: "domates2"
+config =
+    cloudant:
+        url: "https://demeter.cloudant.com"
+        port: 443
+        database: "domates2"
 
-
-db-conf1 =
-    url: "http://10.0.9.92"
-    port: 5984
-    database: "domates5"
+    aktos:
+        url: "https://aktos.io/couchdb"
+        port: 443
+        database: "domates5"
 
 Ractive.components['login'] = Ractive.extend do
     isolated: yes
@@ -45,14 +45,9 @@ Ractive.components['login'] = Ractive.extend do
             if key.key-code is enter-key
                 login-button.fire \click
 
-
-        db-conf = db-conf0
         @on do
-            do-login1: (e) ->
-                db-conf := db-conf1
-                __.fire \doLogin0, e
-
-            do-login0: (e) ->
+            do-login: (e, server) ->
+                db-conf = config[server]
                 __ = @
                 # setup db
 
@@ -139,9 +134,15 @@ Ractive.components['login'] = Ractive.extend do
             logout: ->
                 console.log "LOGIN: We are logged out..."
 
-    data:
+    data: -> 
         context: null
         db: null
         username-placeholder: \Username
         password-placeholder: \Password
         warn-capslock: no
+        server-list:
+            * id: \aktos
+              name: "Cici Meze (Begos, İzmir)"
+            * id: \cloudant
+              name: "Cloudant (Avusturya)"
+        selected-server: \aktos

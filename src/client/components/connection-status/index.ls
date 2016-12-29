@@ -22,5 +22,5 @@ Ractive.components['connection-status'] = Ractive.extend do
                 console.log "Clicked is running ", val
 
 
-    data:
+    data: -> 
         connection-ok: no

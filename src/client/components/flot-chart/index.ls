@@ -55,6 +55,3 @@ Ractive.components['flot-chart'] = Ractive.extend do
                         tooltip: true
                     }
             )
-
-    data:
-        id: \will-be-random
