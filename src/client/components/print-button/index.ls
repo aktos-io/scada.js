@@ -14,8 +14,11 @@ Ractive.components['print-button'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->
-        id = "print-#{gen-entry-id!}"
-        @set \data-source, id
+        id = @get \data-source
+        unless id
+            id = "print-#{gen-entry-id!}"
+            @set \data-source, id
+
         @on do
             __prepare-print: ->
                 __ = @

@@ -5,9 +5,4 @@ export function pack x
         val
 
 export function unpack x
-    try
-        JSON.parse x
-    catch
-        console.error "Error while unpacking: #{e}, param: ", x
-        #debugger
-        throw e
+    JSON.parse x
