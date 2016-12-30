@@ -52,7 +52,6 @@ Ractive.components['print-button'] = Ractive.extend do
                         <script>window.print(); window.close()</script>
                     </html>
                     """
-                debugger
                 printWindow.document.writeln doc
                 printWindow.document.close!
     data: ->
