@@ -33,9 +33,9 @@ Ractive.components[component-name] = Ractive.extend do
                         ''
 
                 # convert array of arrays to csv
-                content = ""
+                content = "sep=,\r\n"
                 if col-names isnt ""
-                    content = "#{col-names}\r\n"                
+                    content = "#{col-names}\r\n"
                 for row in res.content
                     for j, col of row
                         inner-value = col?.to-string!
