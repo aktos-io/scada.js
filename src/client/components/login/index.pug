@@ -1,11 +1,16 @@
 form-vertical
     form-group
+        strong Database seçin:
+        search-combobox(data="{{ serverList }}" selected="{{ selectedServer }}")
+    form-group
         input.form-control.username-input(value="{{context._user.name}}" placeholder="{{ usernamePlaceholder }}")
     form-group
         input.form-control.password-input(value="{{context._user.password}}" type="password" placeholder="{{ passwordPlaceholder }}")
     form-group
+
         ack-button(
             on-buttonclick="doLogin"
+            value="{{ selectedServer }}"
             class="btn-lg btn-block btn-signin"
             type!="{{#if warnCapslock}}warning{{else}}primary{{/if}}"
             ) Login

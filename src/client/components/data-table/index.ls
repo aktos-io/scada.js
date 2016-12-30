@@ -8,6 +8,13 @@ require! 'randomstring': random
 Ractive.components['data-table'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
+    oninit: ->
+        readonly = if @partials.editForm then no else yes
+        title-provided = if @partials.addnewTitle then yes else no
+        @set \readonly, readonly
+        @set \_titleProvided, title-provided
+        @set \hasAddNewButton, (not readonly and title-provided)
+
     onrender: ->
         __ = @
 
@@ -74,11 +81,6 @@ Ractive.components['data-table'] = Ractive.extend do
         @set \handlers, handlers
 
         gen-entry-id = db.gen-entry-id
-
-        @set \readonly, if @partials.editForm
-            no
-        else
-            yes
 
         @set \dataFilters, settings.filters
 
@@ -393,6 +395,7 @@ Ractive.components['data-table'] = Ractive.extend do
 
     data: ->
         __ = @
+        has-add-new-button: no
         deleteDocuments: no
         instance: @
         curr: null

@@ -10,9 +10,16 @@
 require! 'aea': {gen-entry-id, hash8, sleep, pack, CouchNano, merge}
 require! \cradle
 
-db-conf =
-    url: "https://demeter.cloudant.com"
-    database: 'domates2'
+config =
+    cloudant:
+        url: "https://demeter.cloudant.com"
+        port: 443
+        database: "domates2"
+
+    aktos:
+        url: "https://aktos.io/couchdb"
+        port: 443
+        database: "domates5"
 
 Ractive.components['login'] = Ractive.extend do
     isolated: yes
@@ -38,16 +45,9 @@ Ractive.components['login'] = Ractive.extend do
             if key.key-code is enter-key
                 login-button.fire \click
 
-
-        /*
-        server = CouchNano do
-            url: "https://demeter.cloudant.com"
-            user:
-                name: 'cca'
-                password: '3ijLODU'
-        */
         @on do
-            do-login: (e) ->
+            do-login: (e, server) ->
+                db-conf = config[server]
                 __ = @
                 # setup db
 
@@ -73,14 +73,14 @@ Ractive.components['login'] = Ractive.extend do
                     username: user.name
                     password: user.password
 
-                conn = new(cradle.Connection) db-conf.url, 443, db-opts
+                conn = new(cradle.Connection) db-conf.url, db-conf.port, db-opts
                 db = conn.database db-conf.database
                 db.gen-entry-id = gen-entry-id
                 db.hash = hash8
 
                 get-credentials = (callback) ->
                     unless user.name is \demeter
-                        err, res <- conn.database \_users .get "org.couchdb.user:#{user.name}"
+                        err, res <- conn.database "_users" .get "org.couchdb.user:#{user.name}"
                         if err
                             console.error err
                             e.component.fire \state, \error, err.message
@@ -134,9 +134,15 @@ Ractive.components['login'] = Ractive.extend do
             logout: ->
                 console.log "LOGIN: We are logged out..."
 
-    data:
+    data: -> 
         context: null
         db: null
         username-placeholder: \Username
         password-placeholder: \Password
         warn-capslock: no
+        server-list:
+            * id: \aktos
+              name: "Cici Meze (Begos, İzmir)"
+            * id: \cloudant
+              name: "Cloudant (Avusturya)"
+        selected-server: \aktos

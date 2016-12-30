@@ -1,0 +1,7 @@
+.input-group
+    input.form-control(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}")
+    | {{#if unit === null }}
+    span.input-group-addon {{yield}}
+    | {{else}}
+    span.input-group-addon {{ unit }}
+    | {{/if}}

@@ -1,0 +1,23 @@
+//-
+    Match with Design Guide status:
+
+        [ ] 1. Example implementation
+        [ ] 2. Simple variable
+        [ ] 3. Unbound instances
+        [ ] 4. Bound instances and/or live feed
+        [ ] 5. {{#if }} ... {{/if}} block
+        [ ] 6. Test on mobile
+        [ ] 7. Change sizes
+        [ ] 8. Match theme
+        [ ] 9. This checklist
+
+panel(type="info" title="input-field")
+    .content
+        .row
+            .col-md-12
+                pre input-field(value="\{{ myValue }}" unit="seconds" placeholder="my place holder")
+                blockquote.
+                    Note that changing number values by scrolling is intentionally disabled.
+            .col-md-12
+                input-field(value="{{ inputField.value }}" unit="dakika" placeholder="hello!")
+                strong value is: {{ inputField.value }}

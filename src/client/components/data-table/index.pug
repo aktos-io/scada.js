@@ -33,7 +33,7 @@ include ../../templates/mixins.pug
 | {{>header}}
 table.rwd-table
     thead
-        +unless('readonly')
+        +if('hasAddNewButton')
             tr
                 td(colspan="{{ columnList.length + 1 }}")
                     row
@@ -92,7 +92,7 @@ table.rwd-table
                     | {{#if openingRow}}
                     btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
                     | &nbsp;
-                    tag {{ .id }}                    
+                    tag {{ .id }}
                     | &nbsp;
                     icon-cog(spin="true")
                     | &nbsp;
