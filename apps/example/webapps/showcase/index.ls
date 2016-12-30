@@ -115,6 +115,12 @@ ractive.on do
         <- sleep 2000ms
         ev.component.fire \state, intended-state
 
+    my-print: (html, value, callback) ->
+        callback err=null, body: """
+            <h1>This is value: #{value}</h1>
+            #{html}
+            """
+
     todostatechanged: (ev, list, item-index) ->
         the-item = list[item-index]
         new-state = if the-item.is-done then \checked else \unchecked

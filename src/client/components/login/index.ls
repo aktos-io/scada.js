@@ -21,6 +21,11 @@ config =
         port: 443
         database: "domates5"
 
+    local:
+        url: "http://10.0.9.92"
+        port: 5984
+        database: "domates5"
+
 Ractive.components['login'] = Ractive.extend do
     isolated: yes
     template: RACTIVE_PREPARSE('index.pug')
@@ -134,13 +139,15 @@ Ractive.components['login'] = Ractive.extend do
             logout: ->
                 console.log "LOGIN: We are logged out..."
 
-    data: -> 
+    data: ->
         context: null
         db: null
         username-placeholder: \Username
         password-placeholder: \Password
         warn-capslock: no
         server-list:
+            * id: \local
+              name: "CM"
             * id: \aktos
               name: "Cici Meze (Begos, İzmir)"
             * id: \cloudant

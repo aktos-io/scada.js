@@ -1,0 +1,10 @@
+.print-area {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+.no-print {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
