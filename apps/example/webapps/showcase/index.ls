@@ -93,6 +93,9 @@ ractive.on do
             title: "this is an example info"
             message: value or "test info..."
 
+    test-ack-button5: (ev) ->
+        ev.component.fire \info, 'this is a test string (info)'
+
     test-ack-button4: (ev, value) ->
         console.log "asking if yes or no"
         ok <- ev.component.fire \yesno, do

@@ -54,7 +54,10 @@ Ractive.components['ack-button'] = Ractive.extend do
 
             info: (msg) ->
                 __ = @
+                if typeof! msg is \String
+                    msg = message: msg
                 <- sleep 1000ms
+                debugger
                 __.set \infoTitle, (msg.title or \info)
                 __.set \infoMessage, (msg.message)
                 __.set \confirmationType, null
