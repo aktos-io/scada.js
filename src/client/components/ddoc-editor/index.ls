@@ -11,18 +11,26 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
         design-document = (@get \document)
         @set (camelize \design-document), design-document
         @on do
-            get-design-document: (e) ->
+            listDesignDocuments: (ev) ->
+                __ = @
+                ev.component.fire \state, \doing
+                err, res <- db.all {startkey: "_design/", endkey: "_design0", +include_docs}
+                return ev.component.fire \state, \error, err.message if err
+                __.set \designDocuments, [..key for res]
+                ev.component.fire \state, \done...
+
+            get-design-document: (e, value) ->
                 e.component.fire \state, \doing
                 self = this
                 # get the _auth design document
                 console.log "DB is: ", db
-                design-document = self.get camelize \design-document
-                err, res <- db.get design-document._id
+                err, res <- db.get value
                 return e.component.fire \state, \error, err.message if err
 
                 console.log "Current _auth document: ", res
                 ddoc = res
                 ddoc.livescript = res.src
+                self.set \documentId, ddoc._id
                 self.set (camelize \design-document), ddoc
                 e.component.fire \state, \done...
 
@@ -36,17 +44,6 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
 
                 ev.component.fire \state, \done
 
-            new-design-document: (e) ->
-                __ = @
-                e.component.fire \state, \doing
-                design-document = @get \designDocument
-                delete design-document._rev
-                console.log "Putting new design document: ", design-document
-                err, res <- db.save design-document
-                return e.component.fire \state, \error, err.message if err
-
-                console.log "Design document uploaded successfully...", res
-                __.fire (camelize \get-design-document), e
 
             compileDesignDocument: (e)->
                 console.log "Compiling auth document..."
@@ -63,9 +60,13 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
             putDesignDocument: (e) ->
                 self = @
                 e.component.fire \state, \doing
-                console.log "Putting design document!"
-                console.log "Uploading design document..."
+
                 ddoc = self.get \designDocument
+                new-id = self.get \documentId
+                if new-id isnt ddoc._id
+                    e.component.fire \info, "Putting new design document!"
+                    ddoc._id = new-id
+                    delete ddoc._rev
                 id = ddoc._id
                 if id.split('/').1 is ''
                     return e.component.fire \state, \error, "Design document name cannot be empty: #{id}"
@@ -83,10 +84,13 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                     e.component.fire \state, \error, err.message
                     console.error "Error uploading ddoc-src document: ", err
                     return
-                else
-                    console.log "ddoc-src document uploaded successfully", res
-                    # update _rev field for the following updates
-                    self.fire (camelize \get-design-document), e
+
+                console.log "ddoc-src document uploaded successfully", res
+
+                # update _rev field for the following updates
+                ddoc._rev = res.rev
+                self.set \designDocument, ddoc
+                e.component.fire \state, \done...
 
     data: ->
         db: null
@@ -96,3 +100,10 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
             javascript: "compiled testing"
 
         allDesignDocs: ''
+        designDocuments: []
+        documentId: ''
+
+
+/*
+
+*/
