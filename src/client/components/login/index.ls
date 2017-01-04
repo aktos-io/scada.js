@@ -26,6 +26,7 @@ config =
         port: 5984
         database: "domates7"
 
+
 Ractive.components['login'] = Ractive.extend do
     isolated: yes
     template: RACTIVE_PREPARSE('index.pug')
@@ -150,6 +151,5 @@ Ractive.components['login'] = Ractive.extend do
               name: "Cici Meze (Begos, İzmir)"
             * id: \cloudant
               name: "Cloudant (Avusturya)"
-            #* id: \local
-            #  name: "CM (Failover)"
+
         selected-server: \cloudant
