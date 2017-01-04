@@ -220,7 +220,10 @@ Ractive.components['data-table'] = Ractive.extend do
                             if index is value._id
                                 curr = unpack pack tabledata[key]
                     else
-                        curr = unpack pack find (._id is index), tabledata
+                        curr = try
+                            unpack pack find (._id is index), tabledata
+                        catch
+                            unpack pack context
 
                     if curr
                         @set \curr, curr
