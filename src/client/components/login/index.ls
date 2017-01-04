@@ -152,4 +152,4 @@ Ractive.components['login'] = Ractive.extend do
               name: "Cloudant (Avusturya)"
             #* id: \local
             #  name: "CM (Failover)"
-        selected-server: \cloudant
+        selected-server: \aktos
