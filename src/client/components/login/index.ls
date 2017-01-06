@@ -26,6 +26,7 @@ config =
         port: 5984
         database: "domates7"
 
+
 Ractive.components['login'] = Ractive.extend do
     isolated: yes
     template: RACTIVE_PREPARSE('index.pug')
