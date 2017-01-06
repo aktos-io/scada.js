@@ -7,6 +7,7 @@ require! {
     './packing': {pack, unpack}
     './formatting': {unix-to-readable, readable-to-unix}
     './couch-nano': {CouchNano}
+    './convert-units': {convert-units}
 }
 
 require! 'prelude-ls': {chars, unchars}
@@ -105,4 +106,5 @@ module.exports = {
     obj-copy, dynamic-obj, attach
     copyToClipboard
     tr-to-ascii
+    convert-units
 }
