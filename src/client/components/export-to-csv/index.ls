@@ -33,7 +33,8 @@ Ractive.components[component-name] = Ractive.extend do
                         ''
 
                 # convert array of arrays to csv
-                content = "sep=,\r\n"
+                content = ""
+                #content += "\"sep=,\"\r\n" # Excel default separator workaround
                 if col-names isnt ""
                     content = "#{col-names}\r\n"
                 for row in res.content
