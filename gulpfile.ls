@@ -124,6 +124,8 @@ gulp.task \default, ->
         "#{paths.client-src}/**/*.ls"
         "#{paths.client-webapps}/#{app}/**/*.html"
         "#{paths.client-src}/**/*.html"
+        "#{paths.lib-src}/**/*.ls"
+        "#{paths.lib-src}/**/*.js"
 
     watch for-browserify, ->
         gulp.start \browserify
