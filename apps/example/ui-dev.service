@@ -14,11 +14,12 @@ source "${LIB_DIR}/tmux-launch"
 cd $CURR_DIR
 SCADA_ROOT="$CURR_DIR/../.."
 
+# causing export: " `run-editor': not a valid identifier " error
+# TODO: initialize run-editor
 #export run-editor
 
 # start new tmux session (if there is no duplicate)
 start-tmux-session "$SESSION_NAME"
-tmux send-keys "tmux set -g base-index 0" C-m
 
 # run commands in tmux session
 run-in-tmux "cd $SCADA_ROOT" "gulp --project example --app showcase"
