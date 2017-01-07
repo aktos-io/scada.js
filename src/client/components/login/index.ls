@@ -19,12 +19,13 @@ config =
     aktos:
         url: "https://aktos.io/couchdb"
         port: 443
-        database: "domates5"
+        database: "domates7"
 
     local:
         url: "http://10.0.9.92"
         port: 5984
-        database: "domates5"
+        database: "domates7"
+
 
 Ractive.components['login'] = Ractive.extend do
     isolated: yes
@@ -146,10 +147,10 @@ Ractive.components['login'] = Ractive.extend do
         password-placeholder: \Password
         warn-capslock: no
         server-list:
-            * id: \local
-              name: "CM"
             * id: \aktos
               name: "Cici Meze (Begos, İzmir)"
             * id: \cloudant
               name: "Cloudant (Avusturya)"
+            #* id: \local
+            #  name: "CM (Failover)"
         selected-server: \aktos

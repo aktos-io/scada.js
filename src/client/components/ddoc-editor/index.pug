@@ -1,16 +1,11 @@
-form-horizontal
-    form-group
-        row
-            col-sm-2
-                b-label Document ID
-            col-sm-4
-                input.form-control(value="{{designDocument._id}}")
-            col-sm-6    
-                btn-group
-                    ack-button(on-buttonclick="getDesignDocument" type="primary").
-                        Get Document!
-    ace-editor(code="{{ designDocument.livescript }}" mode="livescript" theme="xcode")
+ack-button(on-buttonclick="listDesignDocuments" type="primary") Get List
++each('designDocuments')
+    ack-button(on-buttonclick="getDesignDocument" value="{{ . }}")
+        code {{ . }}
+
+ace-editor(code="{{ designDocument.livescript }}" mode="livescript" theme="xcode")
 btn-group
+    input(value="{{ documentId }}")
     ack-button(on-buttonclick="putDesignDocument" type="success").
         Put Auth Document!
     ack-button(on-buttonclick="compileDesignDocument" type="info").

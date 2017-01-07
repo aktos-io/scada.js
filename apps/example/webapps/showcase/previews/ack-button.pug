@@ -31,6 +31,8 @@ panel(type="info" title="ack-button")
                 p
                     input(value="{{ button.infoMessage }}" placeholder="Info message")
                     ack-button(on-buttonclick="testAckButton3" value="{{ button.infoMessage }}") MY BUTTON 3
+                p
+                    ack-button(on-buttonclick="testAckButton5") Send info via handler (as string)
                 h3 This is text-button (an ack-button with input)
                 text-button(on-buttonclick="testAckButton3") MY BUTTON 3
 

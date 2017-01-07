@@ -7,7 +7,10 @@ require! {
     './packing': {pack, unpack}
     './formatting': {unix-to-readable, readable-to-unix}
     './couch-nano': {CouchNano}
+    './convert-units': {convert-units}
 }
+
+require! 'prelude-ls': {chars, unchars}
 
 export function assert (condition, message)
     unless condition
@@ -68,6 +71,28 @@ function copyToClipboard(text) {
     }
 }
 ``
+
+export tr-to-ascii = (x) ->
+    _from = "çalışöğünisÇALIŞÖĞÜNİŞ"
+    _to = "calisogunisCALISOGUNIS"
+
+    exploded = chars x
+    for ci of exploded
+        for index, f of _from
+            exploded[ci] = _to[index] if exploded[ci] is f
+    unchars exploded
+
+tests =
+    'ÖZDİLEK': "OZDILEK"
+    "özdilek": "ozdilek"
+
+console.log "started tr-to-ascii tests"
+for w, c of tests
+    if tr-to-ascii(w) isnt c
+        console.log "tr-to-ascii of #{w} is #{tr-to-ascii w} but expecting #{c}"
+        throw
+console.log "finished tr-to-ascii tests"
+
 module.exports = {
     make-user-doc, PouchDB, make-design-doc, check-login, is-db-alive, gen-entry-id, hash8, hash8n
     CouchNano
@@ -80,4 +105,6 @@ module.exports = {
     assert
     obj-copy, dynamic-obj, attach
     copyToClipboard
+    tr-to-ascii
+    convert-units
 }

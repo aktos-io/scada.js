@@ -33,6 +33,7 @@ include ../../templates/mixins.pug
 | {{>header}}
 table.rwd-table
     thead
+        | {{#if firstRunDone}}
         +if('hasAddNewButton')
             tr
                 td(colspan="{{ columnList.length + 1 }}")
@@ -49,7 +50,11 @@ table.rwd-table
                              {{#if addingNew}}{{>editForm}}{{/if}}
         tr
             td(colspan="{{ columnList.length + 1 }}")
+<<<<<<< HEAD
                 ack-button(on-buttonclick="kickChanges") Refresh ({{ createViewCounter }})
+=======
+                ack-button(on-buttonclick="kickChanges") Yenile
+>>>>>>> dd2b0d12d8f306082a3787db359eb6c4ffac56c8
                 span(style="color: lightgray; margin-left: 20px") {{#unless openingRow}}{{ openingRowMsg }}{{/unless}}
 
 
@@ -57,6 +62,13 @@ table.rwd-table
             {{#each columnList}}
                 <th>{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</th>
             {{/each}}
+        | {{else}}
+        tr
+            td(colspan="{{ columnList.length + 1 }}")
+                h2
+                    icon-cog(spin="true")
+                    span Yükleniyor...
+        | {{/if}}
 
     tbody
         +each('tableview_visible:i')

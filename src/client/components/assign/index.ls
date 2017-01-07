@@ -1,3 +1,5 @@
+require! 'aea':{pack, unpack}
+
 Ractive.components['assign'] = Ractive.extend do
     isolated: yes
     template: RACTIVE_PREPARSE('index.pug')
@@ -12,6 +14,6 @@ Ractive.components['assign'] = Ractive.extend do
                     return
             @observe \input, (new-val, old-val) ->
                 #console.log "ASSIGN: assigning new value: ", new-val
-                @set \output, new-val
+                @set \output, unpack pack new-val
         catch
             debugger

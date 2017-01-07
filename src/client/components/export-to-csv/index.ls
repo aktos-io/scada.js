@@ -2,11 +2,9 @@ require! 'prelude-ls': {
     map
 }
 require! 'aea': {copyToClipboard}
-
 base64 = (s) -> window.btoa unescape encodeURIComponent s
 
-component-name = "export-to-file"
-Ractive.components[component-name] = Ractive.extend do
+Ractive.components["export-to-csv"] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->
@@ -14,6 +12,7 @@ Ractive.components[component-name] = Ractive.extend do
         @on do
             __prepare-download: ->
                 __ = @
+                __.set \state, \doing
                 err, res <- @fire \prepareDownload
                 #a = @find "download-link"
 
@@ -33,7 +32,8 @@ Ractive.components[component-name] = Ractive.extend do
                         ''
 
                 # convert array of arrays to csv
-                content = "sep=,\r\n"
+                content = ""
+                #content += "\"sep=,\"\r\n" # Excel default separator workaround
                 if col-names isnt ""
                     content = "#{col-names}\r\n"
                 for row in res.content
@@ -62,6 +62,7 @@ Ractive.components[component-name] = Ractive.extend do
                     a.download = filename
                     a.href = filecontent
                     a.click!
+                __.set \state, \done...
 
     data: ->
         data: []
@@ -69,3 +70,4 @@ Ractive.components[component-name] = Ractive.extend do
         'col-names': null
         filecontent: null
         download-link-ready: no
+        state: 'normal'
