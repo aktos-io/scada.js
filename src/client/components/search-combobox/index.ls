@@ -57,5 +57,5 @@ Ractive.components['search-combobox'] = Ractive.extend do
         selected-text: ''
         multiple: 1
         multi-selected: null
-        placeholder: "Seçim yapın..."
+        placeholder: "Please Choose..."
         __selectize__: null
