@@ -99,8 +99,11 @@ test-cases =
       expected: 10 / 1000
 
 exceptional-cases =
+    # test units 
     * {in: test-units, from: \maket, to: \paket}  # no such source unit
     * {in: test-units, from: \paket, to: \maket}  # no such target unit
+
+    # bad units
     * {in: bad-units1, from: \paket, to: \gr}  # duplicate units
 
 console.log "Begin CONVERT_UNITS testing..."
