@@ -13,8 +13,9 @@ default-units =
       amount: 10
       base-unit: \desi_gr
 
-function ConversionException message
-    @message = message
+function ConversionException message, unit
+    @message = "ConversionException: #{message}: #{pack unit}"
+    @unit = unit
     @name = "ConversionException"
 
 function ConversionTestException message
@@ -43,14 +44,14 @@ export function convert-units params
         for c in coeff
             matches = filter ((x) -> (x.derived-unit is c.derived-unit) and (x.base-unit is c.base-unit)), coeff
             if matches.length > 1
-                throw new ConversionException "Duplicate unit definition: #{pack c}"
+                throw new ConversionException "Duplicate unit definition", c
 
 
         if source not in all-units
-            throw new ConversionException "No such source unit: #{source}"
+            throw new ConversionException "No such source unit", source
 
         if target not in all-units
-            throw new ConversionException "No such target unit: #{target}"
+            throw new ConversionException "No such target unit", target
 
         debugger if debug
         # down conversion
@@ -75,7 +76,7 @@ export function convert-units params
                     remaining = array-diff coeff, base
                     debugger if debug
                     try return (recurse {in: remaining, from: tu.derived-unit, to: target, debug: debug}) / tu.amount
-        throw new ConversionException "Dead end: #{target}"
+        throw new ConversionException "Dead end", target
     recurse params
 
 test-units =
