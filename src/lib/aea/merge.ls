@@ -1,6 +1,6 @@
 require! './packing': {pack}
 
-/**/
+/** /
 export merge = (obj1, obj2) ->
     if (typeof! obj1 is \Array) and (typeof! obj2 is \Array)
         for i in obj2
@@ -31,29 +31,31 @@ export merge = (obj1, obj2) ->
                     delete obj1[p]
         obj1
 
-/** /
+/**/
 
 export function merge obj1, obj2
-    for p of obj2
-        t-obj1 = typeof! obj1[p]
-        if typeof! obj2[p] is \Object
-            if t-obj1 is \Object
-                obj1[p] `merge` obj2[p]
+    if (typeof! obj1 is \Array) and (typeof! obj2 is \Array)
+        for i in obj2
+            try
+                for j in obj1
+                    throw if pack(i) is pack(j)
+                # append if item is not found in first one
+                obj1.push i
+        return obj1
+    else
+        for p of obj2
+            t-obj1 = typeof! obj1[p]
+            if typeof! obj2[p] in <[ Object Array ]>
+                if t-obj1 in <[ Object Array ]>
+                    obj1[p] `merge` obj2[p]
+                else
+                    obj1[p] = obj2[p]
             else
-                obj1[p] = obj2[p]
-        else
-            if t-obj1 is \Array
-                # array, merge with current one
-                for i, j of obj2[p]
-                    try
-                        for a in obj1[p]
-                            throw if pack(a) is pack(j)
-                        obj1[p].push j
-            else if obj2[p] isnt void
-                obj1[p] = obj2[p]
-            else
-                delete obj1[p]
-    obj1
+                if obj2[p] isnt void
+                    obj1[p] = obj2[p]
+                else
+                    delete obj1[p]
+        obj1
 /**/
 export function merge-all (obj1, ...sources)
     for obj2 in sources
