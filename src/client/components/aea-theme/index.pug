@@ -3,7 +3,7 @@
         .row(style="margin: 0; padding: 0") {{ yield }}
 
 +component('aea-menu')
-    .col-sm-2(style="padding: 0; margin-left: 0; margin-top: 0; margin-bottom: 0")
+    .col-md-2(style="padding: 0; margin-left: 0; margin-top: 0; margin-bottom: 0")
         .sidebar-nav
             .navbar.navbar-default(role="navigation")
                 .navbar-header
@@ -14,7 +14,7 @@
                         span.icon-bar
                 .navbar-collapse.collapse.sidebar-navbar-collapse
                     ul.nav.navbar-nav
-                        li {{yield}}
+                        | {{yield}}
                         +each('menu')
                             | {{#if ! .subMenu}}
                             | {{#if isAllowed(.url).visible}}
