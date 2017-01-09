@@ -101,9 +101,13 @@ body {
 
   .rwd-table td {
     display: block;
-    text-align: right;
+    /*text-align: right;*/
     font-size: 13px;
     border-bottom: 1px dotted #ccc;
+  }
+
+  .rwd-table td[data-th] {
+    text-align: right;
   }
 
   .rwd-table td:last-child {
