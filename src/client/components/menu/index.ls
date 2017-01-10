@@ -22,4 +22,4 @@ Ractive.components[component-name] = Ractive.extend do
 
 <-! $ \document .ready
 ev <-! $ \.main-sidebar-button .click
-$ \.main-sidebar .toggleClass \closed
+$ \.main-sidebar .toggleClass \collapsed
