@@ -2,7 +2,7 @@
     | {{ yield }}
 
 +component('aea-menu')
-    aside.main-sidebar
+    aside.main-sidebar.debug
         button.btn.btn-default.main-sidebar-button(type="button"): i.glyphicon.glyphicon-menu-hamburger
         nav.main-sidebar-navigation
             ul.sidebar-menu
@@ -13,38 +13,7 @@
                     span.menu-item-icon.glyphicon.glyphicon-tags
                     span.menu-item-title &nbsp;Bar
 
-    //- .col-md-2(style="padding: 0; margin-left: 0; margin-top: 0; margin-bottom: 0")
-    //-     .sidebar-nav
-    //-         .navbar.navbar-default(role="navigation")
-    //-             .navbar-header
-    //-                 button.navbar-toggle(type="button" data-toggle="collapse" data-target=".sidebar-navbar-collapse")
-    //-                     span.sr-only Toggle Navigation
-    //-                     span.icon-bar
-    //-                     span.icon-bar
-    //-                     span.icon-bar
-    //-             .navbar-collapse.collapse.sidebar-navbar-collapse
-    //-                 ul.nav.navbar-nav
-    //-                     | {{yield}}
-    //-                     +each('menu')
-    //-                         | {{#if ! .subMenu}}
-    //-                         | {{#if isAllowed(.url).visible}}
-    //-                         li(class="{{#if selected === .url}}active{{/if}}"): a(href="{{ .url }}") {{#if expand}}{{ .title }}{{/if}}
-    //-                         | {{/if}}
-    //-                         | {{else}}
-    //-                         // this is submenu
-    //-                         li.dropdown
-    //-                             a.dropdown-toggle(href="#" data-toggle="dropdown") {{#if expand}} {{.title}} #[b.caret] {{/if}}
-    //-                             ul.dropdown-menu
-    //-                                 +each('subMenu')
-    //-                                     +if('isAllowed(.url).visible')
-    //-                                         li
-    //-                                             a(href="{{.url}}") {{.title}}
-
-    //-                         | {{/if}}
-
-
 +component('aea-content')
-    //- .col-md-10.col-md-offset-2.col-xs-11.col-xs-offset-1
     .container-fluid.content-wrapper
         .row
             .col-md-12
