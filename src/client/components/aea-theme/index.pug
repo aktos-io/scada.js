@@ -1,18 +1,17 @@
 +component('aea-theme')
-    .content
-        .row(style="margin: 0; padding: 0") {{ yield }}
+    | {{ yield }}
 
 +component('aea-menu')
     aside.main-sidebar
-        button.sidebar-button(type="button"): i.glyphicon.glyphicon-menu-hamburger
-
-        ul.sidebar-menu
-            li: a(href="#foo")
-                i.fa.fa-th
-                span lorem ipsum dolor sit amet
-            li: a(href="#bar")
-                i.fa.fa-files-o
-                span Bar
+        button.btn.btn-default.main-sidebar-button(type="button"): i.glyphicon.glyphicon-menu-hamburger
+        nav.main-sidebar-navigation
+            ul.sidebar-menu
+                li: a(href="#foo")
+                    span.menu-item-icon.glyphicon.glyphicon-cloud
+                    span.menu-item-title &nbsp;lorem ipsum dolor sit amet
+                li: a(href="#bar")
+                    span.menu-item-icon.glyphicon.glyphicon-tags
+                    span.menu-item-title &nbsp;Bar
 
     //- .col-md-2(style="padding: 0; margin-left: 0; margin-top: 0; margin-bottom: 0")
     //-     .sidebar-nav
@@ -45,8 +44,10 @@
 
 
 +component('aea-content')
-    .col-md-10.col-md-offset-2.col-xs-11.col-xs-offset-1
-        .row(style="margin: 0; padding: 0").
-            {{yield header}}
-        .row(style="margin: 0; padding: 0").
-            {{yield body}}
+    //- .col-md-10.col-md-offset-2.col-xs-11.col-xs-offset-1
+    .container-fluid.content-wrapper
+        .row
+            .col-md-12
+                | {{yield header}}
+            .col-md-12
+                | {{yield body}}

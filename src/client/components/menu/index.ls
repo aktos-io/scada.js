@@ -21,5 +21,5 @@ Ractive.components[component-name] = Ractive.extend do
         show-menu: true
 
 <-! $ \document .ready
-ev <-! $ \.sidebar-button .click
-console.log ev
+ev <-! $ \.main-sidebar-button .click
+$ \.main-sidebar .toggleClass \closed

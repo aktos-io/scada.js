@@ -1,28 +1,44 @@
 .main-sidebar {
-background-color: maroon;
+background-color: lime;
     position: fixed;
     top: 0;
     left: 0;
     min-height: 100%;
-    width: 16.66666667%; /* col-*-2 */
+    width: 48px;
     z-index: 810;
+    transition: 0.2s;
 }
 
-.sidebar-button {
+.main-sidebar.closed {
+    background-color: transparent;
+}
+/*.main-sidebar.closed .main-sidebar-navigation {
+    width: 0;
+}*/
+.main-sidebar.closed li {
+    display: none;
+}
+
+.main-sidebar-button {
     width: 40px;
     padding: 6px 0;
     margin: 6px 0 6px 4px;
+    z-index: 811;
+}
+
+.main-sidebar-navigation {
+    transition: 0.2s;
 }
 
 .sidebar-menu {
     list-style: none;
-    position: absolute;
     margin: 0;
     padding: 0;
 }
 
 .sidebar-menu > li {
     position: relative;
+    display: inherit;
     margin: 0;
     padding: 0;
 }
@@ -32,22 +48,70 @@ background-color: maroon;
     display: block;
 }
 
-@media (min-width: 426px) and (max-width: 991px) {
+.menu-item-icon {
+    display: inline-block;
+}
+
+.menu-item-title {
+    display: none;
+}
+
+.content-wrapper {
+    margin-left: 36px;
+}
+
+@media (min-width: 480px) { /* twbs-xs */
     /* collapsed to icons */
     .main-sidebar {
-background-color: lime;
-        width: 8.33333333%; /* col-*-1 */
+background-color: cyan;
     }
 }
 
-@media (max-width: 425px) {
-    /* hidden - shown by button */
+@media (min-width: 768px) { /* twbs-sm */
     .main-sidebar {
-background-color: navy;
-        width: 200px;
+background-color: maroon;
+        width: calc(2 * 8.33333333%);
     }
 
-    .sidebar-menu {
-        left: -200px;
+    .menu-item-title {
+        display: inline-block;
     }
+
+    /*.content-wrapper {
+        margin-left: calc(2 * 8.33333333%);
+    }*/
+}
+
+@media (min-width: 992px) { /* twbs-md */
+    .main-sidebar {
+background-color: lightgray;
+        width: calc(3 * 8.33333333%);
+    }
+
+    .menu-item-title {
+        display: inline-block;
+    }
+
+    /*.content-wrapper {
+        margin-left: calc(3 * 8.33333333%);
+    }*/
+}
+
+@media (min-width: 1200px) { /* twbs-lg */
+    .main-sidebar {
+background-color: black;
+        width: calc(4 * 8.33333333%);
+    }
+
+    .main-sidebar a {
+color: white;
+    }
+
+    .menu-item-title {
+        display: inline-block;
+    }
+
+    /*.content-wrapper {
+        margin-left: calc(4 * 8.33333333%);
+    }*/
 }
