@@ -121,4 +121,16 @@
 }
 
 @media (min-width: 1200px) { /* twbs-lg */
+    .main-sidebar + .content-wrapper {
+        width: calc(9 * 8.33333333%);
+        margin-left: calc(3 * 8.33333333%);
+    }
+    .main-sidebar.collapsed + .content-wrapper {
+        width: calc(100% - 48px);
+        margin-left: 48px;
+    }
+}
+
+.content-wrapper {
+    transition: 0.2s;
 }
