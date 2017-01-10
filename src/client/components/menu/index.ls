@@ -19,3 +19,7 @@ Ractive.components[component-name] = Ractive.extend do
               icon: "resize-horizontal"
             ...
         show-menu: true
+
+<-! $ \document .ready
+ev <-! $ \.sidebar-button .click
+console.log ev
