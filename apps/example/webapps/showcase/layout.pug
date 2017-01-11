@@ -1,9 +1,12 @@
 aea-theme
-    aea-menu(menu="{{menu}}" selected="{{testMenu.selected}}")
-        li: a(href="#foo") Foo
-        li: a(href="#bar") Bar
-        li: a(href="#baz") Baz
-        li: a(href="#qux") Qux
+    aea-menu(menu="{{menu}}" selected="{{ currPage }}" isAllowed="{{ isAllowed }}")
+        span {{ login.user.name }}
+        //- li: a.active(href="#foo")
+        //-     span.menu-item-icon.glyphicon.glyphicon-cloud
+        //-     span.menu-item-title lorem ipsum dolor sit amet
+        //- li: a(href="#bar")
+        //-     span.menu-item-icon.glyphicon.glyphicon-tags
+        //-     span.menu-item-title Bar
     aea-content
         +partial('header')
             p hi! this is header!

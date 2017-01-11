@@ -73,6 +73,13 @@ ractive = new Ractive do
                   content: 'Finally do this'
             log2: []
         unix-to-readable: unix-to-readable
+        menu:
+            * title: "Siparişler"
+              icon: "fa fa-bar-chart-o"
+              url: '#/orders'
+            * title: "İş Planları"
+              icon: "fa fa-bar-chart-o"
+              url: '#/production-jobs'
 
 ractive.on do
     test-ack-button1: (ev, value) ->

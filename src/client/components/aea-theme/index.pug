@@ -6,12 +6,22 @@
         button.btn.btn-default.main-sidebar-button(type="button"): i.glyphicon.glyphicon-menu-hamburger
         nav.main-sidebar-navigation
             ul.sidebar-menu
-                li: a.active(href="#foo")
-                    span.menu-item-icon.glyphicon.glyphicon-cloud
-                    span.menu-item-title lorem ipsum dolor sit amet
-                li: a(href="#bar")
-                    span.menu-item-icon.glyphicon.glyphicon-tags
-                    span.menu-item-title Bar
+                +each('menu')
+                    li
+                        | {{#if menu.url}}
+                        a.active(href="{{ .url }}")
+                        | {{else}}
+                        a(href="{{ .url }}")
+                        | {{/if}}
+                            span.menu-item-icon.glyphicon.glyphicon-cloud
+                            span.menu-item-title
+                                | {{ .title }}
+                //- li: a.active(href="#foo")
+                //-     span.menu-item-icon.glyphicon.glyphicon-cloud
+                //-     span.menu-item-title lorem ipsum dolor sit amet
+                //- li: a(href="#bar")
+                //-     span.menu-item-icon.glyphicon.glyphicon-tags
+                //-     span.menu-item-title Bar
 
 +component('aea-content')
     .container-fluid.content-wrapper
