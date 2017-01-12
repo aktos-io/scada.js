@@ -30,7 +30,10 @@ include ../../templates/mixins.pug
 
             .modal-footer
 
-| {{>header}}
+//- Header part
++if('firstRunDone') {{>header}}
+//- End Of Header
+
 table.rwd-table
     thead
         | {{#if firstRunDone}}
