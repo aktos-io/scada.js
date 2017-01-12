@@ -14,9 +14,10 @@ panel(type="info" title="file-read")
     .content
         .row
             .col-md-12
-                pre file-read(on-select="fileReadHandler" [multiple] [accept=".xml"])
+                pre file-read(on-read="fileReadHandler" [multiple] [accept=".xml"])
                 p.
-                    #[code on-select] = (event, contents) -> contents is array of #[code {filename: "name of file", content: "content"}]
+                    #[code on-read] = (file, next) -> file is an object: #[code {name: "name of file", content: "content"}],
+                    #[code next] is function to proceed to next file (if multiple selected)
 
             .col-md-12
                 // a checkbox to toggle one component instance ||meets 5||
