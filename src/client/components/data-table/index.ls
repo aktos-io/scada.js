@@ -199,7 +199,7 @@ Ractive.components['data-table'] = Ractive.extend do
             try
                 def = __.get \settings.default
                 if typeof def is \function
-                    return def!
+                    return def.call __
                 else
                     unpack pack def
             catch

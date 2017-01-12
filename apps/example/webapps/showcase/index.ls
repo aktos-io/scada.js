@@ -43,6 +43,9 @@ ractive = new Ractive do
         checkbox:
             checked1: no
             checked2: no
+        file-read:
+            show: yes
+            files: []
         todo:
             show: yes
             todos1:
@@ -149,3 +152,8 @@ ractive.on do
     todotimeout2: (item) ->
         console.log "UnBound instance: item with id of '" + item.id + "' in the list had been timed out"
         console.log item
+
+    uploadReadFile: (file, next) ->
+        console.log "Appending file: #{file.name}"
+        ractive.push 'fileRead.files', file
+        next!
