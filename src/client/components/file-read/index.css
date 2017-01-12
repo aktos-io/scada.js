@@ -1,7 +1,7 @@
 .fileRead {
     position: relative;
     overflow: hidden;
-    //margin: 10px;
+    display: inline; 
 }
 .fileRead input.upload {
     position: absolute;

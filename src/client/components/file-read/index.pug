@@ -1,3 +1,3 @@
-.fileRead.btn.btn-primary
-    span {{ yield }}
+.fileRead
+    ack-button(type="primary") {{ yield }}
     | <input class="upload" type="file" {{#multiple}}multiple{{/multiple}} {{#accept}}accept="{{accept}}"{{/accept}} />
