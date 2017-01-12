@@ -1,0 +1,38 @@
+//-
+    Match with Design Guide status:
+
+        [ ] 1. Example implementation
+        [ ] 2. Simple variable
+        [ ] 3. Unbound instances
+        [ ] 4. Bound instances and/or live feed
+        [ ] 5. {{#if }} ... {{/if}} block
+        [ ] 6. Test on mobile
+        [ ] 7. Change sizes
+        [ ] 8. Match theme
+
+panel(type="info" title="file-read")
+    .content
+        .row
+            .col-md-12
+                pre file-read(on-select="fileReadHandler" [multiple] [extensions="txt,xml,csv"])
+                p.
+                    #[code on-select] = (event, contents) -> contents is array of #[code {filename: "name of file", content: "content"}]
+
+            .col-md-12
+                // a checkbox to toggle one component instance ||meets 5||
+                checkbox(checked="{{ fileRead.show }}") Show/hide Bound component 1
+        .row
+            col-md-4
+                h3 Bound component 1
+                // a component instance that is created on demand
+                +if('fileRead.show')
+                    file-read(on-read="uploadReadFile" multiple extensions="txt,xml") Upload!
+
+        .row
+            col-md-12
+                h2 Contents of uploaded files:
+                ul
+                    +each('fileRead.files')
+                        li
+                            h3 Filename: {{ .name }}
+                            p Contents: {{ .content }}
