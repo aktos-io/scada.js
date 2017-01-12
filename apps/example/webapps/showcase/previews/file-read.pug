@@ -14,7 +14,7 @@ panel(type="info" title="file-read")
     .content
         .row
             .col-md-12
-                pre file-read(on-select="fileReadHandler" [multiple] [extensions="txt,xml,csv"])
+                pre file-read(on-select="fileReadHandler" [multiple] [accept=".xml"])
                 p.
                     #[code on-select] = (event, contents) -> contents is array of #[code {filename: "name of file", content: "content"}]
 
@@ -26,7 +26,7 @@ panel(type="info" title="file-read")
                 h3 Bound component 1
                 // a component instance that is created on demand
                 +if('fileRead.show')
-                    file-read(on-read="uploadReadFile" multiple extensions="txt,xml") Upload!
+                    file-read(on-read="uploadReadFile" multiple accept=".csv") Upload!
 
         .row
             col-md-12
