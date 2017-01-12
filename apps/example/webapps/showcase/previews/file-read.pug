@@ -27,7 +27,9 @@ panel(type="info" title="file-read")
                 h3 Bound component 1
                 // a component instance that is created on demand
                 +if('fileRead.show')
-                    file-read(on-read="uploadReadFile" multiple accept=".csv") Upload!
+                    file-read(on-read="uploadReadFile" multiple accept=".csv") Get contents!
+
+                ack-button(on-buttonclick="fileReadClear" type="danger") Clear
 
         .row
             col-md-12

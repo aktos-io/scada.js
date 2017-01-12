@@ -7,6 +7,7 @@ Ractive.components['file-read'] = Ractive.extend do
     onrender: ->
         __ = @
         file-input = $ @find "input[type='file']"
+        ack-button = @find-component 'ack-button'
         file-input.on \change, ->
             files = file-input.prop \files
             __.set \files, files
@@ -24,7 +25,7 @@ Ractive.components['file-read'] = Ractive.extend do
                     #console.log "file content is: ", content
                     console.log "read file: ", file.name
 
-                    <- __.fire \read, do
+                    <- __.fire \read, {component: ack-button}, do
                         name: file.name
                         content: content
                     --i

@@ -153,7 +153,20 @@ ractive.on do
         console.log "UnBound instance: item with id of '" + item.id + "' in the list had been timed out"
         console.log item
 
-    uploadReadFile: (file, next) ->
+    uploadReadFile: (ev, file, next) ->
+        ev.component.fire \state, \doing
         console.log "Appending file: #{file.name}"
         ractive.push 'fileRead.files', file
+        /*
+        answer <- ev.component.fire \yesno, message: """
+            do you want to proceed?
+        """
+        ev.component.fire \state, \error, "cancelled!" if answer is no
+        */
+        ev.component.fire \state, \done
+        <- sleep 2000ms
         next!
+
+    fileReadClear: (ev) ->
+        ractive.set \fileRead.files, []
+        ev.component.fire \info, message: "cleared!"
