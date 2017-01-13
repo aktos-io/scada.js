@@ -31,7 +31,7 @@ Ractive.components['ack-button'] = Ractive.extend do
 
             error: (msg) ->
                 @fire \state, \error, msg
-
+                
             state: (s, msg) ->
                 self-disabled = no
 
