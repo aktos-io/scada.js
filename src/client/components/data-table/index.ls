@@ -1,6 +1,6 @@
 require! 'prelude-ls': {
     split, take, join, lists-to-obj, sum, filter
-    camelize, find, reject
+    camelize, find, reject, is-it-NaN
 }
 require! 'aea': {sleep, merge, pack, unpack, unix-to-readable}
 require! 'randomstring': random
@@ -51,11 +51,15 @@ Ractive.components['data-table'] = Ractive.extend do
                     for part in new-url.split '/'
                         rel-entry = find (.id is part), tableview
                         if rel-entry
-                            console.warn "I know this guy: ", part
+                            msg = "I know this guy: #{part}"
                             if settings.page-size and settings.page-size > 0
                                 curr-page = Math.floor (rel-entry.no / settings.page-size)
                                 __.set \currPage, curr-page
+                                msg += " at page: #{curr-page}"
+                                debugger if is-it-NaN curr-page
                             __.set \clickedIndex, null
+
+                            console.warn msg
 
                             __.fire \clicked, {context: rel-entry}
                             __.update! unless no-need-updating
@@ -207,7 +211,7 @@ Ractive.components['data-table'] = Ractive.extend do
 
 
         events =
-            dblclicked: (args) ->
+            clicked: (args) ->
                 __ = @
                 context = args.context
                 index = context.id
