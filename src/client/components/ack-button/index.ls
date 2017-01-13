@@ -31,7 +31,7 @@ Ractive.components['ack-button'] = Ractive.extend do
 
             error: (msg) ->
                 @fire \state, \error, msg
-                
+
             state: (s, msg) ->
                 self-disabled = no
 
@@ -69,22 +69,29 @@ Ractive.components['ack-button'] = Ractive.extend do
                 # TODO Reset `infoTitle` and `infoMessage` on modal dismiss
 
             yesno: (opt, callback) ->
+                message = if opt.message.html
+                    opt.message.html
+                else
+                    opt.message
+
                 @set \infoTitle, (opt.title or 'o_O')
-                @set \infoMessage, (opt.message or 'Are you sure?')
+                @set \infoMessage, (message or 'Are you sure?')
                 @set \confirmationType, opt.type
                 @set \confirmationCallback, callback
                 modal-confirmation.modal \show
                 # TODO What if confirmation modal dismissed?
 
             closeYesNo: (answer) ->
+                __ = @
                 callback = @get \confirmationCallback
                 modal-confirmation.modal \hide
+                <- sleep 1000ms
                 callback answer
 
                 # Reset relevant props for next confirmation
-                @set \confirmationType, null
-                @set \confirmationCallback, null
-                @set \confirmationInput, null
+                __.set \confirmationType, null
+                __.set \confirmationCallback, null
+                __.set \confirmationInput, null
 
     data: ->
         __ = @

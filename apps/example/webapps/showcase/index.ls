@@ -111,6 +111,20 @@ ractive.on do
             console.error msg
             return
 
+        ok <- ev.component.fire \yesno, do
+            title: 'HTML test'
+            message: html: """
+                <h1>This is header</h1>
+                <span class="glyphicon glyphicon-ok-sign" style="font-size: 2em"></span>
+                <span>This is an icon...</span>
+                """
+
+        unless ok
+            msg = "User says it's not OK to continue!"
+            ev.component.fire \output, msg
+            console.error msg
+            return
+
         msg = "It's OK to go..."
         console.log msg
         ev.component.fire \output, msg
