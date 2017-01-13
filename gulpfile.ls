@@ -246,7 +246,7 @@ gulp.task \pug ->
 # javascript files that uses a Ractive Template. In the end, ractive-preparserify
 # should handle this process all by itself.
 debounce = {}
-first-debounce-time = 15000ms
+first-debounce-time = 15_000ms
 skip-first-time = yes
 gulp.task \preparserify-workaround ->
     gulp.src for-preparserify-workaround
