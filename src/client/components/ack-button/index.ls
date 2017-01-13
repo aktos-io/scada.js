@@ -29,6 +29,9 @@ Ractive.components['ack-button'] = Ractive.extend do
                 # TODO: remove {args: val}
                 @fire \buttonclick, {component: this, args: val}, val
 
+            error: (msg) ->
+                @fire \state, \error, msg
+
             state: (s, msg) ->
                 self-disabled = no
 
