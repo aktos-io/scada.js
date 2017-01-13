@@ -8,7 +8,12 @@ Ractive.components['file-read'] = Ractive.extend do
         __ = @
         file-input = $ @find "input[type='file']"
         ack-button = @find-component 'ack-button'
-        x = file-input.prop \files
+
+        # reset input value in order to get the 'on-change' event
+        # when the same files are selected
+        file-input.on \click, ->
+            @value = null
+
         file-input.on \change, ->
             files = file-input.prop \files
             __.set \files, files
@@ -38,7 +43,6 @@ Ractive.components['file-read'] = Ractive.extend do
                 |_ => reader.read-as-text file
 
             console.log "finished reading files..."
-            file-input.prop \files, x 
 
     data: ->
         files: []
