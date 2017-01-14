@@ -1,7 +1,7 @@
 require! 'through2': through
 require! <[ pug path cheerio fs ]>
 require! 'ractive':Ractive
-require! 'prelude-ls': {map}
+require! 'prelude-ls': {map, keys}
 
 /*******************************************************************************
 
@@ -74,14 +74,7 @@ export ractive-preparserify = (file) ->
                     #console.log "DEPS : ", JSON.stringify preparserify-dep-list, null, 2
                     template-html = fn!
                 catch _ex
-                    e = {}
-                    #console.error "ERROR: ractive-parserify: #{e}"
-                    e.name = 'Ractive Preparse Error'
-                    e.message = _ex.message
-                    e.fileName = template-full-path
-                    console.log "cwd: ", process.cwd!
-                    console.log "err file: ", template-full-path
-                    __.emit 'error', _ex.message
+                    __.emit 'error', _ex
                     return
 
 

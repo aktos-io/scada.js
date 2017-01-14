@@ -174,6 +174,8 @@ bundler.transform browserify-livescript
 bundler.transform ractive-preparserify
 bundler.transform browserify-optimize-js
 
+first-browserify-done = no
+
 function bundle
     bundler
         .bundle!
@@ -198,7 +200,7 @@ function bundle
             console.log "Project\t: #{project}"
             console.log "App\t: #{app}"
             console.log "------------------------------------------"
-
+            first-browserify-done := yes
 
 gulp.task \browserify, -> run-sequence \copy-js, ->
     bundle!
@@ -249,13 +251,14 @@ gulp.task \pug ->
 # FIXME: This is a workaround before ractive-preparserify
 # will handle this process all by itself.
 debounce = {}
-first-debounce-time = 15_000ms
-skip-first-time = yes
 gulp.task \preparserify-workaround ->
     gulp.src for-preparserify-workaround
         .pipe cache 'preparserify-workaround-cache'
         .pipe tap (file) ->
             #console.log "preparserify-workaround: ", file.path
+            unless first-browserify-done
+                #console.log "DEBUG: Ractive Preparserify: skipping because first browserify is not done yet"
+                return
             rel = preparserify-dep-list[file.path]
             if typeof! rel is \Array
                 for js-file in unique rel
@@ -265,10 +268,6 @@ gulp.task \preparserify-workaround ->
                         clear-timeout debounce[js-file]
                         console.log "INFO: absorbed debounce for #{path.basename js-file}..."
                     #console.log "we need to invalidate: ", js-file
-                    debounce[js-file] = sleep (first-debounce-time + 100ms), ->
-                        if skip-first-time
-                            skip-first-time := no
-                            return
-                        console.log "triggering for #{path.basename js-file} debounce-time: #{first-debounce-time}"
-                        first-debounce-time := 0
+                    debounce[js-file] = sleep 100ms, ->
+                        console.log "triggering for #{path.basename js-file}"
                         touch.sync js-file
