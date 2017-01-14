@@ -194,11 +194,8 @@ function bundle
         #.pipe sourcemaps.write '.'
         .pipe gulp.dest './build'
         .pipe tap (file) ->
-            log-info \browserify, "Browserify finished"
+            log-info \browserify, "Browserify finished (#{project}:#{app})"
             #console.log "browserify cache: ", pack keys browserify-cache
-            console.log "------------------------------------------"
-            console.log "Project\t: #{project}"
-            console.log "App\t: #{app}"
             console.log "------------------------------------------"
             first-browserify-done := yes
 
@@ -255,19 +252,14 @@ gulp.task \preparserify-workaround ->
     gulp.src for-preparserify-workaround
         .pipe cache 'preparserify-workaround-cache'
         .pipe tap (file) ->
-            #console.log "preparserify-workaround: ", file.path
+            #console.log "preparserify-workaround: invalidating: ", file.path
             unless first-browserify-done
                 #console.log "DEBUG: Ractive Preparserify: skipping because first browserify is not done yet"
                 return
             rel = preparserify-dep-list[file.path]
             if typeof! rel is \Array
                 for js-file in unique rel
-                    #console.log "DEBUG: as #{file.path} changed: "
-                    try
-                        throw unless debounce[js-file]
-                        clear-timeout debounce[js-file]
-                        console.log "INFO: absorbed debounce for #{path.basename js-file}..."
-                    #console.log "we need to invalidate: ", js-file
-                    debounce[js-file] = sleep 100ms, ->
-                        console.log "triggering for #{path.basename js-file}"
-                        touch.sync js-file
+                    console.log "INFO: Preparserify workaround: triggering for #{path.basename js-file}"
+                    touch.sync js-file
+            else
+                throw "related documents should be an array "
