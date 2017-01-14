@@ -1,6 +1,6 @@
 require! 'prelude-ls': {
     split, take, join, lists-to-obj, sum, filter
-    camelize, find, reject, is-it-NaN
+    camelize, find, reject, find-index
 }
 require! 'aea': {sleep, merge, pack, unpack, unix-to-readable}
 require! 'randomstring': random
@@ -42,27 +42,27 @@ Ractive.components['data-table'] = Ractive.extend do
 
         settings = @get \settings
 
+        prev-url = null
         open-row = (no-need-updating) ->
             #console.warn "open row disabled..."
             new-url = __.get \curr-url
-            if new-url
+            if new-url and new-url isnt prev-url
                 tableview = __.get \tableview
                 if tableview
                     for part in new-url.split '/'
                         rel-entry = find (.id is part), tableview
+                        index = find-index (.id is part), tableview
                         if rel-entry
-                            msg = "I know this guy: #{part}"
+                            console.warn "I know this guy: ", part
                             if settings.page-size and settings.page-size > 0
-                                curr-page = Math.floor (rel-entry.no / settings.page-size)
+                                curr-page = Math.floor (index / settings.page-size)
                                 __.set \currPage, curr-page
-                                msg += " at page: #{curr-page}"
-                                debugger if is-it-NaN curr-page
                             __.set \clickedIndex, null
-
-                            console.warn msg
 
                             __.fire \clicked, {context: rel-entry}
                             __.update! unless no-need-updating
+                            prev-url := new-url
+                            return
 
         @observe \curr-url, ->
             open-row!
@@ -239,13 +239,28 @@ Ractive.components['data-table'] = Ractive.extend do
                     @set \clickedIndex, index
                     @set \lastIndex, index
 
+
+                    scroll-to = (anchor) ->
+                        dom = $ "tr[data-anchor='#{index}']"
+                        offset = dom.offset!
+                        if offset
+                            <- sleep 10m
+                            $ 'html, body' .animate do
+                                scroll-top: offset.top
+                                , 500ms
+
+                    # scroll to index as soon as it is clicked
+                    scroll-to index
+
                     if typeof! settings.on-create-view is \Function
-                        settings.on-create-view.call this, curr, ->
+                        settings.on-create-view.call __, curr, ->
                             __.set \openingRow, no
                             __.set \openingRowMsg, ""
+                            scroll-to index
                     else
                         __.set \openingRow, no
                         __.set \openingRowMsg, ""
+                        scroll-to index
 
 
 
