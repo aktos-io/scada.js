@@ -248,6 +248,10 @@ Ractive.components['data-table'] = Ractive.extend do
                             $ 'html, body' .animate do
                                 scroll-top: offset.top
                                 , 500ms
+                        else
+                            console.warn "Couldn't find offset of #{index}?"
+                            debugger 
+
 
                     # scroll to index as soon as it is clicked
                     scroll-to index
