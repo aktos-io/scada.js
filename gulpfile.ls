@@ -194,6 +194,10 @@ function bundle
         .pipe tap (file) ->
             log-info \browserify, "Browserify finished"
             #console.log "browserify cache: ", pack keys browserify-cache
+            console.log "------------------------------------------"
+            console.log "Project\t: #{project}"
+            console.log "App\t: #{app}"
+            console.log "------------------------------------------"
 
 
 gulp.task \browserify, -> run-sequence \copy-js, ->
@@ -242,9 +246,8 @@ gulp.task \pug ->
         .pipe flatten!
         .pipe gulp.dest paths.client-public
 
-# FIXME: This is a workaround before we can accurately detect the dependencies of a
-# javascript files that uses a Ractive Template. In the end, ractive-preparserify
-# should handle this process all by itself.
+# FIXME: This is a workaround before ractive-preparserify
+# will handle this process all by itself.
 debounce = {}
 first-debounce-time = 15_000ms
 skip-first-time = yes
