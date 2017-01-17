@@ -1,7 +1,7 @@
 {
-  "name": "ractive-webservice-test",
-  "version": "1.0.0",
-  "description": "",
+  "name": "scada",
+  "version": "0.4.0",
+  "description": "![ScadaJS](https://github.com/aktos-io/scada.js/blob/master/src/client/assets/scadajs.png)",
   "main": "jquery-1.12.0.min.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -11,8 +11,8 @@
     "type": "git",
     "url": "git+https://github.com/ceremcem/livescript-ractive-example-project.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Cerem Cem ASLAN",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/ceremcem/livescript-ractive-example-project/issues"
   },
@@ -72,5 +72,17 @@
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.7.0",
     "yargs": "^4.8.1"
-  }
+  },
+  "directories": {
+    "doc": "doc"
+  },
+  "keywords": [
+    "scada",
+    "ractive",
+    "realtime",
+    "MRP",
+    "ERP",
+    "distributed",
+    "control"
+  ]
 }
