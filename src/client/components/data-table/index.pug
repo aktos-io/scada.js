@@ -105,7 +105,7 @@ table.rwd-table
                     +each(".cols:i").
                         <td data-th="{{columnList[i]}}">{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</td>
 
-                    hr 
+                    hr
                     btn.btn-sm(type="info" on-buttonclick="newOrderClose" tooltip="Kapat") #[icon-remove]
                     |  #[icon-cog(spin="true")] #[strong {{ openingRowMsg }}]
                     | {{else}}

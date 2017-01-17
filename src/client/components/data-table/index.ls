@@ -21,11 +21,6 @@ Ractive.components['data-table'] = Ractive.extend do
         db = @get \db
         console.error "No database object is passed to data-table!" unless db
 
-        if (@get \id) is \will-be-random
-            # then make it random
-            @set \id random.generate 7
-
-
         modal-error = $ @find \.modal-error
 
         modal-error.modal do
@@ -250,7 +245,7 @@ Ractive.components['data-table'] = Ractive.extend do
                                 , 500ms
                         else
                             console.warn "Couldn't find offset of #{index}?"
-                            debugger 
+                            debugger
 
 
                     # scroll to index as soon as it is clicked
@@ -426,7 +421,6 @@ Ractive.components['data-table'] = Ractive.extend do
         instance: @
         curr: null
         handlers: {}
-        id: \will-be-random
         readonly: no
         tabledata: []
         tableview: []
