@@ -17,6 +17,12 @@ ractive = new Ractive do
             info-title: ''
             info-message: ''
             output: 'hello'
+        csv-importer:
+            show: yes
+            test-data: """74LPPD2KZ7N,ACILI EZME 200 GR,5T1544H8
+            74LPPD2L06J,ACILI EZME 200 GR MEAL BOX,4NL8C89Y
+            74LPPD2L08J,ACILI EZME 3000 GR,55LE456H"""
+
         combobox:
             show: yes
             list1:
@@ -184,3 +190,9 @@ ractive.on do
     fileReadClear: (ev) ->
         ractive.set \fileRead.files, []
         ev.component.fire \info, message: "cleared!"
+
+    import-csv: (ev, content) ->
+        ev.component.fire \state, \doing
+        console.log "content: ", content
+        ractive.set \csvContent, content
+        ev.component.fire \state, \done...
