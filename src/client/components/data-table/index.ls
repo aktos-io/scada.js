@@ -92,10 +92,6 @@ Ractive.components['data-table'] = Ractive.extend do
             filters = __.get \dataFilters
             selected-filter = __.get \selectedFilter
             tabledata = __.get \tabledata
-            try
-                throw if tabledata.length is 0
-            catch
-                return
 
             if curr
                 curr-in-table = find (._id is curr._id), tabledata
@@ -239,7 +235,7 @@ Ractive.components['data-table'] = Ractive.extend do
                         dom = $ "tr[data-anchor='#{index}']"
                         offset = dom.offset!
                         if offset
-                            <- sleep 10m
+                            <- sleep 200ms
                             $ 'html, body' .animate do
                                 scroll-top: offset.top
                                 , 500ms
