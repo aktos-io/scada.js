@@ -9,6 +9,7 @@ Ractive.components[component-name] = Ractive.extend do
     isolated: yes
     data: ->
         expand: yes
+        show-submenu: no
 
 component-name = "aea-content"
 Ractive.components[component-name] = Ractive.extend do

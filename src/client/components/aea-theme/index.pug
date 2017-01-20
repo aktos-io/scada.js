@@ -22,11 +22,12 @@
                             | {{/if}}
                             | {{else}}
                             // this is submenu
-                            li.dropdown
+                            li.dropdown(style="{{#unless showSubmenu}}visibility: hidden{{/unless}}")
                                 a.dropdown-toggle(href="#" data-toggle="dropdown") {{#if expand}} {{.title}} #[b.caret] {{/if}}
                                 ul.dropdown-menu
                                     +each('subMenu')
                                         +if('isAllowed(.url).visible')
+                                            assign(input="{{ true }}" output="{{ showSubmenu }}")
                                             li
                                                 a(href="{{.url}}") {{.title}}
 
