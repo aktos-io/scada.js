@@ -1,0 +1,24 @@
+//-
+    Match with Design Guide status:
+
+        [ ] 1. Example implementation
+        [ ] 2. Simple variable
+        [ ] 3. Unbound instances
+        [ ] 4. Bound instances and/or live feed
+        [ ] 5. {{#if }} ... {{/if}} block
+        [ ] 6. Test on mobile
+        [ ] 7. Change sizes
+        [ ] 8. Match theme
+        [ ] 9. This checklist
+
+panel(type="info" title="formal-field")
+    .content
+        .row
+            .col-md-6
+                pre formal-field(value="\{{ myValue }}")
+                pre +partial('editForm')
+
+            .col-md-6
+                formal-field(value="{{ formalField.value }}")
+                    +partial('editForm')
+                        input(value="Soooo Soooooo")

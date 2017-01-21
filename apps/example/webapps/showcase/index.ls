@@ -52,6 +52,9 @@ ractive = new Ractive do
         file-read:
             show: yes
             files: []
+        formal-field:
+            show: yes
+            value: "Default value"
         todo:
             show: yes
             todos1:

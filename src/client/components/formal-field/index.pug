@@ -1,0 +1,5 @@
+span(on-click="edit") {{ value }}
++if('editable')
+    | {{yield editForm}}
+    ack-button(type="success") Accept
+    ack-button(type="danger") Cancel
