@@ -1,7 +1,11 @@
 .input-group
     input.form-control(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}")
     | {{#if unit === null }}
+    //- DANGER
+    //- DO NOT USE {{>content}} without deeply testing prior usages,
+    //- use {{yield}} instead!
     span.input-group-addon {{yield}}
+    //- END OF DANGER 
     | {{else}}
     span.input-group-addon {{ unit }}
     | {{/if}}

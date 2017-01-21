@@ -30,7 +30,10 @@ include ../../templates/mixins.pug
 
             .modal-footer
 
-| {{>header}}
+//- Header part
++if('firstRunDone') {{>header}}
+//- End Of Header
+
 table.rwd-table
     thead
         | {{#if firstRunDone}}
@@ -69,8 +72,9 @@ table.rwd-table
     tbody
         +each('tableview_visible:i')
             tr.input-line(
+                data-anchor="{{.id}}"
                 style="{{#if isClicked(.id)}}{{#if isEditingLine(.id)}}border: 2px dashed white;{{else}}border: 2px solid white; {{/if}}{{elseif clickedIndex !== null}}opacity: 0.4; background-color: gray;{{/if}}{{.style}}{{#if isLastClicked(.id)}}border: 2px solid #4285F4;{{/if}}"
-                on-click="dblclicked"
+                on-click="clicked"
                 )
                 | {{#if isEditingLine(.id)}}
                 //- -----------------------------------------------
@@ -98,14 +102,12 @@ table.rwd-table
                 //- -----------------------------------------------
                 td(colspan="{{ columnList.length + 1 }}" style="margin: 2px")
                     | {{#if openingRow}}
-                    btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
-                    | &nbsp;
-                    tag {{ .id }}
-                    | &nbsp;
-                    icon-cog(spin="true")
-                    | &nbsp;
-                    strong {{ openingRowMsg }}
+                    +each(".cols:i").
+                        <td data-th="{{columnList[i]}}">{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</td>
 
+                    hr
+                    btn.btn-sm(type="info" on-buttonclick="newOrderClose" tooltip="Kapat") #[icon-remove]
+                    |  #[icon-cog(spin="true")] #[strong {{ openingRowMsg }}]
                     | {{else}}
                     btn-group
                         | {{#unless readonly}}
@@ -137,4 +139,4 @@ table.rwd-table
                     td(colspan="{{ columnList.length + 1 }}")
                         btn-group
                             +each('range(1, Math.ceil(tableview.length / settings.pageSize)):i')
-                                btn(on-buttonclick="selectPage" value="{{ i }}") {{ . }}
+                                btn(on-buttonclick="selectPage" value="{{ i }}" type!="{{#if currPage === i}}info{{/if}}") {{ . }}

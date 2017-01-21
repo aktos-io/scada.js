@@ -17,6 +17,12 @@ ractive = new Ractive do
             info-title: ''
             info-message: ''
             output: 'hello'
+        csv-importer:
+            show: yes
+            test-data: """74LPPD2KZ7N,ACILI EZME 200 GR,5T1544H8
+            74LPPD2L06J,ACILI EZME 200 GR MEAL BOX,4NL8C89Y
+            74LPPD2L08J,ACILI EZME 3000 GR,55LE456H"""
+
         combobox:
             show: yes
             list1:
@@ -43,6 +49,9 @@ ractive = new Ractive do
         checkbox:
             checked1: no
             checked2: no
+        file-read:
+            show: yes
+            files: []
         todo:
             show: yes
             todos1:
@@ -108,6 +117,20 @@ ractive.on do
             console.error msg
             return
 
+        ok <- ev.component.fire \yesno, do
+            title: 'HTML test'
+            message: html: """
+                <h1>This is header</h1>
+                <span class="glyphicon glyphicon-ok-sign" style="font-size: 2em"></span>
+                <span>This is an icon...</span>
+                """
+
+        unless ok
+            msg = "User says it's not OK to continue!"
+            ev.component.fire \output, msg
+            console.error msg
+            return
+
         msg = "It's OK to go..."
         console.log msg
         ev.component.fire \output, msg
@@ -149,3 +172,27 @@ ractive.on do
     todotimeout2: (item) ->
         console.log "UnBound instance: item with id of '" + item.id + "' in the list had been timed out"
         console.log item
+
+    uploadReadFile: (ev, file, next) ->
+        ev.component.fire \state, \doing
+        console.log "Appending file: #{file.name}"
+        ractive.push 'fileRead.files', file
+        /*
+        answer <- ev.component.fire \yesno, message: """
+            do you want to proceed?
+        """
+        ev.component.fire \state, \error, "cancelled!" if answer is no
+        */
+        ev.component.fire \state, \done
+        <- sleep 2000ms
+        next!
+
+    fileReadClear: (ev) ->
+        ractive.set \fileRead.files, []
+        ev.component.fire \info, message: "cleared!"
+
+    import-csv: (ev, content) ->
+        ev.component.fire \state, \doing
+        console.log "content: ", content
+        ractive.set \csvContent, content
+        ev.component.fire \state, \done...

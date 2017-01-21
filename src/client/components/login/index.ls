@@ -10,28 +10,21 @@
 require! 'aea': {gen-entry-id, hash8, sleep, pack, CouchNano, merge}
 require! \cradle
 
-config =
-    cloudant:
-        url: "https://demeter.cloudant.com"
-        port: 443
-        database: "domates2"
-
-    aktos:
-        url: "https://aktos.io/couchdb"
-        port: 443
-        database: "domates7"
-
-    local:
-        url: "http://10.0.9.92"
-        port: 5984
-        database: "domates7"
-
-
 Ractive.components['login'] = Ractive.extend do
     isolated: yes
     template: RACTIVE_PREPARSE('index.pug')
     onrender: ->
         __ = @
+        config = @get \config
+        server-list = []
+        for server, conf of config
+            unless conf.disabled
+                server-list ++= entry =
+                    id: server
+                    name: conf.name
+
+        @set \serverList, server-list
+
         username-input = $ @find \.username-input
         password-input = $ @find \.password-input
         login-button = @find-component \ack-button
@@ -146,11 +139,5 @@ Ractive.components['login'] = Ractive.extend do
         username-placeholder: \Username
         password-placeholder: \Password
         warn-capslock: no
-        server-list:
-            * id: \aktos
-              name: "Cici Meze (Begos, İzmir)"
-            * id: \cloudant
-              name: "Cloudant (Avusturya)"
-            #* id: \local
-            #  name: "CM (Failover)"
-        selected-server: \aktos
+        server-list: []
+        selected-server: \default
