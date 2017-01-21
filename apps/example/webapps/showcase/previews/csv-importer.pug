@@ -14,7 +14,7 @@ panel(type="info" title="csv-importer")
     .content
         .row
             .col-md-12
-                pre csv-importer(on-import="importCsv" columns="col1,col2,col3")
+                pre csv-importer(on-import="importCsv" columns="col1,col2,col3" delimiter=",") #...delimiter="\t"
                 p
                     code on-import = (ev, content) ->
                 ul
@@ -35,7 +35,7 @@ panel(type="info" title="csv-importer")
                         .panel.panel-heading
                             h3 Import From CSV
                         .panel.panel-body
-                            csv-importer(on-import="importCsv" columns="col1,col2,col3 ") Import-CSV!
+                            csv-importer(on-import="importCsv" columns="col1,col2,col3 " delimiter=",") Import-CSV!
         .row
             .col-md-12
                 p Csv data :
