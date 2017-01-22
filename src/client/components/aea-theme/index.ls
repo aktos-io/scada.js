@@ -28,9 +28,9 @@ Ractive.components[component-name] = Ractive.extend do
                 main-sidebar .removeClass \collapsed
 
             __.set \showSubmenu, !__.get \showSubmenu
-        $ \.menu-item-dropdown .click !->
-            $ this .parent! .next \.sub-menu .toggleClass \sub-menu-open
-            $ this .toggleClass \glyphicon-chevron-down .toggleClass \glyphicon-chevron-up
+        $ \.anchor .click !->
+            $ this .next \.sub-menu .toggleClass \sub-menu-open
+            $ this .children \.menu-item-dropdown .toggleClass \glyphicon-chevron-down .toggleClass \glyphicon-chevron-up
 
 component-name = "aea-content"
 Ractive.components[component-name] = Ractive.extend do
