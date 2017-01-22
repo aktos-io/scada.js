@@ -82,16 +82,17 @@ export tr-to-ascii = (x) ->
             exploded[ci] = _to[index] if exploded[ci] is f
     unchars exploded
 
-tests =
-    'ÖZDİLEK': "OZDILEK"
-    "özdilek": "ozdilek"
+if make-tests=no
+    tests =
+        'ÖZDİLEK': "OZDILEK"
+        "özdilek": "ozdilek"
 
-console.log "started tr-to-ascii tests"
-for w, c of tests
-    if tr-to-ascii(w) isnt c
-        console.log "tr-to-ascii of #{w} is #{tr-to-ascii w} but expecting #{c}"
-        throw
-console.log "finished tr-to-ascii tests"
+    console.log "started tr-to-ascii tests"
+    for w, c of tests
+        if tr-to-ascii(w) isnt c
+            console.log "tr-to-ascii of #{w} is #{tr-to-ascii w} but expecting #{c}"
+            throw
+    console.log "finished tr-to-ascii tests"
 
 module.exports = {
     make-user-doc, PouchDB, make-design-doc, check-login, is-db-alive, gen-entry-id, hash8, hash8n

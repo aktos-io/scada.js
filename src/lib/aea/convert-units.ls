@@ -153,35 +153,36 @@ exceptional-cases =
     * {in: test-units, from: \maket, to: \paket}  # no such source unit
     * {in: test-units, from: \paket, to: \maket}  # no such target unit
 
-
-console.log "Begin CONVERT_UNITS testing..."
-# expected throwing exception for some test cases...
-for test in exceptional-cases
-    test-name = "from #{test.from} to #{test.to}"
-    try
-        x = convert-units test
-        throw new ConversionTestException """test failed for #{test-name}
-            (expected throwing an exception, but returned #{x} instead)
-            """
-    catch
-        if e.name is \ConversionException
-            console.log "test passed: #{test-name}, message: #{e.message}"
-        else
-            console.error "test failed in #{test-name}:", e.message
-
-# normal conversion tests
-for test in test-cases
-    test-name = "from #{test.calculated.from} to #{test.calculated.to}"
-    try
-        if test.expected isnt convert-units test.calculated
-            throw new ConversionTestException """test failed while
-                converting #{test-name}, expected: #{test.expected},
-                calculated: #{convert-units test.calculated}
+make-tests = no
+if make-tests
+    console.log "Begin CONVERT_UNITS testing..."
+    # expected throwing exception for some test cases...
+    for test in exceptional-cases
+        test-name = "from #{test.from} to #{test.to}"
+        try
+            x = convert-units test
+            throw new ConversionTestException """test failed for #{test-name}
+                (expected throwing an exception, but returned #{x} instead)
                 """
-        else
-            console.log "test passed: #{test-name}"
-    catch
-        console.error "test failed in #{test-name}", e
-        #throw e.name
+        catch
+            if e.name is \ConversionException
+                console.log "test passed: #{test-name}, message: #{e.message}"
+            else
+                console.error "test failed in #{test-name}:", e.message
 
-console.log "End of CONVERT_UNITS testing..."
+    # normal conversion tests
+    for test in test-cases
+        test-name = "from #{test.calculated.from} to #{test.calculated.to}"
+        try
+            if test.expected isnt convert-units test.calculated
+                throw new ConversionTestException """test failed while
+                    converting #{test-name}, expected: #{test.expected},
+                    calculated: #{convert-units test.calculated}
+                    """
+            else
+                console.log "test passed: #{test-name}"
+        catch
+            console.error "test failed in #{test-name}", e
+            #throw e.name
+
+    console.log "End of CONVERT_UNITS testing..."

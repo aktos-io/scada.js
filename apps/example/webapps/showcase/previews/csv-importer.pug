@@ -1,0 +1,49 @@
+//-
+    Match with Design Guide status:
+
+        [ ] 1. Example implementation
+        [ ] 2. Simple variable
+        [ ] 3. Unbound instances
+        [ ] 4. Bound instances and/or live feed
+        [ ] 5. {{#if }} ... {{/if}} block
+        [ ] 6. Test on mobile
+        [ ] 7. Change sizes
+        [ ] 8. Match theme
+
+panel(type="info" title="csv-importer")
+    .content
+        .row
+            .col-md-12
+                pre csv-importer(on-import="importCsv" csv="\{{ rawCsvContent }}" columns="col1,col2,col3" delimiter=",") #...delimiter="\t"
+                p
+                    code on-import = (ev, content) ->
+                ul
+                    li #[code ev]: #[code ack-button] event
+                    li #[code content] is response with [{col1:"xx", col2:"xx", col3:"xx"}, {col1:"xx", col2:"xx", col3:"xx"}, ...]
+
+            .col-md-12
+                // a checkbox to toggle one component instance ||meets 5||
+                checkbox(checked="{{ csvImporter.show }}") Show/hide Bound component 1
+        .row
+            +if('csvImporter.show')
+                .col-md-6
+                    h4
+                    .panel.panel-default
+                        .panel.panel-heading
+                            h3 Import From CSV
+                        .panel.panel-body
+                            csv-importer(on-import="importCsv" csv="{{ csvImporter.testData }}" columns="col1,col2,col3 " delimiter=",") Import-CSV!
+        .row
+            .col-md-12
+                b-table
+                    thead
+                        tr
+                            th col1
+                            th col2
+                            th col3
+                    tbody
+                        +each('csvContent:i')
+                            tr
+                                td {{ .col1 }}
+                                td {{ .col2 }}
+                                td {{ .col3 }}

@@ -5,8 +5,11 @@ export unix-to-readable = (unix) ->
     else
         display
 
-export readable-to-unix = (display) ->
-    unix = moment(display, 'DD.MM.YYYY HH:mm').unix! * 1000ms
+export readable-to-unix = (display, format) ->
+    unless format
+        unix = moment(display, 'DD.MM.YYYY HH:mm').unix! * 1000ms
+    else
+        unix = moment(display, format).unix! * 1000ms
 
 require! 'prelude-ls': {
     split, last, map,
