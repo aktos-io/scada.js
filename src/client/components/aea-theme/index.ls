@@ -9,13 +9,14 @@ Ractive.components[component-name] = Ractive.extend do
     isolated: yes
     data: ->
         expand: yes
+        show-submenu: no
     onrender: ->
         __ = @
         main-sidebar = $ @find \.main-sidebar
         main-sidebar-button = $ @find \.main-sidebar-button
 
         main-sidebar-button .click !->
-            if ! main-sidebar .hasClass \collapsed
+            if !__.get \showSubmenu
                 # close the menu
 
                 main-sidebar .addClass \collapsed
@@ -25,6 +26,8 @@ Ractive.components[component-name] = Ractive.extend do
                 # open the menu
 
                 main-sidebar .removeClass \collapsed
+
+            __.set \showSubmenu, !__.get \showSubmenu
         $ \.menu-item-dropdown .click !->
             $ this .parent! .next \.sub-menu .toggleClass \sub-menu-open
             $ this .toggleClass \glyphicon-chevron-down .toggleClass \glyphicon-chevron-up

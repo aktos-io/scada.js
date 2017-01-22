@@ -7,8 +7,8 @@ console.log "Project\t: #{project}"
 console.log "App\t: #{app}"
 console.log "------------------------------------------"
 
-require! <[ watchify gulp browserify glob path fs globby ]>
-require! 'prelude-ls': {union, join, keys, map}
+require! <[ watchify gulp browserify glob path fs globby touch ]>
+require! 'prelude-ls': {union, join, keys, map, unique}
 require! 'vinyl-source-stream': source
 require! 'vinyl-buffer': buffer
 require! 'gulp-watch': watch
@@ -16,8 +16,10 @@ require! 'gulp-pug': pug
 require! 'node-notifier': notifier
 require! 'gulp-concat': cat
 require! 'gulp-uglify': uglify
-require! './src/lib/aea': {sleep}
-require! './src/lib/aea/ractive-preparserify'
+require! './src/lib/aea': {sleep, pack}
+require! './src/lib/aea/ractive-preparserify': {
+    ractive-preparserify, preparserify-dep-list
+}
 require! './src/lib/aea/browserify-optimize-js'
 require! 'gulp-flatten': flatten
 require! 'gulp-tap': tap
@@ -29,7 +31,6 @@ require! 'through2':through
 require! 'optimize-js'
 require! 'gulp-if-else': if-else
 require! 'gulp-rename': rename
-
 
 # Build Settings
 notification-enabled = yes
@@ -89,6 +90,12 @@ for-css =
     "#{paths.client-src}/**/*.css"
     "#{paths.client-webapps}/**/*.css"
 
+for-preparserify-workaround =
+    "#{paths.client-webapps}/#{app}/**/*.html"
+    "#{paths.client-src}/**/*.html"
+    "#{paths.client-webapps}/#{app}/**/*.pug"
+    "#{paths.client-src}/**/*.pug"
+
 
 # Organize Tasks
 gulp.task \default, ->
@@ -98,7 +105,14 @@ gulp.task \default, ->
         return
 
     do function run-all
-        gulp.start <[ browserify html vendor vendor-css assets pug ]>
+        gulp.start do
+            \browserify
+            \html
+            \vendor
+            \vendor-css
+            \assets
+            \pug
+            \preparserify-workaround
 
     if only-compile
         console.log "Gulp will compile only once..."
@@ -119,16 +133,15 @@ gulp.task \default, ->
 
     for-browserify =
         "#{paths.client-webapps}/#{app}/**/*.ls"
-        "#{paths.client-webapps}/#{app}/**/*.pug"
-        "#{paths.client-src}/**/*.pug"
         "#{paths.client-src}/**/*.ls"
-        "#{paths.client-webapps}/#{app}/**/*.html"
-        "#{paths.client-src}/**/*.html"
         "#{paths.lib-src}/**/*.ls"
         "#{paths.lib-src}/**/*.js"
 
     watch for-browserify, ->
         gulp.start \browserify
+
+    watch for-preparserify-workaround, ->
+        gulp.start \preparserify-workaround
 
 # Copy js and html files as is
 gulp.task \copy-js, ->
@@ -142,7 +155,7 @@ gulp.task \html, ->
         .pipe gulp.dest paths.client-public
 
 
-
+browserify-cache = {}
 bundler = browserify do
     entries: ls-entry-files
     debug: true
@@ -151,13 +164,17 @@ bundler = browserify do
         paths.lib-src
         paths.client-webapps
     extensions: <[ .ls ]>
-    #cache: {}
-    #package-cache: {}
-    plugin: [watchify unless only-compile]
+    cache: browserify-cache
+    package-cache: {}
+    plugin:
+        watchify unless only-compile
+        ...
 
 bundler.transform browserify-livescript
 bundler.transform ractive-preparserify
 bundler.transform browserify-optimize-js
+
+first-browserify-done = no
 
 function bundle
     bundler
@@ -177,7 +194,10 @@ function bundle
         #.pipe sourcemaps.write '.'
         .pipe gulp.dest './build'
         .pipe tap (file) ->
-            log-info \browserify, "Browserify finished"
+            log-info \browserify, "Browserify finished (#{project}:#{app})"
+            #console.log "browserify cache: ", pack keys browserify-cache
+            console.log "------------------------------------------"
+            first-browserify-done := yes
 
 gulp.task \browserify, -> run-sequence \copy-js, ->
     bundle!
@@ -224,3 +244,30 @@ gulp.task \pug ->
         .pipe rename basename: app
         .pipe flatten!
         .pipe gulp.dest paths.client-public
+
+# FIXME: This is a workaround before ractive-preparserify
+# will handle this process all by itself.
+debounce = {}
+gulp.task \preparserify-workaround ->
+    gulp.src for-preparserify-workaround
+        .pipe cache 'preparserify-workaround-cache'
+        .pipe tap (file) ->
+            #console.log "preparserify-workaround: invalidating: ", file.path
+            unless first-browserify-done
+                #console.log "DEBUG: Ractive Preparserify: skipping because first browserify is not done yet"
+                return
+            rel = preparserify-dep-list[file.path]
+            if typeof! rel is \Array
+                for js-file in unique rel
+                    console.log "INFO: Preparserify workaround: triggering for #{path.basename js-file}"
+                    try
+                        clear-timeout debounce[js-file]
+                        console.log "Preventing debounce for #{js-file}"
+                    catch
+                        console.log "...no need to prevent debounce for #{js-file}"
+                        
+                    debounce[js-file] = sleep 100ms, ->
+                        touch.sync js-file
+                        delete debounce[js-file]
+            else
+                throw "related documents should be an array "

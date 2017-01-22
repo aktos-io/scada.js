@@ -1,6 +1,6 @@
 require! 'prelude-ls': {
     split, take, join, lists-to-obj, sum, filter
-    camelize, find, reject
+    camelize, find, reject, find-index
 }
 require! 'aea': {sleep, merge, pack, unpack, unix-to-readable}
 require! 'randomstring': random
@@ -21,11 +21,6 @@ Ractive.components['data-table'] = Ractive.extend do
         db = @get \db
         console.error "No database object is passed to data-table!" unless db
 
-        if (@get \id) is \will-be-random
-            # then make it random
-            @set \id random.generate 7
-
-
         modal-error = $ @find \.modal-error
 
         modal-error.modal do
@@ -42,23 +37,27 @@ Ractive.components['data-table'] = Ractive.extend do
 
         settings = @get \settings
 
+        prev-url = null
         open-row = (no-need-updating) ->
             #console.warn "open row disabled..."
             new-url = __.get \curr-url
-            if new-url
+            if new-url and new-url isnt prev-url
                 tableview = __.get \tableview
                 if tableview
                     for part in new-url.split '/'
                         rel-entry = find (.id is part), tableview
+                        index = find-index (.id is part), tableview
                         if rel-entry
                             console.warn "I know this guy: ", part
                             if settings.page-size and settings.page-size > 0
-                                curr-page = Math.floor (rel-entry.no / settings.page-size)
+                                curr-page = Math.floor (index / settings.page-size)
                                 __.set \currPage, curr-page
                             __.set \clickedIndex, null
 
                             __.fire \clicked, {context: rel-entry}
                             __.update! unless no-need-updating
+                            prev-url := new-url
+                            return
 
         @observe \curr-url, ->
             open-row!
@@ -93,10 +92,6 @@ Ractive.components['data-table'] = Ractive.extend do
             filters = __.get \dataFilters
             selected-filter = __.get \selectedFilter
             tabledata = __.get \tabledata
-            try
-                throw if tabledata.length is 0
-            catch
-                return
 
             if curr
                 curr-in-table = find (._id is curr._id), tabledata
@@ -199,7 +194,7 @@ Ractive.components['data-table'] = Ractive.extend do
             try
                 def = __.get \settings.default
                 if typeof def is \function
-                    return def!
+                    return def.call __
                 else
                     unpack pack def
             catch
@@ -207,7 +202,7 @@ Ractive.components['data-table'] = Ractive.extend do
 
 
         events =
-            dblclicked: (args) ->
+            clicked: (args) ->
                 __ = @
                 context = args.context
                 index = context.id
@@ -235,13 +230,32 @@ Ractive.components['data-table'] = Ractive.extend do
                     @set \clickedIndex, index
                     @set \lastIndex, index
 
+
+                    scroll-to = (anchor) ->
+                        dom = $ "tr[data-anchor='#{index}']"
+                        offset = dom.offset!
+                        if offset
+                            <- sleep 200ms
+                            $ 'html, body' .animate do
+                                scroll-top: offset.top
+                                , 500ms
+                        else
+                            console.warn "Couldn't find offset of #{index}?"
+                            debugger
+
+
+                    # scroll to index as soon as it is clicked
+                    scroll-to index
+
                     if typeof! settings.on-create-view is \Function
-                        settings.on-create-view.call this, curr, ->
+                        settings.on-create-view.call __, curr, ->
                             __.set \openingRow, no
                             __.set \openingRowMsg, ""
+                            scroll-to index
                     else
                         __.set \openingRow, no
                         __.set \openingRowMsg, ""
+                        scroll-to index
 
 
 
@@ -403,7 +417,6 @@ Ractive.components['data-table'] = Ractive.extend do
         instance: @
         curr: null
         handlers: {}
-        id: \will-be-random
         readonly: no
         tabledata: []
         tableview: []

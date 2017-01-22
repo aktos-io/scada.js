@@ -1,6 +1,12 @@
 require! 'aea': {pack}
 
-Ractive.components['checkbox'] = Ractive.extend do
+ractive-mixins =
+    has-event: (event-name) ->
+        fn = (a) ->
+            a.t is 70 and a.n.indexOf(event-name) > -1
+        return @component and @component.template.m.find fn
+
+Ractive.components['checkbox'] = Ractive.extend ractive-mixins, do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->
@@ -18,7 +24,7 @@ Ractive.components['checkbox'] = Ractive.extend do
         @on do
             toggleChecked: ->
                 __.set \timestamp, Date.now!
-                if __.get(\async)
+                if @has-event 'statechange'
                     if __.get(\checked) then
                         [curr-state, intended-state] = <[ checked unchecked ]>
                     else
