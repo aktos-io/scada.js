@@ -260,6 +260,14 @@ gulp.task \preparserify-workaround ->
             if typeof! rel is \Array
                 for js-file in unique rel
                     console.log "INFO: Preparserify workaround: triggering for #{path.basename js-file}"
-                    touch.sync js-file
+                    try
+                        clear-timeout debounce[js-file]
+                        console.log "Preventing debounce for #{js-file}"
+                    catch
+                        console.log "...no need to prevent debounce for #{js-file}"
+                        
+                    debounce[js-file] = sleep 100ms, ->
+                        touch.sync js-file
+                        delete debounce[js-file]
             else
                 throw "related documents should be an array "
