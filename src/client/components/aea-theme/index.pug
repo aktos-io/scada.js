@@ -6,9 +6,8 @@
         button.btn.btn-default.main-sidebar-button(type="button"): i.glyphicon.glyphicon-menu-hamburger
         nav.main-sidebar-navigation
             ul.sidebar-menu
+                li {{yield}}
                 +each('menu')
-                    li {{yield}}
-                    | {{#if isAllowed(.url).visible}}
                     | {{#if .subMenu}}
                     li.menu-item-has-submenu
                         .anchor
@@ -30,7 +29,6 @@
                             span.menu-item-icon(class="{{#if .icon}}{{.icon}}{{/if}}")
                             span.menu-item-title
                                 | {{ .title }}
-                    | {{/if}}
                     | {{/if}}
 +component('aea-content')
     .container-fluid.content-wrapper
