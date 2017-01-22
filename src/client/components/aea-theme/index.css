@@ -1,37 +1,182 @@
-@media (max-width: 990px) {
-    .navbar-header {
-        float: none;
+.main-sidebar.debug {
+    background-color: lime;
+}
+@media (min-width: 480px) { /* twbs-xs */
+    .main-sidebar.debug {
+        background-color: cyan;
     }
-    .navbar-left,.navbar-right {
-        float: none !important;
+}
+@media (min-width: 768px) { /* twbs-sm */
+    .main-sidebar.debug {
+        background-color: maroon;
     }
-    .navbar-toggle {
-        display: block;
+}
+@media (min-width: 992px) { /* twbs-md */
+    .main-sidebar.debug {
+        background-color: lightgray;
     }
-    .navbar-collapse {
-        border-top: 1px solid transparent;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+}
+@media (min-width: 1200px) { /* twbs-lg */
+    .main-sidebar.debug {
+        background-color: black;
     }
-    .navbar-fixed-top {
-        top: 0;
-        border-width: 0 0 1px;
-        width: 100%; 
+
+    .main-sidebar.debug a {
+        color: white;
     }
-    .navbar-collapse.collapse {
-        display: none!important;
+}
+
+.main-sidebar {
+    top: 0;
+    left: 0;
+    z-index: 810;
+    transition: 0.2s;
+    background-color: #ececec;
+}
+
+.main-sidebar.closed {
+    background-color: transparent;
+}
+.main-sidebar.closed li {
+    display: none;
+}
+
+.main-sidebar.collapsed {
+    width: 100%;
+    height: 48px;
+}
+.main-sidebar.collapsed .sidebar-menu li {
+    display: none;
+}
+
+.main-sidebar-button {
+    width: 40px;
+    padding: 6px 0;
+    margin: 6px 0 6px 4px;
+    z-index: 811;
+}
+
+.main-sidebar-navigation {
+    transition: 0.2s;
+}
+
+.sidebar-menu,
+.sub-menu {
+    list-style: none;
+    margin: 0;
+    white-space: nowrap;
+}
+.sidebar-menu {
+    padding: 0;
+}
+.sub-menu {
+    padding: 0 0 0 10px;
+    display: none;
+}
+.sub-menu.sub-menu-open {
+    display: inherit;
+}
+
+.sidebar-menu li,
+.sub-menu li {
+    position: relative;
+    display: inherit;
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar-menu a,
+.sidebar-menu .anchor,
+.sub-menu a,
+.sub-menu .anchor {
+    padding: 12px 5px 12px 17px;
+    display: block;
+    color: white;
+}
+.sidebar-menu a.active,
+.sub-menu a.active,
+.sidebar-menu .anchor.active,
+.sub-menu .anchor.active {
+    background-color: #dadada;
+    color: black;
+}
+
+.menu-item-icon {
+    display: inline-block;
+}
+
+.menu-item-title {
+    margin-left: 14px;
+    /*display: none;*/
+}
+
+.menu-item-dropdown {
+    right: 10px;
+    z-index: 13;
+    opacity: 1;
+    transition: 0.2s;
+}
+
+/*.content-wrapper {
+    margin-left: 36px;
+}*/
+
+@media (min-width: 480px) { /* twbs-xs */
+    .main-sidebar {
+        position: fixed;
+        min-height: 100%;
+        width: calc(5 * 8.33333333%);
+        /*max-width: 320px;*/
     }
-    .navbar-nav {
-        float: none!important;
-        margin-top: 7.5px;
+
+    .main-sidebar.collapsed {
+        width: 48px;
     }
-    .navbar-nav>li {
-        float: none;
+    .main-sidebar.collapsed .sidebar-menu li {
+        display: inherit !important;
     }
-    .navbar-nav>li>a {
-        padding-top: 10px;
-        padding-bottom: 10px;
+
+    .menu-item-title {
+        display: inline-block;
     }
-    .collapse.in{
-        display:block !important;
+
+    .main-sidebar.collapsed .menu-item-title {
+        display: none !important;
     }
+    .main-sidebar.collapsed .menu-item-dropdown {
+        opacity: 0;
+        /*display: none;*/
+    }
+
+    .content-wrapper {
+        margin-left: 36px;
+    }
+}
+
+@media (min-width: 768px) { /* twbs-sm */
+    .main-sidebar {
+        width: calc(4 * 8.33333333%);
+    }
+}
+
+@media (min-width: 992px) { /* twbs-md */
+    .main-sidebar {
+        width: calc(3 * 8.33333333%);
+    }
+
+    .main-sidebar + .content-wrapper {
+        width: calc(9 * 8.33333333%);
+        margin-left: calc(3 * 8.33333333%);
+    }
+    .main-sidebar.collapsed + .content-wrapper {
+        width: calc(100% - 48px);
+        margin-left: 48px;
+    }
+}
+
+@media (min-width: 1200px) { /* twbs-lg */
+}
+
+.content-wrapper {
+    transition: 0.2s;
 }
