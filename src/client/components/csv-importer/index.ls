@@ -2,9 +2,9 @@ require! 'aea':{merge, sleep}
 require! 'csv-parse': parse
 require! 'prelude-ls': {unique, map}
 
-get-csv = (string, callback) ->
+get-csv = (string, delimiter, callback) ->
     # http://csv.adaltas.com/parse/examples/
-    err, res <- parse string, {comment: '#', delimiter: ','} #\t
+    err, res <- parse string, {comment: '#', delimiter: delimiter} #\t
     callback err, res
 
 Ractive.components['csv-importer'] = Ractive.extend do
@@ -13,6 +13,7 @@ Ractive.components['csv-importer'] = Ractive.extend do
     onrender: ->
         __ = @
         ack-button = @find-component 'ack-button'
+        delimiter = @get \delimiter
         console.warn "FIXME: remove: sleep 0"
         try
             columns = @get \columns .split ',' |> map (.trim!)
@@ -28,8 +29,7 @@ Ractive.components['csv-importer'] = Ractive.extend do
         @on do
             get-content: (ev) ->
                 csv = @get \csv
-
-                err, res <- get-csv csv
+                err, res <- get-csv csv, delimiter
                 if err
                     return ev.component.fire \state, \error, "csv file isnt proper !!!"
 

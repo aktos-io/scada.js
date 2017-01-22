@@ -14,7 +14,7 @@ panel(type="info" title="csv-importer")
     .content
         .row
             .col-md-12
-                pre csv-importer(on-import="importCsv" columns="col1,col2,col3")
+                pre csv-importer(on-import="importCsv" csv="\{{ rawCsvContent }}" columns="col1,col2,col3" delimiter=",") #...delimiter="\t"
                 p
                     code on-import = (ev, content) ->
                 ul
@@ -27,18 +27,14 @@ panel(type="info" title="csv-importer")
         .row
             +if('csvImporter.show')
                 .col-md-6
-                    h4 Example CSV :
-                    textarea(value="{{csvImporter.testData}}" style="width: 100%; height: 300px")
-                .col-md-6
                     h4
                     .panel.panel-default
                         .panel.panel-heading
                             h3 Import From CSV
                         .panel.panel-body
-                            csv-importer(on-import="importCsv" columns="col1,col2,col3 ") Import-CSV!
+                            csv-importer(on-import="importCsv" csv="{{ csvImporter.testData }}" columns="col1,col2,col3 " delimiter=",") Import-CSV!
         .row
             .col-md-12
-                p Csv data :
                 b-table
                     thead
                         tr
