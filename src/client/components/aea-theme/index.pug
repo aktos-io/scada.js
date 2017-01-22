@@ -7,22 +7,31 @@
         nav.main-sidebar-navigation
             ul.sidebar-menu
                 +each('menu')
-                    li
-                        | {{#if menu.url}}
-                        a.active(href="{{ .url }}")
-                        | {{else}}
-                        a(href="{{ .url }}")
-                        | {{/if}}
-                            span.menu-item-icon.glyphicon.glyphicon-cloud
+                    li {{yield}}
+                    | {{#if isAllowed(.url).visible}}
+                    | {{#if .subMenu}}
+                    li.menu-item-has-submenu
+                        .anchor
+                            span.menu-item-icon(class="{{#if .icon}}{{.icon}}{{/if}}")
                             span.menu-item-title
                                 | {{ .title }}
-                //- li: a.active(href="#foo")
-                //-     span.menu-item-icon.glyphicon.glyphicon-cloud
-                //-     span.menu-item-title lorem ipsum dolor sit amet
-                //- li: a(href="#bar")
-                //-     span.menu-item-icon.glyphicon.glyphicon-tags
-                //-     span.menu-item-title Bar
+                            span.menu-item-dropdown.glyphicon.glyphicon-chevron-down.pull-right
 
+                        ul.sub-menu
+                            +each('subMenu')
+                                li
+                                    a(href="{{ .url }}" class="{{#if selected === .url}}active{{/if}}")
+                                        span.menu-item-icon(class="{{#if .icon}}{{.icon}}{{/if}}")
+                                        span.menu-item-title
+                                            | {{ .title }}
+                    | {{else}}
+                    li
+                        a(href="{{ .url }}" class="{{#if selected === .url}}active{{/if}}")
+                            span.menu-item-icon(class="{{#if .icon}}{{.icon}}{{/if}}")
+                            span.menu-item-title
+                                | {{ .title }}
+                    | {{/if}}
+                    | {{/if}}
 +component('aea-content')
     .container-fluid.content-wrapper
         .row

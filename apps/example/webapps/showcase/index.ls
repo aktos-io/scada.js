@@ -75,11 +75,49 @@ ractive = new Ractive do
         unix-to-readable: unix-to-readable
         menu:
             * title: "Siparişler"
-              icon: "fa fa-bar-chart-o"
+              icon: "glyphicon glyphicon-asterisk"
               url: '#/orders'
             * title: "İş Planları"
-              icon: "fa fa-bar-chart-o"
+              icon: "glyphicon glyphicon-plus"
               url: '#/production-jobs'
+            * title: "Paketleme"
+              icon: "glyphicon glyphicon-euro"
+              url: '#/bundling'
+            * title: "Kolileme"
+              icon: "glyphicon glyphicon-minus"
+              url: '#/boxing'
+            * title: "Sevkiyat"
+              icon: "glyphicon glyphicon-cloud"
+              url: '#/dispatch'
+            * title: "Satın Alma"
+              icon: "glyphicon glyphicon-envelope"
+              url: '#/raw-material-purchases'
+            * title: "Hammadde Kabul"
+              icon: "glyphicon glyphicon-pencil"
+              url: '#/raw-material-admission'
+            * title: "Tanımlamalar"
+              icon:"glyphicon glyphicon-glass"
+              sub-menu:
+                * title: "Müşteri Tanımla"
+                  url: '#/definitions/client'
+                * title: "Tedarikçi Tanımla"
+                  url: '#/definitions/supplier'
+                * title: "Hammadde Tanımla"
+                  url: '#/definitions/raw-material'
+                * title: "Reçete Tanımla"
+                  url: '#/definitions/recipe'
+                * title: "Kap Tanımla"
+                  icon:"glyphicon glyphicon-cloud"
+                  url: '#/definitions/container'
+                * title: "Paket Tanımla"
+                  url: '#/definitions/packaging'
+                * title: "Çalışan Tanımla"
+                  url: '#/definitions/workers'
+            * title: "Other"
+              icon: "glyphicon glyphicon-magnet"
+              url: "#"
+        test-menu:
+            selected: '#/production-jobs'
 
 ractive.on do
     test-ack-button1: (ev, value) ->

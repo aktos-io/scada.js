@@ -19,7 +19,3 @@ Ractive.components[component-name] = Ractive.extend do
               icon: "resize-horizontal"
             ...
         show-menu: true
-
-<-! $ \document .ready
-ev <-! $ \.main-sidebar-button .click
-$ \.main-sidebar .toggleClass \collapsed
