@@ -1,5 +1,5 @@
-panel(type="info" title="todo")
-    .content
+.col-md-12
+    panel(type="info" title="todo")
         .row
             .col-md-12
                 pre todo(checklist="\{{ list }}" log="\{{ log }}" on-statechange="statechanged" on-completion="completed" on-timeout="timedout")
