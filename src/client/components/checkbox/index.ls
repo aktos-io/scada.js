@@ -1,12 +1,6 @@
 require! 'aea': {pack}
 
-ractive-mixins =
-    has-event: (event-name) ->
-        fn = (a) ->
-            a.t is 70 and a.n.indexOf(event-name) > -1
-        return @component and @component.template.m.find fn
-
-Ractive.components['checkbox'] = Ractive.extend ractive-mixins, do
+Ractive.components['checkbox'] = Ractive.extend Ractive.mixins, do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->
