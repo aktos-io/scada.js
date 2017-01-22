@@ -14,10 +14,9 @@ component-name = "aea-content"
 Ractive.components[component-name] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug', '#aea-content')
 
-window.is-menu-open = yes
 $ \document .ready ->
     $ \.main-sidebar-button .click !->
-        if window.is-menu-open
+        if ! $ \.main-sidebar .hasClass \collapsed
             # close the menu
 
             $ \.main-sidebar .addClass \collapsed
@@ -27,8 +26,6 @@ $ \document .ready ->
             # open the menu
 
             $ \.main-sidebar .removeClass \collapsed
-
-        window.is-menu-open = !window.is-menu-open
     $ \.menu-item-dropdown .click !->
         $ this .parent! .next \.sub-menu .toggleClass \sub-menu-open
         $ this .toggleClass \glyphicon-chevron-down .toggleClass \glyphicon-chevron-up
