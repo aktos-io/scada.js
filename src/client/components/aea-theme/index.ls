@@ -41,6 +41,15 @@ Ractive.components[component-name] = Ractive.extend do
 
             __.set \isMenuOpen, !__.get \isMenuOpen
 
+        $ '.sidebar-menu li>a' .click !->
+            # close the menu
+
+            main-sidebar .addClass \collapsed
+            $ \.sub-menu-open .removeClass \sub-menu-open
+            $ \.glyphicon-chevron-up .removeClass \glyphicon-chevron-up .addClass \glyphicon-chevron-down
+
+            __.set \isMenuOpen, no
+
         $ \.anchor .click !->
             unless __.get \isMenuOpen
                 # open the menu
