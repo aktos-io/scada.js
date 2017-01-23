@@ -127,8 +127,6 @@ ractive = new Ractive do
             * title: "Other"
               icon: "glyphicon glyphicon-magnet"
               url: "#"
-        test-menu:
-            selected: '#/production-jobs'
 
 ractive.on do
     test-ack-button1: (ev, value) ->
