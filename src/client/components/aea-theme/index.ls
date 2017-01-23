@@ -49,14 +49,34 @@ Ractive.components[component-name] = Ractive.extend do
             hash = window.location.hash
             hash = '/' unless hash
 
+            is-match-found = no
+
             for x in __.get \menu
-                if not x.url or x.url is \#
+                if x.url is \# or (not x.url and not x.sub-menu)
                     continue
 
                 if x.url is hash
-                    $ \.sidebar-menu .find \a.active .removeClass \active
+                    is-match-found = yes
+
+                    $ \.sidebar-menu .find \.active .removeClass \active
                     $ \.sidebar-menu .find 'a[href="' + hash + '"]' .addClass \active
 
+                    break
+
+                if x.sub-menu
+                    for y in x.sub-menu
+                        if y.url is \# or (not y.url and not y.sub-menu)
+                            continue
+
+                        if y.url is hash
+                            is-match-found = yes
+
+                            $ \.sidebar-menu .find \.active .removeClass \active
+                            $ \.sidebar-menu .find 'a[href="' + hash + '"]' .addClass \active .parent! .parent! .siblings \.anchor .addClass \active
+
+                            break
+
+                if is-match-found
                     break
 
         $ window .on \hashchange, -> hashchange!
