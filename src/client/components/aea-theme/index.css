@@ -30,8 +30,10 @@
     top: 0;
     left: 0;
     z-index: 810;
-    transition: 0.2s;
+    transition-duration: 0.2s;
+    transition-property: transform;
     background-color: #ececec;
+    overflow-y: auto;
 }
 
 .main-sidebar.closed {
@@ -85,6 +87,10 @@
     padding: 0;
 }
 
+.sidebar-menu .anchor {
+    cursor: pointer;
+}
+
 .sidebar-menu a,
 .sidebar-menu .anchor,
 .sub-menu a,
@@ -124,13 +130,15 @@
 @media (min-width: 480px) { /* twbs-xs */
     .main-sidebar {
         position: fixed;
-        min-height: 100%;
+        height: 100%;
+        min-height: inherit;
         width: calc(5 * 8.33333333%);
         /*max-width: 320px;*/
     }
 
     .main-sidebar.collapsed {
         width: 48px;
+        min-height: 100%;
     }
     .main-sidebar.collapsed .sidebar-menu li {
         display: inherit !important;
