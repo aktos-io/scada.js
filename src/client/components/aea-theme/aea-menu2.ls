@@ -3,7 +3,7 @@ Ractive.components[component-name] = Ractive.extend do
     template: RACTIVE_PREPARSE('aea-menu2.pug')
     isolated: yes
     data: ->
-        is-in-debug-mode: yes
+        is-in-debug-mode: no
         is-menu-open: no
     onrender: ->
         __ = @
