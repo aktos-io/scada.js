@@ -15,12 +15,12 @@ Ractive.components[component-name] = Ractive.extend do
         main-sidebar = $ @find \.main-sidebar
         main-sidebar-button = $ @find \.main-sidebar-button
 
-        if $ window .width! < 1200
-            __.set \isMenuOpen no
-            main-sidebar .addClass \collapsed
+        if $ window .width! > 1200
+            __.set \isMenuOpen, yes
+            main-sidebar .removeClass \collapsed
 
         main-sidebar-button .click !->
-            if !__.get \isMenuOpen
+            if __.get \isMenuOpen
                 # close the menu
 
                 main-sidebar .addClass \collapsed
