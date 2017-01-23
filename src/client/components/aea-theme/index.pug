@@ -1,7 +1,38 @@
 +component('aea-theme')
     | {{ yield }}
 
-+component('aea-menu')
+//- +component('aea-menu')
+//-     .col-md-2.col-sm-12.col-xs-12(style="padding: 0; margin-left: 0; margin-top: 0; margin-bottom: 0")
+//-         .sidebar-nav
+//-             .navbar.navbar-default(role="navigation")
+//-                 .navbar-header
+//-                     button.navbar-toggle(type="button" data-toggle="collapse" data-target=".sidebar-navbar-collapse")
+//-                         span.sr-only Toggle Navigation
+//-                         span.icon-bar
+//-                         span.icon-bar
+//-                         span.icon-bar
+//-                 .navbar-collapse.collapse.sidebar-navbar-collapse
+//-                     ul.nav.navbar-nav
+//-                         li {{yield}}
+//-                         +each('menu')
+//-                             | {{#if ! .subMenu}}
+//-                             | {{#if isAllowed(.url).visible}}
+//-                             li(class="{{#if selected === .url}}active{{/if}}"): a(href="{{ .url }}") {{#if expand}}{{ .title }}{{/if}}
+//-                             | {{/if}}
+//-                             | {{else}}
+//-                             // this is submenu
+//-                             li.dropdown(style="{{#unless showSubmenu}}visibility: hidden{{/unless}}")
+//-                                 a.dropdown-toggle(href="#" data-toggle="dropdown") {{#if expand}} {{.title}} #[b.caret] {{/if}}
+//-                                 ul.dropdown-menu
+//-                                     +each('subMenu')
+//-                                         +if('isAllowed(.url).visible')
+//-                                             assign(input="{{ true }}" output="{{ showSubmenu }}")
+//-                                             li
+//-                                                 a(href="{{.url}}") {{.title}}
+
+//-                             | {{/if}}
+
++component('aea-menu2')
     aside.main-sidebar.debug.collapsed
         button.btn.btn-default.main-sidebar-button(type="button"): i.glyphicon.glyphicon-menu-hamburger
         nav.main-sidebar-navigation

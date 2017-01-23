@@ -9,6 +9,14 @@ Ractive.components[component-name] = Ractive.extend do
     isolated: yes
     data: ->
         expand: yes
+        show-submenu: no
+
+component-name = "aea-menu2"
+Ractive.components[component-name] = Ractive.extend do
+    template: RACTIVE_PREPARSE('index.pug', '#aea-menu2')
+    isolated: yes
+    data: ->
+        expand: yes
         is-menu-open: no
     onrender: ->
         __ = @
