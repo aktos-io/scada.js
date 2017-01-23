@@ -3,17 +3,17 @@ component-name = "aea-theme"
 Ractive.components[component-name] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug', '#aea-theme')
 
-component-name = "aea-menu"
-Ractive.components[component-name] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug', '#aea-menu')
-    isolated: yes
-    data: ->
-        expand: yes
-        show-submenu: no
+# component-name = "aea-menu"
+# Ractive.components[component-name] = Ractive.extend do
+#     template: RACTIVE_PREPARSE('index.pug', '#aea-menu')
+#     isolated: yes
+#     data: ->
+#         expand: yes
+#         show-submenu: no
 
 component-name = "aea-menu2"
 Ractive.components[component-name] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug', '#aea-menu2')
+    template: RACTIVE_PREPARSE('index.pug', '#aea-menu')
     isolated: yes
     data: ->
         expand: yes
