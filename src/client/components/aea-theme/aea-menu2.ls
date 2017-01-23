@@ -22,34 +22,24 @@ Ractive.components[component-name] = Ractive.extend do
 
         @observe \isInDebugMode, update-debug-mode
 
-        main-sidebar-button .click !->
+        @observe \isMenuOpen, ->
             if __.get \isMenuOpen
+                # open the menu
+                main-sidebar .removeClass \collapsed
+            else
                 # close the menu
-
                 main-sidebar .addClass \collapsed
                 $ \.sub-menu-open .removeClass \sub-menu-open
                 $ \.glyphicon-chevron-up .removeClass \glyphicon-chevron-up .addClass \glyphicon-chevron-down
-            else
-                # open the menu
 
-                main-sidebar .removeClass \collapsed
-
+        main-sidebar-button .click !->
             __.toggle \isMenuOpen
 
         $ '.sidebar-menu li>a' .click !->
-            # close the menu
-
-            main-sidebar .addClass \collapsed
-            $ \.sub-menu-open .removeClass \sub-menu-open
-            $ \.glyphicon-chevron-up .removeClass \glyphicon-chevron-up .addClass \glyphicon-chevron-down
-
             __.set \isMenuOpen, no
 
         $ \.anchor .click !->
             unless __.get \isMenuOpen
-                # open the menu
-
-                main-sidebar .removeClass \collapsed
                 __.set \isMenuOpen, yes
 
             $ this .next \.sub-menu .toggleClass \sub-menu-open
