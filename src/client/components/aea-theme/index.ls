@@ -47,15 +47,13 @@ Ractive.components[component-name] = Ractive.extend do
 
         do function hashchange
             hash = window.location.hash
-            hash = '/' unless hash # hash = '#/orders'
+            hash = '/' unless hash
 
             for x in __.get \menu
                 if not x.url or x.url is \#
                     continue
 
                 if x.url is hash
-                    console.log x
-
                     $ \.sidebar-menu .find \a.active .removeClass \active
                     $ \.sidebar-menu .find 'a[href="' + hash + '"]' .addClass \active
 

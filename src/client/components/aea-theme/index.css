@@ -87,6 +87,10 @@
     padding: 0;
 }
 
+.sidebar-menu .anchor {
+    cursor: pointer;
+}
+
 .sidebar-menu a,
 .sidebar-menu .anchor,
 .sub-menu a,
