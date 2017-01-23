@@ -40,9 +40,28 @@ Ractive.components[component-name] = Ractive.extend do
                 main-sidebar .removeClass \collapsed
 
             __.set \isMenuOpen, !__.get \isMenuOpen
+
         $ \.anchor .click !->
             $ this .next \.sub-menu .toggleClass \sub-menu-open
             $ this .children \.menu-item-dropdown .toggleClass \glyphicon-chevron-down .toggleClass \glyphicon-chevron-up
+
+        do function hashchange
+            hash = window.location.hash
+            hash = '/' unless hash # hash = '#/orders'
+
+            for x in __.get \menu
+                if not x.url or x.url is \#
+                    continue
+
+                if x.url is hash
+                    console.log x
+
+                    $ \.sidebar-menu .find \a.active .removeClass \active
+                    $ \.sidebar-menu .find 'a[href="' + hash + '"]' .addClass \active
+
+                    break
+
+        $ window .on \hashchange, -> hashchange!
 
 component-name = "aea-content"
 Ractive.components[component-name] = Ractive.extend do
