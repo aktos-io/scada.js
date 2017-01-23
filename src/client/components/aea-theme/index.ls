@@ -42,6 +42,12 @@ Ractive.components[component-name] = Ractive.extend do
             __.set \isMenuOpen, !__.get \isMenuOpen
 
         $ \.anchor .click !->
+            unless __.get \isMenuOpen
+                # open the menu
+
+                main-sidebar .removeClass \collapsed
+                __.set \isMenuOpen, yes
+
             $ this .next \.sub-menu .toggleClass \sub-menu-open
             $ this .children \.menu-item-dropdown .toggleClass \glyphicon-chevron-down .toggleClass \glyphicon-chevron-up
 
