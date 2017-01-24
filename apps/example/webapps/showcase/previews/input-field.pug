@@ -21,3 +21,7 @@
             .col-md-12
                 input-field(value="{{ inputField.value }}" unit="dakika" placeholder="hello!")
                 strong value is: {{ inputField.value }}
+
+            .col-md-12
+                input-field(value="{{ inputField.value }}" placeholder="hello!")
+                    search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}")

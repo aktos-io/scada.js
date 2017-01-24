@@ -18,7 +18,7 @@ Ractive.components['checkbox'] = Ractive.extend do
         @on do
             toggleChecked: ->
                 __.set \timestamp, Date.now!
-                if __.get(\async)
+                if @has-event 'statechange'
                     if __.get(\checked) then
                         [curr-state, intended-state] = <[ checked unchecked ]>
                     else
