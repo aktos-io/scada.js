@@ -1,3 +1,5 @@
+require! 'aea': {sleep}
+
 Ractive.components["aea-menu2"] = Ractive.extend do
     template: RACTIVE_PREPARSE('aea-menu2.pug')
     isolated: yes
@@ -42,13 +44,17 @@ Ractive.components["aea-menu2"] = Ractive.extend do
             if __.get \isMenuAutomaticallyOpened or $ window .width! < 1200
                 __.set \isMenuOpen, no
 
-        $ \.anchor .click !->
+        open-sub-menu = ->
             unless __.get \isMenuOpen
                 __.set \isMenuOpen, yes
                 __.set \isMenuAutomaticallyOpened, yes
 
             $ this .next \.sub-menu .toggleClass \sub-menu-open
             $ this .children \.menu-item-dropdown .toggleClass \glyphicon-chevron-down .toggleClass \glyphicon-chevron-up
+
+        @observe \menu, ->
+            <- sleep 500
+            $ \.anchor .click open-sub-menu
 
         do function hashchange
             hash = window.location.hash
