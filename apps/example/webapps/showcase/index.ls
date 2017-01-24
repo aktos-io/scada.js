@@ -84,7 +84,8 @@ ractive = new Ractive do
                   content: 'Finally do this'
             log2: []
         unix-to-readable: unix-to-readable
-        menu:
+        menu: []
+        menu-links:
             * title: "Siparişler"
               url: '#/orders'
               icon: "credit-card"
@@ -128,6 +129,11 @@ ractive = new Ractive do
                   icon: 'user'
 
 ractive.on do
+    'complete': ->
+        __ = @
+        <- sleep 1000ms 
+        __.set \menu, __.get \menuLinks
+
     test-ack-button1: (ev, value) ->
         ev.component.fire \state, \doing
         <- sleep 5000ms
