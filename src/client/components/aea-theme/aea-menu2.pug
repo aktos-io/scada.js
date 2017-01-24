@@ -1,8 +1,9 @@
-aside.main-sidebar.debug
+aside.main-sidebar.debug.collapsed
     button.btn.btn-default.main-sidebar-button(type="button"): i.glyphicon.glyphicon-menu-hamburger
-    | &nbsp; 
+    | &nbsp;
     +if('isMenuOpen')
         | {{ yield }}
+    debug-obj(obj="{{menu}}")
     nav.main-sidebar-navigation
         ul.sidebar-menu
             +each('menu')
@@ -18,8 +19,7 @@ aside.main-sidebar.debug
                             li
                                 a(href="{{ .url }}" class="{{#if selected === .url}}active{{/if}}")
                                     icon.menu-item-icon(name="{{.icon}}")
-                                    span.menu-item-title
-                                        | {{ .title }}
+                                    span.menu-item-title {{ .title }}
                 | {{else}}
                 li
                     a(href="{{ .url }}" class="{{#if selected === .url}}active{{/if}}")
