@@ -4,14 +4,14 @@ Ractive.components["aea-menu2"] = Ractive.extend do
     data: ->
         is-in-debug-mode: no
         is-menu-open: no
+        is-menu-automatically-opened: no
     onrender: ->
         __ = @
         main-sidebar = $ @find \.main-sidebar
         main-sidebar-button = $ @find \.main-sidebar-button
 
-        if $ window .width! > 1200
+        if $ window .width! >= 1200
             __.set \isMenuOpen, yes
-            main-sidebar .removeClass \collapsed
 
         update-debug-mode = ->
             if __.get \isInDebugMode
@@ -30,16 +30,22 @@ Ractive.components["aea-menu2"] = Ractive.extend do
                 main-sidebar .addClass \collapsed
                 $ \.sub-menu-open .removeClass \sub-menu-open
                 $ \.glyphicon-chevron-up .removeClass \glyphicon-chevron-up .addClass \glyphicon-chevron-down
+            # We just assume these menu is opened and the *user* is involved
+            # BUT automatic operations update `isMenuAutomaticallyOpened`
+            # afterwards
+            __.set \isMenuAutomaticallyOpened, no
 
         main-sidebar-button .click !->
             __.toggle \isMenuOpen
 
         $ '.sidebar-menu li>a' .click !->
-            __.set \isMenuOpen, no
+            if __.get \isMenuAutomaticallyOpened or $ window .width! < 1200
+                __.set \isMenuOpen, no
 
         $ \.anchor .click !->
             unless __.get \isMenuOpen
                 __.set \isMenuOpen, yes
+                __.set \isMenuAutomaticallyOpened, yes
 
             $ this .next \.sub-menu .toggleClass \sub-menu-open
             $ this .children \.menu-item-dropdown .toggleClass \glyphicon-chevron-down .toggleClass \glyphicon-chevron-up
