@@ -2,9 +2,10 @@ Ractive.components["aea-menu2"] = Ractive.extend do
     template: RACTIVE_PREPARSE('aea-menu2.pug')
     isolated: yes
     data: ->
-        is-in-debug-mode: no
+        debug: no
         is-menu-open: no
         is-menu-automatically-opened: no
+
     onrender: ->
         __ = @
         main-sidebar = $ @find \.main-sidebar
@@ -13,13 +14,12 @@ Ractive.components["aea-menu2"] = Ractive.extend do
         if $ window .width! >= 1200
             __.set \isMenuOpen, yes
 
-        update-debug-mode = ->
-            if __.get \isInDebugMode
-                $ @find \.main-sidebar .addClass \debug
+        @observe \debug, (_new) ->
+            if _new
+                main-sidebar.addClass \debug
             else
-                $ @find \.main-sidebar .removeClass \debug
+                main-sidebar.removeClass \debug
 
-        @observe \isInDebugMode, update-debug-mode
 
         @observe \isMenuOpen, ->
             if __.get \isMenuOpen
