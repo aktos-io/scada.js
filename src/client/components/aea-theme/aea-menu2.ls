@@ -1,5 +1,4 @@
-component-name = "aea-menu"
-Ractive.components[component-name] = Ractive.extend do
+Ractive.components["aea-menu2"] = Ractive.extend do
     template: RACTIVE_PREPARSE('aea-menu2.pug')
     isolated: yes
     data: ->

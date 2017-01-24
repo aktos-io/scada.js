@@ -86,31 +86,33 @@ ractive = new Ractive do
         unix-to-readable: unix-to-readable
         menu:
             * title: "Siparişler"
-              icon: "glyphicon glyphicon-asterisk"
               url: '#/orders'
+              icon: "credit-card"
             * title: "İş Planları"
-              icon: "glyphicon glyphicon-plus"
               url: '#/production-jobs'
+              icon: "list-alt"
             * title: "Paketleme"
-              icon: "glyphicon glyphicon-euro"
               url: '#/bundling'
-            * title: "Kolileme"
-              icon: "glyphicon glyphicon-minus"
-              url: '#/boxing'
+              icon: 'gift'
             * title: "Sevkiyat"
-              icon: "glyphicon glyphicon-cloud"
               url: '#/dispatch'
+              icon: 'road'
+            * title: "Depo İstek Formu"
+              url: '#/raw-material-requests'
+              icon: 'shopping-cart'
             * title: "Satın Alma"
-              icon: "glyphicon glyphicon-envelope"
               url: '#/raw-material-purchases'
+              icon: 'briefcase'
             * title: "Hammadde Kabul"
-              icon: "glyphicon glyphicon-pencil"
               url: '#/raw-material-admission'
+              icon: 'download-alt'
             * title: "Tanımlamalar"
-              icon:"glyphicon glyphicon-glass"
+              icon:"cog"
               sub-menu:
                 * title: "Müşteri Tanımla"
                   url: '#/definitions/client'
+                * title: "Marka Tanımla"
+                  url: '#/definitions/brands'
                 * title: "Tedarikçi Tanımla"
                   url: '#/definitions/supplier'
                 * title: "Hammadde Tanımla"
@@ -118,15 +120,12 @@ ractive = new Ractive do
                 * title: "Reçete Tanımla"
                   url: '#/definitions/recipe'
                 * title: "Kap Tanımla"
-                  icon:"glyphicon glyphicon-cloud"
                   url: '#/definitions/container'
                 * title: "Paket Tanımla"
                   url: '#/definitions/packaging'
                 * title: "Çalışan Tanımla"
                   url: '#/definitions/workers'
-            * title: "Other"
-              icon: "glyphicon glyphicon-magnet"
-              url: "#"
+                  icon: 'user'
 
 ractive.on do
     test-ack-button1: (ev, value) ->

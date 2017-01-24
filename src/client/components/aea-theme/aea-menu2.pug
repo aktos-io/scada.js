@@ -7,22 +7,21 @@ aside.main-sidebar.debug.collapsed
                 | {{#if .subMenu}}
                 li.menu-item-has-submenu
                     .anchor
-                        span.menu-item-icon(class="{{#if .icon}}{{.icon}}{{/if}}")
+                        icon.menu-item-icon(name="{{.icon}}")
                         span.menu-item-title
                             | {{ .title }}
-                        span.menu-item-dropdown.glyphicon.glyphicon-chevron-down.pull-right
-
+                        icon-chevron-down.menu-item-dropdown.pull-right
                     ul.sub-menu
-                        +each('subMenu')
+                        +each('.subMenu')
                             li
                                 a(href="{{ .url }}" class="{{#if selected === .url}}active{{/if}}")
-                                    span.menu-item-icon(class="{{#if .icon}}{{.icon}}{{/if}}")
+                                    icon.menu-item-icon(name="{{.icon}}")
                                     span.menu-item-title
                                         | {{ .title }}
                 | {{else}}
                 li
                     a(href="{{ .url }}" class="{{#if selected === .url}}active{{/if}}")
-                        span.menu-item-icon(class="{{#if .icon}}{{.icon}}{{/if}}")
+                        icon.menu-item-icon(name="{{.icon}}")
                         span.menu-item-title
                             | {{ .title }}
                 | {{/if}}
