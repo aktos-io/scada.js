@@ -7,6 +7,7 @@ Ractive.components["aea-menu2"] = Ractive.extend do
         debug: no
         is-menu-open: no
         is-menu-automatically-opened: no
+        submenu-state: {}
 
     onrender: ->
         __ = @
@@ -52,9 +53,16 @@ Ractive.components["aea-menu2"] = Ractive.extend do
             $ this .next \.sub-menu .toggleClass \sub-menu-open
             $ this .children \.menu-item-dropdown .toggleClass \glyphicon-chevron-down .toggleClass \glyphicon-chevron-up
 
+        /*
         @observe \menu, ->
-            <- sleep 500
             $ \.anchor .click open-sub-menu
+        */
+
+        @on do
+            toggleSubmenu: (index) ->
+                submenuState = @get \submenuState
+                submenuState[index] = not submenuState[index]
+                @set \submenuState, submenuState
 
         do function hashchange
             hash = window.location.hash

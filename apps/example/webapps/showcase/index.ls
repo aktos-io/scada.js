@@ -96,8 +96,17 @@ ractive = new Ractive do
               url: '#/bundling'
               icon: 'gift'
             * title: "Sevkiyat"
-              url: '#/dispatch'
               icon: 'road'
+              sub-menu:
+                * title: "dispatch submenu1"
+                  url: '#/dispatch/1'
+                * title: "dispatch submenu2"
+                  url: '#/dispatch/2'
+                * title: "dispatch submenu3"
+                  url: '#/dispatch/3'
+                * title: "dispatch submenu4"
+                  url: '#/dispatch/4'
+
             * title: "Depo İstek Formu"
               url: '#/raw-material-requests'
               icon: 'shopping-cart'
@@ -131,7 +140,7 @@ ractive = new Ractive do
 ractive.on do
     'complete': ->
         __ = @
-        <- sleep 1000ms 
+        <- sleep 1000ms
         __.set \menu, __.get \menuLinks
 
     test-ack-button1: (ev, value) ->
