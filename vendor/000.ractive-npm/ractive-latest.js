@@ -17051,6 +17051,13 @@ Ractive.mixins = {
     return this.component && this.component.template.m.find(fn);
   }
 };
+Ractive.defaults.hasEvent = function(eventName){
+  var fn;
+  fn = function(a){
+    return a.t === 70 && a.n.indexOf(eventName) > -1;
+  };
+  return this.component && this.component.template.m.find(fn);
+};
 window.Ractive = Ractive;
 
 

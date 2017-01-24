@@ -1,6 +1,6 @@
 require! 'aea': {pack}
 
-Ractive.components['checkbox'] = Ractive.extend Ractive.mixins, do
+Ractive.components['checkbox'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->
