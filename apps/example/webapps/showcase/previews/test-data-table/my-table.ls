@@ -1,5 +1,13 @@
 require! 'aea': {sleep}
 
+simulated-data = [{
+    _id: "#{..}"
+    type: \test
+    timestamp: .. * 100
+    name: "this is #{..} and this line is very log as you can easily understand"
+    } for [1 to 10]]
+
+
 export my-table =
     settings:
         page-size: 20   # optional, 0 or null for infinite page
@@ -17,12 +25,6 @@ export my-table =
         on-init: (next) ->
             # fetch your data to `tabledata` variable here
 
-            simulated-data = [{
-                _id: ..
-                type: \test
-                timestamp: .. * 100
-                name: "this is #{..}"
-                } for [1 to 10]]
 
             @set \tabledata, simulated-data
 

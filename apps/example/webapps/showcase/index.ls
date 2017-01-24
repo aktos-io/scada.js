@@ -84,33 +84,45 @@ ractive = new Ractive do
                   content: 'Finally do this'
             log2: []
         unix-to-readable: unix-to-readable
-        menu:
+        menu: []
+        menu-links:
             * title: "Siparişler"
-              icon: "glyphicon glyphicon-asterisk"
               url: '#/orders'
+              icon: "credit-card"
             * title: "İş Planları"
-              icon: "glyphicon glyphicon-plus"
               url: '#/production-jobs'
+              icon: "list-alt"
             * title: "Paketleme"
-              icon: "glyphicon glyphicon-euro"
               url: '#/bundling'
-            * title: "Kolileme"
-              icon: "glyphicon glyphicon-minus"
-              url: '#/boxing'
+              icon: 'gift'
             * title: "Sevkiyat"
-              icon: "glyphicon glyphicon-cloud"
-              url: '#/dispatch'
+              icon: 'road'
+              sub-menu:
+                * title: "dispatch submenu1"
+                  url: '#/dispatch/1'
+                * title: "dispatch submenu2"
+                  url: '#/dispatch/2'
+                * title: "dispatch submenu3"
+                  url: '#/dispatch/3'
+                * title: "dispatch submenu4"
+                  url: '#/dispatch/4'
+
+            * title: "Depo İstek Formu"
+              url: '#/raw-material-requests'
+              icon: 'shopping-cart'
             * title: "Satın Alma"
-              icon: "glyphicon glyphicon-envelope"
               url: '#/raw-material-purchases'
+              icon: 'briefcase'
             * title: "Hammadde Kabul"
-              icon: "glyphicon glyphicon-pencil"
               url: '#/raw-material-admission'
+              icon: 'download-alt'
             * title: "Tanımlamalar"
-              icon:"glyphicon glyphicon-glass"
+              icon:"cog"
               sub-menu:
                 * title: "Müşteri Tanımla"
                   url: '#/definitions/client'
+                * title: "Marka Tanımla"
+                  url: '#/definitions/brands'
                 * title: "Tedarikçi Tanımla"
                   url: '#/definitions/supplier'
                 * title: "Hammadde Tanımla"
@@ -118,19 +130,19 @@ ractive = new Ractive do
                 * title: "Reçete Tanımla"
                   url: '#/definitions/recipe'
                 * title: "Kap Tanımla"
-                  icon:"glyphicon glyphicon-cloud"
                   url: '#/definitions/container'
                 * title: "Paket Tanımla"
                   url: '#/definitions/packaging'
                 * title: "Çalışan Tanımla"
                   url: '#/definitions/workers'
-            * title: "Other"
-              icon: "glyphicon glyphicon-magnet"
-              url: "#"
-        test-menu:
-            selected: '#/production-jobs'
+                  icon: 'user'
 
 ractive.on do
+    'complete': ->
+        __ = @
+        <- sleep 1000ms
+        __.set \menu, __.get \menuLinks
+
     test-ack-button1: (ev, value) ->
         ev.component.fire \state, \doing
         <- sleep 5000ms
