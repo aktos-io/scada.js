@@ -1,5 +1,9 @@
 aea-theme
-    aea-menu(menu="{{menu}}" selected="{{testMenu.selected}}")
+    aea-menu2(menu="{{menu}}" debug="{{ menuDebug }}")
+        icon-user
+        span John DOE
+        checkbox(checked="{{ menuDebug }}") Debug?
+        
     aea-content
         +partial('header')
             p hi! this is header!

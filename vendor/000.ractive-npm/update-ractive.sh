@@ -1,5 +1,5 @@
-#!/bin/bash 
+#!/bin/bash
 
 echo "updating ractive from this node modules"
 
-browserify ractive-npm.js.bak -o ractive-latest.js
+browserify -t browserify-livescript ractive-npm.ls -o ractive-latest.js

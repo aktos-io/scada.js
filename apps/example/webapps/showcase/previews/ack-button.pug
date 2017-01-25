@@ -43,3 +43,14 @@ panel(type="info" title="ack-button")
                 input(value="{{ button.askMessage }}" placeholder="ask for something...")
                 ack-button(on-buttonclick="testAckButton4" value="{{ button.askMessage }}" output="{{ button.output }}") MY BUTTON 4
                 p User says: {{ button.output }}
+
+        .row
+            .col-md-4.col-sm-4
+            .col-md-4.col-sm-4
+                h3 Large button example
+                ack-button(
+                    on-buttonclick="testAckButton2"
+                    value="{{ button.infoMessage }}"
+                    class="btn-lg btn-block btn-signin"
+                    ) Login
+            .col-md-4.col-sm-4

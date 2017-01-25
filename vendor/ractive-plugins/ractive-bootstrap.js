@@ -401,9 +401,9 @@ var icons = [
 	"menu-up"
 ]
 
-Ractive.components['icon'] = Ractive.extend({template: "<span class='glyphicon glyphicon-{{name}} {{#spin}}gly-spin{{/spin}}' aria-hidden='true' title='{{title}}' style='{{#size}}font-size: {{size}};{{/size}}'></span>"})
+Ractive.components['icon'] = Ractive.extend({template: "<span class='glyphicon glyphicon-{{name}} {{#spin}}gly-spin{{/spin}} {{class}}' aria-hidden='true' title='{{title}}' style='{{#size}}font-size: {{size}};{{/size}}'></span>"})
 for( var i in icons ) {
-	Ractive.components['icon-' + icons[i]] = Ractive.extend({template: "<icon spin='{{spin}}' size='{{size}}'/>", data: {name: icons[i], spin: false, size: '1em'}})
+	Ractive.components['icon-' + icons[i]] = Ractive.extend({template: "<icon spin='{{spin}}' class='{{class}}' size='{{size}}'/>", data: {name: icons[i], spin: false, size: '1em'}})
 }
 
 icons = undefined

@@ -19,9 +19,11 @@ ractive = new Ractive do
             output: 'hello'
         csv-importer:
             show: yes
-            test-data: """74LPPD2KZ7N,ACILI EZME 200 GR,5T1544H8
-            74LPPD2L06J,ACILI EZME 200 GR MEAL BOX,4NL8C89Y
-            74LPPD2L08J,ACILI EZME 3000 GR,55LE456H"""
+            test-data: """
+                74LPPD2KZ7N,ACILI EZME 200 GR,5T1544H8
+                74LPPD2L06J,ACILI EZME 200 GR MEAL BOX,4NL8C89Y
+                74LPPD2L08J,ACILI EZME 3000 GR,55LE456H
+                """
 
         combobox:
             show: yes
@@ -85,8 +87,65 @@ ractive = new Ractive do
                   content: 'Finally do this'
             log2: []
         unix-to-readable: unix-to-readable
+        menu: []
+        menu-links:
+            * title: "Siparişler"
+              url: '#/orders'
+              icon: "credit-card"
+            * title: "İş Planları"
+              url: '#/production-jobs'
+              icon: "list-alt"
+            * title: "Paketleme"
+              url: '#/bundling'
+              icon: 'gift'
+            * title: "Sevkiyat"
+              icon: 'road'
+              sub-menu:
+                * title: "dispatch submenu1"
+                  url: '#/dispatch/1'
+                * title: "dispatch submenu2"
+                  url: '#/dispatch/2'
+                * title: "dispatch submenu3"
+                  url: '#/dispatch/3'
+                * title: "dispatch submenu4"
+                  url: '#/dispatch/4'
+
+            * title: "Depo İstek Formu"
+              url: '#/raw-material-requests'
+              icon: 'shopping-cart'
+            * title: "Satın Alma"
+              url: '#/raw-material-purchases'
+              icon: 'briefcase'
+            * title: "Hammadde Kabul"
+              url: '#/raw-material-admission'
+              icon: 'download-alt'
+            * title: "Tanımlamalar"
+              icon:"cog"
+              sub-menu:
+                * title: "Müşteri Tanımla"
+                  url: '#/definitions/client'
+                * title: "Marka Tanımla"
+                  url: '#/definitions/brands'
+                * title: "Tedarikçi Tanımla"
+                  url: '#/definitions/supplier'
+                * title: "Hammadde Tanımla"
+                  url: '#/definitions/raw-material'
+                * title: "Reçete Tanımla"
+                  url: '#/definitions/recipe'
+                * title: "Kap Tanımla"
+                  url: '#/definitions/container'
+                * title: "Paket Tanımla"
+                  url: '#/definitions/packaging'
+                * title: "Çalışan Tanımla"
+                  url: '#/definitions/workers'
+                  icon: 'user'
 
 ractive.on do
+    'complete': ->
+        __ = @
+        <- sleep 1000ms
+        __.set \menu, __.get \menuLinks
+
     test-ack-button1: (ev, value) ->
         ev.component.fire \state, \doing
         <- sleep 5000ms
