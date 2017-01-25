@@ -18,10 +18,20 @@
                 pre input-field(value="\{{ myValue }}" unit="seconds" placeholder="my place holder")
                 blockquote.
                     Note that changing number values by scrolling is intentionally disabled.
+        .row
             .col-md-12
                 input-field(value="{{ inputField.value }}" unit="dakika" placeholder="hello!")
                 strong value is: {{ inputField.value }}
 
+        .row
             .col-md-12
                 input-field(value="{{ inputField.value }}" placeholder="hello!")
                     search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}")
+
+        //- As one can see here children of `input-field` which will be treated as
+        //- input group addon, MUST be wrapped by `span` tag. Please see CEVEAT1
+        //- in `src/client/components/input-field/index.css`
+        .row
+            .col-md-12
+                input-field(value="{{ inputField.value }}" placeholder="hello!")
+                    span foo

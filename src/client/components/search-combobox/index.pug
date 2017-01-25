@@ -1,7 +1,8 @@
 include ../../templates/mixins.pug
 //- http://selectize.github.io/selectize.js/
 
-select(placeholder="{{ placeholder }}")
-    option(value="") ...
-    +each('data')
-        option(value="{{ .id }}") {{ .name }}
+.input-group-with-selectize
+    select(placeholder="{{ placeholder }}")
+        option(value="") ...
+        +each('data')
+            option(value="{{ .id }}") {{ .name }}
