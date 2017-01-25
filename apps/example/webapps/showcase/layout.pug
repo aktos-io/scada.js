@@ -3,23 +3,24 @@ aea-theme
         icon-user
         span John DOE
         checkbox(checked="{{ menuDebug }}") Debug?
-        
+
     aea-content
         +partial('header')
             p hi! this is header!
 
         +partial('body')
-            include ./previews/csv-importer.pug
-            include ./previews/file-read.pug
-            include ./previews/print-button.pug
-            include ./previews/input-field.pug
-            include ./previews/checkbox.pug
-            include ./previews/ack-button.pug
-            include ./previews/example-component.pug
-            include ./previews/search-combobox.pug
-            include ./previews/date-picker.pug
-            include ./previews/test-data-table/my-table.pug
-            include ./previews/todo.pug
+            .row
+                include ./previews/csv-importer.pug
+                include ./previews/file-read.pug
+                include ./previews/print-button.pug
+                include ./previews/input-field.pug
+                include ./previews/checkbox.pug
+                include ./previews/ack-button.pug
+                include ./previews/example-component.pug
+                include ./previews/search-combobox.pug
+                include ./previews/date-picker.pug
+                include ./previews/test-data-table/my-table.pug
+                include ./previews/todo.pug
 
     aea-footer
         +partial('right')
