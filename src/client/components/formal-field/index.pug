@@ -1,5 +1,8 @@
-span(on-click="edit") {{ value }}
-+if('editable')
-    | {{yield editForm}}
-    ack-button(type="success") Accept
-    ack-button(type="danger") Cancel
+
+|{{#if editable}}
+|{{> editForm}}
+ack-button(type="success" on-buttonclick="accept") Accept
+ack-button(type="danger" on-buttonclick="cancel") Cancel
+|{{else}}
+span(class="formal-field" on-click="edit") {{yield viewForm}}
+|{{/if}}

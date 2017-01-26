@@ -56,7 +56,14 @@ ractive = new Ractive do
             files: []
         formal-field:
             show: yes
-            value: "Default value"
+            value1: 3
+            value2: \Paket
+            combobox:
+                * id:\Paket, name:\Paket
+                * id:\Koli, name: \Koli
+        curr:
+            value1: 5
+
         todo:
             show: yes
             todos1:
@@ -258,3 +265,13 @@ ractive.on do
         console.log "content: ", content
         ractive.set \csvContent, content
         ev.component.fire \state, \done...
+    test-formal-field: (ev, curr, previous, finish) ->
+        #return ev.component.fire \state, \error, "olmadı olmaz...."
+        formal-field = ractive.get \formalField
+        formal-field.value1 = curr.value1
+        formal-field.value2 = curr.value2
+        ractive.set \previous, previous
+        debugger
+        ractive.set \formalField, formal-field
+        previous.state = "confirmed"
+        finish previous

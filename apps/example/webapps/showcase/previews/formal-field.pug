@@ -14,11 +14,50 @@
 panel(type="info" title="formal-field")
     .content
         .row
-            .col-md-6
-                pre formal-field(value="\{{ myValue }}")
+            .col-md-12
+                //-pre formal-field(value="\{{ myValue }}" on-change="formalField")
+                pre formal-field(on-test="testFormalField" log="\{{ log }}")
+                pre +partial('viewForm')
                 pre +partial('editForm')
+                p
+                    code on-test = (ev, curr, previous, finish) ->
+                ul
+                    li #[code ev]: #[code ack-button] event
+                    li #[code curr]: new values that user enters
+                    li #[code previous]: previous change
+                    li #[code finish]: is a function that takes log that user wanted to keep
 
-            .col-md-6
-                formal-field(value="{{ formalField.value }}")
+        .row
+            .col-md-12
+                h3 Uneditable
+                | {{ formalField.value1 }} &nbsp {{ formalField.value2 }}
+                ul
+                    li previous: count: {{previous.value1}}, unit: {{previous.value2}}
+                    li log summary:
+                    b-table
+                        thead
+                            tr
+                                th count
+                                th unit
+                                th date
+                                th state
+                        tbody
+                            +each('log')
+                                tr
+                                    td {{.value1}}
+                                    td {{.value2}}
+                                    td {{unixToReadable(.date)}}
+                                    td {{.state}}
+            .col-md-12
+                h3 Editable
+                formal-field(on-test="testFormalField" log="{{ log }}")
+                    +partial('viewForm')
+                        | {{ formalField.value1 }}
+                        | {{ formalField.value2 }}
                     +partial('editForm')
-                        input(value="Soooo Soooooo")
+                        assign(input="{{ formalField.value1 }}" output="{{ curr.value1 }}")
+                        assign(input="{{ formalField.value2 }}" output="{{ curr.value2 }}")
+                        .col-md-1
+                            input(value="{{ curr.value1 }}")
+                        .col-md-1
+                            search-combobox(data="{{ formalField.combobox }}" selected="{{ curr.value2 }}")
