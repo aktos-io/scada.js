@@ -16,48 +16,74 @@ panel(type="info" title="formal-field")
         .row
             .col-md-12
                 //-pre formal-field(value="\{{ myValue }}" on-change="formalField")
-                pre formal-field(on-test="testFormalField" log="\{{ log }}")
-                pre +partial('viewForm')
-                pre +partial('editForm')
+                pre formal-field(on-test="testFormalField" changelog="\{{ changelog }}" on-displaylog="testFormalFieldShow" addSomeParameter="\{{.value1}}" addSomeParameter2="\{{.value2}}" )
+                pre +partial('viewForm') -> partial   ###editable with doubleclick
+                pre +partial('editForm') -> partial
                 p
                     code on-test = (ev, curr, previous, finish) ->
                 ul
                     li #[code ev]: #[code ack-button] event
-                    li #[code curr]: new values that user enters
+                    li #[code curr]: new values that user enters as parameters in component like above
                     li #[code previous]: previous change
                     li #[code finish]: is a function that takes log that user wanted to keep
 
         .row
             .col-md-12
-                h3 Uneditable
-                | {{ formalField.value1 }} &nbsp {{ formalField.value2 }}
-                ul
-                    li previous: count: {{previous.value1}}, unit: {{previous.value2}}
-                    li log summary:
-                    b-table
-                        thead
+                h3 Original Data
+                p This is the original data: {{ formalField.value1 }} &nbsp {{ formalField.value2 }}
+
+                h3 Possible Usecase
+                p
+                    span "We need &nbsp
+                    formal-field(
+                        on-valuechange="testFormalField"
+                        value1="{{formalField.value1}}"
+                        value2="{{formalField.value2}}"
+                        on-displaylog="testFormalFieldShow"
+                        )
+                        +partial('viewForm')
+                            span {{curr.value1}} {{curr.value2}}
+
+                        +partial('editForm')
+                            div(style="display: inline-block; width: 300px; height: 20px;")
+                                input-field(value="{{ curr.value1 }}")
+                                    search-combobox(data="{{ formalField.combobox }}" selected="{{ curr.value2 }}")
+                    span of product X.
+
+                h3 Test cases
+                ol
+                    li.
+                        try: switch to edit mode -> change input value
+                        see: original data is not changing
+                    li.
+                        try: switch to edit mode -> change input -> cancel -> switch to edit mode
+                        see: edit form contains current data, not the data we just cancelled
+                    li.
+                        try: switch to edit mode -> change input -> accept
+                        see: orginal data is changed and log number button is showed
+                    li.
+                        try: switch to edit mode -> change input -> cancel -> switch to edit mode
+                        see: edit form contains current data, not the data we just cancelled
+                    li.
+                        try: press log button
+                        see: log data in a model
+                    li.
+                        try: press log button
+                        see: log data in a model and repetition of data is not showed
+
+                h3 Change Log
+                p Change log can be displayed externally (ie. outside of component)
+                b-table
+                    thead
+                        tr
+                            th count
+                            th unit
+                            th date
+                            th state
+                    tbody
+                        +each('changelog')
                             tr
-                                th count
-                                th unit
-                                th date
-                                th state
-                        tbody
-                            +each('log')
-                                tr
-                                    td {{.value1}}
-                                    td {{.value2}}
-                                    td {{unixToReadable(.date)}}
-                                    td {{.state}}
-            .col-md-12
-                h3 Editable
-                formal-field(on-test="testFormalField" log="{{ log }}")
-                    +partial('viewForm')
-                        | {{ formalField.value1 }}
-                        | {{ formalField.value2 }}
-                    +partial('editForm')
-                        assign(input="{{ formalField.value1 }}" output="{{ curr.value1 }}")
-                        assign(input="{{ formalField.value2 }}" output="{{ curr.value2 }}")
-                        .col-md-1
-                            input(value="{{ curr.value1 }}")
-                        .col-md-1
-                            search-combobox(data="{{ formalField.combobox }}" selected="{{ curr.value2 }}")
+                                td {{.value1}}
+                                td {{.value2}}
+                                td {{unixToReadable(.date)}}
+                                td {{.state}}

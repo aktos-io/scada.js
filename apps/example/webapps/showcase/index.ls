@@ -61,9 +61,12 @@ ractive = new Ractive do
             combobox:
                 * id:\Paket, name:\Paket
                 * id:\Koli, name: \Koli
+            log: [{ date: Date.now! }]
         curr:
             value1: 5
-
+        units:
+            * id:\Paket, name:\Paket
+            * id:\Koli, name: \Koli
         todo:
             show: yes
             todos1:
@@ -265,13 +268,40 @@ ractive.on do
         console.log "content: ", content
         ractive.set \csvContent, content
         ev.component.fire \state, \done...
-    test-formal-field: (ev, curr, previous, finish) ->
-        #return ev.component.fire \state, \error, "olmadı olmaz...."
+    test-formal-field: (ev, curr, previous, log-item, finish) ->
+        ev.button.fire \state, \doing
+        <- sleep 3000ms
+        ev.button.fire \state, \done...
         formal-field = ractive.get \formalField
         formal-field.value1 = curr.value1
         formal-field.value2 = curr.value2
         ractive.set \previous, previous
-        debugger
         ractive.set \formalField, formal-field
-        previous.state = "confirmed"
-        finish previous
+        finish log-item
+
+    test-formal-field-show:(ev, log) ->
+        string = """
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date &nbsp</th>
+                        <th>Amount &nbsp</th>
+                        <th>Unit</th>
+                    </tr>
+                </thead>
+                <tbody>
+            """
+
+        for row in log
+            string += """
+                <tr style="text-align:middle;">
+                    <td>#{unix-to-readable row.date}</td>
+                    <td>#{row.curr.value1}</td>
+                    <td>#{row.curr.value2}</td>
+                </tr>
+                """
+        string += """
+                </tbody>
+            </table>
+            """
+        ev.component.fire \info, message: html: string

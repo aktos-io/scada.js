@@ -1,8 +1,15 @@
-
-|{{#if editable}}
-|{{> editForm}}
-ack-button(type="success" on-buttonclick="accept") Accept
-ack-button(type="danger" on-buttonclick="cancel") Cancel
-|{{else}}
-span(class="formal-field" on-click="edit") {{yield viewForm}}
-|{{/if}}
+div(style="display:inline-block")
+    |{{#if editable}}
+    | {{> editForm}}
+    div(style="display:inline-block")
+        ack-button(class="formal-field-accept-button" type="success" on-buttonclick="accept") Accept
+        ack-button(type="danger" on-buttonclick="cancel") Cancel
+    |{{else}}
+    span(class="formal-field" on-dblclick="edit")
+        | {{> viewForm}}
+        | &nbsp;
+        |{{#if changelog.length > 0}}
+        ack-button(on-buttonclick="showPopup" type="primary xs" style="position: relative;bottom: 10px;padding: 3px 6px;" value="{{changelog}}") {{changelog.length-1}}
+        | &nbsp;
+        |{{/if}}
+    |{{/if}}
