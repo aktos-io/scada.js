@@ -269,9 +269,11 @@ ractive.on do
         ractive.set \csvContent, content
         ev.component.fire \state, \done...
     test-formal-field: (ev, curr, previous, log-item, finish) ->
-        ev.button.fire \state, \doing
+        /*
+        ev.component.fire \state, \doing
         <- sleep 3000ms
-        ev.button.fire \state, \done...
+        ev.component.fire \state, \done...
+        */
         formal-field = ractive.get \formalField
         formal-field.value1 = curr.value1
         formal-field.value2 = curr.value2

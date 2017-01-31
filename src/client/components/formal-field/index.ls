@@ -6,17 +6,19 @@ Ractive.components['formal-field'] = Ractive.extend do
     isolated: no
     oninit: ->
         __ = @
-        component-attributes = unpack pack @get()
-
+        component-attributes = {}
+        component-attributes = __.component.attributeByName
         /*
         for key, attr of component-attributes
             @set "#{key}", attr
         */
         curr = {}
         for key, attr of component-attributes
-            unless ['previous', 'editable', 'changelog', 'curr'].indexOf(key) > -1
-                a = {"#{key}": attr}
+            unless ['changelog'].indexOf(key) > -1
+                a = {"#{key}": attr.model.value}
                 curr `merge` a
+            else
+                @set "#{key}", attr.model.value
 
         @set \curr, curr
 
@@ -32,7 +34,7 @@ Ractive.components['formal-field'] = Ractive.extend do
                 prev = __.get \previous
                 changelog = __.get \changelog
 
-                ev.component.fire \state, \doing
+                #ev.component.fire \state, \doing
 
                 if pack(curr) is pack(prev)
                     __.set \editable, no
@@ -42,13 +44,7 @@ Ractive.components['formal-field'] = Ractive.extend do
                     curr: curr
                     date: Date.now!
 
-                ack-button = __.find-all-components 'ack-button'
-                for comp in ack-button
-                    for attr in comp.component.attributes
-                        if attr.value is 'formal-field-accept-button'
-                            button = comp
-
-                log <- __.fire \valuechange, {component: @, button: button}, curr, prev, log-item #log returns as curr
+                log <- __.fire \valuechange, {component: ev}, curr, prev, log-item #log returns as curr
 
                 if changelog.length is 0
                     changelog.unshift first-item =
@@ -56,9 +52,9 @@ Ractive.components['formal-field'] = Ractive.extend do
                         date: "(initial)"
 
 
-                changelog.unshift (log or log-item)
+                changelog.unshift (unpack pack (log or log-item))
 
-                ev.component.fire \state, \done...
+                #ev.component.fire \state, \done...
                 __.set \curr, curr
                 __.set \changelog, changelog
                 __.set \editable, no
