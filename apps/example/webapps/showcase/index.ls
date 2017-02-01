@@ -58,6 +58,7 @@ ractive = new Ractive do
             show: yes
             value1: 3
             value2: \Paket
+            tempvalue:"mahmut"
             combobox:
                 * id:\Paket, name:\Paket
                 * id:\Koli, name: \Koli

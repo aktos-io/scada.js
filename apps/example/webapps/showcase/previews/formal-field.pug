@@ -15,7 +15,7 @@ panel(type="info" title="formal-field")
     .content
         .row
             .col-md-12
-                pre formal-field(on-valuechange="testFormalField" value="\{{ value }}" on-displaylog="testFormalFieldShow" someParam1="\{{.value1}}" someParam2="\{{.value2}}" )
+                pre formal-field(on-valuechange="testFormalField" on-displaylog="testFormalFieldShow" value="\{{ value }}" _foo="\{{foo}}" _baz="\{{baz}}" someParam1="\{{.value1}}" someParam2="\{{.value2}}" )
                 pre +partial('viewForm') -> partial   ###editable with doubleclick
                 pre +partial('editForm') -> partial
                 p
@@ -29,6 +29,8 @@ panel(type="info" title="formal-field")
                 ul
                     li #[code ev]: #[code ack-button] event
                     li #[code log]: returns curr, prev, date by default
+                p
+                    code value and _* (like _foo etc.) attributes can be used without placed in curr
         .row
             .col-md-12
                 h3 Original Data
@@ -41,21 +43,24 @@ panel(type="info" title="formal-field")
                         on-valuechange="testFormalField"
                         value="112"
                         changelog="{{formalField.changelog}}"
+                        on-displaylog="testFormalFieldShow"
+
                         value1="{{formalField.value1}}"
                         value2="{{formalField.value2}}"
-                        on-displaylog="testFormalFieldShow"
+                        _tempvalue="{{formalField.tempvalue}}"
                         )
                         +partial('viewForm')
-                            debug-obj(obj="{{curr}}")
                             span {{curr.value1}} {{curr.value2}}
                         +partial('editForm')
                             div(style="display: inline-block; width: 300px; height: 20px;")
                                 input-field(value="{{ curr.value1 }}")
                                     search-combobox(data="{{ formalField.combobox }}" selected="{{ curr.value2 }}")
+                                        //-input(value="{{_tempvalue}}")
                     span of product X.
-
-                p Here is amount: #[input-field(value="{{ formalField.value1 }}")]
-                p Here is unit: #[search-combobox(data="{{ formalField.combobox }}" selected="{{ formalField.value2 }}")]
+                //-
+                    p Here is original amount: #[input-field(value="{{ formalField.value1 }}")]
+                    p Here is original unit: #[search-combobox(data="{{ formalField.combobox }}" selected="{{ formalField.value2 }}")]
+                    p Here is original tempvalue: #[input(value="{{formalField.tempvalue}}")]
 
 
                 h3 Test cases

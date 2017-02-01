@@ -9,6 +9,11 @@ Ractive.components['formal-field'] = Ractive.extend do
         component-attributes = {}
         component-attributes = keys @component.attributeByName
         required-attr = <[ changelog value ]>
+
+        for name in component-attributes # attributes that start with '_' can be used, too.
+            if name[0] is '_'
+                required-attr.push name
+
         @set \extraAttributes, component-attributes `difference` required-attr
 
     onrender: ->
@@ -43,7 +48,7 @@ Ractive.components['formal-field'] = Ractive.extend do
                     changelog.unshift log-item
                     return changelog
 
-                curr = __.get \curr
+                curr = unpack pack __.get \curr
                 prev = __.get \prev
                 #ev.component.fire \state, \doing
                 if pack(curr) is pack(prev)
@@ -62,14 +67,12 @@ Ractive.components['formal-field'] = Ractive.extend do
                     prev: prev
                     value: __.get \value
 
-                debugger
-
                 <- __.fire \valuechange, {component: ev, add-to-changelog: add-to-changelog}, log-item #log returns as curr
 
                 #ev.component.fire \state, \done...
                 __.set \message, ""
                 __.set \curr, curr
-                __.set \changelog, (__.get \changelog)
+                __.set \changelog, (unpack pack (__.get \changelog))
                 __.set \editable, no
 
             cancel: (ev) ->
