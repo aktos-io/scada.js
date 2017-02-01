@@ -61,7 +61,6 @@ ractive = new Ractive do
             combobox:
                 * id:\Paket, name:\Paket
                 * id:\Koli, name: \Koli
-            log: [{ date: Date.now! }]
         curr:
             value1: 5
         units:
@@ -278,8 +277,9 @@ ractive.on do
         formal-field.value1 = log-item.curr.value1
         formal-field.value2 = log-item.curr.value2
         ractive.set \previous, log-item.prev
+        formalField.changelog = ev.add-to-changelog log-item
         ractive.set \formalField, formal-field
-        finish log-item
+        finish!
 
     test-formal-field-show:(ev, log) ->
         string = """

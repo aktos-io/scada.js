@@ -15,14 +15,14 @@ panel(type="info" title="formal-field")
     .content
         .row
             .col-md-12
-                pre formal-field(on-valuechange="testFormalField" changelog="\{{ changelog }}" on-displaylog="testFormalFieldShow" someParam1="\{{.value1}}" someParam2="\{{.value2}}" )
+                pre formal-field(on-valuechange="testFormalField" value="\{{ value }}" on-displaylog="testFormalFieldShow" someParam1="\{{.value1}}" someParam2="\{{.value2}}" )
                 pre +partial('viewForm') -> partial   ###editable with doubleclick
                 pre +partial('editForm') -> partial
                 p
                     code on-valuechange = (ev, log-item, finish) ->
                 ul
                     li #[code ev]: #[code ack-button] event
-                    li #[code log-item]: returns curr, prev, date by default
+                    li #[code log-item]: returns curr, prev, date, value by default
                     li #[code finish]: is a function that takes log-item that user wanted to keep
                 p
                     code on-displaylog = (ev, log) ->  ### for displaying changelog with html in model
@@ -39,6 +39,8 @@ panel(type="info" title="formal-field")
                     span "We need &nbsp
                     formal-field(
                         on-valuechange="testFormalField"
+                        value= "0"
+                        changelog="{{formalField.changelog}}"
                         value1="{{formalField.value1}}"
                         value2="{{formalField.value2}}"
                         on-displaylog="testFormalFieldShow"
