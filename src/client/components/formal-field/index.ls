@@ -1,5 +1,5 @@
 require! 'aea':{pack, unpack, merge}
-require! 'prelude-ls':{find}
+require! 'prelude-ls':{find, difference, keys}
 
 Ractive.components['formal-field'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
@@ -7,69 +7,73 @@ Ractive.components['formal-field'] = Ractive.extend do
     oninit: ->
         __ = @
         component-attributes = {}
-        component-attributes = __.component.attributeByName
-        /*
-        for key, attr of component-attributes
-            @set "#{key}", attr
-        */
-        curr = {}
-        for key, attr of component-attributes
-            unless ['changelog'].indexOf(key) > -1
-                a = {"#{key}": attr.model.value}
-                curr `merge` a
-            else
-                @set "#{key}", attr.model.value
-
-        @set \curr, curr
+        component-attributes = keys @component.attributeByName
+        required-attr = <[ changelog value ]>
+        @set \extraAttributes, component-attributes `difference` required-attr
 
     onrender: ->
         __ = @
+        extra-attr = @get \extraAttributes
+
+        for let attr in extra-attr
+            @observe attr, (_new) ->
+                curr = __.get \curr
+                curr[attr] = _new
+                __.set \curr, curr
+
         @on do
             edit: ->
-                __.set \editable, yes
-                __.set \previous, unpack pack (__.get \curr)
+                @set \prev, unpack pack @get \curr
+                @set \editable, yes
+
 
             accept: (ev) ->
-                curr = unpack pack __.get \curr
-                prev = __.get \previous
-                changelog = __.get \changelog
-                message = @get \message
-                #ev.component.fire \state, \doing
 
+                add-to-changelog = (log-item) ->
+                    changelog = unpack pack __.get \changelog
+
+                    if changelog.length is 0
+                        changelog.unshift first-item =
+                            curr: __.get \prev
+                            message: "initial"
+                            date: "(initial)"
+
+                    delete log-item.prev
+                    delete log-item.value
+                    changelog.unshift log-item
+                    return changelog
+
+                curr = __.get \curr
+                prev = __.get \prev
+                #ev.component.fire \state, \doing
                 if pack(curr) is pack(prev)
                     __.set \editable, no
                     __.set \message, ""
                     return
 
+                message = __.get \message
                 if message is ""
-                    return ev.component.fire \state, \error, "Mesaj kısmı boş geçilemez!"
+                    return ev.component.fire \state, \error, "Açıklama kısmı boş geçilemez!"
 
                 log-item =
                     curr: curr
                     message: message
                     date: Date.now!
                     prev: prev
+                    value: __.get \value
 
-                log <- __.fire \valuechange, {component: ev}, log-item #log returns as curr
+                debugger
 
-                if changelog.length is 0
-                    changelog.unshift first-item =
-                        curr: prev
-                        message: "initial"
-                        date: "(initial)"
-
-                delete log.prev
-                delete log-item.prev
-                changelog.unshift (unpack pack (log or log-item))
+                <- __.fire \valuechange, {component: ev, add-to-changelog: add-to-changelog}, log-item #log returns as curr
 
                 #ev.component.fire \state, \done...
                 __.set \message, ""
                 __.set \curr, curr
-                __.set \changelog, changelog
+                __.set \changelog, (__.get \changelog)
                 __.set \editable, no
 
             cancel: (ev) ->
-                __.set \curr, (__.get \previous)
+                __.set \curr, (__.get \prev)
                 __.set \editable, no
                 __.set \message, ""
 
@@ -78,7 +82,9 @@ Ractive.components['formal-field'] = Ractive.extend do
                 <- __.fire \displaylog, ev, value
 
     data: ->
-        previous: ""
+        prev: ""
         editable: no
         curr: {}
         changelog: []
+        message:""
+        value: null

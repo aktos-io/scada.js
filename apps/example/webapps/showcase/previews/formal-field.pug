@@ -39,19 +39,24 @@ panel(type="info" title="formal-field")
                     span "We need &nbsp
                     formal-field(
                         on-valuechange="testFormalField"
-                        value= "0"
+                        value="112"
                         changelog="{{formalField.changelog}}"
                         value1="{{formalField.value1}}"
                         value2="{{formalField.value2}}"
                         on-displaylog="testFormalFieldShow"
                         )
                         +partial('viewForm')
+                            debug-obj(obj="{{curr}}")
                             span {{curr.value1}} {{curr.value2}}
                         +partial('editForm')
                             div(style="display: inline-block; width: 300px; height: 20px;")
                                 input-field(value="{{ curr.value1 }}")
                                     search-combobox(data="{{ formalField.combobox }}" selected="{{ curr.value2 }}")
                     span of product X.
+
+                p Here is amount: #[input-field(value="{{ formalField.value1 }}")]
+                p Here is unit: #[search-combobox(data="{{ formalField.combobox }}" selected="{{ formalField.value2 }}")]
+
 
                 h3 Test cases
                 ol
