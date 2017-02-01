@@ -33,28 +33,37 @@ Ractive.components['formal-field'] = Ractive.extend do
                 curr = unpack pack __.get \curr
                 prev = __.get \previous
                 changelog = __.get \changelog
-
+                message = @get \message
                 #ev.component.fire \state, \doing
 
                 if pack(curr) is pack(prev)
                     __.set \editable, no
+                    __.set \message, ""
                     return
+
+                if message is ""
+                    return ev.component.fire \state, \error, "Mesaj kısmı boş geçilemez!"
 
                 log-item =
                     curr: curr
+                    message: message
                     date: Date.now!
+                    prev: prev
 
-                log <- __.fire \valuechange, {component: ev}, curr, prev, log-item #log returns as curr
+                log <- __.fire \valuechange, {component: ev}, log-item #log returns as curr
 
                 if changelog.length is 0
                     changelog.unshift first-item =
                         curr: prev
+                        message: "initial"
                         date: "(initial)"
 
-
+                delete log.prev
+                delete log-item.prev
                 changelog.unshift (unpack pack (log or log-item))
 
                 #ev.component.fire \state, \done...
+                __.set \message, ""
                 __.set \curr, curr
                 __.set \changelog, changelog
                 __.set \editable, no
@@ -62,6 +71,7 @@ Ractive.components['formal-field'] = Ractive.extend do
             cancel: (ev) ->
                 __.set \curr, (__.get \previous)
                 __.set \editable, no
+                __.set \message, ""
 
             show-popup: (ev, value) ->
 

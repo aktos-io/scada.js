@@ -2,8 +2,11 @@ div(style="display:inline-block")
     |{{#if editable}}
     | {{> editForm}}
     div(style="display:inline-block")
+        textarea(value="{{ message }}" placeholder="Nedenini yazınız...")
+    div(style="display:inline-block")
         ack-button(class="formal-field-accept-button" type="success" on-buttonclick="accept") Accept
         ack-button(type="danger" on-buttonclick="cancel") Cancel
+
     |{{else}}
     span(class="formal-field" on-dblclick="edit")
         | {{> viewForm}}

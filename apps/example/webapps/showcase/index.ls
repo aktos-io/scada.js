@@ -268,16 +268,16 @@ ractive.on do
         console.log "content: ", content
         ractive.set \csvContent, content
         ev.component.fire \state, \done...
-    test-formal-field: (ev, curr, previous, log-item, finish) ->
+    test-formal-field: (ev, log-item, finish) ->
         /*
         ev.component.fire \state, \doing
         <- sleep 3000ms
         ev.component.fire \state, \done...
         */
         formal-field = ractive.get \formalField
-        formal-field.value1 = curr.value1
-        formal-field.value2 = curr.value2
-        ractive.set \previous, previous
+        formal-field.value1 = log-item.curr.value1
+        formal-field.value2 = log-item.curr.value2
+        ractive.set \previous, log-item.prev
         ractive.set \formalField, formal-field
         finish log-item
 
@@ -288,7 +288,8 @@ ractive.on do
                     <tr>
                         <th>Date &nbsp</th>
                         <th>Amount &nbsp</th>
-                        <th>Unit</th>
+                        <th>Unit &nbsp</th>
+                        <th>Message </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -297,9 +298,10 @@ ractive.on do
         for row in log
             string += """
                 <tr style="text-align:middle;">
-                    <td>#{unix-to-readable row.date}</td>
-                    <td>#{row.curr.value1}</td>
-                    <td>#{row.curr.value2}</td>
+                    <td>#{unix-to-readable row.date} &nbsp</td>
+                    <td>#{row.curr.value1} &nbsp</td>
+                    <td>#{row.curr.value2} &nbsp</td>
+                    <td>#{row.message}</td>
                 </tr>
                 """
         string += """

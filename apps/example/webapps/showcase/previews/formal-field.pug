@@ -15,18 +15,20 @@ panel(type="info" title="formal-field")
     .content
         .row
             .col-md-12
-                //-pre formal-field(value="\{{ myValue }}" on-change="formalField")
-                pre formal-field(on-test="testFormalField" changelog="\{{ changelog }}" on-displaylog="testFormalFieldShow" addSomeParameter="\{{.value1}}" addSomeParameter2="\{{.value2}}" )
+                pre formal-field(on-valuechange="testFormalField" changelog="\{{ changelog }}" on-displaylog="testFormalFieldShow" someParam1="\{{.value1}}" someParam2="\{{.value2}}" )
                 pre +partial('viewForm') -> partial   ###editable with doubleclick
                 pre +partial('editForm') -> partial
                 p
-                    code on-test = (ev, curr, previous, finish) ->
+                    code on-valuechange = (ev, log-item, finish) ->
                 ul
                     li #[code ev]: #[code ack-button] event
-                    li #[code curr]: new values that user enters as parameters in component like above
-                    li #[code previous]: previous change
-                    li #[code finish]: is a function that takes log that user wanted to keep
-
+                    li #[code log-item]: returns curr, prev, date by default
+                    li #[code finish]: is a function that takes log-item that user wanted to keep
+                p
+                    code on-displaylog = (ev, log) ->  ### for displaying changelog with html in model
+                ul
+                    li #[code ev]: #[code ack-button] event
+                    li #[code log]: returns curr, prev, date by default
         .row
             .col-md-12
                 h3 Original Data
@@ -43,7 +45,6 @@ panel(type="info" title="formal-field")
                         )
                         +partial('viewForm')
                             span {{curr.value1}} {{curr.value2}}
-
                         +partial('editForm')
                             div(style="display: inline-block; width: 300px; height: 20px;")
                                 input-field(value="{{ curr.value1 }}")
