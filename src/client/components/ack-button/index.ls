@@ -59,12 +59,17 @@ Ractive.components['ack-button'] = Ractive.extend do
                 __ = @
                 if typeof! msg is \String
                     msg = message: msg
+
+                msg = if msg.message.html
+                    message: msg.message.html
+
+
                 <- sleep 1000ms
                 __.set \infoTitle, (msg.title or \info)
                 __.set \infoMessage, (msg.message)
                 __.set \confirmationType, null
-                console.log "info title: ", (__.get \infoTitle)
-                console.log "info message: ", (__.get \infoMessage)
+                #console.log "info title: ", (__.get \infoTitle)
+                #console.log "info message: ", (__.get \infoMessage)
                 modal-confirmation.modal \show
                 # TODO Reset `infoTitle` and `infoMessage` on modal dismiss
 

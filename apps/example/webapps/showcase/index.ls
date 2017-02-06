@@ -54,6 +54,19 @@ ractive = new Ractive do
         file-read:
             show: yes
             files: []
+        formal-field:
+            show: yes
+            value1: 3
+            value2: \Paket
+            tempvalue:"mahmut"
+            combobox:
+                * id:\Paket, name:\Paket
+                * id:\Koli, name: \Koli
+        curr:
+            value1: 5
+        units:
+            * id:\Paket, name:\Paket
+            * id:\Koli, name: \Koli
         todo:
             show: yes
             todos1:
@@ -255,3 +268,45 @@ ractive.on do
         console.log "content: ", content
         ractive.set \csvContent, content
         ev.component.fire \state, \done...
+    test-formal-field: (ev, log-item, finish) ->
+        /*
+        ev.component.fire \state, \doing
+        <- sleep 3000ms
+        ev.component.fire \state, \done...
+        */
+        formal-field = ractive.get \formalField
+        formal-field.value1 = log-item.curr.value1
+        formal-field.value2 = log-item.curr.value2
+        ractive.set \previous, log-item.prev
+        formalField.changelog = ev.add-to-changelog log-item
+        ractive.set \formalField, formal-field
+        finish!
+
+    test-formal-field-show:(ev, log) ->
+        string = """
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date &nbsp</th>
+                        <th>Amount &nbsp</th>
+                        <th>Unit &nbsp</th>
+                        <th>Message </th>
+                    </tr>
+                </thead>
+                <tbody>
+            """
+
+        for row in log
+            string += """
+                <tr style="text-align:middle;">
+                    <td>#{unix-to-readable row.date} &nbsp</td>
+                    <td>#{row.curr.value1} &nbsp</td>
+                    <td>#{row.curr.value2} &nbsp</td>
+                    <td>#{row.message}</td>
+                </tr>
+                """
+        string += """
+                </tbody>
+            </table>
+            """
+        ev.component.fire \info, message: html: string
