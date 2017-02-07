@@ -27,10 +27,6 @@ ractive = new Ractive do
 
         combobox:
             show: yes
-            selected:
-                * id: \aaa
-                * id: \bbb
-                * id: \ccc
             list1:
                 * id: \1
                   name: \hello
@@ -50,10 +46,6 @@ ractive = new Ractive do
                 * id: \ccc
                   name: \list
             boundSelected: null
-
-        combobox-list:(selected) ->
-            list = @get \combobox.list2
-            list
 
         date-picker:
             show: yes
