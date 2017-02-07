@@ -26,3 +26,17 @@ panel(type="info" title="search-combobox")
         input.form-control(value="{{ combobox.amount }}")
         span.input-group-btn
             search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}")
+
+    h3 Test cases
+    h5 Original data: {{JSON.stringify(combobox.selected)}}
+    ol
+        li.
+            try: change selected from search-combobox &nbsp
+            expected: selected is changed to desired data &nbsp
+            result: original data is not changing
+
+    |{{#each combobox.selected:i}}
+    col-md-4
+        search-combobox(data="{{ comboboxList(combobox.selected) }}" selected="{{ combobox.selected[i].id }}")
+        p selected: {{ combobox.selected[i].id }}
+    |{{/each}}
