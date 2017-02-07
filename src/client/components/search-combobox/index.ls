@@ -1,3 +1,4 @@
+require! 'aea': {unpack, pack}
 Ractive.components['search-combobox'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
@@ -24,18 +25,19 @@ Ractive.components['search-combobox'] = Ractive.extend do
             value = x.target.text-content
             if multiple is 1
                 __.set \selected, id
+                debugger
             else
                 multi = []
                 for option in x.target
                     multi.push(option.value)
-
                 __.set \selected, multi
+                debugger
 
             #__.set \selectedText, value
             #console.log "selected: ", id, "value: ", value
 
         box = select.0.selectize
-        default-selected = __.get \selected
+        #default-selected = __.get \selected
         try
             throw if default-selected
             data = __.get \data
@@ -43,6 +45,7 @@ Ractive.components['search-combobox'] = Ractive.extend do
             default-selected = data.0.id
 
         @observe \data, (new-data, old-data) ->
+            default-selected = __.get \selected
             if new-data
                 box
                     ..add-option new-data
