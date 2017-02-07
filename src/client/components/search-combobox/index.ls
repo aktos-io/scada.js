@@ -41,7 +41,7 @@ Ractive.components['search-combobox'] = Ractive.extend do
             data = __.get \data
             throw if data.length > 1
             default-selected = data.0.id
-        
+
         @observe \data, (new-data, old-data) ->
             if new-data
                 box
