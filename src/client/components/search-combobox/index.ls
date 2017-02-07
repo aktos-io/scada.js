@@ -25,14 +25,11 @@ Ractive.components['search-combobox'] = Ractive.extend do
             value = x.target.text-content
             if multiple is 1
                 __.set \selected, id
-                debugger
             else
                 multi = []
                 for option in x.target
                     multi.push(option.value)
                 __.set \selected, multi
-                debugger
-
             #__.set \selectedText, value
             #console.log "selected: ", id, "value: ", value
 
