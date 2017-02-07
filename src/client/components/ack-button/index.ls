@@ -29,6 +29,9 @@ Ractive.components['ack-button'] = Ractive.extend do
                 # TODO: remove {args: val}
                 @fire \buttonclick, {component: this, args: val}, val
 
+            error: (msg) ->
+                @fire \state, \error, msg
+
             state: (s, msg) ->
                 self-disabled = no
 
@@ -56,32 +59,44 @@ Ractive.components['ack-button'] = Ractive.extend do
                 __ = @
                 if typeof! msg is \String
                     msg = message: msg
+
+                msg = if msg.message.html
+                    message: msg.message.html
+
+
                 <- sleep 1000ms
                 __.set \infoTitle, (msg.title or \info)
                 __.set \infoMessage, (msg.message)
                 __.set \confirmationType, null
-                console.log "info title: ", (__.get \infoTitle)
-                console.log "info message: ", (__.get \infoMessage)
+                #console.log "info title: ", (__.get \infoTitle)
+                #console.log "info message: ", (__.get \infoMessage)
                 modal-confirmation.modal \show
                 # TODO Reset `infoTitle` and `infoMessage` on modal dismiss
 
             yesno: (opt, callback) ->
+                message = if opt.message.html
+                    opt.message.html
+                else
+                    opt.message
+
                 @set \infoTitle, (opt.title or 'o_O')
-                @set \infoMessage, (opt.message or 'Are you sure?')
+                @set \infoMessage, (message or 'Are you sure?')
                 @set \confirmationType, opt.type
                 @set \confirmationCallback, callback
                 modal-confirmation.modal \show
                 # TODO What if confirmation modal dismissed?
 
             closeYesNo: (answer) ->
+                __ = @
                 callback = @get \confirmationCallback
                 modal-confirmation.modal \hide
+                <- sleep 1000ms
                 callback answer
 
                 # Reset relevant props for next confirmation
-                @set \confirmationType, null
-                @set \confirmationCallback, null
-                @set \confirmationInput, null
+                __.set \confirmationType, null
+                __.set \confirmationCallback, null
+                __.set \confirmationInput, null
 
     data: ->
         __ = @

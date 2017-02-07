@@ -1,7 +1,7 @@
 require! 'through2': through
 require! <[ pug path cheerio fs ]>
 require! 'ractive':Ractive
-require! 'prelude-ls': {map}
+require! 'prelude-ls': {map, keys}
 
 /*******************************************************************************
 
@@ -29,7 +29,9 @@ Example:
 
 ********************************************************************************/
 
-module.exports = (file) ->
+export preparserify-dep-list = {}
+
+export ractive-preparserify = (file) ->
     through (buf, enc, next) ->
         __ = this
         content = buf.to-string \utf8
@@ -55,17 +57,24 @@ module.exports = (file) ->
                     mixin-relative = path.relative dirname, process.cwd!
                     mixin-include = "include #{mixin-relative}/src/client/templates/mixins.pug\n"
                     template-contents = mixin-include + template-contents
+
+                    # FIXME: We should get dependencies and rendered content in one function call
+                    deps = pug.compileClientWithDependenciesTracked template-contents, {filename: file} .dependencies
                     fn = pug.compile template-contents, {filename: file}
+                    # End of FIXME
+
+                    all-deps = deps ++ template-full-path
+                    for dep in all-deps
+                        #console.log "dep is: ", dep, "for the file: ", file
+                        if preparserify-dep-list[dep]
+                            preparserify-dep-list[dep].push file
+                        else
+                            preparserify-dep-list[dep] = [file]
+
+                    #console.log "DEPS : ", JSON.stringify preparserify-dep-list, null, 2
                     template-html = fn!
                 catch _ex
-                    e = {}
-                    #console.error "ERROR: ractive-parserify: #{e}"
-                    e.name = 'Ractive Preparse Error'
-                    e.message = _ex.message
-                    e.fileName = template-full-path
-                    console.log "cwd: ", process.cwd!
-                    console.log "err file: ", template-full-path
-                    __.emit 'error', _ex.message
+                    __.emit 'error', _ex
                     return
 
 

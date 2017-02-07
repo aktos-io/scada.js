@@ -36,6 +36,11 @@ Ractive.components['search-combobox'] = Ractive.extend do
 
         box = select.0.selectize
         default-selected = __.get \selected
+        try
+            throw if default-selected
+            data = __.get \data
+            throw if data.length > 1
+            default-selected = data.0.id
 
         @observe \data, (new-data, old-data) ->
             if new-data

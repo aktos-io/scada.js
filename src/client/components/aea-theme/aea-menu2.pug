@@ -1,0 +1,33 @@
+aside.main-sidebar.debug.collapsed
+    button.btn.btn-default.main-sidebar-button(type="button"): i.glyphicon.glyphicon-menu-hamburger
+    | &nbsp;
+    +if('isMenuOpen')
+        | {{ yield }}
+    //- debug-obj(obj="{{menu}}")
+    nav.main-sidebar-navigation
+        ul.sidebar-menu
+            +each('menu:i')
+                | {{#if .subMenu}}
+                li.menu-item-has-submenu
+                    .anchor(
+                        on-click="@this.fire('toggleSubmenu', i)"
+                        )
+                        icon.menu-item-icon(name="{{.icon}}")
+                        span.menu-item-title
+                            | {{ .title }}
+                        icon.menu-item-dropdown.pull-right(name="chevron-{{#if submenuState[i]}}up{{else}}down{{/if}}")
+                    ul.sub-menu(
+                        class="{{#if submenuState[i] }}sub-menu-open{{/if}}"
+                        )
+                        +each('.subMenu')
+                            li
+                                a(href="{{ .url }}" class="{{#if selected === .url}}active{{/if}}")
+                                    icon.menu-item-icon(name="{{.icon}}")
+                                    span.menu-item-title {{ .title }}
+                | {{else}}
+                li
+                    a(href="{{ .url }}" class="{{#if selected === .url}}active{{/if}}")
+                        icon.menu-item-icon(name="{{.icon}}")
+                        span.menu-item-title
+                            | {{ .title }}
+                | {{/if}}
