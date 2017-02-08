@@ -17,6 +17,33 @@ Ractive.components["aea-menu2"] = Ractive.extend do
         if $ window .width! >= 1200
             __.set \isMenuOpen, yes
 
+        @observe \menu, ->
+            menu = __.get \menu
+
+            if menu.length is 0
+                return
+
+            menus = [ menu ]
+
+            while menus .length > 0
+                # Get first item and remove it from the array
+                menu = menus .shift!
+
+                for menu-item in menu
+                    if not menu-item.icon or menu-item.icon is ''
+                        initials = menu-item.title.split(' ')
+
+                        if initials.length >= 2
+                            initials = ((initials .shift! || '')[0] + (initials .shift! || '')[0])
+                        else
+                            initials += menu-item.title[2]
+
+                        menu-item.icon-text = initials .toUpperCase!
+
+                    if menu-item.sub-menu
+                        # Mark the sub menu for further processing
+                        menus .push menu-item.sub-menu
+
         @observe \debug, (_new) ->
             if _new
                 main-sidebar.addClass \debug
