@@ -12,7 +12,11 @@ aside.main-sidebar.debug.collapsed
                     .anchor(
                         on-click="@this.fire('toggleSubmenu', i)"
                         )
+                        | {{#if .icon}}
                         icon.menu-item-icon(name="{{.icon}}")
+                        | {{else}}
+                        tag(size="0.7em" type="primary") {{ .title.substring(0,2) }}
+                        | {{/if}}
                         span.menu-item-title
                             | {{ .title }}
                         icon.menu-item-dropdown.pull-right(name="chevron-{{#if submenuState[i]}}up{{else}}down{{/if}}")
@@ -22,12 +26,20 @@ aside.main-sidebar.debug.collapsed
                         +each('.subMenu')
                             li
                                 a(href="{{ .url }}" class="{{#if selected === .url}}active{{/if}}")
+                                    | {{#if .icon}}
                                     icon.menu-item-icon(name="{{.icon}}")
+                                    | {{else}}
+                                    tag(size="0.7em") {{ .title.substring(0,2) }}
+                                    | {{/if}}
                                     span.menu-item-title {{ .title }}
                 | {{else}}
                 li
                     a(href="{{ .url }}" class="{{#if selected === .url}}active{{/if}}")
+                        | {{#if .icon}}
                         icon.menu-item-icon(name="{{.icon}}")
+                        | {{else}}
+                        tag(size="0.7em" type="primary") {{ .title.substring(0,2) }}
+                        | {{/if}}
                         span.menu-item-title
                             | {{ .title }}
                 | {{/if}}
