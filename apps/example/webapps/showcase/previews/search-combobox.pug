@@ -38,4 +38,3 @@ panel(type="info" title="search-combobox")
             ol
                 +each('combobox.list2')
                     li if you select "{{.name }}", you should see "{{.id}}" in here: "{{combobox.selected[0].id}}"
-        li #[b BUG] -> data is not changing
