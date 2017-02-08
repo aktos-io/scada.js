@@ -45,21 +45,12 @@ Ractive.components["aea-menu2"] = Ractive.extend do
             if __.get \isMenuAutomaticallyOpened or $ window .width! < 1200
                 __.set \isMenuOpen, no
 
-        open-sub-menu = ->
-            unless __.get \isMenuOpen
-                __.set \isMenuOpen, yes
-                __.set \isMenuAutomaticallyOpened, yes
-
-            $ this .next \.sub-menu .toggleClass \sub-menu-open
-            $ this .children \.menu-item-dropdown .toggleClass \glyphicon-chevron-down .toggleClass \glyphicon-chevron-up
-
-        /*
-        @observe \menu, ->
-            $ \.anchor .click open-sub-menu
-        */
-
         @on do
             toggleSubmenu: (index) ->
+                unless __.get \isMenuOpen
+                    __.set \isMenuOpen, yes
+                    __.set \isMenuAutomaticallyOpened, yes
+
                 submenuState = @get \submenuState
                 submenuState[index] = not submenuState[index]
                 @set \submenuState, submenuState
