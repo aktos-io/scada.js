@@ -57,11 +57,13 @@ panel(type="info" title="data-table")
                 ul
                     +each('curr.entries')
                         .panel
-                            .panel-heading
-                                search-combobox(data="{{ products }}" selected="{{ .product }}")
-                                input-field(value="{{ .amount }}" placeholder="amount of product")
-                                    search-combobox(data="{{ units }}" selected="{{ .unit }}")
-                                btn(on-buttonclick="deleteOrder" value="entries: {{ i }}"): icon-remove
+                            .panel-body
+                                div(style="float: left;")
+                                    search-combobox(data="{{ products }}" selected="{{ .product }}")
+                                div(style="float: left;")
+                                    input-field(value="{{ .amount }}" placeholder="amount of product")
+                                        search-combobox(data="{{ units }}" selected="{{ .unit }}")
+                                btn(on-buttonclick="deleteOrder" value="entries: {{ i }}" style="float: left;"): icon-remove
 
             //- use `addNewEntry` method to add a new default entry to `entries`:
             btn(on-buttonclick="addNewEntry" value="entries")
