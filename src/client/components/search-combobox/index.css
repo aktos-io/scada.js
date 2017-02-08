@@ -1,0 +1,14 @@
+.input-group-with-selectize {
+    height: 30px;
+    position: relative;
+    top: -2px;
+    /* the rule below is what we called as 'fixed' */
+    min-width: 80px;
+}
+
+.input-group-with-selectize .selectize-input {
+    height: 34px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left-width: 0 !important;
+}
