@@ -1,5 +1,5 @@
 div(style="display:inline-block")
-    |{{#if editable}}
+    |{{#if editable && readonly}}
     | {{> editForm}}
     div(style="display:inline-block")
         textarea(value="{{ message }}" placeholder="Açıklama...")

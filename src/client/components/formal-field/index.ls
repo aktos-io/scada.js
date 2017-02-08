@@ -10,6 +10,9 @@ Ractive.components['formal-field'] = Ractive.extend do
         component-attributes = keys @component.attributeByName
         required-attr = <[ changelog value ]>
 
+        readonly = if @partials.editForm then yes else no
+        @set \readonly, readonly
+
         for name in component-attributes # attributes that start with '_' can be used, too.
             if name[0] is '_'
                 required-attr.push name
@@ -91,3 +94,4 @@ Ractive.components['formal-field'] = Ractive.extend do
         changelog: []
         message:""
         value: null
+        readonly: yes
