@@ -6,19 +6,20 @@ panel(type="info" title="search-combobox")
         .row
             .col-md-12
                 checkbox(checked="{{ combobox.show }}") Show/hide combobox Bound component1
-        row
-            col-md-4
+        .row
+            .col-md-4
                 h3 Bound component1
                 +if('combobox.show')
                     search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}")
                     p selected: {{combobox.boundSelected}}
-            col-md-4
+            .col-md-4
                 h3 Bound component2
                 search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}")
                 p selected: {{combobox.boundSelected}}
-            col-md-4
+            .col-md-4(style="border: 1px dashed black")
                 h3 UnBound (free) instance
-                search-combobox(data="{{ combobox.list2 }}" selected="{{ combobox.unboundSelected }}")
+                quote(style="background-color: pink") This instance fits width of its container
+                search-combobox(data="{{ combobox.list2 }}" selected="{{ combobox.unboundSelected }}" fit-width)
                 p selected: {{ combobox.unboundSelected }}
 
     h3 With input group

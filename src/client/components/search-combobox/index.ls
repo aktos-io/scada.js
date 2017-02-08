@@ -1,4 +1,4 @@
-require! 'aea': {unpack, pack}
+require! 'aea': {unpack, pack, sleep}
 Ractive.components['search-combobox'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
@@ -20,6 +20,9 @@ Ractive.components['search-combobox'] = Ractive.extend do
 
         @set \__selectize__, select
 
+        if @get \fit-width
+          $ @find \.search-combobox .css display: \block
+          
         select.on \change, (x) ->
             id = x.target.value
             value = x.target.text-content
@@ -64,3 +67,4 @@ Ractive.components['search-combobox'] = Ractive.extend do
         multi-selected: null
         placeholder: "Seçim yapın..."
         __selectize__: null
+        fit-width: no
