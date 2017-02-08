@@ -1,11 +1,17 @@
 div(style="display:inline-block")
     |{{#if editable && readonly}}
-    | {{> editForm}}
-    div(style="display:inline-block")
-        textarea(value="{{ message }}" placeholder="Açıklama...")
-    div(style="display:inline-block")
-        ack-button(class="formal-field-accept-button" type="success" on-buttonclick="accept") Accept
-        ack-button(type="danger" on-buttonclick="cancel") Cancel
+    table
+      tr
+        td(style="vertical-align: top") {{> editForm}}
+        td
+          table(style="margin-left: 10px; ")
+            tr
+              td
+                textarea(value="{{ message }}" placeholder="Açıklama..." style="border: none; width: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;")
+              td(style="vertical-align: top")
+                btn-group-vertical
+                  ack-button(class="formal-field-accept-button" type="success xs" on-buttonclick="accept") Accept
+                  ack-button(type="danger xs" on-buttonclick="cancel") Cancel
 
     |{{else}}
     span(class="formal-field" on-dblclick="edit")

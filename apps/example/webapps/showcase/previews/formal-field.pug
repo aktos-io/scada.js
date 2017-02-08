@@ -52,10 +52,8 @@ panel(type="info" title="formal-field")
                         +partial('viewForm')
                             span {{curr.value1}} {{curr.value2}}
                         +partial('editForm')
-                            div(style="display: inline-block; width: 300px; height: 20px;")
-                                input-field(value="{{ curr.value1 }}")
-                                    search-combobox(data="{{ formalField.combobox }}" selected="{{ curr.value2 }}")
-                                        //-input(value="{{_tempvalue}}")
+                          input-field(value="{{ curr.value1 }}")
+                              search-combobox(data="{{ formalField.combobox }}" selected="{{ curr.value2 }}")
                     span of product X."
                 //-
                     p Here is original amount: #[input-field(value="{{ formalField.value1 }}")]
