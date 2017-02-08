@@ -21,7 +21,8 @@
         background-color: black;
     }
 
-    .main-sidebar.debug a {
+    .main-sidebar.debug a,
+    .main-sidebar.debug .anchor {
         color: white;
     }
 }
