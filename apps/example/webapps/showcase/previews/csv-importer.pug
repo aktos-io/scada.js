@@ -10,8 +10,8 @@
         [ ] 7. Change sizes
         [ ] 8. Match theme
 
-panel(type="info" title="csv-importer")
-    .content
+.col-md-12
+    panel(type="info" title="csv-importer")
         .row
             .col-md-12
                 pre csv-importer(on-import="importCsv" csv="\{{ rawCsvContent }}" columns="col1,col2,col3" delimiter=",") #...delimiter="\t"
