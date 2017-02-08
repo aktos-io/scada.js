@@ -21,7 +21,8 @@
         background-color: black;
     }
 
-    .main-sidebar.debug a {
+    .main-sidebar.debug a,
+    .main-sidebar.debug .anchor {
         color: white;
     }
 }
@@ -117,6 +118,7 @@
 
 .menu-item-icon {
     display: inline-block;
+    max-width: 16px;
 }
 
 .menu-item-title {
@@ -187,6 +189,17 @@
 }
 
 @media (min-width: 1200px) { /* twbs-lg */
+}
+
+@media (min-width: 1400px) { /* beyond twbs-lg */
+    .main-sidebar {
+        width: calc(2 * 8.33333333%);
+    }
+
+    .main-sidebar + .content-wrapper {
+        width: calc(10 * 8.33333333%);
+        margin-left: calc(2 * 8.33333333%);
+    }
 }
 
 .content-wrapper {
