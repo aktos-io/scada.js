@@ -1,0 +1,9 @@
+.selectize-control {
+    display: inline-block;
+}
+.selectize-input {
+    padding-right: 30px;
+}
+.selectize-dropdown {
+    width: auto !important; 
+}
