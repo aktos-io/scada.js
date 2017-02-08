@@ -109,7 +109,6 @@ ractive = new Ractive do
         menu-links:
             * title: "Siparişler"
               url: '#/orders'
-              icon: "credit-card"
             * title: "İş Planları"
               url: '#/production-jobs'
               icon: "list-alt"
@@ -117,7 +116,6 @@ ractive = new Ractive do
               url: '#/bundling'
               icon: 'gift'
             * title: "Sevkiyat"
-              icon: 'road'
               sub-menu:
                 * title: "dispatch submenu1"
                   url: '#/dispatch/1'
@@ -161,7 +159,7 @@ ractive = new Ractive do
 ractive.on do
     'complete': ->
         __ = @
-        <- sleep 1000ms
+        <- sleep 10ms
         __.set \menu, __.get \menuLinks
 
     test-ack-button1: (ev, value) ->
