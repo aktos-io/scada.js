@@ -1,3 +1,10 @@
 .input-field {
   display: inline-block;
 }
+
+.rwd-table .input-field table tr {
+    border: 0 !important;
+}
+.rwd-table .input-field table td {
+    padding: 0 !important;
+}
