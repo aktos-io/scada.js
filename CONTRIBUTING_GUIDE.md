@@ -17,3 +17,7 @@
 7. **If** your next feature **does** depend your previous PR, stay where you are 
 8. Create a new branch, continue development. 
 9. If any changes is required, switch to appropriate branch, apply your changes, go to step 3. 
+
+# Design Principles of Components 
+
+1. Do not modify inputs if there is no obvious reason to do so. 
