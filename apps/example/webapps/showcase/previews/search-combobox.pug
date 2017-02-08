@@ -22,11 +22,12 @@ panel(type="info" title="search-combobox")
                 search-combobox(data="{{ combobox.list2 }}" selected="{{ combobox.unboundSelected }}" fit-width)
                 p selected: {{ combobox.unboundSelected }}
 
-    h3 With input group
-    .input-group
-        input.form-control(value="{{ combobox.amount }}")
-        span.input-group-btn
-            search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}")
+    h3 With input-field
+    p
+      | "...amount of product X is
+      input-field(value="{{ combobox.amount }}")
+        search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}")
+      | ..."
 
     h3 Test Case: Supply search-combobox data from a function
     p default selected data is "{{combobox.selected[0].id}}" for the search-combobox.

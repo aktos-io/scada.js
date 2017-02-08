@@ -1,11 +1,17 @@
-.input-group
-    input.form-control(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}")
-    | {{#if unit === null }}
-    //- DANGER
-    //- DO NOT USE {{>content}} without deeply testing prior usages,
-    //- use {{yield}} instead!
-    span.input-group-addon {{yield}}
-    //- END OF DANGER 
-    | {{else}}
-    span.input-group-addon {{ unit }}
-    | {{/if}}
+.input-field
+  | {{#if unit}}
+  .input-group
+      input.form-control(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}")
+      span.input-group-addon {{ unit }}
+  | {{else}}
+  table
+    tr
+      td(style="height: 100%; border-top-left-radius: 10px; border-bottom-left-radius: 10px; border: 1px solid lightgray")
+        input(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}" style="height: 100%; margin: 0; padding-left: 5px; padding-top: 0; padding-bottom: 0; padding-right: 0; border: none")
+      td
+        //- DANGER
+        //- DO NOT USE {{>content}} without deeply testing prior usages,
+        //- use {{yield}} instead!
+        span {{yield}}
+        //- END OF DANGER
+  | {{/if}}
