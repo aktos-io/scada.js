@@ -1,7 +1,7 @@
 form-vertical
     form-group
         strong Database seçin:
-        search-combobox(data="{{ serverList }}" selected="{{ selectedServer }}")
+        search-combobox(data="{{ serverList }}" selected="{{ selectedServer }}" fit-width)
     form-group
         input.form-control.username-input(value="{{context._user.name}}" placeholder="{{ usernamePlaceholder }}")
     form-group
@@ -13,7 +13,7 @@ form-vertical
             class="btn-lg btn-block btn-signin"
             type!="{{#if warnCapslock}}warning{{else}}primary{{/if}}"
             ) Login
-            
+
 | {{#if warnCapslock}}
 .alert.alert-warning
     strong CAPS-LOCK açık olabilir...
