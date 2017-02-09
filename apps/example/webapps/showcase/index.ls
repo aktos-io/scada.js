@@ -31,6 +31,22 @@ ractive = new Ractive do
                 * id: \aaa
                 * id: \bbb
                 * id: \ccc
+            products:
+                * id: \1
+                  name: \apple
+                * id: \2
+                  name: \strawberry
+                * id: \3
+                  name: \melon
+                * id: \4
+                  name: "tomato"
+            units:
+                * id: \1
+                  name: \kg
+                * id: \2
+                  name: \gr
+                * id: \3
+                  name: \packet
             list1:
                 * id: \1
                   name: \hello
