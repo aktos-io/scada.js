@@ -23,8 +23,8 @@ panel(type="info" title="r-table")
             tbody
                 +each('combobox.list1')
                     tr
-                        td(data-th="my id") {{ .id }}
-                        td(data-th="my name") {{ .name }}
-                        td(data-th="my combobox")
+                        td {{ .id }}
+                        td {{ .name }}
+                        td
                           input-field(value="{{ inputField.value }}" placeholder="hello!")
                               search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" fit-width)
