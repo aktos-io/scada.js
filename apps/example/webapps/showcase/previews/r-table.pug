@@ -1,0 +1,26 @@
+//-
+    Match with Design Guide status:
+
+        [ ] 1. Example implementation
+        [ ] 2. Simple variable
+        [ ] 3. Unbound instances
+        [ ] 4. Bound instances and/or live feed
+        [ ] 5. {{#if }} ... {{/if}} block
+        [ ] 6. Test on mobile
+        [ ] 7. Change sizes
+        [ ] 8. Match theme
+
+panel(type="info" title="r-table")
+    .panel-heading
+        pre r-table is a responsive-table to use in place of #[code table] element
+    .panel-body
+        r-table
+            thead
+                tr
+                    th Id
+                    th Name
+            tbody
+                +each('combobox.list1')
+                    tr
+                        td {{ .id }}
+                        td {{ .name }}
