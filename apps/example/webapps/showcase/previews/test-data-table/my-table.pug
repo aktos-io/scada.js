@@ -38,9 +38,16 @@ panel(type="info" title="data-table")
 
             h3 Entries:
 
-            ul
-                +each('curr.entries')
-                    li Product: {{ .product }} with amount of: {{ .amount }}
+            r-table
+                thead
+                    tr
+                        th Product
+                        th Amount
+                tbody
+                    +each('curr.entries')
+                        tr
+                            td {{ .product }}
+                            td {{ .amount }}
 
         +partial('editForm')
             h3 This is editForm!
@@ -49,7 +56,7 @@ panel(type="info" title="data-table")
 
             key-value-grid(key="document name")
                 input(value="{{ curr.name }}" placeholder="name")
-                    
+
             h3 Entries:
                 ul
                     +each('curr.entries')
