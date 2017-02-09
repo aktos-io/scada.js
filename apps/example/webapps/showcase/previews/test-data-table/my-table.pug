@@ -5,6 +5,9 @@ panel(type="info" title="data-table")
         lastchange="{{ changes }}"
         curr-url="{{ currPage }}"
         enabled="{{ true }}"
+
+        products="{{combobox.products}}"
+        units="{{combobox.units}}"
         )
         +partial('addnewTitle')
             | Add my new document
@@ -60,10 +63,12 @@ panel(type="info" title="data-table")
             h3 Entries:
                 ul
                     +each('curr.entries')
-                        li.
-                            Product: #[input(value="{{ .product }}")]
-                            Amount: #[input(value="{{ .amount }}")]
-                             (#[btn(on-buttonclick="deleteOrder" value="entries: {{ i }}"): icon-remove])
+                        .panel
+                            .panel-heading
+                                search-combobox(data="{{ products }}" selected="{{ .product }}")
+                                input-field(value="{{ .amount }}" placeholder="amount of product")
+                                    search-combobox(data="{{ units }}" selected="{{ .unit }}")
+                                btn(on-buttonclick="deleteOrder" value="entries: {{ i }}"): icon-remove
 
             //- use `addNewEntry` method to add a new default entry to `entries`:
             btn(on-buttonclick="addNewEntry" value="entries")
