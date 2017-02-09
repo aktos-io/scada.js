@@ -103,7 +103,7 @@ r-table
                 td(colspan="{{ columnList.length + 1 }}" style="margin: 2px")
                     | {{#if openingRow}}
                     +each(".cols:i").
-                        <td data-th="{{columnList[i]}}">{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</td>
+                        <td>{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</td>
 
                     hr
                     btn.btn-sm(type="info" on-buttonclick="newOrderClose" tooltip="Kapat") #[icon-remove]
