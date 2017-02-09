@@ -202,7 +202,7 @@ ractive.on do
     test-ack-button4: (ev, value) ->
         console.log "asking if yes or no"
         ok <- ev.component.fire \yesno, do
-            title: 'well...'
+            title: 'Well...'
             message: value or 'are you sure?'
 
         unless ok

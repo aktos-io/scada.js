@@ -3,5 +3,7 @@ Ractive.components['example-component'] = Ractive.extend do
     isolated: yes
 
     oninit: ->
+        # currentYear = new Date().getFullYear()
+        # might be a better option
         @observe \birth, ->
-            @set \age, (2016 - (@get \birth))
+            @set \age, (2017 - (@get \birth))

@@ -9,7 +9,7 @@ include ../../templates/mixins.pug
     .modal-dialog(role="document")
         .modal-content.modal-danger
             .modal-header.
-                <h4 class="modal-title">Hata</h4>
+                <h4 class="modal-title">Error</h4>
             .modal-body {{errorMessage}}
             .modal-footer
 
@@ -20,7 +20,7 @@ include ../../templates/mixins.pug
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title">Yeni Kayıt</h4>
+                <h4 class="modal-title">New record</h4>
 
             .modal-body(
                 style="max-height: calc(100vh - 200px); overflow-y: auto;")
@@ -40,7 +40,7 @@ r-table
         +if('hasAddNewButton')
             tr
                 td(colspan="{{ columnList.length + 1 }}")
-                    row
+                    .row
                         .col-md-3.col-sm-3
                             btn(on-buttonclick="addNewOrder")
                                 icon-plus
@@ -53,7 +53,11 @@ r-table
                              {{#if addingNew}}{{>editForm}}{{/if}}
         tr
             td(colspan="{{ columnList.length + 1 }}")
+<<<<<<< HEAD
+                ack-button(on-buttonclick="kickChanges") Refresh ({{ createViewCounter }})
+=======
                 ack-button(on-buttonclick="kickChanges") Yenile
+>>>>>>> dd2b0d12d8f306082a3787db359eb6c4ffac56c8
                 span(style="color: lightgray; margin-left: 20px") {{#unless openingRow}}{{ openingRowMsg }}{{/unless}}
 
 
@@ -87,12 +91,12 @@ r-table
                             on-buttonclick="toggleEditing"
                             type="{{#if editTooltip }}danger{{else}}default{{/if}}"
                             active="{{editable}}"
-                            tooltip="Düzenle"
+                            tooltip="Edit"
                             )
                             | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
                             icon-pencil
                         | {{/unless}}
-                        btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
+                        btn(type="info" on-buttonclick="newOrderClose" tooltip="Close"): icon-remove
                     hr
                     | {{>editForm}}
 
@@ -102,8 +106,18 @@ r-table
                 //- -----------------------------------------------
                 td(colspan="{{ columnList.length + 1 }}" style="margin: 2px")
                     | {{#if openingRow}}
+<<<<<<< HEAD
+                    btn(type="info" on-buttonclick="newOrderClose" tooltip="Close"): icon-remove
+                    | &nbsp;
+                    tag {{ .id }}
+                    | &nbsp;
+                    icon-cog(spin="true")
+                    | &nbsp;
+                    strong {{ openingRowMsg }}
+=======
                     +each(".cols:i").
                         <td data-th="{{columnList[i]}}">{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</td>
+>>>>>>> 5ed8f12c2384cabd0624a8ee6b7c6e5a8f5fc53c
 
                     hr
                     btn.btn-sm(type="info" on-buttonclick="newOrderClose" tooltip="Kapat") #[icon-remove]
@@ -115,12 +129,12 @@ r-table
                             on-buttonclick="toggleEditing"
                             type="{{#if editTooltip }}danger{{else}}default{{/if}}"
                             active="{{editable}}"
-                            tooltip="Düzenle"
+                            tooltip="Edit"
                             )
                             | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
                             icon-pencil
                         | {{/unless}}
-                        btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
+                        btn(type="info" on-buttonclick="newOrderClose" tooltip="Close"): icon-remove
                     hr
                     | {{>viewForm}}
                     | {{/if}}
