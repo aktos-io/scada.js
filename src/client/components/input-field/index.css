@@ -1,3 +1,25 @@
 .input-field {
   display: inline-block;
 }
+.input-field-wrapper {
+    border: 1px solid lightgray;
+    display: table;
+    margin: 0;
+    padding: 0;
+}
+
+.input-field-wrapper-row {
+    display: table-row;
+    margin: 0;
+    padding: 0;
+}
+
+.input-field-wrapper-col > input {
+    height: 2em;
+    border: none;
+}
+.input-field-wrapper-col {
+    display: table-cell;
+    margin: 0;
+    padding: 0;
+}

@@ -10,7 +10,6 @@ body {
   min-width: 300px;
   width: 100% !important;
   border-radius: .4em;
-  overflow: hidden;
 }
 .rwd-table > tbody > tr {
   border-top: 1px solid #ddd;
@@ -129,6 +128,7 @@ body {
     text-align: left;
     font-size: 13px;
     border-bottom: 1px dotted #ccc;
+    margin-left: 0;
   }
 
   .rwd-table > tbody > tr > td:last-child {
@@ -141,7 +141,7 @@ body {
     display: block !important;
   }
 
-  .table > tbody > tr > td {
+  .rwd-table > tbody > tr > td {
     border-top: 0;
   }
 }
