@@ -3,23 +3,26 @@
 }
 .input-field-wrapper {
     border: 1px solid lightgray;
+    border-radius: 3px;
+    padding: 2px;
     display: table;
-    margin: 0;
-    padding: 0;
 }
 
 .input-field-wrapper-row {
     display: table-row;
-    margin: 0;
-    padding: 0;
 }
 
 .input-field-wrapper-col > input {
-    height: 2em;
     border: none;
+    padding: 6px 0 6px 8px;
 }
 .input-field-wrapper-col {
     display: table-cell;
-    margin: 0;
-    padding: 0;
+    vertical-align: middle;
+}
+@media (max-width: 420px) {
+    .input-field-wrapper-col {
+        display: block;
+        width: 100%;
+    }
 }
