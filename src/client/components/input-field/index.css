@@ -1,3 +1,28 @@
 .input-field {
   display: inline-block;
 }
+.input-field-wrapper {
+    border: 1px solid lightgray;
+    border-radius: 3px;
+    padding: 2px;
+    display: table;
+}
+
+.input-field-wrapper-row {
+    display: table-row;
+}
+
+.input-field-wrapper-col > input {
+    border: none;
+    padding: 6px 0 6px 8px;
+}
+.input-field-wrapper-col {
+    display: table-cell;
+    vertical-align: middle;
+}
+@media (max-width: 420px) {
+    .input-field-wrapper-col {
+        display: block;
+        width: 100%;
+    }
+}
