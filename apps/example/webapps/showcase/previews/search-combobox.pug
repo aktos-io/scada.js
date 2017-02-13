@@ -43,10 +43,16 @@ panel(type="info" title="search-combobox")
     h3 Test Case2: Delete rendered search-combobox component
     ol
         li delete #2 combobox instance in the Example List
-        li #[code BUG:] #4 instance isnt empty while it is supposed to be empty (stay intact)
+        li #4 instance is empty (stay intact)
     h4 Example list:
-    ol
-        +each('combobox.case2:i')
-            li
-                search-combobox(data="{{ combobox.case2 }}" selected="{{ .id }}")
+    //-debug-obj(obj="{{combobox.case2}}")
+    +each('combobox.case2:i')
+        .row
+            .col-md-4
+                search-combobox(data="{{ combobox.products }}" selected="{{ .id }}" fit-width)
+                p debug: {{#if i === 4}}true{{else}}false{{/if}}
+            .col-md-1
                 btn(on-buttonclick="deleteProducts" value="{{ i }}"): icon-remove
+            .col-md-4
+                span {{JSON.stringify(combobox.case2[i],2,null)}}
+            .col-md-3

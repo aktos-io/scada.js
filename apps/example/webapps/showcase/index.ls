@@ -33,15 +33,10 @@ ractive = new Ractive do
                 * id: \ccc
             case2:
                 * id: \1
-                  name: \apple
                 * id: ""
-                  name: \strawberry
                 * id: \3
-                  name: \melon
                 * id: \4
-                  name: "tomato"
                 * id: ""
-                  name: "berry"
             products:
                 * id: \1
                   name: \apple
@@ -356,3 +351,4 @@ ractive.on do
         index = parse-int i
         products.splice index, 1
         ractive.set \combobox.case2, products
+        debugger

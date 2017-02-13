@@ -22,7 +22,7 @@ Ractive.components['search-combobox'] = Ractive.extend do
 
         if @get \fit-width
           $ @find \.search-combobox .css display: \block
-          
+
         select.on \change, (x) ->
             id = x.target.value
             value = x.target.text-content
@@ -51,8 +51,11 @@ Ractive.components['search-combobox'] = Ractive.extend do
                     ..add-option new-data
                     ..refresh-options false
                     ..set-value default-selected if default-selected
+
         @observe \selected, (new-val) ->
-            if new-val
+            unless new-val is undefined
+            #if new-val or new-val is "" or new-val is null
+                debugger
                 box.set-value new-val
 
 
@@ -68,3 +71,4 @@ Ractive.components['search-combobox'] = Ractive.extend do
         placeholder: "Seçim yapın..."
         __selectize__: null
         fit-width: no
+        debug: no

@@ -62,7 +62,7 @@ panel(type="info" title="data-table")
 
             h3 Entries:
                 ul
-                    +each('curr.entries')
+                    +each('curr.entries:i')
                         .panel
                             .panel-heading
                                 search-combobox(data="{{ products }}" selected="{{ .product }}")
