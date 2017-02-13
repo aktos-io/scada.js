@@ -43,7 +43,7 @@ export my-table =
             @set \curr, curr
 
             # we might need some time consuming operations within here:
-            sleep-duration = 3000ms
+            sleep-duration = 1000ms
             refresh-interval = 1000ms
             remains = sleep-duration
             <- :lo(op) ->

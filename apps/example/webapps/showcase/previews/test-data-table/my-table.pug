@@ -61,13 +61,16 @@ panel(type="info" title="data-table")
                 input(value="{{ curr.name }}" placeholder="name")
 
             h3 Entries:
-                ul
+            r-table
+                tbody
                     +each('curr.entries:i')
-                        .panel
-                            .panel-heading
+                        tr
+                            td
                                 search-combobox(data="{{ products }}" selected="{{ .product }}")
+                            td
                                 input-field(value="{{ .amount }}" placeholder="amount of product")
                                     search-combobox(data="{{ units }}" selected="{{ .unit }}")
+                            td
                                 btn(on-buttonclick="deleteOrder" value="entries: {{ i }}"): icon-remove
 
             //- use `addNewEntry` method to add a new default entry to `entries`:

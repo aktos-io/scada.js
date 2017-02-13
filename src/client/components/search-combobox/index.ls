@@ -54,8 +54,6 @@ Ractive.components['search-combobox'] = Ractive.extend do
 
         @observe \selected, (new-val) ->
             unless new-val is undefined
-            #if new-val or new-val is "" or new-val is null
-                debugger
                 box.set-value new-val
 
 
