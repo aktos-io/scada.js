@@ -31,6 +31,17 @@ ractive = new Ractive do
                 * id: \aaa
                 * id: \bbb
                 * id: \ccc
+            case2:
+                * id: \1
+                  name: \apple
+                * id: ""
+                  name: \strawberry
+                * id: \3
+                  name: \melon
+                * id: \4
+                  name: "tomato"
+                * id: ""
+                  name: "berry"
             products:
                 * id: \1
                   name: \apple
@@ -46,7 +57,7 @@ ractive = new Ractive do
                 * id: \2
                   name: \gr
                 * id: \3
-                  name: \packet               
+                  name: \packet
             list1:
                 * id: \1
                   name: \hello
@@ -332,3 +343,16 @@ ractive.on do
             </table>
             """
         ev.component.fire \info, message: html: string
+
+    /*
+    delete-product: (i) ->
+        products = ractive.get \combobox.products
+        products.splice (parse-int i), 1
+        ractive.set \combobox.products, products
+    */
+
+    delete-products: (i) ->
+        products = ractive.get \combobox.case2
+        index = parse-int i
+        products.splice index, 1
+        ractive.set \combobox.case2, products
