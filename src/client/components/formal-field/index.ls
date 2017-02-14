@@ -31,9 +31,11 @@ Ractive.components['formal-field'] = Ractive.extend do
 
         @on do
             edit: ->
-                @set \prev, unpack pack @get \curr
-                @set \editable, yes
-
+                if @get \readonly
+                    @set \prev, unpack pack @get \curr
+                    @set \editable, yes
+                else
+                    @set \editable, no
 
             accept: (ev) ->
 
