@@ -46,7 +46,7 @@ ractive = new Ractive do
                 * id: \2
                   name: \gr
                 * id: \3
-                  name: \packet               
+                  name: \packet
             list1:
                 * id: \1
                   name: \hello
