@@ -1,0 +1,35 @@
+//-
+    Match with Design Guide status:
+
+        [ ] 1. Example implementation
+        [ ] 2. Simple variable
+        [ ] 3. Unbound instances
+        [ ] 4. Bound instances and/or live feed
+        [ ] 5. {{#if }} ... {{/if}} block
+        [ ] 6. Test on mobile
+        [ ] 7. Change sizes
+        [ ] 8. Match theme
+panel(type="info" title="dropdown-panel")
+    .content
+        .row
+            .col-md-12
+                pre dropdown-panel is a component that allows to overlay other elements
+        .row
+            .col-md-12
+                dropdown-panel
+                    +partial('body')
+                        p Check the checkbox to see list of products in dropdown-panel: &nbsp
+                            checkbox(checked="{{checkbox.checked1}}")  Show/Hide Dropdown
+                    +partial('dropdown')
+                        | {{#if checkbox.checked1}}
+                        r-table
+                            thead
+                                tr
+                                    th Name
+                                    th Id
+                            tbody
+                                +each('combobox.products')
+                                    tr
+                                        td {{ .name }}
+                                        td {{ .id }}
+                        | {{/if}}
