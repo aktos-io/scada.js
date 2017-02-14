@@ -1,17 +1,16 @@
+include ../../templates/mixins.pug
+
 div(style="display:inline-block")
-    |{{#if editable && readonly}}
-    table
-      tr
-        td(style="vertical-align: top") {{> editForm}}
-        td
-          table(style="margin-left: 10px; ")
-            tr
-              td
+    |{{#if editable}}
+    dropdown-panel
+        +partial('body')
+            | {{> editForm}}
+        +partial('dropdown')
+            div(style="border: 1px solid lightgrey;")
                 textarea(value="{{ message }}" placeholder="Açıklama..." style="border: none; width: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;")
-              td(style="vertical-align: top")
-                btn-group-vertical
-                  ack-button(class="formal-field-accept-button" type="success xs" on-buttonclick="accept") Accept
-                  ack-button(type="danger xs" on-buttonclick="cancel") Cancel
+                btn-group-horizontal
+                    ack-button(type="success xs" on-buttonclick="accept") Accept
+                    ack-button(type="danger xs" on-buttonclick="cancel") Cancel
 
     |{{else}}
     span(class="formal-field" on-dblclick="edit")
