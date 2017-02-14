@@ -17,7 +17,7 @@ div(style="display:inline-block")
         | {{> viewForm}}
         | &nbsp;
         |{{#if changelog.length > 0}}
-        ack-button(on-buttonclick="showPopup" type="primary xs" style="position: relative;bottom: 10px;padding: 3px 6px;" value="{{changelog}}") {{changelog.length-1}}
+        ack-button(on-buttonclick="showPopup" type="{{#if JSON.stringify(changelog[0].curr) == JSON.stringify(changelog[changelog.length-1].curr)}}primary xs{{else}}danger xs{{/if}}" style="position: relative;bottom: 10px;padding: 3px 6px;" value="{{changelog}}") {{changelog.length-1}}
         | &nbsp;
         |{{/if}}
     |{{/if}}
