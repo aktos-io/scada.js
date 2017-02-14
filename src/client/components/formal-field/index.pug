@@ -6,10 +6,11 @@ div(style="display:inline-block")
         +partial('body')
             | {{> editForm}}
         +partial('dropdown')
-            textarea(value="{{ message }}" placeholder="Açıklama..." style="border: none; width: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;")
-            btn-group-horizontal
-                ack-button(style="float: left;" class="formal-field-accept-button" type="success xs" on-buttonclick="accept") Accept
-                ack-button(style="float: right;" type="danger xs" on-buttonclick="cancel") Cancel
+            div(style="border: 1px solid lightgrey;")
+                textarea(value="{{ message }}" placeholder="Açıklama..." style="border: none; width: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;")
+                btn-group-horizontal
+                    ack-button(type="success xs" on-buttonclick="accept") Accept
+                    ack-button(type="danger xs" on-buttonclick="cancel") Cancel
 
     |{{else}}
     span(class="formal-field" on-dblclick="edit")
