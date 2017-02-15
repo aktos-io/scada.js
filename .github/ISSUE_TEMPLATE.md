@@ -4,4 +4,7 @@
 
 ## Reproduction:
 
-This issue is reproduced in the `showcase` page in this pull request: 
+1. Merge this PR: ...
+2. Do this
+3. Do that
+4. See the issue described above
