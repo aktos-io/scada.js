@@ -12,7 +12,7 @@ __tmp__
 
 # sensitive files
 auth.conf
-passwords.ls
+passwords*
 
 # project specific directories
 db
