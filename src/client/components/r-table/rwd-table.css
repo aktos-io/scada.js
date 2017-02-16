@@ -10,6 +10,7 @@ body {
   min-width: 300px;
   width: 100% !important;
   border-radius: .4em;
+  table-layout: fixed;
 }
 .rwd-table > tbody > tr {
   border-top: 1px solid #ddd;
