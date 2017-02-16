@@ -4,10 +4,12 @@
         input.form-control(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}")
         span.input-group-addon {{ unit }}
     | {{else}}
+    //- input-field with custom unit
     .input-field-wrapper
-        .input-field-wrapper-row
-            .input-field-wrapper-col
-                input(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}")
-            .input-field-wrapper-col
-                | {{yield}}
+        .input-field-input
+            input(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}")
+        .input-field-unit
+            | {{yield}}
+
+        div(style="clear: both")
     | {{/if}}

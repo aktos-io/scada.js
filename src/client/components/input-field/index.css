@@ -1,28 +1,31 @@
 .input-field {
-  display: inline-block;
+    display: inline-block;
+    padding: 0;
 }
 .input-field-wrapper {
     border: 1px solid lightgray;
     border-radius: 3px;
-    padding: 2px;
-    display: table;
+    display: inline-flex;
+    flex-wrap: wrap;
+    margin: 0; padding: 0;
 }
 
-.input-field-wrapper-row {
-    display: table-row;
+/* input field's input element */
+.input-field-input {
+    min-width:10px;
+    display: inline-table;
+    margin: 0; padding: 0;
 }
-
-.input-field-wrapper-col > input {
+.input-field-input > input {
     border: none;
     padding: 6px 0 6px 8px;
+    display:table-cell;
+    width:100%;
 }
-.input-field-wrapper-col {
-    display: table-cell;
+
+/* input-field's unit */
+.input-field-unit {
     vertical-align: middle;
-}
-@media (max-width: 420px) {
-    .input-field-wrapper-col {
-        display: block;
-        width: 100%;
-    }
+        margin: 0; padding: 0;
+
 }
