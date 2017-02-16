@@ -14,17 +14,66 @@ panel(type="info" title="r-table")
     .panel-heading
         pre r-table is a responsive-table to use in place of #[code table] element
     .panel-body
-        r-table
-            thead
-                tr
-                    th Id
-                    th Name
-                    th Test combobox
-            tbody
-                +each('combobox.list1')
+        .row
+            r-table
+                thead
                     tr
-                        td {{ .id }}
-                        td {{ .name }}
-                        td
-                          input-field(value="{{ inputField.value }}" placeholder="hello!")
-                              search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" fit-width)
+                        th Id
+                        th Name
+                        th Test combobox
+                tbody
+                    +each('combobox.list1')
+                        tr
+                            td {{ .id }}
+                            td Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vitae velit ac lacus consequat posuere at id erat. Pellentesque sit amet rhoncus ipsum, a lacinia ipsum.
+                            td
+                              input-field(value="{{ inputField.value }}" placeholder="hello!")
+                                  search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" fit-width)
+
+        hr
+        .row
+            .col-md-4
+                r-table
+                    thead
+                        tr
+                            th Id
+                            th Name
+                            th Test combobox
+                    tbody
+                        +each('combobox.list1')
+                            tr
+                                td {{ .id }}
+                                td Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vitae velit ac lacus consequat posuere at id erat. Pellentesque sit amet rhoncus ipsum, a lacinia ipsum.
+                                td
+                                  input-field(value="{{ inputField.value }}" placeholder="hello!")
+                                      search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" fit-width)
+            .col-md-4
+                r-table
+                    thead
+                        tr
+                            th Id
+                            th Name
+                            th Test combobox
+                    tbody
+                        +each('combobox.list1')
+                            tr
+                                td {{ .id }}
+                                td Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vitae velit ac lacus consequat posuere at id erat. Pellentesque sit amet rhoncus ipsum, a lacinia ipsum.
+                                td
+                                  input-field(value="{{ inputField.value }}" placeholder="hello!")
+                                      search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" fit-width)
+            .col-md-4
+                r-table
+                    thead
+                        tr
+                            th Id
+                            th Name
+                            th Test combobox
+                    tbody
+                        +each('combobox.list1')
+                            tr
+                                td {{ .id }}
+                                td Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vitae velit ac lacus consequat posuere at id erat. Pellentesque sit amet rhoncus ipsum, a lacinia ipsum.
+                                td
+                                  input-field(value="{{ inputField.value }}" placeholder="hello!")
+                                      search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" fit-width)

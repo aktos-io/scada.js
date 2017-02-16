@@ -1,93 +1,93 @@
 panel(type="info" title="data-table")
-data-table(
-    settings="{{ myTable.settings }}"
-    db="{{ db }}"
-    lastchange="{{ changes }}"
-    curr-url="{{ currPage }}"
-    enabled="{{ true }}"
+    data-table(
+        settings="{{ myTable.settings }}"
+        db="{{ db }}"
+        lastchange="{{ changes }}"
+        curr-url="{{ currPage }}"
+        enabled="{{ true }}"
 
-    products="{{combobox.products}}"
-    units="{{combobox.units}}"
-    )
-    +partial('addnewTitle')
-        | Add my new document
+        products="{{combobox.products}}"
+        units="{{combobox.units}}"
+        )
+        +partial('addnewTitle')
+            | Add my new document
 
-    //- -------------------------------------------------------------------------
-    //- ------------------------- HEADER -------------------------------------
-    //- -------------------------------------------------------------------------
-    +partial('header')
-        h3 This partial goes to header!
-        .row
-            .col-md-12
-                btn(on-buttonclick="setFilter" value="all") Show all
-                btn(on-buttonclick="setFilter" value="pink" type="info") Show only pinks
+        //- -------------------------------------------------------------------------
+        //- ------------------------- HEADER -------------------------------------
+        //- -------------------------------------------------------------------------
+        +partial('header')
+            h3 This partial goes to header!
+            .row
+                .col-md-12
+                    btn(on-buttonclick="setFilter" value="all") Show all
+                    btn(on-buttonclick="setFilter" value="pink" type="info") Show only pinks
 
-    //- -------------------------------------------------------------------------
-    //- ------------------------- VIEW FORM -------------------------------------
-    //- -------------------------------------------------------------------------
-    +partial('viewForm')
-        h3 This is viewForm!
-        p Any html design here is shown when you doubleclick a row.
+        //- -------------------------------------------------------------------------
+        //- ------------------------- VIEW FORM -------------------------------------
+        //- -------------------------------------------------------------------------
+        +partial('viewForm')
+            h3 This is viewForm!
+            p Any html design here is shown when you doubleclick a row.
 
-        p Our document looks like as follows:
+            p Our document looks like as follows:
 
-        key-value-grid(key="document type") {{ curr.type }}
+            key-value-grid(key="document type") {{ curr.type }}
 
-        key-value-grid(key="document name") {{ curr.name }}
+            key-value-grid(key="document name") {{ curr.name }}
 
-        key-value-grid(key="timestamp: ") {{ curr.timestamp }}
+            key-value-grid(key="timestamp: ") {{ curr.timestamp }}
 
-        key-value-grid(key="timestamp (human readable): ") {{ unixToReadable(curr.timestamp) }}
+            key-value-grid(key="timestamp (human readable): ") {{ unixToReadable(curr.timestamp) }}
 
-        h3 Entries:
+            h3 Entries:
 
-        r-table
-            thead
-                tr
-                    th Product
-                    th Amount
-            tbody
-                +each('curr.entries')
+            r-table
+                thead
                     tr
-                        td {{ .product }}
-                        td {{ .amount }}
-
-    +partial('editForm')
-        panel(type="primary" title="EditForm")
-            .content
-                key-value-grid(key="set your document type")
-                    input(value="{{ curr.type }}" placeholder="document type")
-
-                key-value-grid(key="document name")
-                    input(value="{{ curr.name }}" placeholder="name")
-
-                h3 Entries:
-                r-table
-                    thead
+                        th Product
+                        th Amount
+                tbody
+                    +each('curr.entries')
                         tr
-                            th Product
-                            th Amount
-                            th Delete
-                    tbody
-                        +each('curr.entries:i')
+                            td {{ .product }}
+                            td {{ .amount }}
+
+        +partial('editForm')
+            panel(type="primary" title="EditForm")
+                .content
+                    key-value-grid(key="set your document type")
+                        input(value="{{ curr.type }}" placeholder="document type")
+
+                    key-value-grid(key="document name")
+                        input(value="{{ curr.name }}" placeholder="name")
+
+                    h3 Entries:
+                    r-table
+                        thead
                             tr
-                                td
-                                    search-combobox(data="{{ products }}" selected="{{ .product }}")
-                                td
-                                    input-field(value="{{ .amount }}" placeholder="amount of product")
-                                        search-combobox(data="{{ units }}" selected="{{ .unit }}")
-                                td
-                                    btn(on-buttonclick="deleteOrder" value="entries: {{ i }}"): icon-remove
+                                th Product
+                                th Amount
+                                th Delete
+                        tbody
+                            +each('curr.entries:i')
+                                tr
+                                    td
+                                        search-combobox(data="{{ products }}" selected="{{ .product }}")
+                                    td
+                                        input-field(value="{{ .amount }}" placeholder="amount of product")
+                                            search-combobox(data="{{ units }}" selected="{{ .unit }}")
+                                    td
+                                        btn(on-buttonclick="deleteOrder" value="entries: {{ i }}"): icon-remove
 
-                //- use `addNewEntry` method to add a new default entry to `entries`:
-                btn(on-buttonclick="addNewEntry" value="entries")
-                    icon-plus
-                    span Add new entry
+                    //- use `addNewEntry` method to add a new default entry to `entries`:
+                    btn(on-buttonclick="addNewEntry" value="entries")
+                        icon-plus
+                        span Add new entry
 
-                hr
+                    hr
 
-                //- use `newOrderClose` method to close the row
-                btn(on-buttonclick="newOrderClose") Kapat!
+                    //- use `newOrderClose` method to close the row
+                    btn(on-buttonclick="newOrderClose") Kapat!
 
-                //- use an ack-button to save your document
-                ack-button(on-buttonclick="save" value="{{ curr }}") Save
+                    //- use an ack-button to save your document
+                    ack-button(on-buttonclick="save" value="{{ curr }}") Save
