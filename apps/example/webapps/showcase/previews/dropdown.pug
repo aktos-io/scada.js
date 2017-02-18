@@ -1,0 +1,27 @@
+panel(type="info" title="dropdown")
+    .content
+        .row
+            .col-md-6
+                h3 Bound component2
+                dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" placeholder="my placeholder")
+                p selected: {{combobox.boundSelected}}
+            .col-md-6(style="border: 1px dashed black")
+                h3 UnBound (free) instance
+                quote(style="background-color: pink") This instance fits width of its container
+                search-combobox(data="{{ combobox.list2 }}" selected="{{ combobox.unboundSelected }}" fit-width)
+                p selected: {{ combobox.unboundSelected }}
+
+.ui.four.column.grid
+    .row
+        .column
+            dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" placeholder="my placeholder")
+            p selected: {{combobox.boundSelected}}
+        .column
+            dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" placeholder="my placeholder")
+            p selected: {{combobox.boundSelected}}
+        .column
+            dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" placeholder="my placeholder")
+            p selected: {{combobox.boundSelected}}
+        .column
+            dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" placeholder="my placeholder")
+            p selected: {{combobox.boundSelected}}

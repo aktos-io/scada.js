@@ -183,7 +183,7 @@ ractive.on do
         __ = @
         <- sleep 10ms
         __.set \menu, __.get \menuLinks
-
+        
     test-ack-button1: (ev, value) ->
         ev.component.fire \state, \doing
         <- sleep 5000ms

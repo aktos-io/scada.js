@@ -1,0 +1,5 @@
+
+select.ui.fluid.normal.dropdown
+    option(value="") {{placeholder}}
+    +each('data')
+        option(value="{{.id}}") {{.name}}
