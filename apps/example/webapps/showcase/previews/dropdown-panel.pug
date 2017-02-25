@@ -46,28 +46,3 @@
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vitae velit ac lacus consequat posuere at id erat.
                 Pellentesque sit amet rhoncus ipsum, a lacinia ipsum.Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                 Vestibulum vitae velit ac lacus consequat posuere at id erat. Pellentesque sit amet rhoncus ipsum, a lacinia ipsum.
-
-//-panel(type="info" title="dropdown-panel")
-    .content
-        .row
-            .col-md-12
-                pre dropdown-panel is a component that allows to overlay other elements
-        .row
-            .col-md-12
-                dropdown-panel
-                    +partial('body')
-                        p Check the checkbox to see list of products in dropdown-panel: &nbsp
-                            checkbox(checked="{{checkbox.checked1}}")  Show/Hide Dropdown
-                    +partial('dropdown')
-                        | {{#if checkbox.checked1}}
-                        r-table
-                            thead
-                                tr
-                                    th Name
-                                    th Id
-                            tbody
-                                +each('combobox.products')
-                                    tr
-                                        td {{ .name }}
-                                        td {{ .id }}
-                        | {{/if}}
