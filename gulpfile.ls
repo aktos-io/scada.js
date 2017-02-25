@@ -265,9 +265,10 @@ gulp.task \preparserify-workaround ->
                         console.log "Preventing debounce for #{js-file}"
                     catch
                         console.log "...no need to prevent debounce for #{js-file}"
-                        
+
                     debounce[js-file] = sleep 100ms, ->
                         touch.sync js-file
                         delete debounce[js-file]
             else
-                throw "related documents should be an array "
+                log-info 'preparserify', "related documents should be an array: "
+                console.log pack rel
