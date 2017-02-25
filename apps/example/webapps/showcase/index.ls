@@ -183,7 +183,11 @@ ractive.on do
         __ = @
         <- sleep 10ms
         __.set \menu, __.get \menuLinks
-        
+        $('.context.example .ui.sidebar')
+            .sidebar({
+                context: $('.context.example .bottom.segment')
+                })
+
     test-ack-button1: (ev, value) ->
         ev.component.fire \state, \doing
         <- sleep 5000ms
