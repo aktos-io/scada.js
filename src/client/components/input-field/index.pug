@@ -5,11 +5,7 @@
         span.input-group-addon {{ unit }}
     | {{else}}
     //- input-field with custom unit
-    .input-field-wrapper
-        .input-field-input
-            input(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}")
-        .input-field-unit
-            | {{yield}}
-
-        div(style="clear: both")
+    .ui.right.labeled.input
+        input(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}")
+        | {{ yield }}
     | {{/if}}
