@@ -9,7 +9,8 @@ Ractive.components['r-table'] = Ractive.extend do
         #$ @find \.rwd-table .width(parent-width)
         width = $ @find \.rwd-table .width()
         @set \width, width
-        debugger
+
+        
     oncomplete: ->
         cols = $ @find 'thead > tr:last-of-type' .children!
         col-names = [..inner-text for cols]
