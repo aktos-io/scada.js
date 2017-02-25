@@ -1,5 +1,13 @@
+//-
+    select.ui.fluid.floating.dropdown
+        option(value="") {{placeholder}}
+        +each('data')
+            option(value="{{.id}}") {{.name}}
 
-select.ui.fluid.normal.dropdown
-    option(value="") {{placeholder}}
-    +each('data')
-        option(value="{{.id}}") {{.name}}
+.ui.floating.search.selection.dropdown
+    input(type="hidden" name="mahmut")
+    i.dropdown.icon
+    .default.text {{placeholder}}
+    .menu
+        +each('data')
+            .item(data-value="{{.id}}") {{.name}}

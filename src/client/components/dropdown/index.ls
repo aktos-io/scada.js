@@ -4,7 +4,8 @@ Ractive.components['dropdown'] = Ractive.extend do
     onrender: ->
         __ = @
         ui = $ @find '.ui.dropdown'
-        ui.find 'select' .attr \multiple, ''
+        ui.attr \multiple, '' if @get \multiple
+        ui.add-class \inline if @get \inline
         ui.dropdown do
             force-selection: no
             on-change: (value, text, selected) ->
