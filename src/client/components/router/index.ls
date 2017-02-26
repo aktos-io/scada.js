@@ -1,13 +1,16 @@
-Ractive.components['navigation'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+Ractive.components['router'] = Ractive.extend do
+    template: ''
     isolated: yes
     oninit: ->
         __ = @
-        @set \selected, '#/' if (@get \selected) is void
+        @set \curr, '#/' if (@get \curr) is void
 
         do function hashchange
             hash = window.location.hash
             hash = '/' unless hash
-            __.set \selected, hash
+            __.set \curr, hash
 
         $ window .on \hashchange, -> hashchange!
+
+    data: ->
+        curr: '#/'

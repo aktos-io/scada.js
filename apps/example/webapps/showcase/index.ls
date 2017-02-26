@@ -131,14 +131,15 @@ ractive = new Ractive do
         menu-links:
             * title: "Siparişler"
               url: '#/orders'
+              icon: 'tags'
             * title: "İş Planları"
               url: '#/production-jobs'
-              icon: "list-alt"
+              icon: "industry"
             * title: "Paketleme"
               url: '#/bundling'
               icon: 'gift'
             * title: "Sevkiyat"
-              sub-menu:
+              submenu:
                 * title: "dispatch submenu1"
                   url: '#/dispatch/1'
                 * title: "dispatch submenu2"
@@ -150,16 +151,16 @@ ractive = new Ractive do
 
             * title: "Depo İstek Formu"
               url: '#/raw-material-requests'
-              icon: 'shopping-cart'
+              icon: 'shop'
             * title: "Satın Alma"
               url: '#/raw-material-purchases'
-              icon: 'briefcase'
+              icon: 'shopping bag'
             * title: "Hammadde Kabul"
               url: '#/raw-material-admission'
-              icon: 'download-alt'
+              icon: 'download'
             * title: "Tanımlamalar"
-              icon:"cog"
-              sub-menu:
+              icon: "settings"
+              submenu:
                 * title: "Müşteri Tanımla"
                   url: '#/definitions/client'
                 * title: "Marka Tanımla"

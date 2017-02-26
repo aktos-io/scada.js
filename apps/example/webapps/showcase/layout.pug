@@ -1,16 +1,40 @@
-.ui.top.menu.inverted.fixed
+router(curr="{{ currentPage }}")
+
+.ui.top.menu.inverted
     a.item(onclick="$('.ui.sidebar').sidebar('toggle')")
         i.sidebar.icon
         | Menu
-
+    .horizontal.right.menu
+        .item
+            i.icon.user
+            span John DOE
+            
 .ui.divider.hidden
 .ui.divider.hidden
 .ui.divider.hidden
-
 .ui.pushable
     .ui.vertical.inverted.sidebar.menu.left.inline
-        i.icon.user
-        span John DOE
+        +each('menu')
+            +unless('.submenu')
+                a.item(
+                    href="{{.url}}"
+                    class="{{#if currentPage === .url }}active{{/if}}"
+                    )
+                    | {{ .title }}
+                    +if('.icon')
+                        i.icon(class="{{.icon}}")
+            +if('.submenu')
+                .item
+                    .header {{.title}}
+                    .menu
+                        +each('.submenu')
+                            a.item(
+                                href="{{.url}}"
+                                class="{{#if currentPage === .url }}active{{/if}}"
+                                )
+                                | {{ .title }}
+                                +if('.icon')
+                                    i.icon(class="{{.icon}}")
 
 
 .pusher.ui.container
