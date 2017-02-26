@@ -9,27 +9,40 @@
         [ ] 6. Test on mobile
         [ ] 7. Change sizes
         [ ] 8. Match theme
-panel(type="info" title="dropdown-panel")
-    .content
+.ui.segments
+    h3.ui.top.attached.block.header dropdown-panel
+    .ui.segment
+        h1 Description:
+        p   dropdown-panel is a component that allows to overlay other elements
+
+    .ui.segment
         .row
-            .col-md-12
-                pre dropdown-panel is a component that allows to overlay other elements
-        .row
-            .col-md-12
-                dropdown-panel
-                    +partial('body')
-                        p Check the checkbox to see list of products in dropdown-panel: &nbsp
-                            checkbox(checked="{{checkbox.checked1}}")  Show/Hide Dropdown
-                    +partial('dropdown')
-                        | {{#if checkbox.checked1}}
-                        r-table
-                            thead
-                                tr
-                                    th Name
-                                    th Id
-                            tbody
-                                +each('combobox.products')
-                                    tr
-                                        td {{ .name }}
-                                        td {{ .id }}
-                        | {{/if}}
+            h1 Example:
+            span.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vitae velit ac lacus consequat posuere at id erat.
+                Pellentesque sit amet rhoncus ipsum, a lacinia ipsum.Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Vestibulum vitae velit ac lacus consequat posuere at id erat. Pellentesque sit amet rhoncus ipsum, a lacinia ipsum.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vitae velit ac lacus consequat posuere at id erat.
+                Pellentesque sit amet rhoncus ipsum, a lacinia ipsum.This is a &nbsp
+            dropdown-panel
+                +partial('body')
+                     span(style="color: red;") dropdown-panel &nbsp
+                        //-checkbox(checked="{{checkbox.checked1}}")  Show/Hide Dropdown
+                +partial('dropdown')
+                    span &nbsp is opened here...
+                    input(value="{{ dropdownPanel.input}}" placeholder="Entry here...")
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" placeholder="my placeholder")
+            span.
+                in a line.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vitae velit ac lacus consequat posuere at id erat.
+                Pellentesque sit amet rhoncus ipsum, a lacinia ipsum.Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Vestibulum vitae velit ac lacus consequat posuere at id erat. Pellentesque sit amet rhoncus ipsum, a lacinia ipsum.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vitae velit ac lacus consequat posuere at id erat.
+                Pellentesque sit amet rhoncus ipsum, a lacinia ipsum.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vitae velit ac lacus consequat posuere at id erat.
+                Pellentesque sit amet rhoncus ipsum, a lacinia ipsum.Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Vestibulum vitae velit ac lacus consequat posuere at id erat. Pellentesque sit amet rhoncus ipsum, a lacinia ipsum.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vitae velit ac lacus consequat posuere at id erat.
+                Pellentesque sit amet rhoncus ipsum, a lacinia ipsum.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vitae velit ac lacus consequat posuere at id erat.
+                Pellentesque sit amet rhoncus ipsum, a lacinia ipsum.Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Vestibulum vitae velit ac lacus consequat posuere at id erat. Pellentesque sit amet rhoncus ipsum, a lacinia ipsum.
