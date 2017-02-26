@@ -20,7 +20,7 @@ start-tmux-session "$SESSION_NAME"
 # run commands in tmux session
 run-in-tmux "cd $SCADA_ROOT" "gulp --project example --app showcase"
 run-in-tmux "cd $CURR_DIR/webserver" './run-development'
-run-in-tmux "cd $SCADA_ROOT" 'xdg-open' 'atom . || subl .'
+run-in-tmux "cd $SCADA_ROOT" 'xdg-open .' 'atom . || subl .'
 
 # Show in terminal if not `--headless`
 attach-tmux-session "$SESSION_NAME"
