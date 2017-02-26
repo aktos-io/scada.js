@@ -5,7 +5,7 @@ require! './simulate-db': {db}
 require! './previews/test-data-table/my-table': {my-table}
 
 ractive = new Ractive do
-    el: '#main-output'
+    el: \body
     template: RACTIVE_PREPARSE('layout.pug')
     data:
         db: db
@@ -184,10 +184,12 @@ ractive.on do
         __ = @
         <- sleep 10ms
         __.set \menu, __.get \menuLinks
-        $('.context.example .ui.sidebar')
-            .sidebar({
-                context: $('.context.example .bottom.segment')
-                })
+
+        # initialize sidebar
+        $ '.ui.sidebar' .sidebar!
+        # use menu in content context
+        #$ '.ui.sidebar' .sidebar context: $ 'body .bottom.segment'
+
 
     test-ack-button1: (ev, value) ->
         ev.component.fire \state, \doing
