@@ -1,6 +1,10 @@
 # Example Project
 
-# Starting Development
+## Demo 
+
+Showcase can be seen on surge.sh: https://scadajs.surge.sh/showcase.html
+
+## Development
 
 ### Linux
 
