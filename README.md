@@ -3,7 +3,7 @@
 # Key features
 
 * First-class support for [LiveScript](http://livescript.net) with Sourcemaps!
-* Supports [RactiveJS](http://ractivejs.com) with a custom (and optimized) component inclusion mechanizm
+* Supports [RactiveJS](http://www.ractivejs.org/) with a custom (and optimized) component inclusion mechanizm
 * Supports [Pug](https://pugjs.org) for composing static html documents and Ractive templates.
 * Supports desktop apps via [ElectronJS](http://electron.atom.io/).
 * Uses Distributed NoSQL database ([CouchDB](http://couchdb.apache.org/) in mind)
@@ -32,17 +32,8 @@ Install all dependencies:
 
 See [`./apps/example/README.md`](./apps/example/README.md).
 
-# Starting a New Project
+# Creating a New Project
 
-## Way 1: Copy the template, rename, go: 
-You can start a new project by simply copying [`./apps/template`](./apps/template) as `./apps/myproject`. 
-
-## Way 2: Create a project layout by scratch:
-
-1. Create your project directory (eg. `myproject`) in `{{ scada }}/apps` => `{{myproject}}`: `{{ scada }}/apps/myproject`
-2. Place any README, scripts and source codes in your project directory.
-3. Place your browser applications (webapps) in `{{ myproject }}/webapps` directory with the same name: `{{myproject}}/webapps/myproject`
-
-## Run
-1. Start Gulp by passing your project name as parameter: `gulp --project myproject`
-2. The browser applications (`myproject.html`, `myproject.js` and `.css` files) will be created under `{{ scada }}/build/public` directory. Use your favourite modern browser to display your web application. 
+1. Create a new project by simply copying [`./apps/template`](./apps/template) as `./apps/myproject`. 
+2. Start Gulp by passing your project name as parameter: `gulp --project myproject`
+3. The browser applications (`myproject.html`, `myproject.js` and `.css` files) will be created under `{{ scada }}/build/public` directory. Use your favourite modern browser to display your web application. 
