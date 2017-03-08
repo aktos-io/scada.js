@@ -17,6 +17,10 @@
 * Supports tools and documentation for [DRY](https://en.wikipedia.org/wiki/Don't_repeat_yourself) and [TDD](https://en.wikipedia.org/wiki/Test-driven_development) in mind.
 * Provides build system via [Gulp](http://gulpjs.com).
 
+# DEMO
+
+Demo page can be seen here: https://scadajs.surge.sh/showcase.html
+
 # INSTALL
 
 Install all dependencies:
