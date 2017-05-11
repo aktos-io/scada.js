@@ -1,12 +1,4 @@
-.modal.modal-error.fade(tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
-    .modal-dialog(role="document")
-        .modal-content.modal-danger
-            .modal-header
-                h4.modal-title: icon-alert
 
-            .modal-body(style="font-size:1.5rem") {{reason}}
-
-            .modal-footer
 
 .modal.modal-confirmation.fade(tabindex="-1" role="dialog" aria-labelledby="confirmation-modal" aria-hidden="true")
     .modal-dialog(role="document")
@@ -32,13 +24,12 @@ btn(
     style="{{ style }}"
     )
     | {{#if state === "doing"}}
-    icon-cog(spin="true")
+    icon.setting.loading
     | {{elseif state === "done"}}
-    icon-ok-sign
+    icon.checkmark
     | {{elseif state === "error"}}
-    icon-alert
+    icon.warning.circle
     | {{elseif state === "normal"}}
-    icon-refresh
     | {{/if}}
 
     | {{yield}}

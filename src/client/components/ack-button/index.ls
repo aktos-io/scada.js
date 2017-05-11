@@ -6,14 +6,8 @@ Ractive.components['ack-button'] = Ractive.extend do
     isolated: yes
     onrender: ->
         __ = @
-        modal-error = $ @find \.modal-error
+        modal-error = $ @find \.ui.basic.modal
         modal-confirmation = $ @find \.modal-confirmation
-
-        modal-error.modal do
-            keyboard: yes
-            focus: yes
-            show: no
-
 
         modal-confirmation.modal do
             keyboard: yes
