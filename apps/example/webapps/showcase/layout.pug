@@ -4,6 +4,9 @@ router(curr="{{ currentPage }}")
     a.item(onclick="$('.ui.sidebar').sidebar('toggle')")
         i.sidebar.icon
         | Menu
+    .item
+        curr page: {{ currentPage }}
+        
     .horizontal.right.menu
         .item
             i.icon.user
@@ -33,7 +36,7 @@ router(curr="{{ currentPage }}")
                                 i.icon(class="{{.icon}}")
 
 .ui.bottom.attached.segment.pusher
-    .ui.divider
+    .ui.hidden.divider
     .ui.container
         include ./previews/dropdown.pug
         include ./previews/dropdown-panel.pug

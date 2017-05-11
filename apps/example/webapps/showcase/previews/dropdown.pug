@@ -10,7 +10,7 @@
                 .column(style="border: 1px dashed black")
                     h3 UnBound (free) instance
                     quote(style="background-color: pink") This instance fits width of its container
-                    search-combobox(data="{{ combobox.list2 }}" selected="{{ combobox.unboundSelected }}" fit-width)
+                    dropdown(data="{{ combobox.list2 }}" selected="{{ combobox.unboundSelected }}")
                     p selected: {{ combobox.unboundSelected }}
 
     .ui.segment
@@ -30,6 +30,7 @@
                     p selected: {{combobox.boundSelected}}
 
     .ui.segment
+        .ui.mini.header Inline Dropdown #[a(href="#dropdown-inline-example") #[icon.settings]]
         p.
             A dropdown may be #[dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" placeholder="my placeholder" inline)]
             inline as shown.

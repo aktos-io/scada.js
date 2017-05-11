@@ -129,54 +129,54 @@ ractive = new Ractive do
         unix-to-readable: unix-to-readable
         menu: []
         menu-links:
-            * title: "Siparişler"
-              url: '#/orders'
+            * title: "Dropdown"
+              url: '/dropdown'
               icon: 'tags'
             * title: "İş Planları"
-              url: '#/production-jobs'
+              url: '/production-jobs'
               icon: "industry"
             * title: "Paketleme"
-              url: '#/bundling'
+              url: '/bundling'
               icon: 'gift'
             * title: "Sevkiyat"
               submenu:
                 * title: "dispatch submenu1"
-                  url: '#/dispatch/1'
+                  url: '/dispatch/1'
                 * title: "dispatch submenu2"
-                  url: '#/dispatch/2'
+                  url: '/dispatch/2'
                 * title: "dispatch submenu3"
-                  url: '#/dispatch/3'
+                  url: '/dispatch/3'
                 * title: "dispatch submenu4"
-                  url: '#/dispatch/4'
+                  url: '/dispatch/4'
 
             * title: "Depo İstek Formu"
-              url: '#/raw-material-requests'
+              url: '/raw-material-requests'
               icon: 'shop'
             * title: "Satın Alma"
-              url: '#/raw-material-purchases'
+              url: '/raw-material-purchases'
               icon: 'shopping bag'
             * title: "Hammadde Kabul"
-              url: '#/raw-material-admission'
+              url: '/raw-material-admission'
               icon: 'download'
             * title: "Tanımlamalar"
               icon: "settings"
               submenu:
                 * title: "Müşteri Tanımla"
-                  url: '#/definitions/client'
+                  url: '/definitions/client'
                 * title: "Marka Tanımla"
-                  url: '#/definitions/brands'
+                  url: '/definitions/brands'
                 * title: "Tedarikçi Tanımla"
-                  url: '#/definitions/supplier'
+                  url: '/definitions/supplier'
                 * title: "Hammadde Tanımla"
-                  url: '#/definitions/raw-material'
+                  url: '/definitions/raw-material'
                 * title: "Reçete Tanımla"
-                  url: '#/definitions/recipe'
+                  url: '/definitions/recipe'
                 * title: "Kap Tanımla"
-                  url: '#/definitions/container'
+                  url: '/definitions/container'
                 * title: "Paket Tanımla"
-                  url: '#/definitions/packaging'
+                  url: '/definitions/packaging'
                 * title: "Çalışan Tanımla"
-                  url: '#/definitions/workers'
+                  url: '/definitions/workers'
                   icon: 'user'
 
 ractive.on do

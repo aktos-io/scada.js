@@ -1,39 +1,39 @@
-panel(type="info" title="checkbox")
-    .content
-        .row
-            .col-md-8
-                .row
-                    .col-md-12
-                        h3 Simple checkbox
-                        p.
-                            Simple checkbox toggles #[code checked="\{{ variable }}"] on every press:
-                            #[checkbox(checked="{{checkbox.checked1}}") My Checkbox2 (no event)]
+.ui.segments
+    h3.ui.top.attached.huge.block.header checkbox
+    .ui.attached.segment
+        .ui.header Description
 
-                        pre checkbox(checked="\{{checkbox.checked1}}")
-
-                .row
-                    .col-md-12
-                        h3 Checkbox with callback (async checkbox)
+        pre checkbox(checked="\{{checkbox.checked1}}")
 
 
-                        p
-                            span.
-                                Async checkbox fires the callback #[code checkboxchanged]
-                                on every press and let the callback handle its visual state
-                                and #[code checked] status:
-                            checkbox(
-                                checked="{{checkbox.checked1}}"
-                                on-statechange="checkboxchanged"
-                                value="hi!"
-                                ) My Checkbox2 (with callback)
+    .ui.segment
+        .ui.large.header Examples
 
-                        pre.
-                            checkbox(
-                                checked="\{{checkbox.checked1}}"
-                                on-statechange="checkboxchanged"
-                                value="hi!"
-                                ) My Checkbox2 (with callback)
+        .ui.medium.header Simple checkbox (no callback)
+        p.
+            Simple checkbox toggles #[code checked="\{{ variable }}"] on every press:
+            #[checkbox(checked="{{checkbox.checked1}}") My Checkbox2 (no event)]
+
+        .ui.medium.header Checkbox with callback (async checkbox)
 
 
-            .col-md-4
-                p My checkbox state is: {{ checkbox.checked1 ? 'checked!' : 'not checked...' }}
+        p
+            span.
+                Async checkbox fires the callback #[code checkboxchanged]
+                on every press and let the callback handle its visual state
+                and #[code checked] status:
+            checkbox(
+                checked="{{checkbox.checked1}}"
+                on-statechange="checkboxchanged"
+                value="hi!"
+                ) My Checkbox2 (with callback)
+
+        pre.
+            checkbox(
+                checked="\{{checkbox.checked1}}"
+                on-statechange="checkboxchanged"
+                value="hi!"
+                ) My Checkbox2 (with callback)
+
+
+        .ui.message.green My checkbox state is: {{ checkbox.checked1 ? 'checked!' : 'not checked...' }}

@@ -13,6 +13,8 @@
     h3.ui.top.attached.block.header dropdown-panel
     .ui.segment
         h1 Description:
+        a(href="#hey") hey
+        a(href="#how") how 
         p   dropdown-panel is a component that allows to overlay other elements
 
     .ui.segment
@@ -24,6 +26,15 @@
                 Vestibulum vitae velit ac lacus consequat posuere at id erat. Pellentesque sit amet rhoncus ipsum, a lacinia ipsum.
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vitae velit ac lacus consequat posuere at id erat.
                 Pellentesque sit amet rhoncus ipsum, a lacinia ipsum.This is a &nbsp
+            .ui.inline.dropdown
+                .text
+                    | What is a dog
+                .menu
+                    .item
+                        span &nbsp is opened here...
+                        input(value="{{ dropdownPanel.input}}" placeholder="Entry here...")
+                        dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" placeholder="my placeholder")
+                    
             dropdown-panel
                 +partial('body')
                      span(style="color: red;") dropdown-panel &nbsp

@@ -1,56 +1,49 @@
-panel(type="info" title="ack-button")
-    .content
+.ui.segments
+    h3.ui.top.attached.block.header ack-button
+    .ui.attached.segment
+        pre ack-button(on-buttonclick="testAckButton1" value="\{{ button.boundVal }}") MY BUTTON
+    .ui.segment
+        .ui.block.big.header Examples
+        checkbox(checked="{{ button.show }}") Show/hide Bound component 1
+        .two.column.grid
+            .row
+                .column
+                    h3 Bound component1
+                    +if('button.show')
+                        ack-button(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") MY BUTTON 1
+                    hr
+                    p
+                        span Button will send
+                        input.ui.input(value="{{ button.boundVal }}" placeholder="this")
+                        span value to here => #[tag {{ button.sendValue }}] after 3 seconds...
+                    p Button state: {{ button.state1 }}
+                .column
+                    h3 Bound component2
+                    ack-button(on-buttonclick="testAckButton1" value="{{ button.boundVal }}") MY BUTTON 1
+                    p Button will send "{{ button.boundVal }}" after click.
         .row
-            .col-md-12
-                pre ack-button(on-buttonclick="testAckButton1" value="\{{ button.boundVal }}") MY BUTTON
-            .col-md-12
-                checkbox(checked="{{ button.show }}") Show/hide Bound component 1
-        .row
-            .col-md-6
-                h3 Bound component1
-                +if('button.show')
-                    ack-button(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") MY BUTTON 1
-                hr
-                p
-                    span Button will send
-                    input(value="{{ button.boundVal }}" placeholder="this")
-                    span value to here => #[tag {{ button.sendValue }}] after 3 seconds...
-                p Button state: {{ button.state1 }}
-            .col-md-6
-                h3 Bound component2
-                ack-button(on-buttonclick="testAckButton1" value="{{ button.boundVal }}") MY BUTTON 1
-                p Button will send "{{ button.boundVal }}" after click.
-        .row
-            .col-md-12
+            .column
                 h3 Unbound (free) instance
                 ack-button(state="{{ button.unboundState }}" on-buttonclick="testAckButton2" value="my-test-value") MY BUTTON 2
                 p Button State: {{ button.unboundState }}
-        .row
-            .col-md-12
+            .column
                 h3 Show some info via button event
-                p
+                .ui.action.input
                     input(value="{{ button.infoMessage }}" placeholder="Info message")
                     ack-button(on-buttonclick="testAckButton3" value="{{ button.infoMessage }}") MY BUTTON 3
-                p
                     ack-button(on-buttonclick="testAckButton5") Send info via handler (as string)
                 h3 This is text-button (an ack-button with input)
                 text-button(on-buttonclick="testAckButton3") MY BUTTON 3
 
+    .ui.segment
+        .ui.header Ask yes or no (check also console for return value)
+        input.ui.input(value="{{ button.askMessage }}" placeholder="ask for something...")
+        ack-button(on-buttonclick="testAckButton4" value="{{ button.askMessage }}" output="{{ button.output }}") MY BUTTON 4
+        p User says: {{ button.output }}
 
-        .row
-            .col-md-12
-                h3 Ask yes or no (check also console for return value)
-                input(value="{{ button.askMessage }}" placeholder="ask for something...")
-                ack-button(on-buttonclick="testAckButton4" value="{{ button.askMessage }}" output="{{ button.output }}") MY BUTTON 4
-                p User says: {{ button.output }}
-
-        .row
-            .col-md-4.col-sm-4
-            .col-md-4.col-sm-4
-                h3 Large button example
-                ack-button(
-                    on-buttonclick="testAckButton2"
-                    value="{{ button.infoMessage }}"
-                    class="btn-lg btn-block btn-signin"
-                    ) Login
-            .col-md-4.col-sm-4
+    .ui.segment
+        .ui.header Large button example
+        ack-button.blue.fluid(
+            on-buttonclick="testAckButton2"
+            value="{{ button.infoMessage }}"
+            ) Login
