@@ -5,3 +5,7 @@ Ractive.components['example-component'] = Ractive.extend do
     oninit: ->
         @observe \birth, ->
             @set \age, (2016 - (@get \birth))
+
+    data: ->
+        age: 0
+        birth: 0 
