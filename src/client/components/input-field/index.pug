@@ -1,11 +1,11 @@
 .input-field
     | {{#if unit}}
-    .input-group
-        input.form-control(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}")
-        span.input-group-addon {{ unit }}
+    .ui.right.labeled.input
+        input(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}")
+        .ui.basic.label {{ unit }}
     | {{else}}
     //- input-field with custom unit
-    .ui.right.labeled.input
+    .ui.right.action.input
         input(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}")
         | {{ yield }}
     | {{/if}}
