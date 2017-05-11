@@ -1,8 +1,8 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (global){
 /*
-	Ractive.js v0.8.10
-	Wed Jan 25 2017 20:20:21 GMT+0000 (UTC) - commit b27c84593338c4fe29df2729d1561ed6e5f6b33c
+	Ractive.js v0.8.12
+	Thu Mar 16 2017 17:26:29 GMT+0000 (UTC) - commit af463e0d2dff780e82e7c2a1ea218c7350d57bd6
 
 	http://ractivejs.org
 	http://twitter.com/RactiveJS
@@ -430,13 +430,13 @@
 	var welcome;
 	if ( hasConsole ) {
 		var welcomeIntro = [
-			("%cRactive.js %c0.8.10 %cin debug mode, %cmore..."),
+			("%cRactive.js %c0.8.12 %cin debug mode, %cmore..."),
 			'color: rgb(114, 157, 52); font-weight: normal;',
 			'color: rgb(85, 85, 85); font-weight: normal;',
 			'color: rgb(85, 85, 85); font-weight: normal;',
 			'color: rgb(82, 140, 224); font-weight: normal; text-decoration: underline;'
 		];
-		var welcomeMessage = "You're running Ractive 0.8.10 in debug mode - messages will be printed to the console to help you fix problems and optimise your application.\n\nTo disable debug mode, add this line at the start of your app:\n  Ractive.DEBUG = false;\n\nTo disable debug mode when your app is minified, add this snippet:\n  Ractive.DEBUG = /unminified/.test(function(){/*unminified*/});\n\nGet help and support:\n  http://docs.ractivejs.org\n  http://stackoverflow.com/questions/tagged/ractivejs\n  http://groups.google.com/forum/#!forum/ractive-js\n  http://twitter.com/ractivejs\n\nFound a bug? Raise an issue:\n  https://github.com/ractivejs/ractive/issues\n\n";
+		var welcomeMessage = "You're running Ractive 0.8.12 in debug mode - messages will be printed to the console to help you fix problems and optimise your application.\n\nTo disable debug mode, add this line at the start of your app:\n  Ractive.DEBUG = false;\n\nTo disable debug mode when your app is minified, add this snippet:\n  Ractive.DEBUG = /unminified/.test(function(){/*unminified*/});\n\nGet help and support:\n  http://docs.ractivejs.org\n  http://stackoverflow.com/questions/tagged/ractivejs\n  http://groups.google.com/forum/#!forum/ractive-js\n  http://twitter.com/ractivejs\n\nFound a bug? Raise an issue:\n  https://github.com/ractivejs/ractive/issues\n\n";
 
 		welcome = function () {
 			if ( Ractive.WELCOME_MESSAGE === false ) {
@@ -1074,6 +1074,7 @@
 	TransitionManager.prototype.detachNodes = function detachNodes () {
 		this.detachQueue.forEach( detach );
 		this.children.forEach( _detachNodes );
+		this.detachQueue = [];
 	};
 
 	TransitionManager.prototype.ready = function ready () {
@@ -2059,6 +2060,9 @@
 		removeFromArray( this.links, link );
 	};
 
+	KeyModel.prototype.reference = noop;
+	KeyModel.prototype.unreference = noop;
+
 	function bind$1               ( x ) { x.bind(); }
 	function cancel             ( x ) { x.cancel(); }
 	function handleChange       ( x ) { x.handleChange(); }
@@ -2166,6 +2170,9 @@
 		removeFromArray( this.deps, dep );
 		if ( !this.deps.length ) this.teardown();
 	};
+
+	KeypathModel.prototype.reference = noop;
+	KeypathModel.prototype.unreference = noop;
 
 	var hasProp = Object.prototype.hasOwnProperty;
 
@@ -2412,6 +2419,10 @@
 		}
 	};
 
+	ModelBase.prototype.reference = function reference () {
+		'refs' in this ? this.refs++ : this.refs = 1;
+	};
+
 	ModelBase.prototype.register = function register ( dep ) {
 		this.deps.push( dep );
 	};
@@ -2460,8 +2471,12 @@
 		}
 	};
 
-	ModelBase.prototype.unregister = function unregister ( dependant ) {
-		removeFromArray( this.deps, dependant );
+	ModelBase.prototype.unreference = function unreference () {
+		if ( 'refs' in this ) this.refs--;
+	};
+
+	ModelBase.prototype.unregister = function unregister ( dep ) {
+		removeFromArray( this.deps, dep );
 	};
 
 	ModelBase.prototype.unregisterLink = function unregisterLink ( link ) {
@@ -2746,6 +2761,7 @@
 
 		LinkModel.prototype.teardown = function teardown$1 () {
 			if ( this._link ) this._link.teardown();
+			this.target.unregisterLink( this );
 			this.children.forEach( teardown );
 		};
 
@@ -4005,7 +4021,14 @@
 		var this$1 = this;
 
 			if ( previous ) previous.removeUnresolved( this.keys[0], this );
-		if ( next ) runloop.scheduleTask( function () { return next.addUnresolved( this$1.keys[0], this$1 ); } );
+
+		this.next = next;
+		if ( next ) runloop.scheduleTask( function () {
+			if ( next === this$1.next ) {
+				next.addUnresolved( this$1.keys[0], this$1 );
+				this$1.next = null;
+			}
+		});
 	};
 
 	ReferenceResolver.prototype.unbind = function unbind () {
@@ -4020,6 +4043,8 @@
 
 	function observe ( keypath, callback, options ) {
 		var this$1 = this;
+
+		if ( this.torndown ) return { cancel: function() {} };
 
 		var observers = [];
 		var map;
@@ -4699,9 +4724,30 @@
 		return c;
 	}
 
-	var selectorsPattern = /(?:^|\})?\s*([^\{\}]+)\s*\{/g;
-	var commentsPattern = /\/\*[\s\S]*?\*\//g;
-	var selectorUnitPattern = /((?:(?:\[[^\]+]\])|(?:[^\s\+\>~:]))+)((?:::?[^\s\+\>\~\(:]+(?:\([^\)]+\))?)*\s*[\s\+\>\~]?)\s*/g;
+	var remove = /\/\*(?:[\s\S]*?)\*\//g;
+	var escape = /url\(\s*(['"])(?:\\[\s\S]|(?!\1).)*\1\s*\)|url\((?:\\[\s\S]|[^)])*\)|(['"])(?:\\[\s\S]|(?!\2).)*\2/gi;
+	var value = /\0(\d+)/g;
+
+	// Removes comments and strings from the given CSS to make it easier to parse.
+	// Callback receives the cleaned CSS and a function which can be used to put
+	// the removed strings back in place after parsing is done.
+	function cleanCss ( css, callback, additionalReplaceRules ) {
+		if ( additionalReplaceRules === void 0 ) additionalReplaceRules = [];
+
+		var values = [];
+		var reconstruct = function ( css ) { return css.replace( value, function ( match, n ) { return values[ n ]; } ); };
+		css = css.replace( escape, function ( match ) { return ("\u0000" + (values.push( match ) - 1)); }).replace( remove, '' );
+
+		additionalReplaceRules.forEach( function ( pattern ) {
+			css = css.replace( pattern, function ( match ) { return ("\u0000" + (values.push( match ) - 1)); } );
+		});
+
+		return callback( css, reconstruct );
+	}
+
+	var selectorsPattern = /(?:^|\}|\{)\s*([^\{\}\0]+)\s*(?=\{)/g;
+	var keyframesDeclarationPattern = /@keyframes\s+[^\{\}]+\s*\{(?:[^{}]+|\{[^{}]+})*}/gi;
+	var selectorUnitPattern = /((?:(?:\[[^\]]+\])|(?:[^\s\+\>~:]))+)((?:::?[^\s\+\>\~\(:]+(?:\([^\)]+\))?)*\s*[\s\+\>\~]?)\s*/g;
 	var excludePattern = /^(?:@|\d+%)/;
 	var dataRvcGuidPattern = /\[data-ractive-css~="\{[a-z0-9-]+\}"]/g;
 
@@ -4756,19 +4802,21 @@
 		if ( dataRvcGuidPattern.test( css ) ) {
 			transformed = css.replace( dataRvcGuidPattern, dataAttr );
 		} else {
-			transformed = css
-			.replace( commentsPattern, '' )
-			.replace( selectorsPattern, function ( match, $1 ) {
-				// don't transform at-rules and keyframe declarations
-				if ( excludePattern.test( $1 ) ) return match;
+			transformed = cleanCss( css, function ( css, reconstruct ) {
+				css = css.replace( selectorsPattern, function ( match, $1 ) {
+					// don't transform at-rules and keyframe declarations
+					if ( excludePattern.test( $1 ) ) return match;
 
-				var selectors = $1.split( ',' ).map( trim$1 );
-				var transformed = selectors
-					.map( function ( selector ) { return transformSelector( selector, dataAttr ); } )
-					.join( ', ' ) + ' ';
+					var selectors = $1.split( ',' ).map( trim$1 );
+					var transformed = selectors
+						.map( function ( selector ) { return transformSelector( selector, dataAttr ); } )
+						.join( ', ' ) + ' ';
 
-				return match.replace( $1, transformed );
-			});
+					return match.replace( $1, transformed );
+				});
+
+				return reconstruct( css );
+			}, [ keyframesDeclarationPattern ]);
 		}
 
 		return transformed;
@@ -6353,6 +6401,8 @@
 
 	var methodCallPattern = /^([a-zA-Z_$][a-zA-Z_$0-9]*)\(.*\)\s*$/;
 	var ExpressionParser;
+	var blank = /^\s*$/;
+
 	ExpressionParser = Parser$1.extend({
 		converters: [ readExpression ],
 		spreadArgs: true
@@ -6414,6 +6464,9 @@
 				token = tokens.shift();
 
 				if ( typeof token === 'string' ) {
+					// ignore empty space
+					if ( blank.test( token ) ) continue;
+
 					colonIndex = token.indexOf( ':' );
 
 					if ( colonIndex === -1 ) {
@@ -9058,9 +9111,14 @@
 			Model.prototype.teardown.call(this);
 		};
 
+		ExpressionProxy.prototype.unreference = function unreference () {
+			Model.prototype.unreference.call(this);
+			if ( !this.deps.length && !this.refs ) this.teardown();
+		};
+
 		ExpressionProxy.prototype.unregister = function unregister( dep ) {
 			Model.prototype.unregister.call( this, dep );
-			if ( !this.deps.length ) this.teardown();
+			if ( !this.deps.length && !this.refs ) this.teardown();
 		};
 
 		ExpressionProxy.prototype.unbind = function unbind$1 () {
@@ -9321,12 +9379,28 @@
 			this.model.set( value );
 		};
 
-		ReferenceExpressionProxy.prototype.unbind = function unbind$1 () {
+		ReferenceExpressionProxy.prototype.teardown = function teardown () {
+			var this$1 = this;
+
 			this.resolvers.forEach( unbind );
+
 			if ( this.model ) {
 				this.model.unregister( this );
 				this.model.unregisterTwowayBinding( this );
 			}
+			if ( this.members ) {
+				this.members.forEach( function ( m ) { return m && m.unregister && m.unregister( this$1 ); } );
+			}
+		};
+
+		ReferenceExpressionProxy.prototype.unreference = function unreference () {
+			Model.prototype.unreference.call(this);
+			if ( !this.deps.length && !this.refs ) this.teardown();
+		};
+
+		ReferenceExpressionProxy.prototype.unregister = function unregister( dep ) {
+			Model.prototype.unregister.call( this, dep );
+			if ( !this.deps.length && !this.refs ) this.teardown();
 		};
 
 		return ReferenceExpressionProxy;
@@ -9354,6 +9428,10 @@
 			for ( var i = 0; i < refs.length; i++ ) {
 				section.aliases[ refs[i].n ] = resolve$2( section.parentFragment, refs[i].x );
 			}
+		}
+
+		for ( var k in section.aliases ) {
+			section.aliases[k].reference();
 		}
 	}
 
@@ -9430,6 +9508,11 @@
 
 		Alias.prototype.unbind = function unbind () {
 			this.aliases = {};
+
+			for ( var k in this.fragment.aliases ) {
+				this.aliases[k].unreference();
+			}
+
 			if ( this.fragment ) this.fragment.unbind();
 		};
 
@@ -9468,20 +9551,20 @@
 	}
 
 	var space = /\s+/;
-	var remove = /\/\*(?:[\s\S]*?)\*\//g;
-	var escape = /url\(\s*(['"])(?:\\[\s\S]|(?!\1).)*\1\s*\)|url\((?:\\[\s\S]|[^)])*\)|(['"])(?:\\[\s\S]|(?!\1).)*\2/gi;
-	var value = /\0(\d+)/g;
+	var remove$1 = /\/\*(?:[\s\S]*?)\*\//g;
+	var escape$1 = /url\(\s*(['"])(?:\\[\s\S]|(?!\1).)*\1\s*\)|url\((?:\\[\s\S]|[^)])*\)|(['"])(?:\\[\s\S]|(?!\1).)*\2/gi;
+	var value$1 = /\0(\d+)/g;
 
 	function readStyle ( css ) {
 		var values = [];
 
 		if ( typeof css !== 'string' ) return {};
 
-		return css.replace( escape, function ( match ) { return ("\u0000" + (values.push( match ) - 1)); })
-			.replace( remove, '' )
+		return css.replace( escape$1, function ( match ) { return ("\u0000" + (values.push( match ) - 1)); })
+			.replace( remove$1, '' )
 			.split( ';' )
 			.filter( function ( rule ) { return !!rule.trim(); } )
-			.map( function ( rule ) { return rule.replace( value, function ( match, n ) { return values[ n ]; } ); } )
+			.map( function ( rule ) { return rule.replace( value$1, function ( match, n ) { return values[ n ]; } ); } )
 			.reduce(function ( rules, rule ) {
 				var i = rule.indexOf(':');
 				var name = rule.substr( 0, i ).trim();
@@ -9764,22 +9847,7 @@
 		var attr = readClass( this.node.className );
 		var prev = this.previous || attr.slice( 0 );
 
-		var i = 0;
-		while ( i < value.length ) {
-			if ( !~attr.indexOf( value[i] ) ) attr.push( value[i] );
-			i++;
-		}
-
-		// remove now-missing classes
-		i = prev.length;
-		while ( i-- ) {
-			if ( !~value.indexOf( prev[i] ) ) {
-				var idx = attr.indexOf( prev[i] );
-				if ( ~idx ) attr.splice( idx, 1 );
-			}
-		}
-
-		var className = attr.join( ' ' );
+		var className = value.concat( attr.filter( function ( c ) { return !~prev.indexOf( c ); } ) ).join( ' ' );
 
 		if ( className !== this.node.className ) {
 			this.node.className = className;
@@ -9866,6 +9934,9 @@
 		return namespaces[ prefix ];
 	}
 
+	var attribute = false;
+	function inAttribute () { return attribute; }
+
 	var Attribute = (function (Item) {
 		function Attribute ( options ) {
 			Item.call( this, options );
@@ -9926,15 +9997,21 @@
 		};
 
 		Attribute.prototype.getString = function getString () {
-			return this.fragment ?
+			attribute = true;
+			var value = this.fragment ?
 				this.fragment.toString() :
 				this.value != null ? '' + this.value : '';
+			attribute = false;
+			return value;
 		};
 
 		// TODO could getValue ever be called for a static attribute,
 		// or can we assume that this.fragment exists?
 		Attribute.prototype.getValue = function getValue () {
-			return this.fragment ? this.fragment.valueOf() : booleanAttributes.test( this.name ) ? true : this.value;
+			attribute = true;
+			var value = this.fragment ? this.fragment.valueOf() : booleanAttributes.test( this.name ) ? true : this.value;
+			attribute = false;
+			return value;
 		};
 
 		Attribute.prototype.render = function render () {
@@ -9975,6 +10052,8 @@
 		};
 
 		Attribute.prototype.toString = function toString () {
+			attribute = true;
+
 			var value = this.getValue();
 
 			// Special case - select and textarea values (should not be stringified)
@@ -10006,6 +10085,8 @@
 			if ( value == null ) return '';
 
 			var str = safeAttributeString( this.getString() );
+			attribute = false;
+
 			return str ?
 				("" + (this.name) + "=\"" + str + "\"") :
 				this.name;
@@ -10994,6 +11075,13 @@
 			return this.wrapper ? this.wrapper.get() : this.value;
 		};
 
+		RootModel.prototype.teardown = function teardown () {
+			Model.prototype.teardown.call(this);
+			for ( var k in this.computations ) {
+				this.computations[ k ].teardown();
+			}
+		};
+
 		RootModel.prototype.update = function update () {
 			// noop
 		};
@@ -11599,12 +11687,12 @@
 
 			var template = this.template.f;
 
-		if ( template.m ) {
+		if ( template.x ) {
 			if ( this.resolvers ) this.resolvers.forEach( unbind );
 			this.resolvers = [];
 
 			if ( this.models ) this.models.forEach( function ( m ) {
-				if ( m.unregister ) m.unregister( this$1 );
+				if ( m && m.unregister ) m.unregister( this$1 );
 			});
 			this.models = null;
 		}
@@ -11879,7 +11967,7 @@
 
 			removeFromLiveComponentQueries( this );
 
-			if ( instance.fragment.rendered && instance.el.__ractive_instances__ ) {
+			if ( instance.el && instance.el.__ractive_instances__ ) {
 				removeFromArray( instance.el.__ractive_instances__, instance );
 			}
 
@@ -13627,7 +13715,7 @@
 			if ( model ) {
 				model.register( this );
 				this.model = model;
-			} else {
+			} else if ( this.template.r ) {
 				this.resolver = this.parentFragment.resolve( this.template.r, function ( model ) {
 					this$1.model = model;
 					model.register( this$1 );
@@ -13811,6 +13899,7 @@
 
 		Mapping.prototype.unbind = function unbind () {
 			if ( this.fragment ) this.fragment.unbind();
+			if ( this.model ) this.model.unregister( this );
 			if ( this.boundFragment ) this.boundFragment.unbind();
 
 			if ( this.element.bound ) {
@@ -13848,7 +13937,7 @@
 
 			item.link = viewmodel.createLink( item.name, item.model, template[0].r );
 
-			if ( item.model.get() === undefined && item.name in childData ) {
+			if ( item.model.get() === undefined && !item.model.isReadonly && item.name in childData ) {
 				item.model.set( childData[ item.name ] );
 			}
 		}
@@ -14848,8 +14937,9 @@
 					}
 				}
 			} else {
-				if ( this.fragment && this.rendered ) {
-					this.fragment.unbind().unrender( true );
+				if ( this.fragment ) {
+					this.fragment.unbind();
+					if ( this.rendered ) this.fragment.unrender( true );
 				}
 
 				this.fragment = null;
@@ -15954,7 +16044,10 @@
 		};
 
 		Triple.prototype.toString = function toString () {
-			return this.model && this.model.get() != null ? decodeCharacterReferences( '' + this.model.get() ) : '';
+			var value = this.model && this.model.get();
+			value = value != null ? '' + value : '';
+
+			return inAttribute() ? decodeCharacterReferences( value ) : value;
 		};
 
 		Triple.prototype.unrender = function unrender () {
@@ -16533,6 +16626,7 @@
 
 	Fragment.prototype.unbind = function unbind$1 () {
 		this.items.forEach( unbind );
+		this.resolvers.forEach( unbind );
 		this.bound = false;
 
 		return this;
@@ -17050,7 +17144,7 @@
 		magic:          { value: magicSupported },
 
 		// version
-		VERSION:        { value: '0.8.10' },
+		VERSION:        { value: '0.8.12' },
 
 		// plugins
 		adaptors:       { writable: true, value: {} },
