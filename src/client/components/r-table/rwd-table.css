@@ -1,9 +1,5 @@
 /* @import "http://fonts.googleapis.com/css?family=Montserrat:300,400,700";
 */
-body {
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
 
 .rwd-table {
   margin: 1em 0;
@@ -62,12 +58,14 @@ body {
 /* Min with should be LESS THAN 600px if you want to print as normal table! */
 /* ------------------------------------------------------------------------ */
 
+/* hide column names for below settings */
 @media (min-width: 601px) {
   .rwd-table > tbody > tr > td:before {
     display: none;
   }
 }
 
+/* tablet */
 @media (min-width: 401px) and (max-width: 600px) {
   .rwd-table {
     border: 0;
@@ -80,7 +78,7 @@ body {
   .rwd-table > tbody > tr {
     margin-bottom: 10px;
     display: block;
-    border-bottom: 2px solid #ddd;
+    /*border-bottom: 2px solid #ddd;*/
   }
 
   .rwd-table > tbody > tr > td {
@@ -109,6 +107,7 @@ body {
   }
 }
 
+/* small phone and large phone */
 @media (max-width: 400px) {
   .rwd-table {
     border: 0;
