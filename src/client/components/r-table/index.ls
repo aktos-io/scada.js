@@ -1,7 +1,21 @@
+require! aea: {sleep}
 
 Ractive.components['r-table'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
+
+    oninit: ->
+        @on do
+            updateColNames: ->
+                cols = $ @find 'thead > tr:last-of-type' .children!
+
+                if cols.length is 0
+                    console.error "Column names are not found, missing thead > tr > th?"
+                col-names = [..inner-text for cols]
+                $ @find 'tbody' .children \tr .each (i, row) ->
+                    $ row .children \td .each (i, col) ->
+                        $ col .attr \data-th, col-names[i]
+
     onrender: ->
         #r-table = @find \table.rwd-table
         #r-table.parent-element.client-width
@@ -10,10 +24,9 @@ Ractive.components['r-table'] = Ractive.extend do
         width = $ @find \.rwd-table .width()
         @set \width, width
 
-        
+
     oncomplete: ->
-        cols = $ @find 'thead > tr:last-of-type' .children!
-        col-names = [..inner-text for cols]
-        $ @find 'tbody' .children \tr .each (i, row) ->
-            $ row .children \td .each (i, col) ->
-                $ col .attr \data-th, col-names[i]
+        @observe \update, ->
+            __ = @
+            <- sleep 50ms
+            __.fire \updateColNames

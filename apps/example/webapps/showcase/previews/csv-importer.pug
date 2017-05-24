@@ -31,7 +31,7 @@
                     csv-importer(on-import="importCsv" csv="{{ csvImporter.testData }}" columns="col1,col2,col3 " delimiter=",") Import-CSV!
     .ui.segment
         h3 Imported CSV
-        r-table
+        r-table(update="{{ csvContent }}")
             thead
                 tr
                     th first column
