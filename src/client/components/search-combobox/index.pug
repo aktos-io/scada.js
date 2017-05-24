@@ -1,8 +1,0 @@
-include ../../templates/mixins.pug
-//- http://selectize.github.io/selectize.js/
-
-.search-combobox
-  select(placeholder="{{ placeholder }}")
-      option(value="") ...
-      +each('data')
-          option(value="{{ .id }}") {{ .name }}
