@@ -9,3 +9,4 @@ Ractive.components['dropdown-panel'] = Ractive.extend do
             popup: overlay
             on: \click
             inline: yes
+            active: yes
