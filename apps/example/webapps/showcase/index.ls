@@ -24,7 +24,7 @@ ractive = new Ractive do
                 74LPPD2L06J,ACILI EZME 200 GR MEAL BOX,4NL8C89Y
                 74LPPD2L08J,ACILI EZME 3000 GR,55LE456H
                 """
-
+        input-field: value: null
         combobox:
             show: yes
             selected:
