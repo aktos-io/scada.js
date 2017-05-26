@@ -1,13 +1,15 @@
-//-
-    select.ui.fluid.floating.dropdown
-        option(value="") {{placeholder}}
-        +each('data')
-            option(value="{{.id}}") {{.name}}
-
-.ui.floating.search.selection.dropdown
-    input(type="hidden" name="mahmut")
+.ui.floating.dropdown.right.labeled.icon.button
     i.dropdown.icon
-    .default.text {{placeholder}}
+    span.text {{ placeholder }}
     .menu
-        +each('data')
-            .item(data-value="{{.id}}") {{.name}}
+        .ui.icon.search.input
+            i.search.icon
+            input(type="text" placeholder="Search...")
+        .divider
+        .header
+            i.tags.icon 
+            | Tag Label 
+            
+        .scrolling.menu
+            +each('data')
+                .item(data-value="{{.id}}") {{.name}}

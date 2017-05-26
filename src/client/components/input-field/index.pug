@@ -5,7 +5,7 @@
         .ui.basic.label {{ unit }}
     | {{else}}
     //- input-field with custom unit
-    .ui.right.action.input
+    div(class="ui right action input")
         input(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}")
         | {{ yield }}
     | {{/if}}
