@@ -5,6 +5,6 @@ Ractive.components['logger'] = Ractive.extend do
         modal = $ @find '.ui.basic.modal'
 
         @on do
-            show-dimmed: (msg) ->
+            show-dimmed: (event, msg) ->
                 modal.modal \show
     data: ->

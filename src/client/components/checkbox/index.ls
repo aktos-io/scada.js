@@ -29,7 +29,7 @@ Ractive.components['checkbox'] = Ractive.extend do
                 else
                     __.toggle \checked
 
-            state: (s, msg) ->
+            state: (event, s, msg) ->
                 self-disabled = no
 
                 if s in <[ checked ]>

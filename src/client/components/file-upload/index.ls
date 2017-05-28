@@ -25,7 +25,7 @@ Ractive.components['file-upload'] = Ractive.extend do
             img-preview.show!
 
         @on do
-            upload-file: (e) ->
+            upload-file: (event, e) ->
                 console.log "uploading!!!"
                 e.component.fire \state, \doing
 

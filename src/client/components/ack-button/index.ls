@@ -22,10 +22,10 @@ Ractive.components['ack-button'] = Ractive.extend do
                 # TODO: remove {args: val}
                 @fire \buttonclick, {component: this, args: val}, val
 
-            error: (msg) ->
+            error: (event, msg) ->
                 @fire \state, \error, msg
 
-            state: (s, msg) ->
+            state: (event, s, msg) ->
                 self-disabled = no
 
                 if s in <[ done ]>
@@ -50,7 +50,7 @@ Ractive.components['ack-button'] = Ractive.extend do
 
                 __.set \selfDisabled, self-disabled
 
-            info: (msg) ->
+            info: (event, msg) ->
                 __ = @
                 if typeof! msg is \String
                     msg = message: msg
@@ -68,7 +68,7 @@ Ractive.components['ack-button'] = Ractive.extend do
                 modal-confirmation.modal \show
                 # TODO Reset `infoTitle` and `infoMessage` on modal dismiss
 
-            yesno: (opt, callback) ->
+            yesno: (event, opt, callback) ->
                 message = if opt.message.html
                     opt.message.html
                 else
@@ -81,7 +81,7 @@ Ractive.components['ack-button'] = Ractive.extend do
                 modal-confirmation.modal \show
                 # TODO What if confirmation modal dismissed?
 
-            closeYesNo: (answer) ->
+            closeYesNo: (event, answer) ->
                 __ = @
                 callback = @get \confirmationCallback
                 modal-confirmation.modal \hide

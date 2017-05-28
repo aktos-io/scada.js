@@ -45,7 +45,7 @@ Ractive.components['login'] = Ractive.extend do
                 login-button.fire \click
 
         @on do
-            do-login: (e, server) ->
+            do-login: (event, e, server) ->
                 db-conf = config[server]
                 __ = @
                 # setup db
@@ -109,7 +109,7 @@ Ractive.components['login'] = Ractive.extend do
                 __.fire \success
                 e.component.fire \state, \done...
 
-            do-logout: (e) ->
+            do-logout: (event, e) ->
                 __ = @
                 e.component.fire \state, \doing
                 #console.log "LOGIN: Logging out!"
