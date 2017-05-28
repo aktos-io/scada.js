@@ -1,6 +1,3 @@
-.formal-field:hover {
-    border-bottom: dashed 2px black;
-}
 .formal-field {
-  border-bottom: 1px dotted black; 
+  border-bottom: 1px dotted black;
 }

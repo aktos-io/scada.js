@@ -1,22 +1,27 @@
-include ../../templates/mixins.pug
-
-div(style="display:inline-block")
-    |{{#if editable}}
+.formal-field(style="display:inline-block")
     dropdown-panel
         +partial('body')
-            | {{> editForm}}
-        +partial('dropdown')
-            textarea(value="{{ message }}" placeholder="Açıklama..." style="border: none; width: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;")
-            btn-group-horizontal
-                ack-button(type="success xs" on-buttonclick="accept") Accept
-                ack-button(type="danger xs" on-buttonclick="cancel") Cancel
+            | {{> viewForm}}
+            |{{#if changelog.length > 0}}
+            | &nbsp;
+            ack-button(
+                on-buttonclick="showPopup" 
+                type="{{#if JSON.stringify(changelog[0].curr) == JSON.stringify(changelog[changelog.length-1].curr)}}primary xs{{else}}danger xs{{/if}}" 
+                style="position: relative;bottom: 10px;padding: 3px 6px;" 
+                value="{{changelog}}") {{changelog.length-1}}
+            | &nbsp;
+            |{{/if}}
 
-    |{{else}}
-    span(class="formal-field" on-dblclick="edit")
-        | {{> viewForm}}
-        | &nbsp;
-        |{{#if changelog.length > 0}}
-        ack-button(on-buttonclick="showPopup" type="{{#if JSON.stringify(changelog[0].curr) == JSON.stringify(changelog[changelog.length-1].curr)}}primary xs{{else}}danger xs{{/if}}" style="position: relative;bottom: 10px;padding: 3px 6px;" value="{{changelog}}") {{changelog.length-1}}
-        | &nbsp;
-        |{{/if}}
-    |{{/if}}
+
+        +partial('dropdown')
+            .ui.form
+                .field 
+                    | {{> editForm}}
+                .field
+                    label Açıklama...
+                    textarea(value="{{ message }}" )
+                .field 
+                    .ui.buttons
+                        ack-button.green(on-buttonclick="accept") Accept
+                        .or
+                        ack-button.red(on-buttonclick="cancel") Cancel
