@@ -11,6 +11,8 @@ Ractive.components['ack-button'] = Ractive.extend do
         __ = @
         modal-error = $ @find ".ui.basic.modal"
 
+        logger = @root.find-component \logger
+
         @observe \tooltip, (new-val) ->
             __.set \reason, new-val
 
@@ -44,7 +46,7 @@ Ractive.components['ack-button'] = Ractive.extend do
                     __.set \reason, (msg.message or msg)
                     __.set \modalMessage, (msg.message or msg)
                     __.set \modalTitle, (msg.title or 'This is error')
-                    modal-error.modal \show
+                    logger.fire \showDimmed
 
                 __.set \selfDisabled, self-disabled
 

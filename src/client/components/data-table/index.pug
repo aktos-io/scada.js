@@ -5,30 +5,32 @@ include ../../templates/mixins.pug
 
     internals:
         tableview: [{id: column-id, cols: [col1, col2, col3, ...], background-color: css-color} for rows]
-.modal.modal-error.fade(tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
-    .modal-dialog(role="document")
-        .modal-content.modal-danger
-            .modal-header.
-                <h4 class="modal-title">Hata</h4>
-            .modal-body {{errorMessage}}
-            .modal-footer
+        
+//- 
+    .modal.modal-error.fade(tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
+        .modal-dialog(role="document")
+            .modal-content.modal-danger
+                .modal-header.
+                    <h4 class="modal-title">Hata</h4>
+                .modal-body {{errorMessage}}
+                .modal-footer
 
-.modal.modal-new.fade(tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true")
-    .modal-dialog(role="document")
-        .modal-content.modal-danger
-            .modal-header.
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">Yeni Kayıt</h4>
+    .modal.modal-new.fade(tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true")
+        .modal-dialog(role="document")
+            .modal-content.modal-danger
+                .modal-header.
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Yeni Kayıt</h4>
 
-            .modal-body(
-                style="max-height: calc(100vh - 200px); overflow-y: auto;")
-                | {{#if addingNew}}
-                | {{>editForm}}
-                | {{/if}}
+                .modal-body(
+                    style="max-height: calc(100vh - 200px); overflow-y: auto;")
+                    | {{#if addingNew}}
+                    | {{>editForm}}
+                    | {{/if}}
 
-            .modal-footer
+                .modal-footer
 
 //- Header part
 +if('firstRunDone') {{>header}}
