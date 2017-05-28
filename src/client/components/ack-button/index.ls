@@ -4,15 +4,12 @@
 Ractive.components['ack-button'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
+    oninit: ->
+        #console.log "guid of this instance is: #{@_guid}"
+
     onrender: ->
         __ = @
-        modal-error = $ @find \.ui.basic.modal
-        modal-confirmation = $ @find \.modal-confirmation
-
-        modal-confirmation.modal do
-            keyboard: yes
-            focus: yes
-            show: no
+        modal-error = $ @find ".ui.basic.modal"
 
         @observe \tooltip, (new-val) ->
             __.set \reason, new-val
@@ -44,7 +41,9 @@ Ractive.components['ack-button'] = Ractive.extend do
 
                 if s in <[ error ]>
                     __.set \state, \error
-                    __.set \reason, msg
+                    __.set \reason, (msg.message or msg)
+                    __.set \modalMessage, (msg.message or msg)
+                    __.set \modalTitle, (msg.title or 'This is error')
                     modal-error.modal \show
 
                 __.set \selfDisabled, self-disabled
@@ -110,3 +109,5 @@ Ractive.components['ack-button'] = Ractive.extend do
         confirmation-callback: null
         confirmation-input: null
         output: void
+        modal-title: ''
+        modal-message: ''

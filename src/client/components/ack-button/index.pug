@@ -1,35 +1,20 @@
-
-
-.modal.modal-confirmation.fade(tabindex="-1" role="dialog" aria-labelledby="confirmation-modal" aria-hidden="true")
-    .modal-dialog(role="document")
-        .modal-content
-            .modal-header
-                button.close(type="button" data-dismiss="modal" aria-label="Close"): span(aria-hidden="true") &times;
-                h4.modal-title {{infoTitle}}
-
-            .modal-body {{{ infoMessage }}}
-
-            +if('confirmationType !== null')
-                .modal-footer
-                    button.btn.btn-success(type="button" on-click='@this.fire("closeYesNo", true)') Evet
-                    button.btn.btn-danger(type="button" on-click='@this.fire("closeYesNo", false)') Hayır
-
 btn(
     on-buttonclick="click"
     value="{{value}}"
     title="{{reason}}"
-    class="{{ class }} ack-button"
+    class="{{ class }} ack-button labeled icon"
     type="{{ type }}"
     disabled="{{ (disabled || selfDisabled) || !(enabled) }}"
     style="{{ style }}"
     )
     | {{#if state === "doing"}}
-    icon.setting.loading
+    i.icon #[.ui.active.mini.inverted.loader]
     | {{elseif state === "done"}}
-    icon.checkmark
+    i.icon.checkmark
     | {{elseif state === "error"}}
-    icon.warning.circle
-    | {{elseif state === "normal"}}
+    i.warning.sign.icon
+    | {{elseif state === "normal" || state === ""}}
+    i.icon
     | {{/if}}
-
+    
     | {{yield}}

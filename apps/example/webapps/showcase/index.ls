@@ -199,10 +199,8 @@ ractive.on do
 
     test-ack-button2: (ev, value) ->
         ev.component.fire \state, \doing
-        <- sleep 3000ms
-        ev.component.fire \state, \error, "handler 2 got message: #{value}"
-        <- sleep 3000ms
-        ev.component.fire \state, \done
+        <- sleep 1000ms
+        ev.component.fire \error, "handler 2 got message: #{value}"
 
     test-ack-button3: (ev, value) ->
         ev.component.fire \info, do

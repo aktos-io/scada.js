@@ -33,9 +33,9 @@ Ractive.components['btn'] = Ractive.extend({
 	},
 	template: function() {
 		if( this.get('href') )
-			return      "<a class='ui button {{type.replace(/ +/g,\" btn-\")}} {{#disabled}}disabled{{/}} {{#active}}active{{/}} {{#dropdown}}dropdown-toggle{{/}} {{ class }}' {{#dropdown}}data-toggle='dropdown'{{/}} href='{{href}}'  style='{{style}}' title='{{title}}'>{{yield}}</a>"
+			return      "<a class='ui button {{type.replace(/ +/g,\" btn-\")}} {{#disabled}}disabled{{/}} {{#active}}active{{/}} {{ class }}' href='{{href}}'  style='{{style}}' title='{{title}}'>{{yield}}</a>"
 		else
-			return "<button type='button' class='ui button {{type.replace(/ +/g,\" btn-\")}} {{#disabled}}disabled{{/}} {{#active}}active{{/}} {{#dropdown}}dropdown-toggle{{/}} {{ class }}' {{#dropdown}}data-toggle='dropdown'{{/}} onclick='onclick' {{#if ! disabled}}on-click=\"@this.fire('buttonclick', value)\" {{/if}} style='{{style}}' title='{{title}}{{tooltip}}'>{{yield}}</button>"
+			return "<button type='button' class='ui button {{type.replace(/ +/g,\" btn-\")}} {{#disabled}}disabled{{/}} {{#active}}active{{/}} {{ class }}' onclick='onclick' {{#if ! disabled}}on-click=\"@this.fire('buttonclick', value)\" {{/if}} style='{{style}}' title='{{title}}{{tooltip}}'>{{yield}}</button>"
 	}
 })
 

@@ -1,39 +1,73 @@
 .ui.segments
-    h3.ui.top.attached.block.header ack-button
+    h3.ui.top.attached.block.header ack-button #[a(href="#ack-button") #[i.linkify.icon]]
     .ui.attached.segment
         pre ack-button(on-buttonclick="testAckButton1" value="\{{ button.boundVal }}") MY BUTTON
-    .ui.segment
-        .ui.block.big.header Examples
+    
+    h3.ui.block.big.attached.header Examples
+    .ui.attached.segment
+        h3.header Buttons has icons representing their states 
+        ack-button.green(state="") Button Text
+        ack-button.green(state="doing") Button Text
+        ack-button.green(state="done") Button Text
+        ack-button.green(state="error") Button Text
+    
+    .ui.attached.segment
+        h3.header Show/hide test
         checkbox(checked="{{ button.show }}") Show/hide Bound component 1
-        .two.column.grid
-            .row
-                .column
-                    h3 Bound component1
-                    +if('button.show')
-                        ack-button(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") MY BUTTON 1
-                    hr
-                    p
-                        span Button will send
-                        input.ui.input(value="{{ button.boundVal }}" placeholder="this")
-                        span value to here => #[tag {{ button.sendValue }}] after 3 seconds...
-                    p Button state: {{ button.state1 }}
-                .column
-                    h3 Bound component2
-                    ack-button(on-buttonclick="testAckButton1" value="{{ button.boundVal }}") MY BUTTON 1
-                    p Button will send "{{ button.boundVal }}" after click.
-        .row
-            .column
-                h3 Unbound (free) instance
-                ack-button(state="{{ button.unboundState }}" on-buttonclick="testAckButton2" value="my-test-value") MY BUTTON 2
-                p Button State: {{ button.unboundState }}
-            .column
-                h3 Show some info via button event
-                .ui.action.input
-                    input(value="{{ button.infoMessage }}" placeholder="Info message")
-                    ack-button(on-buttonclick="testAckButton3" value="{{ button.infoMessage }}") MY BUTTON 3
-                    ack-button(on-buttonclick="testAckButton5") Send info via handler (as string)
-                h3 This is text-button (an ack-button with input)
-                text-button(on-buttonclick="testAckButton3") MY BUTTON 3
+
+        +if('button.show')
+            ack-button(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") My Button
+            ack-button.red(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") My Button
+            ack-button.green(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") My Button
+            ack-button.blue.basic(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") My Button
+
+    .ui.attached.segment 
+        h3.header Action test 
+        span.
+            #[ack-button(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") My Button]
+            will send #[.ui.input #[input(value="{{ button.boundVal }}" placeholder="this value")]]
+            to here => #[.ui.teal.label {{ button.sendValue }}] after 3 seconds...
+        p Button state: {{ button.state1 }}
+        
+    .ui.attached.segment 
+        h3.header Fire modal 
+        p.
+            Buttons can fire modal window upon error with custom error message 
+            passed by #[code ... value="my message" ...] attribute
+
+        ack-button(state="{{ button.unboundState }}" on-buttonclick="testAckButton2" value="my-test-value") MY BUTTON 2
+        p Button State: {{ button.unboundState }}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .ui.attached.segment
+        h3 Show some info via button event
+        .ui.action.input
+            input(value="{{ button.infoMessage }}" placeholder="Info message")
+            ack-button(on-buttonclick="testAckButton3" value="{{ button.infoMessage }}") MY BUTTON 3
+            ack-button(on-buttonclick="testAckButton5") Send info via handler (as string)
+        h3 This is text-button (an ack-button with input)
+        text-button(on-buttonclick="testAckButton3") MY BUTTON 3
 
     .ui.segment
         .ui.header Ask yes or no (check also console for return value)
