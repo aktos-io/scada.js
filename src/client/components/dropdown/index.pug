@@ -1,15 +1,7 @@
-.ui.floating.dropdown.right.labeled.icon.button
+.ui.floating.dropdown.right.labeled.search.icon.button(class="{{#if fitWidth}}fluid{{/if}}")
     i.dropdown.icon
     span.text {{ placeholder }}
     .menu
-        .ui.icon.search.input
-            i.search.icon
-            input(type="text" placeholder="Search...")
-        .divider
-        .header
-            i.tags.icon 
-            | Tag Label 
-            
         .scrolling.menu
             +each('data')
                 .item(data-value="{{.id}}") {{.name}}
