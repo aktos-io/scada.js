@@ -12,7 +12,7 @@
         [ ] 9. This checklist
 
 .ui.segments
-    h3.ui.top.attached.block.header formal-field
+    h3.ui.top.attached.block.header formal-field #[a(href="#formal-field") #[i.linkify.icon]]
     .ui.attached.segment
         pre formal-field(on-valuechange="testFormalField" on-displaylog="testFormalFieldShow" value="\{{ value }}" _foo="\{{foo}}" _baz="\{{baz}}" someParam1="\{{.value1}}" someParam2="\{{.value2}}" )
         pre +partial('viewForm') -> partial   ###editable with doubleclick
@@ -35,13 +35,13 @@
 
         h3 Example
         p
-            span "We need &nbsp
+            span "We need&nbsp;
             formal-field(
                 on-valuechange="testFormalField"
-                value="112"
                 changelog="{{formalField.changelog}}"
                 on-displaylog="testFormalFieldShow"
-
+                
+                value="112"
                 value1="{{formalField.value1}}"
                 value2="{{formalField.value2}}"
                 _tempvalue="{{formalField.tempvalue}}"
@@ -49,13 +49,9 @@
                 +partial('viewForm')
                     span {{curr.value1}} {{curr.value2}}
                 +partial('editForm')
-                  input-field(value="{{ curr.value1 }}")
-                      search-combobox(data="{{ formalField.combobox }}" selected="{{ curr.value2 }}")
-            span of product X."
-        //-
-            p Here is original amount: #[input-field(value="{{ formalField.value1 }}")]
-            p Here is original unit: #[search-combobox(data="{{ formalField.combobox }}" selected="{{ formalField.value2 }}")]
-            p Here is original tempvalue: #[input(value="{{formalField.tempvalue}}")]
+                    input-field(value="{{ curr.value1 }}")
+                        dropdown(data="{{ formalField.combobox }}" selected="{{ curr.value2 }}")
+            span &nbsp;of product X."
 
         h3 Example's Change Log
         p Change log can be displayed externally (ie. outside of component)
@@ -67,7 +63,7 @@
                     th date
                     th state
             tbody
-                +each('changelog')
+                +each('formalField.changelog')
                     tr
                         td {{.value1}}
                         td {{.value2}}
