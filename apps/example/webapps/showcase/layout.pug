@@ -1,5 +1,4 @@
 router(curr="{{ currentPage }}")
-logger(curr="{{ currentPage }}")
 .ui.top.attached.inverted.menu
     a.item(onclick="$('.ui.sidebar').sidebar('toggle')")
         i.sidebar.icon
@@ -35,6 +34,7 @@ logger(curr="{{ currentPage }}")
                             +if('.icon')
                                 i.icon(class="{{.icon}}")
 
+logger(curr="{{ currentPage }}")
 .ui.bottom.attached.segment.pusher
     .ui.hidden.divider
     .ui.container
