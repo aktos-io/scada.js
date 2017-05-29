@@ -215,7 +215,10 @@ ractive.on do
             message: "Do you want to continue?"
         console.log "ack-button action has been taken: #{action}"
 
-        ev.component.fire \info, 'this is a test string (info)'
+    textButtonTest: (event, ev, value) ->
+        ev.component.fire \info, do
+            title: "Text Button Test"
+            message: "value passed by input is: #{value}"
 
     checkboxchanged: (event, ev, curr-state, intended-state, value) ->
         console.log "checkbox event fired, curr: #{curr-state}"
