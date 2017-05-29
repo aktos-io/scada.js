@@ -1,5 +1,4 @@
-
-{sleep} = require "aea"
+require! 'aea': {merge, sleep}
 
 Ractive.components['ack-button'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
@@ -11,7 +10,11 @@ Ractive.components['ack-button'] = Ractive.extend do
         __ = @
         modal-error = $ @find ".ui.basic.modal"
 
+        # logger utility is defined here
         logger = @root.find-component \logger
+        console.error "No logger component is found!" unless logger
+        # end of logger utility
+
 
         @observe \tooltip, (new-val) ->
             __.set \reason, new-val
@@ -22,10 +25,7 @@ Ractive.components['ack-button'] = Ractive.extend do
                 # TODO: remove {args: val}
                 @fire \buttonclick, {component: this, args: val}, val
 
-            error: (event, msg) ->
-                @fire \state, \error, msg
-
-            state: (event, s, msg) ->
+            state: (event, s, msg, callback) ->
                 self-disabled = no
 
                 if s in <[ done ]>
@@ -41,57 +41,44 @@ Ractive.components['ack-button'] = Ractive.extend do
                     __.set \state, \doing
                     self-disabled = yes
 
-                if s in <[ error ]>
-                    __.set \state, \error
-                    __.set \reason, (msg.message or msg)
-                    __.set \modalMessage, (msg.message or msg)
-                    __.set \modalTitle, (msg.title or 'This is error')
-                    logger.fire \showDimmed
-
                 __.set \selfDisabled, self-disabled
 
-            info: (event, msg) ->
-                __ = @
-                if typeof! msg is \String
-                    msg = message: msg
+                if s in <[ error ]>
+                    console.warn "scadajs: Deprecation: use \"ack-button.fire \\error\" instead"
+                    @fire \error, msg, callback
 
-                msg = if msg.message.html
-                    message: msg.message.html
+            error: (event, msg, callback) ->
+                msg = {message: msg} unless msg.message
+                msg = msg `merge` {
+                    title: msg.title or 'This is my error'
+                    icon: "warning sign"
+                }
+                @set \state, \error
+                @set \reason, msg.message
+                @set \selfDisabled, no
+                action <- logger.fire \showDimmed, msg, {-closable}
+                #console.log "error has been processed by ack-button, action is: #{action}"
+                callback action if typeof! callback is \Function
 
+            info: (event, msg, callback) ->
+                msg = {message: msg} unless msg.message
+                msg = msg `merge` {
+                    title: msg.title or 'ack-button info'
+                    icon: "info circle"
+                }
+                action <- logger.fire \showDimmed, msg, {-closable}
+                #console.log "info has been processed by ack-button, action is: #{action}"
+                callback action if typeof! callback is \Function
 
-                <- sleep 1000ms
-                __.set \infoTitle, (msg.title or \info)
-                __.set \infoMessage, (msg.message)
-                __.set \confirmationType, null
-                #console.log "info title: ", (__.get \infoTitle)
-                #console.log "info message: ", (__.get \infoMessage)
-                modal-confirmation.modal \show
-                # TODO Reset `infoTitle` and `infoMessage` on modal dismiss
-
-            yesno: (event, opt, callback) ->
-                message = if opt.message.html
-                    opt.message.html
-                else
-                    opt.message
-
-                @set \infoTitle, (opt.title or 'o_O')
-                @set \infoMessage, (message or 'Are you sure?')
-                @set \confirmationType, opt.type
-                @set \confirmationCallback, callback
-                modal-confirmation.modal \show
-                # TODO What if confirmation modal dismissed?
-
-            closeYesNo: (event, answer) ->
-                __ = @
-                callback = @get \confirmationCallback
-                modal-confirmation.modal \hide
-                <- sleep 1000ms
-                callback answer
-
-                # Reset relevant props for next confirmation
-                __.set \confirmationType, null
-                __.set \confirmationCallback, null
-                __.set \confirmationInput, null
+            yesno: (event, msg, callback) ->
+                msg = {message: msg} unless msg.message
+                msg = msg `merge` {
+                    title: msg.title or 'Yes or No'
+                    icon: "map signs"
+                }
+                action <- logger.fire \showDimmed, msg, {-closable, mode: \yesno}
+                #console.log "yesno dialog has been processed by ack-button, action is: #{action}"
+                callback action if typeof! callback is \Function
 
     data: ->
         __ = @

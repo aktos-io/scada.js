@@ -24,19 +24,20 @@
     .ui.attached.segment 
         h3.header Action test 
         span.
-            #[ack-button(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") My Button]
+            #[ack-button.teal(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") My Button]
             will send #[.ui.input #[input(value="{{ button.boundVal }}" placeholder="this value")]]
             to here => #[.ui.teal.label {{ button.sendValue }}] after 3 seconds...
         p Button state: {{ button.state1 }}
         
     .ui.attached.segment 
-        h3.header Fire modal 
+        h3.header Modal Dialogs
         p.
             Buttons can fire modal window upon error with custom error message 
             passed by #[code ... value="my message" ...] attribute
 
-        ack-button(state="{{ button.unboundState }}" on-buttonclick="testAckButton2" value="my-test-value") MY BUTTON 2
-        p Button State: {{ button.unboundState }}
+        ack-button.red(on-buttonclick="testAckButton2" value="my error value") Test Error
+        ack-button.blue(on-buttonclick="testAckButton3" value="my info value") Test Info
+        ack-button.orange(on-buttonclick="testAckButton4" value="my yesno value") Test Yesno
 
 
 

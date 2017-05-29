@@ -1,20 +1,19 @@
 .ui.basic.modal
     .ui.icon.header 
-        i.warning.sign.icon 
-        | {{ modalTitle }} 
-    
-    .content {{ modalMessage }} 
-    
-    //-
-        +if('confirmationType !== null')
-            .modal-footer
-                button.btn.btn-success(type="button" on-click='@this.fire("closeYesNo", true)') Evet
-                button.btn.btn-danger(type="button" on-click='@this.fire("closeYesNo", false)') Hayır
-        
+        i.icon(class="{{ icon }}")
+        | {{ dimmedTitle }} 
+    .content {{ dimmedMessage }} 
+            
     .actions 
+        | {{#if mode === "ok"}}
+        .ui.green.ok.inverted.button 
+            i.remove.icon 
+            | Okay 
+        | {{else}}
         .ui.red.basic.cancel.inverted.button 
             i.remove.icon 
             | No 
         .ui.green.ok.inverted.button 
             i.remove.icon 
             | Yes 
+        | {{/if}}

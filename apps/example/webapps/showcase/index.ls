@@ -191,68 +191,45 @@ ractive.on do
         #$ '.ui.sidebar' .sidebar context: $ 'body .bottom.segment'
 
 
-    test-ack-button1: (ev, value) ->
+    test-ack-button1: (event, ev, value) ->
         ev.component.fire \state, \doing
         <- sleep 5000ms
         ractive.set \button.sendValue, value
         ev.component.fire \state, \done...
 
-    test-ack-button2: (ev, value) ->
+    test-ack-button2: (event, ev, value) ->
         ev.component.fire \state, \doing
         <- sleep 1000ms
-        ev.component.fire \error, "handler 2 got message: #{value}"
+        action <- ev.component.fire \error, "handler 2 got message: #{value}"
+        console.log "ack-button's error modal is closed."
 
-    test-ack-button3: (ev, value) ->
-        ev.component.fire \info, do
+    test-ack-button3: (event, ev, value) ->
+        action <- ev.component.fire \info, do
             title: "this is an example info"
             message: value or "test info..."
+        console.log "ack-button action has been taken: #{action}"
 
-    test-ack-button5: (ev) ->
+    test-ack-button4: (event, ev) ->
+        action <- ev.component.fire \yesno, do
+            title: "Step 2 of 2"
+            message: "Do you want to continue?"
+        console.log "ack-button action has been taken: #{action}"
+
         ev.component.fire \info, 'this is a test string (info)'
 
-    test-ack-button4: (ev, value) ->
-        console.log "asking if yes or no"
-        ok <- ev.component.fire \yesno, do
-            title: 'well...'
-            message: value or 'are you sure?'
-
-        unless ok
-            msg = "User says it's not OK to continue!"
-            ev.component.fire \output, msg
-            console.error msg
-            return
-
-        ok <- ev.component.fire \yesno, do
-            title: 'HTML test'
-            message: html: """
-                <h1>This is header</h1>
-                <span class="glyphicon glyphicon-ok-sign" style="font-size: 2em"></span>
-                <span>This is an icon...</span>
-                """
-
-        unless ok
-            msg = "User says it's not OK to continue!"
-            ev.component.fire \output, msg
-            console.error msg
-            return
-
-        msg = "It's OK to go..."
-        console.log msg
-        ev.component.fire \output, msg
-
-    checkboxchanged: (ev, curr-state, intended-state, value) ->
+    checkboxchanged: (event, ev, curr-state, intended-state, value) ->
         console.log "checkbox event fired, curr: #{curr-state}"
         ev.component.fire \state, \doing
         <- sleep 2000ms
         ev.component.fire \state, intended-state
 
-    my-print: (html, value, callback) ->
+    my-print: (event, html, value, callback) ->
         callback err=null, body: """
             <h1>This is value: #{value}</h1>
             #{html}
             """
 
-    todostatechanged: (ev, list, item-index) ->
+    todostatechanged: (event, ev, list, item-index) ->
         the-item = list[item-index]
         new-state = if the-item.is-done then \checked else \unchecked
         old-state = if new-state is \checked then \unchecked else \checked
@@ -261,11 +238,11 @@ ractive.on do
     todocompletion: ->
         console.log "Bound components: all todo items has been done"
 
-    todotimeout: (item) ->
+    todotimeout: (event, item) ->
         console.log "Bound components: item with id of '" + item.id + "' in the list had been timed out"
         console.log item
 
-    todostatechanged2: (ev, list, item-index) ->
+    todostatechanged2: (event, ev, list, item-index) ->
         the-item = list[item-index]
         new-state = if the-item.is-done then \checked else \unchecked
         old-state = if new-state is \checked then \unchecked else \checked
@@ -274,11 +251,11 @@ ractive.on do
     todocompletion2: ->
         console.log "UnBound instance: all todo items has been done"
 
-    todotimeout2: (item) ->
+    todotimeout2: (event, item) ->
         console.log "UnBound instance: item with id of '" + item.id + "' in the list had been timed out"
         console.log item
 
-    uploadReadFile: (ev, file, next) ->
+    uploadReadFile: (event, ev, file, next) ->
         ev.component.fire \state, \doing
         console.log "Appending file: #{file.name}"
         ractive.push 'fileRead.files', file
@@ -292,16 +269,16 @@ ractive.on do
         <- sleep 2000ms
         next!
 
-    fileReadClear: (ev) ->
+    fileReadClear: (event, ev) ->
         ractive.set \fileRead.files, []
         ev.component.fire \info, message: "cleared!"
 
-    import-csv: (ev, content) ->
+    import-csv: (event, ev, content) ->
         ev.component.fire \state, \doing
         console.log "content: ", content
         ractive.set \csvContent, content
         ev.component.fire \state, \done...
-    test-formal-field: (ev, log-item, finish) ->
+    test-formal-field: (event, ev, log-item, finish) ->
         /*
         ev.component.fire \state, \doing
         <- sleep 3000ms
@@ -315,7 +292,7 @@ ractive.on do
         ractive.set \formalField, formal-field
         finish!
 
-    test-formal-field-show:(ev, log) ->
+    test-formal-field-show:(event, ev, log) ->
         string = """
             <table>
                 <thead>
@@ -351,7 +328,7 @@ ractive.on do
         ractive.set \combobox.products, products
     */
 
-    delete-products: (i) ->
+    delete-products: (event, i) ->
         products = ractive.get \combobox.case2
         index = parse-int i
         products.splice index, 1
