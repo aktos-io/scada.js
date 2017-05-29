@@ -1,5 +1,5 @@
 .ui.segments
-    h3.ui.top.attached.huge.block.header checkbox
+    h3.ui.top.attached.huge.block.header checkbox #[a(href="#checkbox") #[i.linkify.icon]]
     .ui.attached.segment
         .ui.header Description
 
@@ -12,21 +12,24 @@
         .ui.medium.header Simple checkbox (no callback)
         p.
             Simple checkbox toggles #[code checked="\{{ variable }}"] on every press:
-            #[checkbox(checked="{{checkbox.checked1}}") My Checkbox2 (no event)]
+            #[checkbox.green(checked="{{checkbox.checked1}}") My Checkbox2 (no event)]
 
         .ui.medium.header Checkbox with callback (async checkbox)
 
 
-        p
-            span.
-                Async checkbox fires the callback #[code checkboxchanged]
-                on every press and let the callback handle its visual state
-                and #[code checked] status:
-            checkbox(
-                checked="{{checkbox.checked1}}"
-                on-statechange="checkboxchanged"
-                value="hi!"
-                ) My Checkbox2 (with callback)
+        p.
+            Async checkbox fires the callback #[code checkboxchanged]
+            on every press and let the callback handle its visual state
+            and #[code checked] status:
+        checkbox.purple(
+            checked="{{checkbox.checked1}}"
+            on-statechange="checkboxchanged"
+            value="hi!"
+            ) My Checkbox2 (with callback)
+                
+        p.
+            Async checkbox may also #[checkbox(checked="{{checkbox.throw}}") throw] exceptions upon press. 
+            
 
         pre.
             checkbox(
@@ -36,4 +39,5 @@
                 ) My Checkbox2 (with callback)
 
 
-        .ui.message.green My checkbox state is: {{ checkbox.checked1 ? 'checked!' : 'not checked...' }}
+        .ui.message(class="{{#if checkbox.checked1}}green{{else}}red{{/if}}").
+            My checkbox state is: {{ checkbox.checked1 ? 'checked!' : 'not checked...' }}

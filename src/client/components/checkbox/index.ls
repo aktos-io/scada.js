@@ -1,16 +1,14 @@
-require! 'aea': {pack}
+require! 'aea': {pack, merge, sleep}
 
 Ractive.components['checkbox'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->
         __ = @
-        modal-error = $ @find \.modal-error
 
-        modal-error.modal do
-            keyboard: yes
-            focus: yes
-            show: no
+        logger = @root.find-component \logger
+        console.error "No logger component is found!" unless logger
+
 
         @observe \checked, (_new, _old) ->
             __.set \state, if _new then 'checked' else 'unchecked'
@@ -29,8 +27,10 @@ Ractive.components['checkbox'] = Ractive.extend do
                 else
                     __.toggle \checked
 
-            state: (event, s, msg) ->
+            state: (event, s, msg, callback ) ->
                 self-disabled = no
+
+                @set \prevState, @get \state
 
                 if s in <[ checked ]>
                     __.set \state, \checked
@@ -45,10 +45,24 @@ Ractive.components['checkbox'] = Ractive.extend do
                     self-disabled = yes
 
                 if s in <[ error ]>
-                    __.set \reason, msg
-                    modal-error.modal \show
+                    console.warn "scadajs: Deprecation: use \"checkbox.fire \\error\" instead"
+                    @fire \error, msg, callback
 
                 __.set \selfDisabled, self-disabled
+
+            error: (event, msg, callback) ->
+                msg = {message: msg} unless msg.message
+                msg = msg `merge` {
+                    title: msg.title or 'This is my error'
+                    icon: "warning sign"
+                }
+                @set \reason, msg.message
+                @set \selfDisabled, no
+                @set \state, @get \prevState
+                action <- logger.fire \showDimmed, msg, {-closable}
+                #console.log "error has been processed by ack-button, action is: #{action}"
+                callback action if typeof! callback is \Function
+
 
 
     data: ->
@@ -64,3 +78,5 @@ Ractive.components['checkbox'] = Ractive.extend do
         angle: 0
         tooltip: ''
         timestamp: null
+        state: null
+        prev-state: null

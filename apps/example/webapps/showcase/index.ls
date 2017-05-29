@@ -223,8 +223,13 @@ ractive.on do
     checkboxchanged: (event, ev, curr-state, intended-state, value) ->
         console.log "checkbox event fired, curr: #{curr-state}"
         ev.component.fire \state, \doing
-        <- sleep 2000ms
-        ev.component.fire \state, intended-state
+        if @get \checkbox.throw
+            <- sleep 1000ms
+            <- ev.component.fire \error, {message: "my custom error"}
+            console.log "checkbox processed the error modal (modal is closed now)"
+        else
+            <- sleep 1000ms
+            ev.component.fire \state, intended-state
 
     my-print: (event, html, value, callback) ->
         callback err=null, body: """
