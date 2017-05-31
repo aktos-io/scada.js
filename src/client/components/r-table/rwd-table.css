@@ -2,8 +2,8 @@
 */
 
 .rwd-table {
-  margin: 1em 0;
-  min-width: 300px;
+  margin: 0;
+  min-width: 200px;
   width: 100% !important;
   border-radius: .4em;
   table-layout: fixed;

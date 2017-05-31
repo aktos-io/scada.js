@@ -12,28 +12,12 @@ Ractive.components['data-table'] = Ractive.extend do
         readonly = if @partials.editForm then no else yes
         title-provided = if @partials.addnewTitle then yes else no
         @set \readonly, readonly
-        @set \_titleProvided, title-provided
-        @set \hasAddNewButton, (not readonly and title-provided)
 
     onrender: ->
         __ = @
 
         db = @get \db
         console.error "No database object is passed to data-table!" unless db
-
-        modal-error = $ @find \.modal-error
-
-        modal-error.modal do
-            keyboard: yes
-            focus: yes
-            show: no
-
-        modal-new = $ @find \.modal-new
-        modal-new.modal do
-            keyboard: no
-            focus: yes
-            show: no
-            backdrop: \static
 
         settings = @get \settings
 
@@ -67,8 +51,11 @@ Ractive.components['data-table'] = Ractive.extend do
             return
 
         try
-            col-list = split ',', settings.col-names
-            @set \columnList, col-list
+            if typeof! settings.col-names is \Array
+                @set \columnList, settings.col-names
+            else
+                col-list = split ',', settings.col-names
+                @set \columnList, col-list
         catch
             console.warn "DATA_TABLE: problem with col-names: ", e
             return
@@ -202,9 +189,8 @@ Ractive.components['data-table'] = Ractive.extend do
 
 
         events =
-            clicked: (args) ->
+            clicked: (event, context) ->
                 __ = @
-                context = args.context
                 index = context.id
                 unless (@get \clickedIndex) is index
                     # trigger only if there is a change
@@ -227,18 +213,26 @@ Ractive.components['data-table'] = Ractive.extend do
 
                     @set \currView, context
                     @set \openingRow, yes
+                    @set \openedRow, no
                     @set \clickedIndex, index
                     @set \lastIndex, index
 
 
+                    dom = $ "tr[data-anchor='#{index}']"
+
+                    loading-dimmer = $ @find \.table-section-of-data-table
+
                     scroll-to = (anchor) ->
-                        dom = $ "tr[data-anchor='#{index}']"
                         offset = dom.offset!
                         if offset
                             <- sleep 200ms
+                            scroll-time = 500ms
                             $ 'html, body' .animate do
                                 scroll-top: offset.top
-                                , 500ms
+                                , scroll-time
+                            <- sleep scroll-time + 10ms
+                            loading-dimmer.dimmer \show
+
                         else
                             console.warn "Couldn't find offset of #{index}?"
                             debugger
@@ -250,16 +244,14 @@ Ractive.components['data-table'] = Ractive.extend do
                     if typeof! settings.on-create-view is \Function
                         settings.on-create-view.call __, curr, ->
                             __.set \openingRow, no
+                            __.set \openedRow, yes
                             __.set \openingRowMsg, ""
                             scroll-to index
                     else
                         __.set \openingRow, no
+                        __.set \openedRow, yes
                         __.set \openingRowMsg, ""
                         scroll-to index
-
-
-
-
 
             end-editing: ->
                 @set \clickedIndex, null
@@ -276,14 +268,14 @@ Ractive.components['data-table'] = Ractive.extend do
                 console.log "My id: ", id
                 $ "\##{id}-modal" .modal \show
 
-            set-filter: (filter-name) ->
+            set-filter: (event, filter-name) ->
                 console.log "DATA_TABLE: filter is set to #{filter-name}"
                 @set \selectedFilter, filter-name if filter-name
                 @set \currPage, 0
                 create-view!
 
 
-            select-page: (page-num) ->
+            select-page: (event, page-num) ->
                 @set \currPage, page-num
                 create-view!
 
@@ -312,7 +304,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \addingNew, false
                 @fire \endEditing
 
-            save: (e) ->
+            save: (event, e) ->
                 __ = @
                 order-doc = @get \curr
 
@@ -341,7 +333,7 @@ Ractive.components['data-table'] = Ractive.extend do
                     # TODO: use "kick-changes! function"
                     __.add \changes
 
-            add-new-entry: (keypath) ->
+            add-new-entry: (event, keypath) ->
                 __ = @
                 editing-doc = __.get \curr
                 try
@@ -361,14 +353,14 @@ Ractive.components['data-table'] = Ractive.extend do
                 __.set \curr, editing-doc
 
 
-            delete-order: (index-str) ->
+            delete-order: (event, index-str) ->
                 [key, index] = split ':' index-str
                 index = parse-int index
                 editing-doc = @get \curr
                 editing-doc[key].splice index, 1
                 @set \curr, editing-doc
 
-            delete-document: (e) ->
+            delete-document: (event, e) ->
                 __ = @
                 e.component.fire \state, \doing
                 curr = @get \curr
@@ -381,12 +373,12 @@ Ractive.components['data-table'] = Ractive.extend do
                 __.set \tabledata, tabledata
                 (__.get \create-view)!
 
-            show-error: (err-message) ->
+            show-error: (event, err-message) ->
                 type = modal-error.TYPE_DANGER
                 @set \errorMessage, err-message
                 modal-error.modal \show
 
-            kick-changes: (ev) ->
+            kick-changes: (event, ev) ->
                 console.log "kicking changes..."
                 ev.component.fire \state, \doing
                 @add \changes
@@ -399,7 +391,7 @@ Ractive.components['data-table'] = Ractive.extend do
         # modify "save" handler
         _save = events.save
         events.save = (...args) ->
-            e = args.0
+            e = args.1
             _save.apply __, args
             e.component.set \onDone, ->
                 if __.get \addingNew
@@ -446,9 +438,20 @@ Ractive.components['data-table'] = Ractive.extend do
             clicked-index = @get \clickedIndex
             editable and (index is clicked-index)
 
-        is-clicked: (index) ->
+        is-viewing-row: (index) ->
             clicked-index = @get \clickedIndex
-            index is clicked-index
+            opened = @get \openedRow
+            index is clicked-index and opened
+
+        is-opening-now: (row-index) ->
+            opening = @get \openingRow
+            opened = @get \openedRow
+            clicked-index = @get \clickedIndex
+
+            if clicked-index is row-index and opening and not opened
+                yes
+            else
+                no
 
         is-last-clicked: (index) ->
             x = index is @get \lastIndex
