@@ -1,8 +1,9 @@
 
 #r-table 
-    span.red parent: {{ parentWidth }}
-    span.red width: {{ width }}
-    table.r-table(class="ui table {{ class }}" style="{{ style }}")
+    //-
+        span.red parent: {{ parentWidth }}
+        span.red width: {{ width }}
+    table.r-table(class="ui {{ class }} table" style="{{ style }}")
         | {{ yield }}
         
 #r-head

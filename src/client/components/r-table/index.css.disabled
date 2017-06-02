@@ -5,9 +5,6 @@
   margin: 1em 0;
   width: 100% !important;
   border-radius: .4em;
-  table-layout: fixed;
-  border-left: 1px solid #46637f;
-  border-right: 1px solid #46637f;
 }
 
 .r-table > tbody > tr {

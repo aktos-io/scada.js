@@ -1,11 +1,13 @@
-.input-field
-    | {{#if unit}}
-    .ui.right.labeled.input
++iff('unit')
+    .input-field.ui.right.labeled.input
         input(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}")
         .ui.basic.label {{ unit }}
-    | {{else}}
-    //- input-field with custom unit
-    div(class="ui right action input")
-        input(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}")
-        | {{ yield }}
-    | {{/if}}
++else
+    .input-field.ui.form(class="{{ class }}" style="{{ style }}")
+        .fields 
+            .field
+                .ui.input
+                    input(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}")
+            .field
+                | {{ yield }}
++endif

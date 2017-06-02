@@ -34,6 +34,7 @@ Ractive.components['r-table'] = Ractive.extend do
                     $ row .children \td .each (i, col) ->
                         $ col .attr \data-th, col-names[i]
     complete: ->
+        /*
         r-table = $ @find \.r-table
         parent-width = r-table.parent().inner-width()
         width = r-table.width()
@@ -55,6 +56,7 @@ Ractive.components['r-table'] = Ractive.extend do
             r-table.remove-class \r-table-tablet
             r-table.add-class \r-table-mobile
 
+        */
 
 
 

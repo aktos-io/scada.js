@@ -35,39 +35,37 @@
     .ui.segment
         .ui.header Test Responsiveness
         .ui.mini.header 4 column grid
-        .ui.four.column.grid
-            .row
-                .column
-                    input-field(value="{{ inputField.value }}" placeholder="hello!")
-                        dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
-                .column
-                    input-field(value="{{ inputField.value }}" placeholder="hello!")
-                        dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
-                .column
-                    input-field(value="{{ inputField.value }}" placeholder="hello!")
-                        dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
-                .column
-                    input-field(value="{{ inputField.value }}" placeholder="hello!")
-                        dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+        .ui.stackable.grid
+            .column
+                input-field(value="{{ inputField.value }}" placeholder="hello!")
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+            .column
+                input-field(value="{{ inputField.value }}" placeholder="hello!")
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+            .column
+                input-field(value="{{ inputField.value }}" placeholder="hello!")
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+            .column
+                input-field(value="{{ inputField.value }}" placeholder="hello!")
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
 
         .ui.mini.header 6 column grid
-        .ui.six.column.grid
-            .row
-                .column
-                    input-field(value="{{ inputField.value }}" placeholder="hello!")
-                        dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
-                .column
-                    input-field(value="{{ inputField.value }}" placeholder="hello!")
-                        dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
-                .column
-                    input-field(value="{{ inputField.value }}" placeholder="hello!")
-                        dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
-                .column
-                    input-field(value="{{ inputField.value }}" placeholder="hello!")
-                        dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
-                .column
-                    input-field(value="{{ inputField.value }}" placeholder="hello!")
-                        dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
-                .column
-                    input-field(value="{{ inputField.value }}" placeholder="hello!")
-                        dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+        .ui.stackable.six.column.grid
+            .column
+                input-field(value="{{ inputField.value }}" placeholder="hello!")
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+            .column
+                input-field(value="{{ inputField.value }}" placeholder="hello!")
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+            .column
+                input-field(value="{{ inputField.value }}" placeholder="hello!")
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+            .column
+                input-field(value="{{ inputField.value }}" placeholder="hello!")
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+            .column
+                input-field(value="{{ inputField.value }}" placeholder="hello!")
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+            .column
+                input-field(value="{{ inputField.value }}" placeholder="hello!")
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
