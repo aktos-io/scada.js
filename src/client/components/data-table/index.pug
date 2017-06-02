@@ -33,19 +33,19 @@
 
     .ui.segment
         r-table
-            thead
-                //- print column headers 
-                tr
+            r-head
+                r-row                    
                     +each('columnList')
-                        th {{>renderMarkup}}                    
+                        r-head-col {{>renderMarkup}}                    
             //- -----------------------------------------------
             //- body of table 
             //- -----------------------------------------------
-            tbody
+            r-body
                 +each('tableview_visible:i')
                     tr(
                         data-anchor="{{.id}}"
-                        on-click="@this.fire('clicked', this)"
+                        on-click!="['clicked', this]"
+                        class!="{{#if isDisabled(.id)}}disabled{{/if}}"
                         )                        
                         //- -----------------------------------------------
                         //- edit form
@@ -80,25 +80,30 @@
                                     +else.
                                         {{>renderMarkup}}
                                     +endif
-                                +iff('isLastClicked(.id)')
-                                    .ui.dimmer.table-section-of-data-table
-                                        .content
-                                            .center 
-                                                btn.small.circular.red.icon(on-buttonclick="newOrderClose" tooltip="Kapat") #[i.remove.icon]
-                                                .ui.active.centered.inline.text.loader {{ openingRowMsg }}
-                                +endif
                         +endif
 
             +if('settings.pageSize > 0')
                 +if('(tableview.length / settings.pageSize) > 1')
                     tfoot
                         tr
-                            td(colspan="{{ columnList.length }}")
-                                btn-group
+                            th(colspan="{{ columnList.length }}")
+                                .ui.right.floated.pagination.menu
                                     +each('range(1, Math.ceil(tableview.length / settings.pageSize)):i')
-                                        btn(on-buttonclick="selectPage" value="{{ i }}" type!="{{#if currPage === i}}info{{/if}}") {{ . }}
+                                        a(on-click="@.fire('selectPage', i)" class!="item {{#if currPage === i}}blue{{/if}}") {{ . }}
+
+                        +if('openingRowMsg')
+                            tr 
+                                th(colspan="{{ columnList.length }}")
+                                    | {{ openingRowMsg }}
 
 +else
     //- display "Loading" indicator till first fetch of the tabledata  
     .ui.active.centered.inline.big.text.loader Yükleniyor  
 +endif
+
+.ui.page.dimmer.table-section-of-data-table
+    .content
+        .center 
+            .ui.active.big.text.loader
+                p {{ openingRowMsg }}
+                btn.small.inverted.red.icon(on-buttonclick="newOrderClose" tooltip="Kapat") #[i.remove.icon] Cancel

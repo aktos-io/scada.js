@@ -19,14 +19,14 @@ simulated-data = [{
 # Example settings
 
 simulated-timeouts =
-    first-loading-time: 500ms
-    row-opening-time: 5000ms
+    first-loading-time: 2000ms
+    row-opening-time: 2000ms
 
 
 export my-table =
     settings:
         # define how many rows per page (0 or null for infinite page)
-        page-size: 20
+        page-size: 5
 
         # this is the default document for newly created rows
         default: ->
@@ -71,7 +71,7 @@ export my-table =
 
             # some simulated time consuming operation here
             sleep-duration = simulated-timeouts.row-opening-time
-            refresh-interval = 1000ms
+            refresh-interval = 200ms
             remains = sleep-duration
             <- :lo(op) ->
                 __.set \openingRowMsg, "doing something for #{sleep-duration} ms, remains: #{remains} ms."

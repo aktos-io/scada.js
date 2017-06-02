@@ -13,11 +13,13 @@ Ractive.components['data-table'] = Ractive.extend do
         title-provided = if @partials.addnewTitle then yes else no
         @set \readonly, readonly
 
-    onrender: ->
+    complete: ->
         __ = @
 
         db = @get \db
         console.error "No database object is passed to data-table!" unless db
+
+        opening-dimmer = $ @find \.table-section-of-data-table
 
         settings = @get \settings
 
@@ -187,71 +189,74 @@ Ractive.components['data-table'] = Ractive.extend do
             catch
                 console.error e
 
-
         events =
             clicked: (event, context) ->
                 __ = @
                 index = context.id
-                unless (@get \clickedIndex) is index
-                    # trigger only if there is a change
-                    #console.log "ORDER_TABLE: clicked!!!", args, index
-                    tabledata = @get \tabledata
-                    if typeof! tabledata is \Object
-                        for key, value of tabledata
-                            if index is value._id
-                                curr = unpack pack tabledata[key]
+                clicked-index = @get \clickedIndex
+                if clicked-index isnt null
+                    return
+                if clicked-index is index
+                    # do not allow more than one click
+                    return
+
+                tabledata = @get \tabledata
+                if typeof! tabledata is \Object
+                    for key, value of tabledata
+                        if index is value._id
+                            curr = unpack pack tabledata[key]
+                else
+                    curr = try
+                        unpack pack find (._id is index), tabledata
+                    catch
+                        unpack pack context
+
+                if curr
+                    @set \curr, curr
+                else
+                    curr = index
+
+                @set \currView, context
+                @set \openingRow, yes
+                @set \openedRow, no
+                @set \clickedIndex, index
+                @set \lastIndex, index
+
+
+                dom = $ "tr[data-anchor='#{index}']"
+
+                opening-dimmer.dimmer \show
+
+                scroll-to = (anchor) ->
+                    offset = dom.offset!
+                    if offset
+                        <- sleep 200ms
+                        scroll-time = 500ms
+                        $ 'html, body' .animate do
+                            scroll-top: offset.top
+                            , scroll-time
+
                     else
-                        curr = try
-                            unpack pack find (._id is index), tabledata
-                        catch
-                            unpack pack context
-
-                    if curr
-                        @set \curr, curr
-                    else
-                        curr = index
-
-                    @set \currView, context
-                    @set \openingRow, yes
-                    @set \openedRow, no
-                    @set \clickedIndex, index
-                    @set \lastIndex, index
+                        console.warn "Couldn't find offset of #{index}?"
+                        debugger
 
 
-                    dom = $ "tr[data-anchor='#{index}']"
+                # scroll to index as soon as it is clicked
+                scroll-to index
 
-                    loading-dimmer = $ @find \.table-section-of-data-table
-
-                    scroll-to = (anchor) ->
-                        offset = dom.offset!
-                        if offset
-                            <- sleep 200ms
-                            scroll-time = 500ms
-                            $ 'html, body' .animate do
-                                scroll-top: offset.top
-                                , scroll-time
-                            <- sleep scroll-time + 10ms
-                            loading-dimmer.dimmer \show
-
-                        else
-                            console.warn "Couldn't find offset of #{index}?"
-                            debugger
-
-
-                    # scroll to index as soon as it is clicked
-                    scroll-to index
-
-                    if typeof! settings.on-create-view is \Function
-                        settings.on-create-view.call __, curr, ->
-                            __.set \openingRow, no
-                            __.set \openedRow, yes
-                            __.set \openingRowMsg, ""
-                            scroll-to index
-                    else
+                if typeof! settings.on-create-view is \Function
+                    settings.on-create-view.call __, curr, ->
                         __.set \openingRow, no
                         __.set \openedRow, yes
                         __.set \openingRowMsg, ""
                         scroll-to index
+                        opening-dimmer.dimmer \hide
+                else
+                    __.set \openingRow, no
+                    __.set \openedRow, yes
+                    __.set \openingRowMsg, ""
+                    scroll-to index
+                    opening-dimmer.dimmer \hide
 
             end-editing: ->
                 @set \clickedIndex, null
@@ -303,6 +308,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 #console.log "ORDER_TABLE: Closing edit form..."
                 @set \addingNew, false
                 @fire \endEditing
+                opening-dimmer.dimmer \hide
 
             save: (event, e) ->
                 __ = @
@@ -455,6 +461,13 @@ Ractive.components['data-table'] = Ractive.extend do
 
         is-last-clicked: (index) ->
             x = index is @get \lastIndex
+
+        is-disabled: (index) ->
+            clicked-index = @get \clickedIndex
+            if clicked-index isnt null and clicked-index isnt index
+                yes
+            else
+                no
 
         run-handler: (params) ->
             handlers = __.get \settings.handlers
