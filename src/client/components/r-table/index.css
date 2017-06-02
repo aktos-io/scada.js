@@ -1,0 +1,143 @@
+/* @import "http://fonts.googleapis.com/css?family=Montserrat:300,400,700";
+*/
+
+.r-table {
+  margin: 1em 0;
+  width: 100% !important;
+  border-radius: .4em;
+  table-layout: fixed;
+  border-left: 1px solid #46637f;
+  border-right: 1px solid #46637f;
+}
+
+.r-table > tbody > tr {
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  border-color: #46637f;
+}
+
+.r-table > tbody > tr:nth-child(odd) {
+    background-color: rgba(0, 80, 50, 0.05);
+}
+
+.r-table > thead > tr > th,
+.r-table > tbody > tr > td {
+  text-align: left;
+  margin: .5em 1em;
+  display: table-cell;
+  padding: 1em !important;
+}
+
+.r-table > thead > tr > th:first-child,
+.r-table > tbody > tr > td:first-child {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.r-table > tbody > tr > td:first-child {
+  margin-top: .5em;
+}
+.r-table > tbody > tr > td:last-child {
+  margin-bottom: .5em;
+}
+
+.r-table > thead > tr > th:last-child,
+.r-table > tbody > tr > td:last-child {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.r-table > tbody > tr > td:before {
+    display: none;
+}
+
+/* ------------------------------------------------------------------------ */
+/* Min with should be LESS THAN 600px if you want to print as normal table! */
+/* ------------------------------------------------------------------------ */
+
+
+/* tablet */
+.r-table-tablet {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.r-table-tablet > thead {
+    display: none;
+}
+
+.r-table-tablet > tbody > tr {
+    margin-bottom: 2px;
+    display: block;
+    /*border-bottom: 2px solid #ddd;*/
+}
+.r-table-tablet > tbody > tr:last-child {
+    margin-bottom: 0;
+}
+
+.r-table-tablet > tbody > tr > td {
+    display: block;
+    /*text-align: right;*/
+    font-size: 13px;
+    border-bottom: 1px dotted #ccc;
+    border-top: 0;
+}
+
+.r-table-tablet > tbody > tr > td[data-th] {
+    text-align: right;
+}
+
+.r-table-tablet > tbody > tr > td:last-child {
+    border-bottom: 0;
+}
+
+.r-table-tablet > tbody > tr > td:before {
+    content: attr(data-th);
+    float: left;
+    font-weight: bold !important;
+    display: block !important;
+}
+
+
+/* small phone and large phone */
+.r-table-mobile {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.r-table-mobile > thead {
+    display: none;
+}
+
+.r-table-mobile > tbody > tr {
+    margin-bottom: 5px;
+    display: table;
+    border-bottom: 2px solid #ddd;
+    padding: 0.5em;
+}
+.r-table-mobile > tbody > tr:last-child {
+    margin-bottom: 0;
+}
+
+.r-table-mobile > tbody > tr > td {
+    display: block;
+    text-align: left;
+    font-size: 13px;
+    border-top: 0;
+    border-bottom: 1px dotted #ccc;
+    margin-left: 0;
+    margin-right: 0;
+    overflow: auto;
+}
+
+.r-table-mobile > tbody > tr > td:last-child {
+    border-bottom: 0;
+}
+
+.r-table-mobile > tbody > tr > td:before {
+    content: attr(data-th);
+    font-weight: bold;
+    display: block !important;
+}
