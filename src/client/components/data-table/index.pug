@@ -31,74 +31,90 @@
     | {{>header}}
     //- End Of Header
 
-    .ui.segment
-        r-table
-            r-head
-                r-row                    
-                    +each('columnList')
-                        r-head-col {{>renderMarkup}}                    
-            //- -----------------------------------------------
-            //- body of table 
-            //- -----------------------------------------------
-            r-body
-                +each('tableview_visible:i')
-                    tr(
-                        data-anchor="{{.id}}"
-                        on-click!="['clicked', this]"
-                        class!="{{#if isDisabled(.id)}}disabled{{/if}}"
-                        )                        
-                        //- -----------------------------------------------
-                        //- edit form
-                        //- -----------------------------------------------
-                        +iff('isEditingLine(.id)')
-                            td(colspan="{{ columnList.length }}")
-                                | {{>controls}}
-                                | {{>editForm}}
+    .ui.segments
+        +if('selectedFilter !== "all"')
+            .ui.attached.warning.message.segment
+                .header 
+                    i.warning.icon 
+                    | Filtered Content 
+                p.
+                    You are seeing a filtered content. 
+                    #[btn.blue(on-buttonclick="setFilter" value="all") #[i.remove.icon] Clear Filter]
+                    
+        .ui.segment
+            r-table
+                r-head
+                    r-row                    
+                        +each('columnList')
+                            r-head-col {{>renderMarkup}}                    
+                //- -----------------------------------------------
+                //- body of table 
+                //- -----------------------------------------------
+                r-body
+                    +each('tableview_visible:i')
+                        tr(
+                            data-anchor="{{.id}}"
+                            on-click!="['clicked', this]"
+                            class!="{{#if isDisabled(.id)}}disabled{{/if}}"
+                            )                        
+                            //- -----------------------------------------------
+                            //- edit form
+                            //- -----------------------------------------------
+                            +iff('isEditingLine(.id)')
+                                td(colspan="{{ columnList.length }}")
+                                    | {{>controls}}
+                                    | {{>editForm}}
 
-                        //- -----------------------------------------------
-                        //- view form
-                        //- -----------------------------------------------
-                        +elif('isViewingRow(.id)')
-                            td(colspan="{{ columnList.length }}")                            
-                                | {{>controls}}
-                                | {{>viewForm}}
-                            
-                        //- -----------------------------------------------
-                        //- normal rows 
-                        //- -----------------------------------------------
-                        +else
-                            +each(".cols:colindex")
-                                td(data-th="{{columnList[colindex]}}")
-                                    +iff('colindex === 0 && isLastClicked(tableview_visible[i].id)')
-                                        +iff('isOpeningNow(tableview_visible[i].id)')
-                                            //- if row is opening, mark first column with teal ribbon label 
-                                            .ui.teal.ribbon.label {{>renderMarkup}}
-                                        +else
-                                            //- if row is opening, mark first column with orange ribbon label 
-                                            .ui.orange.ribbon.label {{>renderMarkup}}
+                            //- -----------------------------------------------
+                            //- view form
+                            //- -----------------------------------------------
+                            +elif('isViewingRow(.id)')
+                                td(colspan="{{ columnList.length }}")                            
+                                    | {{>controls}}
+                                    | {{>viewForm}}
+                                
+                            //- -----------------------------------------------
+                            //- normal rows 
+                            //- -----------------------------------------------
+                            +else
+                                +each(".cols:colindex")
+                                    td(data-th="{{columnList[colindex]}}")
+                                        +iff('colindex === 0 && isLastClicked(tableview_visible[i].id)')
+                                            +iff('isOpeningNow(tableview_visible[i].id)')
+                                                //- if row is opening, mark first column with teal ribbon label 
+                                                .ui.teal.ribbon.label {{>renderMarkup}}
+                                            +else
+                                                //- if row is opening, mark first column with orange ribbon label 
+                                                .ui.orange.ribbon.label {{>renderMarkup}}
+                                            +endif
+                                        +else.
+                                            {{>renderMarkup}}
                                         +endif
-                                    +else.
-                                        {{>renderMarkup}}
-                                    +endif
-                        +endif
+                            +endif
 
-            +if('settings.pageSize > 0')
-                +if('(tableview.length / settings.pageSize) > 1')
-                    tfoot
-                        tr
-                            th(colspan="{{ columnList.length }}")
-                                .ui.right.floated.pagination.menu
-                                    +each('range(1, Math.ceil(tableview.length / settings.pageSize)):i')
-                                        a(on-click="@.fire('selectPage', i)" class!="item {{#if currPage === i}}blue{{/if}}") {{ . }}
-
-                        +if('openingRowMsg')
-                            tr 
+                +if('settings.pageSize > 0')
+                    +if('(tableview.length / settings.pageSize) > 1')
+                        tfoot
+                            tr
                                 th(colspan="{{ columnList.length }}")
-                                    | {{ openingRowMsg }}
+                                    .ui.right.floated.pagination.menu
+                                        +each('range(1, Math.ceil(tableview.length / settings.pageSize)):i')
+                                            a(on-click="@.fire('selectPage', i)" class!="item {{#if currPage === i}}blue{{/if}}") {{ . }}
+
+                            +if('openingRowMsg')
+                                tr 
+                                    th(colspan="{{ columnList.length }}")
+                                        | {{ openingRowMsg }}
 
 +else
     //- display "Loading" indicator till first fetch of the tabledata  
-    .ui.active.centered.inline.big.text.loader Yükleniyor  
+        .ui.active.centered.inline.big.text.loader Yükleniyor  
+    .ui.icon.message 
+        i.notched.circle.loading.icon 
+        .content 
+            .header Just one second 
+        p We're fetching table content for you. 
+        
 +endif
 
 .ui.page.dimmer.table-section-of-data-table
