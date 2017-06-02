@@ -10,7 +10,7 @@
         [ ] 7. Change sizes
         [ ] 8. Match theme
 .ui.segments
-    h3.ui.top.attached.block.header csv-importer
+    h3.ui.top.attached.block.header csv-importer #[a(href="#csv-importer") #[i.linkify.icon]]
     .ui.attached.segment
         pre csv-importer(on-import="importCsv" csv="\{{ rawCsvContent }}" columns="col1,col2,col3" delimiter=",") #...delimiter="\t"
         p
@@ -31,15 +31,15 @@
                     csv-importer(on-import="importCsv" csv="{{ csvImporter.testData }}" columns="col1,col2,col3 " delimiter=",") Import-CSV!
     .ui.segment
         h3 Imported CSV
-        r-table(update="{{ csvContent }}")
-            thead
-                tr
-                    th first column
-                    th second column
-                    th third column
-            tbody
+        r-table
+            r-head
+                r-row
+                    r-head-col first column
+                    r-head-col second column
+                    r-head-col third column
+            r-body
                 +each('csvContent:i')
-                    tr
-                        td {{ .col1 }}
-                        td {{ .col2 }}
-                        td {{ .col3 }}
+                    r-row
+                        r-col {{ .col1 }}
+                        r-col {{ .col2 }}
+                        r-col {{ .col3 }}

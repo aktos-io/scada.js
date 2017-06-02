@@ -1,3 +1,26 @@
-table.rwd-table(class="{{class}}")
-    //-span width: {{width}} 
-    | {{ yield }}
+#r-table 
+    //-
+        span.red parent: {{ parentWidth }}
+        span.red width: {{ width }}
+    table.r-table(class="ui {{ class }} table" style="{{ style }}")
+        | {{ yield }}
+        
+#r-head
+    thead(class="{{ class }}" style="{{ style }}")
+        | {{ yield }}
+
+#r-body 
+    tbody(class="{{ class }}" style="{{ style }}") 
+        | {{ yield }}
+
+#r-row 
+    tr.r-table-row(class="{{ class }}" style="{{ style }}") 
+        | {{ yield }}
+
+#r-head-col
+    th(class="{{ class }}" style="{{ style }}") 
+        | {{ yield }}
+    
+#r-col
+    td.r-table-column(class="{{ class }}" style="{{ style }}") 
+        | {{ yield }}
