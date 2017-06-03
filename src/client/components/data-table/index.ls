@@ -13,13 +13,18 @@ Ractive.components['data-table'] = Ractive.extend do
         title-provided = if @partials.addnewTitle then yes else no
         @set \readonly, readonly
 
-    complete: ->
+    onrender: ->
         __ = @
 
         db = @get \db
         console.error "No database object is passed to data-table!" unless db
 
         opening-dimmer = $ @find \.table-section-of-data-table
+
+        # logger utility is defined here
+        logger = @root.find-component \logger
+        console.error "No logger component is found!" unless logger
+        # end of logger utility
 
         settings = @get \settings
 
@@ -268,11 +273,6 @@ Ractive.components['data-table'] = Ractive.extend do
                 editable = @get \editable
                 @set \editable, not editable
 
-            show-modal: ->
-                id = @get \id
-                console.log "My id: ", id
-                $ "\##{id}-modal" .modal \show
-
             set-filter: (event, filter-name) ->
                 console.log "DATA_TABLE: filter is set to #{filter-name}"
                 @set \selectedFilter, filter-name if filter-name
@@ -298,7 +298,6 @@ Ractive.components['data-table'] = Ractive.extend do
 
                 @set \curr, new-order
                 @set \addingNew, true
-                modal-new.modal \show
 
                 if typeof! settings.on-create-view is \Function
                     settings.on-create-view.call this, new-order, ->
@@ -317,7 +316,6 @@ Ractive.components['data-table'] = Ractive.extend do
                 button-state = (state, msg) ->
                     e.component.fire \state, state, msg if e
 
-                __.set \saving, "Kaydediyor..."
                 button-state \doing
 
                 console.log "Saving new order document: ", order-doc
@@ -328,7 +326,6 @@ Ractive.components['data-table'] = Ractive.extend do
                 err, res <- db.save order-doc
                 if err
                     console.log "Error putting new order: ", err
-                    __.set \saving, "#{__.get \saving} : #{err.message}"
                     button-state \error, err.message
                 else
                     (__.get \create-view) order-doc
@@ -379,10 +376,15 @@ Ractive.components['data-table'] = Ractive.extend do
                 __.set \tabledata, tabledata
                 (__.get \create-view)!
 
-            show-error: (event, err-message) ->
-                type = modal-error.TYPE_DANGER
-                @set \errorMessage, err-message
-                modal-error.modal \show
+            show-error: (event, msg, callback) ->
+                msg = {message: msg} unless msg.message
+                msg = msg `merge` {
+                    title: msg.title or 'data-table error'
+                    icon: "error circle"
+                }
+                action <- logger.fire \showDimmed, msg, {-closable}
+                #console.log "info has been processed by ack-button, action is: #{action}"
+                callback action if typeof! callback is \Function
 
             kick-changes: (event, ev) ->
                 console.log "kicking changes..."
@@ -390,6 +392,16 @@ Ractive.components['data-table'] = Ractive.extend do
                 @add \changes
                 @observe-once \createViewCounter, ->
                     ev.component.fire \state, \done...
+
+            info: (event, msg, callback) ->
+                msg = {message: msg} unless msg.message
+                msg = msg `merge` {
+                    title: msg.title or 'data-table info'
+                    icon: "info circle"
+                }
+                action <- logger.fire \showDimmed, msg, {-closable}
+                #console.log "info has been processed by ack-button, action is: #{action}"
+                callback action if typeof! callback is \Function
 
 
 
@@ -402,7 +414,6 @@ Ractive.components['data-table'] = Ractive.extend do
             e.component.set \onDone, ->
                 if __.get \addingNew
                     #e.component.
-                    modal-new.modal \hide
                     __.set \addingNew, false
 
         @on events

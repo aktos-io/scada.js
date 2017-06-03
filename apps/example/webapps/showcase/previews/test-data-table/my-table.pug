@@ -56,14 +56,22 @@
                 p Any html design here is shown when you doubleclick a row.
 
                 p Our document looks like as follows:
+                
+                table.ui.very.basic.collapsing.celled.table 
+                    tr
+                        td Document Type 
+                        td  {{ curr.type }} 
+                    tr
+                        td Document Name 
+                        td  {{ curr.name }} 
 
-                key-value-grid(key="document type") {{ curr.type }}
+                    tr 
+                        td Timestamp 
+                        td {{ curr.timestamp }}
+                    tr 
+                        td Timestamp (human readable)
+                        td {{ unixToReadable(curr.timestamp) }}
 
-                key-value-grid(key="document name") {{ curr.name }}
-
-                key-value-grid(key="timestamp: ") {{ curr.timestamp }}
-
-                key-value-grid(key="timestamp (human readable): ") {{ unixToReadable(curr.timestamp) }}
 
                 h3 Entries:
 
@@ -82,15 +90,24 @@
             //- ------------------------- EDIT FORM -------------------------------------
             //- -------------------------------------------------------------------------
             +partial('editForm')
-                panel(type="primary" title="EditForm")
-                    .content
-                        key-value-grid(key="set your document type")
-                            input(value="{{ curr.type }}" placeholder="document type")
-
-                        key-value-grid(key="document name")
-                            input(value="{{ curr.name }}" placeholder="name")
-
-                        h3 Entries:
+                .ui.segments 
+                    h3.ui.top.attached.header Edit Form 
+                    .ui.attached.segment 
+                        .ui.form
+                            .fields 
+                                .field 
+                                    .label Set your document type 
+                                    .ui.input 
+                                        input(value="{{ curr.type }}" placeholder="document type")
+                                .field 
+                                    .label Set your document name 
+                                    .ui.input 
+                                        input(value="{{ curr.name }}" placeholder="name")
+                    .ui.segment 
+                        ack-button.green(on-buttonclick="info" value="heyy") Simulate throwing a message
+                    
+                    h3.ui.attached.header Entries 
+                    .ui.segment
                         r-table
                             thead
                                 tr
@@ -101,23 +118,23 @@
                                 +each('curr.entries:i')
                                     tr
                                         td
-                                            search-combobox(data="{{ products }}" selected="{{ .product }}")
+                                            dropdown(data="{{ products }}" selected="{{ .product }}")
                                         td
                                             input-field(value="{{ .amount }}" placeholder="amount of product")
-                                                search-combobox(data="{{ units }}" selected="{{ .unit }}")
+                                                dropdown(data="{{ units }}" selected="{{ .unit }}")
                                         td
-                                            btn(on-buttonclick="deleteOrder" value="entries: {{ i }}"): icon-remove
+                                            btn(on-buttonclick="deleteOrder" value="entries: {{ i }}") #[i.remove.icon]
+                                            
 
                         //- use `addNewEntry` method to add a new default entry to `entries`:
                         btn(on-buttonclick="addNewEntry" value="entries")
-                            icon-plus
+                            i.plus.icon
                             span Add new entry
 
-                        hr
+                    .ui.segment 
+                        //- use an ack-button to save your document
+                        ack-button.green(on-buttonclick="save" value="{{ curr }}") Save
 
                         //- use `newOrderClose` method to close the row
-                        btn(on-buttonclick="newOrderClose") Kapat!
-
-                        //- use an ack-button to save your document
-                        ack-button(on-buttonclick="save" value="{{ curr }}") Save
-                        
+                        btn.inverted.red(on-buttonclick="newOrderClose") #[i.remove.icon] Kapat!
+                    

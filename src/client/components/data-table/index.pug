@@ -39,8 +39,13 @@
                     | Filtered Content 
                 p.
                     You are seeing a filtered content. 
-                    #[btn.blue(on-buttonclick="setFilter" value="all") #[i.remove.icon] Clear Filter]
+                    #[btn.blue.mini(on-buttonclick="setFilter" value="all") #[i.remove.icon] Clear Filter]
                     
+        +if('addingNew')
+            h3.ui.attached.header #[i.edit.icon] New Document 
+            .ui.segment
+                | {{> editForm }}
+
         .ui.segment
             r-table
                 r-head
