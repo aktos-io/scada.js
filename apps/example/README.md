@@ -17,6 +17,8 @@ else
 
 ### Windows
 
+* Navigate to `/path/to/scada.js`
+
 * Open `git BASH`
     * `gulp --project=example --app=showcase`
 
