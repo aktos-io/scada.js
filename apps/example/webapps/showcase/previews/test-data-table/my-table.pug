@@ -21,122 +21,24 @@
     
     h3.ui.block.big.attached.header Example
     .ui.attached.segment
-        data-table(
-            settings="{{ myTable.settings }}"
-            db="{{ db }}"
-            lastchange="{{ changes }}"
-            curr-url="{{ currPage }}"
-            enabled="{{ true }}"
+        checkbox(checked="{{ button.show }}") Show/hide Bound component 1
 
-            products="{{combobox.products}}"
-            units="{{combobox.units}}"
-            )
-            //- -------------------------------------------------------------------------
-            //- ------------------------- HEADER -------------------------------------
-            //- -------------------------------------------------------------------------
-            +partial('header')
-                .ui.segments
-                    h3.ui.top.attached.block.header This partial goes to header!
-                    .ui.attached.segment
-                        btn.blue(on-buttonclick="setFilter" value="all") Show all
-                        btn.pink(on-buttonclick="setFilter" value="pink") Show only pinks
-                        
-                    .ui.attached.segment 
-                        btn(on-buttonclick="addNewOrder")
-                            i.plus.icon
-                            | Add new document 
-                                    
-                        ack-button.olive(on-buttonclick="kickChanges") Yenile
+        +if('button.show')
+            data-table(
+                settings="{{ myTable.settings }}"
+                db="{{ db }}"
+                lastchange="{{ changes }}"
+                curr-url="{{ currPage }}"
+                enabled="{{ true }}"
 
-            //- -------------------------------------------------------------------------
-            //- ------------------------- VIEW FORM -------------------------------------
-            //- -------------------------------------------------------------------------
-            +partial('viewForm')
-                h3 This is viewForm!
-                p Any html design here is shown when you doubleclick a row.
+                products="{{combobox.products}}"
+                units="{{combobox.units}}"
+                )
+                +partial('header')
+                    include ./header.pug
 
-                p Our document looks like as follows:
-                
-                table.ui.very.basic.collapsing.celled.table 
-                    tr
-                        td Document Type 
-                        td  {{ curr.type }} 
-                    tr
-                        td Document Name 
-                        td  {{ curr.name }} 
+                +partial('viewForm')
+                    include ./view-form.pug
 
-                    tr 
-                        td Timestamp 
-                        td {{ curr.timestamp }}
-                    tr 
-                        td Timestamp (human readable)
-                        td {{ unixToReadable(curr.timestamp) }}
-
-
-                h3 Entries:
-
-                r-table
-                    thead
-                        tr
-                            th Product
-                            th Amount
-                    tbody
-                        +each('curr.entries')
-                            tr
-                                td {{ .product }}
-                                td {{ .amount }}
-
-            //- -------------------------------------------------------------------------
-            //- ------------------------- EDIT FORM -------------------------------------
-            //- -------------------------------------------------------------------------
-            +partial('editForm')
-                .ui.segments 
-                    h3.ui.top.attached.block.header Edit Form 
-                    .ui.attached.segment 
-                        .ui.form
-                            .fields 
-                                .field 
-                                    .label Set your document type 
-                                    .ui.input 
-                                        input(value="{{ curr.type }}" placeholder="document type")
-                                .field 
-                                    .label Set your document name 
-                                    .ui.input 
-                                        input(value="{{ curr.name }}" placeholder="name")
-                    .ui.segment
-                        p this is a button that simulates triggering an info popup 
-                        ack-button.green(on-buttonclick="info" value="heyy") Simulate throwing a message
-                        
-                    
-                    h3.ui.attached.block.header Entries 
-                    .ui.segment
-                        r-table
-                            thead
-                                tr
-                                    th Product
-                                    th Amount
-                                    th Delete
-                            tbody
-                                +each('curr.entries:i')
-                                    tr
-                                        td
-                                            dropdown(data="{{ products }}" selected="{{ .product }}")
-                                        td
-                                            input-field(value="{{ .amount }}" placeholder="amount of product")
-                                                dropdown(data="{{ units }}" selected="{{ .unit }}")
-                                        td
-                                            btn(on-buttonclick="deleteOrder" value="entries: {{ i }}") #[i.remove.icon]
-                                            
-
-                        //- use `addNewEntry` method to add a new default entry to `entries`:
-                        btn(on-buttonclick="addNewEntry" value="entries")
-                            i.plus.icon
-                            span Add new entry
-
-                    .ui.segment 
-                        //- use an ack-button to save your document
-                        ack-button.green(on-buttonclick="save" value="{{ curr }}") Save
-
-                        //- use `newOrderClose` method to close the row
-                        btn.inverted.red(on-buttonclick="newOrderClose") #[i.remove.icon] Kapat!
-                    
+                +partial('editForm')
+                    include ./edit-form.pug

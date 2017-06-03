@@ -13,15 +13,7 @@ router(curr="{{ currentPage }}")
 
 .ui.vertical.inverted.inline.left.pushable.sidebar.menu
     +each('menu')
-        +unless('.submenu')
-            a.item(
-                href="{{.url}}"
-                class="{{#if currentPage === .url }}active{{/if}}"
-                )
-                | {{ .title }}
-                +if('.icon')
-                    i.icon(class="{{.icon}}")
-        +if('.submenu')
+        +iff('.submenu')
             .item
                 .header {{.title}}
                 .menu
@@ -33,19 +25,33 @@ router(curr="{{ currentPage }}")
                             | {{ .title }}
                             +if('.icon')
                                 i.icon(class="{{.icon}}")
+        +else
+            a.item(
+                href="{{.url}}"
+                class="{{#if currentPage === .url }}active{{/if}}"
+                )
+                | {{ .title }}
+                +if('.icon')
+                    i.icon(class="{{.icon}}")
+        +endif
 
-logger(curr="{{ currentPage }}")
+
 .ui.bottom.attached.segment.pusher
+    logger(curr="{{ currentPage }}")
+    
     .ui.hidden.divider
     .ui.container
         include ./previews/dropdown.pug
         include ./previews/dropdown-panel.pug
-        include ./previews/input-field.pug
+        include ./previews/input-field.pug    
+        
+        //- FIXME: ack-button.pug causes glitching on show/hide     
         include ./previews/ack-button.pug
+        
+        include ./previews/csv-importer.pug
         include ./previews/text-button.pug
         include ./previews/r-table.pug
         include ./previews/formal-field.pug
-        include ./previews/csv-importer.pug
         include ./previews/file-read.pug
         include ./previews/print-button.pug
         include ./previews/checkbox.pug

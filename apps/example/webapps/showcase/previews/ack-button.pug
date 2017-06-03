@@ -2,7 +2,7 @@
     h3.ui.top.attached.block.header ack-button #[a(href="#ack-button") #[i.linkify.icon]]
     .ui.attached.segment
         pre ack-button(on-buttonclick="testAckButton1" value="\{{ button.boundVal }}") MY BUTTON
-    
+
     h3.ui.block.big.attached.header Examples
     .ui.attached.segment
         h3.header Buttons has icons representing their states 
@@ -10,9 +10,9 @@
         ack-button.green(state="doing") Button Text
         ack-button.green(state="done") Button Text
         ack-button.green(state="error") Button Text
-    
+
     .ui.attached.segment
-        h3.header Show/hide test
+    h3.header Show/hide test
         checkbox(checked="{{ button.show }}") Show/hide Bound component 1
 
         +if('button.show')
