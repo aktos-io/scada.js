@@ -1,7 +1,3 @@
-.ui.floating.dropdown.right.labeled.search.icon.button(class="{{#if fitWidth}}fluid{{/if}}")
-    i.dropdown.icon
-    span.text {{ placeholder }}
-    .menu
-        .scrolling.menu
-            +each('data')
-                .item(data-value="{{.id}}") {{.name}}
+select.ui.search.dropdown(class="{{#if fitWidth}}fluid{{/if}}")
+    +each('data')
+        option(value="{{.id}}") {{.name}}

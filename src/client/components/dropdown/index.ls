@@ -14,7 +14,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                 __.set \selected, value
 
         @observe \selected, (_new) ->
-            unless _new is undefined
+            if _new not in [undefined, null]
                 ui.dropdown 'set selected', _new
 
     data: ->

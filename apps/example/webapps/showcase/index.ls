@@ -71,7 +71,20 @@ ractive = new Ractive do
                   name: \different
                 * id: \ccc
                   name: \list
+            list3:
+                * id: \1
+                  name: \hello3
+                * id: \2
+                  name: \world3
+                * id: \3
+                  name: \heyy3!
+                * id: \4
+                  name: "çalış öğün3"
+                * id: \5
+                  name: "ÇALIŞ ÖĞÜN3"
+
             boundSelected: null
+            boundSelected3: []
 
         combobox-list: ->
             @get \combobox.list2
