@@ -23,11 +23,7 @@ Demo page can be seen here: https://scadajs.surge.sh/showcase.html
 
 # INSTALL
 
-Install [`NodeJs`](https://nodejs.org) and `yarn`
-
-   
-
-Install all dependencies:
+Install [`NodeJs`](https://nodejs.org) and install rest of the dependencies:
 
     git clone https://github.com/aktos-io/scada.js
     cd scada.js
