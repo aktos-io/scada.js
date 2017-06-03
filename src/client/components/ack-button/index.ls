@@ -8,7 +8,6 @@ Ractive.components['ack-button'] = Ractive.extend do
 
     onrender: ->
         __ = @
-        modal-error = $ @find ".ui.basic.modal"
 
         # logger utility is defined here
         logger = @root.find-component \logger
@@ -36,6 +35,10 @@ Ractive.components['ack-button'] = Ractive.extend do
                     <- sleep 3000ms
                     if __.get(\state) is \done
                         __.set \state, ''
+
+                if s in <[ done done... ]>
+                    on-done = @get \onDone
+                    on-done! 
 
                 if s in <[ doing ]>
                     __.set \state, \doing
@@ -82,7 +85,6 @@ Ractive.components['ack-button'] = Ractive.extend do
 
     data: ->
         __ = @
-        angle: 0
         reason: ''
         type: "default"
         value: ""
@@ -92,11 +94,4 @@ Ractive.components['ack-button'] = Ractive.extend do
         self-disabled: no
         enabled: yes
         state: ''
-        info-title: ''
-        info-message: ''
-        confirmation-type: null
-        confirmation-callback: null
-        confirmation-input: null
-        output: void
-        modal-title: ''
-        modal-message: ''
+        on-done: -> console.warn "default ack-button on-done function run"

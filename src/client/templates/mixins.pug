@@ -1,3 +1,18 @@
+mixin iff(condition)
+    != '{{#if ' + condition + '}}'
+    block
+
+mixin elif(condition)
+    != '{{elseif ' + condition + '}}'
+    block
+
+mixin else
+    != '{{else}}'
+    block
+        
+mixin endif
+    != '{{/if}}'
+
 mixin if(condition)
     != '{{#if ' + condition + '}}'
     block

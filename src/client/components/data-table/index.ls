@@ -12,8 +12,6 @@ Ractive.components['data-table'] = Ractive.extend do
         readonly = if @partials.editForm then no else yes
         title-provided = if @partials.addnewTitle then yes else no
         @set \readonly, readonly
-        @set \_titleProvided, title-provided
-        @set \hasAddNewButton, (not readonly and title-provided)
 
     onrender: ->
         __ = @
@@ -21,19 +19,12 @@ Ractive.components['data-table'] = Ractive.extend do
         db = @get \db
         console.error "No database object is passed to data-table!" unless db
 
-        modal-error = $ @find \.modal-error
+        opening-dimmer = $ @find \.table-section-of-data-table
 
-        modal-error.modal do
-            keyboard: yes
-            focus: yes
-            show: no
-
-        modal-new = $ @find \.modal-new
-        modal-new.modal do
-            keyboard: no
-            focus: yes
-            show: no
-            backdrop: \static
+        # logger utility is defined here
+        logger = @root.find-component \logger
+        console.error "No logger component is found!" unless logger
+        # end of logger utility
 
         settings = @get \settings
 
@@ -67,8 +58,11 @@ Ractive.components['data-table'] = Ractive.extend do
             return
 
         try
-            col-list = split ',', settings.col-names
-            @set \columnList, col-list
+            if typeof! settings.col-names is \Array
+                @set \columnList, settings.col-names
+            else
+                col-list = split ',', settings.col-names
+                @set \columnList, col-list
         catch
             console.warn "DATA_TABLE: problem with col-names: ", e
             return
@@ -200,66 +194,74 @@ Ractive.components['data-table'] = Ractive.extend do
             catch
                 console.error e
 
-
         events =
-            clicked: (args) ->
+            clicked: (event, context) ->
                 __ = @
-                context = args.context
                 index = context.id
-                unless (@get \clickedIndex) is index
-                    # trigger only if there is a change
-                    #console.log "ORDER_TABLE: clicked!!!", args, index
-                    tabledata = @get \tabledata
-                    if typeof! tabledata is \Object
-                        for key, value of tabledata
-                            if index is value._id
-                                curr = unpack pack tabledata[key]
+                clicked-index = @get \clickedIndex
+                if clicked-index isnt null
+                    return
+                if clicked-index is index
+                    # do not allow more than one click
+                    return
+
+                tabledata = @get \tabledata
+                if typeof! tabledata is \Object
+                    for key, value of tabledata
+                        if index is value._id
+                            curr = unpack pack tabledata[key]
+                else
+                    curr = try
+                        unpack pack find (._id is index), tabledata
+                    catch
+                        unpack pack context
+
+                if curr
+                    @set \curr, curr
+                else
+                    curr = index
+
+                @set \currView, context
+                @set \openingRow, yes
+                @set \openedRow, no
+                @set \clickedIndex, index
+                @set \lastIndex, index
+
+
+                dom = $ "tr[data-anchor='#{index}']"
+
+                opening-dimmer.dimmer \show
+
+                scroll-to = (anchor) ->
+                    offset = dom.offset!
+                    if offset
+                        <- sleep 200ms
+                        scroll-time = 500ms
+                        $ 'html, body' .animate do
+                            scroll-top: offset.top
+                            , scroll-time
+
                     else
-                        curr = try
-                            unpack pack find (._id is index), tabledata
-                        catch
-                            unpack pack context
-
-                    if curr
-                        @set \curr, curr
-                    else
-                        curr = index
-
-                    @set \currView, context
-                    @set \openingRow, yes
-                    @set \clickedIndex, index
-                    @set \lastIndex, index
+                        console.warn "Couldn't find offset of #{index}?"
+                        debugger
 
 
-                    scroll-to = (anchor) ->
-                        dom = $ "tr[data-anchor='#{index}']"
-                        offset = dom.offset!
-                        if offset
-                            <- sleep 200ms
-                            $ 'html, body' .animate do
-                                scroll-top: offset.top
-                                , 500ms
-                        else
-                            console.warn "Couldn't find offset of #{index}?"
-                            debugger
+                # scroll to index as soon as it is clicked
+                scroll-to index
 
-
-                    # scroll to index as soon as it is clicked
-                    scroll-to index
-
-                    if typeof! settings.on-create-view is \Function
-                        settings.on-create-view.call __, curr, ->
-                            __.set \openingRow, no
-                            __.set \openingRowMsg, ""
-                            scroll-to index
-                    else
+                if typeof! settings.on-create-view is \Function
+                    settings.on-create-view.call __, curr, ->
                         __.set \openingRow, no
+                        __.set \openedRow, yes
                         __.set \openingRowMsg, ""
                         scroll-to index
-
-
-
-
+                        opening-dimmer.dimmer \hide
+                else
+                    __.set \openingRow, no
+                    __.set \openedRow, yes
+                    __.set \openingRowMsg, ""
+                    scroll-to index
+                    opening-dimmer.dimmer \hide
 
             end-editing: ->
                 @set \clickedIndex, null
@@ -271,19 +273,14 @@ Ractive.components['data-table'] = Ractive.extend do
                 editable = @get \editable
                 @set \editable, not editable
 
-            show-modal: ->
-                id = @get \id
-                console.log "My id: ", id
-                $ "\##{id}-modal" .modal \show
-
-            set-filter: (filter-name) ->
+            set-filter: (event, filter-name) ->
                 console.log "DATA_TABLE: filter is set to #{filter-name}"
                 @set \selectedFilter, filter-name if filter-name
                 @set \currPage, 0
                 create-view!
 
 
-            select-page: (page-num) ->
+            select-page: (event, page-num) ->
                 @set \currPage, page-num
                 create-view!
 
@@ -301,7 +298,6 @@ Ractive.components['data-table'] = Ractive.extend do
 
                 @set \curr, new-order
                 @set \addingNew, true
-                modal-new.modal \show
 
                 if typeof! settings.on-create-view is \Function
                     settings.on-create-view.call this, new-order, ->
@@ -311,15 +307,15 @@ Ractive.components['data-table'] = Ractive.extend do
                 #console.log "ORDER_TABLE: Closing edit form..."
                 @set \addingNew, false
                 @fire \endEditing
+                opening-dimmer.dimmer \hide
 
-            save: (e) ->
+            save: (event, e) ->
                 __ = @
                 order-doc = @get \curr
 
                 button-state = (state, msg) ->
                     e.component.fire \state, state, msg if e
 
-                __.set \saving, "Kaydediyor..."
                 button-state \doing
 
                 console.log "Saving new order document: ", order-doc
@@ -330,7 +326,6 @@ Ractive.components['data-table'] = Ractive.extend do
                 err, res <- db.save order-doc
                 if err
                     console.log "Error putting new order: ", err
-                    __.set \saving, "#{__.get \saving} : #{err.message}"
                     button-state \error, err.message
                 else
                     (__.get \create-view) order-doc
@@ -341,7 +336,7 @@ Ractive.components['data-table'] = Ractive.extend do
                     # TODO: use "kick-changes! function"
                     __.add \changes
 
-            add-new-entry: (keypath) ->
+            add-new-entry: (event, keypath) ->
                 __ = @
                 editing-doc = __.get \curr
                 try
@@ -361,14 +356,14 @@ Ractive.components['data-table'] = Ractive.extend do
                 __.set \curr, editing-doc
 
 
-            delete-order: (index-str) ->
+            delete-order: (event, index-str) ->
                 [key, index] = split ':' index-str
                 index = parse-int index
                 editing-doc = @get \curr
                 editing-doc[key].splice index, 1
                 @set \curr, editing-doc
 
-            delete-document: (e) ->
+            delete-document: (event, e) ->
                 __ = @
                 e.component.fire \state, \doing
                 curr = @get \curr
@@ -381,17 +376,32 @@ Ractive.components['data-table'] = Ractive.extend do
                 __.set \tabledata, tabledata
                 (__.get \create-view)!
 
-            show-error: (err-message) ->
-                type = modal-error.TYPE_DANGER
-                @set \errorMessage, err-message
-                modal-error.modal \show
+            show-error: (event, msg, callback) ->
+                msg = {message: msg} unless msg.message
+                msg = msg `merge` {
+                    title: msg.title or 'data-table error'
+                    icon: "error circle"
+                }
+                action <- logger.fire \showDimmed, msg, {-closable}
+                #console.log "info has been processed by ack-button, action is: #{action}"
+                callback action if typeof! callback is \Function
 
-            kick-changes: (ev) ->
+            kick-changes: (event, ev) ->
                 console.log "kicking changes..."
                 ev.component.fire \state, \doing
                 @add \changes
                 @observe-once \createViewCounter, ->
                     ev.component.fire \state, \done...
+
+            info: (event, msg, callback) ->
+                msg = {message: msg} unless msg.message
+                msg = msg `merge` {
+                    title: msg.title or 'data-table info'
+                    icon: "info circle"
+                }
+                action <- logger.fire \showDimmed, msg, {-closable}
+                #console.log "info has been processed by ack-button, action is: #{action}"
+                callback action if typeof! callback is \Function
 
 
 
@@ -399,12 +409,11 @@ Ractive.components['data-table'] = Ractive.extend do
         # modify "save" handler
         _save = events.save
         events.save = (...args) ->
-            e = args.0
+            e = args.1
             _save.apply __, args
             e.component.set \onDone, ->
                 if __.get \addingNew
                     #e.component.
-                    modal-new.modal \hide
                     __.set \addingNew, false
 
         @on events
@@ -446,12 +455,30 @@ Ractive.components['data-table'] = Ractive.extend do
             clicked-index = @get \clickedIndex
             editable and (index is clicked-index)
 
-        is-clicked: (index) ->
+        is-viewing-row: (index) ->
             clicked-index = @get \clickedIndex
-            index is clicked-index
+            opened = @get \openedRow
+            index is clicked-index and opened
+
+        is-opening-now: (row-index) ->
+            opening = @get \openingRow
+            opened = @get \openedRow
+            clicked-index = @get \clickedIndex
+
+            if clicked-index is row-index and opening and not opened
+                yes
+            else
+                no
 
         is-last-clicked: (index) ->
             x = index is @get \lastIndex
+
+        is-disabled: (index) ->
+            clicked-index = @get \clickedIndex
+            if clicked-index isnt null and clicked-index isnt index
+                yes
+            else
+                no
 
         run-handler: (params) ->
             handlers = __.get \settings.handlers

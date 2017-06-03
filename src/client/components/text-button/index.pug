@@ -1,10 +1,14 @@
-.ui.action.input 
-    input(value="{{ amount }}" type="{{ inputType }}" placeholder="{{placeholder}}")
-    ack-button(
-        class="right {{class}}"
-        type="{{buttonType}}"
-        on-buttonclick="_buttonclick"
-        value="{{ value }}"
-        disabled="{{ disabled }}"
-        enabled="{{ enabled }}"
-    ) {{yield}} 
+.ui.form
+    .fields 
+        .field
+            .ui.input
+                input(value="{{ amount }}" type="{{ inputType }}" placeholder="{{placeholder}}")
+        .field
+            ack-button(
+                class="right {{class}}"
+                type="{{buttonType}}"
+                on-buttonclick="_buttonclick"
+                value="{{ value }}"
+                disabled="{{ disabled }}"
+                enabled="{{ enabled }}"
+            ) {{yield}} 

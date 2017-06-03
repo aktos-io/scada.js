@@ -1,3 +1,5 @@
+require! moment
+
 export unix-to-readable = (unix) ->
     display = moment (new Date unix) .format "DD.MM.YYYY HH:mm"
     if display.match /date/ig

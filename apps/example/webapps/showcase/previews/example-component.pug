@@ -17,27 +17,26 @@
         pre example-component(age="\{{ exampleComponent.age }}" birth="\{{ exampleComponent.birth }}")
         // a checkbox to toggle one component instance ||meets 5||
         checkbox(checked="{{ exampleComponent.show }}") Show/hide Bound component 1
-        .ui.three.column.grid
-            .row
-                .column
-                    h3 Bound component 1
-                    // a component instance that is created on demand
-                    +if('exampleComponent.show')
-                        example-component(age="{{ exampleComponent.age }}" birth="{{ exampleComponent.birth }}")
-                        // simple ractive variables to be able to observe values ||meets 2||
-                        p birth: {{ exampleComponent.birth }}
-                        p age: {{ exampleComponent.age }}
-                .column
-                    //
-                    h3 Bound component 2
-                    example-component(age="{{ exampleComponent.age }}" birth="{{ exampleComponent.birth1 }}")
+        .ui.stackable.three.column.grid
+            .column
+                h3 Bound component 1
+                // a component instance that is created on demand
+                +if('exampleComponent.show')
+                    example-component(age="{{ exampleComponent.age }}" birth="{{ exampleComponent.birth }}")
+                    // simple ractive variables to be able to observe values ||meets 2||
                     p birth: {{ exampleComponent.birth }}
                     p age: {{ exampleComponent.age }}
+            .column
+                //
+                h3 Bound component 2
+                example-component(age="{{ exampleComponent.age }}" birth="{{ exampleComponent.birth1 }}")
+                p birth: {{ exampleComponent.birth }}
+                p age: {{ exampleComponent.age }}
 
-                .column
-                    // Third instance is to prove it doesn't interfere with other instances ||meets 3||
-                    h3 Unbound (free) instance
-                    example-component(age="{{ exampleComponent.age2 }}" birth="{{ exampleComponent.birth2 }}")
-                    // simple ractive variables to be able to observe values
-                    p birth2: {{ exampleComponent.birth2 }}
-                    p age2: {{ exampleComponent.age2 }}
+            .column
+                // Third instance is to prove it doesn't interfere with other instances ||meets 3||
+                h3 Unbound (free) instance
+                example-component(age="{{ exampleComponent.age2 }}" birth="{{ exampleComponent.birth2 }}")
+                // simple ractive variables to be able to observe values
+                p birth2: {{ exampleComponent.birth2 }}
+                p age2: {{ exampleComponent.age2 }}
