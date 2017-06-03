@@ -33,7 +33,7 @@ Ractive.components['r-table'] = Ractive.extend do
                 $ @find 'tbody' .children \tr .each (i, row) ->
                     $ row .children \td .each (i, col) ->
                         $ col .attr \data-th, col-names[i]
-    complete: ->
+    oncomplete: ->
         /*
         r-table = $ @find \.r-table
         parent-width = r-table.parent().inner-width()

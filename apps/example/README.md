@@ -2,24 +2,38 @@
 
 # Starting Development
 
+1. Build
+2. Open your webapp via a web browser  
+
+## 1. Build
+
 ### Linux
 
-if you follow [aea-way](../../doc/aea-way.md): 
+if you follow [aea-way](../../doc/aea-way.md):
 
    ```bash
    ./ui-dev.service
    ```
-else 
+else, do it manually:
 
-   * run `gulp --project example --app showcase` in `{{scada}}` directory 
-   * run `./run-development` in  `webserver` directory  
-   * Then visit [http://localhost:4001/showcase.html](http://localhost:4001/showcase.html)
+    * `cd {{scada directory}}`
+    * run `gulp --app example --webapp showcase`
+    * run `./run-development` in  `webserver` directory  
 
 ### Windows
 
+* Go to `{{scada.js directory}}`
 * Open `git BASH`
-    * `gulp --project=example --app=showcase`
+    * `gulp --app=example --webapp=showcase`
 
 * Go to `webserver` directory, double-click on `run-development.cmd`
 
-Then visit [http://localhost:4001/showcase.html](http://localhost:4001/showcase.html)
+
+## 2. Open in web browser
+
+Go to: [http://localhost:4001/example/showcase](http://localhost:4001/example/showcase)
+
+
+# Demo
+
+Demo can be seen on: http://scadajs.surge.sh/showcase

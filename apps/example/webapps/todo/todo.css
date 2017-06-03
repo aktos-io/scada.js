@@ -1,8 +1,0 @@
-/* TODO This is not so stable */
-.checklist-item-done button div.pull-left {
-    text-decoration: line-through;
-}
-
-.checklist-item-editing {
-    background-color: lime;
-}

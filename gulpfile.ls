@@ -1,7 +1,7 @@
 argv = require 'yargs' .argv
 
-project = argv.project or \aktos
-app = argv.app or project
+project = argv.app or \example
+app = argv.webapp or project
 console.log "------------------------------------------"
 console.log "App\t: #{project}"
 console.log "Webapp\t: #{app}"
@@ -144,10 +144,12 @@ gulp.task \default, ->
     watch for-preparserify-workaround, ->
         gulp.start \preparserify-workaround
 
+
 # Copy js and html files as is
-gulp.task \copy-js, ->
-    gulp.src "#{paths.client-src}/**/*.js", {base: paths.client-src}
-        .pipe gulp.dest paths.client-public
+#gulp.task \copy-js, ->
+#    gulp.src "#{paths.client-src}/**/*.js", {base: paths.client-src}
+#        .pipe gulp.dest paths.client-public
+
 
 gulp.task \html, ->
     gulp.src html-entry-files
@@ -200,7 +202,7 @@ function bundle
             console.log "------------------------------------------"
             first-browserify-done := yes
 
-gulp.task \browserify, -> run-sequence \copy-js, ->
+gulp.task \browserify, ->
     bundle!
 
 
@@ -227,7 +229,7 @@ gulp.task \vendor-css, ->
 
 # Copy assets into the public directory as is
 gulp.task \assets, ->
-    gulp.src "#{paths.client-src}/assets/**/*", {base: "#{paths.client-src}/assets"}
+    gulp.src "#{paths.client-src}/assets/**", {base: "#{paths.client-src}/assets"}
         .pipe gulp.dest paths.client-public
 
 # Compile pug files in paths.client-src to the paths.client-tmp folder

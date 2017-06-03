@@ -1,7 +1,7 @@
 #!/bin/bash
 
 rsync -av  ~/src-3rd/Semantic-UI/dist .
-rsync -av --remove-source-files dist/themes ../../src/client/assets/css/
+rsync -av --remove-source-files dist/themes ../../src/client/assets/
 
 echo "removing uncompressed javascript and css files..."
 IFS=$'\n'
