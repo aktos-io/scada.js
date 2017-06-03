@@ -1,12 +1,12 @@
 require! 'prelude-ls': {group-by, sort-by}
 require! components
 require! 'aea': {sleep, unix-to-readable}
-require! './simulate-db': {db}
+require! './deps/simulate-db': {db}
 require! './previews/test-data-table/my-table': {my-table}
 
 ractive = new Ractive do
     el: \body
-    template: RACTIVE_PREPARSE('layout.pug')
+    template: RACTIVE_PREPARSE('app.pug')
     data:
         db: db
         my-table: my-table

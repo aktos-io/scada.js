@@ -3,8 +3,8 @@ argv = require 'yargs' .argv
 project = argv.project or \aktos
 app = argv.app or project
 console.log "------------------------------------------"
-console.log "Project\t: #{project}"
-console.log "App\t: #{app}"
+console.log "App\t: #{project}"
+console.log "Webapp\t: #{app}"
 console.log "------------------------------------------"
 
 require! <[ watchify gulp browserify glob path fs globby touch ]>
@@ -18,7 +18,8 @@ require! 'gulp-concat': cat
 require! 'gulp-uglify': uglify
 require! './src/lib/aea': {sleep, pack}
 require! './src/lib/aea/ractive-preparserify': {
-    ractive-preparserify, preparserify-dep-list
+    ractive-preparserify
+    preparserify-dep-list
 }
 require! './src/lib/aea/browserify-optimize-js'
 require! 'gulp-flatten': flatten
@@ -36,16 +37,16 @@ require! 'gulp-rename': rename
 notification-enabled = yes
 
 # Project Folder Structure
+paths =
+    vendor-folder: "#{__dirname}/vendor"
+    build-folder: "#{__dirname}/build"
+    client-src: "#{__dirname}/src/client"
+    lib-src: "#{__dirname}/src/lib"
+    client-webapps: "#{__dirname}/apps/#{project}/webapps"
 
-paths = {}
-paths.vendor-folder = "#{__dirname}/vendor"
-paths.build-folder = "#{__dirname}/build"
-paths.client-public = "#{paths.build-folder}/public"
-paths.client-src = "#{__dirname}/src/client"
-paths.client-apps = "#{paths.client-public}"
-paths.client-webapps = "#{__dirname}/apps/#{project}/webapps"
-paths.lib-src = "#{__dirname}/src/lib"
+paths.client-public = "#{paths.build-folder}/#{project}/#{app}"
 paths.components-src = "#{paths.client-src}/components"
+
 
 
 notifier.notify {title: "ScadaJS" message: "Project #{project}:#{app} started!"}
@@ -82,8 +83,8 @@ deleteFolderRecursive = (path) ->
 only-compile = yes if argv.compile is true
 
 pug-entry-files = glob.sync "#{paths.client-webapps}/**/#{app}/index.pug"
-ls-entry-files = glob.sync "#{paths.client-webapps}/**/#{app}/index.{ls,js}"
 html-entry-files = glob.sync "#{paths.client-webapps}/#{app}/index.html"
+ls-entry-files = glob.sync "#{paths.client-webapps}/**/#{app}/app.{ls,js}"
 
 for-css =
     "#{paths.vendor-folder}/**/*.css"
@@ -146,11 +147,11 @@ gulp.task \default, ->
 # Copy js and html files as is
 gulp.task \copy-js, ->
     gulp.src "#{paths.client-src}/**/*.js", {base: paths.client-src}
-        .pipe gulp.dest paths.client-apps
+        .pipe gulp.dest paths.client-public
 
 gulp.task \html, ->
     gulp.src html-entry-files
-        .pipe rename basename: app
+        #.pipe rename basename: app
         .pipe flatten!
         .pipe gulp.dest paths.client-public
 
@@ -186,13 +187,13 @@ function bundle
                 err
             on-error \browserify, msg
             @emit \end
-        .pipe source "public/#{app}.js"
+        .pipe source "#{project}/#{app}/app.js"
         .pipe buffer!
         #.pipe sourcemaps.init {+load-maps, +large-files}
         .pipe if-else only-compile, uglify
-        .pipe rename basename: app
+        #.pipe rename basename: 'app'
         #.pipe sourcemaps.write '.'
-        .pipe gulp.dest './build'
+        .pipe gulp.dest paths.build-folder
         .pipe tap (file) ->
             log-info \browserify, "Browserify finished (#{project}:#{app})"
             #console.log "browserify cache: ", pack keys browserify-cache
@@ -216,13 +217,13 @@ gulp.task \vendor, ->
             file.contents = new Buffer optimized
 
             cb null, file
-        .pipe gulp.dest "#{paths.client-apps}/js"
+        .pipe gulp.dest "#{paths.client-public}/js"
 
 # Concatenate vendor css files into public/css/vendor.css
 gulp.task \vendor-css, ->
     gulp.src for-css
         .pipe cat "vendor.css"
-        .pipe gulp.dest "#{paths.client-apps}/css"
+        .pipe gulp.dest "#{paths.client-public}/css"
 
 # Copy assets into the public directory as is
 gulp.task \assets, ->
@@ -241,7 +242,7 @@ gulp.task \pug ->
         .on \error, (err) ->
             on-error \pug, err
             @emit \end
-        .pipe rename basename: app
+        #.pipe rename basename: app
         .pipe flatten!
         .pipe gulp.dest paths.client-public
 

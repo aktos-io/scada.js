@@ -14,7 +14,7 @@ html(lang="en-GB")
         link(rel="icon" href="favicon.ico")
         link(rel="icon" sizes="192x192" href="favicon.ico")
         block title
-            title My Example Page
+            title ScadaJS #{app}
         block head
         script if (typeof module === 'object') {window.module = module; module = undefined;}
         script(src="js/vendor.js")
@@ -25,3 +25,4 @@ html(lang="en-GB")
             #main-output.
                 Loading...
         block script
+            script(src='app.js')
