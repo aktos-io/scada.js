@@ -1,9 +1,5 @@
 # Example Project
 
-## Demo 
-
-Showcase can be seen on surge.sh: https://scadajs.surge.sh/showcase.html
-
 ## Development
 
 ### Linux
@@ -27,3 +23,8 @@ else
 * Go to `webserver` directory, double-click on `run-development.cmd`
 
 Then visit [http://localhost:4001/showcase.html](http://localhost:4001/showcase.html)
+
+## Demo 
+
+Live demo is here: https://scadajs.surge.sh/showcase.html
+
