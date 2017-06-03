@@ -91,7 +91,7 @@
             //- -------------------------------------------------------------------------
             +partial('editForm')
                 .ui.segments 
-                    h3.ui.top.attached.header Edit Form 
+                    h3.ui.top.attached.block.header Edit Form 
                     .ui.attached.segment 
                         .ui.form
                             .fields 
@@ -103,10 +103,12 @@
                                     .label Set your document name 
                                     .ui.input 
                                         input(value="{{ curr.name }}" placeholder="name")
-                    .ui.segment 
+                    .ui.segment
+                        p this is a button that simulates triggering an info popup 
                         ack-button.green(on-buttonclick="info" value="heyy") Simulate throwing a message
+                        
                     
-                    h3.ui.attached.header Entries 
+                    h3.ui.attached.block.header Entries 
                     .ui.segment
                         r-table
                             thead
