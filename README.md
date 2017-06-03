@@ -23,12 +23,16 @@ Demo page can be seen here: https://scadajs.surge.sh/showcase.html
 
 # INSTALL
 
+Install [`NodeJs`](https://nodejs.org) and `yarn`
+
+   
+
 Install all dependencies:
 
     git clone https://github.com/aktos-io/scada.js
     cd scada.js
-    yarn || npm install    
-    npm install -g gulp livescript@1.4.0
+    npm install -g gulp yarn livescript@1.4.0
+    yarn 
     
 ...and optionally [follow the aea-way](doc/aea-way.md).
 
