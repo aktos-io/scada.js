@@ -7,13 +7,13 @@ Ractive.components['todo'] = Ractive.extend do
 
     onrender: ->
         @on do
-            startEditing: (ev, id)->
+            startEditing: (event, ev, id)->
                 orig = find (.id is id), @get \checklist
                 @set \editingItem, id
                 @set \editingContent, orig.content
                 @set \newDueTimestamp, orig.due-timestamp
 
-            addNewItem: (ev, value) ->
+            addNewItem: (event, ev, value) ->
                 # TODO: fire external handler for async handling of saving data
                 checklist = @get \checklist
 
@@ -37,7 +37,7 @@ Ractive.components['todo'] = Ractive.extend do
                     timestamp: Date.now()
                 @set \log, log
 
-            saveChanges: (ev, orig) ->
+            saveChanges: (event, ev, orig) ->
                 _new =
                     content: @get \editingContent
                     due-timestamp: @get \newDueTimestamp
@@ -61,7 +61,7 @@ Ractive.components['todo'] = Ractive.extend do
             cancelEdit: (ev) ->
                 @set \editingItem, -1
 
-            statechanged: (ev, curr-state, intended-state, item-id) ->
+            statechanged: (event, ev, curr-state, intended-state, item-id) ->
                 # add new action to the log
                 item = find (.id is item-id), @get \checklist
                 item.is-done = intended-state is \checked
@@ -93,4 +93,4 @@ Ractive.components['todo'] = Ractive.extend do
         doneItemsLength: ->
             items = @get \checklist
             doneItems = filter (.isDone), items
-            doneItems.length 
+            doneItems.length

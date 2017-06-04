@@ -1,33 +1,28 @@
-panel(title="{{ yield }}")
-    p
+.ui.segment
+    .ui.input 
         input(value="{{ newContent }}" placeholder="content...")
-        ack-button(on-buttonclick="addNewItem" value="{{ newContent }}") Add New Item
+    ack-button(on-buttonclick="addNewItem" value="{{ newContent }}") Add New Item
     p
         checkbox(checked="{{ isEditable }}") Editable
 
     p {{ doneItemsLength }} out of {{ itemsLength }} items done.
 
-    //-
-        .panel.panel-danger
-            .panel-heading Debug
-            .panel-body
-                p editing item: {{ editingItem }}
-
-
-    ul.list-group
+    .ui.middle.aligned.divided.list
         +each('checklist')
-            li.list-group-item(class="{{#if .isDone}}checklist-item-done{{/if}} {{#if .isEditing}}checklist-item-editing{{/if}}")
-                checkbox(
-                    checked="{{ .isDone }}"
-                    async
-                    on-statechange="statechanged"
-                    value="{{ .id }}"
-                    )
-                    | {{#if isEditing(.id) && isEditable }}
-                    input(value="{{ editingContent }}")
-                    | {{else}}
-                    | {{ .content }} ({{ unixToReadable(.dueTimestamp)}})
-                    | {{/if}}
+            .item(class="{{#if .isDone}}green{{/if}} {{#if .isEditing}}red{{/if}}")
+                .content
+                    checkbox(
+                        checked="{{ .isDone }}"
+                        on-statechange="statechanged"
+                        value="{{ .id }}"
+                        )
+                        +iff('isEditing(.id) && isEditable')
+                            .ui.input 
+                                input(value="{{ editingContent }}")
+                        +else
+                            | {{ .content }} ({{ unixToReadable(.dueTimestamp)}})
+                        +endif
+
                 +if('isEditable')
                     ack-button(
                         on-buttonclick="startEditing"
