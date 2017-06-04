@@ -161,6 +161,14 @@ ractive = new Ractive do
                 max: 180
                 curr: 45
 
+        slider:
+            one:
+                curr: 10
+                max: 250
+            two:
+                curr: 20
+                max: 500
+
 ractive.on do
     'complete': ->
         __ = @

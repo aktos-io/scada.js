@@ -37,6 +37,7 @@
     "mkdirp": "^0.5.1",
     "moment": "^2.18.1",
     "nano": "git+https://github.com/aktos-io/nano.git",
+    "nouislider": "^10.0.0",
     "page": "^1.7.1",
     "prelude-ls": "^1.1.2",
     "ractive": "~0.9.0",
