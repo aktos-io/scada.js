@@ -2,16 +2,16 @@ btn(
     on-buttonclick="toggleChecked"
     tooltip="{{tooltip}}"
     class!="{{#if ! transparent}}basic{{/if}} {{ class }} aea-checkbox"
-    style="{{ style }} {{#if transparent}}background-color: transparent;{{/if}}"
+    style="{{ style }} {{#if transparent}}background-color: transparent;{{/if}} text-align: left; "
     disabled="{{ (disabled || selfDisabled) || !(enabled) }}"
     type="{{type}}"
     )
-    .pull-left.
-        {{#if state === 'checked'}}
-        #[icon.checkmark.box]
-        {{elseif state === 'unchecked'}}
-        #[icon.square.outline]
-        {{elseif state === 'doing'}}
-        #[icon.setting.loading]
-        {{/if}}
-         {{yield}}
+    +iff("state === 'checked'")
+        icon.checkmark.box
+    +elif("state === 'unchecked'")
+        icon.square.outline
+    +elif("state === 'doing'")
+        icon.setting.loading 
+    +endif
+    | {{yield}}
+        

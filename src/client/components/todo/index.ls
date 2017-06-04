@@ -6,14 +6,25 @@ Ractive.components['todo'] = Ractive.extend do
     isolated: yes
 
     onrender: ->
+        # logger utility is defined here
+        logger = @root.find-component \logger
+        console.error "No logger component is found!" unless logger
+        # end of logger utility
+
         @on do
-            startEditing: (event, ev, id)->
+            startEditing: (event, id)->
                 orig = find (.id is id), @get \checklist
                 @set \editingItem, id
                 @set \editingContent, orig.content
                 @set \newDueTimestamp, orig.due-timestamp
 
             addNewItem: (event, ev, value) ->
+                unless value.content
+                    @fire \error, do
+                        title: "Append Error"
+                        message: "Content can not be empty."
+                    return
+
                 # TODO: fire external handler for async handling of saving data
                 checklist = @get \checklist
 
@@ -73,6 +84,19 @@ Ractive.components['todo'] = Ractive.extend do
                     timestamp: Date.now!
                 @set \log, log
                 @update \checklist
+
+            error: (event, msg, callback) ->
+                msg = {message: msg} unless msg.message
+                msg = msg `merge` {
+                    title: msg.title or 'This is my error'
+                    icon: "warning sign"
+                }
+                @set \state, \error
+                @set \reason, msg.message
+                @set \selfDisabled, no
+                action <- logger.fire \showDimmed, msg, {-closable}
+                #console.log "error has been processed by ack-button, action is: #{action}"
+                callback action if typeof! callback is \Function
 
     data: ->
         unix-to-readable: unix-to-readable

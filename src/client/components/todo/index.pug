@@ -5,34 +5,41 @@
 
     .ui.attached.segment
         progress.top.attached.blue(value="{{doneItemsLength}}" max="{{itemsLength}}")
-        .ui.middle.aligned.divided.list
+        .ui.divided.left.aligned.list
             +each('checklist')
-                .item(class="{{#if .isDone}}green{{/if}} {{#if .isEditing}}red{{/if}}")
-                    .content
+                .item
+                    +iff('isEditing(.id) && isEditable')
+                        .ui.form.red
+                            .fields
+                                .field
+                                    .ui.input: input(value="{{ editingContent }}")
+                                .field
+                                    date-picker(unix="{{ newDueTimestamp }}" mode="popup")
+                                .field
+                                    .ui.buttons.right.floated
+                                        ack-button.green(value="{{ . }}" on-buttonclick="saveChanges") Save
+                                        .or
+                                        btn.red(on-buttonclick="cancelEdit") Cancel
+
+                    +else
                         checkbox.transparent(
                             checked="{{ .isDone }}"
                             on-statechange="statechanged"
                             value="{{ .id }}"
+                            inline
                             )
-                            +iff('isEditing(.id) && isEditable')
-                                .ui.input 
-                                    input(value="{{ editingContent }}")
-                            +else
-                                span(class!="{{# .isDone}}todo-item-done {{/}}").
-                                    {{ .content }} ({{ unixToReadable(.dueTimestamp)}})
-                            +endif
+                            span(class!="{{# .isDone}}todo-item-done {{/}}").
+                                {{ .content }} ({{ unixToReadable(.dueTimestamp)}})
 
-                    +if('isEditable')
-                        ack-button(
-                            on-buttonclick="startEditing"
-                            value="{{ .id }}"
-                            disabled="{{ isEditing(.id) }}"
-                            ) Edit
+                        +if('isEditable')
+                            btn.basic.right.floated(
+                                on-buttonclick="startEditing"
+                                value="{{ .id }}"
+                                disabled="{{ isEditing(.id) || .isDone }}"
+                                ) Edit
+                    +endif 
+                    
 
-                        +if('isEditing(.id)')
-                            date-picker(unix="{{ newDueTimestamp }}" mode="popup")
-                            ack-button(value="{{ . }}" on-buttonclick="saveChanges") Save
-                            ack-button(on-buttonclick="cancelEdit") Cancel
     .ui.attached.segment 
         .ui.equal.width.stackable.grid 
             .column
