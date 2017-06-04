@@ -1,0 +1,45 @@
+.ui.vertical.inverted.sidebar.menu.left
+    .item
+        h2.ui.inverted.header 
+            img.ui.mini.image(src="scadajs.png")
+            .content ScadaJS 
+
+    .menu 
+        +each('menu')
+            +iff('.submenu')
+                .item
+                    .header {{.title}}
+                    .menu
+                        +each('.submenu')
+                            a.item(
+                                href="{{.url}}"
+                                class="{{#if currentPage === .url }}active{{/if}}"
+                                )
+                                | {{ .title }}
+                                +if('.icon')
+                                    i.icon(class="{{.icon}}")
+            +else
+                a.item(
+                    href="{{.url}}"
+                    class="{{#if currentPage === .url }}active{{/if}}"
+                    )
+                    | {{ .title }}
+                    +if('.icon')
+                        i.icon(class="{{.icon}}")
+            +endif
+
+
+.ui.fixed.inverted.main.menu
+    .ui.container 
+        a.launch.icon.item(onclick="$('.ui.sidebar').sidebar('toggle')")
+            i.content.icon 
+            
+        .item Page: {{currentPage}}
+        
+        .right.menu
+            .vertically.fitted.borderless.item
+                a.gh-btn(href="https://github.com/aktos-io/scada.js" data-icon="octicon-star" aria-label="Star aktos-io/scada.js on GitHub") Star
+
+            .item
+                i.icon.user
+                span John DOE
