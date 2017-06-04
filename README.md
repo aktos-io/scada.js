@@ -19,7 +19,7 @@
 
 # DEMO
 
-Demo page can be seen here: https://scadajs.surge.sh/showcase.html
+Demo page can be seen here: https://scadajs.surge.sh/showcase
 
 # INSTALL
 
