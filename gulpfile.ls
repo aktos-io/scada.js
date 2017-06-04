@@ -2,9 +2,14 @@ argv = require 'yargs' .argv
 
 project = argv.app or \example
 app = argv.webapp or project
+only-compile = yes if argv.optimize is true
+
 console.log "------------------------------------------"
 console.log "App\t: #{project}"
 console.log "Webapp\t: #{app}"
+if only-compile
+    console.log "------------------------------------------"
+    console.log " Gulp is running only once for optimization..."
 console.log "------------------------------------------"
 
 require! <[ watchify gulp browserify glob path fs globby touch ]>
@@ -80,7 +85,6 @@ deleteFolderRecursive = (path) ->
                 fs.unlinkSync(curPath)
         fs.rmdirSync(path)
 
-only-compile = yes if argv.compile is true
 
 pug-entry-files = glob.sync "#{paths.client-webapps}/**/#{app}/index.pug"
 html-entry-files = glob.sync "#{paths.client-webapps}/#{app}/index.html"
@@ -116,7 +120,6 @@ gulp.task \default, ->
             \preparserify-workaround
 
     if only-compile
-        console.log "Gulp will compile only once..."
         return
 
     watch pug-entry-files, ->
