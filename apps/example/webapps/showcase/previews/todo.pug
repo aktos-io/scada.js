@@ -1,3 +1,15 @@
++partial('logformat')
+    .ui.relaxed.divided.list
+        +each('todoLog')
+            .item
+                i.large.middle.aligned.edit.icon
+                .content 
+                    a.header {{ unixToReadable(.timestamp) }}
+                    .description.
+                        "{{ .action }}" action taken with id {{ .targetId }} 
+                        on {{ unixToReadable(.timestamp) }}
+
+
 .ui.segments
     h3.ui.top.attached.block.header todo #[a(href="#todo") #[i.linkify.icon]]
     .ui.attached.segment
@@ -8,50 +20,49 @@
         checkbox(checked="{{ todo.show }}") Show/hide todo Bound component1
 
         +if('todo.show')
-            todo(
-                checklist="{{ todo.todos1 }}"
-                log="{{ todos.log1 }}"
-                on-statechange="todostatechanged"
-                on-completion="todocompletion"
-                on-timeout="todotimeout"
-                ) todo Bound component1
-                
+            .ui.equal.width.stackable.grid
+                .column 
+                    todo(
+                        checklist="{{ todo.todos1 }}"
+                        log="{{ todos.log1 }}"
+                        on-statechange="todostatechanged"
+                        on-completion="todocompletion"
+                        on-timeout="todotimeout"
+                        title="todo 1"
+                        )
+
+                .column 
+                    h3.ui.block.header Logs for todo1
+                    | {{>logformat {todoLog: todos.log1}}}
     
     h3.ui.attached.block.header Independent Instances 
     .ui.attached.segment
-        todo(
-            checklist="{{ todo.todos1 }}"
-            log="{{ todos.log1 }}"
-            on-statechange="todostatechanged"
-            on-completion="todocompletion"
-            on-timeout="todotimeout"
-            ) todo Bound component2
+        .ui.equal.width.stackable.grid
+            .row
+                .column 
+                    todo(
+                        checklist="{{ todo.todos1 }}"
+                        log="{{ todos.log1 }}"
+                        on-statechange="todostatechanged"
+                        on-completion="todocompletion"
+                        on-timeout="todotimeout"
+                        title="todo 1"
+                        )
+                .column
+                    h3.ui.block.header Logs for todo1 
+                    | {{>logformat {todoLog: todos.log1}}}
 
-        todo(
-            checklist="{{ todo.todos2 }}"
-            log="{{ todos.log2 }}"
-            on-statechange="todostatechanged2"
-            on-completion="todocompletion2"
-            on-timeout="todotimeout2"
-            ) todo UnBound (free) instance
-
-
-    +partial('logformat')
-        .ui.relaxed.divided.list
-            +each('todoLog')
-                .item
-                    i.large.middle.aligned.edit.icon
-                    .content 
-                        a.header {{ unixToReadable(.timestamp) }}
-                        .description.
-                            "{{ .action }}" action taken with id {{ .targetId }} 
-                            on {{ unixToReadable(.timestamp) }}
-
-    h3.ui.attached.block.header Logs for todo1 
-    .ui.attached.segment
-        | {{>logformat {todoLog: todos.log1}}}
-
-    h3.ui.attached.block.header Logs for todo2
-    .ui.attached.segment
-        | {{>logformat {todoLog: todos.log2}}}
-                                
+            .row
+                .column 
+                    todo(
+                        checklist="{{ todo.todos2 }}"
+                        log="{{ todos.log2 }}"
+                        on-statechange="todostatechanged2"
+                        on-completion="todocompletion2"
+                        on-timeout="todotimeout2"
+                        title="todo 2"
+                        )
+                .column
+                    h3.ui.block.header Logs for todo2
+                    | {{>logformat {todoLog: todos.log2}}}
+                    

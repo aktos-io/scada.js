@@ -14,7 +14,7 @@
                                 .field
                                     .ui.input: input(value="{{ editingContent }}")
                                 .field
-                                    date-picker(unix="{{ newDueTimestamp }}" mode="popup")
+                                    date-picker(unix="{{ newDueTimestamp }}")
                                 .field
                                     .ui.buttons.right.floated
                                         ack-button.green(value="{{ . }}" on-buttonclick="saveChanges") Save
