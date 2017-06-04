@@ -16,6 +16,3 @@ Ractive.components['dropdown'] = Ractive.extend do
         @observe \selected, (_new) ->
             if _new not in [undefined, null]
                 ui.dropdown 'set selected', _new
-
-    data: ->
-        fitWidth: no
