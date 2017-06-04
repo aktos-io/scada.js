@@ -11,8 +11,8 @@
         ack-button.green(state="done") Button Text
         ack-button.green(state="error") Button Text
 
+    h3.ui.attached.block.header Show/hide test
     .ui.attached.segment
-    h3.header Show/hide test
         checkbox(checked="{{ button.show }}") Show/hide Bound component 1
 
         +if('button.show')
@@ -21,16 +21,16 @@
             ack-button.green(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") My Button
             ack-button.blue.basic(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") My Button
 
+    h3.ui.attached.block.header Action test 
     .ui.attached.segment 
-        h3.header Action test 
         span.
             #[ack-button.teal(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") My Button]
             will send #[.ui.input #[input(value="{{ button.boundVal }}" placeholder="this value")]]
             to here => #[.ui.teal.label {{ button.sendValue }}] after 3 seconds...
         p Button state: {{ button.state1 }}
         
+    h3.ui.attached.block.header Modal Dialogs
     .ui.attached.segment 
-        h3.header Modal Dialogs
         p.
             Buttons can fire modal window upon error with custom error message 
             passed by #[code ... value="my message" ...] attribute
@@ -39,8 +39,8 @@
         ack-button.blue(on-buttonclick="testAckButton3" value="my info value") Test Info
         ack-button.orange(on-buttonclick="testAckButton4" value="my yesno value") Test Yesno
 
+    h3.ui.attached.block.header Large button example
     .ui.segment
-        .ui.header Large button example
         ack-button.blue.fluid(
             on-buttonclick="testAckButton2"
             value="{{ button.infoMessage }}"
