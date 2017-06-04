@@ -20,9 +20,18 @@ html(lang="en-GB")
         script(src="js/vendor.js")
         script if (window.module) module = window.module;
         link(rel="stylesheet", href="css/vendor.css")
-    body.basic.minimal.pushable(ontouchstart)
+    body(ontouchstart)
         block content
-            #main-output.
-                Loading...
+            #main-output 
+                .ui.centered.grid
+                    .row
+                        .column(style="padding-top: 10%")
+                            h2.ui.center.aligned.header 
+                                img.ui.tiny.image(src="scadajs.png")
+                                .content ScadaJS
+
+                .ui.active.big.text.loader#main-output
+                    p Loading Application...
+
         block script
             script(src='app.js')

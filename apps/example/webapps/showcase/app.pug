@@ -1,6 +1,19 @@
 router(curr="{{ currentPage }}")
 
-include ./menu.pug
+.ui.fixed.inverted.main.menu
+    .ui.container 
+        a.launch.icon.item(onclick="$('.ui.sidebar').sidebar('toggle')")
+            i.content.icon 
+            
+        .item Page: {{currentPage}}
+        
+        .right.menu
+            .vertically.fitted.borderless.item
+                a.gh-btn(href="https://github.com/aktos-io/scada.js" data-icon="octicon-star" aria-label="Star aktos-io/scada.js on GitHub") Star
+
+            .item
+                i.icon.user
+                span John DOE
 
 .ui.attached.segment.pusher
     logger(curr="{{ currentPage }}")
@@ -23,3 +36,5 @@ include ./menu.pug
         include ./previews/test-data-table/my-table.pug
         include ./previews/todo.pug
         include ./previews/progress.pug
+
+include ./menu.pug
