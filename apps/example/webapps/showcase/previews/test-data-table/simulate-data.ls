@@ -6,12 +6,18 @@ colors =
     \blue
     \purple
 
+lorem = (arg) -> """
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    Vestibulum ...... #{arg} ..... vitae velit ac lacus consequat
+    posuere at id erat. Pellentesque sit amet rhoncus ipsum, a lacinia ipsum.
+    """
+
 export simulated-data = [{
     _id: "#{..}"
     type: \test
     timestamp: .. * 100
     color: colors[Math.floor(Math.random()*colors.length)]
-    name: "this is #{..} and this line is very log as you can easily understand"
+    name: lorem ..
     } for [1 to 10]]
 
 # Example settings
