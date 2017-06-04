@@ -4,8 +4,11 @@
         progress(value="{{progress.one.curr}}" max="{{progress.one.max}}")
         progress.warning(value="{{progress.one.curr}}" max="{{progress.one.max}}")
         progress.top.attached.blue(value="{{progress.one.curr}}" max="{{progress.one.max}}")
+
+        progress.vertical(value="{{progress.one.curr}}" max="{{progress.one.max}}")
             
         h2.ui.horizontal.divider.header 
             i.wrench.icon 
             | test inputs 
         .ui.input: input(value="{{progress.one.curr}}" type="number")
+        slider(value="{{progress.one.curr}}" max="{{progress.one.max}}")
