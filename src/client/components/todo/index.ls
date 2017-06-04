@@ -22,12 +22,13 @@ Ractive.components['todo'] = Ractive.extend do
 
                 checklist.push do
                     id: new-entry-id
-                    content: value
+                    content: value.content
+                    dueTimestamp: value.dueTimestamp
 
                 @set \checklist, checklist
 
                 # reset input via new-entry
-                ev.component.fire \value, ''
+                @set \newItem, {}
 
                 # add new action to the log
                 log = @get \log
@@ -78,7 +79,7 @@ Ractive.components['todo'] = Ractive.extend do
         title: 'Todo List'
         is-editable: false
         editing-item: -1
-        newContent: ''
+        newItem: {}
         editingContent: ''
         newDueTimestamp: 0
         checklist: {}

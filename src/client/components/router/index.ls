@@ -11,7 +11,7 @@ Ractive.components['router'] = Ractive.extend do
             offset = $ "[href='\##{anchor}']" .offset!
             if offset
                 $ 'html, body' .animate do
-                    scroll-top: offset.top - 5px
+                    scroll-top: offset.top - 75px
                     , 500ms
 
         page '*', (ctx, next) ->

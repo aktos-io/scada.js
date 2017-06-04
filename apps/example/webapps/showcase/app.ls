@@ -64,13 +64,9 @@ ractive = new Ractive do
                   name: "çalış öğün"
                 * id: \5
                   name: "ÇALIŞ ÖĞÜN"
-            list2:
-                * id: \aaa
-                  name: \totally
-                * id: \bbb
-                  name: \different
-                * id: \ccc
-                  name: \list
+            list2: do ->
+                [{id: .., name: ..} for [1 to 1000]]
+
             list3:
                 * id: \1
                   name: \hello3
@@ -141,56 +137,29 @@ ractive = new Ractive do
             log2: []
         unix-to-readable: unix-to-readable
         menu: []
-        menu-links:
-            * title: "Dropdown"
-              url: '/dropdown'
-              icon: 'tags'
-            * title: "İş Planları"
-              url: '/production-jobs'
-              icon: "industry"
-            * title: "Paketleme"
-              url: '/bundling'
-              icon: 'gift'
-            * title: "Sevkiyat"
-              submenu:
-                * title: "dispatch submenu1"
-                  url: '/dispatch/1'
-                * title: "dispatch submenu2"
-                  url: '/dispatch/2'
-                * title: "dispatch submenu3"
-                  url: '/dispatch/3'
-                * title: "dispatch submenu4"
-                  url: '/dispatch/4'
+        menu-links: do ->
+            components =
+                \dropdown
+                \ack-button
+                \checkbox
+                \csv-importer
+                \date-picker
+                \dropdown-panel
+                \example-component
+                \file-read
+                \formal-field
+                \input-field
+                \print-button
+                \r-table
+                \text-button
+                \todo
 
-            * title: "Depo İstek Formu"
-              url: '/raw-material-requests'
-              icon: 'shop'
-            * title: "Satın Alma"
-              url: '/raw-material-purchases'
-              icon: 'shopping bag'
-            * title: "Hammadde Kabul"
-              url: '/raw-material-admission'
-              icon: 'download'
-            * title: "Tanımlamalar"
-              icon: "settings"
-              submenu:
-                * title: "Müşteri Tanımla"
-                  url: '/definitions/client'
-                * title: "Marka Tanımla"
-                  url: '/definitions/brands'
-                * title: "Tedarikçi Tanımla"
-                  url: '/definitions/supplier'
-                * title: "Hammadde Tanımla"
-                  url: '/definitions/raw-material'
-                * title: "Reçete Tanımla"
-                  url: '/definitions/recipe'
-                * title: "Kap Tanımla"
-                  url: '/definitions/container'
-                * title: "Paket Tanımla"
-                  url: '/definitions/packaging'
-                * title: "Çalışan Tanımla"
-                  url: '/definitions/workers'
-                  icon: 'user'
+            [{title: .., url: "\##{..}", icon: \tags} for components]
+
+        progress:
+            one:
+                max: 180
+                curr: 45
 
 ractive.on do
     'complete': ->

@@ -6,8 +6,7 @@
     .input-field.ui.form(class="{{ class }}" style="{{ style }}")
         .fields 
             .field
-                .ui.input
-                    input(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}")
+                .ui.input: input(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}")
             .field
                 | {{ yield }}
 +endif

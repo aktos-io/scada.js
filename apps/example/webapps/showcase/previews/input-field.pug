@@ -35,19 +35,20 @@
     .ui.segment
         .ui.header Test Responsiveness
         .ui.mini.header 4 column grid
-        .ui.stackable.grid
-            .column
-                input-field(value="{{ inputField.value }}" placeholder="hello!")
-                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
-            .column
-                input-field(value="{{ inputField.value }}" placeholder="hello!")
-                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
-            .column
-                input-field(value="{{ inputField.value }}" placeholder="hello!")
-                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
-            .column
-                input-field(value="{{ inputField.value }}" placeholder="hello!")
-                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+        .container 
+            .ui.equal.width.stackable.grid
+                .column
+                    input-field(value="{{ inputField.value }}" placeholder="hello!")
+                        dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+                .column
+                    input-field(value="{{ inputField.value }}" placeholder="hello!")
+                        dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+                .column
+                    input-field(value="{{ inputField.value }}" placeholder="hello!")
+                        dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+                .column
+                    input-field(value="{{ inputField.value }}" placeholder="hello!")
+                        dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
 
         .ui.mini.header 6 column grid
         .ui.stackable.six.column.grid

@@ -5,7 +5,7 @@ btn(
     class="{{ class }} ack-button labeled icon"
     type="{{ type }}"
     disabled="{{ (disabled || selfDisabled) || !(enabled) }}"
-    style="{{ style }}"
+    style="{{ style }} {{#if transparen}}background-color: transparent;{{/if}}"
     )
     | {{#if state === "doing"}}
     i.icon #[.ui.active.mini.inverted.loader]

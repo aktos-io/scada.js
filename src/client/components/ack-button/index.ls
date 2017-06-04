@@ -4,7 +4,8 @@ Ractive.components['ack-button'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     oninit: ->
-        #console.log "guid of this instance is: #{@_guid}"
+        if @get \class .index-of(\transparent)  > -1
+            @set \transparent, yes
 
     onrender: ->
         __ = @
@@ -13,7 +14,6 @@ Ractive.components['ack-button'] = Ractive.extend do
         logger = @root.find-component \logger
         console.error "No logger component is found!" unless logger
         # end of logger utility
-
 
         @observe \tooltip, (new-val) ->
             __.set \reason, new-val
@@ -38,7 +38,7 @@ Ractive.components['ack-button'] = Ractive.extend do
 
                 if s in <[ done done... ]>
                     on-done = @get \onDone
-                    on-done! 
+                    on-done!
 
                 if s in <[ doing ]>
                     __.set \state, \doing
@@ -95,3 +95,4 @@ Ractive.components['ack-button'] = Ractive.extend do
         enabled: yes
         state: ''
         on-done: -> console.warn "default ack-button on-done function run"
+        transparent: no

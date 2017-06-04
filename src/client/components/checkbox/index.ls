@@ -3,12 +3,15 @@ require! 'aea': {pack, merge, sleep}
 Ractive.components['checkbox'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
+    oninit: ->
+        if @get \class .index-of(\transparent)  > -1
+            @set \transparent, yes
+
     onrender: ->
         __ = @
 
         logger = @root.find-component \logger
         console.error "No logger component is found!" unless logger
-
 
         @observe \checked, (_new, _old) ->
             __.set \state, if _new then 'checked' else 'unchecked'
@@ -80,3 +83,4 @@ Ractive.components['checkbox'] = Ractive.extend do
         timestamp: null
         state: null
         prev-state: null
+        transparent: no
