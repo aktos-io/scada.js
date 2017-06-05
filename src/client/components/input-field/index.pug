@@ -1,12 +1,11 @@
 +iff('unit')
-    .input-field.ui.right.labeled.input
+    .input-field.ui.right.labeled.transparent.input
         input(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}")
         .ui.basic.label {{ unit }}
 +else
-    .input-field.ui.form(class="{{ class }}" style="{{ style }}")
-        .fields 
-            .field
-                .ui.input: input(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}")
-            .field
-                | {{ yield }}
+    .input-field(class="{{ class }}" style="{{ style }}")
+        .ui.transparent.input(style="padding: 5px")
+            input(value="{{ value }}" placeholder="{{ placeholder }}" type="{{ type }}")
+        .input-field-inner
+            | {{ yield }}
 +endif

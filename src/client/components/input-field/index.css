@@ -1,0 +1,11 @@
+.input-field {
+    border: 1px solid lightgray;
+    display: inline-table;
+    border-radius: 3px;
+    padding: 1px;
+    background-color: white;
+}
+
+.input-field-inner {
+    display: inline-block
+}
