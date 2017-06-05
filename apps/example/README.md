@@ -1,6 +1,6 @@
 # Example Project
 
-# Starting Development
+## Development
 
 1. Build
 2. Open your webapp via a web browser  
@@ -22,12 +22,12 @@ else, do it manually:
 
 ### Windows
 
-* Go to `{{scada.js directory}}`
+* Navigate to `/path/to/scada.js`
+
 * Open `git BASH`
     * `gulp --app=example --webapp=showcase`
 
 * Go to `webserver` directory, double-click on `run-development.cmd`
-
 
 ## 2. Open in web browser
 
