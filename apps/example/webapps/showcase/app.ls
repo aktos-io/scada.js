@@ -65,7 +65,7 @@ ractive = new Ractive do
                 * id: \5
                   name: "ÇALIŞ ÖĞÜN"
             list2: do ->
-                [{id: .., name: ..} for [1 to 1000]]
+                [{id: .., name: "choice number #{..}"} for [1 to 1000]]
 
             list3:
                 * id: \1
