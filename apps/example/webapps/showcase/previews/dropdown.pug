@@ -9,15 +9,18 @@
                     h3 Bound component2
                     dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" placeholder="my placeholder")
                     p selected: {{combobox.boundSelected}}
-                .column(style="border: 1px dashed black")
+                .column
                     h3 UnBound (free) instance
-                    quote(style="background-color: pink") This instance fits width of its container
+                    .ui.info.message
+                        .header Fluid Mode
+                        p This instance fits width of its container
+                    
                     dropdown(data="{{ combobox.list2 }}" selected="{{ combobox.unboundSelected }}" fit-width)
                     p selected: {{ combobox.unboundSelected }}
 
     .ui.segment
         .ui.stackable.four.column.grid
-            .row.container
+            .row
                 .column
                     dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" placeholder="my placeholder")
                     p selected: {{combobox.boundSelected}}
