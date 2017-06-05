@@ -1,41 +1,51 @@
-panel(title="{{ yield }}")
-    p
-        input(value="{{ newContent }}" placeholder="content...")
-        ack-button(on-buttonclick="addNewItem" value="{{ newContent }}") Add New Item
-    p
-        checkbox(checked="{{ isEditable }}") Editable
+.ui.segments
+    h3.ui.top.attached.block.header(class!="{{#if doneItemsLength === itemsLength}}inverted green{{/if}}")
+        | {{ title || 'My Todo List' }} ({{ doneItemsLength }}/{{ itemsLength }})
+        checkbox.right.floated.transparent(checked="{{ isEditable }}") Edit
 
-    p {{ doneItemsLength }} out of {{ itemsLength }} items done.
+    .ui.attached.segment
+        progress.top.attached.blue(value="{{doneItemsLength}}" max="{{itemsLength}}")
+        .ui.divided.left.aligned.list
+            +each('checklist')
+                .item
+                    +iff('isEditing(.id) && isEditable')
+                        .ui.form.red
+                            .fields
+                                .field
+                                    .ui.input: input(value="{{ editingContent }}")
+                                .field
+                                    date-picker(unix="{{ newDueTimestamp }}")
+                                .field
+                                    .ui.buttons.right.floated
+                                        ack-button.green(value="{{ . }}" on-buttonclick="saveChanges") Save
+                                        .or
+                                        btn.red(on-buttonclick="cancelEdit") Cancel
 
-    //-
-        .panel.panel-danger
-            .panel-heading Debug
-            .panel-body
-                p editing item: {{ editingItem }}
+                    +else
+                        checkbox.transparent(
+                            checked="{{ .isDone }}"
+                            on-statechange="statechanged"
+                            value="{{ .id }}"
+                            inline
+                            )
+                            span(class!="{{# .isDone}}todo-item-done {{/}}").
+                                {{ .content }} ({{ unixToReadable(.dueTimestamp)}})
 
+                        +if('isEditable')
+                            btn.basic.right.floated(
+                                on-buttonclick="startEditing"
+                                value="{{ .id }}"
+                                disabled="{{ isEditing(.id) || .isDone }}"
+                                ) Edit
+                    +endif 
+                    
 
-    ul.list-group
-        +each('checklist')
-            li.list-group-item(class="{{#if .isDone}}checklist-item-done{{/if}} {{#if .isEditing}}checklist-item-editing{{/if}}")
-                checkbox(
-                    checked="{{ .isDone }}"
-                    async
-                    on-statechange="statechanged"
-                    value="{{ .id }}"
-                    )
-                    | {{#if isEditing(.id) && isEditable }}
-                    input(value="{{ editingContent }}")
-                    | {{else}}
-                    | {{ .content }} ({{ unixToReadable(.dueTimestamp)}})
-                    | {{/if}}
-                +if('isEditable')
-                    ack-button(
-                        on-buttonclick="startEditing"
-                        value="{{ .id }}"
-                        disabled="{{ isEditing(.id) }}"
-                        ) Edit
-
-                    +if('isEditing(.id)')
-                        date-picker(unix="{{ newDueTimestamp }}" mode="popup")
-                        ack-button(value="{{ . }}" on-buttonclick="saveChanges") Save
-                        ack-button(on-buttonclick="cancelEdit") Cancel
+    .ui.attached.segment 
+        .ui.equal.width.stackable.grid 
+            .column
+                i.plus.icon
+                .ui.input: input(value="{{ newItem.content }}" placeholder="content...")
+            .column 
+                date-picker(unix="{{ newItem.dueTimestamp }}")
+            .column
+                ack-button(on-buttonclick="addNewItem" value="{{ newItem }}") Add New Item

@@ -10,24 +10,27 @@
         [ ] 7. Change sizes
         [x] 8. Match theme
         [x] 9. This checklist
-panel(type="info" title="date-picker")
-    .content
-        .row
-            .col-md-12
-                pre date-picker(unix="\{{ datepicker.date1 }}")
-            .col-md-12
-                checkbox(checked="{{ datepicker.show }}") Show/hide Bound component 1
-        .row
-            .col-md-4
-                h3 Bound component1
-                +if('datepicker.show')
-                    date-picker(unix="{{ datepicker.date1 }}")
-                    p unix (in ms.): {{ datepicker.date1  }}
-            .col-md-4
-                h3 Bound component2
-                date-picker(unix="{{ datepicker.date1 }}")
-                p unix (in ms.): {{ datepicker.date1  }}
-            .col-md-4
-                h3 Unbound instance
-                date-picker(unix="{{ datepicker.date2 }}")
-                p unix (in ms.): {{ datepicker.date2  }}
+
+.ui.segments
+    h3.ui.top.attached.block.header date-picker #[a(href="#date-picker") #[i.linkify.icon]]
+    .ui.attached.segment
+        pre date-picker(unix="\{{ datePicker.date1 }}")
+    
+    h3.ui.block.big.attached.header Examples
+
+    .ui.attached.segment
+        h3.header Show/hide test
+
+        checkbox(checked="{{ datePicker.show }}") Show/hide Bound component 1
+        +if('datePicker.show')
+            date-picker(unix="{{ datePicker.date1 }}")
+        p date-picker (1): unix (in ms.): {{ datePicker.date1  }}
+
+    .ui.attached.segment
+        h3.header Multiple instances 
+
+        date-picker(unix="{{ datePicker.date1 }}")
+        p date-picker (1): unix (in ms.): {{ datePicker.date1  }}
+
+        date-picker(unix="{{ datePicker.date2 }}")
+        p date-picker (2): unix (in ms.): {{ datePicker.date2  }}

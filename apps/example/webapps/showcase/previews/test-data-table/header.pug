@@ -1,0 +1,12 @@
+.ui.segments
+    h3.ui.top.attached.block.header This partial goes to header!
+    .ui.attached.segment
+        btn.blue(on-buttonclick="setFilter" value="all") Show all
+        btn.pink(on-buttonclick="setFilter" value="pink") Show only pinks
+        
+    .ui.attached.segment 
+        btn(on-buttonclick="addNewOrder")
+            i.plus.icon
+            | Add new document 
+                    
+        ack-button.olive(on-buttonclick="kickChanges") Yenile

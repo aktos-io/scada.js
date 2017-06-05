@@ -1,56 +1,47 @@
-panel(type="info" title="ack-button")
-    .content
-        .row
-            .col-md-12
-                pre ack-button(on-buttonclick="testAckButton1" value="\{{ button.boundVal }}") MY BUTTON
-            .col-md-12
-                checkbox(checked="{{ button.show }}") Show/hide Bound component 1
-        .row
-            .col-md-6
-                h3 Bound component1
-                +if('button.show')
-                    ack-button(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") MY BUTTON 1
-                hr
-                p
-                    span Button will send
-                    input(value="{{ button.boundVal }}" placeholder="this")
-                    span value to here => #[tag {{ button.sendValue }}] after 3 seconds...
-                p Button state: {{ button.state1 }}
-            .col-md-6
-                h3 Bound component2
-                ack-button(on-buttonclick="testAckButton1" value="{{ button.boundVal }}") MY BUTTON 1
-                p Button will send "{{ button.boundVal }}" after click.
-        .row
-            .col-md-12
-                h3 Unbound (free) instance
-                ack-button(state="{{ button.unboundState }}" on-buttonclick="testAckButton2" value="my-test-value") MY BUTTON 2
-                p Button State: {{ button.unboundState }}
-        .row
-            .col-md-12
-                h3 Show some info via button event
-                p
-                    input(value="{{ button.infoMessage }}" placeholder="Info message")
-                    ack-button(on-buttonclick="testAckButton3" value="{{ button.infoMessage }}") MY BUTTON 3
-                p
-                    ack-button(on-buttonclick="testAckButton5") Send info via handler (as string)
-                h3 This is text-button (an ack-button with input)
-                text-button(on-buttonclick="testAckButton3") MY BUTTON 3
+.ui.segments
+    h3.ui.top.attached.block.header ack-button #[a(href="#ack-button") #[i.linkify.icon]]
+    .ui.attached.segment
+        pre ack-button(on-buttonclick="testAckButton1" value="\{{ button.boundVal }}") MY BUTTON
 
+    h3.ui.block.big.attached.header Examples
+    .ui.attached.segment
+        h3.header Buttons has icons representing their states 
+        ack-button.green(state="") Button Text
+        ack-button.green(state="doing") Button Text
+        ack-button.green(state="done") Button Text
+        ack-button.green(state="error") Button Text
 
-        .row
-            .col-md-12
-                h3 Ask yes or no (check also console for return value)
-                input(value="{{ button.askMessage }}" placeholder="ask for something...")
-                ack-button(on-buttonclick="testAckButton4" value="{{ button.askMessage }}" output="{{ button.output }}") MY BUTTON 4
-                p User says: {{ button.output }}
+    h3.ui.attached.block.header Show/hide test
+    .ui.attached.segment
+        checkbox(checked="{{ button.show }}") Show/hide Bound component 1
 
-        .row
-            .col-md-4.col-sm-4
-            .col-md-4.col-sm-4
-                h3 Large button example
-                ack-button(
-                    on-buttonclick="testAckButton2"
-                    value="{{ button.infoMessage }}"
-                    class="btn-lg btn-block btn-signin"
-                    ) Login
-            .col-md-4.col-sm-4
+        +if('button.show')
+            ack-button(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") My Button
+            ack-button.red(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") My Button
+            ack-button.green(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") My Button
+            ack-button.blue.basic(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") My Button
+
+    h3.ui.attached.block.header Action test 
+    .ui.attached.segment 
+        span.
+            #[ack-button.teal(state="{{button.state1}}" on-buttonclick="testAckButton1" value="{{ button.boundVal }}") My Button]
+            will send #[.ui.input #[input(value="{{ button.boundVal }}" placeholder="this value")]]
+            to here => #[.ui.teal.label {{ button.sendValue }}] after 3 seconds...
+        p Button state: {{ button.state1 }}
+        
+    h3.ui.attached.block.header Modal Dialogs
+    .ui.attached.segment 
+        p.
+            Buttons can fire modal window upon error with custom error message 
+            passed by #[code ... value="my message" ...] attribute
+
+        ack-button.red(on-buttonclick="testAckButton2" value="my error value") Test Error
+        ack-button.blue(on-buttonclick="testAckButton3" value="my info value") Test Info
+        ack-button.orange(on-buttonclick="testAckButton4" value="my yesno value") Test Yesno
+
+    h3.ui.attached.block.header Large button example
+    .ui.segment
+        ack-button.blue.fluid(
+            on-buttonclick="testAckButton2"
+            value="{{ button.infoMessage }}"
+            ) Login

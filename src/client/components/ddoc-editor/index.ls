@@ -11,7 +11,7 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
         design-document = (@get \document)
         @set (camelize \design-document), design-document
         @on do
-            listDesignDocuments: (ev) ->
+            listDesignDocuments: (event, ev) ->
                 __ = @
                 ev.component.fire \state, \doing
                 err, res <- db.all {startkey: "_design/", endkey: "_design0", +include_docs}
@@ -19,22 +19,22 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                 __.set \designDocuments, [..key for res]
                 ev.component.fire \state, \done...
 
-            get-design-document: (e, value) ->
-                e.component.fire \state, \doing
+            get-design-document: (event, ev, value) ->
+                ev.component.fire \state, \doing
                 self = this
                 # get the _auth design document
                 console.log "DB is: ", db
                 err, res <- db.get value
-                return e.component.fire \state, \error, err.message if err
+                return ev.component.fire \state, \error, err.message if err
 
                 console.log "Current _auth document: ", res
                 ddoc = res
                 ddoc.livescript = res.src
                 self.set \documentId, ddoc._id
                 self.set (camelize \design-document), ddoc
-                e.component.fire \state, \done...
+                ev.component.fire \state, \done...
 
-            get-all-design-documents: (ev) ->
+            get-all-design-documents: (event, ev) ->
                 __ = @
                 ev.component.fire \state, \doing
                 err, res <- db.all {startkey: "_design/", endkey: "_design0", +include_docs}
@@ -45,7 +45,7 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                 ev.component.fire \state, \done
 
 
-            compileDesignDocument: (e)->
+            compileDesignDocument: (event, e)->
                 console.log "Compiling auth document..."
                 e.component.fire \state, \doing
                 try
@@ -57,7 +57,7 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                     e.component.fire \state, \error, "See Output Textarea"
                 @set \designDocument.javascript, js
 
-            putDesignDocument: (e) ->
+            putDesignDocument: (event, e) ->
                 self = @
                 e.component.fire \state, \doing
 

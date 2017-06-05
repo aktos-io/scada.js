@@ -6,7 +6,7 @@ argv = require 'yargs' .argv
 
 # Select development or production folder to serve
 production-public = "#{__dirname}/../../../__public__"
-development-public = "#{__dirname}/../../../build/public"
+development-public = "#{__dirname}/../../../build"
 
 if argv.target is \production
     console.log "----------------------------------------"

@@ -1,11 +1,14 @@
-.input-group
-    input.form-control(value="{{ amount }}" style="min-width: 50px" type="{{ inputType }}" placeholder="{{placeholder}}")
-    span.input-group-btn
-        ack-button(
-            type="{{buttonType}}"
-            on-buttonclick="_buttonclick"
-            value="{{ value }}"
-            disabled="{{ disabled }}"
-            enabled="{{ enabled }}"
-            )
-            | {{yield}}
+.ui.form
+    .fields 
+        .field
+            .ui.input
+                input(value="{{ amount }}" type="{{ inputType }}" placeholder="{{placeholder}}")
+        .field
+            ack-button(
+                class="right {{class}}"
+                type="{{buttonType}}"
+                on-buttonclick="_buttonclick"
+                value="{{ value }}"
+                disabled="{{ disabled }}"
+                enabled="{{ enabled }}"
+            ) {{yield}} 

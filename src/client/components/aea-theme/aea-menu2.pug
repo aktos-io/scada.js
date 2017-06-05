@@ -1,5 +1,6 @@
 aside.main-sidebar.debug.collapsed
-    button.btn.btn-default.main-sidebar-button(type="button"): i.glyphicon.glyphicon-menu-hamburger
+    button.ui.button.main-sidebar-button
+        i.home.icon
     | &nbsp;
     +if('isMenuOpen')
         | {{ yield }}

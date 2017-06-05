@@ -1,0 +1,50 @@
+.ui.segments 
+    h3.ui.top.attached.block.header Edit Form 
+    .ui.attached.segment 
+        .ui.form
+            .fields 
+                .field 
+                    .label Set your document type 
+                    .ui.input 
+                        input(value="{{ curr.type }}" placeholder="document type")
+                .field 
+                    .label Set your document name 
+                    .ui.input 
+                        input(value="{{ curr.name }}" placeholder="name")
+    .ui.segment
+        p this is a button that simulates triggering an info popup 
+        ack-button.green(on-buttonclick="info" value="heyy") Simulate throwing a message
+        
+    
+    h3.ui.attached.block.header Entries 
+    .ui.segment
+        r-table
+            thead
+                tr
+                    th Product
+                    th Amount
+                    th Delete
+            tbody
+                +each('curr.entries:i')
+                    tr
+                        td
+                            dropdown(data="{{ products }}" selected="{{ .product }}")
+                        td
+                            input-field(value="{{ .amount }}" placeholder="amount of product")
+                                dropdown(data="{{ units }}" selected="{{ .unit }}")
+                        td
+                            btn(on-buttonclick="deleteOrder" value="entries: {{ i }}") #[i.remove.icon]
+                            
+
+        //- use `addNewEntry` method to add a new default entry to `entries`:
+        btn(on-buttonclick="addNewEntry" value="entries")
+            i.plus.icon
+            span Add new entry
+
+    .ui.segment 
+        //- use an ack-button to save your document
+        ack-button.green(on-buttonclick="save" value="{{ curr }}") Save
+
+        //- use `newOrderClose` method to close the row
+        btn.inverted.red(on-buttonclick="newOrderClose") #[i.remove.icon] Kapat!
+    

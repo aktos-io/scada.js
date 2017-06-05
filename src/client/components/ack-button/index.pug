@@ -1,44 +1,20 @@
-.modal.modal-error.fade(tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
-    .modal-dialog(role="document")
-        .modal-content.modal-danger
-            .modal-header
-                h4.modal-title: icon-alert
-
-            .modal-body(style="font-size:1.5rem") {{reason}}
-
-            .modal-footer
-
-.modal.modal-confirmation.fade(tabindex="-1" role="dialog" aria-labelledby="confirmation-modal" aria-hidden="true")
-    .modal-dialog(role="document")
-        .modal-content
-            .modal-header
-                button.close(type="button" data-dismiss="modal" aria-label="Close"): span(aria-hidden="true") &times;
-                h4.modal-title {{infoTitle}}
-
-            .modal-body {{{ infoMessage }}}
-
-            +if('confirmationType !== null')
-                .modal-footer
-                    button.btn.btn-success(type="button" on-click='@this.fire("closeYesNo", true)') Evet
-                    button.btn.btn-danger(type="button" on-click='@this.fire("closeYesNo", false)') Hayır
-
 btn(
     on-buttonclick="click"
     value="{{value}}"
     title="{{reason}}"
-    class="{{ class }} ack-button"
+    class="{{ class }} ack-button labeled icon"
     type="{{ type }}"
     disabled="{{ (disabled || selfDisabled) || !(enabled) }}"
-    style="{{ style }}"
+    style="{{ style }} {{#if transparen}}background-color: transparent;{{/if}}"
     )
     | {{#if state === "doing"}}
-    icon-cog(spin="true")
+    i.icon #[.ui.active.mini.inverted.loader]
     | {{elseif state === "done"}}
-    icon-ok-sign
+    i.icon.checkmark
     | {{elseif state === "error"}}
-    icon-alert
-    | {{elseif state === "normal"}}
-    icon-refresh
+    i.warning.sign.icon
+    | {{elseif state === "normal" || state === ""}}
+    i.icon
     | {{/if}}
-
+    
     | {{yield}}

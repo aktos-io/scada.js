@@ -1,0 +1,8 @@
+.aea-progress {
+    width: auto;
+    margin: 10px;
+}
+.aea-progress > svg {
+    height: 100%;
+    display: inline;
+}

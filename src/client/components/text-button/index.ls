@@ -4,7 +4,7 @@ Ractive.components['text-button'] = Ractive.extend do
     onrender: ->
         __ = @
         @on do
-            _buttonclick: (ev, val) ->
+            _buttonclick: (event, ev, val) ->
                 __.fire \buttonclick, ev, (__.get 'amount'), val
 
     data: ->

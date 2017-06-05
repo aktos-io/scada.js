@@ -1,14 +1,12 @@
-
-.dropdown-body {
+/*
+.dropdown-overlay {
     position: absolute;
-    /*z-index: 999;*/
     background-color: white;
-    overflow: auto;
-    width: 100%;
+    width: auto;
+    height: auto;
     box-shadow: 5px 5px 5px #888888;
-    /*border: 1px solid lightgrey;*/
 }
+*/
 .dropdown-panel {
-    position: relative;
-    z-index: 1041;
+    display: inline-block;
 }

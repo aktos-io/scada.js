@@ -1,0 +1,25 @@
+.ui.segments
+    h3.ui.top.attached.block.header progress #[a(href="#progress") #[i.linkify.icon]]
+    .ui.attached.segment
+        progress.top.attached.orange(value="{{progress.one.curr}}" max="{{progress.one.max}}")
+
+        .ui.equal.width.stackable.grid
+            .column 
+                h3.ui.header Simple progress bars
+                progress.purple(value="{{progress.one.curr}}" max="{{progress.one.max}}")
+                progress.red(value="{{progress.one.curr}}" max="{{progress.one.max}}")
+            .column(style="height: 200px;")
+                h3.ui.header Circular progress bars
+                progress(circular value="{{progress.one.curr}}" max="{{progress.one.max}}")
+
+    .ui.attached.segment 
+        h3.ui.header Vertical progress bar 
+        progress.vertical(value="{{progress.one.curr}}" max="{{progress.one.max}}")
+            
+        h2.ui.horizontal.divider.header 
+            i.wrench.icon 
+            | test inputs 
+
+        .ui.input: input(value="{{progress.one.curr}}" type="number")
+
+        slider(value="{{progress.one.curr}}" max="{{progress.one.max}}")

@@ -1,18 +1,16 @@
 require! 'aea': {sleep}
 
-simulated-data = [{
-    _id: "#{..}"
-    type: \test
-    timestamp: .. * 100
-    name: "this is #{..} and this line is very log as you can easily understand"
-    } for [1 to 10]]
-
+require! './simulate-data': {
+    simulated-data, simulated-timeouts
+}
 
 export my-table =
     settings:
-        page-size: 20   # optional, 0 or null for infinite page
+        # define how many rows per page (0 or null for infinite page)
+        page-size: 5
+
+        # this is the default document for newly created rows
         default: ->
-            # this is the default document for newly created rows
             type: \test
             timestamp: Date.now!
             name: ""
@@ -20,19 +18,29 @@ export my-table =
                 * product: ""
                   amount: ""
                 ...
-        col-names: "ID of document, Name, Number of entries, some, more, columns"
 
+        # column names for the table view
+        col-names:
+            "ID of document"
+            "Name"
+            "Number of entries"
+            "Color"
+            "Foo"
+            "Bar"
+
+        # when data table first renders, this function is run:
         on-init: (next) ->
             # fetch your data to `tabledata` variable here
-
-
             @set \tabledata, simulated-data
+
+            # display "loading" part for 3 seconds
+            <- sleep simulated-timeouts.first-loading-time
 
             # to continue, call next!
             next!
 
+        # when you doubleclick a row, this method is called.
         on-create-view: (curr, next) ->
-            # when you doubleclick a row, this method is called.
             # `curr` is currently clicked document.
             __ = @
 
@@ -42,9 +50,9 @@ export my-table =
 
             @set \curr, curr
 
-            # we might need some time consuming operations within here:
-            sleep-duration = 1000ms
-            refresh-interval = 1000ms
+            # some simulated time consuming operation here
+            sleep-duration = simulated-timeouts.row-opening-time
+            refresh-interval = 200ms
             remains = sleep-duration
             <- :lo(op) ->
                 __.set \openingRowMsg, "doing something for #{sleep-duration} ms, remains: #{remains} ms."
@@ -56,27 +64,25 @@ export my-table =
             # after you finished row preperation, call next! to continue:
             next!
 
+        # define your view filters here.
         filters:
-            # define your view filters here.
             # filter your docs here, then return the remaining array:
-
             all: (docs) ->
                 docs
 
             pink: (docs) ->
                 [.. for docs when ..color is \pink]
 
+        # define your event handlers and methods here
         handlers:
-            # define your event handlers and methods here
             multiply-by-two: (x) ->
                 console.log "data-table says: this method multiplies by two!"
                 2 * x
 
 
+        # this method is called after `filter` method is called.
+        # create tableview here.
         after-filter: (docs, next) ->
-            # this method is called after `filter` method is called.
-            # create table front view here.
-
             my-reduce = (x) ->
                 try
                     x.length
@@ -89,7 +95,7 @@ export my-table =
                     .._id
                     ..name
                     my-reduce ..entries
-                    \hello
+                    "<div class='ui #{..color} label'>#{..color}</div>"
                     \world
                     \again!
                 } for docs]

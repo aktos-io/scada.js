@@ -27,7 +27,7 @@ Ractive.components['csv-importer'] = Ractive.extend do
             return
 
         @on do
-            get-content: (ev) ->
+            get-content: (event, ev) ->
                 csv = @get \csv
                 err, res <- get-csv csv, delimiter
                 if err

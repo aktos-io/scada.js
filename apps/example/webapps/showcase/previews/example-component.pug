@@ -11,16 +11,14 @@
         [ ] 8. Match theme
         [x] 9. This checklist
 
-panel(type="info" title="example-component")
-    .content
-        .row
-            .col-md-12
-                pre example-component(age="\{{ exampleComponent.age }}" birth="\{{ exampleComponent.birth }}")
-            .col-md-12
-                // a checkbox to toggle one component instance ||meets 5||
-                checkbox(checked="{{ exampleComponent.show }}") Show/hide Bound component 1
-        .row
-            col-md-4
+.ui.segments
+    h3.ui.top.attached.huge.block.header #[code example-component]
+    .ui.attached.segment
+        pre example-component(age="\{{ exampleComponent.age }}" birth="\{{ exampleComponent.birth }}")
+        // a checkbox to toggle one component instance ||meets 5||
+        checkbox(checked="{{ exampleComponent.show }}") Show/hide Bound component 1
+        .ui.stackable.three.column.grid
+            .column
                 h3 Bound component 1
                 // a component instance that is created on demand
                 +if('exampleComponent.show')
@@ -28,14 +26,14 @@ panel(type="info" title="example-component")
                     // simple ractive variables to be able to observe values ||meets 2||
                     p birth: {{ exampleComponent.birth }}
                     p age: {{ exampleComponent.age }}
-            col-md-4
+            .column
                 //
                 h3 Bound component 2
                 example-component(age="{{ exampleComponent.age }}" birth="{{ exampleComponent.birth1 }}")
                 p birth: {{ exampleComponent.birth }}
                 p age: {{ exampleComponent.age }}
 
-            col-md-4
+            .column
                 // Third instance is to prove it doesn't interfere with other instances ||meets 3||
                 h3 Unbound (free) instance
                 example-component(age="{{ exampleComponent.age2 }}" birth="{{ exampleComponent.birth2 }}")

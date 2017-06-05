@@ -1,0 +1,29 @@
+.ui.vertical.inverted.sidebar.menu.left
+    .item
+        h2.ui.inverted.header 
+            img.ui.mini.image(src="scadajs.png")
+            .content ScadaJS 
+
+    .menu 
+        +each('menu')
+            +iff('.submenu')
+                .item
+                    .header {{.title}}
+                    .menu
+                        +each('.submenu')
+                            a.item(
+                                href="{{.url}}"
+                                class="{{#if currentPage === .url }}active{{/if}}"
+                                )
+                                | {{ .title }}
+                                +if('.icon')
+                                    i.icon(class="{{.icon}}")
+            +else
+                a.item(
+                    href="{{.url}}"
+                    class="{{#if currentPage === .url }}active{{/if}}"
+                    )
+                    | {{ .title }}
+                    +if('.icon')
+                        i.icon(class="{{.icon}}")
+            +endif

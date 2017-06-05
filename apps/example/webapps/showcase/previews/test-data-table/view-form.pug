@@ -1,0 +1,33 @@
+h3 This is viewForm!
+p Any html design here is shown when you doubleclick a row.
+
+p Our document looks like as follows:
+
+table.ui.very.basic.collapsing.celled.table 
+    tr
+        td Document Type 
+        td  {{ curr.type }} 
+    tr
+        td Document Name 
+        td  {{ curr.name }} 
+
+    tr 
+        td Timestamp 
+        td {{ curr.timestamp }}
+    tr 
+        td Timestamp (human readable)
+        td {{ unixToReadable(curr.timestamp) }}
+
+
+h3 Entries:
+
+r-table
+    thead
+        tr
+            th Product
+            th Amount
+    tbody
+        +each('curr.entries')
+            tr
+                td {{ .product }}
+                td {{ .amount }}

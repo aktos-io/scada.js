@@ -37,7 +37,7 @@ Ractive.components['formal-field'] = Ractive.extend do
                 else
                     @set \editable, no
 
-            accept: (ev) ->
+            accept: (event, ev) ->
 
                 add-to-changelog = (log-item) ->
                     changelog = unpack pack __.get \changelog
@@ -80,12 +80,12 @@ Ractive.components['formal-field'] = Ractive.extend do
                 __.set \changelog, (unpack pack (__.get \changelog))
                 __.set \editable, no
 
-            cancel: (ev) ->
+            cancel: (event, ev) ->
                 __.set \curr, (__.get \prev)
                 __.set \editable, no
                 __.set \message, ""
 
-            show-popup: (ev, value) ->
+            show-popup: (event, ev, value) ->
 
                 <- __.fire \displaylog, ev, value
 

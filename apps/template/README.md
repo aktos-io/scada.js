@@ -4,5 +4,5 @@ Your webapps go to `webapps/` directory. Your other files, such as webservers, b
 
 # How to build
 
-See [html/javascript template](./webapps/html-js-template/README.md) for basic template and
- [html/livescript template](./webapps/html-ls-template/README.md) for livescript based template. 
+See [html/javascript template](./webapps/html-js/README.md) for basic template and
+ [html/livescript template](./webapps/html-ls/README.md) for livescript based template. 

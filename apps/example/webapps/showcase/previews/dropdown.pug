@@ -1,0 +1,43 @@
+.ui.segments
+    h3.ui.top.attached.block.header dropdown #[a(href="#dropdown") #[i.linkify.icon]]
+    .ui.attached.segment
+        checkbox(checked="{{ button.show }}") Show/hide Bound component 1
+
+        +if('button.show')
+            .ui.two.column.stackable.grid
+                .column
+                    h3 Bound component2
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" placeholder="my placeholder")
+                    p selected: {{combobox.boundSelected}}
+                .column(style="border: 1px dashed black")
+                    h3 UnBound (free) instance
+                    quote(style="background-color: pink") This instance fits width of its container
+                    dropdown(data="{{ combobox.list2 }}" selected="{{ combobox.unboundSelected }}" fit-width)
+                    p selected: {{ combobox.unboundSelected }}
+
+    .ui.segment
+        .ui.stackable.four.column.grid
+            .row.container
+                .column
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" placeholder="my placeholder")
+                    p selected: {{combobox.boundSelected}}
+                .column
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" placeholder="my placeholder")
+                    p selected: {{combobox.boundSelected}}
+                .column
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" placeholder="my placeholder")
+                    p selected: {{combobox.boundSelected}}
+                .column
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" placeholder="my placeholder")
+                    p selected: {{combobox.boundSelected}}
+
+    .ui.segment
+        .ui.mini.header Inline Dropdown #[a(href="#dropdown-inline-example") #[icon.settings]]
+        p.
+            A dropdown may be #[dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" placeholder="my placeholder" inline)]
+            inline as shown.
+
+    h3.ui.attached.block.header multiselect dropdown 
+    .ui.attached.segment
+        dropdown(data="{{ combobox.list3 }}" selected="{{ combobox.boundSelected3 }}" placeholder="my placeholder" multiple)
+        p selected: {{ combobox.boundSelected3 }}

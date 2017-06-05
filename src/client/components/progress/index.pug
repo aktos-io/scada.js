@@ -1,0 +1,6 @@
++iff('type === "simple"')
+    .ui.progress(class="{{class}}" style="{{style}}")
+        .bar(style="min-width: 0 !important;")
++else
+    .aea-progress(id="{{_guid}}-progress")
++endif

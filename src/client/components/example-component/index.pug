@@ -1,5 +1,4 @@
-div(style="border: 2px solid black")
-    p Enter your birth year (eg. 1984): 
-    input(type="text" value="{{ birth }}")
-    p You are {{ age }} years old. 
-                
+.ui.raised.segment
+    .ui.input
+        input(type="text" value="{{ birth }}" placeholder="Enter your birth year (eg. 1984)")
+    p You are {{ age }} years old.

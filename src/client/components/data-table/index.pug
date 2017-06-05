@@ -1,142 +1,130 @@
-include ../../templates/mixins.pug
-//-
-    parameters:
-        ... TODO
 
-    internals:
-        tableview: [{id: column-id, cols: [col1, col2, col3, ...], background-color: css-color} for rows]
-.modal.modal-error.fade(tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
-    .modal-dialog(role="document")
-        .modal-content.modal-danger
-            .modal-header.
-                <h4 class="modal-title">Hata</h4>
-            .modal-body {{errorMessage}}
-            .modal-footer
+//- table form controls 
++partial('controls')
+    .ui.buttons 
+        +unless('readonly')
+            btn(
+                on-buttonclick="toggleEditing"
+                class="{{#if editTooltip }}red{{else}}blue{{/if}} {{#if editable}}red{{/if}}"
+                active="{{editable}}"
+                tooltip="Düzenle"
+                )
+                i.write.icon 
+            .or
+        
+        btn(on-buttonclick="newOrderClose" tooltip="Kapat")
+            i.remove.icon
+    .ui.horizontal.divider 
 
-.modal.modal-new.fade(tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true")
-    .modal-dialog(role="document")
-        .modal-content.modal-danger
-            .modal-header.
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">Yeni Kayıt</h4>
 
-            .modal-body(
-                style="max-height: calc(100vh - 200px); overflow-y: auto;")
-                | {{#if addingNew}}
-                | {{>editForm}}
-                | {{/if}}
+//- tableview partials 
++partial('renderMarkup').
+    {{#if typeof . === 'string'}}
+        {{> { template: . } }}
+    {{else}}
+        {{{ . }}}
+    {{/if}}
 
-            .modal-footer
 
 //- Header part
-+if('firstRunDone') {{>header}}
-//- End Of Header
++iff('firstRunDone')
+    | {{>header}}
+    //- End Of Header
 
-r-table
-    thead
-        | {{#if firstRunDone}}
-        +if('hasAddNewButton')
-            tr
-                td(colspan="{{ columnList.length + 1 }}")
-                    row
-                        .col-md-3.col-sm-3
-                            btn(on-buttonclick="addNewOrder")
-                                icon-plus
-                                span {{yield addnewTitle}}
-                        .col-md-6
-                        .col-md-3
-                //-
-                    .row
-                        .col-md-12.
-                             {{#if addingNew}}{{>editForm}}{{/if}}
-        tr
-            td(colspan="{{ columnList.length + 1 }}")
-                ack-button(on-buttonclick="kickChanges") Yenile
-                span(style="color: lightgray; margin-left: 20px") {{#unless openingRow}}{{ openingRowMsg }}{{/unless}}
+    .ui.segments
+        +if('selectedFilter !== "all"')
+            .ui.attached.warning.message.segment
+                .header 
+                    i.warning.icon 
+                    | Filtered Content 
+                p.
+                    You are seeing a filtered content. 
+                    #[btn.blue.mini(on-buttonclick="setFilter" value="all") #[i.remove.icon] Clear Filter]
+                    
+        +if('addingNew')
+            h3.ui.attached.header #[i.edit.icon] New Document 
+            .ui.segment
+                | {{> editForm }}
 
-
-        tr.
-            {{#each columnList}}
-                <th>{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</th>
-            {{/each}}
-        | {{else}}
-        tr
-            td(colspan="{{ columnList.length + 1 }}")
-                h2
-                    icon-cog(spin="true")
-                    span Yükleniyor...
-        | {{/if}}
-
-    tbody
-        +each('tableview_visible:i')
-            tr.input-line(
-                data-anchor="{{.id}}"
-                style="{{#if isClicked(.id)}}{{#if isEditingLine(.id)}}border: 2px dashed white;{{else}}border: 2px solid white; {{/if}}{{elseif clickedIndex !== null}}opacity: 0.4; background-color: gray;{{/if}}{{.style}}{{#if isLastClicked(.id)}}border: 2px solid #4285F4;{{/if}}"
-                on-click="clicked"
-                )
-                | {{#if isEditingLine(.id)}}
+        .ui.segment
+            r-table
+                r-head
+                    r-row                    
+                        +each('columnList')
+                            r-head-col {{>renderMarkup}}                    
                 //- -----------------------------------------------
-                //- edit form
+                //- body of table 
                 //- -----------------------------------------------
-                td(colspan="{{ columnList.length + 1 }}" style="margin: 2px")
-                    btn-group
-                        | {{#unless readonly}}
-                        btn(
-                            on-buttonclick="toggleEditing"
-                            type="{{#if editTooltip }}danger{{else}}default{{/if}}"
-                            active="{{editable}}"
-                            tooltip="Düzenle"
-                            )
-                            | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
-                            icon-pencil
-                        | {{/unless}}
-                        btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
-                    hr
-                    | {{>editForm}}
+                r-body
+                    +each('tableview_visible:i')
+                        tr(
+                            data-anchor="{{.id}}"
+                            on-click!="['clicked', this]"
+                            class!="{{#if isDisabled(.id)}}disabled{{/if}}"
+                            )                        
+                            //- -----------------------------------------------
+                            //- edit form
+                            //- -----------------------------------------------
+                            +iff('isEditingLine(.id)')
+                                td(colspan="{{ columnList.length }}")
+                                    | {{>controls}}
+                                    | {{>editForm}}
 
-                | {{elseif isClicked(.id)}}
-                //- -----------------------------------------------
-                //- view form
-                //- -----------------------------------------------
-                td(colspan="{{ columnList.length + 1 }}" style="margin: 2px")
-                    | {{#if openingRow}}
-                    +each(".cols:i").
-                        <td>{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</td>
+                            //- -----------------------------------------------
+                            //- view form
+                            //- -----------------------------------------------
+                            +elif('isViewingRow(.id)')
+                                td(colspan="{{ columnList.length }}")                            
+                                    | {{>controls}}
+                                    | {{>viewForm}}
+                                
+                            //- -----------------------------------------------
+                            //- normal rows 
+                            //- -----------------------------------------------
+                            +else
+                                +each(".cols:colindex")
+                                    td(data-th="{{columnList[colindex]}}")
+                                        +iff('colindex === 0 && isLastClicked(tableview_visible[i].id)')
+                                            +iff('isOpeningNow(tableview_visible[i].id)')
+                                                //- if row is opening, mark first column with teal ribbon label 
+                                                .ui.teal.ribbon.label {{>renderMarkup}}
+                                            +else
+                                                //- if row is opening, mark first column with orange ribbon label 
+                                                .ui.orange.ribbon.label {{>renderMarkup}}
+                                            +endif
+                                        +else.
+                                            {{>renderMarkup}}
+                                        +endif
+                            +endif
 
-                    hr
-                    btn.btn-sm(type="info" on-buttonclick="newOrderClose" tooltip="Kapat") #[icon-remove]
-                    |  #[icon-cog(spin="true")] #[strong {{ openingRowMsg }}]
-                    | {{else}}
-                    btn-group
-                        | {{#unless readonly}}
-                        btn(
-                            on-buttonclick="toggleEditing"
-                            type="{{#if editTooltip }}danger{{else}}default{{/if}}"
-                            active="{{editable}}"
-                            tooltip="Düzenle"
-                            )
-                            | {{#if editable}} <icon-check/> {{else}} <icon-unchecked /> {{/if}}
-                            icon-pencil
-                        | {{/unless}}
-                        btn(type="info" on-buttonclick="newOrderClose" tooltip="Kapat"): icon-remove
-                    hr
-                    | {{>viewForm}}
-                    | {{/if}}
-                | {{else}}
-                //- -----------------------------------------------
-                //- columns
-                //- -----------------------------------------------
-                +each(".cols:i").
-                    <td data-th="{{columnList[i]}}">{{#if typeof . === 'string'}}{{> { template: . } }}{{else}}{{{ . }}}{{/if}}</td>
-                | {{/if}}
+                +if('settings.pageSize > 0')
+                    +if('(tableview.length / settings.pageSize) > 1')
+                        tfoot
+                            tr
+                                th(colspan="{{ columnList.length }}")
+                                    .ui.right.floated.pagination.menu
+                                        +each('range(1, Math.ceil(tableview.length / settings.pageSize)):i')
+                                            a(on-click="@.fire('selectPage', i)" class!="item {{#if currPage === i}}blue{{/if}}") {{ . }}
 
-    +if('settings.pageSize > 0')
-        +if('(tableview.length / settings.pageSize) > 1')
-            tfoot
-                tr
-                    td(colspan="{{ columnList.length + 1 }}")
-                        btn-group
-                            +each('range(1, Math.ceil(tableview.length / settings.pageSize)):i')
-                                btn(on-buttonclick="selectPage" value="{{ i }}" type!="{{#if currPage === i}}info{{/if}}") {{ . }}
+                            +if('openingRowMsg')
+                                tr 
+                                    th(colspan="{{ columnList.length }}")
+                                        | {{ openingRowMsg }}
+
++else
+    //- display "Loading" indicator till first fetch of the tabledata  
+        .ui.active.centered.inline.big.text.loader Yükleniyor  
+    .ui.icon.message 
+        i.notched.circle.loading.icon 
+        .content 
+            .header Just one second 
+        p We're fetching table content for you. 
+        
++endif
+
+.ui.page.dimmer.table-section-of-data-table
+    .content
+        .center 
+            .ui.active.big.text.loader
+                p {{ openingRowMsg }}
+                btn.small.inverted.red.icon(on-buttonclick="newOrderClose" tooltip="Kapat") #[i.remove.icon] Cancel

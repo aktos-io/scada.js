@@ -6,14 +6,25 @@ Ractive.components['todo'] = Ractive.extend do
     isolated: yes
 
     onrender: ->
+        # logger utility is defined here
+        logger = @root.find-component \logger
+        console.error "No logger component is found!" unless logger
+        # end of logger utility
+
         @on do
-            startEditing: (ev, id)->
+            startEditing: (event, id)->
                 orig = find (.id is id), @get \checklist
                 @set \editingItem, id
                 @set \editingContent, orig.content
                 @set \newDueTimestamp, orig.due-timestamp
 
-            addNewItem: (ev, value) ->
+            addNewItem: (event, ev, value) ->
+                unless value.content
+                    @fire \error, do
+                        title: "Append Error"
+                        message: "Content can not be empty."
+                    return
+
                 # TODO: fire external handler for async handling of saving data
                 checklist = @get \checklist
 
@@ -22,12 +33,13 @@ Ractive.components['todo'] = Ractive.extend do
 
                 checklist.push do
                     id: new-entry-id
-                    content: value
+                    content: value.content
+                    dueTimestamp: value.dueTimestamp
 
                 @set \checklist, checklist
 
                 # reset input via new-entry
-                ev.component.fire \value, ''
+                @set \newItem, {}
 
                 # add new action to the log
                 log = @get \log
@@ -37,7 +49,7 @@ Ractive.components['todo'] = Ractive.extend do
                     timestamp: Date.now()
                 @set \log, log
 
-            saveChanges: (ev, orig) ->
+            saveChanges: (event, ev, orig) ->
                 _new =
                     content: @get \editingContent
                     due-timestamp: @get \newDueTimestamp
@@ -61,7 +73,7 @@ Ractive.components['todo'] = Ractive.extend do
             cancelEdit: (ev) ->
                 @set \editingItem, -1
 
-            statechanged: (ev, curr-state, intended-state, item-id) ->
+            statechanged: (event, ev, curr-state, intended-state, item-id) ->
                 # add new action to the log
                 item = find (.id is item-id), @get \checklist
                 item.is-done = intended-state is \checked
@@ -73,12 +85,25 @@ Ractive.components['todo'] = Ractive.extend do
                 @set \log, log
                 @update \checklist
 
+            error: (event, msg, callback) ->
+                msg = {message: msg} unless msg.message
+                msg = msg `merge` {
+                    title: msg.title or 'This is my error'
+                    icon: "warning sign"
+                }
+                @set \state, \error
+                @set \reason, msg.message
+                @set \selfDisabled, no
+                action <- logger.fire \showDimmed, msg, {-closable}
+                #console.log "error has been processed by ack-button, action is: #{action}"
+                callback action if typeof! callback is \Function
+
     data: ->
         unix-to-readable: unix-to-readable
         title: 'Todo List'
         is-editable: false
         editing-item: -1
-        newContent: ''
+        newItem: {}
         editingContent: ''
         newDueTimestamp: 0
         checklist: {}
@@ -93,4 +118,4 @@ Ractive.components['todo'] = Ractive.extend do
         doneItemsLength: ->
             items = @get \checklist
             doneItems = filter (.isDone), items
-            doneItems.length 
+            doneItems.length

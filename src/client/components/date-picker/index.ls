@@ -1,43 +1,53 @@
-{split, take, join, lists-to-obj, sum} = require 'prelude-ls'
-{sleep} = require "aea"
-
 Ractive.components['date-picker'] = Ractive.extend do
     isolated: yes
     template: RACTIVE_PREPARSE('index.pug')
-
-
-    /*
-        Example Usage:
-            date-picker(unix="{{ myUnixTime }}" display="{{ myDisplayTime }}" mode="{{ timePickerMode }}")
-            unix -> eg: "1468575910000" for "Fri, 15 Jul 2016 09:45:10 GMT"
-            display -> eg: "27.10.2016 13:15 (Istanbul)"
-    */
-
     onrender: ->
         __ = @
-        jq = $ @find \.date
-        dp = jq.datetimepicker do
-            # daysOfWeekDisabled: [6, 7]
-            format: 'DD.MM.YYYY HH:mm'
-            locale: 'tr'
-            useCurrent: false
-            showTodayButton: true
-            ignoreReadonly: true
-            side-by-side: yes
+        j = $ @find \.date-picker
 
-        #console.log "x: " , x
+        j.calendar do
+            ampm: false
+            text:
+                days: ['Pz', 'P', 'S', 'Ç', 'P', 'C', 'Cts']
+                first-day-of-week: 1
+                months:
+                    \Ocak
+                    \Şubat
+                    \Mart
+                    \Nisan
+                    \Mayıs
+                    \Haziran
+                    \Temmuz
+                    \Ağustos
+                    \Eylül
+                    \Ekim
+                    \Kasım
+                    \Aralık
+                monthsShort:
+                    \Oca
+                    \Şub
+                    \Mar
+                    \Nis
+                    \May
+                    \Haz
+                    \Tem
+                    \Ağu
+                    \Eyl
+                    \Ekm
+                    \Ksm
+                    \Arl
+                today: 'Bugün'
+                now: \Şimdi
+                am: \ÖÖ
+                pm: \ÖS
 
-        dp-fn = jq.data \DateTimePicker
-        #console.log "dp func: ", dp-fn
+            on-change: (date, text, mode) ->
+                __.set \unix, date.get-time!
 
-        dp.on "dp.change" , ->
-            disp = jq.data!.date
-            unix = moment(disp, 'DD.MM.YYYY HH:mm').unix! * 1000ms
-            #console.log "unix time: ", unix
-            __.set \unix, unix
-
-        __.observe \unix, (val) ->
-            #console.log "unix val: ", val
-            display = moment (new Date val) .format 'DD.MM.YYYY HH:mm'
-            #console.log "display: ", display
-            dp-fn.date display
+        @observe \unix, (unix) ->
+            try
+                date = new Date unix
+                j.calendar "set date", date, update-input=yes, fire-change=no
+            catch
+                console.warn "date-picker: ", e
+                debugger

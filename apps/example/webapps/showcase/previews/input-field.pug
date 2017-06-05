@@ -11,59 +11,62 @@
         [ ] 8. Match theme
         [ ] 9. This checklist
 
-panel(type="info" title="input-field")
-    .content
-        .row
-            .col-md-12
-                pre input-field(value="\{{ myValue }}" unit="seconds" placeholder="my place holder")
-                blockquote.
-                    Note that changing number values by scrolling is intentionally disabled.
-        .row
-            .col-md-12
-                span lorem ipsum
-                input-field(value="{{ inputField.value }}" unit="dakika" placeholder="hello!")
-                span sit amet...
-                strong value is: {{ inputField.value }}
+.ui.segments
+    h3.ui.top.attached.block.header input-field #[a(href="#input-field") #[i.linkify.icon]]
+    .ui.attached.segment
+        pre input-field(value="\{{ myValue }}" unit="seconds" placeholder="my place holder")
 
-        .row
-            .col-md-12
-                h4 Test responsiveness
-        .row
-            .col-md-12
-                span lorem ipsum
-                input-field(value="{{ inputField.value }}" placeholder="hello!")
-                    search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
-                span sit amet...
-        .row
-            .col-md-3
-                input-field(value="{{ inputField.value }}" placeholder="hello!")
-                    search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
-            .col-md-3
-                input-field(value="{{ inputField.value }}" placeholder="hello!")
-                    search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
-            .col-md-3
-                input-field(value="{{ inputField.value }}" placeholder="hello!")
-                    search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
-            .col-md-3
-                input-field(value="{{ inputField.value }}" placeholder="hello!")
-                    search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+        .ui.ignored.message.
+            Note that changing number values by scrolling is intentionally disabled.
 
-        .row
-            .col-md-2
+    .ui.segment
+        .ui.header Simple inline
+        p.
+            lorem ipsum #[input-field(value="{{ inputField.value }}" unit="dakika" placeholder="hello!")]
+            sit amet... #[strong value is: {{ inputField.value }}]
+
+    .ui.segment
+        .ui.header input-field with dropdown
+        | lorem ipsum
+        input-field(value="{{ inputField.value }}" placeholder="hello!")
+            dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+        | sit amet...
+
+    .ui.segment
+        .ui.header Test Responsiveness
+        .ui.mini.header 4 column grid
+        .container 
+            .ui.equal.width.stackable.grid
+                .column
+                    input-field(value="{{ inputField.value }}" placeholder="hello!")
+                        dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+                .column
+                    input-field(value="{{ inputField.value }}" placeholder="hello!")
+                        dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+                .column
+                    input-field(value="{{ inputField.value }}" placeholder="hello!")
+                        dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+                .column
+                    input-field(value="{{ inputField.value }}" placeholder="hello!")
+                        dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+
+        .ui.mini.header 6 column grid
+        .ui.stackable.six.column.grid
+            .column
                 input-field(value="{{ inputField.value }}" placeholder="hello!")
-                    search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
-            .col-md-2
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+            .column
                 input-field(value="{{ inputField.value }}" placeholder="hello!")
-                    search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
-            .col-md-2
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+            .column
                 input-field(value="{{ inputField.value }}" placeholder="hello!")
-                    search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
-            .col-md-2
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+            .column
                 input-field(value="{{ inputField.value }}" placeholder="hello!")
-                    search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
-            .col-md-2
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+            .column
                 input-field(value="{{ inputField.value }}" placeholder="hello!")
-                    search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
-            .col-md-2
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+            .column
                 input-field(value="{{ inputField.value }}" placeholder="hello!")
-                    search-combobox(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
+                    dropdown(data="{{ combobox.list1 }}" selected="{{ combobox.boundSelected }}" )
