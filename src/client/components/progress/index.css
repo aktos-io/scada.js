@@ -4,5 +4,5 @@
 }
 .aea-progress > svg {
     height: 100%;
-    display: inline;
+    display: inline-block;
 }

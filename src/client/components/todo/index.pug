@@ -4,7 +4,7 @@
         checkbox.right.floated.transparent(checked="{{ isEditable }}") Edit
 
     .ui.attached.segment
-        progress.top.attached.blue(value="{{doneItemsLength}}" max="{{itemsLength}}")
+        ui-progress.top.attached.blue(value="{{doneItemsLength}}" max="{{itemsLength}}")
         .ui.divided.left.aligned.list
             +each('checklist')
                 .item

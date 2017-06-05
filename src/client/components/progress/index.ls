@@ -7,8 +7,12 @@ Ractive.components['progress'] = Ractive.extend do
         # get type of progress bar
         type = if @get \circular
             \circular
+        else if @get \half-circle
+            \half-circle
         else if @get \vertical
             \vertical
+        else if @get \custom
+            \custom
         else
             \simple
 
@@ -18,24 +22,8 @@ Ractive.components['progress'] = Ractive.extend do
         max = @get \max
         min = @get \min
 
-        if @get(\type) is \simple
-            indicator = $ @find \.ui.progress
-
-            indicator.progress do
-                duration: 0
-                total: max
-                min: min
-                showActivity: no
-
-            @observe \value, (_new) ->
-                indicator.progress "set progress", _new
-
-            @observe \max, (_new) ->
-                indicator.progress "set total", _new
-                indicator.progress "set progress", @get \value
-
-        else if @get(\type) is \circular
-            bar = new ProgressBar.Circle "\##{@_guid}-progress", do
+        try
+            bar = new ProgressBar.Path "\##{@_guid}-progress .progress-path", do
                 strokeWidth: 6
                 color: '#FFEA82'
                 trailColor: '#eee'
@@ -43,9 +31,12 @@ Ractive.components['progress'] = Ractive.extend do
                 svgStyle:
                     'height': '100px'
                     'width': '100px'
+        catch
+            console.error "progress: ", e
+            return
 
-            @observe \value, (val) ->
-                bar.set (val / (max - min))
+        @observe \value, (val) ->
+            bar.set (val / (max - min))
 
     data: ->
         max: 100

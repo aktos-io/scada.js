@@ -1,0 +1,33 @@
+.ui.segments
+    h3.ui.top.attached.block.header progress #[a(href="#progress") #[i.linkify.icon]]
+    .ui.attached.segment
+        ui-progress.top.attached.orange(value="{{progress.one.curr}}" max="{{progress.one.max}}")
+
+        r-table(class="ui very basic collapsing celled table")
+            tbody 
+                tr 
+                    td
+                        h3.ui.top.header Simple progress bars (ui-progress)
+                        ui-progress.purple(value="{{progress.one.curr}}" max="{{progress.one.max}}")
+                        ui-progress.red(value="{{progress.one.curr}}" max="{{progress.one.max}}")
+                    td 
+                        h3.ui.top.header Circular progress bar
+                        progress(circular value="{{progress.one.curr}}" max="{{progress.one.max}}")
+                    td
+                        h3.ui.top.header Half circle progress bar
+                        progress(half-circle value="{{progress.one.curr}}" max="{{progress.one.max}}")
+                    td                        
+                        h3.ui.top.header Custom progress bar (heart)
+                        progress.purple(custom value="{{progress.one.curr}}" max="{{progress.one.max}}")
+                            include ./heart.svg
+                    td 
+                        h3.ui.top.header Vertical progress bar 
+                        progress(vertical value="{{progress.one.curr}}" max="{{progress.one.max}}")
+            
+        h2.ui.horizontal.divider.header 
+            i.wrench.icon 
+            | test inputs 
+
+        input-field(value="{{progress.one.curr}}" type="number")
+
+        slider(value="{{progress.one.curr}}" max="{{progress.one.max}}")

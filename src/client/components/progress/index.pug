@@ -1,6 +1,17 @@
-+iff('type === "simple"')
-    .ui.progress(class="{{class}}" style="{{style}}")
-        .bar(style="min-width: 0 !important;")
-+else
-    .aea-progress(id="{{_guid}}-progress")
-+endif
+.aea-progress(id="{{_guid}}-progress")
+    +iff('type === "circular"')
+        include ./circular.svg
+
+    +elif('type === "simple"')
+        include ./line.svg
+        
+    +elif('type === "half-circle"')
+        include ./half-circle.svg
+        
+    +elif('type === "vertical"')
+        include ./vertical.svg
+        
+    +elif('type === "custom"')
+        | {{yield}}
+        
+    +endif
