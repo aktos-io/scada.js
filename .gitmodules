@@ -1,3 +1,6 @@
 [submodule "tools/service-runner"]
 	path = tools/service-runner
 	url = https://github.com/aktos-io/service-runner
+[submodule "src/lib/aktos-dcs"]
+	path = src/lib/aktos-dcs
+	url = https://github.com/aktos-io/aktos-dcs-node

@@ -47,7 +47,9 @@
     "serialport": "^4.0.1",
     "serve-index": "^1.8.0",
     "soap": "^0.16.0",
+    "socket.io": "^2.0.2",
     "superagent": "^3.1.0",
+    "uuid4": "^1.0.0",
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
