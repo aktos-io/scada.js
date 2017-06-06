@@ -39,5 +39,6 @@ See [`./apps/example/README.md`](./apps/example/README.md).
 # Creating a New Project
 
 1. Create a new project by simply copying [`./apps/template`](./apps/template) as `./apps/myproject`.
-2. Start Gulp by passing your project name as parameter: `gulp --project myproject`
-3. The browser applications (`myproject.html`, `myproject.js` and `.css` files) will be created under `{{ scada }}/build/public` directory. Use your favourite modern browser to display your web application.
+2. Select one of `html-js`, `html-ls`, `pug-ls`; delete the others and rename your webapp as `my-webapp`
+3. Start Gulp by passing your project name as parameter: `gulp --app myproject --webapp my-webapp`
+4. The browser application files (`.html`, `.js`, `.css` and others) will be created under `{{ scada }}/build/myproject/my-webapp` directory. Use your favourite modern browser to display your web application (`{{ scada }}/build/myproject/my-webapp/index.html`).
