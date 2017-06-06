@@ -95,6 +95,10 @@ export formatter = (format, value) -->
         unit-left-hand: not unit-right-hand
         overflow: yes or no
 
+
+# -----------------------------------------------------------------------
+#                                    TESTS START HERE
+# -----------------------------------------------------------------------
 formatter-tests =
   'simple formatting': ->
     f = formatter '#.### m/s'
