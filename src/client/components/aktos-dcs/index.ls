@@ -1,6 +1,7 @@
 require! 'aea/debug-log': {logger}
-require! 'aktos-dcs/proxy-actor': {ProxyActor}
-require! 'aktos-dcs/io-actor': {IoActor}
+require! 'aktos-dcs/src/proxy-actor': {ProxyActor}
+require! 'aktos-dcs/src/io-actor': {IoActor}
+require! 'aktos-dcs/src/filters': {FpsExec}
 
 Ractive.components['aktos-dcs'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
@@ -28,9 +29,14 @@ Ractive.components['aktos-dcs'] = Ractive.extend do
 
         actor4 = new IoActor \my-test-pin3
         actor4.ractive = this
+        actor4.subscribe "IoMessage.hello"
         actor4.sync "testValue4"
 
-
+        actor5 = new IoActor \my-test-pin4
+        actor5.ractive = this
+        actor5.subscribe "IoMessage.hello"
+        actor5.subscribe "IoMessage.my-test-pin3"
+        actor5.sync "testValue5"
 
 
     data: ->

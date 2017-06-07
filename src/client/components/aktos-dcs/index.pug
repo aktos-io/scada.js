@@ -6,22 +6,30 @@
 
     h3.ui.top.attached.block.header Subscribe to same topics 
     .ui.attached.segment 
-        h3.dividing.header Test value (subscribed to #[code my-test-pin3])
-        input-field(value="{{ testValue3}}")
-        slider(value="{{ testValue3 }}")
-
-    .ui.attached.segment 
-        h3.dividing.header Test value2 (subscribed to #[code my-test-pin3])
-        input-field(value="{{ testValue4}}")
-        slider(value="{{ testValue4 }}")
+        p.
+            Below sliders are bound to each other, so moving one should make the others move. 
+            
+        .ui.equal.width.grid 
+            .column 
+                h3.dividing.header #[code testValue3] (subscribed to #[code my-test-pin3])
+                input-field(value="{{ testValue3}}")
+                slider(value="{{ testValue3 }}")
+            .column 
+                h3.dividing.header #[code testValue4] (subscribed to both #[code my-test-pin3] and #[code hello])
+                input-field(value="{{ testValue4}}")
+                slider(value="{{ testValue4 }}")
+            .column 
+                h3.dividing.header #[code testValue5] (subscribed to both #[code my-test-pin4] and #[code hello])
+                input-field(value="{{ testValue5}}")
+                slider(value="{{ testValue5 }}")
     
     h3.ui.top.attached.block.header Subscribe to separate topics 
     .ui.attached.segment 
-        h3.dividing.header Test value (subscribed to #[code my-test-pin1])
+        h3.dividing.header #[code testValue] (subscribed to #[code my-test-pin1])
         input-field(value="{{ testValue}}")
         slider(value="{{ testValue }}")
 
     .ui.attached.segment 
-        h3.dividing.header Test value2 (subscribed to #[code my-test-pin2])
+        h3.dividing.header #[code testValue2] (subscribed to #[code my-test-pin2])
         input-field(value="{{ testValue2}}")
         slider(value="{{ testValue2 }}")
