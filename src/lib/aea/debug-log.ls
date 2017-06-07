@@ -28,13 +28,14 @@ export class logger
         @level = debug-levels.normal
         @opts = opts
         @start-time = start-time
-
+        @sections = []
 
     log: (...args) ->
         if @level > debug-levels.silent
             console.log.apply this, [@_get-prefix!] ++ args
 
     debug-log: (...args) ->
+        console.warn "debug-log is depreciated. use log-section instead."
         if @level >= debug-levels.debug
             @log ...args
 
@@ -42,8 +43,18 @@ export class logger
         if @level > debug-levels.silent
             console.error.apply this, [@_get-prefix!] ++ args
 
-    debug-err: (...args) ->
-        ...
+    section: (section, ...args) ->
+        if section in @sections
+            console.log.apply this, [@_get-prefix!] ++ args
+
+    err-section: (section, ...args) ->
+        if section in @sections
+            console.error.apply this, [@_get-prefix!] ++ args
+
+    warn-section: (section, ...args) ->
+        if section in @sections
+            console.warn.apply this, [@_get-prefix!] ++ args
+
 
     _get-timestamp: ->
         "#{new Date! .get-time! - @start-time}ms"
