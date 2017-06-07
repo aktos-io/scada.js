@@ -35,8 +35,8 @@ export class logger
             console.log.apply this, [@_get-prefix!] ++ args
 
     debug-log: (...args) ->
-        console.warn "debug-log is depreciated. use log-section instead."
         if @level >= debug-levels.debug
+            console.warn "debug-log is depreciated. use log-section instead."
             @log ...args
 
     err: (...args) ->
