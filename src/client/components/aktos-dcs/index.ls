@@ -1,5 +1,5 @@
 require! 'aea/debug-log': {logger}
-require! 'aktos-dcs/src/proxy-actor': {ProxyActor}
+require! 'aktos-dcs/src/socketio-browser': {SocketIOBrowser}
 require! 'aktos-dcs/src/io-actor': {IoActor}
 require! 'aktos-dcs/src/filters': {FpsExec}
 
@@ -8,7 +8,7 @@ Ractive.components['aktos-dcs'] = Ractive.extend do
     isolated: yes
     oninit: ->
         __ = @
-        proxy-actor = new ProxyActor {host: 'http://localhost', port: 4001}
+        new SocketIOBrowser {host: 'http://localhost', port: 4001}
         log = new logger \aktos-dcs-component
 
         #actor.sync "ractiveVariable", "topic"
