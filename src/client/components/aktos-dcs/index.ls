@@ -8,7 +8,7 @@ Ractive.components['aktos-dcs'] = Ractive.extend do
     isolated: yes
     oninit: ->
         __ = @
-        proxy-actor = new ProxyActor!
+        proxy-actor = new ProxyActor {host: 'http://localhost', port: 4001}
         log = new logger \aktos-dcs-component
 
         #actor.sync "ractiveVariable", "topic"

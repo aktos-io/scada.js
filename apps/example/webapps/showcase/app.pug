@@ -23,26 +23,37 @@ router(curr="{{ currentPage }}")
         //- realtime layer 
         aktos-dcs
             
+        h2.ui.horizontal.divider.header 
+            i.dashboard.icon 
+            | SCADA Components 
+            
+        include ./previews/ack-button.pug    
+        include ./previews/progress/progress.pug
+        include ./previews/slider.pug
+
+        h2.ui.horizontal.divider.header 
+            i.tasks.icon 
+            | ERP Components 
+
         include ./previews/dropdown.pug
         include ./previews/dropdown-panel.pug
         include ./previews/input-field.pug    
+        include ./previews/checkbox.pug
         
-        include ./previews/ack-button.pug    
-        //-    
         include ./previews/csv-importer.pug
         include ./previews/text-button.pug
         include ./previews/r-table.pug
-
         include ./previews/formal-field.pug
         include ./previews/file-read.pug
         include ./previews/print-button.pug
-        include ./previews/checkbox.pug
-        include ./previews/example-component.pug
         include ./previews/date-picker.pug
         include ./previews/test-data-table/my-table.pug
         include ./previews/todo.pug
-        include ./previews/progress/progress.pug
 
-        include ./previews/slider.pug
+        h2.ui.horizontal.divider.header 
+            i.cube.icon 
+            | Example
+        include ./previews/example-component.pug
+
 
 include ./menu.pug

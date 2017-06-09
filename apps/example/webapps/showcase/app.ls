@@ -163,10 +163,10 @@ ractive = new Ractive do
 
         slider:
             one:
-                curr: 10
+                curr: 116
                 max: 250
             two:
-                curr: 20
+                curr: 34
                 max: 500
 
 ractive.on do

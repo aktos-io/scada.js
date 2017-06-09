@@ -3828,7 +3828,7 @@ querystring@0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/querystring/-/querystring-0.2.0.tgz#b209849203bb25df820da756e747005878521620"
 
-ractive@~0.9.0:
+ractive@^0.9.0:
   version "0.9.0"
   resolved "https://registry.yarnpkg.com/ractive/-/ractive-0.9.0.tgz#0b93b40b3a5a4398ade851c964c20a23db17c1ea"
 

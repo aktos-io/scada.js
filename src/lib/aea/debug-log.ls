@@ -45,7 +45,8 @@ export class logger
 
     section: (section, ...args) ->
         if section in @sections
-            console.log.apply this, [@_get-prefix!] ++ args
+            pfx = "#{@_get-prefix!} |#{section}| :"
+            console.log.apply this, [pfx] ++ args
 
     err-section: (section, ...args) ->
         if section in @sections
