@@ -1,4 +1,4 @@
-require! 'aktos-dcs/src/actor': {Actor}
+require! 'dcs': {Actor}
 
 export class Monitor extends Actor
     (name='') ->

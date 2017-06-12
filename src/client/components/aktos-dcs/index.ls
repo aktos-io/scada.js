@@ -1,7 +1,5 @@
 require! 'aea/debug-log': {logger}
-require! 'aktos-dcs/src/socketio-browser': {SocketIOBrowser}
-require! 'aktos-dcs/src/io-actor': {IoActor}
-require! 'aktos-dcs/src/filters': {FpsExec}
+require! 'dcs/browser': {IoActor, SocketIOBrowser}
 
 Ractive.components['aktos-dcs'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')

@@ -3,14 +3,13 @@ This simulator receives a message, doubles the payload and re-sends to the
 DCS network.
 """
 
-require! 'aktos-dcs/src/actor': {Actor}
-require! 'aktos-dcs/src/broker': {Broker}
+require! 'dcs': {Actor, Broker}
 require! 'aea': {sleep}
 
 export class IncrementingEcho extends Actor
     (topic) ->
         super 'simulator'
-        @subscribe topic 
+        @subscribe topic
 
         @on-receive (msg) ~>
             @echo msg

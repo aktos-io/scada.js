@@ -41,8 +41,7 @@ process.on 'SIGINT', ->
 # -----------------------------------------------------------------------------
 # DCS codes
 # -----------------------------------------------------------------------------
-require! 'aktos-dcs/src/socketio-server': {SocketIOServer}
-require! 'aktos-dcs/src/broker': {Broker}
+require! 'dcs': {Broker, SocketIOServer}
 
 # create socket.io server
 io = (require "socket.io") http
