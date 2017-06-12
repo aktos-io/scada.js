@@ -27,7 +27,7 @@ router(curr="{{ currentPage }}")
             i.dashboard.icon 
             | SCADA Components 
             
-        include ./previews/ack-button.pug    
+        include ./previews/rt-button.pug    
         include ./previews/progress/progress.pug
         include ./previews/slider.pug
 
@@ -35,6 +35,7 @@ router(curr="{{ currentPage }}")
             i.tasks.icon 
             | ERP Components 
 
+        include ./previews/ack-button.pug    
         include ./previews/dropdown.pug
         include ./previews/dropdown-panel.pug
         include ./previews/input-field.pug    
