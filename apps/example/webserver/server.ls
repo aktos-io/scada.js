@@ -54,7 +54,5 @@ new Broker!
 # -----------------------------------------------------------------------------
 # Test codes
 # -----------------------------------------------------------------------------
-require! './test-actors': {Simulator, Monitor}
-
+require! './monitor': {Monitor}
 new Monitor!
-#new Simulator!
