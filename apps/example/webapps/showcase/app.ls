@@ -169,6 +169,9 @@ ractive = new Ractive do
                 curr: 34
                 max: 500
 
+        rt-button:
+            test1: on
+
 ractive.on do
     'complete': ->
         __ = @
