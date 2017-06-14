@@ -9,19 +9,22 @@
         p.
             Below sliders are bound to each other, so moving one should make the others move. 
             
-        .ui.equal.width.grid 
+        .ui.equal.width.stackable.grid 
             .column 
                 h3.dividing.header #[code testValue3] (subscribed to #[code my-test-pin3])
                 input-field(value="{{ testValue3}}")
-                slider(value="{{ testValue3 }}" hostlink="site1.tank5.level")
+                slider(value="{{ testValue3 }}")
+                sync(value="{{ testValue3 }}" topic="my-test-pin1" fps="10")
             .column 
                 h3.dividing.header #[code testValue4] (subscribed to both #[code my-test-pin3] and #[code hello])
                 input-field(value="{{ testValue4}}")
                 slider(value="{{ testValue4 }}")
+                sync(value="{{ testValue4 }}" topic="my-test-pin4" fps="20")
             .column 
                 h3.dividing.header #[code testValue5] (subscribed to both #[code my-test-pin4] and #[code hello])
                 input-field(value="{{ testValue5}}")
                 slider(value="{{ testValue5 }}")
+                sync(value="{{ testValue5 }}" topic="my-test-pin4" fps="20")
     
     h3.ui.attached.block.header Subscribe to separate topics 
     .ui.attached.segment 
