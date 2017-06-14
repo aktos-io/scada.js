@@ -7,14 +7,21 @@ Ractive.components['checkbox'] = Ractive.extend do
         if @get \class .index-of(\transparent)  > -1
             @set \transparent, yes
 
+        @sync = @find-component \sync
+        if @sync
+            @sync.on \receive, (event, msg) ~>
+                @set \state, if msg.payload then \checked else \unchecked
+
     onrender: ->
         __ = @
 
         logger = @root.find-component \logger
         console.error "No logger component is found!" unless logger
 
-        @observe \checked, (_new, _old) ->
+        @observe \checked, (_new, _old) ~>
             __.set \state, if _new then 'checked' else 'unchecked'
+            if @sync
+                @sync.actor.send (@get \state), (@sync.get \topic)
 
         @on do
             toggleChecked: ->
@@ -84,3 +91,4 @@ Ractive.components['checkbox'] = Ractive.extend do
         state: null
         prev-state: null
         transparent: no
+        msg: null

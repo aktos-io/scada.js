@@ -1,44 +1,17 @@
-require! 'aea/debug-log': {logger}
-require! 'dcs/browser': {IoActor, SocketIOBrowser}
+require! 'dcs/browser': {SocketIOBrowser}
+
+require! 'prelude-ls': {initial, drop, join}
+curr-url = ->
+    url = String window.location .split '#' .0
+    arr = url.split "/"
+    do
+        host-port: arr.0 + "//" + arr.2
+        host: "#{arr.0}//#{arr.2.split ':' .0}"
+        port: parse-int "#{(arr.2.split ':' .1) or 80}"
 
 Ractive.components['aktos-dcs'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     oninit: ->
-        __ = @
-        new SocketIOBrowser {host: 'http://localhost', port: 4001}
-        log = new logger \aktos-dcs-component
-
-        #actor.sync "ractiveVariable", "topic"
-
-        # subscribe to separate topics
-        actor = new IoActor pin_name=\my-test-pin1
-        actor.ractive = this
-        actor.sync "testValue"
-
-        actor2 = new IoActor pin_name=\my-test-pin2
-        actor2.ractive = this
-        actor2.sync "testValue2"
-
-        # subscribe to same topics
-        actor3 = new IoActor \my-test-pin3
-        actor3.ractive = this
-        actor3.sync "testValue3"
-
-        actor4 = new IoActor \my-test-pin3
-        actor4.ractive = this
-        actor4.subscribe "IoMessage.hello"
-        actor4.sync "testValue4"
-
-        actor5 = new IoActor \my-test-pin4
-        actor5.ractive = this
-        actor5.subscribe "IoMessage.hello"
-        actor5.subscribe "IoMessage.my-test-pin3"
-        actor5.sync "testValue5"
-
-
-    data: ->
-        test-value: 0
-        test-value2: 0
-        test-value3: 0
-        test-value4: 0
+        url = curr-url!
+        new SocketIOBrowser {host: url.host, port: url.port}
