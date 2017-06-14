@@ -13,6 +13,5 @@ Ractive.components['aktos-dcs'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     oninit: ->
-        __ = @
         url = curr-url!
         new SocketIOBrowser {host: url.host, port: url.port}
