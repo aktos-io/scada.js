@@ -1,6 +1,11 @@
 require! page
 require! 'aea': {sleep}
 
+Ractive.components['anchor'] = Ractive.extend do
+    template: '<a data-id="{{yield}}"></a>'
+    isolated: yes
+
+
 Ractive.components['router'] = Ractive.extend do
     template: ''
     isolated: yes
@@ -8,10 +13,10 @@ Ractive.components['router'] = Ractive.extend do
         __ = @
 
         scroll-to = (anchor) ->
-            offset = $ "[href='\##{anchor}']" .offset!
+            offset = $ "a[data-id='#{anchor}']" .offset!
             if offset
                 $ 'html, body' .animate do
-                    scroll-top: offset.top - 75px
+                    scroll-top: offset.top - 45px
                     , 500ms
 
         page '*', (ctx, next) ->
