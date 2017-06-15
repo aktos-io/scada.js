@@ -238,7 +238,7 @@ Ractive.components['data-table'] = Ractive.extend do
                         <- sleep 200ms
                         scroll-time = 500ms
                         $ 'html, body' .animate do
-                            scroll-top: offset.top
+                            scroll-top: offset.top - 45px   # FIXME: remove hard coded navigation
                             , scroll-time
 
                     else

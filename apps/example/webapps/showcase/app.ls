@@ -139,20 +139,24 @@ ractive = new Ractive do
         menu: []
         menu-links: do ->
             components =
-                \dropdown
                 \ack-button
                 \checkbox
                 \csv-importer
                 \date-picker
                 \dropdown-panel
+                \dropdown
                 \example-component
                 \file-read
                 \formal-field
                 \input-field
                 \print-button
                 \r-table
+                \rt-components
+                \slider
                 \text-button
                 \todo
+                \data-table
+
 
             [{title: .., url: "\##{..}", icon: \tags} for components]
 
