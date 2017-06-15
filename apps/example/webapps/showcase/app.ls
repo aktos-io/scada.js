@@ -2,7 +2,7 @@ require! 'prelude-ls': {group-by, sort-by}
 require! components
 require! 'aea': {sleep, unix-to-readable}
 require! './deps/simulate-db': {db}
-require! './previews/test-data-table/my-table': {my-table}
+require! './previews/data-table': {my-table}
 
 ractive = new Ractive do
     el: \body
