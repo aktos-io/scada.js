@@ -18,6 +18,7 @@ Ractive.components['rt-button'] = Ractive.extend do
         @on do
             click: ->
                 @actor.send (@get \value), (@get \topic)
+                @toggle \value
 
     data: ->
         __ = @

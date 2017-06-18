@@ -176,6 +176,10 @@ ractive = new Ractive do
         rt-button:
             test1: on
 
+        rt-components:
+            test1: -10
+            test3: -5
+
 ractive.on do
     'complete': ->
         __ = @

@@ -7,12 +7,20 @@ anchor rt-components
     h3.ui.block.big.attached.header Examples
     .ui.attached.segment
         h3.header Buttons has icons representing their states 
-        rt-button.green(state="" topic="hello.world" value="{{rtButton.test1}}") Button Text
-        
-        input-field(value="{{rtButton.test1}}") State
+        rt-button.green(state="" topic="my-test-plc.testOutput" value="{{rtButton.test1}}") 
+            | Button Text 
+            +iff('rtButton.test1')
+                span(style="color: red") (press to turn on)
+            +else
+                span(style="color: yellowgreen") (press to turn off)
+            +endif
 
-        h3.header Checkbox
         
+        p 
+            b my-test-plc.testLevel1: {{rtComponents.test2}}
+            sync(value="{{rtComponents.test2}}" topic="my-test-plc.testLevel1")
+
+        h3.header Checkbox        
         checkbox(value="{{rtButton.test1}}")
             | My RT Checkbox
             sync(value="mahmut" topic="hello.world")
