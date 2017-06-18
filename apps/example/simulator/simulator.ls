@@ -26,4 +26,4 @@ export class IncrementingEcho extends Actor
         @send_raw msg
 
 new Broker!
-new IncrementingEcho 'IoMessage.my-test-pin3'
+new IncrementingEcho 'my-test-pin3'
