@@ -152,6 +152,7 @@ ractive = new Ractive do
                 \print-button
                 \r-table
                 \rt-components
+                \progress
                 \slider
                 \text-button
                 \todo
