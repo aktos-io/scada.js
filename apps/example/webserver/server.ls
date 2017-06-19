@@ -6,22 +6,18 @@ require! \path
 require! \express
 argv = require 'yargs' .argv
 
-pub-dir = development-public = "#{__dirname}/../../../build"
+pub-dir = development-public = "#{__dirname}/../../../build/example"
 app = express!
 http = require \http .Server app
-
-app.get "/", (req, res) ->
-        console.log "req: ", req.path
-        res.send-file path.resolve "#{pub-dir}/example/showcase/index.html"
 
 app.use (req, res, next) ->
         filename = path.basename req.url
         extension = path.extname filename
-        #console.log "File: #{filename} was requested."
+        console.log "File: #{filename} was requested."
         next!
 
 console.log "serving static folder: /"
-app.use "/", express.static path.resolve "#{pub-dir}/"
+app.use "/", express.static path.resolve "#{pub-dir}/showcase"
 
 server-port = argv.port
 try
@@ -37,6 +33,7 @@ http.listen server-port, ->
 process.on 'SIGINT', ->
     console.log 'Received SIGINT, cleaning up...'
     process.exit 0
+
 
 # -----------------------------------------------------------------------------
 # DCS codes
