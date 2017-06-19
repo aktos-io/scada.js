@@ -10,10 +10,11 @@ pub-dir = development-public = "#{__dirname}/../../../build/example"
 app = express!
 http = require \http .Server app
 
+# for debugging purposes, print out what is requested
 app.use (req, res, next) ->
         filename = path.basename req.url
         extension = path.extname filename
-        console.log "File: #{filename} was requested."
+        #console.log "File: #{filename} was requested."
         next!
 
 console.log "serving static folder: /"
