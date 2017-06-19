@@ -31,3 +31,4 @@
         input-field(value="{{progress.one.curr}}" type="number")
 
         slider(value="{{progress.one.curr}}" max="{{progress.one.max}}")
+        sync(value="{{progress.one.curr}}" topic="hello.slider")
