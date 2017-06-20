@@ -14,7 +14,7 @@ export get-logger = (debug-source, opts={}) ->
             timestamp = (new Date! .get-time! - start-time) + "ms"
         else
             timestamp = Date!
-        console.log.apply this, ["#{timestamp}:", (align-left 15, "#{debug-source}") + ":"] ++ x
+        console.log.apply console, ["#{timestamp}:", (align-left 15, "#{debug-source}") + ":"] ++ x
 
 export debug-levels =
     silent: 0
@@ -41,20 +41,20 @@ export class logger
 
     err: (...args) ->
         if @level > debug-levels.silent
-            console.error.apply this, [@_get-prefix!] ++ args
+            console.error.apply console, [@_get-prefix!] ++ args
 
     section: (section, ...args) ->
         if section in @sections
             pfx = "#{@_get-prefix!} |#{section}| :"
-            console.log.apply this, [pfx] ++ args
+            console.log.apply console, [pfx] ++ args
 
     err-section: (section, ...args) ->
         if section in @sections
-            console.error.apply this, [@_get-prefix!] ++ args
+            console.error.apply console, [@_get-prefix!] ++ args
 
     warn-section: (section, ...args) ->
         if section in @sections
-            console.warn.apply this, [@_get-prefix!] ++ args
+            console.warn.apply console, [@_get-prefix!] ++ args
 
 
     _get-timestamp: ->
