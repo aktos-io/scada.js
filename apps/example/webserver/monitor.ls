@@ -3,7 +3,8 @@ require! 'dcs': {Actor}
 export class Monitor extends Actor
     (name='') ->
         super "Monitor #{name}"
-        #@subscribe "IoMessage.my-test-pin3"
+        @subscribe '**'
+        @log.log "subscribed: #{@subscriptions}"
 
         @on-receive (msg) ~>
             @log.log "payload: ", msg.payload, "topic: ", msg.topic

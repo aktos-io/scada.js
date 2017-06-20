@@ -5,7 +5,8 @@ Ractive.components['rt-button'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     oninit: ->
-        @actor = new IoActor (@get \topic)
+        @actor = new IoActor (@get \name)
+        @actor.subscribe (@get \topic)
 
     onrender: ->
         __ = @
