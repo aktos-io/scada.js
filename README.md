@@ -26,6 +26,7 @@ Demo page can be seen here: https://scadajs.surge.sh/showcase
 Install [`NodeJs`](https://nodejs.org) and install rest of the dependencies:
 
     git clone https://github.com/aktos-io/scada.js
+    git submodule update 
     cd scada.js
     npm install -g gulp yarn livescript@1.4.0
     yarn
