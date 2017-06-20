@@ -8,10 +8,10 @@ echo "updating ractive from this node modules"
 cd $DIR
 browserify -t browserify-livescript ractive-npm.ls -o ractive-latest.js
 
-echo "downloading polyfills.js to support older browsers"
-mv polyfills.js polyfills.js.bak
-wget https://cdn.jsdelivr.net/npm/ractive@latest/polyfills.js || exit 5
-rm polyfills.js.bak
+#echo "downloading polyfills.js to support older browsers"
+#mv polyfills.js polyfills.js.bak
+#wget https://cdn.jsdelivr.net/npm/ractive@latest/polyfills.js || exit 5
+#rm polyfills.js.bak
 
 cat <<WARNING > tmp-warning.js
 
