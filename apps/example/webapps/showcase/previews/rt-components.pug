@@ -14,6 +14,15 @@ anchor rt-components
             +else
                 span(style="color: yellowgreen") (press to turn off)
             +endif
+            
+        p 
+            led.tiny.spaced(state="{{helloLed}}")
+            | This is a led 
+            
+        p 
+            led.mini.avatar(state="{{helloLed}}")
+            span Input.0
+            sync(value="{{helloLed}}" topic="my-test-plc.testInput")
 
         
         p 
