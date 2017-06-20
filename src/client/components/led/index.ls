@@ -3,3 +3,4 @@ Ractive.components['led'] = Ractive.extend do
     isolated: yes
     data: ->
         type: \lightbulb
+        state: off
