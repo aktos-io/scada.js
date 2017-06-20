@@ -37,6 +37,9 @@ mixin partial(name)
     != '{{#partial ' + name + '}}'
     block
     != '{{/partial}}'
+    
+mixin apply(name, arg)
+    != '{{>' + name + ' ' + arg + '}}'
 
 mixin component(name)
     != '<script id="' + name  + '" type="text/ractive">'

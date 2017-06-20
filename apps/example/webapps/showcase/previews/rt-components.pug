@@ -14,8 +14,15 @@ anchor rt-components
             +else
                 span(style="color: yellowgreen") (press to turn off)
             +endif
+            
+        .ui.list
+            +each('[0, 1, 2, 3]')
+                .item
+                    led.mini.avatar(topic="my-test-plc.testInput{{.}}")
+                    .content
+                        a.header Input.{{.}}
+                        .description This is input number {{.}}
 
-        
         p 
             b my-test-plc.testLevel1: {{rtComponents.test2}}
             sync(value="{{rtComponents.test2}}" topic="my-test-plc.testLevel1")

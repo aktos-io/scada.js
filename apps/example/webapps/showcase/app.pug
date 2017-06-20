@@ -1,5 +1,7 @@
 router(curr="{{ currentPage }}")
 
+include ./deps/side-menu.pug
+
 .ui.fixed.inverted.main.menu
     .ui.container 
         a.launch.icon.item(onclick="$('.ui.sidebar').sidebar('toggle')")
@@ -57,6 +59,3 @@ router(curr="{{ currentPage }}")
             i.cube.icon 
             | Example
         include ./previews/example-component.pug
-
-
-include ./deps/menu.pug

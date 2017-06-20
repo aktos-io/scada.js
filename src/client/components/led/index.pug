@@ -1,0 +1,11 @@
+//- preload all images 
++each('["on", "off"]')
+    div(style="display: none; background: url(/{{type}}/{{.}}.svg)")
+
+img.ui.image(src="/{{type}}/{{# state}}on{{else}}off{{/}}.svg" class="{{class}}")
+sync(value="{{ state }}" topic="{{topic}}")
+
+    
+    
+    
+    
