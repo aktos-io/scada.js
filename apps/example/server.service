@@ -7,6 +7,7 @@ PROJECT_NAME="$(basename $CURR_DIR)_$(basename $CURR_FILE)"
 SESSION_NAME="${PROJECT_NAME%%.*}"
 [[ -f "tmux-launch" ]] && LIB_DIR="$CURR_DIR" || LIB_DIR="/etc/aktos/service-runner"
 
+
 # include lib(s)
 source "${LIB_DIR}/tmux-launch"
 set_title $SESSION_NAME
@@ -19,8 +20,10 @@ cd $SCADA_ROOT
 start-tmux-session "$SESSION_NAME"
 
 # run commands in tmux session
-run-in-tmux "cd $SCADA_ROOT" "gulp --app example --webapp showcase"
-run-in-tmux "cd $SCADA_ROOT" 'xdg-open .' 'atom . || subl .'
+run-in-tmux "cd $CURR_DIR/webserver" './run-development'
+run-in-tmux "cd $CURR_DIR/webserver" './run-ls ram-cache.ls'
+run-in-tmux "cd $CURR_DIR/webserver" './run-ls monitor.ls'
+
 
 # Show in terminal if not `--headless`
 attach-tmux-session "$SESSION_NAME"
