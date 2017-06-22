@@ -56,6 +56,9 @@ export class logger
         if section in @sections
             console.warn.apply console, [@_get-prefix!] ++ args
 
+    warn: (...args) ->
+        console.warn.apply console, [@_get-prefix!, '[WARNING]'] ++ args
+
 
     _get-timestamp: ->
         "#{new Date! .get-time! - @start-time}ms"
