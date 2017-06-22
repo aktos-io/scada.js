@@ -10,13 +10,13 @@ class Cache extends Actor
 
         @on-data (msg) ~>
             @cache[msg.topic] = msg.payload
-            @log.log "Current cache status: ", @cache
+            #@log.log "Current cache status: ", @cache
 
         @on-update (msg) ~>
             @log.log "update requested from cache"
             for topic, value of @cache
                 @send value, topic
-                
+
     action: ->
         @log.log "#{@name} started..."
 
