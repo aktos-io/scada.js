@@ -6,3 +6,7 @@ export function pack x
 
 export function unpack x
     JSON.parse x
+
+
+export clone = (x) ->
+    unpack pack x 

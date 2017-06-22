@@ -3,8 +3,8 @@ require! {
     './merge': {merge}
     './sleep': {sleep, after, clear-timer}
     './signal': {wait-for, timeout-wait-for, go, is-waiting}
-    './debug-log': {debug-log, get-logger}
-    './packing': {pack, unpack}
+    './debug-log': {debug-log, get-logger, logger, debug-levels}
+    './packing': {pack, unpack, clone}
     './formatting': {unix-to-readable, readable-to-unix}
     './couch-nano': {CouchNano}
     './convert-units': {convert-units}
@@ -100,8 +100,8 @@ module.exports = {
     sleep, after, clear-timer
     merge
     wait-for, timeout-wait-for, go, is-waiting
-    debug-log, get-logger
-    pack, unpack
+    debug-log, get-logger, logger, debug-levels
+    pack, unpack, clone
     unix-to-readable, readable-to-unix
     assert
     obj-copy, dynamic-obj, attach
