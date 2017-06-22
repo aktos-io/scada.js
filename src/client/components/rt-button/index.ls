@@ -7,10 +7,9 @@ Ractive.components['rt-button'] = Ractive.extend do
     oninit: ->
         @actor = new IoActor (@get \name)
         @actor.subscribe (@get \topic)
+        @actor.request-update!
 
     onrender: ->
-        __ = @
-
         # logger utility is defined here
         logger = @root.find-component \logger
         console.error "No logger component is found!" unless logger

@@ -10,5 +10,7 @@ Ractive.components['sync'] = Ractive.extend do
         @actor.on-receive (msg) ~>
             @fire \receive, msg
 
+        @actor.request-update!
+
     data: ->
         value: null

@@ -7,7 +7,10 @@ export class Monitor extends Actor
         @log.log "subscribed: #{@subscriptions}"
 
         @on-receive (msg) ~>
-            @log.log "payload: ", msg.payload, "topic: ", msg.topic
+            if \update of msg
+                @log.log "***update message: ", msg.update, "\t\ttopic: ", msg.topic
+            if \payload of msg
+                @log.log "data message: ", msg.payload, "\t\ttopic: ", msg.topic
 
     action: ->
         @log.log "#{@name} started..."
