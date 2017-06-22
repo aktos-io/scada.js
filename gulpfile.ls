@@ -101,6 +101,17 @@ for-preparserify-workaround =
     "#{paths.client-webapps}/#{app}/**/*.pug"
     "#{paths.client-src}/**/*.pug"
 
+for-assets =
+    "#{paths.client-src}/assets/**"
+    ...
+
+for-browserify =
+    "#{paths.client-webapps}/#{app}/**/*.ls"
+    "#{paths.client-src}/**/*.ls"
+    "#{paths.lib-src}/**/*.ls"
+    "#{paths.lib-src}/**/*.js"
+
+
 
 # Organize Tasks
 gulp.task \default, ->
@@ -134,18 +145,14 @@ gulp.task \default, ->
     watch "#{paths.vendor-folder}/**", (event) ->
         gulp.start <[ vendor ]>
 
-
-    for-browserify =
-        "#{paths.client-webapps}/#{app}/**/*.ls"
-        "#{paths.client-src}/**/*.ls"
-        "#{paths.lib-src}/**/*.ls"
-        "#{paths.lib-src}/**/*.js"
-
     watch for-browserify, ->
         gulp.start \browserify
 
     watch for-preparserify-workaround, ->
         gulp.start \preparserify-workaround
+
+    watch for-assets, ->
+        gulp.start \assets
 
 
 # Copy js and html files as is
