@@ -1,8 +1,11 @@
-//- preload all images 
+//- preload all images (should be above `img` tag)
 +each('["on", "off"]')
     div(style="display: none; background: url(/{{type}}/{{.}}.svg)")
 
-img.ui.image(src="/{{type}}/{{# state}}on{{else}}off{{/}}.svg" class="{{class}}")
+//- actual led 
+img.ui.image.led(src="/{{type}}/{{innerState}}" class="{{class}}")
+
+//- the sync component that updates status of led 
 sync(value="{{ state }}" topic="{{topic}}")
 
     
