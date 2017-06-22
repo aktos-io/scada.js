@@ -47,9 +47,3 @@ new SocketIOServer io, 'socketio server'
 
 # start a broker to share messages over dcs network
 new Broker!
-
-# -----------------------------------------------------------------------------
-# Test codes
-# -----------------------------------------------------------------------------
-require! './monitor': {Monitor}
-new Monitor!

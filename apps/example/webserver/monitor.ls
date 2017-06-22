@@ -1,6 +1,6 @@
-require! 'dcs': {Actor}
+require! 'dcs': {Actor, Broker}
 
-export class Monitor extends Actor
+class Monitor extends Actor
     (name='') ->
         super "Monitor #{name}"
         @subscribe '**'
@@ -14,3 +14,6 @@ export class Monitor extends Actor
 
     action: ->
         @log.log "#{@name} started..."
+
+new Monitor \test
+new Broker!
