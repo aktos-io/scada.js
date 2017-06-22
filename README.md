@@ -28,7 +28,6 @@ Install [`NodeJs`](https://nodejs.org) and install rest of the dependencies:
     git clone https://github.com/aktos-io/scada.js
     cd scada.js
     git submodule update --init --recursive
-    git submodule update 
     npm install -g gulp yarn livescript@1.4.0
     yarn
 
