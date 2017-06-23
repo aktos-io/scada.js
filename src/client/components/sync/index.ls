@@ -7,7 +7,7 @@ Ractive.components['sync'] = Ractive.extend do
         @actor.ractive = this
         @actor.sync \value, (@get \topic), (@get \fps)
 
-        @actor.on-receive (msg) ~>
+        @actor.on \receive, (msg) ~>
             @fire \receive, msg
 
         @actor.request-update!
