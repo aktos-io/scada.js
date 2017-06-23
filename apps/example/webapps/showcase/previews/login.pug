@@ -6,5 +6,5 @@ anchor login
             .field
                 input(value="{{login.username}}" placeholder="username")
             .field 
-                input(value="{{login.username}}" placeholder="password")
-            login-button.purple Login
+                input(value="{{login.password}}" placeholder="password")
+            login-button.purple(context="{{login}}") Login
