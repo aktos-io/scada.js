@@ -9,10 +9,10 @@
             +each('checklist')
                 .item
                     +iff('isEditing(.id) && isEditable')
-                        .ui.form.red
+                        form.ui.form.red
                             .fields
                                 .field
-                                    .ui.input: input(value="{{ editingContent }}")
+                                    input(value="{{ editingContent }}")
                                 .field
                                     date-picker(unix="{{ newDueTimestamp }}")
                                 .field
@@ -41,11 +41,11 @@
                     
 
     .ui.attached.segment 
-        .ui.equal.width.stackable.grid 
-            .column
+        .ui.form
+            .field
                 i.plus.icon
-                .ui.input: input(value="{{ newItem.content }}" placeholder="content...")
-            .column 
+                input(value="{{ newItem.content }}" placeholder="content...")
+            .field 
                 date-picker(unix="{{ newItem.dueTimestamp }}")
-            .column
+            .field
                 ack-button(on-buttonclick="addNewItem" value="{{ newItem }}") Add New Item
