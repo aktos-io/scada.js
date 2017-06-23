@@ -9,6 +9,8 @@ ractive = new Ractive do
     template: RACTIVE_PREPARSE('app.pug')
     data:
         db: db
+        login:
+            ok: false 
         my-table: my-table
         button:
             show: yes

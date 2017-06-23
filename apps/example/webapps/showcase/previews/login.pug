@@ -1,0 +1,10 @@
+anchor login
+.ui.segments
+    h3.ui.top.attached.block.header login #[a(href="#login") #[i.linkify.icon]]
+    .ui.attached.segment
+        form.ui.form 
+            .field
+                input(value="{{login.username}}" placeholder="username")
+            .field 
+                input(value="{{login.username}}" placeholder="password")
+            login-button.purple Login

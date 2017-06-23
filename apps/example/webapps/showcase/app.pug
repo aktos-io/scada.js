@@ -8,6 +8,7 @@ include ./deps/side-menu.pug
             i.content.icon 
             
         .item Page: {{currentPage}}
+                    
         
         .right.menu
             .vertically.fitted.borderless.item
@@ -17,7 +18,11 @@ include ./deps/side-menu.pug
 
             .item
                 i.icon.user
-                span John DOE
+                +iff('login.ok')
+                    span me: {{login.username}}
+                +else     
+                    span Sing in 
+                +endif 
 
 .ui.attached.segment.pusher
     logger(curr="{{ currentPage }}")
@@ -27,6 +32,8 @@ include ./deps/side-menu.pug
         //- realtime layer 
         aktos-dcs
             
+        include ./previews/login
+        
         h2.ui.horizontal.divider.header 
             i.dashboard.icon 
             | SCADA Components 
