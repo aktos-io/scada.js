@@ -37,8 +37,7 @@ Ractive.components['ack-button'] = Ractive.extend do
                         __.set \state, ''
 
                 if s in <[ done done... ]>
-                    on-done = @get \onDone
-                    on-done!
+                    x = 1
 
                 if s in <[ doing ]>
                     __.set \state, \doing
@@ -94,5 +93,5 @@ Ractive.components['ack-button'] = Ractive.extend do
         self-disabled: no
         enabled: yes
         state: ''
-        on-done: -> console.warn "default ack-button on-done function run"
+        on-done: ->
         transparent: no
