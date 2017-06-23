@@ -18,8 +18,8 @@ include ./deps/side-menu.pug
 
             .item
                 i.icon.user
-                +iff('login.ok')
-                    span me: {{login.username}}
+                +iff('login.loggedin')
+                    span {{login.username}}
                 +else     
                     span Sing in 
                 +endif 

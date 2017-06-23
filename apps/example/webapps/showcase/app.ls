@@ -10,7 +10,11 @@ ractive = new Ractive do
     data:
         db: db
         login:
-            ok: false 
+            username: \user1
+            password: "hello world"
+            loggedin: no
+            token: null 
+
         my-table: my-table
         button:
             show: yes

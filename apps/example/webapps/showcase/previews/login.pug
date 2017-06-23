@@ -7,4 +7,10 @@ anchor login
                 input(value="{{login.username}}" placeholder="username")
             .field 
                 input(value="{{login.password}}" placeholder="password")
-            login-button.purple(context="{{login}}") Login
+            login-button.purple(
+                username="{{login.username}}" 
+                password="{{login.password}}"
+                token="{{login.token}}" 
+                loggedin="{{login.loggedin}}") Login
+                
+        p Token is: {{ login.token }}
