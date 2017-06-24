@@ -56,7 +56,7 @@ export function merge obj1, obj2
                 else
                     delete obj1[p]
         obj1
-/**/
+/* */
 export function merge-all (obj1, ...sources)
     for obj2 in sources
         # merge rest one by one
@@ -122,6 +122,25 @@ tests =
             a: 1
             b: 8
             c: [1, 2, 4]
+
+        {result, expected}
+
+
+    'merge lists2': ->
+        a=
+          a: 1
+          b: 2
+          c: ['hello', 'world']
+        b=
+          b: 8
+          c: ['hi', 'world']
+
+        result = a `merge` b
+
+        expected =
+            a: 1
+            b: 8
+            c: ['hello', 'world', 'hi']
 
         {result, expected}
 
@@ -213,6 +232,7 @@ tests =
                 cb: 5
 
         {result, expected}
+        
     'merging object with functions': ->
         a=
           a: 1
