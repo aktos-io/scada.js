@@ -39,6 +39,9 @@ Ractive.components['ack-button'] = Ractive.extend do
                 if s in <[ done done... ]>
                     x = 1
 
+                if s in <[ normal ]>
+                    __.set \state, \normal 
+
                 if s in <[ doing ]>
                     __.set \state, \doing
                     self-disabled = yes

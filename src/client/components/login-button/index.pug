@@ -1,1 +1,6 @@
-ack-button(class="{{class}}" on-buttonclick="doLogin") {{yield}}
+ack-button(
+    class="{{class}}" 
+    on-buttonclick="doAction"
+    disabled="{{disabled}}"
+    enabled="{{enabled}}") {{yield}}
+    
