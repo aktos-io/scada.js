@@ -2,19 +2,16 @@ btn(
     on-buttonclick="click"
     value="{{value}}"
     title="{{reason}}"
-    class="{{ class }} ack-button labeled icon"
+    class="{{ class }} ack-button {{#if (state === 'doing') || (state === 'done') || (state === 'error') }}labeled icon{{/if}}"
     type="{{ type }}"
     disabled="{{ (disabled || selfDisabled) || !(enabled) }}"
     style="{{ style }} {{#if transparen}}background-color: transparent;{{/if}}"
     )
-    | {{#if state === "doing"}}
-    i.icon #[.ui.active.mini.inverted.loader]
-    | {{elseif state === "done"}}
-    i.icon.checkmark
-    | {{elseif state === "error"}}
-    i.warning.sign.icon
-    | {{elseif state === "normal" || state === ""}}
-    i.icon
-    | {{/if}}
-    
+    +iff('state === "doing"')
+        i.icon #[.ui.active.mini.inverted.loader]
+    +elif('state === "done"')
+        i.icon.checkmark
+    +elif('state === "error"')
+        i.warning.sign.icon
+    +endif
     | {{yield}}

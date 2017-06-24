@@ -1,0 +1,70 @@
+anchor login
+.ui.segments
+    h3.ui.top.attached.block.header login #[a(href="#login") #[i.linkify.icon]]
+    .ui.attached.segment
+        .ui.relaxed.divided.list 
+            .item 
+                i.large.user.middle.aligned.icon 
+                .content 
+                    a.header Account 1
+                    .description user1, #[code hello world]
+            .item 
+                i.large.user.middle.aligned.icon 
+                .content 
+                    a.header Account 2
+                    .description user2, #[code hello world2]
+            
+    h3.ui.attached.block.header Login Form
+    .ui.attached.segment
+        .ui.four.column.stackable.center.aligned.grid 
+            .column 
+                form.ui.form 
+                    .field
+                        .ui.left.icon.input 
+                            input(value="{{login.username}}" placeholder="username")
+                            i.user.icon 
+                    .field 
+                        .ui.left.icon.input
+                            input(value="{{login.password}}" placeholder="password")
+                            i.lock.icon 
+                    .ui.fluid.buttons
+                        login-button.green(
+                            username="{{login.username}}" 
+                            password="{{login.password}}"
+                            loggedin="{{login.loggedin}}"
+                            disabled="{{login.loggedin}}") Login
+                            
+                        login-button.red(
+                            action="logout"
+                            enabled="{{login.loggedin}}"
+                            loggedin="{{login.loggedin}}") Logout
+                            
+            .ui.horizontal.divider or 
+            .column 
+                form.ui.form 
+                    .field
+                        .ui.left.icon.input 
+                            input(value="{{login.token}}" placeholder="token")
+                            i.lock.icon 
+                    login-button.purple.fluid(
+                        token="{{login.token}}" 
+                        loggedin="{{login.loggedin}}") Login with token
+        
+    h3.ui.attached.block.header Authorization Tests 
+    .ui.attached.segment
+        .ui.warning.message.
+            This section should only be readable to user1 and only writable 
+            to user2. Guest should not see anything at all.
+
+        .ui.info.message.
+            topic: "authorization.test1"
+
+        h3.ui.header.red Authorized Area Starts Here
+
+        .ui.input: input(value="{{rtComponents.testAuthorization1.value}}")
+        slider(value="{{rtComponents.testAuthorization1.value}}")
+        sync(value="{{rtComponents.testAuthorization1.value}}" 
+            topic="authorization.test1"
+            perms="{{authorization.test1.perms}}")
+        p effective permissions: {{authorization.test1.perms}}
+            

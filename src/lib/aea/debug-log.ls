@@ -1,7 +1,10 @@
 # for debugging purposes
+require! colors: {green, gray, yellow}
+
 start-time = new Date! .get-time!
 
 export debug-log = (...x) ->
+    console.warn yellow "Deprecated: Use logger class instead."
     console.log.apply this, [(new Date! .get-time! - start-time) + "ms : "]  ++ x
 
 function align-left width, inp
@@ -9,6 +12,7 @@ function align-left width, inp
 
 export get-logger = (debug-source, opts={}) ->
     (...x) ->
+        console.warn yellow "Deprecated: Use logger class instead."
         return if debug-level is \silent
         if opts.incremental
             timestamp = (new Date! .get-time! - start-time) + "ms"
@@ -34,6 +38,9 @@ export class logger
         if @level > debug-levels.silent
             console.log.apply this, [@_get-prefix!] ++ args
 
+    log-green: ->
+        @log green ...
+
     debug-log: (...args) ->
         if @level >= debug-levels.debug
             console.warn "debug-log is depreciated. use log-section instead."
@@ -57,7 +64,7 @@ export class logger
             console.warn.apply console, [@_get-prefix!] ++ args
 
     warn: (...args) ->
-        console.warn.apply console, [@_get-prefix!, '[WARNING]'] ++ args
+        console.warn.apply console, [@_get-prefix!, yellow('[WARNING]')] ++ args
 
 
     _get-timestamp: ->
@@ -65,7 +72,7 @@ export class logger
 
     _get-prefix: ->
         src-name = align-left 15, "#{@source-name}"
-        "#{@_get-timestamp!}: #{src-name} :"
+        (gray "#{@_get-timestamp!}: ") + "#{src-name} :"
 
 if testing=no
     a = new logger \a

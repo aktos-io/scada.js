@@ -8,6 +8,7 @@ include ./deps/side-menu.pug
             i.content.icon 
             
         .item Page: {{currentPage}}
+                    
         
         .right.menu
             .vertically.fitted.borderless.item
@@ -17,7 +18,11 @@ include ./deps/side-menu.pug
 
             .item
                 i.icon.user
-                span John DOE
+                +iff('login.loggedin')
+                    span {{login.username}}
+                +else     
+                    span Sing in 
+                +endif 
 
 .ui.attached.segment.pusher
     logger(curr="{{ currentPage }}")
@@ -27,7 +32,9 @@ include ./deps/side-menu.pug
         //- realtime layer 
         aktos-dcs
             
-        h2.ui.horizontal.divider.header 
+        include ./previews/login
+        
+        h1.ui.horizontal.divider.header 
             i.dashboard.icon 
             | SCADA Components 
             
@@ -35,7 +42,7 @@ include ./deps/side-menu.pug
         include ./previews/progress/progress.pug
         include ./previews/slider.pug
 
-        h2.ui.horizontal.divider.header 
+        h1.ui.horizontal.divider.header 
             i.tasks.icon 
             | ERP Components 
 

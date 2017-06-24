@@ -9,6 +9,12 @@ ractive = new Ractive do
     template: RACTIVE_PREPARSE('app.pug')
     data:
         db: db
+        login:
+            username: \user1
+            password: "hello world"
+            loggedin: no
+            token: null
+
         my-table: my-table
         button:
             show: yes
@@ -180,6 +186,9 @@ ractive = new Ractive do
         rt-components:
             test1: -10
             test3: -5
+            test-authorization1:
+                value: null
+                perms: null
 
 ractive.on do
     'complete': ->
