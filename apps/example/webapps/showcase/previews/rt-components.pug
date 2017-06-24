@@ -21,20 +21,20 @@ anchor rt-components
                 .column 
                     .ui.fluid.card 
                         .image 
-                            led.mini(topic="my-test-plc.testInput{{.}}")
+                            led.mini(topic="public.my-test-plc.testInput{{.}}")
                         .content
                             .header Input.{{.}}
 
     .ui.attached.segment 
         p 
             b my-test-plc.testLevel1: {{rtComponents.test2}}
-            sync(value="{{rtComponents.test2}}" topic="my-test-plc.testLevel1")
+            sync(value="{{rtComponents.test2}}" topic="public.my-test-plc.testLevel1")
 
     .ui.attached.segment 
         h3.header Checkbox        
         checkbox(value="{{rtButton.test1}}")
             | My RT Checkbox
-            sync(value="mahmut" topic="hello.world")
+            sync(value="mahmut" topic="public.hello.world")
                 
         
 
