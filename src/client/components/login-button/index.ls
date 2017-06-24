@@ -11,19 +11,17 @@ Ractive.components['login-button'] = Ractive.extend do
                 event.component.fire \state, \doing
                 err, res <~ @auth.login {username: @get('username'), password: @get('password')}
                 if err
-                    <~ event.component.fire \error, "something went wrong"
+                    <~ event.component.fire \error, "something went wrong with login: #{pack err}"
                     #console.log "user pressed button on error screen. "
-                    @set \loggedin, no
                 else
-                    event.component.fire \state, \done...
-                    #console.log "login button says: we got: ", res
-                    @set \loggedin, yes
+                    if res.auth.session
+                        event.component.fire \state, \done...
+                        #console.log "login button says: we got: ", res
+                        @set \loggedin, yes
+                        # token is written to local-storage and sent to relevant actor in AuthActor
+                    else
+                        <~ event.component.fire \error, "unexpected response on login: #{pack res}"
 
-                # for debugging purposes only
-                @set \token, try
-                    res.auth.session.token
-                catch
-                    void
 
             do-logout: (event) ->
                 event.component.fire \state, \doing
@@ -31,11 +29,13 @@ Ractive.components['login-button'] = Ractive.extend do
                 if err
                     <~ event.component.fire \error, "something went wrong while logging out"
                     #console.log "user pressed button on error screen. "
-                    @set \loggedin, yes
                 else
-                    event.component.fire \state, \done...
-                    console.log "login button says: we got: ", res
-                    @set \loggedin, no
+                    if res.auth.logout is \ok
+                        event.component.fire \state, \done...
+                        console.log "login button says: we got: ", res
+                        @set \loggedin, no
+                    else
+                        <~ event.component.fire \error, "something went wrong while logging out, res: #{pack res}"
 
 
 
@@ -46,7 +46,7 @@ Ractive.components['login-button'] = Ractive.extend do
                     @fire \doLogin, event
 
     onrender: ->
-        <~ sleep 500ms
+        <~ sleep 300ms
         ack-button = @find-component \ack-button
         ack-button.fire \state, \doing
         err, res <~ @auth.check-session
