@@ -16,16 +16,14 @@ anchor login
             
     h3.ui.attached.block.header Login Form
     .ui.attached.segment
-        .ui.two.column.stackable.center.aligned.grid 
+        .ui.four.column.stackable.center.aligned.grid 
             .column 
                 form.ui.form 
                     .field
-                        label username 
                         .ui.left.icon.input 
                             input(value="{{login.username}}" placeholder="username")
                             i.user.icon 
                     .field 
-                        label password
                         .ui.left.icon.input
                             input(value="{{login.password}}" placeholder="password")
                             i.lock.icon 
@@ -37,7 +35,6 @@ anchor login
             .column 
                 form.ui.form 
                     .field
-                        label token 
                         .ui.left.icon.input 
                             input(value="{{login.token}}" placeholder="token")
                             i.lock.icon 
@@ -47,18 +44,19 @@ anchor login
         
     h3.ui.attached.block.header Authorization Tests 
     .ui.attached.segment
-        p.
-            This section should only be readable by user1 and only writable 
-            by user2. Guest should not see anything at all.
-        
-        p topic: "authorization.test1"
-        
-        h4.ui.horizontal.divider.header #[i.lock.icon] authorization test starts here 
+        .ui.warning.message.
+            This section should only be readable to user1 and only writable 
+            to user2. Guest should not see anything at all.
+
+        .ui.info.message.
+            topic: "authorization.test1"
+
+        h3.ui.header.red Authorized Area Starts Here
+
         .ui.input: input(value="{{rtComponents.testAuthorization1.value}}")
         slider(value="{{rtComponents.testAuthorization1.value}}")
         sync(value="{{rtComponents.testAuthorization1.value}}" 
             topic="authorization.test1"
             perms="{{authorization.test1.perms}}")
         p effective permissions: {{authorization.test1.perms}}
-        h4.ui.horizontal.header.divider authorization test ends here 
             
