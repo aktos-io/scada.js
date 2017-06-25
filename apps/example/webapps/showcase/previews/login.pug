@@ -24,22 +24,19 @@ anchor login
                             .ui.left.icon.input 
                                 input(
                                     value="{{login.username}}" 
-                                    placeholder="username"
-                                    disabled="{{login.loggedin}}")
+                                    placeholder="username")
                                 i.user.icon 
                         .field 
                             .ui.left.icon.input
                                 input(
                                     value="{{login.password}}" 
-                                    placeholder="password"
-                                    disabled="{{login.loggedin}}")
+                                    placeholder="password")
                                 i.lock.icon 
                         login-button.fluid.green(
                             username="{{login.username}}" 
                             password="{{login.password}}"
-                            loggedin="{{login.loggedin}}"
-                            permissions="{{login.permissions}}") Login
-                                
+                            loggedin="{{login.loggedin}}") Login
+                                    
                 .ui.horizontal.divider or 
                 .column 
                     form.ui.form 
@@ -61,8 +58,7 @@ anchor login
                         | Logged in 
                     login-button.fluid.red(
                         action="logout"
-                        loggedin="{{login.loggedin}}"
-                        permissions="{{login.permissions}}") Logout
+                        loggedin="{{login.loggedin}}") Logout
         +endif
                 
     
