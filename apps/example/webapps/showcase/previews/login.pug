@@ -16,40 +16,56 @@ anchor login
             
     h3.ui.attached.block.header Login Form
     .ui.attached.segment
-        .ui.four.column.stackable.center.aligned.grid 
-            .column 
-                form.ui.form 
-                    .field
-                        .ui.left.icon.input 
-                            input(value="{{login.username}}" placeholder="username")
-                            i.user.icon 
-                    .field 
-                        .ui.left.icon.input
-                            input(value="{{login.password}}" placeholder="password")
-                            i.lock.icon 
-                    .ui.fluid.buttons
-                        login-button.green(
+        +iff('! login.loggedin')
+            .ui.four.column.stackable.center.aligned.grid 
+                .column 
+                    form.ui.form 
+                        .field
+                            .ui.left.icon.input 
+                                input(
+                                    value="{{login.username}}" 
+                                    placeholder="username"
+                                    disabled="{{login.loggedin}}")
+                                i.user.icon 
+                        .field 
+                            .ui.left.icon.input
+                                input(
+                                    value="{{login.password}}" 
+                                    placeholder="password"
+                                    disabled="{{login.loggedin}}")
+                                i.lock.icon 
+                        login-button.fluid.green(
                             username="{{login.username}}" 
                             password="{{login.password}}"
                             loggedin="{{login.loggedin}}"
-                            disabled="{{login.loggedin}}") Login
-                            
-                        login-button.red(
-                            action="logout"
-                            enabled="{{login.loggedin}}"
-                            loggedin="{{login.loggedin}}") Logout
-                            
-            .ui.horizontal.divider or 
-            .column 
-                form.ui.form 
-                    .field
-                        .ui.left.icon.input 
-                            input(value="{{login.token}}" placeholder="token")
-                            i.lock.icon 
-                    login-button.purple.fluid(
-                        token="{{login.token}}" 
-                        loggedin="{{login.loggedin}}") Login with token
-        
+                            permissions="{{login.permissions}}") Login
+                                
+                .ui.horizontal.divider or 
+                .column 
+                    form.ui.form 
+                        .field
+                            .ui.left.icon.input 
+                                input(
+                                    value="{{login.token}}" 
+                                    placeholder="token")
+                                i.lock.icon 
+                        login-button.purple.fluid(
+                            token="{{login.token}}" 
+                            loggedin="{{login.loggedin}}"
+                            disabled="true") Login with token
+        +else 
+            .ui.four.column.stackable.center.aligned.grid 
+                .column 
+                    h1.ui.header
+                        i.green.check.icon 
+                        | Logged in 
+                    login-button.fluid.red(
+                        action="logout"
+                        loggedin="{{login.loggedin}}"
+                        permissions="{{login.permissions}}") Logout
+        +endif
+                
+    
     h3.ui.attached.block.header Authorization Tests 
     .ui.attached.segment
         h3.ui.header Steps to follow 
@@ -79,6 +95,8 @@ anchor login
                         .ui.horizontal.divider OR
                         | 2: Login as user1 on one window and as user2 on the 
                         | other. Open a third window and stay as a guest there. 
+                        .ui.horizontal.divider OR
+                        | 3: Hack the UI with "HACK ME :)" checkbox. 
             .step
                 i.checkbox.box.icon
                 .content 
@@ -97,16 +115,47 @@ anchor login
                         bu you can't change the value wih user1's account. 
                         
                         Also see that you can not see any changes in Guest account.
-                        
+                        #[.ui.horizontal.divider Hacking]
+
+                        #[b Notice that hacking user interface doesn't make any sense.]
                     
     
 
         h3.ui.header.red Authorized Area Starts Here
 
-        .ui.input: input(value="{{rtComponents.testAuthorization1.value}}")
-        slider(value="{{rtComponents.testAuthorization1.value}}")
-        sync(value="{{rtComponents.testAuthorization1.value}}" 
-            topic="authorization.test1"
-            perms="{{authorization.test1.perms}}")
-        p effective permissions: {{authorization.test1.perms}}
+        .ui.horizontal.divider Start of hacking tools 
+        checkbox(checked="{{hackme}}") HACK ME :)
+        .ui.orange.message.
+            You may hack the user interface (with developer tools) to make every 
+            hidden/disabled (unauthorized) component available. But still, if 
+            you don't have enough permissions, 
+            your messages will be dropped in the server side. 
+            
+        .ui.horizontal.divider /End of hacking tools 
+
+        p 
+            |effective permissions: can see: 
+            +iff("canSee('authorization.test1') || hackme")
+                b yes 
+            +else 
+                b no 
+            +endif 
+            | , can write: 
+            +iff("isDisabledFor('authorization.test1') && !hackme ")
+                b no 
+            +else 
+                b yes 
+            +endif 
+                        
+        +if("canSee('authorization.test1') || hackme")
+            .ui.input: input(
+                value="{{rtComponents.testAuthorization1.value}}"
+                disabled!="{{isDisabledFor('authorization.test1') && !hackme }}")
+            slider(
+                value="{{rtComponents.testAuthorization1.value}}"
+                disabled!="{{isDisabledFor('authorization.test1') && !hackme }}")
+            sync(value="{{rtComponents.testAuthorization1.value}}" 
+                topic="authorization.test1"
+                perms="{{authorization.test1.perms}}")
+            
             

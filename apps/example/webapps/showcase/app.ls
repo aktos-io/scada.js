@@ -9,6 +9,7 @@ ractive = new Ractive do
     template: RACTIVE_PREPARSE('app.pug')
     data:
         db: db
+        permissions: {}
         login:
             username: \user1
             password: "hello world"
