@@ -53,6 +53,7 @@ Ractive.components['slider'] = Ractive.extend do
         nouislider.create slider.0, opts
         slider-widget = slider.0.no-ui-slider
 
+
         if type is \simple
             @observe \value, (_new) ->
                 slider-widget.set _new
