@@ -121,5 +121,5 @@ Ractive.components['check-login'] = Ractive.extend do
             else
                 console.warn "unknown response: ", res
         else
-            unless err.code is \singleton
+            unless err.code in <[ singleton already-checked ]>
                 console.warn "something went wrong while checking the session, err: ", err
