@@ -52,12 +52,54 @@ anchor login
         
     h3.ui.attached.block.header Authorization Tests 
     .ui.attached.segment
-        .ui.warning.message.
-            This section should only be readable to user1 and only writable 
-            to user2. Guest should not see anything at all.
-
-        .ui.info.message.
-            topic: "authorization.test1"
+        h3.ui.header Steps to follow 
+        
+        .ui.five.steps 
+            .step
+                i.checkbox.box.icon
+                .content 
+                    .title Test read and write permissions
+                    .description.
+                        Guest has no right to read or write permissions for this 
+                        slider. user1 can read, but can't write. user2 can read and 
+                        write. 
+            .step
+                i.checkbox.box.icon
+                .content 
+                    .title Step 1
+                    .description.
+                        Open this page on another browser or in a  private 
+                        window of your browser 
+            .step
+                i.checkbox.box.icon
+                .content 
+                    .title Step 2
+                    .description 
+                        | Confirm you are logged out on both windows 
+                        .ui.horizontal.divider OR
+                        | 2: Login as user1 on one window and as user2 on the 
+                        | other. Open a third window and stay as a guest there. 
+            .step
+                i.checkbox.box.icon
+                .content 
+                    .title Step 3
+                    .description Move the slider to change the value in any of the windows 
+            .step
+                i.checkbox.box.icon
+                .content 
+                    .title Expect
+                    .description. 
+                        Changes are not propagated because Guest has no write 
+                        permissions for #[code authorization.test1] topic. 
+                        #[.ui.horizontal.divider OR]
+                        If you did #[b Step 2: 2], you can change values with 
+                        user2's account and see the changes with user1's account; 
+                        bu you can't change the value wih user1's account. 
+                        
+                        Also see that you can not see any changes in Guest account.
+                        
+                    
+    
 
         h3.ui.header.red Authorized Area Starts Here
 
