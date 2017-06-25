@@ -24,7 +24,7 @@ Ractive.components['ack-button'] = Ractive.extend do
                 # TODO: remove {args: val}
                 @fire \buttonclick, {component: this, args: val}, val
 
-            state: (event, s, msg, callback) ->
+            state: (_event, s, msg, callback) ->
                 self-disabled = no
 
                 if s in <[ done ]>
@@ -40,7 +40,7 @@ Ractive.components['ack-button'] = Ractive.extend do
                     x = 1
 
                 if s in <[ normal ]>
-                    __.set \state, \normal 
+                    __.set \state, \normal
 
                 if s in <[ doing ]>
                     __.set \state, \doing
@@ -52,20 +52,22 @@ Ractive.components['ack-button'] = Ractive.extend do
                     console.warn "scadajs: Deprecation: use \"ack-button.fire \\error\" instead"
                     @fire \error, msg, callback
 
-            error: (event, msg, callback) ->
+            error: (_event, msg, callback) ~>
                 msg = {message: msg} unless msg.message
                 msg = msg `merge` {
                     title: msg.title or 'This is my error'
                     icon: "warning sign"
                 }
-                @set \state, \error
-                @set \reason, msg.message
-                @set \selfDisabled, no
-                action <- logger.fire \showDimmed, msg, {-closable}
+                action <~ logger.fire \showDimmed, msg, {-closable}
+
+                __.set \state, \error
+                __.set \reason, msg.message
+                __.set \selfDisabled, no
+
                 #console.log "error has been processed by ack-button, action is: #{action}"
                 callback action if typeof! callback is \Function
 
-            info: (event, msg, callback) ->
+            info: (_event, msg, callback) ->
                 msg = {message: msg} unless msg.message
                 msg = msg `merge` {
                     title: msg.title or 'ack-button info'
@@ -75,7 +77,7 @@ Ractive.components['ack-button'] = Ractive.extend do
                 #console.log "info has been processed by ack-button, action is: #{action}"
                 callback action if typeof! callback is \Function
 
-            yesno: (event, msg, callback) ->
+            yesno: (_event, msg, callback) ->
                 msg = {message: msg} unless msg.message
                 msg = msg `merge` {
                     title: msg.title or 'Yes or No'
