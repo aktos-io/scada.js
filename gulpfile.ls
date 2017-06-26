@@ -92,8 +92,14 @@ ls-entry-files = glob.sync "#{paths.client-webapps}/**/#{app}/app.{ls,js}"
 
 for-css =
     "#{paths.vendor-folder}/**/*.css"
+    "!#{paths.vendor-folder}/**/__tmp__/**"
     "#{paths.client-src}/**/*.css"
     "#{paths.client-webapps}/**/*.css"
+
+for-js =
+    "#{paths.vendor-folder}/**/*.js"
+    "!#{paths.vendor-folder}/**/__tmp__/**"
+
 
 for-preparserify-workaround =
     "#{paths.client-webapps}/#{app}/**/*.html"
@@ -124,7 +130,7 @@ gulp.task \default, ->
         gulp.start do
             \browserify
             \html
-            \vendor
+            \vendor-js
             \vendor-css
             \assets
             \pug
@@ -142,8 +148,8 @@ gulp.task \default, ->
     watch for-css, (event) ->
         gulp.start <[ vendor-css ]>
 
-    watch "#{paths.vendor-folder}/**", (event) ->
-        gulp.start <[ vendor ]>
+    watch for-js, (event) ->
+        gulp.start <[ vendor-js ]>
 
     watch for-browserify, ->
         gulp.start \browserify
@@ -217,9 +223,8 @@ gulp.task \browserify, ->
 
 
 # Concatenate vendor javascript files into public/js/vendor.js
-gulp.task \vendor, ->
-    files = glob.sync "./vendor/**/*.js"
-    gulp.src files
+gulp.task \vendor-js, ->
+    gulp.src for-js
         .pipe cat "vendor.js"
         .pipe uglify!
         .pipe through.obj (file, enc, cb) ->
