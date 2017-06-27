@@ -1,10 +1,15 @@
+- var srcAddr = "https://github.com/aktos-io/scada.js/blob/master/apps/example/webapps/showcase/previews/progress/progress.pug"
 anchor progress
 .ui.segments
     h3.ui.top.attached.block.header progress #[a(href="#progress") #[i.linkify.icon]]
     .ui.attached.segment
         ui-progress.top.attached.orange(value="{{progress.one.curr}}" max="{{progress.one.max}}")
+        btn.basic.teal.label.icon(href=srcAddr newtab) #[i.code.icon] View on Github #[i.github.icon]
+
+
         assign(input="{{true}}" output="{{hidemeprogrgess}}")
         checkbox(checked="{{hidemeprogrgess}}") hide/show 
+            
         +if('hidemeprogrgess')
             r-table(class="ui very basic collapsing celled table")
                 tbody 

@@ -1,7 +1,7 @@
 btn(
     on-buttonclick="toggleChecked"
     tooltip="{{tooltip}}"
-    class!="{{#if ! transparent}}basic{{/if}} {{ class }} aea-checkbox"
+    class!="{{#if !transparent }}basic{{/if}} gray {{ class }} aea-checkbox"
     style="{{ style }} {{#if transparent}}background-color: transparent;{{/if}} text-align: left; "
     disabled="{{ (disabled || selfDisabled) || !(enabled) }}"
     type="{{type}}"
