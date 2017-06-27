@@ -48,7 +48,7 @@ Ractive.components['login-button'] = Ractive.extend do
                 else
                     if res.auth.logout is \ok
                         _event.component.fire \state, \done...
-                        console.log "login button says: we got: ", res
+                        #console.log "login button says: we got: ", res
                         @set \loggedin, no
                         @fire \getPermissions, {ro: [], rw: []}
                     else
@@ -64,7 +64,7 @@ Ractive.components['login-button'] = Ractive.extend do
 
             get-permissions: (_event, perm) ->
                 # read permissions
-                console.log "permissions: ", perm
+                #console.log "permissions: ", perm
                 if typeof! perm is \Object
                     _permissions := {read: {}, write: {}}
                     if perm.ro
@@ -92,7 +92,7 @@ Ractive.components['check-login'] = Ractive.extend do
         @on do
             get-permissions: (_event, perm) ->
                 # read permissions
-                console.log "permissions: ", perm
+                #console.log "permissions: ", perm
                 if typeof! perm is \Object
                     _permissions := {read: {}, write: {}}
                     if perm.ro
@@ -111,10 +111,10 @@ Ractive.components['check-login'] = Ractive.extend do
         err, res <~ auth.check-session
         unless err
             if res.auth.logout is \yes
-                console.log "logging out"
+                #console.log "logging out"
                 @set \loggedin, no
             else if res.auth.session
-                console.log "server says we are logged in as #{res.auth.session.user}, perms: ", res.auth.session.permissions
+                #console.log "server says we are logged in as #{res.auth.session.user}, perms: ", res.auth.session.permissions
                 @set \username, res.auth.session.user
                 @set \loggedin, yes
                 @fire \getPermissions, res.auth.session.permissions
