@@ -7,7 +7,6 @@ Ractive.components['ui-progress'] = Ractive.extend do
         indicator = $ @find \.ui.progress
 
         indicator.progress do
-            duration: 0
             total: max
             min: min
             showActivity: no
