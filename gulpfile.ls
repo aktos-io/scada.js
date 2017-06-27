@@ -226,7 +226,7 @@ gulp.task \browserify, ->
 gulp.task \vendor-js, ->
     gulp.src for-js
         .pipe cat "vendor.js"
-        .pipe uglify!
+        .pipe if-else only-compile, uglify
         .pipe through.obj (file, enc, cb) ->
             contents = file.contents.to-string!
             optimized = optimize-js contents

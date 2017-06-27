@@ -1,17 +1,11 @@
-.aea-progress(id="{{_guid}}-progress")
-    +iff('type === "circular"')
-        include ./circular.svg
-
-    +elif('type === "simple"')
-        include ./line.svg
-        
-    +elif('type === "half-circle"')
-        include ./half-circle.svg
-        
-    +elif('type === "vertical"')
-        include ./vertical.svg
-        
-    +elif('type === "custom"')
-        | {{yield}}
-        
-    +endif
+| <div class="{{class}}" 
+|       {{#if type === 'vertical'}}
+|           data-type="fill"
+|           data-path="M20 20L90 20L90 90L20 90Z"
+|           data-fill="data:ldbar/res,bubble(#248,#fff,50,1)"
+|       {{/if}}
+|       data-preset="{{_type}}" 
+|       style="{{style}}; {{#if height}}height: {{height}};{{/if}}{{#if width}}width: {{width}};{{/if}}"
+|       data-easing="null"
+| >
+| </div>
