@@ -1,0 +1,16 @@
++iff('href')
+    | <a class='ui button {{# disabled}}disabled{{/}} {{# active}}active{{/}} {{ class }}'
+    |    {{#if newtab}}onclick="window.open('{{href}}')" {{else}}href='{{href}}'{{/if}}
+    |    style='{{style}}'
+    |    title='{{title}}' >
+    |    {{yield}}
+    | </a>
++else
+    | <div type='button'
+    |    class='ui button {{#if disabled}}disabled{{/if}} {{#if active}}active{{/if}} {{ class }}'
+    |    {{#if ! disabled}}on-click="@this.fire('buttonclick', value)" {{/if}}
+    |    style='{{style}}'
+    |    title="{{title}}{{tooltip}}" >
+    |    {{yield}}
+    | </div>
++endif
