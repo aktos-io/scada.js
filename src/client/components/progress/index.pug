@@ -1,11 +1,4 @@
-| <div class="{{class}}" 
-|       {{#if type === 'vertical'}}
-|           data-type="fill"
-|           data-path="M20 20L90 20L90 90L20 90Z"
-|           data-fill="data:ldbar/res,bubble(#248,#fff,50,1)"
-|       {{/if}}
+| <div class="ldBar {{class}}" 
 |       style="{{style}}; {{#if height}}height: {{height}};{{/if}}{{#if width}}width: {{width}};{{/if}}"
-|       data-easing="null"
 | >
-| {{yield}}
 | </div>

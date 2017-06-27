@@ -46,18 +46,31 @@ anchor progress
                             h3.ui.top.header Half circle progress bar
                             progress.green(type="fan" value="{{progress.one.curr}}" max="{{progress.one.max}}")
 
+            slider(value="{{progress.one.curr}}" max="{{progress.one.max}}")
+            r-table(class="ui very basic collapsing celled table")
+                tbody 
+                    tr 
                         th
                             h3.ui.top.header Custom progress bar (heart)
                             progress.purple(value="{{progress.one.curr}}" max="{{progress.one.max}}")
-                                +partial('progress') 
+                                +partial('path') 
                                     include:stripSvg(getPath) ./heart.svg
 
                         th
                             h3.ui.top.header Custom progress bar (heart, fill)
                             progress.purple(value="{{progress.one.curr}}" 
-                                max="{{progress.one.max}}" fill)
-                                +partial('progress') 
+                                max="{{progress.one.max}}"
+                                fill)
+                                +partial('path') 
                                     include:stripSvg(getPath) ./heart.svg
+                        th
+                            h3.ui.top.header Custom progress bar (thermometer, fill)
+                            progress.purple(value="{{progress.one.curr}}" 
+                                max="{{progress.one.max}}" 
+                                height="200px"
+                                width="100px"
+                                img="/progress/thermometer.svg")
+                                                            
                     
         h2.ui.horizontal.divider.header 
             i.wrench.icon 

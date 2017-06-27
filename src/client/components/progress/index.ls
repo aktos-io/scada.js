@@ -5,12 +5,13 @@ Ractive.components['progress'] = Ractive.extend do
         type = switch @get \type
             | \circle   => that
             | \buble    => that
-            | \vertical => \bubble
+            | \vertical => that
             | \fan      => that
             |_          => \line
 
-        if @partials.progress
-            @set \type, type=\custom
+        if @partials.path or @get(\img)
+            type = \custom
+            @set \type,
 
         @set \_type, type
 
@@ -20,21 +21,35 @@ Ractive.components['progress'] = Ractive.extend do
         elem = @find \div
 
         scada-defaults =
-            type: if @get \fill then that else \stroke
+            type: if @get \fill then \fill else \stroke
 
-        data-attributes = scada-defaults <<< $ elem .data!
+        if @get \fill
+            unless that is \fill
+                console.log "fill is: ", @get('fill')
+                scada-defaults <<< fill: that
 
-        inner-type = @get \_type
-        unless inner-type is \custom
-            init-options = data-attributes <<< do
-                preset: inner-type
-        else
-            init-options = data-attributes <<<< do
-                path: @partials.progress .0
-            console.log "init is :", init-options
 
-        bar = new ldBar elem, init-options
+        data-attr = $ elem .data!
 
+        opts = scada-defaults <<< data-attr
+        opts <<< switch @get \_type
+            when \custom =>
+                if @get \img
+                    do
+                        img: that
+                        type: \fill
+                else
+                    path: @partials.path .0
+
+            when \vertical => do
+                preset: \buble
+                type: \fill
+                path: "M20 20L90 20L90 90L20 90Z"
+                fill: 'data:ldbar/res,bubble(#248,#fff,50,1)'
+            else =>
+                preset: that
+
+        bar = new ldBar elem, opts
 
         @observe \value, (_new) ->
             percent = (_new * 100 / (max - min))
