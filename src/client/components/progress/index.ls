@@ -7,8 +7,10 @@ Ractive.components['progress'] = Ractive.extend do
             | \buble    => that
             | \vertical => \bubble
             | \fan      => that
-            | \custom   => that
             |_          => \line
+
+        if @partials.progress
+            @set \type, type=\custom
 
         @set \_type, type
 
@@ -17,18 +19,19 @@ Ractive.components['progress'] = Ractive.extend do
         min = @get \min
         elem = @find \div
 
-        data-attributes = $ elem .data!
+        scada-defaults =
+            type: if @get \fill then that else \stroke
+
+        data-attributes = scada-defaults <<< $ elem .data!
+
         inner-type = @get \_type
         unless inner-type is \custom
             init-options = data-attributes <<< do
                 preset: inner-type
         else
-            x = @partials.svg .0
-            init = data-attributes <<<< do
-                type: \stroke
-                path: x
-            console.log "init is :", init
-            init-options = init
+            init-options = data-attributes <<<< do
+                path: @partials.progress .0
+            console.log "init is :", init-options
 
         bar = new ldBar elem, init-options
 

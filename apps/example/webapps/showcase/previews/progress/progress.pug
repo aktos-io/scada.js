@@ -48,8 +48,15 @@ anchor progress
 
                         th
                             h3.ui.top.header Custom progress bar (heart)
-                            progress.purple(type="custom" value="{{progress.one.curr}}" max="{{progress.one.max}}")
-                                +partial('svg') 
+                            progress.purple(value="{{progress.one.curr}}" max="{{progress.one.max}}")
+                                +partial('progress') 
+                                    include:stripSvg(getPath) ./heart.svg
+
+                        th
+                            h3.ui.top.header Custom progress bar (heart, fill)
+                            progress.purple(value="{{progress.one.curr}}" 
+                                max="{{progress.one.max}}" fill)
+                                +partial('progress') 
                                     include:stripSvg(getPath) ./heart.svg
                     
         h2.ui.horizontal.divider.header 
