@@ -2,6 +2,9 @@ require! 'through2': through
 require! <[ pug path cheerio fs ]>
 require! 'ractive':Ractive
 require! 'prelude-ls': {map, keys}
+require! '../../client/templates/filters': {pug-filters}
+
+console.log "pug filters: ", pug-filters
 
 /*******************************************************************************
 
@@ -59,8 +62,8 @@ export ractive-preparserify = (file) ->
                     template-contents = mixin-include + template-contents
 
                     # FIXME: We should get dependencies and rendered content in one function call
-                    deps = pug.compileClientWithDependenciesTracked template-contents, {filename: file} .dependencies
-                    fn = pug.compile template-contents, {filename: file}
+                    deps = pug.compileClientWithDependenciesTracked template-contents, {filename: file, filters: pug-filters} .dependencies
+                    fn = pug.compile template-contents, {filename: file, filters: pug-filters}
                     # End of FIXME
 
                     all-deps = deps ++ template-full-path
