@@ -25,6 +25,14 @@ anchor progress
                         td 
                             h3.ui.top.header Circular progress bar
                             progress.red(type="circle" value="{{progress.one.curr}}" max="{{progress.one.max}}")
+                        td 
+                            h3.ui.top.header Circular progress bar
+                            progress.red(
+                                type="circle" 
+                                value="{{progress.one.curr}}" 
+                                max="{{progress.one.max}}"
+                                width="200px"
+                                height="200px")
 
                         td 
                             h3.ui.top.header Vertical progress bar 
@@ -37,11 +45,13 @@ anchor progress
                         td
                             h3.ui.top.header Half circle progress bar
                             progress.green(type="fan" value="{{progress.one.curr}}" max="{{progress.one.max}}")
-                            //-
-                                h3.ui.top.header Custom progress bar (heart)
-                                progress.purple(custom value="{{progress.one.curr}}" max="{{progress.one.max}}")
-                                    include ./heart.svg
-                
+
+                        th
+                            h3.ui.top.header Custom progress bar (heart)
+                            progress.purple(type="custom" value="{{progress.one.curr}}" max="{{progress.one.max}}")
+                                +partial('svg') 
+                                    include:stripSvg(getPath) ./heart.svg
+                    
         h2.ui.horizontal.divider.header 
             i.wrench.icon 
             | test inputs 
