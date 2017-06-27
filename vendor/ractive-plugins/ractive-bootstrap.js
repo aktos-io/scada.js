@@ -11,9 +11,9 @@ Ractive.components['btn'] = Ractive.extend({
 	},
 	template: function() {
 		if( this.get('href') )
-			return "<a class='ui button {{# disabled}}disabled{{/}} {{# active}}active{{/}} {{ class }}' href='{{href}}'  style='{{style}}' title='{{title}}'>{{yield}}</a>"
+			return "<a class='ui button {{# disabled}}disabled{{/}} {{# active}}active{{/}} {{ class }}' {{#if newtab}}onclick=\"window.open('{{href}}')\" {{else}}href='{{href}}'{{/if}}  style='{{style}}' title='{{title}}'>{{yield}}</a>"
 		else
-			return "<div type='button' class='ui {{#if disabled}}disabled{{/if}} {{#if active}}active{{/if}} button {{ class }}' onclick='onclick' {{#if ! disabled}}on-click=\"@this.fire('buttonclick', value)\" {{/if}} style='{{style}}' title='{{title}}{{tooltip}}'>{{yield}}</div>"
+			return "<div type='button' class='ui button {{#if disabled}}disabled{{/if}} {{#if active}}active{{/if}} {{ class }}' onclick='onclick' {{#if ! disabled}}on-click=\"@this.fire('buttonclick', value)\" {{/if}} style='{{style}}' title='{{title}}{{tooltip}}'>{{yield}}</div>"
 	}
 })
 
