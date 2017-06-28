@@ -53,6 +53,7 @@ Ractive.components['progress'] = Ractive.extend do
 
         @observe \value, (_new) ->
             percent = (_new * 100 / (max - min))
+            @set \percent, percent 
             bar.set percent, animate=no
 
     data: ->

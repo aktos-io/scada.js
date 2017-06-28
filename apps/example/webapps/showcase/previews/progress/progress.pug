@@ -21,6 +21,8 @@ anchor progress
                         td 
                             h3.ui.top.header Line progress bar
                             progress.red(type="line" value="{{progress.one.curr}}" max="{{progress.one.max}}")
+                            div(style="margin: 3px")
+                                label(format='##.# Ampere' value="{{progress.one.curr}}")
 
                         td 
                             h3.ui.top.header Circular progress bar
@@ -42,6 +44,8 @@ anchor progress
                                 max="{{progress.one.max}}"
                                 width="100px"
                                 height="100px")
+                            label(format='##.# meter' value="{{progress.one.curr}}")
+
                         td
                             h3.ui.top.header Half circle progress bar
                             progress.green(type="fan" value="{{progress.one.curr}}" max="{{progress.one.max}}")
@@ -67,18 +71,23 @@ anchor progress
                             h3.ui.top.header Custom progress bar (thermometer, fill)
                             progress.purple(value="{{progress.one.curr}}" 
                                 max="{{progress.one.max}}" 
+                                percent="{{progress.one.percent}}"
                                 height="200px"
                                 width="100px"
                                 img="/progress/thermometer.svg")
+                            .ui.green.tag.label(style="position: relative; top: -30px; left: 50px") 
+                                b 
+                                    label(format='#.# °C' value="{{progress.one.curr}}")
                                 
                         th
                             h3.ui.top.header Custom progress bar (Truck)
                             progress.purple(value="{{progress.one.curr}}" 
                                 max="{{progress.one.max}}" 
                                 width="200px"
+                                height="150px"
                                 img="/progress/truck.png")
-                    tr
-                        th
+                            .ui.red.large.label(style="position: relative; top: -100px; left: 100px") 
+                                label(format='###.## m3' value="{{progress.one.curr}}")
                                                             
                     
         h2.ui.horizontal.divider.header 

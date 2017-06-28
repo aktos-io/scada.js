@@ -1,13 +1,23 @@
-require! 'aea/formatting': {displayFormat}
+require! 'aea/formatting': {displayFormat, parse-format}
 
 Ractive.defaults.data.displayFormat = displayFormat
+Ractive.defaults.data.parseFormat = parseFormat
 
 Ractive.components['label'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->
+        format = @get \format
+        unless format
+            console.error "Format is required to use a label!"
+            return
+
+        parse-format = @get \parseFormat
+        format-obj = parse-format format
+        display-format = @get \displayFormat
+
         @observe \value, (_new) ->
-            f = @get('displayFormat') '###.##', _new
+            f = displayFormat format-obj, _new
             @set \formattedValue, f.fullText
     data: ->
-        formattedValue: "123.45 hello/hour"
+        formattedValue: ""
