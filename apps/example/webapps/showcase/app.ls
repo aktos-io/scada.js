@@ -162,6 +162,8 @@ ractive = new Ractive do
                 \progress
                 \slider
                 \text-button
+                \login
+                \drawing-area
                 \todo
                 \data-table
 
