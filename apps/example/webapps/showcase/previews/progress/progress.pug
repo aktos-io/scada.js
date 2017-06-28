@@ -75,9 +75,12 @@ anchor progress
                                 height="200px"
                                 width="100px"
                                 img="/progress/thermometer.svg")
-                            .ui.green.label 
-                                b 
-                                    label(format='#.# °C' value="{{progress.one.curr}}")
+                            //-
+                                .ui.black.label
+                                    seven-segment 
+                                        label(format='#.# °C' value="{{progress.one.curr}}")
+                            .ui.black.tag.label(style="position: relative; top: -50px; left: 50px")
+                                seven-segment(value="{{progress.one.curr}}")
                                 
                         th
                             h3.ui.top.header Custom progress bar (Truck)
