@@ -2,6 +2,8 @@
 anchor drawing-area
 .ui.segments
     h3.ui.top.attached.block.header Scada Drawing Area #[a(href="#drawing-area") #[i.linkify.icon]]
+    .ui.attached.segment 
+        btn.basic.teal.label.icon(href=srcAddr newtab) #[i.code.icon] View on Github #[i.github.icon]
     .ui.attached.segment
         drawing-area 
             widget(x="100px" y="100px")
