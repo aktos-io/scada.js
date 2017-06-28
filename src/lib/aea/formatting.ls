@@ -13,120 +13,155 @@ export readable-to-unix = (display, format) ->
     else
         unix = moment(display, format).unix! * 1000ms
 
+# -------------------------------------------------------------------------
+#                           formatting
+# -------------------------------------------------------------------------
+
 require! 'prelude-ls': {
-    split, last, map,
+    split, last, map, take, drop, max, round
 }
-require! './packing': {pack, unpack}
+require! './packing': {clone}
+strip = (.replace /\s/g, '')
 
-export formatter = (format, value) -->
+left-zero-pad = (num-of-digits, value) ->
+    max-digit = max "#{value}".length, num-of-digits
+    result = if value?
+        "#{"0" * num-of-digits}#{value}".slice -max-digit
+    else
+        null
+    #console.log "left-zero: #{num-of-digits} .. #{value} ... #{result}"
+    result
+
+
+parse-format = (format) ->
+    unit-part = format.replace /\s*(#+\.?#*)\s*/, '' |> strip
+    number-part = format.replace unit-part, '' |> strip
+
+    if has-unit = unit-part.length > 0
+        unit-on-left = if format.index-of(unit-part) is 0 then yes else no
+
+
+    [integer-part, decimal-part] = number-part.split '.'
+    max-digits = integer-part.length + decimal-part.length
+
+    parsed =
+        length-of:
+            integer-part: integer-part.length
+            decimal-part: decimal-part.length
+            total: max-digits
+        unit: void
+        has:
+            decimal: decimal-part.length > 0
+            unit: has-unit
+
+    if has-unit
+        parsed <<< unit:
+            text: unit-part
+            is-on-left: unit-on-left
+            is-on-right: not unit-on-left
+    parsed
+
+
+/*
+parse-format '####.## km/sa'
+parse-format '% ###.#'
+parse-format '##.# °C'
+parse-format '#.###### abc/m·s²'
+parse-format '##.####'
+*/
+
+export display-format = (format, value) -->
     # see formatter-tests below
+    if typeof! format is \String
+        f = parse-format format
+    else
+        f = format
 
-    unit = format.replace /[#\.\s]/g, ''
-    format-parts = format.match /#+\.?#*/
-    number-part = format-parts.0
+    to-fixed = (value, precision) ->
+        power = Math.pow(10, precision or 0)
+        String (Math.round(value * power) / power)
 
-    unit-right-hand = if format-parts.index is 0 then yes else no
-
-    value = if value? then
-        parse-float value
-
-    f = number-part.split '.'
-    format-int = f.0
-    digits = format-int.length
-
-    format-prec = ''
-    if f.length > 1
-        format-prec = f.1
-        digits += format-prec.length
-    #console.log "total digits for #type : #digits"
-
-    undefined-input = '-' * digits
+    to-double-fixed = (value, precision) ->
+        # FIXME: this error value has to be added to the value in order
+        # to round correctly
+        err = (0.01 / (10 ** precision))
+        x = to-fixed (value + err), (precision + 1)
+        to-fixed x, precision
 
     if value?
-        prec-len = format-prec.length
-        #console.log "seven segment display got message: ", msg.val
-        # round
-        i = 10**prec-len
-        value = (Math.round value * i) / i
-        #console.log "rounded value: i, value, prec-len ", msg.val, value, prec-len, i
+        value = parse-float value
+        rounded-value = to-double-fixed value, f.length-of.decimal-part
 
-        if prec-len > 0
-            v = String value .split '.'
-            v-int = v.0
+        [integer-part, decimal-part] = "#{rounded-value}".split '.'
+        decimal-part = decimal-part or 0
+        #decimal-part = "#{"0" * f.length-of.decimal-part}#{decimal-part or 0}".slice -f.length-of.decimal-part
 
-            v-prec = ''
-            if v.1
-                v-prec = v.1
-
-            #console.log 'prec-len ... : ', v, String value, prec-len, v-int, v-prec
-
-            if v-prec.length < prec-len
-                missing-zero = prec-len - v-prec.length
-                v-prec = v-prec + ('0' * missing-zero)
-
-            value = v-int + '.' + v-prec
-        else
-            value = String value
-
-        v-str = String value .split '.'
-        v-str-len = v-str.0.length
-        if v-str.1
-            v-str-len += v-str.1.length
-
-        value = if v-str-len <= digits then
-            value
-        else
-            undefined-input
-
-        value-str = if unit-right-hand then
-            value + ' ' + unit
-        else
-            unit + ' ' + value
+        number-text = left-zero-pad f.length-of.integer-part, integer-part
+        if f.has.decimal
+            number-text += "."
+            number-text += take (f.length-of.decimal-part), "#{decimal-part}#{"0" * f.length-of.decimal-part}"
     else
-        value = undefined-input
-        value-str = undefined-input
+        number-text = "#{'-' * f.length-of.integer-part}#{"." if f.has.decimal}#{'-' * f.length-of.decimal-part}"
+        rounded-value = null
+
+    full-text = if f.has.unit
+        if f.unit.is-on-right
+            "#{number-text} #{f.unit.text}"
+        else
+            "#{f.unit.text} #{number-text}"
+    else
+        "#{number-text}"
 
     output =
-        number: value
-        str: value-str
-        unit: unit
-        digits: digits
-        unit-right-hand: unit-right-hand
-        unit-left-hand: not unit-right-hand
-        overflow: yes or no
+        full-text: full-text
+        rounded-value: rounded-value
+        number-text: number-text
+        format: f
 
 
 # -----------------------------------------------------------------------
 #                                    TESTS START HERE
 # -----------------------------------------------------------------------
+assert-str = (result, expected) ->
+    if expected isnt result
+        console.error """
+            formatting.ls: Test failed: #{name}"
+            EXPECTED: #{expected}
+            RESULT  : #{result}
+            """
+
 formatter-tests =
   'simple formatting': ->
-    f = formatter '#.### m/s'
+    f = display-format '#.### m/s'
 
-    result = f 1234.123456 .str
-    expected = '1234.123 m/s'
-    {result, expected}
+    result = f 1234.123456 .full-text
+    expected = '1234.124 m/s'
+    assert-str result, expected
 
   'simple formatting2': ->
-    f = formatter '####.### m/s'
+    f = display-format '####.### m/s'
 
-    result = f 12.123456 .str
-    expected = '0012.123 m/s'
-    {result, expected}
-/*
+    result = f 12.123456 .full-text
+    expected = '0012.124 m/s'
+    assert-str result, expected
+
+    result = f 14.1 .full-text
+    expected = '0014.100 m/s'
+    assert-str result, expected
+
+  'simple formatting3': ->
+    f = display-format '###.##'
+    assert-str f(116.60).full-text, '116.60'
+    assert-str f(116).full-text, '116.00'
+    assert-str f(63.009).full-text, '063.01'
+    assert-str f(0.0049).full-text, '000.01'
+    assert-str f(0.5044445999).full-text, '000.51'
+
 start = Date.now!
-test-count = 1  # use 5_000 for a significiant amount of time
-for i from 0 to test-count
+test-count = 1 #15000
+for i til test-count
     for name, test of formatter-tests
-        {result, expected} = test!
-        if pack(expected) isnt pack(result)
-            console.error """
-                formatting.ls: Test failed: #{name}"
-                EXPECTED: #{expected}
-                RESULT  : #{result}
-                """
-            #throw "test failed. "
-
+        test!
 if test-count > 1
-    console.log "formatting.ls: tests took: #{Date.now! - start} milliseconds..."
-*/
+    console.log "formatting.ls: #{test-count} tests took: #{Date.now! - start} milliseconds..."
+    # formatting.ls: 15000 tests took: 151 milliseconds...
