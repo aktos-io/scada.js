@@ -101,3 +101,40 @@ anchor progress
 
         slider(value="{{progress.one.curr}}" max="{{progress.one.max}}")
         sync(value="{{progress.one.curr}}" topic="hello.slider")
+
+    anchor drawing-area
+    h3.ui.top.attached.block.header Scada Drawing Area 
+    .ui.attached.segment
+        drawing-area 
+            widget(x="100px" y="100px")
+                progress.purple(value="{{progress.one.curr}}" 
+                    max="{{progress.one.max}}" 
+                    percent="{{progress.one.percent}}"
+                    height="200px"
+                    width="100px"
+                    img="/progress/thermometer.svg")
+
+            widget(x="300px" y="300px")
+                progress.purple(
+                    type="vertical" 
+                    value="{{progress.one.curr}}" 
+                    max="{{progress.one.max}}"
+                    width="100px"
+                    height="100px")
+            widget(x="200px" y="100px")
+                label(format='##.# meter' value="{{progress.one.curr}}")
+                    
+            widget(x="400px" y="200px" width="250px")
+                slider(value="{{progress.one.curr}}" max="{{progress.one.max}}")
+
+            widget(x="250px" y="300px" height="200px")
+                slider(vertical value="{{progress.one.curr}}" max="{{progress.one.max}}")
+                    
+            widget(x="420px" y="40px")
+                overlap(width="100px") 
+                    img(src="/progress/truck.png")
+                    +if('showmyoverlay1')
+                        img(src="/progress/truck-red.png")
+
+            widget(x="580px" y="40px")
+                checkbox.red(checked="{{showmyoverlay1}}") show/hide red truck
