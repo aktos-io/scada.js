@@ -1,7 +1,0 @@
-include ../../templates/mixins.pug
-
-+partial('connection-status')
-  |  <div class="connection-status"
-  |    style='background-color: {{ .connected ? "yellowgreen" : "lightgray" }}'>
-  |    {{.connected? "connected..." : "connecting..." }}
-  |  </div>
