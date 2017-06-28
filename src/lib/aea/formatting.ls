@@ -33,7 +33,7 @@ left-zero-pad = (num-of-digits, value) ->
     result
 
 
-parse-format = (format) ->
+export parse-format = (format) ->
     unit-part = format.replace /\s*(#+\.?#*)\s*/, '' |> strip
     number-part = format.replace unit-part, '' |> strip
 
