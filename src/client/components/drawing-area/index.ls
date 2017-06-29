@@ -23,7 +23,7 @@ Ractive.components['drawing-area'] = Ractive.extend do
             offset = $ c .offset!
             total = offset.top + height
             max-height = total if total > max-height
-            console.log "childrens: #{height}, #{offset.top}"
+            #console.log "childrens: #{height}, #{offset.top}"
 
         max-height -= drawing-area.offset! .top
         my-padding = 40px
