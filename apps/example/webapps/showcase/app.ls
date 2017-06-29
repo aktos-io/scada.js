@@ -146,26 +146,26 @@ ractive = new Ractive do
         menu: []
         menu-links: do ->
             components =
-                \ack-button
-                \checkbox
-                \csv-importer
-                \date-picker
-                \dropdown-panel
-                \dropdown
-                \example-component
-                \file-read
-                \formal-field
-                \input-field
-                \print-button
-                \r-table
-                \rt-components
-                \progress
-                \slider
-                \text-button
-                \login
-                \drawing-area
-                \todo
-                \data-table
+                '/ack-button'
+                '/checkbox'
+                '#csv-importer'
+                '#date-picker'
+                'dropdown-panel'
+                'dropdown'
+                'example-component'
+                'file-read'
+                'formal-field'
+                'input-field'
+                'print-button'
+                'r-table'
+                'rt-components'
+                'progress'
+                'slider'
+                'text-button'
+                'login'
+                'drawing-area'
+                'todo'
+                'data-table'
 
 
             [{title: .., url: "\##{..}", icon: \tags} for components]

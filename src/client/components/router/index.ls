@@ -3,25 +3,40 @@ require! 'aea': {sleep}
 require! 'prelude-ls': {take, drop, split}
 
 Ractive.components['anchor'] = Ractive.extend do
-    template: '<a data-id="{{yield}}"></a>'
+    template: '<aa data-id="{{yield}}"></aa>'
     isolated: yes
 
 scroll-to = (anchor) ->
-    offset = $ "span[data-id='#{anchor}']" .offset!
+    offset = $ "a[data-id='#{anchor}']" .offset!
     if offset
         $ 'html, body' .animate do
             scroll-top: offset.top - 45px
             , 500ms
 
+make-hash = (scene, anchor) ->
+    '/' + scene + if anchor? then '#' + anchor else ''
 
-Ractive.components["a"] = Ractive.extend do
+parse-link = (link) ->
+    [scene, anchor] = ['/', '']
+    switch take 2, link
+    | '#/' => [scene, anchor] = drop 2, link .split '#'
+    | '##' => [scene, anchor] = [undefined, (drop 2, link)]
+    |_ => return console.warn "can not determine the prefix. link is: #{link}"
+
+    return do
+        scene: scene
+        anchor: anchor
+
+
+Ractive.components["aa"] = Ractive.extend do
     template: '
-        <span class="aa {{class}}"
-            style="{{style}}"
-            on-click="navigate"
-            {{#if @.get("data-id")}}data-id=\'{{@.get("data-id")}}\' {{/if}}>
-        {{yield}}
-        </span>'
+        <a class="aa {{class}}"
+                style="{{style}}"
+                on-click="navigate"
+                {{#if @.get("data-id")}}data-id=\'{{@.get("data-id")}}\' {{/if}}>
+            {{yield}}
+        </a>'
+
     isolated: no
     onrender: ->
         onclick = @get \onclick
@@ -29,21 +44,23 @@ Ractive.components["a"] = Ractive.extend do
         href = @get \href
         @on do
             navigate: (event) ->
-                if href?
-                    if (take 2, href) is '#/'
-                        [_page, _anchor] = drop 1, href |> split '#'
-                        console.log "this is a page change request, page: #{_page}, anchor: #{_anchor} "
-                    else
-                        _anchor = drop 1, href
-                        scroll-to _anchor
-                        console.log "this is just a normal anchor to: #{href}"
+                if newtab
+                    window.open href
+                    return
 
-                    if newtab
-                        window.open href
-
-                else if onclick
-                    console.log "evaluating onclick: #{onclick}"
+                if onclick
+                    #console.log "evaluating onclick: #{onclick}"
                     eval onclick
+                    return
+
+                if href?
+                    curr = parse-link window.location.hash
+                    link = parse-link href
+                    if link
+                        scene = if link.scene => link.scene else curr.scene
+                        anchor = link.anchor
+                        window.location.hash = make-hash scene, anchor
+                        # scrolling will be performed by hash observer (in the router)
                 else
                     console.log "can not determine action..."
                     debugger
@@ -54,37 +71,21 @@ Ractive.components['router'] = Ractive.extend do
     template: ''
     isolated: yes
     onrender: ->
-        __ = @
+        do handle-hash = ~>
+            curr = parse-link window.location.hash
+            if curr
+                @set \curr, curr.scene
+                @set \scene, curr.scene
+                @set \anchor, curr.anchor
+                scroll-to curr.anchor 
+                console.log """listening hash. current scene:
+                    #{curr.scene}, anchor: #{curr.anchor}"""
+
+        $ window .on \hashchange, -> handle-hash!
 
 
-        page '*', (ctx, next) ->
-            _old = __.get \curr
-            _new = ctx.path
-            if _new isnt _old
-                __.set \curr, _new
-            <- sleep 20ms
-            scroll-to ctx.hash if ctx.hash
-
-        page!
-
-        /*
-        @set \curr, '#/' if (@get \curr) is void
-
-        do function hashchange
-            hash = window.location.hash
-            hash = '/' unless hash
-            __.set \curr, hash
-
-        $ window .on \hashchange, -> hashchange!
-        */
-
-    data: ->
-        curr: '/'
-        root: 'showcase.html'
-
-
-Ractive.components['page'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('page.pug')
+Ractive.components['scene'] = Ractive.extend do
+    template: RACTIVE_PREPARSE('scene.pug')
     isolated: no
     data: ->
         is-selected: (url) ->

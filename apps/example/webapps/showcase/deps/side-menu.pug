@@ -3,7 +3,6 @@
         h2.ui.inverted.header 
             img.ui.mini.image(src="scadajs.png")
             .content ScadaJS 
-
     .menu 
         +each('menu')
             +iff('.submenu')
@@ -11,16 +10,16 @@
                     .header {{.title}}
                     .menu
                         +each('.submenu')
-                            a.item(
-                                href="{{.url}}"
+                            aa.item(
+                                href!='{{.url}}'
                                 class="{{#if currentPage === .url }}active{{/if}}"
                                 )
                                 | {{ .title }}
                                 +if('.icon')
                                     i.icon(class="{{.icon}}")
             +else
-                a.item(
-                    href="{{.url}}"
+                aa.item(
+                    href!='{{.url}}'
                     class="{{#if currentPage === .url }}active{{/if}}"
                     )
                     | {{ .title }}
