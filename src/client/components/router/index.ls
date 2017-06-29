@@ -18,15 +18,14 @@ make-hash = (scene, anchor) ->
 
 get-window-hash = ->
     hash = window.location.hash
-    hash = hash.replace '%23', '#'
+        .replace '%23', '#'
     set-window-hash hash
-    hash
+    hash or '#/'
 
 set-window-hash = (hash) ->
     window.location.hash = hash
 
 parse-link = (link) ->
-    link = link
     [scene, anchor] = ['/', '']
     switch take 2, link
     | '#/' => [scene, anchor] = drop 2, link .split '#'
@@ -84,7 +83,7 @@ Ractive.components["a"] = Ractive.extend do
 Ractive.components['router'] = Ractive.extend do
     template: ''
     isolated: yes
-    onrender: ->
+    oncomplete: ->
         do handle-hash = ~>
             curr = parse-link get-window-hash!
             if curr
@@ -93,14 +92,16 @@ Ractive.components['router'] = Ractive.extend do
                 sleep 50ms, -> scroll-to curr.anchor
                 console.log """hash changed: scene: #{curr.scene}, anchor: #{curr.anchor}"""
 
-        $ window .on \hashchange, -> handle-hash!
+        $ window .on \hashchange, ->
+            console.log "this is hashchange run: #{window.location.hash}"
+            handle-hash!
 
 
 Ractive.components['scene'] = Ractive.extend do
     template: '
         <div name="{{name}}"
             style="
-                {{#unless isSelected(curr)}} display: none; {{/unless}}
+                {{#unless visible}} display: none; {{/unless}}
                 margin: 0;
                 padding: 0;
                 border: 0;
@@ -113,27 +114,28 @@ Ractive.components['scene'] = Ractive.extend do
         if @get \render
             @set \renderedBefore, yes
 
-    data: ->
-        is-selected: (url) ~>
-            #console.log "PAGE: #{@get 'name'} url: #{url}"
+        @observe \curr, (curr) ->
+            console.log "scene says: current is: ", curr
             this-page = @get \name
             default-page = @get 'default'
-            curr = @get \curr
-
-            #console.log "#{@get 'name'} says current scene is:", curr
             if this-page is default-page
                 #console.log "#{@get 'name'} is the default scene. curr is: #{curr}"
-                if curr is '' or curr is undefined
+                if curr is ''
                     @set \visible, yes
-                    @set \renderedBefore, yes
-                    return yes
+                    sleep 5ms, ~>
+                        @set \renderedBefore, yes
+                        console.log "rendering content of #{this-page} (because this is default)"
+                    return
 
             if curr is this-page
                 #console.log "#{@get 'name'} scene is selected"
                 @set \visible, yes
-                @set \renderedBefore, yes
-                return yes
+                sleep 5ms, ~>
+                    @set \renderedBefore, yes
+                    console.log "rendering content of #{this-page} (because this is selected)"
+                return
 
             @set \visible, no
-            return no
+
+    data: ->
         rendered-before: no
