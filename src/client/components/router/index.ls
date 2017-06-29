@@ -124,11 +124,11 @@ Ractive.components['scene'] = Ractive.extend do
 
             #console.log "#{@get 'name'} says current scene is:", curr
             if this-page is default-page
-                console.log "#{@get 'name'} is the default scene."
-                if curr is '/'
+                console.log "#{@get 'name'} is the default scene. curr is: #{curr}"
+                if curr is '' or curr is undefined 
                     @set \visible, yes
                     return yes
-                    
+
             if curr is this-page
                 #console.log "#{@get 'name'} scene is selected"
                 @set \visible, yes
