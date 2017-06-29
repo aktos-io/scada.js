@@ -218,36 +218,36 @@ ractive.on do
         #$ '.ui.sidebar' .sidebar context: $ 'body .bottom.segment'
 
 
-    test-ack-button1: (event, ev, value) ->
+    'scene.testAckButton1': (event, ev, value) ->
         ev.component.fire \state, \doing
         <- sleep 5000ms
         ractive.set \button.sendValue, value
         ev.component.fire \state, \done...
 
-    test-ack-button2: (event, ev, value) ->
+    'scene.testAckButton2': (event, ev, value) ->
         ev.component.fire \state, \doing
         <- sleep 1000ms
         action <- ev.component.fire \error, "handler 2 got message: #{value}"
         console.log "ack-button's error modal is closed."
 
-    test-ack-button3: (event, ev, value) ->
+    'scene.testAckButton3': (event, ev, value) ->
         action <- ev.component.fire \info, do
             title: "this is an example info"
             message: value or "test info..."
         console.log "ack-button action has been taken: #{action}"
 
-    test-ack-button4: (event, ev) ->
+    'scene.testAckButton4': (event, ev) ->
         action <- ev.component.fire \yesno, do
             title: "Step 2 of 2"
             message: "Do you want to continue?"
         console.log "ack-button action has been taken: #{action}"
 
-    textButtonTest: (event, ev, value) ->
+    'scene.textButtonTest': (event, ev, value) ->
         ev.component.fire \info, do
             title: "Text Button Test"
             message: "value passed by input is: #{value}"
 
-    checkboxchanged: (event, ev, curr-state, intended-state, value) ->
+    'scene.checkboxchanged': (event, ev, curr-state, intended-state, value) ->
         console.log "checkbox event fired, curr: #{curr-state}"
         ev.component.fire \state, \doing
         if @get \checkbox.throw
@@ -258,39 +258,39 @@ ractive.on do
             <- sleep 1000ms
             ev.component.fire \state, intended-state
 
-    my-print: (event, html, value, callback) ->
+    'scene.myPrint': (event, html, value, callback) ->
         callback err=null, body: """
             <h1>This is value: #{value}</h1>
             #{html}
             """
 
-    todostatechanged: (event, ev, list, item-index) ->
+    'scene.todostatechanged': (event, ev, list, item-index) ->
         the-item = list[item-index]
         new-state = if the-item.is-done then \checked else \unchecked
         old-state = if new-state is \checked then \unchecked else \checked
         console.log "Bound components: todo item with id of '" + the-item.id + "' state's changed from '" + old-state + "' to '" + new-state + "'"
 
-    todocompletion: ->
+    'scene.todocompletion': ->
         console.log "Bound components: all todo items has been done"
 
-    todotimeout: (event, item) ->
+    'scene.todotimeout': (event, item) ->
         console.log "Bound components: item with id of '" + item.id + "' in the list had been timed out"
         console.log item
 
-    todostatechanged2: (event, ev, list, item-index) ->
+    'scene.todostatechanged2': (event, ev, list, item-index) ->
         the-item = list[item-index]
         new-state = if the-item.is-done then \checked else \unchecked
         old-state = if new-state is \checked then \unchecked else \checked
         console.log "UnBound instance: todo item with id of '" + the-item.id + "' state's changed from '" + old-state + "' to '" + new-state + "'"
 
-    todocompletion2: ->
+    'scene.todocompletion2': ->
         console.log "UnBound instance: all todo items has been done"
 
-    todotimeout2: (event, item) ->
+    'scene.todotimeout2': (event, item) ->
         console.log "UnBound instance: item with id of '" + item.id + "' in the list had been timed out"
         console.log item
 
-    uploadReadFile: (event, ev, file, next) ->
+    'scene.uploadReadFile': (event, ev, file, next) ->
         ev.component.fire \state, \doing
         console.log "Appending file: #{file.name}"
         ractive.push 'fileRead.files', file
@@ -304,16 +304,16 @@ ractive.on do
         <- sleep 2000ms
         next!
 
-    fileReadClear: (event, ev) ->
+    'scene.fileReadClear': (event, ev) ->
         ractive.set \fileRead.files, []
         ev.component.fire \info, message: "cleared!"
 
-    import-csv: (event, ev, content) ->
+    'scene.importCsv': (event, ev, content) ->
         ev.component.fire \state, \doing
         console.log "content: ", content
         ractive.set \csvContent, content
         ev.component.fire \state, \done...
-    test-formal-field: (event, ev, log-item, finish) ->
+    'scene.testFormalField': (event, ev, log-item, finish) ->
         /*
         ev.component.fire \state, \doing
         <- sleep 3000ms
@@ -327,7 +327,7 @@ ractive.on do
         ractive.set \formalField, formal-field
         finish!
 
-    test-formal-field-show:(event, ev, log) ->
+    'scene.testFormalFieldShow':(event, ev, log) ->
         string = """
             <table>
                 <thead>
@@ -363,7 +363,7 @@ ractive.on do
         ractive.set \combobox.products, products
     */
 
-    delete-products: (event, i) ->
+    'scene.deleteProducts': (event, i) ->
         products = ractive.get \combobox.case2
         index = parse-int i
         products.splice index, 1
