@@ -16,7 +16,20 @@ scroll-to = (anchor) ->
 make-hash = (scene, anchor) ->
     '/' + scene + if anchor? then '#' + anchor else ''
 
+get-window-hash = ->
+    hash = window.location.hash
+    hash = hash.replace '%23', '#'
+    set-window-hash hash
+    hash
+
+set-window-hash = (hash) ->
+    if history.push-state
+        history.push-state null, null, hash
+    else
+        location.hash = hash
+
 parse-link = (link) ->
+    link = link
     [scene, anchor] = ['/', '']
     switch take 2, link
     | '#/' => [scene, anchor] = drop 2, link .split '#'
@@ -54,12 +67,12 @@ Ractive.components["a"] = Ractive.extend do
                     return
 
                 if href?
-                    curr = parse-link window.location.hash
+                    curr = parse-link get-window-hash!
                     link = parse-link href
                     if link
                         scene = if link.scene => link.scene else curr.scene
                         anchor = link.anchor
-                        window.location.hash = make-hash scene, anchor
+                        set-window-hash make-hash scene, anchor
                         # scrolling will be performed by hash observer (in the router)
                         # but, if hash is not changed but user clicked again, we should
                         # scroll to link anyway
@@ -75,12 +88,12 @@ Ractive.components['router'] = Ractive.extend do
     isolated: yes
     onrender: ->
         do handle-hash = ~>
-            curr = parse-link window.location.hash
+            curr = parse-link get-window-hash!
             if curr
                 @set \curr, curr.scene
                 @set \anchor, curr.anchor
                 sleep 50ms, -> scroll-to curr.anchor
-                #console.log """listening hash. current scene: #{curr.scene}, anchor: #{curr.anchor}"""
+                console.log """hash changed: scene: #{curr.scene}, anchor: #{curr.anchor}"""
 
         $ window .on \hashchange, -> handle-hash!
 
