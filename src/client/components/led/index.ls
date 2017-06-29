@@ -11,4 +11,4 @@ Ractive.components['led'] = Ractive.extend do
     data: ->
         type: \lightbulb
         state: undefined
-        inner-state: \loading.gif
+        inner-state: \unknown.gif
