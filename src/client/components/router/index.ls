@@ -23,10 +23,7 @@ get-window-hash = ->
     hash
 
 set-window-hash = (hash) ->
-    if history.push-state
-        history.push-state null, null, hash
-    else
-        location.hash = hash
+    window.location.hash = hash
 
 parse-link = (link) ->
     link = link
