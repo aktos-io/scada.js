@@ -48,6 +48,7 @@ paths =
     client-src: "#{__dirname}/src/client"
     lib-src: "#{__dirname}/src/lib"
     client-webapps: "#{__dirname}/apps/#{app}/webapps"
+    client-root: "#{__dirname}/apps/#{app}"
 
 paths.client-public = "#{paths.build-folder}/#{app}/#{webapp}"
 paths.components-src = "#{paths.client-src}/components"
@@ -109,8 +110,10 @@ for-preparserify-workaround =
 
 for-assets =
     "#{paths.client-src}/**/assets/**"
-    "#{app}/assets/**"
-    "#{app}/webapps/#{webapp}/**/assets/**"
+    "!#{paths.client-src}/**/examples/**"
+    "!#{paths.client-src}/**/example/**"
+    "#{paths.client-root}/assets/**"
+    "#{paths.client-webapps}/**/assets/**"
     "#{paths.vendor-folder}/**/assets/**"
     "!#{paths.vendor-folder}/**/__tmp__/**"
     "!#{paths.vendor-folder}/**/tmp-*/**"
@@ -248,7 +251,7 @@ gulp.task \vendor-css, ->
 
 # Copy assets into the public directory as is
 # search for a folder named "assets", copy and paste its contents into
-# build folder. 
+# build folder.
 gulp.task \assets, ->
     gulp.src for-assets
         .pipe rename (path) ->
