@@ -145,30 +145,46 @@ ractive = new Ractive do
         unix-to-readable: unix-to-readable
         menu: []
         menu-links: do ->
-            components =
-                \ack-button
-                \checkbox
-                \csv-importer
-                \date-picker
-                \dropdown-panel
-                \dropdown
-                \example-component
-                \file-read
-                \formal-field
-                \input-field
-                \print-button
-                \r-table
-                \rt-components
-                \progress
-                \slider
-                \text-button
-                \login
-                \drawing-area
-                \todo
-                \data-table
+            menu =
+                * title: 'Scada Components'
+                  url: '#/scada-components'
+                  submenu:
+                      * title: 'Realtime Components'
+                        url: '#rt-components'
+                      * title: 'Progress Bar'
+                        url: '#progress'
+                      * title: 'Slider'
+                        url: '#slider'
+                      * title: 'Drawing Area'
+                        url: '#drawing-area'
+                * title: 'ERP Components'
+                  url: '#/erp-components'
+                  submenu: do ->
+                    components =
+                        'ack-button'
+                        'checkbox'
+                        'csv-importer'
+                        'date-picker'
+                        'dropdown-panel'
+                        'dropdown'
+                        'file-read'
+                        'formal-field'
+                        'input-field'
+                        'print-button'
+                        'r-table'
+                        'rt-components'
+                        'progress'
+                        'text-button'
+                        'login'
+                        'todo'
+                        'data-table'
+                    [{title: .., url: "\##{..}"} for components]
+                * title: 'Authentication'
+                  url: '#/authentication'
+                * title: 'Example Component'
+                  url: '#/example'
+                  icon: 'cube'
 
-
-            [{title: .., url: "\##{..}", icon: \tags} for components]
 
         progress:
             one:

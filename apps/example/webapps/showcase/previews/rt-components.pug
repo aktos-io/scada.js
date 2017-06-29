@@ -7,7 +7,7 @@ anchor rt-components
     h3.ui.block.big.attached.header Examples
     .ui.attached.segment
         h3.header Buttons has icons representing their states 
-        rt-button.green(state="" topic="my-test-plc.testOutput" value="{{rtButton.test1}}") 
+        rt-button.green(state="" topic="public.my-test-plc.testOutput" value="{{rtButton.test1}}") 
             | Button Text 
             +iff('rtButton.test1')
                 span(style="color: red") (press to turn on)

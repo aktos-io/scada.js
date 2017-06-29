@@ -17,53 +17,70 @@ include ./deps/side-menu.pug
                     | Star
 
             .item
-                i.icon.user
                 +iff('login.loggedin')
+                    i.icon.user
                     span {{login.username}}
                 +else     
-                    span Sing in 
+                    btn.labeled.icon.green(href='#/login') Sing in #[i.sign.in.icon]
                 +endif 
+            +if('login.loggedin')
+                .item
+                    login-button.red.circular.icon(
+                        action="logout"
+                        loggedin="{{login.loggedin}}") 
+                            i.sign.out.icon
 
 .ui.attached.segment.pusher
     logger(curr="{{ currentPage }}")
     
     .ui.hidden.divider
+    .ui.hidden.divider
+    .ui.hidden.divider
+    .ui.hidden.divider
+
     .ui.container
         //- realtime layer 
         aktos-dcs
             
-        include ./previews/login
-        
-        h1.ui.horizontal.divider.header 
-            i.dashboard.icon 
-            | SCADA Components 
+        scene(name="authentication" curr="{{currentPage}}")    
+            include ./previews/authentication
             
-        include ./previews/rt-components.pug    
-        include ./previews/progress/progress.pug
-        include ./previews/slider.pug
-        include ./previews/drawing-area.pug
-
-        h1.ui.horizontal.divider.header 
-            i.tasks.icon 
-            | ERP Components 
-
-        include ./previews/ack-button.pug    
-        include ./previews/dropdown.pug
-        include ./previews/dropdown-panel.pug
-        include ./previews/input-field.pug    
-        include ./previews/checkbox.pug
+        scene(name="login" curr="{{currentPage}}" render)
+            include ./previews/login
         
-        include ./previews/csv-importer.pug
-        include ./previews/text-button.pug
-        include ./previews/r-table.pug
-        include ./previews/formal-field.pug
-        include ./previews/file-read.pug
-        include ./previews/print-button.pug
-        include ./previews/date-picker.pug
-        include ./previews/data-table/index.pug
-        include ./previews/todo.pug
+        scene(name="scada-components" curr="{{currentPage}}" default="scada-components")
+            h1.ui.horizontal.divider.header 
+                i.dashboard.icon 
+                | SCADA Components 
+                
+            include ./previews/rt-components.pug    
+            include ./previews/progress/progress.pug
+            include ./previews/slider.pug
+            include ./previews/drawing-area.pug
 
-        h2.ui.horizontal.divider.header 
-            i.cube.icon 
-            | Example
-        include ./previews/example-component.pug
+        scene(name="erp-components" curr="{{currentPage}}")
+            h1.ui.horizontal.divider.header 
+                i.tasks.icon 
+                | ERP Components 
+
+            include ./previews/ack-button.pug    
+            include ./previews/dropdown.pug
+            include ./previews/dropdown-panel.pug
+            include ./previews/input-field.pug    
+            include ./previews/checkbox.pug
+            
+            include ./previews/csv-importer.pug
+            include ./previews/text-button.pug
+            include ./previews/r-table.pug
+            include ./previews/formal-field.pug
+            include ./previews/file-read.pug
+            include ./previews/print-button.pug
+            include ./previews/date-picker.pug
+            include ./previews/data-table/index.pug
+            include ./previews/todo.pug
+
+        scene(name="example" curr="{{currentPage}}")
+            h2.ui.horizontal.divider.header 
+                i.cube.icon 
+                | Example
+            include ./previews/example-component.pug
