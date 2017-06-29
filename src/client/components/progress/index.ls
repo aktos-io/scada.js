@@ -51,13 +51,16 @@ Ractive.components['progress'] = Ractive.extend do
 
         bar = new ldBar elem, opts
 
+        offset = @get \offset
+        console.log "progress offset is #{offset}"
         @observe \value, (_new) ->
-            percent = (_new * 100 / (max - min))
-            @set \percent, percent 
-            bar.set percent, animate=no
+            bar-percent = (_new * (100 - offset) / (max - min)) + (offset)
+            @set \percent, (_new * 100 / (max - min))
+            bar.set bar-percent, animate=no
 
     data: ->
         max: 100
         min: 0
         value: null
         _type: \line
+        offset: 0
