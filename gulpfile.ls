@@ -1,12 +1,12 @@
 argv = require 'yargs' .argv
 
-project = argv.app or \example
-app = argv.webapp or project
+app = argv.app or \example
+webapp = argv.webapp or project
 only-compile = yes if argv.optimize is true
 
 console.log "------------------------------------------"
-console.log "App\t: #{project}"
-console.log "Webapp\t: #{app}"
+console.log "App\t: #{app}"
+console.log "Webapp\t: #{webapp}"
 if only-compile
     console.log "------------------------------------------"
     console.log " Gulp is running only once for optimization..."
@@ -47,14 +47,14 @@ paths =
     build-folder: "#{__dirname}/build"
     client-src: "#{__dirname}/src/client"
     lib-src: "#{__dirname}/src/lib"
-    client-webapps: "#{__dirname}/apps/#{project}/webapps"
+    client-webapps: "#{__dirname}/apps/#{app}/webapps"
 
-paths.client-public = "#{paths.build-folder}/#{project}/#{app}"
+paths.client-public = "#{paths.build-folder}/#{app}/#{webapp}"
 paths.components-src = "#{paths.client-src}/components"
 
 
 
-notifier.notify {title: "ScadaJS" message: "Project #{project}:#{app} started!"}
+notifier.notify {title: "ScadaJS" message: "Project #{app}:#{webapp} started!"}
 
 on-error = (source, msg) ->
     msg = try
@@ -86,9 +86,9 @@ deleteFolderRecursive = (path) ->
         fs.rmdirSync(path)
 
 
-pug-entry-files = glob.sync "#{paths.client-webapps}/**/#{app}/index.pug"
-html-entry-files = glob.sync "#{paths.client-webapps}/#{app}/index.html"
-ls-entry-files = glob.sync "#{paths.client-webapps}/**/#{app}/app.{ls,js}"
+pug-entry-files = glob.sync "#{paths.client-webapps}/**/#{webapp}/index.pug"
+html-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/index.html"
+ls-entry-files = glob.sync "#{paths.client-webapps}/**/#{webapp}/app.{ls,js}"
 
 for-css =
     "#{paths.vendor-folder}/**/*.css"
@@ -102,17 +102,21 @@ for-js =
 
 
 for-preparserify-workaround =
-    "#{paths.client-webapps}/#{app}/**/*.html"
+    "#{paths.client-webapps}/#{webapp}/**/*.html"
     "#{paths.client-src}/**/*.html"
-    "#{paths.client-webapps}/#{app}/**/*.pug"
+    "#{paths.client-webapps}/#{webapp}/**/*.pug"
     "#{paths.client-src}/**/*.pug"
 
 for-assets =
-    "#{paths.client-src}/assets/**"
-    ...
+    "#{paths.client-src}/**/assets/**"
+    "#{app}/assets/**"
+    "#{app}/webapps/#{webapp}/**/assets/**"
+    "#{paths.vendor-folder}/**/assets/**"
+    "!#{paths.vendor-folder}/**/__tmp__/**"
+    "!#{paths.vendor-folder}/**/tmp-*/**"
 
 for-browserify =
-    "#{paths.client-webapps}/#{app}/**/*.ls"
+    "#{paths.client-webapps}/#{webapp}/**/*.ls"
     "#{paths.client-src}/**/*.ls"
     "#{paths.lib-src}/**/*.ls"
     "#{paths.lib-src}/**/*.js"
@@ -205,7 +209,7 @@ function bundle
                 err
             on-error \browserify, msg
             @emit \end
-        .pipe source "#{project}/#{app}/app.js"
+        .pipe source "#{app}/#{webapp}/app.js"
         .pipe buffer!
         #.pipe sourcemaps.init {+load-maps, +large-files}
         .pipe if-else only-compile, uglify
@@ -213,7 +217,7 @@ function bundle
         #.pipe sourcemaps.write '.'
         .pipe gulp.dest paths.build-folder
         .pipe tap (file) ->
-            log-info \browserify, "Browserify finished (#{project}:#{app})"
+            log-info \browserify, "Browserify finished (#{app}:#{webapp})"
             #console.log "browserify cache: ", pack keys browserify-cache
             console.log "------------------------------------------"
             first-browserify-done := yes
@@ -243,9 +247,26 @@ gulp.task \vendor-css, ->
         .pipe gulp.dest "#{paths.client-public}/css"
 
 # Copy assets into the public directory as is
+# search for a folder named "assets", copy and paste its contents into
+# build folder. 
 gulp.task \assets, ->
-    gulp.src "#{paths.client-src}/assets/**", {base: "#{paths.client-src}/assets"}
+    gulp.src for-assets
+        .pipe rename (path) ->
+            path-parts = path.dirname.split('/')
+            parts = []
+            found-assets = no
+            for i in path-parts
+                if i isnt \assets
+                    unless found-assets
+                        continue
+                else
+                    if i is \assets and not found-assets
+                        found-assets = yes
+                        continue
+                parts.push i
+            path.dirname = join '/', parts
         .pipe gulp.dest paths.client-public
+
 
 # Compile pug files in paths.client-src to the paths.client-tmp folder
 gulp.task \pug ->
