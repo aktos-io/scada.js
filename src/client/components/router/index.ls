@@ -3,8 +3,16 @@ require! 'aea': {sleep}
 require! 'prelude-ls': {take, drop, split}
 
 Ractive.components['anchor'] = Ractive.extend do
-    template: '<aa data-id="{{yield}}"></aa>'
+    template: '<a data-id="{{yield}}"></a>'
     isolated: yes
+
+Ractive.components['aa'] = Ractive.extend do
+    template: ''
+    isolated: yes
+    oninit: ->
+        console.error "this is deprecated!"
+
+
 
 scroll-to = (anchor) ->
     offset = $ "a[data-id='#{anchor}']" .offset!
@@ -28,16 +36,16 @@ parse-link = (link) ->
         anchor: anchor
 
 
-Ractive.components["aa"] = Ractive.extend do
+Ractive.components["a"] = Ractive.extend do
     template: '
-        <a class="aa {{class}}"
+        <a class="{{class}}"
                 style="{{style}}"
                 on-click="navigate"
                 {{#if @.get("data-id")}}data-id=\'{{@.get("data-id")}}\' {{/if}}>
             {{yield}}
         </a>'
-
     isolated: no
+    components: {a: false}
     onrender: ->
         onclick = @get \onclick
         newtab = @get \newtab
@@ -77,7 +85,7 @@ Ractive.components['router'] = Ractive.extend do
                 @set \curr, curr.scene
                 @set \scene, curr.scene
                 @set \anchor, curr.anchor
-                scroll-to curr.anchor 
+                scroll-to curr.anchor
                 console.log """listening hash. current scene:
                     #{curr.scene}, anchor: #{curr.anchor}"""
 
@@ -85,7 +93,18 @@ Ractive.components['router'] = Ractive.extend do
 
 
 Ractive.components['scene'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('scene.pug')
+    template: ->
+        debug = yes
+        if debug
+            '<div name="{{name}}"
+                style="
+                    {{#unless isSelected(curr)}} border: 5px dashed red {{/unless}};
+                    margin: 0;
+                    padding: 0;
+                    border: 0
+                    "
+                > {{>content}}
+            </div>'
     isolated: no
     data: ->
         is-selected: (url) ->

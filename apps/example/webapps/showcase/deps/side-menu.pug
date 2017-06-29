@@ -10,7 +10,7 @@
                     .header {{.title}}
                     .menu
                         +each('.submenu')
-                            aa.item(
+                            a.item(
                                 href!='{{.url}}'
                                 class="{{#if currentPage === .url }}active{{/if}}"
                                 )
@@ -18,7 +18,7 @@
                                 +if('.icon')
                                     i.icon(class="{{.icon}}")
             +else
-                aa.item(
+                a.item(
                     href!='{{.url}}'
                     class="{{#if currentPage === .url }}active{{/if}}"
                     )
