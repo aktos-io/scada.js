@@ -73,7 +73,6 @@ Ractive.components["a"] = Ractive.extend do
                     console.log "can not determine action..."
                     debugger
 
-        console.log "a is rendered: href is #{@get 'href'}"
 
 Ractive.components['router'] = Ractive.extend do
     template: ''
@@ -83,7 +82,6 @@ Ractive.components['router'] = Ractive.extend do
             curr = parse-link window.location.hash
             if curr
                 @set \curr, curr.scene
-                @set \scene, curr.scene
                 @set \anchor, curr.anchor
                 scroll-to curr.anchor
                 console.log """listening hash. current scene:
@@ -94,34 +92,47 @@ Ractive.components['router'] = Ractive.extend do
 
 Ractive.components['scene'] = Ractive.extend do
     template: ->
-        debug = yes
+        debug = no
         if debug
             '<div name="{{name}}"
                 style="
                     {{#unless isSelected(curr)}} border: 5px dashed red {{/unless}};
                     margin: 0;
                     padding: 0;
-                    border: 0
+                    border: 0;
                     "
                 > {{>content}}
             </div>'
+        else
+            '<div name="{{name}}"
+                style="
+                    {{#unless isSelected(curr)}} display: none; {{/unless}}
+                    margin: 0;
+                    padding: 0;
+                    border: 0;
+                    "
+                > {{>content}}
+            </div>'
+
     isolated: no
     data: ->
-        is-selected: (url) ->
-            __ = @
+        is-selected: (url) ~>
             #console.log "PAGE: #{@get 'name'} url: #{url}"
             this-page = @get \name
-            landing-page = @get 'landing-page'
-            if this-page is '/' or landing-page
-                if url in ['', void, null, '/']
-                    @set \visible, true
-                    return true
+            default-page = @get 'default'
+            curr = @get \curr
 
-            first-part = url.substring 0, (this-page.length + 1)
-            show-page = first-part is ('#' + this-page)
+            #console.log "#{@get 'name'} says current scene is:", curr
+            if this-page is default-page
+                console.log "#{@get 'name'} is the default scene."
+                if curr is '/'
+                    @set \visible, yes
+                    return yes
+                    
+            if curr is this-page
+                #console.log "#{@get 'name'} scene is selected"
+                @set \visible, yes
+                return yes
 
-            @set \visible, show-page
-            return show-page
-
-        visible: no
-        curr: ''
+            @set \visible, no
+            return no

@@ -32,10 +32,10 @@ include ./deps/side-menu.pug
         //- realtime layer 
         aktos-dcs
         
-        scene(name="login" default="login")    
+        scene(name="login" default="login" curr="{{currentPage}}")    
             include ./previews/login
         
-        scene(name="scada-components")
+        scene(name="scada-components" curr="{{currentPage}}")
             h1.ui.horizontal.divider.header 
                 i.dashboard.icon 
                 | SCADA Components 
@@ -45,7 +45,7 @@ include ./deps/side-menu.pug
             include ./previews/slider.pug
             include ./previews/drawing-area.pug
 
-        scene(name="erp-components")
+        scene(name="erp-components" curr="{{currentPage}}")
             h1.ui.horizontal.divider.header 
                 i.tasks.icon 
                 | ERP Components 
@@ -66,7 +66,7 @@ include ./deps/side-menu.pug
             include ./previews/data-table/index.pug
             include ./previews/todo.pug
 
-        scene(name="example")
+        scene(name="example" curr="{{currentPage}}")
             h2.ui.horizontal.divider.header 
                 i.cube.icon 
                 | Example

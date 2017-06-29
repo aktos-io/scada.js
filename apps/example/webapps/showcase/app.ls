@@ -146,11 +146,14 @@ ractive = new Ractive do
         menu: []
         menu-links: do ->
             components =
-                '/ack-button'
-                '/checkbox'
+                '/login'
+                '/scada-components'
+                '/erp-components'
+                '#ack-button'
+                '#checkbox'
                 '#csv-importer'
                 '#date-picker'
-                'dropdown-panel'
+                '#dropdown-panel'
                 'dropdown'
                 'example-component'
                 'file-read'
