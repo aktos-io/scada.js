@@ -83,28 +83,16 @@ Ractive.components['router'] = Ractive.extend do
 
 
 Ractive.components['scene'] = Ractive.extend do
-    template: ->
-        debug = no
-        if debug
-            '<div name="{{name}}"
-                style="
-                    {{#unless isSelected(curr)}} border: 5px dashed red {{/unless}};
-                    margin: 0;
-                    padding: 0;
-                    border: 0;
-                    "
-                > {{>content}}
-            </div>'
-        else
-            '<div name="{{name}}"
-                style="
-                    {{#unless isSelected(curr)}} display: none; {{/unless}}
-                    margin: 0;
-                    padding: 0;
-                    border: 0;
-                    "
-                > {{>content}}
-            </div>'
+    template: '
+        <div name="{{name}}"
+            style="
+                {{#unless isSelected(curr)}} display: none; {{/unless}}
+                margin: 0;
+                padding: 0;
+                border: 0;
+                "
+            > {{#if renderedBefore}}{{>content}}{{/if}}
+        </div>'
 
     isolated: no
     data: ->
@@ -116,15 +104,18 @@ Ractive.components['scene'] = Ractive.extend do
 
             #console.log "#{@get 'name'} says current scene is:", curr
             if this-page is default-page
-                console.log "#{@get 'name'} is the default scene. curr is: #{curr}"
+                #console.log "#{@get 'name'} is the default scene. curr is: #{curr}"
                 if curr is '' or curr is undefined
                     @set \visible, yes
+                    @set \renderedBefore, yes
                     return yes
 
             if curr is this-page
                 #console.log "#{@get 'name'} scene is selected"
                 @set \visible, yes
+                @set \renderedBefore, yes
                 return yes
 
             @set \visible, no
             return no
+        rendered-before: no
