@@ -1,0 +1,157 @@
+anchor authentication
+.ui.segments
+    h3.ui.top.attached.block.header login #[a(href="#authentication") #[i.linkify.icon]]
+    .ui.attached.segment
+        .ui.relaxed.divided.list 
+            .item 
+                i.large.user.middle.aligned.icon 
+                .content 
+                    a.header Account 1
+                    .description user1, #[code hello world]
+            .item 
+                i.large.user.middle.aligned.icon 
+                .content 
+                    a.header Account 2
+                    .description user2, #[code hello world2]
+            
+    h3.ui.attached.block.header Login Form
+    .ui.attached.segment
+        +iff('! login.loggedin')
+            .ui.four.column.stackable.center.aligned.grid 
+                .column 
+                    form.ui.form 
+                        .field
+                            .ui.left.icon.input 
+                                input(
+                                    value="{{login.username}}" 
+                                    placeholder="username")
+                                i.user.icon 
+                        .field 
+                            .ui.left.icon.input
+                                input(
+                                    value="{{login.password}}" 
+                                    placeholder="password")
+                                i.lock.icon 
+                        login-button.fluid.green(
+                            username="{{login.username}}" 
+                            password="{{login.password}}"
+                            loggedin="{{login.loggedin}}") Login
+                                    
+                .ui.horizontal.divider or 
+                .column 
+                    form.ui.form 
+                        .field
+                            .ui.left.icon.input 
+                                input(
+                                    value="{{login.token}}" 
+                                    placeholder="token")
+                                i.lock.icon 
+                        login-button.purple.fluid(
+                            token="{{login.token}}" 
+                            loggedin="{{login.loggedin}}"
+                            disabled="true") Login with token
+        +else 
+            .ui.four.column.stackable.center.aligned.grid 
+                .column 
+                    h1.ui.header
+                        i.green.check.icon 
+                        | Logged in 
+                    login-button.fluid.red(
+                        action="logout"
+                        loggedin="{{login.loggedin}}") Logout
+        +endif
+                
+    
+    h3.ui.attached.block.header Authorization Tests 
+    .ui.attached.segment
+        h3.ui.header Steps to follow 
+        
+        .ui.five.steps 
+            .step
+                i.checkbox.box.icon
+                .content 
+                    .title Test read and write permissions
+                    .description.
+                        Guest has no right to read or write permissions for this 
+                        slider. user1 can read, but can't write. user2 can read and 
+                        write. 
+            .step
+                i.checkbox.box.icon
+                .content 
+                    .title Step 1
+                    .description.
+                        Open this page on another browser or in a  private 
+                        window of your browser 
+            .step
+                i.checkbox.box.icon
+                .content 
+                    .title Step 2
+                    .description 
+                        | Confirm you are logged out on both windows 
+                        .ui.horizontal.divider OR
+                        | 2: Login as user1 on one window and as user2 on the 
+                        | other. Open a third window and stay as a guest there. 
+                        .ui.horizontal.divider OR
+                        | 3: Hack the UI with "HACK ME :)" checkbox. 
+            .step
+                i.checkbox.box.icon
+                .content 
+                    .title Step 3
+                    .description Move the slider to change the value in any of the windows 
+            .step
+                i.checkbox.box.icon
+                .content 
+                    .title Expect
+                    .description. 
+                        Changes are not propagated because Guest has no write 
+                        permissions for #[code authorization.test1] topic. 
+                        #[.ui.horizontal.divider OR]
+                        If you did #[b Step 2: 2], you can change values with 
+                        user2's account and see the changes with user1's account; 
+                        bu you can't change the value wih user1's account. 
+                        
+                        Also see that you can not see any changes in Guest account.
+                        #[.ui.horizontal.divider Hacking]
+
+                        #[b Notice that hacking user interface doesn't make any sense.]
+                    
+    
+
+        h3.ui.header.red Authorized Area Starts Here
+
+        .ui.horizontal.divider Start of hacking tools 
+        checkbox(checked="{{hackme}}") HACK ME :)
+        .ui.orange.message.
+            You may hack the user interface (with developer tools) to make every 
+            hidden/disabled (unauthorized) component available. But still, if 
+            you don't have enough permissions, 
+            your messages will be dropped on the server side. 
+            
+        .ui.horizontal.divider /End of hacking tools 
+
+        p 
+            |effective permissions: can see: 
+            +iff("canSee('authorization.test1') || hackme")
+                b yes 
+            +else 
+                b no 
+            +endif 
+            | , can write: 
+            +iff("isDisabledFor('authorization.test1') && !hackme ")
+                b no 
+            +else 
+                b yes 
+            +endif 
+                        
+        +if("canSee('authorization.test1') || hackme")
+            .ui.input: input(
+                value="{{rtComponents.testAuthorization1.value}}"
+                disabled!="{{isDisabledFor('authorization.test1') && !hackme }}")
+            slider(
+                value="{{rtComponents.testAuthorization1.value}}"
+                disabled!="{{isDisabledFor('authorization.test1') && !hackme }}")
+            sync(value="{{rtComponents.testAuthorization1.value}}" 
+                topic="authorization.test1"
+                perms="{{authorization.test1.perms}}")
+            
+            

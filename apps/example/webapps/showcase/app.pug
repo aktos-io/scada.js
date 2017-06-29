@@ -17,25 +17,38 @@ include ./deps/side-menu.pug
                     | Star
 
             .item
-                i.icon.user
                 +iff('login.loggedin')
+                    i.icon.user
                     span {{login.username}}
                 +else     
-                    span Sing in 
+                    btn.labeled.icon.green(href='#/login') Sing in #[i.sign.in.icon]
                 +endif 
+            +if('login.loggedin')
+                .item
+                    login-button.red.circular.icon(
+                        action="logout"
+                        loggedin="{{login.loggedin}}") 
+                            i.sign.out.icon
 
 .ui.attached.segment.pusher
     logger(curr="{{ currentPage }}")
     
     .ui.hidden.divider
+    .ui.hidden.divider
+    .ui.hidden.divider
+    .ui.hidden.divider
+
     .ui.container
         //- realtime layer 
         aktos-dcs
-        
-        scene(name="login" default="login" curr="{{currentPage}}")    
+            
+        scene(name="authentication" curr="{{currentPage}}")    
+            include ./previews/authentication
+            
+        scene(name="login" curr="{{currentPage}}" render)
             include ./previews/login
         
-        scene(name="scada-components" curr="{{currentPage}}")
+        scene(name="scada-components" curr="{{currentPage}}" default="scada-components")
             h1.ui.horizontal.divider.header 
                 i.dashboard.icon 
                 | SCADA Components 
