@@ -61,6 +61,10 @@ Ractive.components["a"] = Ractive.extend do
                         anchor = link.anchor
                         window.location.hash = make-hash scene, anchor
                         # scrolling will be performed by hash observer (in the router)
+                        # but, if hash is not changed but user clicked again, we should
+                        # scroll to link anyway
+                        scroll-to anchor
+
                 else
                     console.log "can not determine action..."
                     debugger
@@ -76,8 +80,7 @@ Ractive.components['router'] = Ractive.extend do
                 @set \curr, curr.scene
                 @set \anchor, curr.anchor
                 sleep 50ms, -> scroll-to curr.anchor
-                console.log """listening hash. current scene:
-                    #{curr.scene}, anchor: #{curr.anchor}"""
+                #console.log """listening hash. current scene: #{curr.scene}, anchor: #{curr.anchor}"""
 
         $ window .on \hashchange, -> handle-hash!
 
@@ -98,7 +101,7 @@ Ractive.components['scene'] = Ractive.extend do
     oninit: ->
         if @get \render
             @set \renderedBefore, yes
-            
+
     data: ->
         is-selected: (url) ~>
             #console.log "PAGE: #{@get 'name'} url: #{url}"
