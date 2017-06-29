@@ -6,14 +6,6 @@ Ractive.components['anchor'] = Ractive.extend do
     template: '<a data-id="{{yield}}"></a>'
     isolated: yes
 
-Ractive.components['aa'] = Ractive.extend do
-    template: ''
-    isolated: yes
-    oninit: ->
-        console.error "this is deprecated!"
-
-
-
 scroll-to = (anchor) ->
     offset = $ "a[data-id='#{anchor}']" .offset!
     if offset
@@ -29,7 +21,7 @@ parse-link = (link) ->
     switch take 2, link
     | '#/' => [scene, anchor] = drop 2, link .split '#'
     | '##' => [scene, anchor] = [undefined, (drop 2, link)]
-    |_ => return console.warn "can not determine the prefix. link is: #{link}"
+    |_     => [scene, anchor] = [undefined, (drop 1, link)]
 
     return do
         scene: scene
@@ -83,7 +75,7 @@ Ractive.components['router'] = Ractive.extend do
             if curr
                 @set \curr, curr.scene
                 @set \anchor, curr.anchor
-                scroll-to curr.anchor
+                sleep 50ms, -> scroll-to curr.anchor
                 console.log """listening hash. current scene:
                     #{curr.scene}, anchor: #{curr.anchor}"""
 
@@ -125,7 +117,7 @@ Ractive.components['scene'] = Ractive.extend do
             #console.log "#{@get 'name'} says current scene is:", curr
             if this-page is default-page
                 console.log "#{@get 'name'} is the default scene. curr is: #{curr}"
-                if curr is '' or curr is undefined 
+                if curr is '' or curr is undefined
                     @set \visible, yes
                     return yes
 
