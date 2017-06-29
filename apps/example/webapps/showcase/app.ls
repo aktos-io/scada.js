@@ -163,6 +163,7 @@ ractive = new Ractive do
                     components =
                         'ack-button'
                         'checkbox'
+                        'data-table'
                         'csv-importer'
                         'date-picker'
                         'dropdown-panel'
@@ -172,12 +173,8 @@ ractive = new Ractive do
                         'input-field'
                         'print-button'
                         'r-table'
-                        'rt-components'
-                        'progress'
                         'text-button'
-                        'login'
                         'todo'
-                        'data-table'
                     [{title: .., url: "\##{..}"} for components]
                 * title: 'Authentication'
                   url: '#/authentication'
