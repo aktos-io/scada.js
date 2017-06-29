@@ -10,7 +10,7 @@ scroll-to = (anchor) ->
     offset = $ "a[data-id='#{anchor}']" .offset!
     if offset
         $ 'html, body' .animate do
-            scroll-top: offset.top - 45px
+            scroll-top: offset.top - 55px
             , 500ms
 
 make-hash = (scene, anchor) ->
@@ -95,6 +95,10 @@ Ractive.components['scene'] = Ractive.extend do
         </div>'
 
     isolated: no
+    oninit: ->
+        if @get \render
+            @set \renderedBefore, yes
+            
     data: ->
         is-selected: (url) ~>
             #console.log "PAGE: #{@get 'name'} url: #{url}"
