@@ -42,7 +42,7 @@ Ractive.components["a"] = Ractive.extend do
     template: '
         <a class="{{class}}"
                 style="{{style}}"
-                on-click="navigate"
+                on-click="click"
                 {{#if @.get("data-id")}}data-id=\'{{@.get("data-id")}}\' {{/if}}>
             {{yield}}
         </a>'
@@ -52,8 +52,9 @@ Ractive.components["a"] = Ractive.extend do
         onclick = @get \onclick
         newtab = @get \newtab
         href = @get \href
+
         @on do
-            navigate: (event) ->
+            click: (event) ->
                 if newtab
                     window.open href
                     return
