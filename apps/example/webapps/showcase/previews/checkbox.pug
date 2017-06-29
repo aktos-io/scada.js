@@ -44,6 +44,7 @@ anchor checkbox
             My checkbox state is: {{ checkbox.checked1 ? 'checked!' : 'not checked...' }}
     .ui.segment 
         p You may build states with #[code overlay] component: 
+        cache-asset(src="progress/truck-tanker.png")
         overlap(width="200px") 
             img(src="progress/truck.png")
             +if('showmyoverlay1')
@@ -51,5 +52,5 @@ anchor checkbox
         overlap(width="100px") 
             img(src="progress/truck.png")
             +if('showmyoverlay1')
-                img(src="progress/truck-red.png")
+                img(src="progress/truck-tanker.png")
         checkbox(checked="{{showmyoverlay1}}") show/hide red tanker

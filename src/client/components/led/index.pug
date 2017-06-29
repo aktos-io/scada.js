@@ -1,6 +1,6 @@
 //- preload all images (should be above `img` tag)
-+each('["on", "off"]')
-    div(style="display: none; background: url({{type}}/{{.}}.svg)")
+cache-asset(src="{{type}}/on.svg")
+cache-asset(src="{{type}}/off.svg")
 
 //- actual led 
 img.ui.image.led(src="{{type}}/{{innerState}}" class="{{class}}")
