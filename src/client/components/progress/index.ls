@@ -49,7 +49,7 @@ Ractive.components['progress'] = Ractive.extend do
 
                     if @get \background
                         cfg <<< img2: that
-                    cfg 
+                    cfg
                 else
                     path: @partials.path .0
 
@@ -64,7 +64,6 @@ Ractive.components['progress'] = Ractive.extend do
         bar = new ldBar elem, opts
 
         offset = @get \offset
-        console.log "progress offset is #{offset}"
         @observe \value, (_new) ->
             bar-percent = (_new * (100 - offset) / (max - min)) + (offset)
             @set \percent, (_new * 100 / (max - min))
