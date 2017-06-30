@@ -1,5 +1,13 @@
 Ractive.components['progress'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: '
+        <div class="ldBar {{class}}"
+            style="{{style}};
+                {{#if height}}height: {{height}};{{/if}}
+                {{#if width}}width: {{width}};{{/if}}
+                "
+            >
+        </div>'
+
     isolated: yes
     oninit: ->
         type = switch @get \type
@@ -35,9 +43,13 @@ Ractive.components['progress'] = Ractive.extend do
         opts <<< switch @get \_type
             when \custom =>
                 if @get \img
-                    do
+                    cfg =
                         img: that
                         type: \fill
+
+                    if @get \background
+                        cfg <<< img2: that
+                    cfg 
                 else
                     path: @partials.path .0
 

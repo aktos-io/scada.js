@@ -38,3 +38,12 @@ anchor drawing-area
 
             widget(x="580px" y="40px")
                 checkbox.red(checked="{{showmyoverlay1}}") show/hide red tanker
+                
+            widget(x="580px" y="350px")
+                progress.purple(value="{{progress.one.curr}}" 
+                    max="{{progress.one.max}}" 
+                    width="200px"
+                    height="150px"
+                    offset="50"
+                    img="progress/truck-tanker.png"
+                    background="progress/truck.png")
