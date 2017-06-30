@@ -20,6 +20,14 @@ export function assert (condition, message)
         throw message  # Fallback
 
 
+is-nodejs = ->
+    if typeof! process is \process
+        if typeof! process.versions is \Object
+            if typeof! process.versions.node isnt \Undefined
+                return yes
+    return no
+
+
 export obj-copy = (x) -> JSON.parse JSON.stringify x
 
 export dynamic-obj = (...x) ->
@@ -108,4 +116,5 @@ module.exports = {
     copyToClipboard
     tr-to-ascii
     convert-units
+    is-nodejs
 }
