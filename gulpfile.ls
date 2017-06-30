@@ -1,11 +1,16 @@
-argv = require 'yargs' .argv
+require! 'yargs':{argv}
 
-app = argv.app or \example
-webapp = argv.webapp or project
+if argv.webapp
+    webapp = that
+else
+    console.log "ERROR: You should pass a --webapp=mywebapp parameter. Exiting."
+    process.exit!
+
+webapp = argv.webapp
 only-compile = yes if argv.optimize is true
 
 console.log "------------------------------------------"
-console.log "App\t: #{app}"
+#console.log "App\t: #{app}"
 console.log "Webapp\t: #{webapp}"
 if only-compile
     console.log "------------------------------------------"
@@ -47,15 +52,15 @@ paths =
     build-folder: "#{__dirname}/build"
     client-src: "#{__dirname}/src/client"
     lib-src: "#{__dirname}/src/lib"
-    client-webapps: "#{__dirname}/apps/#{app}/webapps"
-    client-root: "#{__dirname}/apps/#{app}"
+    client-webapps: "#{__dirname}/../webapps"
+    client-root: "#{__dirname}/.."
 
-paths.client-public = "#{paths.build-folder}/#{app}/#{webapp}"
+paths.client-public = "#{paths.build-folder}/#{webapp}"
 paths.components-src = "#{paths.client-src}/components"
 
 
 
-notifier.notify {title: "ScadaJS" message: "Project #{app}:#{webapp} started!"}
+notifier.notify {title: "ScadaJS" message: "Webapp \"#{webapp}\" started!"}
 
 on-error = (source, msg) ->
     msg = try
@@ -75,21 +80,10 @@ log-info = (source, msg) ->
     notifier.notify {title: "GULP.#{source}", message: msg} if notification-enabled
     console.log console-msg
 
-deleteFolderRecursive = (path) ->
-    if fs.existsSync(path)
-        fs.readdirSync(path).forEach (file,index) ->
-            curPath = path + "/" + file
-            if(fs.lstatSync(curPath).isDirectory())  # recurse
-              deleteFolderRecursive(curPath)
-            else
-                # delete file
-                fs.unlinkSync(curPath)
-        fs.rmdirSync(path)
 
-
-pug-entry-files = glob.sync "#{paths.client-webapps}/**/#{webapp}/index.pug"
+pug-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/index.pug"
 html-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/index.html"
-ls-entry-files = glob.sync "#{paths.client-webapps}/**/#{webapp}/app.{ls,js}"
+ls-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/app.{ls,js}"
 
 for-css =
     "#{paths.vendor-folder}/**/*.css"
@@ -189,6 +183,7 @@ bundler = browserify do
         paths.components-src
         paths.lib-src
         paths.client-webapps
+        "#{__dirname}/node_modules"
     extensions: <[ .ls ]>
     cache: browserify-cache
     package-cache: {}
@@ -212,7 +207,7 @@ function bundle
                 err
             on-error \browserify, msg
             @emit \end
-        .pipe source "#{app}/#{webapp}/app.js"
+        .pipe source "#{webapp}/app.js"
         .pipe buffer!
         #.pipe sourcemaps.init {+load-maps, +large-files}
         .pipe if-else only-compile, uglify
@@ -220,7 +215,7 @@ function bundle
         #.pipe sourcemaps.write '.'
         .pipe gulp.dest paths.build-folder
         .pipe tap (file) ->
-            log-info \browserify, "Browserify finished (#{app}:#{webapp})"
+            log-info \browserify, "Browserify finished (#{webapp})"
             #console.log "browserify cache: ", pack keys browserify-cache
             console.log "------------------------------------------"
             first-browserify-done := yes
@@ -279,7 +274,7 @@ gulp.task \pug ->
         .pipe pug do
             pretty: yes
             locals:
-                app: app
+                app: 'ScadaJS'
         .on \error, (err) ->
             on-error \pug, err
             @emit \end
