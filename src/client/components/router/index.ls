@@ -13,8 +13,23 @@ scroll-to = (anchor) ->
             scroll-top: offset.top - 55px
             , 500ms
 
-make-hash = (scene, anchor) ->
-    '#/' + scene + if anchor? then '#' + anchor else ''
+make-link = (scene, anchor) ->
+    curr = parse-link get-window-hash!
+    scene-part = if scene? => that else curr.scene
+
+    scene-part = if scene-part
+        '#/' + that
+    else
+        '#'
+
+    anchor-part = if anchor?
+        '#' + that
+    else
+        ''
+
+    link = scene-part + anchor-part
+    #console.log "Making link from scene: #{scene}, anchor: #{anchor} => #{link} (curr.scene: #{curr.scene})"
+    return link
 
 get-window-hash = ->
     hash = window.location.hash
@@ -24,16 +39,17 @@ get-window-hash = ->
 
 set-window-hash = (hash) ->
     console.log "setting window hash to: #{hash}, curr is: #{window.location.hash}"
-    
+
     window.location.hash = hash
 
 parse-link = (link) ->
     [scene, anchor] = ['/', '']
     switch take 2, link
     | '#/' => [scene, anchor] = drop 2, link .split '#'
-    | '##' => [scene, anchor] = [undefined, (drop 2, link)]
+    | '##' => [scene, anchor] = ['', (drop 2, link)]
     |_     => [scene, anchor] = [undefined, (drop 1, link)]
 
+    console.log "parsing link: #{link} -> scene: #{scene}, anchor: #{anchor}"
     return do
         scene: scene
         anchor: anchor
@@ -72,17 +88,15 @@ Ractive.components["a"] = Ractive.extend do
                     return
 
                 if href?
-                    curr = parse-link get-window-hash!
                     link = parse-link href
                     if link
-                        console.log "<a href=", link
-                        scene = if link.scene => link.scene else curr.scene
-                        anchor = link.anchor
-                        set-window-hash make-hash scene, anchor
+                        generated-link = make-link link.scene, link.anchor
+                        console.log "<a href=", link, "generated link: #{generated-link}"
+                        set-window-hash generated-link
                         # scrolling will be performed by hash observer (in the router)
                         # but, if hash is not changed but user clicked again, we should
                         # scroll to link anyway
-                        scroll-to anchor
+                        scroll-to link.anchor
                     else
                         console.log "there seems a no valid link:", link
                         debugger
