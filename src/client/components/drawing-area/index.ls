@@ -30,6 +30,10 @@ Ractive.components['drawing-area'] = Ractive.extend do
         drawing-container.css \height, (max-height)
         drawing-area.css \height, (max-height + my-padding)
 
+        if @get \height
+            drawing-area.css \height, that
+
+
     data: ->
         desktop: yes
 
