@@ -14,7 +14,7 @@ scroll-to = (anchor) ->
             , 500ms
 
 make-hash = (scene, anchor) ->
-    '/' + scene + if anchor? then '#' + anchor else ''
+    '#/' + scene + if anchor? then '#' + anchor else ''
 
 get-window-hash = ->
     hash = window.location.hash
@@ -23,6 +23,8 @@ get-window-hash = ->
     hash or '#/'
 
 set-window-hash = (hash) ->
+    console.log "setting window hash to: #{hash}, curr is: #{window.location.hash}"
+    
     window.location.hash = hash
 
 parse-link = (link) ->
@@ -40,9 +42,14 @@ parse-link = (link) ->
 Ractive.components["a"] = Ractive.extend do
     template: '
         <a class="{{class}}"
-                style="{{style}}"
+                style="
+                    {{#if href}}cursor: pointer;{{/if}}
+                    {{style}}
+                    "
                 on-click="click"
-                {{#if @.get("data-id")}}data-id=\'{{@.get("data-id")}}\' {{/if}}>
+                {{#if @.get("data-id")}}data-id=\'{{@.get("data-id")}}\' {{/if}}
+                title="{{href}}"
+                >
             {{yield}}
         </a>'
     isolated: no
@@ -50,10 +57,11 @@ Ractive.components["a"] = Ractive.extend do
     onrender: ->
         onclick = @get \onclick
         newtab = @get \newtab
-        href = @get \href
 
         @on do
             click: (event) ->
+                href = @get \href
+
                 if newtab
                     window.open href
                     return
@@ -67,6 +75,7 @@ Ractive.components["a"] = Ractive.extend do
                     curr = parse-link get-window-hash!
                     link = parse-link href
                     if link
+                        console.log "<a href=", link
                         scene = if link.scene => link.scene else curr.scene
                         anchor = link.anchor
                         set-window-hash make-hash scene, anchor
@@ -74,6 +83,9 @@ Ractive.components["a"] = Ractive.extend do
                         # but, if hash is not changed but user clicked again, we should
                         # scroll to link anyway
                         scroll-to anchor
+                    else
+                        console.log "there seems a no valid link:", link
+                        debugger
 
                 else
                     console.log "can not determine action..."
