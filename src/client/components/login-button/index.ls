@@ -36,6 +36,7 @@ Ractive.components['login-button'] = Ractive.extend do
                         @set \loggedin, yes
                         # token is written to local-storage and sent to relevant actor in AuthActor
                         @fire \getPermissions, res.auth.session.permissions
+                        @set \openingScene, res.auth.session.opening-scene
                     else
                         <~ _event.component.fire \error, "unexpected response on login: #{pack res}"
 
@@ -118,6 +119,7 @@ Ractive.components['check-login'] = Ractive.extend do
                 @set \username, res.auth.session.user
                 @set \loggedin, yes
                 @fire \getPermissions, res.auth.session.permissions
+                @set \openingScene, res.auth.session.opening-scene 
             else
                 console.warn "unknown response: ", res
         else
