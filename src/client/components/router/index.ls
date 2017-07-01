@@ -78,13 +78,11 @@ Ractive.components["a"] = Ractive.extend do
                 href = @get \href
 
                 if newtab
-                    window.open href
-                    return
+                    return window.open href
 
                 if onclick
                     #console.log "evaluating onclick: #{onclick}"
-                    eval onclick
-                    return
+                    return eval onclick
 
                 if href?
                     link = parse-link href

@@ -119,9 +119,11 @@ Ractive.components['check-login'] = Ractive.extend do
                 @set \username, res.auth.session.user
                 @set \loggedin, yes
                 @fire \getPermissions, res.auth.session.permissions
-                @set \openingScene, res.auth.session.opening-scene 
+                @set \openingScene, res.auth.session.opening-scene
             else
                 console.warn "unknown response: ", res
         else
             unless err.code in <[ singleton already-checked ]>
                 console.warn "something went wrong while checking the session, err: ", err
+
+require! './redirect-button'
