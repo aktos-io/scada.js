@@ -1,7 +1,9 @@
 require! 'dcs/browser': {find-actor}
-require! 'aea': {sleep, pack, BrowserStorage}
+require! 'aea': {sleep, pack, BrowserStorage, logger}
 
 storage = new BrowserStorage \session
+
+log = new logger "login-button"
 
 _permissions =
     read: {}
@@ -22,15 +24,25 @@ Ractive.components['login-button'] = Ractive.extend do
     isolated: yes
     template: RACTIVE_PREPARSE('index.pug')
     oninit: ->
+        <~ sleep 100ms
+        connector = find-actor @get \transport-id
+
         @on do
             do-login: (_event) ->
                 _event.component.fire \state, \doing
-                err, res <~ auth.login {username: @get('username'), password: @get('password')}
+                credentials =
+                    username: @get 'username'
+                    password: @get 'password'
+
+                err, res <~ connector.proxy.login credentials
                 if err
                     <~ _event.component.fire \error, "something went wrong with login: #{pack err}"
                 else
                     if res.auth.session.token
                         _event.component.fire \state, \done...
+
+                        log.log "We got the token: ", that
+                        storage.set \token, that
                         #console.log "login button says: we got: ", res
                         @set \loggedin, yes
                         # token is written to local-storage and sent to relevant actor in AuthActor
@@ -41,7 +53,8 @@ Ractive.components['login-button'] = Ractive.extend do
 
             do-logout: (_event) ->
                 _event.component.fire \state, \doing
-                err, res <~ auth.logout
+                storage.del \token
+                err, res <~ connector.proxy.logout
                 if err
                     <~ _event.component.fire \error, "something went wrong while logging out"
                     #console.log "user pressed button on error screen. "
@@ -62,6 +75,7 @@ Ractive.components['login-button'] = Ractive.extend do
                 else
                     @fire \doLogin, _event
 
+            # FIXME: Simplify this function
             get-permissions: (_event, perm) ->
                 # read permissions
                 #console.log "permissions: ", perm
@@ -92,6 +106,7 @@ Ractive.components['check-login'] = Ractive.extend do
         <~ sleep 100ms
         connector = find-actor @get \transport-id
         @on do
+            # FIXME: Simplify this function
             get-permissions: (_event, perm) ->
                 # read permissions
                 #console.log "permissions: ", perm
