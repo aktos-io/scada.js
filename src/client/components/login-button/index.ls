@@ -1,6 +1,7 @@
-require! 'dcs/browser': {AuthActor}
-require! 'aea': {sleep, pack}
+require! 'dcs/browser': {find-actor}
+require! 'aea': {sleep, pack, BrowserStorage}
 
+storage = new BrowserStorage \session
 
 _permissions =
     read: {}
@@ -15,8 +16,6 @@ helpers.can-see = (topic) ->
 helpers.is-disabled-for = (topic) ->
     x = @get \permissions
     not _permissions.write[topic]
-
-auth = new AuthActor!
 
 
 Ractive.components['login-button'] = Ractive.extend do
@@ -89,7 +88,9 @@ Ractive.components['login-button'] = Ractive.extend do
 Ractive.components['check-login'] = Ractive.extend do
     template: ''
     isolated: yes
-    oninit: ->
+    onrender: ->
+        <~ sleep 100ms
+        connector = find-actor @get \transport-id
         @on do
             get-permissions: (_event, perm) ->
                 # read permissions
@@ -108,22 +109,24 @@ Ractive.components['check-login'] = Ractive.extend do
                 else
                     console.warn "permissions are something we don't expect: ", perm
 
-        <~ sleep 300ms
-        err, res <~ auth.check-session
-        unless err
-            if res.auth.logout is \yes
-                #console.log "logging out"
-                @set \loggedin, no
-            else if res.auth.session
-                #console.log "server says we are logged in as #{res.auth.session.user}, perms: ", res.auth.session.permissions
-                @set \username, res.auth.session.user
-                @set \loggedin, yes
-                @fire \getPermissions, res.auth.session.permissions
-                @set \openingScene, res.auth.session.opening-scene
+        if storage.get \token
+            err, res <~ connector.proxy.login token: that
+            unless err
+                if res.auth.logout is \yes
+                    #console.log "logging out"
+                    @set \loggedin, no
+                else if res.auth.session
+                    #console.log "server says we are logged in as #{res.auth.session.user}, perms: ", res.auth.session.permissions
+                    @set \username, res.auth.session.user
+                    @set \loggedin, yes
+                    @fire \getPermissions, res.auth.session.permissions
+                    @set \openingScene, res.auth.session.opening-scene
+                else
+                    console.warn "unknown response: ", res
             else
-                console.warn "unknown response: ", res
+                unless err.code in <[ singleton already-checked ]>
+                    console.warn "something went wrong while checking the session, err: ", err
         else
-            unless err.code in <[ singleton already-checked ]>
-                console.warn "something went wrong while checking the session, err: ", err
+            console.log "no token is found in the storage"
 
 require! './redirect-button'

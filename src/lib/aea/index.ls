@@ -102,6 +102,8 @@ if make-tests=no
             throw
     console.log "finished tr-to-ascii tests"
 
+require! './browser-storage': {BrowserStorage}
+
 module.exports = {
     make-user-doc, PouchDB, make-design-doc, check-login, is-db-alive, gen-entry-id, hash8, hash8n
     CouchNano
@@ -117,4 +119,5 @@ module.exports = {
     tr-to-ascii
     convert-units
     is-nodejs
+    BrowserStorage
 }
