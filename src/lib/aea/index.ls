@@ -2,7 +2,6 @@ require! {
     './cca-pouchdb': {PouchDB, make-user-doc, make-design-doc, check-login, is-db-alive, gen-entry-id, hash8, hash8n}
     './merge': {merge}
     './sleep': {sleep, after, clear-timer}
-    './signal': {wait-for, timeout-wait-for, go, is-waiting}
     './debug-log': {debug-log, get-logger, logger, debug-levels}
     './packing': {pack, unpack, clone}
     './formatting': {unix-to-readable, readable-to-unix}
@@ -109,8 +108,8 @@ module.exports = {
     CouchNano
     sleep, after, clear-timer
     merge
-    wait-for, timeout-wait-for, go, is-waiting
-    debug-log, get-logger, logger, debug-levels
+    logger,
+    Logger: logger,
     pack, unpack, clone
     unix-to-readable, readable-to-unix
     assert
