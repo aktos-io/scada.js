@@ -9,8 +9,10 @@ Ractive.components['redirect-button'] = Ractive.extend do
         i = 0
         <~ :lo(op) ~>
             @set \information, "(#{redirect-delay - i})"
+            return op! if ++i > redirect-delay
             <~ sleep 1000ms
-            return op! if ++i >= redirect-delay
             lo(op)
         @set \information, ""
+        # FIXME: Possible bug of Ractive, removing sleep prevents `fire` from working
+        <~ sleep 10ms
         @find-component \a .fire \click
