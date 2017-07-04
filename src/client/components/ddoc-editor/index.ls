@@ -1,17 +1,54 @@
 require! 'livescript': lsc
 require! 'prelude-ls': {camelize}
-require! 'aea': {merge, make-design-doc, pack}
+require! 'aea': {merge, make-design-doc, pack, logger}
+
+# -------------------------------------------------
+require! 'dcs/browser': {Actor, Signal}
+
+class CouchProxy extends Actor
+    (@db-name) ->
+        super \CouchProxy
+        @get-signal = new Signal!
+
+        @topic = "db.#{@db-name}"
+        @subscribe "#{@topic}.**"
+
+        @on \data, (msg) ~>
+
+            if msg.topic is "#{@topic}.get" and \res of msg.payload
+                @get-signal.go msg.payload.err, msg.payload.res
+
+
+
+    get: (doc-id, callback) ->
+        @send {get: doc-id}, "#{@topic}.get"
+
+        reason, err, res <~ @get-signal.wait 10_000ms
+        err = {reason: \timeout} if reason is \timeout
+        callback err, res
+
+
+db = new CouchProxy \test
+# -------------------------------------------------
 
 Ractive.components['ddoc-editor'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     oninit: ->
         #console.log "ddoc editor initializing..."
-        db = @get \db
+        @log = new logger \ddoc-editor
         design-document = (@get \document)
         @set (camelize \design-document), design-document
         @on do
             listDesignDocuments: (event, ev) ->
+                @log.log "getting doc"
+                err, res <~ db.get \01ec95a0cc893779c1098aa6cf17144b
+                @log.log "got doc: ", err, res
+                return
+
+
+
+
                 __ = @
                 ev.component.fire \state, \doing
                 err, res <- db.all {startkey: "_design/", endkey: "_design0", +include_docs}
