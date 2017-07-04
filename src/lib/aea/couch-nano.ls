@@ -2,6 +2,7 @@ require! 'prelude-ls': {flatten, join, split}
 require! 'nano'
 require! './debug-log': {logger}
 require! 'colors': {bg-red, bg-green}
+require! './packing': {pack}
 
 export class CouchNano
     (@cfg) ~>
@@ -36,24 +37,34 @@ export class CouchNano
         return callback {text: "unexpected response"}, null
 
     put: (doc, callback) ->
-        err, res <- @request do
+        err, res <~ @request do
             db: @db-name
             body: doc
             method: \post
-
-        err = {reason: err.reason, name: err.name} if err
+        err = {reason: err.reason, name: err.name, message: err.reason} if err
         callback err, res
 
     get: (doc-id, opts, callback) ->
         [callback, opts] = [opts, {}] if typeof! opts is \Function
 
-        err, res <- @request do
+        err, res <~ @request do
             db: @db-name
             doc: doc-id
             qs: opts
 
-        err = {reason: err.reason, name: err.name} if err
+        err = {reason: err.reason, name: err.name, message: err.reason} if err
         callback err, res
+
+    all: (opts, callback) ->
+        [callback, opts] = [opts, {}] if typeof! opts is \Function
+
+        err, res <~ @request do
+            db: @db-name
+            path: '_all_docs'
+            qs: opts
+
+        err = {reason: err.reason, name: err.name, message: err.reason} if err
+        callback err, res?.rows
 
 
 
