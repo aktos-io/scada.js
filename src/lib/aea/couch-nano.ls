@@ -1,103 +1,67 @@
-require! 'prelude-ls': {
-    flatten
-}
-require! 'superagent': request
-
-/*
-
-user:
-    name: ...
-    password: ...
-*/
+require! 'prelude-ls': {flatten, join, split}
+require! 'nano'
+require! './debug-log': {logger}
+require! 'colors': {bg-red}
 
 export class CouchNano
-    (cfg) ~>
-        @cfg = cfg
-        @db = null
+    (@cfg) ~>
         @cookie = null
-        @user = null
-        @_db = null # original nano database object
+        @nano = nano @cfg.url
+        @log = new logger "db:#{@cfg.database}"
+        @username = @cfg.user.name
+        @password = @cfg.user.password
 
-    check-session: (callback) ~>
-        conn = nano @cfg.url
-        err, ctx <- conn.session
-        return console.error "Err: ", err if err
-        debugger
+    connect: (callback) ->
+        @log.log "Authenticating as #{@username}"
+        err, body, headers <~ @nano.auth @username, @password
+        if err
+            @log.log "error while authenticating: ", err
+            return callback err, null
 
-        console.log "ctx: ", ctx
+        if headers
+            if headers['set-cookie']
+                @log.log "session opened for #{@username}"
+                @cookie = that
+                @log.log "cookie is: #{@cookie}"
+                @db = (require \nano) do
+                    url: "#{@cfg.url}/#{@cfg.database}"
+                    cookie: @cookie
 
-    close-session: (callback) ~>
-        callback!
+                return callback null, 'ok'
 
-        conn = nano @cfg.url
-        conn.request {
-            db: '_session'
-            method: 'delete'
-            params: {}
-            }, callback
+        @log.log bg-red "unexpected response."
+        return callback {text: "unexpected response"}, null
 
 
-    open-session: (callback) ~>
-        __ = @
-        request
-            .post "#{__.cfg.url}/_session"
-            #.get "#{__.cfg.url}/_session"
-            .set 'Content-type', 'application/json'
-            .send do
-                name: __.cfg.user.name
-                password: __.cfg.user.password
-            .end (err, res) ->
-                debugger
-                request
-                    #.set 'Access-Control-Allow-Credentials', 'true'
-                    .with-credentials!
-                    .end (err, res) ->
-                        debugger
+    save: (doc, callback) ->
+        err, res <- @db.insert doc
+        err = if err
+            do
+                reason: err.reason
+                name: err.name
+        callback err, res
 
-        return
-        conn = nano do
-            url: @cfg.url
-            requestDefaults:
-                jar: yes
-
-        err, body, headers <- conn.auth @cfg.user.name, @cfg.user.password
-        return console.log "err", err if err
-        debugger
-        if headers and headers.\set-cookie
-            @cookie = headers.\set-cookie
-            callback err=null, @cookie
-        else
-            console.error "We got no cookie?", headers
-
-    use-session: (cookie, callback) ~>
-        __ = @
-
-        if typeof cookie is \function
-            callback = cookie
-            cookie = null
-
-        cookie = flatten [cookie]
-
-        @sconn = nano do
-            url: @cfg.url
-            cookie: @cookie or cookie
-
-        err, ctx <- @sconn.session
-        return console.error "Err: ", err if err
-
-        console.log "ctx: ", ctx
-        __.user = ctx.user-ctx
-        __._db = __.sconn.use \domates
-        #db.gen-entry-id = gen-entry-id
-
-        callback err=no, ctx
-
-    save-session: ~>
-    get-session: ~>
-
-    save: (docs) ~>
 
 
 if require.main is module
-    # here goes nodejs module
-    1
+    test = new CouchNano do
+        user:
+            name: 'theseencedidesceepediven'
+            password: '09b8c87f79bd2072dc7cb20bad67138f578d7a03'
+        url: "https://aktos.cloudant.com"
+        database: \test
+    <~ test.connect
+
+    i = 2
+    <~ :lo(op) ~>
+        err, res <~ test.save do
+            _id: "hello#{i++}"
+            val: 1
+
+        return test.log.err "error while putting document: ", err if err
+        test.log.log "success: ", res
+
+        return op! if i > 10
+        lo(op)
+
+    test.log.log "all documents inserted"

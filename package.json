@@ -37,7 +37,7 @@
     "livescript": "~1.4.0",
     "mkdirp": "^0.5.1",
     "moment": "^2.18.1",
-    "nano": "git+https://github.com/aktos-io/nano.git",
+    "nano": "^6.3.0",
     "nouislider": "^10.0.0",
     "page": "^1.7.1",
     "prelude-ls": "^1.1.2",

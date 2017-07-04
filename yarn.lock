@@ -1086,7 +1086,7 @@ debug@2.6.7, debug@^2.3.2:
   dependencies:
     ms "2.0.0"
 
-debug@2.6.8, debug@2.X, debug@^2.0.0, debug@^2.1.0, debug@^2.1.3, debug@^2.2.0, debug@~2.6.4, debug@~2.6.6:
+debug@2.6.8, debug@2.X, debug@^2.1.0, debug@^2.1.3, debug@^2.2.0, debug@~2.6.4, debug@~2.6.6:
   version "2.6.8"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.8.tgz#e731531ca2ede27d188222427da17821d68ff4fc"
   dependencies:
@@ -1389,7 +1389,7 @@ error-ex@^1.2.0:
   dependencies:
     is-arrayish "^0.2.1"
 
-errs@^0.3.0:
+errs@^0.3.2:
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/errs/-/errs-0.3.2.tgz#798099b2dbd37ca2bc749e538a7c1307d0b50499"
 
@@ -3239,15 +3239,15 @@ nan@^2.3.0, nan@^2.3.3, nan@^2.4.0:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.6.2.tgz#e4ff34e6c95fdfb5aecc08de6596f43605a7db45"
 
-"nano@git+https://github.com/aktos-io/nano.git":
-  version "6.2.0"
-  resolved "git+https://github.com/aktos-io/nano.git#44d57da28b7f90aa5314a36832282e9a803f32e2"
+nano@^6.3.0:
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/nano/-/nano-6.3.0.tgz#a9cbbd82259bfcd743025a2aa2c01656f6e111e1"
   dependencies:
-    debug "^2.0.0"
-    errs "^0.3.0"
+    debug "^2.2.0"
+    errs "^0.3.2"
     follow "^0.12.1"
-    request "^2.53.0"
-    underscore "^1.7.0"
+    request "^2.76.0"
+    underscore "^1.8.3"
 
 natives@^1.1.0:
   version "1.1.0"
@@ -4041,7 +4041,7 @@ replace-ext@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/replace-ext/-/replace-ext-1.0.0.tgz#de63128373fcbf7c3ccfa4de5a480c45a67958eb"
 
-request@2.x.x, request@>=2.9.0, request@^2.45.0, request@^2.53.0, request@^2.55.0, request@^2.81.0:
+request@2.x.x, request@>=2.9.0, request@^2.45.0, request@^2.55.0, request@^2.76.0, request@^2.81.0:
   version "2.81.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.81.0.tgz#c6928946a0e06c5f8d6f8a9333469ffda46298a0"
   dependencies:
@@ -4798,7 +4798,7 @@ unc-path-regex@^0.1.0:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/unc-path-regex/-/unc-path-regex-0.1.2.tgz#e73dd3d7b0d7c5ed86fbac6b0ae7d8c6a69d50fa"
 
-underscore@^1.7.0:
+underscore@^1.8.3:
   version "1.8.3"
   resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.8.3.tgz#4f3fb53b106e6097fcf9cb4109f2a5e9bdfa5022"
 
