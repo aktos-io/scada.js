@@ -16,6 +16,11 @@ Ractive.components['ack-button'] = Ractive.extend do
         console.error "No logger component is found!" unless logger
         # end of logger utility
 
+        @button-timeout = if @get \timeout
+            that
+        else
+            10_000ms
+
         @observe \tooltip, (new-val) ->
             __.set \reason, new-val
 
@@ -47,10 +52,11 @@ Ractive.components['ack-button'] = Ractive.extend do
                 if s in <[ doing ]>
                     __.set \state, \doing
                     self-disabled = yes
-                    @doing-watchdog.clear!
-                    reason <~ @doing-watchdog.wait 10_000ms
+                    reason <~ @doing-watchdog.wait @button-timeout
                     if reason is \timeout
                         __.fire \error, "button timed out!"
+                    else
+                        console.log "hey, watchdog fired successfully", @doing-watchdog
 
                 __.set \selfDisabled, self-disabled
 
@@ -99,7 +105,9 @@ Ractive.components['ack-button'] = Ractive.extend do
                 action <- logger.fire \showDimmed, msg, {-closable, mode: \yesno}
                 #console.log "yesno dialog has been processed by ack-button, action is: #{action}"
                 callback action if typeof! callback is \Function
-
+    onteardown: ->
+        @doing-watchdog.go!
+        
     data: ->
         __ = @
         reason: ''
