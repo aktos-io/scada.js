@@ -1,4 +1,9 @@
 require! moment
+require! 'prelude-ls': {
+    split, last, map, take,
+    drop, max, round, is-it-NaN
+}
+require! './packing': {clone}
 
 export unix-to-readable = (unix) ->
     display = moment (new Date unix) .format "DD.MM.YYYY HH:mm"
@@ -17,10 +22,6 @@ export readable-to-unix = (display, format) ->
 #                           formatting
 # -------------------------------------------------------------------------
 
-require! 'prelude-ls': {
-    split, last, map, take, drop, max, round
-}
-require! './packing': {clone}
 strip = (.replace /\s/g, '')
 
 left-zero-pad = (num-of-digits, value) ->
@@ -88,8 +89,9 @@ export display-format = (format, value) -->
         x = to-fixed (value + err), (precision + 1)
         to-fixed x, precision
 
-    if value?
+    try
         value = parse-float value
+        throw if is-it-NaN value
         rounded-value = to-double-fixed value, f.length-of.decimal-part
 
         [integer-part, decimal-part] = "#{rounded-value}".split '.'
@@ -100,7 +102,7 @@ export display-format = (format, value) -->
         if f.has.decimal
             number-text += "."
             number-text += take (f.length-of.decimal-part), "#{decimal-part}#{"0" * f.length-of.decimal-part}"
-    else
+    catch
         number-text = "#{'-' * f.length-of.integer-part}#{"." if f.has.decimal}#{'-' * f.length-of.decimal-part}"
         rounded-value = null
 
