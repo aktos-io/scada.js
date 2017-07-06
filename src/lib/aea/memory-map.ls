@@ -1,3 +1,4 @@
+require! 'prelude-ls': {split}
 ``
 function hex2float (a) {return (a & 0x7fffff | 0x800000) * 1.0 / Math.pow(2,23) * Math.pow(2,  ((a>>23 & 0xff) - 127))}
 ``
