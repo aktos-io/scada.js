@@ -5,8 +5,9 @@ Ractive.components['ack-button'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     oninit: ->
-        if @get \class .index-of(\transparent)  > -1
-            @set \transparent, yes
+        if @get \class
+            if that.index-of(\transparent)  > -1
+                @set \transparent, yes
 
     onrender: ->
         __ = @
@@ -28,7 +29,9 @@ Ractive.components['ack-button'] = Ractive.extend do
             click: ->
                 val = __.get \value
                 # TODO: remove {args: val}
-                @doing-watchdog.reset! 
+                @doing-watchdog.reset!
+                @set \tooltip, ""
+
                 @fire \buttonclick, val
 
             state: (_event, s, msg, callback) ->
@@ -56,8 +59,6 @@ Ractive.components['ack-button'] = Ractive.extend do
                     reason <~ @doing-watchdog.wait @button-timeout
                     if reason is \timeout
                         __.fire \error, "button timed out!"
-                    else
-                        console.log "hey, watchdog fired successfully", @doing-watchdog
 
                 __.set \selfDisabled, self-disabled
 
