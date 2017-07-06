@@ -42,10 +42,12 @@ Ractive.components['widget'] = Ractive.extend do
     template: '
         <div class="widget"
             style="
-                {{# x}}left: {{x}};{{/}}
-                {{# y}}top: {{y}};{{/}}
-                {{# width}}width: {{width}};{{/}}"
-            >
+                {{#if x}}left: {{x}};{{/if}}
+                {{#if y}}top: {{y}};{{/if}}
+                {{#if width}}width: {{width}};{{/if}}
+                {{#if height}}height: {{height}};{{/if}}
+                "
+        >
             {{yield}}
         </div>
         '
