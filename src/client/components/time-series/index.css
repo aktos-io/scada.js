@@ -1,0 +1,26 @@
+.time-series.chart-container {
+    position: relative;
+    display: inline-block;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.time-series .chart {
+        position: relative;
+        left: 40px;
+}
+
+.time-series .y-axis {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 40px;
+}
+
+.inverted.time-series .y-axis {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 40px;
+        color: white;
+        fill: white; 
+}
