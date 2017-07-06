@@ -29,3 +29,4 @@ Ractive.components['aktos-dcs'] = Ractive.extend do
             path: url.path
 
         @set \transport-id, @transport.id
+        #console.log "aktos-dcs transport id: ", @transport.id

@@ -88,7 +88,7 @@ Ractive.components["a"] = Ractive.extend do
                     link = parse-link href
                     if link
                         generated-link = make-link link.scene, link.anchor
-                        console.log "<a href=", link, "generated link: #{generated-link}"
+                        #console.log "<a href=", link, "generated link: #{generated-link}"
                         set-window-hash generated-link
                         # scrolling will be performed by hash observer (in the router)
                         # but, if hash is not changed but user clicked again, we should
@@ -113,7 +113,7 @@ Ractive.components['router'] = Ractive.extend do
                 @set \curr, curr.scene
                 @set \anchor, curr.anchor
                 sleep 50ms, -> scroll-to curr.anchor
-                console.log """hash changed: scene: #{curr.scene}, anchor: #{curr.anchor}"""
+                #console.log """hash changed: scene: #{curr.scene}, anchor: #{curr.anchor}"""
 
         $ window .on \hashchange, ->
             #console.log "this is hashchange run: #{window.location.hash}"
