@@ -28,6 +28,7 @@ Ractive.components['ack-button'] = Ractive.extend do
             click: ->
                 val = __.get \value
                 # TODO: remove {args: val}
+                @doing-watchdog.reset! 
                 @fire \buttonclick, val
 
             state: (_event, s, msg, callback) ->
@@ -107,7 +108,7 @@ Ractive.components['ack-button'] = Ractive.extend do
                 callback action if typeof! callback is \Function
     onteardown: ->
         @doing-watchdog.go!
-        
+
     data: ->
         __ = @
         reason: ''
