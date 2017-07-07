@@ -56,11 +56,15 @@ Ractive.components['time-series'] = Ractive.extend do
 
 
         slider-element = @find \.slider
+        slider-made = no
         make-slider = ->
+            return if slider-made
             if graph.series.0.data.length > 0
                 slider = new Rickshaw.Graph.RangeSlider.Preview do
                     graph: graph
                     element: slider-element
+
+                slider-made := yes
 
         append-new = (_new) ->
             if typeof! _new isnt \Array
