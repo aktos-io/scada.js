@@ -12,6 +12,7 @@ Ractive.components['time-series'] = Ractive.extend do
                 ">
             <div class="chart"></div>
             <div class="y-axis"></div>
+            <div class="slider"></div>
         </div>
         '
 
@@ -22,15 +23,14 @@ Ractive.components['time-series'] = Ractive.extend do
             console.error "time-series error: y-format attribute is required!"
             return
 
-        serie = []
-
         graph = new Rickshaw.Graph do
             element: @find ".chart"
             series:
                 * color: 'steelblue',
-                  data: serie
+                  data: []
                   name: @get \name
                 ...
+
 
         graph.render();
 
@@ -54,23 +54,39 @@ Ractive.components['time-series'] = Ractive.extend do
             x-formatter: (x) -> unix-to-readable (1000 * x)
             y-formatter: (x) -> displayFormat y-format, x .full-text
 
-        @observe \data, (_new) ->
-            if (typeof! _new isnt \Array) or (empty _new)
-                return
 
+        slider-element = @find \.slider
+        make-slider = ->
+            if graph.series.0.data.length > 0
+                slider = new Rickshaw.Graph.RangeSlider.Preview do
+                    graph: graph
+                    element: slider-element
+
+        append-new = (_new) ->
+            if typeof! _new isnt \Array
+                _new = [{key: (Date.now! / 1000), value: _new}]
+
+            serie = graph.series.0.data
             if last serie
                 if (first _new .key) < that.x
                     console.error "time-series error: can not add points in the middle."
                     return
 
-            try
-                for point in _new
-                    serie.push {x: point.key, y: point.value}
+            for point in _new
+                serie.push {x: point.key, y: point.value}
 
+        @observe \data, (_new) ->
+            x = graph
+            graph.series.0.data = [{x: ..key, y: ..value} for _new]
+            make-slider!
+            graph.update!
+
+
+        @observe \current, (_new) ->
+            if @get \live
+                append-new _new
+                make-slider!
                 graph.update!
-            catch
-                console.error "time-series error: ", e, _new
-
 
 /*
 

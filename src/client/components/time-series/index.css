@@ -22,5 +22,18 @@
         bottom: 0;
         width: 40px;
         color: white;
-        fill: white; 
+        fill: white;
+}
+
+.time-series .slider {
+        position: absolute;
+        left: 40px;
+        right: 0;
+        height: 150px;
+}
+
+.rickshaw_graph .detail .x_label {
+    position: relative;
+    bottom: 40px;
+    display: inline-block;
 }
