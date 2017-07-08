@@ -7,7 +7,7 @@ Ractive.components['activity'] = Ractive.extend do
         @observe \value, (curr, prev) ->
             if curr?
                 if curr isnt prev
-                    console.log "activity, curr: ", curr, "prev: ", prev
+                    #console.log "activity, curr: ", curr, "prev: ", prev
                     @set \started, yes
                     @set \active, on
                     <~ sleep 100ms
