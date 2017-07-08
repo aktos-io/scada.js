@@ -175,6 +175,9 @@ gulp.task \html, ->
         .pipe gulp.dest paths.client-public
 
 
+my-uglify = (x) ->
+    uglify {mangle: except: ['$super']}, x
+
 browserify-cache = {}
 bundler = browserify do
     entries: ls-entry-files
@@ -210,7 +213,8 @@ function bundle
         .pipe source "#{webapp}/app.js"
         .pipe buffer!
         #.pipe sourcemaps.init {+load-maps, +large-files}
-        .pipe if-else only-compile, uglify
+
+        .pipe if-else only-compile, my-uglify
         #.pipe rename basename: 'app'
         #.pipe sourcemaps.write '.'
         .pipe gulp.dest paths.build-folder
@@ -228,7 +232,7 @@ gulp.task \browserify, ->
 gulp.task \vendor-js, ->
     gulp.src for-js
         .pipe cat "vendor.js"
-        .pipe if-else only-compile, uglify
+        .pipe if-else only-compile, my-uglify
         .pipe through.obj (file, enc, cb) ->
             contents = file.contents.to-string!
             optimized = optimize-js contents
