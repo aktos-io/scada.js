@@ -38,8 +38,7 @@ get-window-hash = ->
     hash or '#/'
 
 set-window-hash = (hash) ->
-    console.log "setting window hash to: #{hash}, curr is: #{window.location.hash}"
-
+    #console.log "setting window hash to: #{hash}, curr is: #{window.location.hash}"
     window.location.hash = hash
 
 parse-link = (link) ->
@@ -49,7 +48,7 @@ parse-link = (link) ->
     | '##' => [scene, anchor] = ['', (drop 2, link)]
     |_     => [scene, anchor] = [undefined, (drop 1, link)]
 
-    console.log "parsing link: #{link} -> scene: #{scene}, anchor: #{anchor}"
+    #console.log "parsing link: #{link} -> scene: #{scene}, anchor: #{anchor}"
     return do
         scene: scene
         anchor: anchor
@@ -79,30 +78,28 @@ Ractive.components["a"] = Ractive.extend do
                 href = @get \href
 
                 if newtab
-                    window.open href
-                    return
+                    return window.open href
 
                 if onclick
                     #console.log "evaluating onclick: #{onclick}"
-                    eval onclick
-                    return
+                    return eval onclick
 
                 if href?
                     link = parse-link href
                     if link
                         generated-link = make-link link.scene, link.anchor
-                        console.log "<a href=", link, "generated link: #{generated-link}"
+                        #console.log "<a href=", link, "generated link: #{generated-link}"
                         set-window-hash generated-link
                         # scrolling will be performed by hash observer (in the router)
                         # but, if hash is not changed but user clicked again, we should
                         # scroll to link anyway
                         scroll-to link.anchor
                     else
-                        console.log "there seems a no valid link:", link
+                        console.error "there seems a no valid link:", link
                         debugger
 
                 else
-                    console.log "can not determine action..."
+                    console.error "can not determine action..."
                     debugger
 
 
@@ -116,10 +113,10 @@ Ractive.components['router'] = Ractive.extend do
                 @set \curr, curr.scene
                 @set \anchor, curr.anchor
                 sleep 50ms, -> scroll-to curr.anchor
-                console.log """hash changed: scene: #{curr.scene}, anchor: #{curr.anchor}"""
+                #console.log """hash changed: scene: #{curr.scene}, anchor: #{curr.anchor}"""
 
         $ window .on \hashchange, ->
-            console.log "this is hashchange run: #{window.location.hash}"
+            #console.log "this is hashchange run: #{window.location.hash}"
             handle-hash!
 
 
@@ -141,7 +138,7 @@ Ractive.components['scene'] = Ractive.extend do
             @set \renderedBefore, yes
 
         @observe \curr, (curr) ->
-            console.log "scene says: current is: ", curr
+            #console.log "scene says: current is: ", curr
             this-page = @get \name
             default-page = @get 'default'
             if this-page is default-page
@@ -150,7 +147,7 @@ Ractive.components['scene'] = Ractive.extend do
                     @set \visible, yes
                     sleep 5ms, ~>
                         @set \renderedBefore, yes
-                        console.log "rendering content of #{this-page} (because this is default)"
+                        #console.log "rendering content of #{this-page} (because this is default)"
                     return
 
             if curr is this-page
@@ -158,7 +155,7 @@ Ractive.components['scene'] = Ractive.extend do
                 @set \visible, yes
                 sleep 5ms, ~>
                     @set \renderedBefore, yes
-                    console.log "rendering content of #{this-page} (because this is selected)"
+                    #console.log "rendering content of #{this-page} (because this is selected)"
                 return
 
             @set \visible, no

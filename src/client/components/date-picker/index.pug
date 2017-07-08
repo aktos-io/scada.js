@@ -1,5 +1,9 @@
-.ui.calendar.date-picker 
-    .ui.input.left.icon 
-        i.calendar.icon 
-        input(type="text" placeholder="Date/Time")
-            
++iff('button')
+    .ui.calendar.date-picker 
+        .ui.button {{buttonText}}
++else
+    .ui.calendar.date-picker 
+        .ui.input.left.icon 
+            i.calendar.icon 
+            input(type="text" placeholder="Date/Time")
++endif        

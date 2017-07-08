@@ -1,3 +1,5 @@
+require! 'aea/formatting': {unix-to-readable}
+
 Ractive.components['date-picker'] = Ractive.extend do
     isolated: yes
     template: RACTIVE_PREPARSE('index.pug')
@@ -42,12 +44,22 @@ Ractive.components['date-picker'] = Ractive.extend do
                 pm: \ÖS
 
             on-change: (date, text, mode) ->
-                __.set \unix, date.get-time!
+                unix-ms = date.get-time!
+                unix = unix-ms / 1000
+                __.set \unix, unix
+                __.set \unix-ms, unix-ms
+                __.set \buttonText, unix-to-readable unix-ms
 
         @observe \unix, (unix) ->
             try
-                date = new Date unix
+                unix-ms = unix * 1000
+                date = new Date unix-ms
                 j.calendar "set date", date, update-input=yes, fire-change=no
+                __.set \buttonText, unix-to-readable unix-ms
+
             catch
                 console.warn "date-picker: ", e
                 debugger
+
+    data: ->
+        buttonText: "Select Date"

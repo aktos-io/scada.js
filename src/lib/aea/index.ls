@@ -2,7 +2,6 @@ require! {
     './cca-pouchdb': {PouchDB, make-user-doc, make-design-doc, check-login, is-db-alive, gen-entry-id, hash8, hash8n}
     './merge': {merge}
     './sleep': {sleep, after, clear-timer}
-    './signal': {wait-for, timeout-wait-for, go, is-waiting}
     './debug-log': {debug-log, get-logger, logger, debug-levels}
     './packing': {pack, unpack, clone}
     './formatting': {unix-to-readable, readable-to-unix}
@@ -102,13 +101,15 @@ if make-tests=no
             throw
     console.log "finished tr-to-ascii tests"
 
+require! './browser-storage': {BrowserStorage}
+
 module.exports = {
     make-user-doc, PouchDB, make-design-doc, check-login, is-db-alive, gen-entry-id, hash8, hash8n
     CouchNano
     sleep, after, clear-timer
     merge
-    wait-for, timeout-wait-for, go, is-waiting
-    debug-log, get-logger, logger, debug-levels
+    logger,
+    Logger: logger,
     pack, unpack, clone
     unix-to-readable, readable-to-unix
     assert
@@ -117,4 +118,5 @@ module.exports = {
     tr-to-ascii
     convert-units
     is-nodejs
+    BrowserStorage
 }

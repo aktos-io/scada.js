@@ -1,19 +1,26 @@
 require! 'aea': {merge, sleep}
+require! 'dcs/browser': {Signal}
 
 Ractive.components['ack-button'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     oninit: ->
-        if @get \class .index-of(\transparent)  > -1
-            @set \transparent, yes
+        if @get \class
+            if that.index-of(\transparent)  > -1
+                @set \transparent, yes
 
     onrender: ->
         __ = @
-
+        @doing-watchdog = new Signal!
         # logger utility is defined here
         logger = @root.find-component \logger
         console.error "No logger component is found!" unless logger
         # end of logger utility
+
+        @button-timeout = if @get \timeout
+            that
+        else
+            10_000ms
 
         @observe \tooltip, (new-val) ->
             __.set \reason, new-val
@@ -22,7 +29,10 @@ Ractive.components['ack-button'] = Ractive.extend do
             click: ->
                 val = __.get \value
                 # TODO: remove {args: val}
-                @fire \buttonclick, {component: this, args: val}, val
+                @doing-watchdog.reset!
+                @set \tooltip, ""
+
+                @fire \buttonclick, val
 
             state: (_event, s, msg, callback) ->
                 self-disabled = no
@@ -37,14 +47,18 @@ Ractive.components['ack-button'] = Ractive.extend do
                         __.set \state, ''
 
                 if s in <[ done done... ]>
-                    x = 1
+                    @doing-watchdog.go!
 
                 if s in <[ normal ]>
+                    @doing-watchdog.go!
                     __.set \state, \normal
 
                 if s in <[ doing ]>
                     __.set \state, \doing
                     self-disabled = yes
+                    reason <~ @doing-watchdog.wait @button-timeout
+                    if reason is \timeout
+                        __.fire \error, "button timed out!"
 
                 __.set \selfDisabled, self-disabled
 
@@ -53,7 +67,12 @@ Ractive.components['ack-button'] = Ractive.extend do
                     @fire \error, msg, callback
 
             error: (_event, msg, callback) ~>
-                msg = {message: msg} unless msg.message
+                @doing-watchdog.go!
+
+                msg = try
+                    {message: msg} unless msg.message
+                catch
+                    {message: "error in message! (internal error)"}
                 msg = msg `merge` {
                     title: msg.title or 'This is my error'
                     icon: "warning sign"
@@ -68,6 +87,7 @@ Ractive.components['ack-button'] = Ractive.extend do
                 callback action if typeof! callback is \Function
 
             info: (_event, msg, callback) ->
+                @doing-watchdog.go!
                 msg = {message: msg} unless msg.message
                 msg = msg `merge` {
                     title: msg.title or 'ack-button info'
@@ -78,6 +98,7 @@ Ractive.components['ack-button'] = Ractive.extend do
                 callback action if typeof! callback is \Function
 
             yesno: (_event, msg, callback) ->
+                @doing-watchdog.go!
                 msg = {message: msg} unless msg.message
                 msg = msg `merge` {
                     title: msg.title or 'Yes or No'
@@ -86,6 +107,13 @@ Ractive.components['ack-button'] = Ractive.extend do
                 action <- logger.fire \showDimmed, msg, {-closable, mode: \yesno}
                 #console.log "yesno dialog has been processed by ack-button, action is: #{action}"
                 callback action if typeof! callback is \Function
+
+        if @get \auto
+            console.log "auto firing ack-button!"
+            @fire \click
+            
+    onteardown: ->
+        @doing-watchdog.go!
 
     data: ->
         __ = @

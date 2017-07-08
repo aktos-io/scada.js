@@ -24,6 +24,9 @@ Ractive.components['aktos-dcs'] = Ractive.extend do
     isolated: yes
     oninit: ->
         url = curr-url!
-        new SocketIOBrowser do
+        @transport = new SocketIOBrowser do
             address: url.host-url
             path: url.path
+
+        @set \transport-id, @transport.id
+        #console.log "aktos-dcs transport id: ", @transport.id

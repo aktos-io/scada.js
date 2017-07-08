@@ -1,0 +1,9 @@
++iff('started')
+    +iff('active')
+        a.ui.empty.orange.circular.label(class="{{class}}")
+    +else 
+        a.ui.empty.green.circular.label(class="{{class}}")
+    +endif    
++else
+    a.ui.empty.gray.circular.label(class="{{class}}")
++endif

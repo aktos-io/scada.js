@@ -63,9 +63,10 @@ Ractive.components['progress'] = Ractive.extend do
 
         bar = new ldBar elem, opts
 
-        offset = @get \offset
+        padding-bottom = @get \padding-bottom
+        padding-top = @get \padding-top
         @observe \value, (_new) ->
-            bar-percent = (_new * (100 - offset) / (max - min)) + (offset)
+            bar-percent = (_new * (100 - padding-bottom - padding-top) / (max - min)) + (padding-bottom)
             @set \percent, (_new * 100 / (max - min))
             bar.set bar-percent, animate=no
 
@@ -74,4 +75,5 @@ Ractive.components['progress'] = Ractive.extend do
         min: 0
         value: null
         _type: \line
-        offset: 0
+        'padding-top': 0
+        'padding-bottom': 0

@@ -613,6 +613,12 @@ bytes@2.4.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/bytes/-/bytes-2.4.0.tgz#7d97196f9d5baf7f6935e25985549edd2a6c2339"
 
+c3@^0.4.14:
+  version "0.4.14"
+  resolved "https://registry.yarnpkg.com/c3/-/c3-0.4.14.tgz#f91232c44c1a6199a2f45665e37bad1a67a0a67f"
+  dependencies:
+    d3 "~3.5.0"
+
 cached-path-relative@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/cached-path-relative/-/cached-path-relative-1.0.1.tgz#d09c4b52800aa4c078e2dd81a869aac90d2e54e7"
@@ -1035,6 +1041,10 @@ currently-unhandled@^0.4.1:
   dependencies:
     array-find-index "^1.0.1"
 
+d3@^3.5.16, d3@~3.5.0:
+  version "3.5.17"
+  resolved "https://registry.yarnpkg.com/d3/-/d3-3.5.17.tgz#bc46748004378b21a360c9fc7cf5231790762fb8"
+
 dashdash@^1.12.0:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/dashdash/-/dashdash-1.14.1.tgz#853cfa0f7cbe2fed5de20326b8dd581035f6e2f0"
@@ -1080,13 +1090,13 @@ debug@2.3.3:
   dependencies:
     ms "0.7.2"
 
-debug@2.6.7, debug@^2.3.2:
+debug@2.6.7, debug@^2.2.0, debug@^2.3.2:
   version "2.6.7"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.7.tgz#92bad1f6d05bbb6bba22cca88bcd0ec894c2861e"
   dependencies:
     ms "2.0.0"
 
-debug@2.6.8, debug@2.X, debug@^2.0.0, debug@^2.1.0, debug@^2.1.3, debug@^2.2.0, debug@~2.6.4, debug@~2.6.6:
+debug@2.6.8, debug@2.X, debug@^2.1.0, debug@^2.1.3, debug@~2.6.4, debug@~2.6.6:
   version "2.6.8"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.8.tgz#e731531ca2ede27d188222427da17821d68ff4fc"
   dependencies:
@@ -1389,7 +1399,7 @@ error-ex@^1.2.0:
   dependencies:
     is-arrayish "^0.2.1"
 
-errs@^0.3.0:
+errs@^0.3.2:
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/errs/-/errs-0.3.2.tgz#798099b2dbd37ca2bc749e538a7c1307d0b50499"
 
@@ -3239,15 +3249,15 @@ nan@^2.3.0, nan@^2.3.3, nan@^2.4.0:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.6.2.tgz#e4ff34e6c95fdfb5aecc08de6596f43605a7db45"
 
-"nano@git+https://github.com/aktos-io/nano.git":
-  version "6.2.0"
-  resolved "git+https://github.com/aktos-io/nano.git#44d57da28b7f90aa5314a36832282e9a803f32e2"
+nano@^6.3.0:
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/nano/-/nano-6.3.0.tgz#a9cbbd82259bfcd743025a2aa2c01656f6e111e1"
   dependencies:
-    debug "^2.0.0"
-    errs "^0.3.0"
+    debug "^2.2.0"
+    errs "^0.3.2"
     follow "^0.12.1"
-    request "^2.53.0"
-    underscore "^1.7.0"
+    request "^2.76.0"
+    underscore "^1.8.3"
 
 natives@^1.1.0:
   version "1.1.0"
@@ -4041,7 +4051,7 @@ replace-ext@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/replace-ext/-/replace-ext-1.0.0.tgz#de63128373fcbf7c3ccfa4de5a480c45a67958eb"
 
-request@2.x.x, request@>=2.9.0, request@^2.45.0, request@^2.53.0, request@^2.55.0, request@^2.81.0:
+request@2.x.x, request@>=2.9.0, request@^2.45.0, request@^2.55.0, request@^2.76.0, request@^2.81.0:
   version "2.81.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.81.0.tgz#c6928946a0e06c5f8d6f8a9333469ffda46298a0"
   dependencies:
@@ -4123,6 +4133,12 @@ resolve@^1.1.3, resolve@^1.1.4, resolve@^1.1.6, resolve@^1.1.7:
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.3.3.tgz#655907c3469a8680dc2de3a275a8fdd69691f0e5"
   dependencies:
     path-parse "^1.0.5"
+
+rickshaw@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/rickshaw/-/rickshaw-1.6.0.tgz#d991d2bcd1b9dd07e4700dee9b6961474053269f"
+  dependencies:
+    d3 "^3.5.16"
 
 right-align@^0.1.1:
   version "0.1.3"
@@ -4798,7 +4814,7 @@ unc-path-regex@^0.1.0:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/unc-path-regex/-/unc-path-regex-0.1.2.tgz#e73dd3d7b0d7c5ed86fbac6b0ae7d8c6a69d50fa"
 
-underscore@^1.7.0:
+underscore@^1.8.3:
   version "1.8.3"
   resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.8.3.tgz#4f3fb53b106e6097fcf9cb4109f2a5e9bdfa5022"
 
