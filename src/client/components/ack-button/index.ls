@@ -107,6 +107,11 @@ Ractive.components['ack-button'] = Ractive.extend do
                 action <- logger.fire \showDimmed, msg, {-closable, mode: \yesno}
                 #console.log "yesno dialog has been processed by ack-button, action is: #{action}"
                 callback action if typeof! callback is \Function
+
+        if @get \auto
+            console.log "auto firing ack-button!"
+            @fire \click
+            
     onteardown: ->
         @doing-watchdog.go!
 

@@ -21,8 +21,7 @@ require! './redirect-button'
 mockevent =
     component:
         fire: (...args) ->
-            log.log "mockevent fired: "
-            console.log "args", args
+            log.log "mockevent fired: ", pack args
 
 
 Ractive.components['login-button'] = Ractive.extend do
@@ -32,7 +31,7 @@ Ractive.components['login-button'] = Ractive.extend do
         <~ sleep 10ms
         connector = null
         @observe \transport-id, (_new) ->
-            console.log "context.transport-id is: ", _new
+            #console.log "context.transport-id is: ", _new
             connector := find-actor _new
 
         @on do
@@ -73,8 +72,6 @@ Ractive.components['login-button'] = Ractive.extend do
                         # set 'token' explicitly to save in the persistent browser storage
                         @set \token, context.token
 
-                        console.log "context is: ", context
-
                     else if res.auth.session.logout is \yes
                         log.log "Will log out..."
                         @fire \doLogout
@@ -106,7 +103,7 @@ Ractive.components['login-button'] = Ractive.extend do
                         cleanup!
 
             do-action: (_event) ->
-                if @get \logout 
+                if @get \logout
                     @fire \doLogout, _event
                 else
                     @fire \doLogin, _event

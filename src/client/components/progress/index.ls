@@ -75,4 +75,5 @@ Ractive.components['progress'] = Ractive.extend do
         min: 0
         value: null
         _type: \line
-        offset: 0
+        'padding-top': 0
+        'padding-bottom': 0

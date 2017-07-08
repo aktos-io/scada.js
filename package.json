@@ -45,6 +45,7 @@
     "progressbar.js": "^1.0.1",
     "ractive": "^0.9.1",
     "randomstring": "^1.1.5",
+    "rickshaw": "^1.6.0",
     "semantic-ui-calendar": "^0.0.8",
     "serialport": "^4.0.1",
     "serve-index": "^1.8.0",
