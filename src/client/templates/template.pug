@@ -35,40 +35,12 @@ html(lang="en-GB")
                         .bar(style="min-width: 0 !important;")
 
 
-        block script
-            //- script(src='app.js')
-        script
-            :livescript
-                $.ajax do 
-                    url: \app.js 
-                    type: \GET 
-                    success: (data) -> 
-                        console.log "page loaded."
-                    error: (e) -> 
-                        msg = "something went wrong while loading page: "
-                        console.log msg, e 
-                        alert msg, e 
-                    
-                    xhr: -> 
-                        $ '#percentProgress' .progress {showActivity: false}
-                        xhr = new window.XMLHttpRequest!
-                        
-                        # upload progress 
-                        xhr.upload.addEventListener \progress, ((ev) -> 
-                            if ev.lengthComputable
-                                percentComplete = ev.loaded / ev.total 
-                                console.log "Upload complete % #{percentComplete * 100}"
 
-                            ), false 
-                        
-                        # download progress 
-                        xhr.addEventListener \progress, ((ev) -> 
-                            if ev.lengthComputable
-                                percentComplete = ev.loaded / ev.total 
-                                percentInt = parseInt(percentComplete * 100)
-                                #console.log "Download complete % #{percentComplete * 100}"
-                                $('#percent').text(percentInt);
-                                $('#percentProgress').progress("set progress", percentInt); 
-                            ), false                         
-                        xhr 
+        #dynamic-script
+        //- 
+            block script
+                script(src='app.js')            
+        //-     
+        script
+            include:livescript ./load-app.ls 
             
