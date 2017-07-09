@@ -1,38 +1,44 @@
+/* 21px: y axis width */
 .time-series.chart-container {
     position: relative;
     display: inline-block;
     font-family: Arial, Helvetica, sans-serif;
     width: 100%;
     border-bottom: 1px solid gray;
-    padding-right: 40px 
+    padding-right: 21px
 }
 
 .time-series .chart {
         position: relative;
-        left: 40px;
+        left: 21px;
+        width: 100%;
 }
 
 .time-series .y-axis {
         position: absolute;
         top: 0;
         bottom: 0;
-        width: 40px;
+        width: 21px;
 }
 
 .inverted.time-series .y-axis {
         position: absolute;
         top: 0;
         bottom: 0;
-        width: 40px;
+        width: 21px;
         color: white;
         fill: white;
 }
 
 .time-series .slider {
         position: absolute;
-        left: 40px;
+        left: 21px;
         right: 0;
         top: 0px;
+        margin: 0;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        width: 100%;
 }
 
 /* fix for x label on hover */
