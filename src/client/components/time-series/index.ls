@@ -88,7 +88,8 @@ Ractive.components['time-series'] = Ractive.extend do
 
         @observe \current, (_new) ->
             if @get \live
-                append-new _new
+                console.log "appending live data: ", _new
+                append-new parse-float _new
                 make-slider!
                 graph.update!
 
