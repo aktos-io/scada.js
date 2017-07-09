@@ -1,5 +1,5 @@
 require! 'cheerio'
-
+require! 'livescript': lsc
 
 export pug-filters =
     # use "my-own-filter" in the pug page as follows:
@@ -22,6 +22,10 @@ export pug-filters =
             $ 'path[id=progress]' .attr 'd'
         else
             svg
+
+    livescript: (contents, options) ->
+        #console.log "this is livescript contents: ", contents 
+        lsc.compile contents, {+bare, -header}
 
 
 test-str = '''

@@ -23,6 +23,8 @@ require! 'vinyl-source-stream': source
 require! 'vinyl-buffer': buffer
 require! 'gulp-watch': watch
 require! 'gulp-pug': pug
+require! './src/client/templates/filters': {pug-filters}
+
 require! 'node-notifier': notifier
 require! 'gulp-concat': cat
 require! 'gulp-uglify': uglify
@@ -279,6 +281,7 @@ gulp.task \pug ->
             pretty: yes
             locals:
                 app: 'ScadaJS'
+            filters: pug-filters
         .on \error, (err) ->
             on-error \pug, err
             @emit \end

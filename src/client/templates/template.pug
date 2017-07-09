@@ -37,43 +37,38 @@ html(lang="en-GB")
 
         block script
             //- script(src='app.js')
-        script.
-            
-            $.ajax({
-              url: 'app.js',
-              type: 'GET',
-              success: function(data) {
-                console.log("page loaded");
-              }, 
-              error: function(e) {
-                  console.error("something went wrong while loading page: ", e); 
-                  alert("something went wrong while loading page: ", e); 
-              },
-                xhr: function()
-                  {
-                    $('#percentProgress').progress({showActivity: false});
-            
-                    var xhr = new window.XMLHttpRequest();
-                    //Upload progress
-                    xhr.upload.addEventListener("progress", function(evt){
-                      if (evt.lengthComputable) {
-                        var percentComplete = evt.loaded / evt.total;
-                        //Do something with upload progress
-                        console.log(percentComplete);
-                      }
-                    }, false);
-                    //Download progress
-                    xhr.addEventListener("progress", function(evt){
-                      if (evt.lengthComputable) {
-                        var percentComplete = evt.loaded / evt.total;
-                        //Do something with download progress
-                        console.log(percentComplete);
-                        percentInt = parseInt(percentComplete * 100)
-                        $('#percent').text(percentInt);
-                        $('#percentProgress').progress("set progress", percentInt); 
+        script
+            :livescript
+                $.ajax do 
+                    url: \app.js 
+                    type: \GET 
+                    success: (data) -> 
+                        console.log "page loaded."
+                    error: (e) -> 
+                        msg = "something went wrong while loading page: "
+                        console.log msg, e 
+                        alert msg, e 
+                    
+                    xhr: -> 
+                        $ '#percentProgress' .progress {showActivity: false}
+                        xhr = new window.XMLHttpRequest!
+                        
+                        # upload progress 
+                        xhr.upload.addEventListener \progress, ((ev) -> 
+                            if ev.lengthComputable
+                                percentComplete = ev.loaded / ev.total 
+                                console.log "Upload complete % #{percentComplete * 100}"
 
-                      }
-                    }, false);
-                    return xhr;
-                  }
-            });
+                            ), false 
+                        
+                        # download progress 
+                        xhr.addEventListener \progress, ((ev) -> 
+                            if ev.lengthComputable
+                                percentComplete = ev.loaded / ev.total 
+                                percentInt = parseInt(percentComplete * 100)
+                                #console.log "Download complete % #{percentComplete * 100}"
+                                $('#percent').text(percentInt);
+                                $('#percentProgress').progress("set progress", percentInt); 
+                            ), false                         
+                        xhr 
+            
