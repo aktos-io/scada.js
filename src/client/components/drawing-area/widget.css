@@ -1,0 +1,26 @@
+.drawing-area-container .widget {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.draggable {
+  border: 2px dashed yellowgreen;
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.draggable-locked {
+  border: 2px solid transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+
+}
