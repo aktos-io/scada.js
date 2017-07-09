@@ -123,6 +123,7 @@ Ractive.components['router'] = Ractive.extend do
 Ractive.components['scene'] = Ractive.extend do
     template: '
         <div name="{{name}}"
+            class="{{class}}"
             style="
                 {{#unless visible}} display: none; {{/unless}}
                 margin: 0;
