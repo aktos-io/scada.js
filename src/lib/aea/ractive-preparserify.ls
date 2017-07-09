@@ -4,7 +4,7 @@ require! 'ractive':Ractive
 require! 'prelude-ls': {map, keys}
 require! '../../client/templates/filters': {pug-filters}
 
-console.log "pug filters: ", pug-filters
+#console.log "pug filters: ", pug-filters
 
 /*******************************************************************************
 
