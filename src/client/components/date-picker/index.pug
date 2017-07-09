@@ -1,6 +1,6 @@
 +iff('button')
-    .ui.calendar.date-picker 
-        .ui.button {{buttonText}}
+    .ui.calendar.date-picker(style!="{{#if inline}}display: inline; {{/if}}")
+        .ui.button(class="{{class}}") {{buttonText}} {{yield}}
 +else
     .ui.calendar.date-picker 
         .ui.input.left.icon 
