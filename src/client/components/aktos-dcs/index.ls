@@ -24,6 +24,12 @@ Ractive.components['aktos-dcs'] = Ractive.extend do
     isolated: yes
     oninit: ->
         url = curr-url!
+        console.log "realtime server url: ", url
+
+        if url.protocol is \file
+            url.host-url = "http://localhost:4008"
+            url.path = "/"
+
         @transport = new SocketIOBrowser do
             address: url.host-url
             path: url.path
