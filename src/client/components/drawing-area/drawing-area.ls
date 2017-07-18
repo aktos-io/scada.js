@@ -36,7 +36,3 @@ Ractive.components['drawing-area'] = Ractive.extend do
 
         if @get \height
             drawing-area.css \height, that
-
-
-    data: ->
-        desktop: yes

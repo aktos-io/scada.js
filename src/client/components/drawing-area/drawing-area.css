@@ -17,7 +17,7 @@
 
 .drawing-area-container {
     width: 1366px;
-    height: 98vh; 
+    height: 98vh;
     white-space: nowrap;
     display: inline-block;
     position: relative; /* this is extremely important for relative widget positioning */
