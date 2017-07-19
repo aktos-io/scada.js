@@ -1,7 +1,7 @@
 require! 'prelude-ls': {flatten, join, split}
 require! 'nano'
 require! './debug-log': {logger}
-require! 'colors': {bg-red, bg-green}
+require! 'colors': {bg-red, bg-green, bg-yellow}
 require! './packing': {pack}
 
 export class CouchNano
@@ -22,34 +22,39 @@ export class CouchNano
 
         if headers
             if headers['set-cookie']
-                #@log.log bg-green "session opened for #{@username}"
-                @cookie = that
-                #@log.log "cookie is: #{@cookie}"
-                @db = (require \nano) do
-                    url: @cfg.url
-                    cookie: @cookie
-
-                @request = @db.request
+                @use-cookie that
                 return callback null, 'ok'
 
         @log.log bg-red "unexpected response."
         return callback {text: "unexpected response"}, null
 
+    use-cookie: (cookie) ->
+        @log.log bg-yellow "Using new cookie: #{cookie}"
+        @db = (require \nano) do
+            url: @cfg.url
+            cookie: cookie
+        @request = @db.request
+
     put: (doc, callback) ->
-        err, res <~ @request do
+        err, res, headers <~ @request do
             db: @db-name
             body: doc
             method: \post
+
+        if headers? => if headers['set-cookie'] => @use-cookie that
+
         err = {reason: err.reason, name: err.name, message: err.reason} if err
         callback err, res
 
     get: (doc-id, opts, callback) ->
         [callback, opts] = [opts, {}] if typeof! opts is \Function
 
-        err, res <~ @request do
+        err, res, headers <~ @request do
             db: @db-name
             doc: doc-id
             qs: opts
+
+        if headers? => if headers['set-cookie'] => @use-cookie that
 
         err = {reason: err.reason, name: err.name, message: err.reason} if err
         callback err, res
@@ -57,10 +62,12 @@ export class CouchNano
     all: (opts, callback) ->
         [callback, opts] = [opts, {}] if typeof! opts is \Function
 
-        err, res <~ @request do
+        err, res, headers <~ @request do
             db: @db-name
             path: '_all_docs'
             qs: opts
+
+        if headers? => if headers['set-cookie'] => @use-cookie that
 
         err = {reason: err.reason, name: err.name, message: err.reason} if err
         callback err, res?.rows
@@ -79,7 +86,10 @@ export class CouchNano
             opts = {}
 
 
-        err, res <~ @_view ddoc, viewname, {type: \view}, opts
+        err, res, headers <~ @_view ddoc, viewname, {type: \view}, opts
+
+        if headers? => if headers['set-cookie'] => @use-cookie that
+
         err = {reason: err.reason, name: err.name, message: err.reason} if err
         callback err, res
 
