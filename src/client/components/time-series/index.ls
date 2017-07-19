@@ -80,10 +80,11 @@ Ractive.components['time-series'] = Ractive.extend do
                 serie.push {x: point.key, y: point.value}
 
         @observe \data, (_new) ->
-            x = graph
-            graph.series.0.data = [{x: ..key, y: ..value} for _new]
-            make-slider!
-            graph.update!
+            if typeof! _new is \Array
+                x = graph
+                graph.series.0.data = [{x: ..key, y: ..value} for _new]
+                make-slider!
+                graph.update!
 
 
         @observe \current, (_new) ->
