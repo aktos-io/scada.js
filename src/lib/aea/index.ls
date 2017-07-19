@@ -9,7 +9,7 @@ require! {
     './convert-units': {convert-units}
 }
 
-require! 'prelude-ls': {chars, unchars}
+require! 'prelude-ls': {chars, unchars, reverse}
 
 export function assert (condition, message)
     unless condition
@@ -103,6 +103,17 @@ if make-tests=no
 
 require! './browser-storage': {BrowserStorage}
 
+
+hex = (n) -> n.to-string 16 .to-upper-case!
+
+ip-to-hex = (ip) ->
+    i = 0
+    result = 0
+    for part in reverse ip.split '.'
+        result += part * (256**i++)
+
+    hex result
+
 module.exports = {
     make-user-doc, PouchDB, make-design-doc, check-login, is-db-alive, gen-entry-id, hash8, hash8n
     CouchNano
@@ -119,4 +130,5 @@ module.exports = {
     convert-units
     is-nodejs
     BrowserStorage
+    hex, ip-to-hex
 }
