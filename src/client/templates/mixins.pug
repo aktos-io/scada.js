@@ -38,8 +38,8 @@ mixin partial(name)
     block
     != '{{/partial}}'
     
-mixin apply(name, arg)
-    != '{{>' + name + ' ' + arg + '}}'
+mixin apply(content)
+    != '{{>' + content + ' }}'
 
 mixin component(name)
     != '<script id="' + name  + '" type="text/ractive">'
