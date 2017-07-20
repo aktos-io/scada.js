@@ -1,4 +1,4 @@
-![ScadaJS](https://github.com/aktos-io/scada.js/blob/master/src/client/assets/scadajs-text.png)
+![ScadaJS](src/client/assets/scadajs-text.png)
 
 # Key features
 
