@@ -22,7 +22,7 @@
 
 # DEMO
 
-Demo application source is [here](http://TODO) and can be seen in action here: https://aktos.io/showcase
+Demo application source is [here](http://TODO) and can be seen here in action: https://aktos.io/showcase
 
 # INSTALL
 
