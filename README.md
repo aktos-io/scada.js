@@ -34,6 +34,7 @@ Add ScadaJS into your project
     cd your-project 
     git submodule add https://github.com/aktos-io/scada.js
     git submodule update --init --recursive
+    cd scada.js
     yarn
 
 ...and optionally [follow the aea-way](doc/aea-way.md).
