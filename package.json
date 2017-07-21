@@ -57,6 +57,7 @@
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
+    "babel-polyfill": "^6.23.0",
     "browserify": "^13.1.1",
     "browserify-livescript": "git+https://github.com/ceremcem/browserify-livescript.git",
     "cheerio": "^0.20.0",
