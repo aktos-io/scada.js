@@ -5,8 +5,9 @@ cache-asset(src="{{type}}/off.svg")
 //- actual led 
 img.ui.image.led(src="{{type}}/{{innerState}}" class="{{class}}")
 
-//- the sync component that updates status of led 
-sync(value="{{ state }}" topic="{{topic}}")
++if('topic')
+    //- the sync component that updates status of led 
+    sync(value="{{ state }}" topic="{{topic}}")
 
     
     
