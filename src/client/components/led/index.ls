@@ -3,10 +3,11 @@ Ractive.components['led'] = Ractive.extend do
     isolated: yes
     oninit: ->
         @observe \state, (_new) ->
-            if _new is on
-                @set \innerState, \on.svg
-            else if _new is off
-                @set \innerState, \off.svg
+            if _new? and _new isnt ""
+                if _new
+                    @set \innerState, \on.svg
+                else
+                    @set \innerState, \off.svg
 
     data: ->
         type: \lightbulb
