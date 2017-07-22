@@ -1,0 +1,9 @@
+.ui.form(class="{{class}}")
+    .field
+        label Receive:
+        textarea.rx-area(value="{{rx}}" rows="3")
+    .field
+        label Send:
+        textarea(value="{{tx}}" rows="1")
+        
+    ack-button.fluid.green(on-buttonclick="sendSerial") Send!
