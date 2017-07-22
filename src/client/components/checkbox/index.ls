@@ -33,7 +33,7 @@ Ractive.components['checkbox'] = Ractive.extend do
                         [curr-state, intended-state] = <[ unchecked checked ]>
                     parameter = __.get(\value)
 
-                    __.fire \statechange, {component: __}, curr-state, intended-state, parameter
+                    __.fire \statechange curr-state, intended-state, parameter
                 else
                     __.toggle \checked
 
