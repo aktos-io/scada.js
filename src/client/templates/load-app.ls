@@ -20,11 +20,14 @@ $.ajax do
     error: (e) ->
         msg = "something went wrong while loading page: "
         console.log msg, e
-        alert msg, e
+        $ '#loading-error' .show! 
 
     xhr: ->
         $ '#percentProgress' .progress {showActivity: false}
+        $ '#loading-error' .hide!
+
         xhr = new window.XMLHttpRequest!
+
 
         # upload progress
         xhr.upload.addEventListener \progress, ((ev) ->
