@@ -21,7 +21,7 @@ require! './redirect-button'
 mockevent =
     component:
         fire: (...args) ->
-            log.log "mockevent fired: ", pack args
+            #log.log "mockevent fired: ", pack args
 
 
 Ractive.components['login-button'] = Ractive.extend do
@@ -35,10 +35,16 @@ Ractive.components['login-button'] = Ractive.extend do
             connector := find-actor _new
 
         @on do
+            click: ->
+                @find-component 'ack-button' .fire \buttonclick
+
             do-login: (_event) ->
                 _event <<< mockevent unless _event.component
 
                 _event.component.fire \state, \doing
+
+                unless connector
+                    console.error "There is no connector actor found: ", connector
 
                 user = @get \user
                 password = @get \password
@@ -71,6 +77,8 @@ Ractive.components['login-button'] = Ractive.extend do
 
                         # set 'token' explicitly to save in the persistent browser storage
                         @set \token, context.token
+
+                        @fire \success
 
                     else if res.auth.session.logout is \yes
                         log.log "Will log out..."
@@ -109,7 +117,7 @@ Ractive.components['login-button'] = Ractive.extend do
                     @fire \doLogin, _event
 
         if @get \auto
-            log.log "Performing auto clicking"
+            #log.log "Performing auto clicking"
             @fire \doLogin
 
     data: ->

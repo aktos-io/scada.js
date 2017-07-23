@@ -13,6 +13,11 @@ Ractive.components['redirect-button'] = Ractive.extend do
             <~ sleep 1000ms
             lo(op)
         @set \information, ""
+
+        @on do
+            click: ->
+                @find-component \a .fire \click
+
         # FIXME: Possible bug of Ractive, removing sleep prevents `fire` from working
-        <~ sleep 10ms
-        @find-component \a .fire \click
+        <~ sleep 0ms 
+        @fire \click
