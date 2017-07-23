@@ -45,3 +45,13 @@ mixin component(name)
     != '<script id="' + name  + '" type="text/ractive">'
     block
     != '</script>'
+
+mixin hideif(condition)
+    != '<div style="{{#if (' + condition + ') }}display: none{{/if}}">'
+    block 
+    != '</div>'
+
+mixin showif(condition)
+    != '<div style="{{#if ! (' + condition + ') }}display: none{{/if}}">'
+    block 
+    != '</div>'
