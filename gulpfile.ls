@@ -23,7 +23,7 @@ require! 'vinyl-source-stream': source
 require! 'vinyl-buffer': buffer
 require! 'gulp-watch': watch
 require! 'gulp-pug': pug
-require! './src/client/templates/filters': {pug-filters}
+require! './templates/filters': {pug-filters}
 
 require! 'node-notifier': notifier
 require! 'gulp-concat': cat
@@ -52,13 +52,12 @@ notification-enabled = yes
 paths =
     vendor-folder: "#{__dirname}/vendor"
     build-folder: "#{__dirname}/build"
-    client-src: "#{__dirname}/src/client"
     lib-src: "#{__dirname}/src/lib"
     client-webapps: "#{__dirname}/../webapps"
     client-root: "#{__dirname}/.."
 
 paths.client-public = "#{paths.build-folder}/#{webapp}"
-paths.components-src = "#{paths.client-src}/components"
+paths.components-src = "#{__dirname}/components"
 
 
 
@@ -90,33 +89,40 @@ ls-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/app.{ls,js}"
 for-css =
     "#{paths.vendor-folder}/**/*.css"
     "!#{paths.vendor-folder}/**/__tmp__/**"
-    "#{paths.client-src}/**/*.css"
+    "#{paths.components-src}/**/*.css"
     "#{paths.client-webapps}/**/*.css"
 
 for-js =
     "#{paths.vendor-folder}/**/*.js"
     "!#{paths.vendor-folder}/**/__tmp__/**"
 
-
+# changes on these files will invalidate browserify cache
 for-preparserify-workaround =
-    "#{paths.client-webapps}/#{webapp}/**/*.html"
-    "#{paths.client-src}/**/*.html"
     "#{paths.client-webapps}/#{webapp}/**/*.pug"
-    "#{paths.client-src}/**/*.pug"
+    "#{paths.client-webapps}/#{webapp}/**/*.html"
+    "#{paths.components-src}/**/*.pug"
+    "#{paths.components-src}/**/*.html"
 
 for-assets =
-    "#{paths.client-src}/**/assets/**"
-    "!#{paths.client-src}/**/examples/**"
-    "!#{paths.client-src}/**/example/**"
+    "#{paths.components-src}/**/assets/**"
     "#{paths.client-root}/assets/**"
     "#{paths.client-webapps}/**/assets/**"
+    "#{__dirname}/assets/**"
+
+    # assets folder in vendor
     "#{paths.vendor-folder}/**/assets/**"
     "!#{paths.vendor-folder}/**/__tmp__/**"
     "!#{paths.vendor-folder}/**/tmp-*/**"
 
 for-browserify =
+    # livescript files in webapp folder
     "#{paths.client-webapps}/#{webapp}/**/*.ls"
-    "#{paths.client-src}/**/*.ls"
+
+    # files in components
+    "#{paths.components-src}/**/*.ls"
+    "#{paths.components-src}/**/*.js"
+
+    # files in lib
     "#{paths.lib-src}/**/*.ls"
     "#{paths.lib-src}/**/*.js"
 

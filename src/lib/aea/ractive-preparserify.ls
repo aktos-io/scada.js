@@ -2,7 +2,7 @@ require! 'through2': through
 require! <[ pug path cheerio fs ]>
 require! 'ractive':Ractive
 require! 'prelude-ls': {map, keys}
-require! '../../client/templates/filters': {pug-filters}
+require! '../../../templates/filters': {pug-filters}
 
 #console.log "pug filters: ", pug-filters
 
@@ -58,7 +58,7 @@ export ractive-preparserify = (file) ->
                 try
                     # include templates/mixins.pug file
                     mixin-relative = path.relative dirname, process.cwd!
-                    mixin-include = "include #{mixin-relative}/src/client/templates/mixins.pug\n"
+                    mixin-include = "include #{mixin-relative}/templates/mixins.pug\n"
                     template-contents = mixin-include + template-contents
 
                     # FIXME: We should get dependencies and rendered content in one function call
