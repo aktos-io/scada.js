@@ -4,8 +4,11 @@ Ractive.components['redirect-button'] = Ractive.extend do
     template: RACTIVE_PREPARSE('redirect-button.pug')
     isolated: yes
     onrender: ->
-        redirect-delay = @get \redirect-delay
+        @on do
+            click: ->
+                @find-component \a .fire \click
 
+        redirect-delay = @get \redirect-delay
         i = 0
         <~ :lo(op) ~>
             @set \information, "(#{redirect-delay - i})"
@@ -14,10 +17,7 @@ Ractive.components['redirect-button'] = Ractive.extend do
             lo(op)
         @set \information, ""
 
-        @on do
-            click: ->
-                @find-component \a .fire \click
-
-        # FIXME: Possible bug of Ractive, removing sleep prevents `fire` from working
-        <~ sleep 0ms 
-        @fire \click
+        if redirect-delay > 0
+            # FIXME: Possible bug of Ractive, removing sleep prevents `fire` from working
+            <~ sleep 0ms
+            @fire \click
