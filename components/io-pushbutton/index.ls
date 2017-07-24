@@ -2,7 +2,7 @@ require! './button-actor': {ButtonActor}
 
 Ractive.components['io-pushbutton'] = Ractive.extend do
     template: '''
-        <div type="button"
+        <div
            class="ui button
                {{#if disabled}}disabled{{/if}}
                {{#if active}}active{{/if}}
@@ -50,7 +50,7 @@ Ractive.components['io-pushbutton'] = Ractive.extend do
             e.stop-propagation!
 
         button.on 'touchend', (e) ->
-            turn off            
+            turn off
 
         actor = new ButtonActor {topic: topic}
         actor.on \data, (msg) ~>
