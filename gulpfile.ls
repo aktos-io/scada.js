@@ -270,11 +270,12 @@ gulp.task \assets, ->
                     unless found-assets
                         continue
                 else
-                    if i is \assets and not found-assets
+                    if not found-assets
                         found-assets = yes
                         continue
                 parts.push i
-            path.dirname = join '/', parts
+            _tmp = join '/', parts
+            path.dirname = _tmp if found-assets
         .pipe gulp.dest paths.client-public
 
 
