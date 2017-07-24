@@ -41,6 +41,7 @@ Ractive.components['io-pushbutton'] = Ractive.extend do
 
         button.on \mouseup, ->
             turn off
+            button.off 'mouseleave'
 
         # for touch device
         button.on 'touchstart', (e) ->
@@ -49,7 +50,7 @@ Ractive.components['io-pushbutton'] = Ractive.extend do
             e.stop-propagation!
 
         button.on 'touchend', (e) ->
-            turn off
+            turn off            
 
         actor = new ButtonActor {topic: topic}
         actor.on \data, (msg) ~>
