@@ -3,6 +3,7 @@ require! 'nano'
 require! './debug-log': {logger}
 require! 'colors': {bg-red, bg-green, bg-yellow}
 require! './packing': {pack}
+require! './sleep' : {sleep}
 
 export class CouchNano
     (@cfg) ~>
@@ -29,17 +30,37 @@ export class CouchNano
         return callback {text: "unexpected response"}, null
 
     use-cookie: (cookie) ->
-        @log.log bg-yellow "Using new cookie: #{cookie}"
-        @db = (require \nano) do
+        #@log.log bg-yellow "Using new cookie: #{cookie}"
+        @db = nano do
             url: @cfg.url
             cookie: cookie
         @request = @db.request
+
+        # for debugging purposes
+        /*
+        # make cookie a garbage, thus break the session
+        <~ sleep 5000ms
+        @db = nano do
+            url: @cfg.url
+            cookie: "garbage"
+        @request = @db.request
+        */
+
 
     put: (doc, callback) ->
         err, res, headers <~ @request do
             db: @db-name
             body: doc
             method: \post
+
+        if err => if err.statusCode is 401
+            # we are unauthorized, try to login again
+            @log.log bg-yellow "Trying to re-login"
+            @connect (err) ~>
+                unless err
+                    @log.log bg-green "logged in again."
+                    @put doc, callback
+            return
 
         if headers? => if headers['set-cookie'] => @use-cookie that
 
@@ -54,6 +75,15 @@ export class CouchNano
             doc: doc-id
             qs: opts
 
+        if err => if err.statusCode is 401
+            # we are unauthorized, try to login again
+            @log.log bg-yellow "Trying to re-login"
+            @connect (err) ~>
+                unless err
+                    @log.log bg-green "logged in again."
+                    @get doc-id, opts, callback
+            return
+
         if headers? => if headers['set-cookie'] => @use-cookie that
 
         err = {reason: err.reason, name: err.name, message: err.reason} if err
@@ -66,6 +96,15 @@ export class CouchNano
             db: @db-name
             path: '_all_docs'
             qs: opts
+
+        if err => if err.statusCode is 401
+            # we are unauthorized, try to login again
+            @log.log bg-yellow "Trying to re-login"
+            @connect (err) ~>
+                unless err
+                    @log.log bg-green "logged in again."
+                    @all opts, callback
+            return
 
         if headers? => if headers['set-cookie'] => @use-cookie that
 
@@ -85,12 +124,21 @@ export class CouchNano
             callback = opts
             opts = {}
 
-
         err, res, headers <~ @_view ddoc, viewname, {type: \view}, opts
+
+        if err => if err.statusCode is 401
+            # we are unauthorized, try to login again
+            @log.log bg-yellow "Trying to re-login"
+            @connect (err) ~>
+                unless err
+                    @log.log bg-green "logged in again."
+                    @view ddoc-viewname, opts, callback
+            return
 
         if headers? => if headers['set-cookie'] => @use-cookie that
 
         err = {reason: err.reason, name: err.name, message: err.reason} if err
+        console.log "couch-nano got #{pack res ?.length} bytes"
         callback err, res
 
     _view: (ddoc, viewName, meta, qs, callback) ->

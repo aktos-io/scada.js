@@ -1,5 +1,5 @@
 require! 'rickshaw':Rickshaw
-require! 'prelude-ls': {empty, first, last}
+require! 'prelude-ls': {empty, first, last, is-it-NaN}
 require! 'aea': {unix-to-readable}
 require! 'aea/formatting': {displayFormat, parse-format}
 
@@ -87,12 +87,15 @@ Ractive.components['time-series'] = Ractive.extend do
                 graph.update!
 
 
-        @observe \current, (_new) ->
+        @observe \current, (curr) ->
             if @get \live
-                console.log "appending live data: ", _new
-                append-new parse-float _new
-                make-slider!
-                graph.update!
+                #console.log "appending live data: ", _new
+                curr = parse-float curr
+                unless is-it-NaN curr
+                    append-new curr
+                    make-slider!
+                    graph.update!
+
 
 /*
 

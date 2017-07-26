@@ -11,14 +11,16 @@ if [ ! -d $SRC ]; then
 fi
 
 cd $DIR
+rm -r dist 2> /dev/null 
+rm -r assets 2> /dev/null 
 
-rsync -av  $SRC/Semantic-UI/dist .
-rsync -av --remove-source-files dist/themes ../../src/client/assets/
-rm -r dist/themes
+rsync -av  $SRC/dist .
+mkdir assets 
+mv dist/themes assets
 
 echo "removing uncompressed javascript and css files..."
 IFS=$'\n'
-for f in $(find . -name '*.js' -or -name '*.css'); do
+for f in $(find dist -name '*.js' -or -name '*.css'); do
     if [[ ${f: -7} == ".min.js" ]]; then
         echo "skipping min.js"
         continue

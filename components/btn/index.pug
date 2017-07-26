@@ -6,7 +6,7 @@
     |    {{yield}}
     | </a>
 +else
-    | <div type='button'
+    | <div
     |    class='ui button {{#if disabled}}disabled{{/if}} {{#if active}}active{{/if}} {{ class }}'
     |    {{#if ! disabled}}on-click="@this.fire('buttonclick', value)" {{/if}}
     |    style='{{style}}'
