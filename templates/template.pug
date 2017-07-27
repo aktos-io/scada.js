@@ -15,34 +15,20 @@ html(lang="en-GB")
         link(rel="icon" sizes="192x192" href="favicon.ico")
         block title
             title ScadaJS #{app}
-        script.            
-            (function () {
-                var old = console.log;
-                var logger = document.getElementById('debugDiv');
-                console.log = function () {
-                  old.apply(this, arguments);
-                  try {
-                      for (var i = 0; i < arguments.length; i++) {
-                        if (typeof arguments[i] == 'object') {
-                            logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(arguments[i], undefined, 2) : arguments[i]) + '<br />';
-                        } else {
-                            logger.innerHTML += arguments[i] + '<br />';
-                        }
-                      }
-                   }
-                   catch(e) {
-                       old(e);
-                   }
-                }
-            })();
+     
         block head
         script if (typeof module === 'object') {window.module = module; module = undefined;}
         script(src="js/vendor.js")
         script if (window.module) module = window.module;
         link(rel="stylesheet", href="css/vendor.css")
     body(ontouchstart)
+        pre#debugDiv
+
+        script
+            include:livescript ./debug-div.ls 
+
         block content
-            #main-output 
+            #main-output.pusher 
                 .ui.centered.grid
                     .row
                         .column(style="padding-top: 10%")
@@ -59,10 +45,6 @@ html(lang="en-GB")
                             
                     block loading 
                         
-                    pre#debugDiv.
-                        This is debug div
-                        -----------------
-
 
 
         #dynamic-script
