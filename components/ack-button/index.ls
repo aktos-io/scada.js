@@ -66,7 +66,7 @@ Ractive.components['ack-button'] = Ractive.extend do
                     console.warn "scadajs: Deprecation: use \"ack-button.fire \\error\" instead"
                     @fire \error, msg, callback
 
-            error: (_event, msg, callback) ~>
+            error: (msg, callback) ~>
                 @doing-watchdog.go!
 
                 msg = try
@@ -86,7 +86,7 @@ Ractive.components['ack-button'] = Ractive.extend do
                 #console.log "error has been processed by ack-button, action is: #{action}"
                 callback action if typeof! callback is \Function
 
-            info: (_event, msg, callback) ->
+            info: (msg, callback) ->
                 @doing-watchdog.go!
                 msg = {message: msg} unless msg.message
                 msg = msg `merge` {
@@ -97,7 +97,7 @@ Ractive.components['ack-button'] = Ractive.extend do
                 #console.log "info has been processed by ack-button, action is: #{action}"
                 callback action if typeof! callback is \Function
 
-            yesno: (_event, msg, callback) ->
+            yesno: (msg, callback) ->
                 @doing-watchdog.go!
                 msg = {message: msg} unless msg.message
                 msg = msg `merge` {
@@ -111,7 +111,7 @@ Ractive.components['ack-button'] = Ractive.extend do
         if @get \auto
             console.log "auto firing ack-button!"
             @fire \click
-            
+
     onteardown: ->
         @doing-watchdog.go!
 
