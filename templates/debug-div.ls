@@ -1,20 +1,14 @@
-``
-            (function () {
-                var old = console.log;
-                var logger = document.getElementById('debugDiv');
-                console.log = function () {
-                  old.apply(this, arguments);
-                  try {
-                      for (var i = 0; i < arguments.length; i++) {
-                        if (typeof arguments[i] == 'object') {
-                            logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(arguments[i], undefined, 2) : arguments[i]) + '<br />';
-                        } else {
-                            logger.innerHTML += arguments[i] + '<br />';
-                        }
-                      }
-                   }
-                   catch(e) {
-                   }
-                }
-            })();
-``
+do -> 
+    old = console.log
+    logger = document.getElementById \debugDiv
+    console.log = ->
+        old.apply console, ...
+        try
+            for arg in ...
+                logger.innerHTML += if typeof! arg is \Object
+                    if JSON and JSON.strigify
+                        JSON.stringify arg, undefined, 2
+                    else
+                        "Something we can not convert with JSON.stringify"
+                else
+                    "#{arg}<br />"
