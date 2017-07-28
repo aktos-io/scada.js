@@ -22,11 +22,6 @@ html(lang="en-GB")
         script if (window.module) module = window.module;
         link(rel="stylesheet", href="css/vendor.css")
     body(ontouchstart)
-        pre#debugDiv
-
-        script
-            include:livescript ./debug-div.ls 
-
         block content
             #main-output.pusher 
                 .ui.centered.grid
@@ -46,12 +41,13 @@ html(lang="en-GB")
                     block loading 
                         
 
+        //- This section is for debugging purposes 
+        //- Enable it if you want to see the console messages in the HTML
+            pre#debugDiv
+            script
+                include:livescript ./debug-div.ls 
 
         #dynamic-script
-        //- 
-            block script
-                script(src='app.js')            
-        //-     
         script
             include:livescript ./load-app.ls 
             
