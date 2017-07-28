@@ -43,7 +43,7 @@
     "page": "^1.7.1",
     "prelude-ls": "^1.1.2",
     "progressbar.js": "^1.0.1",
-    "ractive": "^0.9.1",
+    "ractive": "^0.9.3",
     "randomstring": "^1.1.5",
     "rickshaw": "^1.6.0",
     "semantic-ui-calendar": "^0.0.8",
