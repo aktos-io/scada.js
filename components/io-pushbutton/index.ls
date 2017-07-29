@@ -7,8 +7,9 @@ Ractive.components['io-pushbutton'] = Ractive.extend do
                {{#if disabled}}disabled{{/if}}
                {{#if active}}active{{/if}}
                {{ class }}
-               {{#if state === 'pressed'}}yellow{{/if}}
-               {{#if state == 'released'}}green{{/if}}
+               {{#if state === 'pressed'}}yellow
+               {{elseif state == 'released'}}green
+               {{else}}basic red{{/if}}
                "
            style="{{style}}"
            title="{{title}}{{tooltip}}"
