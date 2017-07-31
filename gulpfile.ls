@@ -95,6 +95,7 @@ for-css =
 for-js =
     "#{paths.vendor-folder}/**/*.js"
     "!#{paths.vendor-folder}/**/__tmp__/**"
+    "!#{paths.vendor-folder}/**/assets/**"
 
 # changes on these files will invalidate browserify cache
 for-preparserify-workaround =
