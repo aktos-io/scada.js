@@ -66,7 +66,8 @@ Ractive.components['ack-button'] = Ractive.extend do
                     console.warn "scadajs: Deprecation: use \"ack-button.fire \\error\" instead"
                     @fire \error, msg, callback
 
-            error: (msg, callback) ~>
+            error: (ev, msg, callback) ~>
+                console.log "ack-button: #{msg}"
                 @doing-watchdog.go!
 
                 msg = try
@@ -79,9 +80,9 @@ Ractive.components['ack-button'] = Ractive.extend do
                 }
                 action <~ logger.fire \showDimmed, msg, {-closable}
 
-                __.set \state, \error
-                __.set \reason, msg.message
-                __.set \selfDisabled, no
+                @set \state, \error
+                @set \reason, msg.message
+                @set \selfDisabled, no
 
                 #console.log "error has been processed by ack-button, action is: #{action}"
                 callback action if typeof! callback is \Function
