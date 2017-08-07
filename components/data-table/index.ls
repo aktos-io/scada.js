@@ -3,7 +3,8 @@ require! 'prelude-ls': {
     camelize, find, reject, find-index
 }
 require! 'aea': {sleep, merge, pack, unpack, unix-to-readable}
-require! 'randomstring': random
+require! 'dcs/browser': {CouchProxy}
+require! './vlogger': {VLogger}
 
 Ractive.components['data-table'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
@@ -14,185 +15,85 @@ Ractive.components['data-table'] = Ractive.extend do
         @set \readonly, readonly
 
     onrender: ->
-        __ = @
+        @logger = new VLogger this
+        settings = @get \settings
+        try
+            unless typeof! settings is \Object
+                throw "No settings found!"
+            unless settings.name
+                throw 'data-table name is required'
+            unless typeof! settings.col-names is \Array
+                throw 'Column names are missing'
+            unless settings.default
+                throw 'Default document is required'
+            unless settings.after-filter
+                throw "after-filter is required"
+            else
+                settings.after-filter.bind this
+        catch
+            @logger.error e
+            return
 
-        db = @get \db
-        console.error "No database object is passed to data-table!" unless db
+        get-default-document = ~>
+            try
+                if typeof settings.default is \function
+                    return settings.default.call this
+                else
+                    unpack pack settings.default
+            catch
+                @logger.error e
 
+        @set \columnList, settings.col-names
+        db = new CouchProxy get-default-document!.type
         opening-dimmer = $ @find \.table-section-of-data-table
 
-        # logger utility is defined here
-        logger = @root.find-component \logger
-        console.error "No logger component is found!" unless logger
-        # end of logger utility
-
-        settings = @get \settings
-
-        prev-url = null
-        open-row = (no-need-updating) ->
-            #console.warn "open row disabled..."
-            new-url = __.get \curr-url
-            if new-url and new-url isnt prev-url
-                tableview = __.get \tableview
-                if tableview
-                    for part in new-url.split '/'
-                        rel-entry = find (.id is part), tableview
-                        index = find-index (.id is part), tableview
-                        if rel-entry
-                            console.warn "I know this guy: ", part
-                            if settings.page-size and settings.page-size > 0
-                                curr-page = Math.floor (index / settings.page-size)
-                                __.set \currPage, curr-page
-                            __.set \clickedIndex, null
-
-                            __.fire \clicked, {context: rel-entry}
-                            __.update! unless no-need-updating
-                            prev-url := new-url
-                            return
-
-        @observe \curr-url, ->
-            open-row!
-
-        if typeof! settings isnt \Object
-            console.log "No settings found!"
-            return
-
-        try
-            if typeof! settings.col-names is \Array
-                @set \columnList, settings.col-names
-            else
-                col-list = split ',', settings.col-names
-                @set \columnList, col-list
-        catch
-            console.warn "DATA_TABLE: problem with col-names: ", e
-            return
-
+        # assign handlers
         handlers = {}
         for handler, func of settings.handlers
             handlers[handler] = func.bind this
 
         @set \handlers, handlers
 
-        gen-entry-id = db.gen-entry-id
+        # assign filters
+        data-filters = {}
+        for name, func of settings.filters
+            data-filters[name] = func.bind this
+        data-filters['all'] = (x) ~> x
+        @set \dataFilters, data-filters
 
-        @set \dataFilters, settings.filters
+        debugger
+        create-tableview = ~>
+            filter-func = @get(\dataFilters)[@get(\selectedFilter)]
+            if typeof! filter-func isnt \Function
+                @logger.error 'Filter function is not a function'
 
-        first-run-started = no
-        create-view = (curr) ->
-            unless __.get \firstRunDone
-                console.warn "data-table: create-view is called before first run!"
-                return
+            # get tableview
+            tableview = @get \tableview
 
-            filters = __.get \dataFilters
-            selected-filter = __.get \selectedFilter
-            tabledata = __.get \tabledata
+            # filter documents
+            tableview_filtered = filter-func tableview
 
-            if curr
-                curr-in-table = find (._id is curr._id), tabledata
-                unless curr-in-table
-                    # tabledata does not contain curr, add it to the beginning
-                    tabledata.unshift curr
+            # calculate which items to show in tableview
+            items = do ~>
+                if settings.page-size > 0
+                    curr-page = @get \currPage
+                    min = (x, y) -> if x < y then x else y
+                    return do
+                        from: curr-page * settings.page-size
+                        to: min (((curr-page + 1) * settings.page-size) - 1), (tableview_filtered.length - 1)
                 else
-                    # update curr in tabledata
-                    # replace all properties with new one
-                    for i of curr-in-table
-                        delete curr-in-table[i]
-                    for i of curr
-                        curr-in-table[i] = curr[i]
+                    return do
+                        from: 0
+                        to: tableview_filtered.length - 1
 
-                __.set \tabledata, tabledata
+            # calculate visible items
+            visible-items = for index, entry of tableview_filtered
+                if items.from <= index <= items.to
+                    entry
 
+            settings.after-filter visible-items, (items) ~>
+                @set \tableview_visible, items
 
-            unless typeof settings.after-filter is \function
-                console.error "after-filter is not defined?", settings.col-names
-                return
-
-            ffunc = filters[selected-filter]
-            filtered = ffunc.apply __, [tabledata] if typeof ffunc is \function
-            generate-visible = (view) ->
-                try
-                    __.set \tableview, view
-                    if settings.page-size > 0
-                        curr-page = __.get \currPage
-                        min = (x, y) -> if x < y then x else y
-                        items =
-                            from: curr-page * settings.page-size
-                            to: min ((curr-page + 1) * settings.page-size) - 1, (view.length - 1)
-
-                        __.set \tableview_visible, [view[index] for index of view when items.from <= index <= items.to ]
-                    else
-                        __.set \tableview_visible, view
-
-                    # for debugging purposes
-                    __.add \createViewCounter
-                catch
-                    console.error e
-                    debugger
-
-            unless filtered
-                console.warn "Filtered data is undefined! "
-            else
-                settings.after-filter.apply __, [filtered, generate-visible]
-                #console.warn "After filter runs so many times???"
-                open-row yes
-
-
-        refresh-view = ->
-            if typeof on-change is \function
-                #if settings.debug then console.log "DATA_TABLE: ON-CHANGE IS FUNCTION..."
-                settings.on-change.apply __
-            else
-                create-view!
-
-
-        @set \create-view, create-view
-
-
-        @observe \enabled, (_new, _old) ->
-            if _new and not __.get(\firstRunDone) and not first-run-started
-                # Run post init (from instance)
-                first-run-started := yes
-                # debug: console.log "Initializing tabledata with columns: #{settings.col-names}"
-                try
-                    if typeof settings.on-init is \function
-                        settings.on-init.call this, ->
-                            __.set \firstRunDone, yes
-                            # debug: console.log "finished initialization #{settings.col-names}"
-                            refresh-view!
-                        # debug: console.log "started initialization: #{settings.col-names}"
-
-
-                catch
-                    console.error "ERROR FROM DATA_TABLE: on-init: ", e
-            else if _old is off and _new is on and __.get(\firstRunDone)
-                # debug: console.log "rising edge of enable, trigger change: #{settings.col-names}"
-                changes = __.get \changes
-                __.set \changes, ++changes
-                refresh-view!
-            else if not _old and _new
-                1
-                #console.warn "Ignoring toggle of enabled in data-table for #{settings.col-names}"
-
-        @observe \changes, ->
-            if (__.get \enabled) and (__.get \firstRunDone)
-                console.log "Refreshing because of changes changed: #{settings.col-names}"
-                refresh-view!
-
-        @observe \tabledata, ->
-            if (__.get \enabled) and (__.get \firstRunDone)
-                console.log "Refreshing because tabledata changed...: #{settings.col-names}"
-                refresh-view!
-
-
-        get-default-document = ->
-            try
-                def = __.get \settings.default
-                if typeof def is \function
-                    return def.call __
-                else
-                    unpack pack def
-            catch
-                console.error e
 
         events =
             clicked: (event, context) ->
@@ -227,24 +128,9 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \clickedIndex, index
                 @set \lastIndex, index
 
-
                 dom = $ "tr[data-anchor='#{index}']"
 
                 opening-dimmer.dimmer \show
-
-                scroll-to = (anchor) ->
-                    offset = dom.offset!
-                    if offset
-                        <- sleep 200ms
-                        scroll-time = 500ms
-                        $ 'html, body' .animate do
-                            scroll-top: offset.top - 45px   # FIXME: remove hard coded navigation
-                            , scroll-time
-
-                    else
-                        console.warn "Couldn't find offset of #{index}?"
-                        debugger
-
 
                 # scroll to index as soon as it is clicked
                 scroll-to index
@@ -356,15 +242,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 __.set \curr, editing-doc
 
 
-            delete-order: (event, index-str) ->
-                [key, index] = split ':' index-str
-                index = parse-int index
-                editing-doc = @get \curr
-                editing-doc[key].splice index, 1
-                @set \curr, editing-doc
-
             delete-document: (event, e) ->
-                __ = @
                 e.component.fire \state, \doing
                 curr = @get \curr
                 curr.type = "_deleted_#{curr.type}"
@@ -377,32 +255,10 @@ Ractive.components['data-table'] = Ractive.extend do
                 (__.get \create-view)!
 
             show-error: (event, msg, callback) ->
-                msg = {message: msg} unless msg.message
-                msg = msg `merge` {
-                    title: msg.title or 'data-table error'
-                    icon: "error circle"
-                }
-                action <- logger.fire \showDimmed, msg, {-closable}
-                #console.log "info has been processed by ack-button, action is: #{action}"
-                callback action if typeof! callback is \Function
+                @logger.error msg, callback
 
-            kick-changes: (event, ev) ->
-                console.log "kicking changes..."
-                ev.component.fire \state, \doing
-                @add \changes
-                @observe-once \createViewCounter, ->
-                    ev.component.fire \state, \done...
-
-            info: (event, msg, callback) ->
-                msg = {message: msg} unless msg.message
-                msg = msg `merge` {
-                    title: msg.title or 'data-table info'
-                    icon: "info circle"
-                }
-                action <- logger.fire \showDimmed, msg, {-closable}
-                #console.log "info has been processed by ack-button, action is: #{action}"
-                callback action if typeof! callback is \Function
-
+            show-info: (event, msg, callback) ->
+                @logger.info msg, callback
 
 
         events `merge` handlers
@@ -413,17 +269,13 @@ Ractive.components['data-table'] = Ractive.extend do
             _save.apply __, args
             e.component.set \onDone, ->
                 if __.get \addingNew
-                    #e.component.
                     __.set \addingNew, false
 
+        # register events
         @on events
-
 
     data: ->
         __ = @
-        has-add-new-button: no
-        deleteDocuments: no
-        instance: @
         curr: null
         handlers: {}
         readonly: no
@@ -438,16 +290,8 @@ Ractive.components['data-table'] = Ractive.extend do
         editTooltip: no
         addingNew: no
         view-func: null
-        data-filters:
-            all: (docs) -> docs
         selected-filter: \all
         curr-page: 0
-        dont-watch-changes: no
-        error-message: null
-        enabled: no
-        create-view-counter: 0
-        changes: 0
-        first-run-done: no
         opening-row: no
         opening-row-msg: ''
         is-editing-line: (index) ->
@@ -480,8 +324,8 @@ Ractive.components['data-table'] = Ractive.extend do
             else
                 no
 
-        run-handler: (params) ->
-            handlers = __.get \settings.handlers
+        run-handler: (params) ~>
+            handlers = @get \settings.handlers
             param = null
 
             #console.log "orig run-handler: params: ", params
@@ -511,19 +355,12 @@ Ractive.components['data-table'] = Ractive.extend do
 
             if typeof handlers[handler] is \function
                 #console.log "RUNNING HANDLER: #{handler}(#{param})"
-                return handlers[handler].apply __, param
+                return handlers[handler].apply this, param
             else
                 console.log "no handler found with the name: ", handler
 
-        trigger-change: ->
-            __.set \dontWatchChanges, yes
-            __.set \changes, (1 + __.get \changes)
 
-        refresh: (curr) ->
-            console.log "TABLE IS REFRESHING!!!"
-            __.fire \setFilter, \all
-            create-view = __.get \create-view
-            create-view curr
+
 
         # utility functions
         # ---------------------------------------------------------------
@@ -533,11 +370,5 @@ Ractive.components['data-table'] = Ractive.extend do
                 range
             catch
                 console.log "error in range generator: ", _from, _to
-
-        two-digit: (n) ->
-            (Math.round (n * 100)) / 100
-
-        five-digit: (n) ->
-            (Math.round (n * 100000)) / 100000
 
         unix-to-readable: unix-to-readable
