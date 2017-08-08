@@ -98,9 +98,6 @@ Ractive.components["a"] = Ractive.extend do
                         console.error "there seems a no valid link:", link
                         debugger
 
-                else
-                    console.error "can not determine action..."
-                    debugger
 
 
 Ractive.components['router'] = Ractive.extend do
