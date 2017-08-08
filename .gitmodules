@@ -3,4 +3,4 @@
 	url = https://github.com/aktos-io/service-runner
 [submodule "src/lib/aktos-dcs"]
 	path = src/lib/dcs
-	url = ssh://git@aktos.io:443/ceremcem/aktos-dcs-node
+	url = git@github.com:aktos-io/aktos-dcs-node
