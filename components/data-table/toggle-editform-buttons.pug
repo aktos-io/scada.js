@@ -1,0 +1,16 @@
+//- table form controls 
++partial('controls')
+    .ui.buttons 
+        +unless('readonly')
+            btn(
+                on-buttonclick="toggleEditing"
+                class="{{#if editTooltip }}red{{else}}blue{{/if}} {{#if editable}}red{{/if}}"
+                active="{{editable}}"
+                tooltip="Düzenle"
+                )
+                i.write.icon 
+            .or
+        
+        btn(on-buttonclick="newOrderClose" tooltip="Kapat")
+            i.remove.icon
+    .ui.horizontal.divider 

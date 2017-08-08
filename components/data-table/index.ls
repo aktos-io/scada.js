@@ -2,19 +2,17 @@ require! 'prelude-ls': {
     split, take, join, lists-to-obj, sum, filter
     camelize, find, reject, find-index
 }
-require! 'aea': {sleep, merge, pack, unpack, unix-to-readable}
-require! 'dcs/browser': {CouchProxy}
+require! 'aea': {sleep, merge, clone, unix-to-readable}
 require! './vlogger': {VLogger}
 
 Ractive.components['data-table'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: RACTIVE_PREPARSE('data-table.pug')
     isolated: yes
-    oninit: ->
+    onrender: ->
         readonly = if @partials.editForm then no else yes
         title-provided = if @partials.addnewTitle then yes else no
         @set \readonly, readonly
 
-    onrender: ->
         @logger = new VLogger this
         settings = @get \settings
         try
@@ -29,22 +27,26 @@ Ractive.components['data-table'] = Ractive.extend do
             unless settings.after-filter
                 throw "after-filter is required"
             else
-                settings.after-filter.bind this
+                settings.after-filter = settings.after-filter.bind this
+
+            unless settings.on-init
+                throw "on-init is required"
+            else
+                settings.on-init = settings.on-init.bind this
         catch
             @logger.error e
             return
 
-        get-default-document = ~>
+        @get-default-document = ~>
             try
                 if typeof settings.default is \function
                     return settings.default.call this
                 else
-                    unpack pack settings.default
+                    clone settings.default
             catch
                 @logger.error e
 
-        @set \columnList, settings.col-names
-        db = new CouchProxy get-default-document!.type
+        @set \colNames, settings.col-names
         opening-dimmer = $ @find \.table-section-of-data-table
 
         # assign handlers
@@ -61,8 +63,7 @@ Ractive.components['data-table'] = Ractive.extend do
         data-filters['all'] = (x) ~> x
         @set \dataFilters, data-filters
 
-        debugger
-        create-tableview = ~>
+        @refresh = ~>
             filter-func = @get(\dataFilters)[@get(\selectedFilter)]
             if typeof! filter-func isnt \Function
                 @logger.error 'Filter function is not a function'
@@ -72,6 +73,7 @@ Ractive.components['data-table'] = Ractive.extend do
 
             # filter documents
             tableview_filtered = filter-func tableview
+            @set \tableview_filtered, tableview_filtered
 
             # calculate which items to show in tableview
             items = do ~>
@@ -92,62 +94,32 @@ Ractive.components['data-table'] = Ractive.extend do
                     entry
 
             settings.after-filter visible-items, (items) ~>
+                if items.length > 0
+                    if items.0.cols.length isnt settings.col-names.length
+                        @logger.error "Column count does not match with after-filter output!"
+                        return
                 @set \tableview_visible, items
 
 
         events =
-            clicked: (event, context) ->
-                __ = @
-                index = context.id
-                clicked-index = @get \clickedIndex
-                if clicked-index isnt null
-                    return
-                if clicked-index is index
-                    # do not allow more than one click
-                    return
-
-                tabledata = @get \tabledata
-                if typeof! tabledata is \Object
-                    for key, value of tabledata
-                        if index is value._id
-                            curr = unpack pack tabledata[key]
-                else
-                    curr = try
-                        unpack pack find (._id is index), tabledata
-                    catch
-                        unpack pack context
-
-                if curr
-                    @set \curr, curr
-                else
-                    curr = index
-
-                @set \currView, context
+            clicked: (ev, row) ~>
+                index = row.id
+                return if @get(\clickedIndex) is index # do not allow multiple clicks
+                @set \clickedIndex, index
                 @set \openingRow, yes
                 @set \openedRow, no
-                @set \clickedIndex, index
-                @set \lastIndex, index
-
-                dom = $ "tr[data-anchor='#{index}']"
-
+                @set \openingRowMsg, "opening row..."
                 opening-dimmer.dimmer \show
-
-                # scroll to index as soon as it is clicked
-                scroll-to index
-
-                if typeof! settings.on-create-view is \Function
-                    settings.on-create-view.call __, curr, ->
-                        __.set \openingRow, no
-                        __.set \openedRow, yes
-                        __.set \openingRowMsg, ""
-                        scroll-to index
-                        opening-dimmer.dimmer \hide
-                else
-                    __.set \openingRow, no
-                    __.set \openedRow, yes
-                    __.set \openingRowMsg, ""
-                    scroll-to index
-                    opening-dimmer.dimmer \hide
+                curr <~ settings.on-create-view.call this, clone row
+                if curr
+                    @set \curr, curr
+                opening-dimmer.dimmer \hide
+                @set \openingRow, no
+                @set \openedRow, yes
+                @set \openingRowMsg, ""
+                @set \lastIndex, index
+                # scroll to the row
+                # TODO
 
             end-editing: ->
                 @set \clickedIndex, null
@@ -163,12 +135,12 @@ Ractive.components['data-table'] = Ractive.extend do
                 console.log "DATA_TABLE: filter is set to #{filter-name}"
                 @set \selectedFilter, filter-name if filter-name
                 @set \currPage, 0
-                create-view!
+                @refresh!
 
 
             select-page: (event, page-num) ->
                 @set \currPage, page-num
-                create-view!
+                @refresh!
 
             save-and-exit: ->
                 index = @get \clickedIndex
@@ -178,8 +150,8 @@ Ractive.components['data-table'] = Ractive.extend do
                 console.log "clicked to save and end editing", index
                 @fire \endEditing
 
-            add-new-order: ->
-                new-order = get-default-document!
+            add-new-order: ~>
+                new-order = @get-default-document!
                 new-order._id = db.gen-entry-id!
 
                 @set \curr, new-order
@@ -189,13 +161,13 @@ Ractive.components['data-table'] = Ractive.extend do
                     settings.on-create-view.call this, new-order, ->
 
 
-            new-order-close: ->
+            new-order-close: ~>
                 #console.log "ORDER_TABLE: Closing edit form..."
                 @set \addingNew, false
                 @fire \endEditing
                 opening-dimmer.dimmer \hide
 
-            save: (event, e) ->
+            save: (ev, e) ~>
                 __ = @
                 order-doc = @get \curr
 
@@ -222,11 +194,11 @@ Ractive.components['data-table'] = Ractive.extend do
                     # TODO: use "kick-changes! function"
                     __.add \changes
 
-            add-new-entry: (event, keypath) ->
+            add-new-entry: (event, keypath) ~>
                 __ = @
                 editing-doc = __.get \curr
                 try
-                    template = (get-default-document!)[keypath].0
+                    template = (@get-default-document!)[keypath].0
                 catch
                     err-message = "Problem with keypath: #{keypath}: #{e}"
                     console.error err-message
@@ -274,12 +246,16 @@ Ractive.components['data-table'] = Ractive.extend do
         # register events
         @on events
 
+        # run init function
+        <~ settings.on-init
+        @set \firstRunDone, yes
+
     data: ->
         __ = @
+        firstRunDone: no
         curr: null
         handlers: {}
         readonly: no
-        tabledata: []
         tableview: []
         tableview_visible: []
         editable: false
@@ -333,7 +309,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 # this is from ack-button
 
                 if typeof! params.args is \Array
-                    args = unpack pack params.args
+                    args = clone params.args
                     handler = args.shift!
                     params.args = args
                 else

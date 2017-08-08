@@ -1,21 +1,4 @@
-
-//- table form controls 
-+partial('controls')
-    .ui.buttons 
-        +unless('readonly')
-            btn(
-                on-buttonclick="toggleEditing"
-                class="{{#if editTooltip }}red{{else}}blue{{/if}} {{#if editable}}red{{/if}}"
-                active="{{editable}}"
-                tooltip="Düzenle"
-                )
-                i.write.icon 
-            .or
-        
-        btn(on-buttonclick="newOrderClose" tooltip="Kapat")
-            i.remove.icon
-    .ui.horizontal.divider 
-
+include ./toggle-editform-buttons.pug 
 
 //- tableview partials 
 +partial('renderMarkup').
@@ -50,7 +33,7 @@
             r-table
                 r-head
                     r-row                    
-                        +each('columnList')
+                        +each('colNames')
                             r-head-col {{>renderMarkup}}                    
                 //- -----------------------------------------------
                 //- body of table 
@@ -66,7 +49,7 @@
                             //- edit form
                             //- -----------------------------------------------
                             +iff('isEditingLine(.id)')
-                                td(colspan="{{ columnList.length }}")
+                                td(colspan="{{ colNames.length }}")
                                     | {{>controls}}
                                     | {{>editForm}}
 
@@ -74,7 +57,7 @@
                             //- view form
                             //- -----------------------------------------------
                             +elif('isViewingRow(.id)')
-                                td(colspan="{{ columnList.length }}")                            
+                                td(colspan="{{ colNames.length }}")                            
                                     | {{>controls}}
                                     | {{>viewForm}}
                                 
@@ -83,7 +66,7 @@
                             //- -----------------------------------------------
                             +else
                                 +each(".cols:colindex")
-                                    td(data-th="{{columnList[colindex]}}")
+                                    td(data-th="{{colNames[colindex]}}")
                                         +iff('colindex === 0 && isLastClicked(tableview_visible[i].id)')
                                             +iff('isOpeningNow(tableview_visible[i].id)')
                                                 //- if row is opening, mark first column with teal ribbon label 
@@ -96,35 +79,9 @@
                                             {{>renderMarkup}}
                                         +endif
                             +endif
-
-                +if('settings.pageSize > 0')
-                    +if('(tableview.length / settings.pageSize) > 1')
-                        tfoot
-                            tr
-                                th(colspan="{{ columnList.length }}")
-                                    .ui.right.floated.pagination.menu
-                                        +each('range(1, Math.ceil(tableview.length / settings.pageSize)):i')
-                                            a(on-click="@.fire('selectPage', i)" class!="item {{#if currPage === i}}blue{{/if}}") {{ . }}
-
-                            +if('openingRowMsg')
-                                tr 
-                                    th(colspan="{{ columnList.length }}")
-                                        | {{ openingRowMsg }}
-
+                include ./pagination.pug
 +else
-    //- display "Loading" indicator till first fetch of the tabledata  
-        .ui.active.centered.inline.big.text.loader Yükleniyor  
-    .ui.icon.message 
-        i.notched.circle.loading.icon 
-        .content 
-            .header Just one second 
-        p We're fetching table content for you. 
-        
+    include ./first-loading.pug
 +endif
 
-.ui.page.dimmer.table-section-of-data-table
-    .content
-        .center 
-            .ui.active.big.text.loader
-                p {{ openingRowMsg }}
-                btn.small.inverted.red.icon(on-buttonclick="newOrderClose" tooltip="Kapat") #[i.remove.icon] Cancel
+include ./open-row-dimmer.pug

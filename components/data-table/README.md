@@ -33,3 +33,6 @@ editForm: The section that appears when something "Edit" button is pressed
 `data-table` won't display any new entries unless it's successfully written to the database.
 
 `curr` document will be fetched from database everytime
+
+if `auto-refresh` is not set to `yes`, a `Click to update` button will popup when table data is
+modified outside current window.
