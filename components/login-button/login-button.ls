@@ -25,6 +25,12 @@ Ractive.components['login-button'] = Ractive.extend do
         @observe \transport-id, (transport-id) ->
             connector := find-actor transport-id
 
+
+        set-logout-variables = ~>
+            @set \token, null
+            @set \context, do
+                loggedin: no
+
         @on do
             click: ->
                 @find-component 'ack-button' .fire \buttonclick
@@ -74,32 +80,27 @@ Ractive.components['login-button'] = Ractive.extend do
 
                     else if res.auth.session.logout is \yes
                         log.log "Will log out..."
-                        @fire \doLogout
+                        set-logout-variables!
                     else
                         <~ ev.component?.fire \error, "unexpected response on login: #{pack res}"
 
             do-logout: (ev) ->
                 log.log "Logging out."
 
-                cleanup = ~>
-                    @set \token, null
-                    @set \context, do
-                        loggedin: no
-
                 ev.component?.fire \state, \doing
                 err, res <~ connector.proxy.logout
                 if err
                     <~ ev.component.fire \error, "something went wrong while logging out"
                     #console.log "user pressed button on error screen. "
-                    cleanup!
+                    set-logout-variables!
                 else
                     if res.auth.logout is \ok
                         ev.component?.fire \state, \done...
                         #console.log "login button says: we got: ", res
-                        cleanup!
+                        set-logout-variables!
                     else
                         <~ ev.component?.fire \error, "something went wrong while logging out, res: #{pack res}"
-                        cleanup!
+                        set-logout-variables!
 
             do-action: (ev) ->
                 if @get \logout
