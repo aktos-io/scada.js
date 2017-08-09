@@ -16,3 +16,7 @@ export class VLogger
             title: \Error
             icon: "warning sign"
         @logger.fire \showDimmed, {}, m, {-closable}, callback
+
+
+    clog: (msg) ->
+        console.log "vlogger: ", msg
