@@ -1,4 +1,4 @@
-![ScadaJS](assets/scadajs-logo-long.svg)
+![ScadaJS](https://cdn.rawgit.com/aktos-io/scada.js/master/assets/scadajs-logo-long.svg)
 
 # Key features
 
