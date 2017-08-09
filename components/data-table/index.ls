@@ -15,6 +15,8 @@ Ractive.components['data-table'] = Ractive.extend do
 
         @logger = new VLogger this
         settings = @get \settings
+
+        # check parameters
         try
             unless typeof! settings is \Object
                 throw "No settings found!"
@@ -28,6 +30,11 @@ Ractive.components['data-table'] = Ractive.extend do
                 throw "after-filter is required"
             else
                 settings.after-filter = settings.after-filter.bind this
+            if not readonly
+                unless typeof! settings.on-save is \Function
+                    throw "data-table is not readonly, on-save function is required"
+                else
+                    settings.on-save = settings.on-save.bind this
 
             unless settings.on-init
                 throw "on-init is required"
@@ -36,6 +43,13 @@ Ractive.components['data-table'] = Ractive.extend do
         catch
             @logger.error e
             return
+
+        # function to use adding on new document
+        unless typeof! settings.on-new-document is \Function
+            settings.on-new-document = (template, next) ->
+                @set \curr, template
+                next!
+        settings.on-new-document = settings.on-new-document.bind this
 
         @get-default-document = ~>
             try
@@ -101,6 +115,10 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \tableview_visible, items
 
 
+        @observe \tableview, ~>
+            @logger.clog "tableview changed, refreshing..."
+            @refresh!
+
         events =
             clicked: (ev, row) ~>
                 index = row.id
@@ -121,78 +139,54 @@ Ractive.components['data-table'] = Ractive.extend do
                 # scroll to the row
                 # TODO
 
-            end-editing: ->
-                @set \clickedIndex, null
-                @set \editable, no
-                @set \editingDoc, null
-                # DO NOT ADD THIS AGAIN: (@get \create-view) (@get \curr)
-
             toggle-editing: ->
+                # ok, working
                 editable = @get \editable
                 @set \editable, not editable
 
             set-filter: (event, filter-name) ->
+                # ok, working
                 console.log "DATA_TABLE: filter is set to #{filter-name}"
                 @set \selectedFilter, filter-name if filter-name
                 @set \currPage, 0
                 @refresh!
 
-
             select-page: (event, page-num) ->
+                # ok, working
                 @set \currPage, page-num
                 @refresh!
 
-            save-and-exit: ->
-                index = @get \clickedIndex
-                #tabledata = @get \tabledata
-                #edited-doc = tabledata.rows[index].doc
-                #console.log "editing document: ", edited-doc
-                console.log "clicked to save and end editing", index
-                @fire \endEditing
-
-            add-new-order: ~>
-                new-order = @get-default-document!
-                new-order._id = db.gen-entry-id!
-
-                @set \curr, new-order
-                @set \addingNew, true
-
-                if typeof! settings.on-create-view is \Function
-                    settings.on-create-view.call this, new-order, ->
-
-
-            new-order-close: ~>
-                #console.log "ORDER_TABLE: Closing edit form..."
+            close-row: ~>
+                # ok, working
                 @set \addingNew, false
                 @fire \endEditing
                 opening-dimmer.dimmer \hide
 
-            save: (ev, e) ~>
-                __ = @
-                order-doc = @get \curr
+            add-new-document: (ev) ~>
+                # ok, working
+                ev.component.fire \state, \doing
+                template = @get-default-document!
+                @set \prepareAddingNew, yes
+                <~ settings.on-new-document template
+                @set \prepareAddingNew, no
+                @set \addingNew, yes
+                ev.component.fire \state, \normal
 
-                button-state = (state, msg) ->
-                    e.component.fire \state, state, msg if e
+            end-editing: ->
+                # ok, working
+                @set \clickedIndex, null
+                @set \editable, no
+                @set \editingDoc, null
+                # DO NOT ADD THIS AGAIN: (@get \create-view) (@get \curr)
 
-                button-state \doing
-
-                console.log "Saving new order document: ", order-doc
-                if not order-doc._id?
-                    console.log "Generating new id for the document!"
-                    order-doc = order-doc `merge` {_id: gen-entry-id!}
-
-                err, res <- db.save order-doc
+            save: (ev, val) ->
+                ev.component.fire \state, \doing
+                err <~ settings.on-save @get(\curr)
                 if err
-                    console.log "Error putting new order: ", err
-                    button-state \error, err.message
+                    ev.component.fire \error, err
                 else
-                    (__.get \create-view) order-doc
-                    order-doc._rev = res.rev
-                    __.set \curr, order-doc
-
-                    button-state \done...
-                    # TODO: use "kick-changes! function"
-                    __.add \changes
+                    ev.component.fire \state \done...
+                    @refresh!
 
             add-new-entry: (event, keypath) ~>
                 __ = @
@@ -232,16 +226,8 @@ Ractive.components['data-table'] = Ractive.extend do
             show-info: (event, msg, callback) ->
                 @logger.info msg, callback
 
-
+        # add handlers to events
         events `merge` handlers
-        # modify "save" handler
-        _save = events.save
-        events.save = (...args) ->
-            e = args.1
-            _save.apply __, args
-            e.component.set \onDone, ->
-                if __.get \addingNew
-                    __.set \addingNew, false
 
         # register events
         @on events
@@ -262,7 +248,7 @@ Ractive.components['data-table'] = Ractive.extend do
         clicked-index: null
         last-index: null
         cols: null
-        column-list: null
+        col-names: null
         editTooltip: no
         addingNew: no
         view-func: null
@@ -334,8 +320,6 @@ Ractive.components['data-table'] = Ractive.extend do
                 return handlers[handler].apply this, param
             else
                 console.log "no handler found with the name: ", handler
-
-
 
 
         # utility functions
