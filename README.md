@@ -1,4 +1,4 @@
-![ScadaJS](assets/scadajs-text.png)
+![ScadaJS](assets/scadajs-logo-long.svg)
 
 # Key features
 
