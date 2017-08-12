@@ -2,7 +2,7 @@ require! 'prelude-ls': {
     split, take, join, lists-to-obj, sum, filter
     camelize, find, reject, find-index
 }
-require! 'aea': {sleep, merge, clone, unix-to-readable}
+require! 'aea': {sleep, merge, clone, unix-to-readable, pack}
 require! './vlogger': {VLogger}
 
 Ractive.components['data-table'] = Ractive.extend do
@@ -112,6 +112,8 @@ Ractive.components['data-table'] = Ractive.extend do
                     if items.0.cols.length isnt settings.col-names.length
                         @logger.error "Column count does not match with after-filter output!"
                         return
+                    for i in items when i.id in [undefined, null]
+                        return @logger.error "id can not be null or undefined: #{pack i}."
                 @set \tableview_visible, items
 
 
@@ -146,7 +148,7 @@ Ractive.components['data-table'] = Ractive.extend do
 
             set-filter: (event, filter-name) ->
                 # ok, working
-                console.log "DATA_TABLE: filter is set to #{filter-name}"
+                @logger.clog "DATA_TABLE: filter is set to #{filter-name}"
                 @set \selectedFilter, filter-name if filter-name
                 @set \currPage, 0
                 @refresh!
@@ -181,31 +183,36 @@ Ractive.components['data-table'] = Ractive.extend do
 
             save: (ev, val) ->
                 ev.component.fire \state, \doing
-                err <~ settings.on-save @get(\curr)
+                ...args <~ settings.on-save @get(\curr)
+                if args.length isnt 1
+                    ev.component.fire \error, """
+                        Coding error: Save function requires error argument upon
+                        calling the callback."""
+                    return
+                err = args.0
                 if err
-                    ev.component.fire \error, err
+                    ev.component.fire \error, pack err
                 else
                     ev.component.fire \state \done...
                     @refresh!
+                    <~ sleep 1000ms
+                    @fire \closeRow
 
             add-new-entry: (event, keypath) ~>
-                __ = @
-                editing-doc = __.get \curr
+                editing-doc = @get \curr
                 try
                     template = (@get-default-document!)[keypath].0
                 catch
-                    err-message = "Problem with keypath: #{keypath}: #{e}"
-                    console.error err-message
-                    __.fire \showError, err-message
+                    @logger.error "Problem with keypath: #{keypath}: #{e}"
                     return
 
                 if typeof! editing-doc[keypath] isnt \Array
-                    console.log "Keypath is not an array, converting to array"
+                    @logger.clog "Keypath is not an array, converting to array"
                     editing-doc[keypath] = []
                 editing-doc[keypath] ++= template
 
-                console.log "adding new entry: ", template
-                __.set \curr, editing-doc
+                @logger.clog "adding new entry: ", template
+                @set \curr, editing-doc
 
 
             delete-document: (event, e) ->
@@ -220,11 +227,6 @@ Ractive.components['data-table'] = Ractive.extend do
                 __.set \tabledata, tabledata
                 (__.get \create-view)!
 
-            show-error: (event, msg, callback) ->
-                @logger.error msg, callback
-
-            show-info: (event, msg, callback) ->
-                @logger.info msg, callback
 
         # add handlers to events
         events `merge` handlers
@@ -237,7 +239,6 @@ Ractive.components['data-table'] = Ractive.extend do
         @set \firstRunDone, yes
 
     data: ->
-        __ = @
         firstRunDone: no
         curr: null
         handlers: {}
@@ -249,22 +250,21 @@ Ractive.components['data-table'] = Ractive.extend do
         last-index: null
         cols: null
         col-names: null
-        editTooltip: no
         addingNew: no
         view-func: null
         selected-filter: \all
         curr-page: 0
         opening-row: no
         opening-row-msg: ''
-        is-editing-line: (index) ->
-            editable = @get \editable
+        is-editing-row: (index) ->
+            return no unless @get \editable
             clicked-index = @get \clickedIndex
-            editable and (index is clicked-index)
+            index is clicked-index
 
         is-viewing-row: (index) ->
+            return no if not @get \openedRow
             clicked-index = @get \clickedIndex
-            opened = @get \openedRow
-            index is clicked-index and opened
+            index is clicked-index
 
         is-opening-now: (row-index) ->
             opening = @get \openingRow
@@ -290,7 +290,6 @@ Ractive.components['data-table'] = Ractive.extend do
             handlers = @get \settings.handlers
             param = null
 
-            #console.log "orig run-handler: params: ", params
             if params.args
                 # this is from ack-button
 
@@ -312,9 +311,6 @@ Ractive.components['data-table'] = Ractive.extend do
                 else
                     handler = params
 
-            #console.log "Handler: ", handler
-            #console.log "Param: ", param
-
             if typeof handlers[handler] is \function
                 #console.log "RUNNING HANDLER: #{handler}(#{param})"
                 return handlers[handler].apply this, param
@@ -329,6 +325,6 @@ Ractive.components['data-table'] = Ractive.extend do
                 range = [i for i from parse-int(_from) to parse-int(_to)]
                 range
             catch
-                console.log "error in range generator: ", _from, _to
+                @logger.clog "error in range generator: from: #{_from}, to: #{_to}"
 
         unix-to-readable: unix-to-readable

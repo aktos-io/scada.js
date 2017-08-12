@@ -4,13 +4,17 @@
         +unless('readonly')
             btn(
                 on-buttonclick="toggleEditing"
-                class="{{#if editTooltip }}red{{else}}blue{{/if}} {{#if editable}}red{{/if}}"
+                class!="{{#if editable}}red{{else}}blue{{/if}}"
                 active="{{editable}}"
                 tooltip="Düzenle"
                 )
                 i.write.icon 
             .or
-        
-        btn(on-buttonclick="closeRow" tooltip="Kapat")
-            i.remove.icon
+        +iff('editable')
+            btn.blue(on-buttonclick="toggleEditing" tooltip="Close Editable")
+                i.remove.icon
+        +else
+            btn(on-buttonclick="closeRow" tooltip="Close Row")
+                i.remove.icon
+        +endif
     .ui.horizontal.divider 

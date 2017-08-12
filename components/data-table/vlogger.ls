@@ -18,5 +18,5 @@ export class VLogger
         @logger.fire \showDimmed, {}, m, {-closable}, callback
 
 
-    clog: (msg) ->
-        console.log "vlogger: ", msg
+    clog: (...msg) ->
+        console.log.apply console, (["vlogger"] ++ msg)

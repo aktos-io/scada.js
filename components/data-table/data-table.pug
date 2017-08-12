@@ -48,7 +48,7 @@ include ./toggle-editform-buttons.pug
                             //- -----------------------------------------------
                             //- edit form
                             //- -----------------------------------------------
-                            +iff('isEditingLine(.id)')
+                            +iff('isEditingRow(.id)')
                                 td(colspan="{{ colNames.length }}")
                                     | {{>controls}}
                                     | {{>editForm}}
