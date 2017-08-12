@@ -75,7 +75,7 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                 ddoc = self.get \designDocument
                 new-id = self.get \documentId
                 if new-id isnt ddoc._id
-                    ev.component.fire \info, "Putting new design document!"
+                    ev.component.fire \info, "Created new design document!"
                     ddoc._id = new-id
                     delete ddoc._rev
                 id = ddoc._id
