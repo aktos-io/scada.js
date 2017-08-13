@@ -4,4 +4,4 @@
     .default.text {{ placeholder }}
     .menu
         +each('data')
-            .item(data-value="{{.id}}") {{.name}}
+            .item(data-value="{{.[keyField]}}") {{.[nameField]}}

@@ -9,10 +9,13 @@ Ractive.components['dropdown'] = Ractive.extend do
         ui.add-class \fluid if @get \fit-width
 
         ui.dropdown do
-            force-selection: no
             on-change: (value, text, selected) ->
                 __.set \selected, value
 
         @observe \selected, (_new) ->
             if _new not in [undefined, null]
                 ui.dropdown 'set selected', _new
+
+    data: ->
+        keyField: \id
+        nameField: \name
