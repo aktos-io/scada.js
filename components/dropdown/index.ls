@@ -1,6 +1,13 @@
 Ractive.components['dropdown'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
+    oninit: ->         
+        if @get \key
+            @set \keyField, that
+
+        if @get \name
+            @set \nameField, that
+
     onrender: ->
         __ = @
         ui = $ @find '.ui.dropdown'
@@ -9,6 +16,7 @@ Ractive.components['dropdown'] = Ractive.extend do
         ui.add-class \fluid if @get \fit-width
 
         ui.dropdown do
+            forceSelection: no
             on-change: (value, text, selected) ->
                 __.set \selected, value
 
