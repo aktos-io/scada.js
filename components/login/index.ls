@@ -66,7 +66,7 @@ Ractive.components['login'] = Ractive.extend do
                 e.component.fire \state, \doing
                 user = __.get \context ._user
                 unless user
-                    return e.component.fire \state, \error, "Kullanıcı adı/şifre boş olamaz!"
+                    return e.component.error "Kullanıcı adı/şifre boş olamaz!"
 
                 db-opts.auth =
                     username: user.name
@@ -82,7 +82,7 @@ Ractive.components['login'] = Ractive.extend do
                         err, res <- conn.database "_users" .get "org.couchdb.user:#{user.name}"
                         if err
                             console.error err
-                            e.component.fire \state, \error, err.message
+                            e.component.error err.message
                             return
                         callback res
                     else
@@ -121,7 +121,7 @@ Ractive.components['login'] = Ractive.extend do
                 err, res <- __.get \db .logout!
                 #console.log "LOGIN: Logged out: err: #{err}, res: ", res
                 if err
-                    e.component.fire \state, \error, err.message
+                    e.component.error err.message
                     __.set \context.err err
                     return
 

@@ -63,7 +63,7 @@ Ractive.components['formal-field'] = Ractive.extend do
 
                 message = __.get \message
                 if message is ""
-                    return ev.component.fire \state, \error, "Açıklama kısmı boş geçilemez!"
+                    return ev.component.error "Açıklama kısmı boş geçilemez!"
 
                 log-item =
                     curr: curr

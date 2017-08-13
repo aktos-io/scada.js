@@ -220,7 +220,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 curr = @get \curr
                 curr.type = "_deleted_#{curr.type}"
                 err, res <- db.save curr
-                return e.component.fire \state, \error, err.message  if err
+                return e.component.error err.message  if err
                 e.component.fire \state, \done
 
                 tabledata = reject (._id is curr._id), __.get \tabledata

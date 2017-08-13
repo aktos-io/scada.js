@@ -1,11 +1,20 @@
+require! 'aea': {sleep}
+
 Ractive.components['text-button'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->
-        __ = @
+        button = @find-component \ack-button
         @on do
-            _buttonclick: (event, ev, val) ->
-                __.fire \buttonclick, ev, (__.get 'amount'), val
+            _buttonclick: (ev, val) ->
+                @fire \buttonclick, ev, (@get 'amount'), val
+
+
+        <~ sleep 0
+        @info = button.info
+        @yesno = button.yesno
+        @error = button.error
+
 
     data: ->
         amount: null

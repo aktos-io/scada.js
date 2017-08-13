@@ -4,11 +4,12 @@ require! 'aea': {sleep, pack, logger, merge}
 log = new logger "login-button"
 
 can-see = (topic) ->
-    perm = @get \login.permissions
-    if topic `topic-match` perm.ro
-        return yes
-    if topic `topic-match` perm.rw
-        return yes
+    if perm
+        perm = @get \login.permissions
+        if topic `topic-match` perm.ro
+            return yes
+        if topic `topic-match` perm.rw
+            return yes
     return no
 
 helpers = Ractive.defaults.data

@@ -18,7 +18,7 @@ Ractive.components['todo'] = Ractive.extend do
                 @set \editingContent, orig.content
                 @set \newDueTimestamp, orig.due-timestamp
 
-            addNewItem: (event, ev, value) ->
+            addNewItem: (ev, value) ->
                 unless value.content
                     @fire \error, do
                         title: "Append Error"
@@ -49,7 +49,7 @@ Ractive.components['todo'] = Ractive.extend do
                     timestamp: Date.now()
                 @set \log, log
 
-            saveChanges: (event, ev, orig) ->
+            saveChanges: (ev, orig) ->
                 _new =
                     content: @get \editingContent
                     due-timestamp: @get \newDueTimestamp
@@ -73,7 +73,7 @@ Ractive.components['todo'] = Ractive.extend do
             cancelEdit: (ev) ->
                 @set \editingItem, -1
 
-            statechanged: (event, ev, curr-state, intended-state, item-id) ->
+            statechanged: (ev, curr-state, intended-state, item-id) ->
                 # add new action to the log
                 item = find (.id is item-id), @get \checklist
                 item.is-done = intended-state is \checked
@@ -85,7 +85,7 @@ Ractive.components['todo'] = Ractive.extend do
                 @set \log, log
                 @update \checklist
 
-            error: (event, msg, callback) ->
+            error: (ev, msg, callback) ->
                 msg = {message: msg} unless msg.message
                 msg = msg `merge` {
                     title: msg.title or 'This is my error'
