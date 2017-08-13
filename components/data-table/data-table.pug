@@ -29,6 +29,9 @@ include ./toggle-editform-buttons.pug
             .ui.segment
                 | {{> editForm }}
 
+        .ui.segment 
+            include ./pagination.pug
+
         .ui.segment
             r-table
                 r-head
@@ -79,7 +82,6 @@ include ./toggle-editform-buttons.pug
                                             {{>renderMarkup}}
                                         +endif
                             +endif
-                include ./pagination.pug
 +else
     include ./first-loading.pug
 +endif
