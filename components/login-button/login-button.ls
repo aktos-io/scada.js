@@ -3,19 +3,37 @@ require! 'aea': {sleep, pack, logger, merge}
 
 log = new logger "login-button"
 
-can-see = (topic) ->
-    if perm
-        perm = @get \login.permissions
-        if topic `topic-match` perm.ro
-            return yes
-        if topic `topic-match` perm.rw
-            return yes
-    return no
-
+# Permission calculation mechanism
 helpers = Ractive.defaults.data
-helpers.can-see = (topic)-> can-see.call this, topic
-helpers.is-disabled-for = (topic) -> not can-see.call this, topic
+helpers.can-see = (login, topic) ~>
+    try
+        permissions = login.permissions
+        console.log "known permissions: ", permissions
+        if permissions
+            for perm in permissions.ro ++ permissions.rw
+                if topic `topic-match` perm
+                    return yes
+        return no
+    catch
+        console.error "hey, error in can-see: ", e
+        return no
 
+
+helpers.can-write = (login, topic) ~>
+    try
+        permissions = login.permissions
+        console.log "known permissions: ", permissions
+        if permissions
+            for perm in permissions.rw
+                if topic `topic-match` perm
+                    return yes
+        return no
+    catch
+        console.error "hey, error in can-write: ", e
+        return no
+
+helpers.cannot-see = (...args) ~> not helpers.can-see.apply this, args
+helpers.cannot-write = (...args) ~> not helpers.can-write.apply this, args
 
 Ractive.components['login-button'] = Ractive.extend do
     isolated: yes
@@ -25,7 +43,6 @@ Ractive.components['login-button'] = Ractive.extend do
         connector = null
         @observe \transport-id, (transport-id) ->
             connector := find-actor transport-id
-
 
         set-logout-variables = ~>
             @set \token, null
