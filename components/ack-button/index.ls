@@ -64,7 +64,7 @@ Ractive.components['ack-button'] = Ractive.extend do
                     console.warn "scadajs: Deprecation: use \"ack-button.fire \\error\" instead"
                     @fire \error, msg, callback
 
-            error: (ev, msg, callback) ~>
+            error: (msg, callback) ~>
                 console.log "ack-button: #{msg}"
                 @doing-watchdog.go!
 
@@ -72,6 +72,8 @@ Ractive.components['ack-button'] = Ractive.extend do
                     {message: msg}
                 else if not msg
                     {message: '(message is empty)'}
+                else
+                    msg 
 
                 msg = msg `merge` {
                     title: msg.title or 'Error'
@@ -86,12 +88,14 @@ Ractive.components['ack-button'] = Ractive.extend do
                 #console.log "error has been processed by ack-button, action is: #{action}"
                 callback action if typeof! callback is \Function
 
-            info: (ev, msg, callback) ->
+            info: (msg, callback) ->
                 @doing-watchdog.go!
                 msg = if typeof! msg is \String
                     {message: msg}
                 else if not msg
                     {message: '(message is empty)'}
+                else
+                    msg
 
                 msg = msg `merge` {
                     title: msg.title or 'Info'
@@ -101,12 +105,14 @@ Ractive.components['ack-button'] = Ractive.extend do
                 #console.log "info has been processed by ack-button, action is: #{action}"
                 callback action if typeof! callback is \Function
 
-            yesno: (ev, msg, callback) ->
+            yesno: (msg, callback) ->
                 @doing-watchdog.go!
                 msg = if typeof! msg is \String
                     {message: msg}
                 else if not msg
                     {message: '(message is empty)'}
+                else
+                    msg
 
                 msg = msg `merge` {
                     title: msg.title or 'Yes or No'
