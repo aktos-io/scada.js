@@ -26,18 +26,23 @@
 
         npm install -g gulp yarn livescript@1.4.0
     
-# USAGE
+...and optionally [follow the aea-way](doc/aea-way.md).
+
+# Create a ScadaJS Project 
 
 Add ScadaJS into your project
 
     git init your-project
     cd your-project 
     git submodule add https://github.com/aktos-io/scada.js
+
+# Start Your Project 
+
+When you first create or clone a ScadaJS project, you need to install the dependencies: 
+
     git submodule update --init --recursive
     cd scada.js
     yarn
-
-...and optionally [follow the aea-way](doc/aea-way.md).
 
 # DEMO
 
