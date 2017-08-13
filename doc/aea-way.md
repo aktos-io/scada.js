@@ -6,7 +6,6 @@ ScadaJS does not enforce any editors or platform, but we prefer Linux and some o
 
 * Install a 64bit Linux distro (preferably Debian)
 * install https://atom.io
-* install https://github.com/aktos-io/service-runner
 
 ### Follow
 
