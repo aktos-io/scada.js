@@ -1,6 +1,9 @@
 require! 'aea': {merge, sleep}
 require! 'dcs/browser': {Signal}
 
+# for debugging reasons
+require! 'aea':{pack}
+
 Ractive.components['ack-button'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
@@ -28,11 +31,9 @@ Ractive.components['ack-button'] = Ractive.extend do
         @on do
             click: ->
                 val = __.get \value
-                # TODO: remove {args: val}
                 @doing-watchdog.reset!
                 @set \tooltip, ""
-
-                @fire \buttonclick, val
+                @fire \buttonclick, {}, val
 
             state: (_event, s, msg, callback) ->
                 self-disabled = no
@@ -66,48 +67,63 @@ Ractive.components['ack-button'] = Ractive.extend do
                     console.warn "scadajs: Deprecation: use \"ack-button.fire \\error\" instead"
                     @fire \error, msg, callback
 
-            error: (ev, msg, callback) ~>
-                console.log "ack-button: #{msg}"
-                @doing-watchdog.go!
+        @error = (msg, callback) ~>
+            console.log "ack-button error: #{pack msg}"
+            @doing-watchdog.go!
 
-                msg = try
-                    {message: msg} unless msg.message
-                catch
-                    {message: "error in message! (internal error)"}
-                msg = msg `merge` {
-                    title: msg.title or 'This is my error'
-                    icon: "warning sign"
-                }
-                action <~ logger.fire \showDimmed, msg, {-closable}
+            msg = if typeof! msg is \String
+                {message: msg}
+            else if not msg
+                {message: '(message is empty)'}
+            else
+                msg
 
-                @set \state, \error
-                @set \reason, msg.message
-                @set \selfDisabled, no
+            msg = msg `merge` {
+                title: msg.title or 'Error'
+                icon: "warning sign"
+            }
+            action <~ logger.fire \showDimmed, {}, msg, {-closable}
 
-                #console.log "error has been processed by ack-button, action is: #{action}"
-                callback action if typeof! callback is \Function
+            @set \state, \error
+            @set \reason, msg.message
+            @set \selfDisabled, no
 
-            info: (msg, callback) ->
-                @doing-watchdog.go!
-                msg = {message: msg} unless msg.message
-                msg = msg `merge` {
-                    title: msg.title or 'ack-button info'
-                    icon: "info circle"
-                }
-                action <- logger.fire \showDimmed, msg, {-closable}
-                #console.log "info has been processed by ack-button, action is: #{action}"
-                callback action if typeof! callback is \Function
+            #console.log "error has been processed by ack-button, action is: #{action}"
+            callback action if typeof! callback is \Function
 
-            yesno: (msg, callback) ->
-                @doing-watchdog.go!
-                msg = {message: msg} unless msg.message
-                msg = msg `merge` {
-                    title: msg.title or 'Yes or No'
-                    icon: "map signs"
-                }
-                action <- logger.fire \showDimmed, msg, {-closable, mode: \yesno}
-                #console.log "yesno dialog has been processed by ack-button, action is: #{action}"
-                callback action if typeof! callback is \Function
+        @info = (msg, callback) ~>
+            @doing-watchdog.go!
+            msg = if typeof! msg is \String
+                {message: msg}
+            else if not msg
+                {message: '(message is empty)'}
+            else
+                msg
+
+            msg = msg `merge` {
+                title: msg.title or 'Info'
+                icon: "info circle"
+            }
+            action <- logger.fire \showDimmed, {}, msg, {-closable}
+            #console.log "info has been processed by ack-button, action is: #{action}"
+            callback action if typeof! callback is \Function
+
+        @yesno = (msg, callback) ~>
+            @doing-watchdog.go!
+            msg = if typeof! msg is \String
+                {message: msg}
+            else if not msg
+                {message: '(message is empty)'}
+            else
+                msg
+
+            msg = msg `merge` {
+                title: msg.title or 'Yes or No'
+                icon: "map signs"
+            }
+            action <- logger.fire \showDimmed, {}, msg, {-closable, mode: \yesno}
+            #console.log "yesno dialog has been processed by ack-button, action is: #{action}"
+            callback action if typeof! callback is \Function
 
         if @get \auto
             console.log "auto firing ack-button!"

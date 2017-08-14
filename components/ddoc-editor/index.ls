@@ -1,19 +1,19 @@
 require! 'livescript': lsc
 require! 'prelude-ls': {camelize}
 require! 'aea': {merge, make-design-doc, pack, logger}
-require! 'dcs/browser': {CouchProxy}
-
-db = new CouchProxy \test
 # -------------------------------------------------
 
 Ractive.components['ddoc-editor'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
-    oninit: ->
-        #console.log "ddoc editor initializing..."
+    onrender: ->
         @log = new logger \ddoc-editor
-        design-document = (@get \document)
-        @set (camelize \design-document), design-document
+        if @get \db
+            db = that
+        else
+            @log.err "db attribute is required!"
+            return
+
         @on do
             listDesignDocuments: (ev) ->
                 /*
@@ -23,16 +23,18 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                 */
                 ev.component.fire \state, \doing
                 err, res <~ db.all {startkey: "_design/", endkey: "_design0", +include_docs}
-                return ev.component.fire \error, err.message if err
+                if err
+                    ev.component.fire \error, pack err
+                    console.log "this is error on list design documents: ", err
+                    return
                 @set \designDocuments, [..key for res]
                 ev.component.fire \state, \done...
 
-            get-design-document: (ev, value) ->
+            get-design-document: (ev, doc-id) ->
                 ev.component.fire \state, \doing
                 self = this
                 # get the _auth design document
-                console.log "DB is: ", db
-                err, res <- db.get value
+                err, res <- db.get doc-id
                 return ev.component.fire \error, err.message if err
 
                 console.log "Current _auth document: ", res
@@ -73,7 +75,7 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                 ddoc = self.get \designDocument
                 new-id = self.get \documentId
                 if new-id isnt ddoc._id
-                    ev.component.fire \info, "Putting new design document!"
+                    ev.component.info "Created new design document!"
                     ddoc._id = new-id
                     delete ddoc._rev
                 id = ddoc._id
@@ -106,17 +108,11 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                 ev.component.fire \state, \done...
 
     data: ->
-        db: null
         design-document:
             _id: '_design/my-test-document'
-            livescript: "testing"
-            javascript: "compiled testing"
+            livescript: ""
+            javascript: ""
 
         allDesignDocs: ''
         designDocuments: []
         documentId: ''
-
-
-/*
-
-*/

@@ -60,18 +60,25 @@ Ractive.components['checkbox'] = Ractive.extend do
 
                 __.set \selfDisabled, self-disabled
 
-            error: (event, msg, callback) ->
-                msg = {message: msg} unless msg.message
-                msg = msg `merge` {
-                    title: msg.title or 'This is my error'
-                    icon: "warning sign"
-                }
-                @set \reason, msg.message
-                @set \selfDisabled, no
-                @set \state, @get \prevState
-                action <- logger.fire \showDimmed, msg, {-closable}
-                #console.log "error has been processed by ack-button, action is: #{action}"
-                callback action if typeof! callback is \Function
+        @error = (msg, callback) ~>
+            msg = if typeof! msg is \String
+                {message: msg}
+            else if not msg
+                {message: '(message is empty)'}
+            else
+                msg
+
+            msg = msg `merge` {
+                title: msg.title or 'Error'
+                icon: "warning sign"
+            }
+
+            @set \reason, msg.message
+            @set \selfDisabled, no
+            @set \state, @get \prevState
+            action <- logger.fire \showDimmed, {}, msg, {-closable}
+            #console.log "error has been processed by ack-button, action is: #{action}"
+            callback action if typeof! callback is \Function
 
 
 

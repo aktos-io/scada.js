@@ -4,7 +4,7 @@ require! './debug-log': {logger}
 require! 'colors': {bg-red, bg-green, bg-yellow}
 require! './packing': {pack}
 require! './sleep' : {sleep}
-
+require! './couch-helpers': {pack-id, unpack-id}
 export class CouchNano
     (@cfg) ~>
         @cookie = null
@@ -14,6 +14,9 @@ export class CouchNano
         @password = @cfg.user.password
         @db-name = @cfg.database
 
+    pack-id: pack-id
+    unpack-id: unpack-id
+    
     connect: (callback) ->
         @log.log "Authenticating as #{@username}"
         err, body, headers <~ @nano.auth @username, @password
@@ -138,7 +141,7 @@ export class CouchNano
         if headers? => if headers['set-cookie'] => @use-cookie that
 
         err = {reason: err.reason, name: err.name, message: err.reason} if err
-        console.log "couch-nano got #{pack res ?.length} bytes"
+        #console.log "couch-nano got #{pack res ?.length} bytes"
         callback err, res
 
     _view: (ddoc, viewName, meta, qs, callback) ->
