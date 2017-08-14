@@ -14,7 +14,7 @@
     * Siemens Comm
     * Omron Hostlink
     * and many others...
-* Fully compatible with [aktos-dcs (Python)](https://github.com/aktos-io/aktos-dcs), [aktos-dcs-cs (C# port)](https://github.com/aktos-io/aktos-dcs-cs), [aktos-dcs-node (Node.js port)](https://github.com/aktos-io/aktos-dcs-node) libraries, a message passing library for distributed control systems by [aktos.io](https://aktos.io).
+* Fully compatible with [aktos-dcs](https://github.com/aktos-io/aktos-dcs), a message passing library for distributed control systems by [aktos.io](https://aktos.io).
 * Fully compatible with aktos.io hardwares
 * Supports tools and documentation for [DRY](https://en.wikipedia.org/wiki/Don't_repeat_yourself) and [TDD](https://en.wikipedia.org/wiki/Test-driven_development) in mind.
 * Provides build system via [Gulp](http://gulpjs.com).
