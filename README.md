@@ -1,5 +1,9 @@
 ![ScadaJS](https://cdn.rawgit.com/aktos-io/scada.js/master/assets/scadajs-logo-long.svg)
 
+# Description 
+
+ScadaJS is a library to easily create Single Page Applications, targeted to industrial SCADA and MRP/ERP systems. Main objective of this library is to provide an integrated Distributed Control System layer which will make it possible to communicate with any type of hardware in realtime in any location (distributed), within the browser. 
+
 # Key features
 
 * Uses HTML for building user interfaces and supports [Pug](https://pugjs.org) for advanced usage (and sanity)
@@ -59,5 +63,5 @@ You can simply build your webapp:
     cd your-project/scada.js 
     gulp --webapp your-webapp [--optimize]
 
-In order get a complete example, take a look at the [scadajs-template](https://github.com/aktos-io/scadajs-template).
 
+> For a full example project, take a look at the [scadajs-template](https://github.com/aktos-io/scadajs-template).
