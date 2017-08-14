@@ -46,5 +46,5 @@ When you first create or clone a ScadaJS project, you need to install the depend
 
 # DEMO
 
-Demo application source is [here](http://TODO) and can be seen here in action: https://aktos.io/showcase
+Demo application source is [here](https://github.com/aktos-io/scadajs-template) and can be seen here in action: https://aktos.io/showcase
 
