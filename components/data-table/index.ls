@@ -128,11 +128,13 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \clickedIndex, index
                 @set \openingRow, yes
                 @set \openedRow, no
-                @set \openingRowMsg, "opening row..."
+                @set \openingRowMsg, "Opening #{index}..."
                 opening-dimmer.dimmer \show
-                curr <~ settings.on-create-view.call this, clone row
+                row-clone = clone row
+                curr <~ settings.on-create-view.call this, row-clone
                 if curr
                     @set \curr, curr
+                @set \row, row-clone
                 opening-dimmer.dimmer \hide
                 @set \openingRow, no
                 @set \openedRow, yes
@@ -328,3 +330,9 @@ Ractive.components['data-table'] = Ractive.extend do
                 @logger.clog "error in range generator: from: #{_from}, to: #{_to}"
 
         unix-to-readable: unix-to-readable
+
+        lookup: (obj-array, key-field, key-value) ->
+            x = find (.[key-field] is key-value), obj-array
+            console.log "lookup input: ", obj-array, key-field, key-value 
+            console.log "lookup result: ", x
+            x
