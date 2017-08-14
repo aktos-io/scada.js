@@ -19,14 +19,20 @@
 * Supports tools and documentation for [DRY](https://en.wikipedia.org/wiki/Don't_repeat_yourself) and [TDD](https://en.wikipedia.org/wiki/Test-driven_development) in mind.
 * Provides build system via [Gulp](http://gulpjs.com).
 
-# INSTALL Global Dependencies 
+# DEMO
+
+Demo application [source is here](https://github.com/aktos-io/scadajs-template) and can be seen in action at https://aktos.io/showcase
+
+# Usage
+
+### 1. Install Global Dependencies 
 
 1. Install [`NodeJs`](https://nodejs.org) 
 2. Install global `npm` dependencies:
 
         npm install -g gulp yarn livescript@1.4.0
     
-# Add ScadaJS Into Your Project 
+### 2. Add ScadaJS Into Your Project 
 
 You can add ScadaJS any existing project: 
 
@@ -36,7 +42,7 @@ You can add ScadaJS any existing project:
     cd your-project 
     git submodule add https://github.com/aktos-io/scada.js
 
-# Install Dependencies per Project
+### 3. Install ScadaJS Dependencies
 
 When you first create or clone a ScadaJS project, you need to install the dependencies: 
     
@@ -46,7 +52,7 @@ When you first create or clone a ScadaJS project, you need to install the depend
     yarn  # or `npm install`
     
     
-# Build Your Webapp
+### 4. Build Your Webapp
 
 You can simply build your webapp: 
 
@@ -54,8 +60,4 @@ You can simply build your webapp:
     gulp --webapp your-webapp [--optimize]
 
 In order get a complete example, take a look at the [scadajs-template](https://github.com/aktos-io/scadajs-template).
-
-# DEMO
-
-Demo application source is [here](https://github.com/aktos-io/scadajs-template) and can be seen in action at https://aktos.io/showcase
 
