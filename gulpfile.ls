@@ -260,10 +260,12 @@ gulp.task \vendor-css, ->
 # Copy assets into the public directory as is
 # search for a folder named "assets", copy and paste its contents into
 # build folder.
+sep = if /^win/.test process.platform => '\\' else '/'
+
 gulp.task \assets, ->
     gulp.src for-assets
         .pipe rename (path) ->
-            path-parts = path.dirname.split('/')
+            path-parts = path.dirname.split sep 
             parts = []
             found-assets = no
             for i in path-parts
@@ -275,7 +277,7 @@ gulp.task \assets, ->
                         found-assets = yes
                         continue
                 parts.push i
-            _tmp = join '/', parts
+            _tmp = join sep, parts
             path.dirname = _tmp if found-assets
         .pipe gulp.dest paths.client-public
 
