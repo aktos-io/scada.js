@@ -65,3 +65,11 @@ You can simply build your webapp:
 
 
 > For a full example project, take a look at the [scadajs-template](https://github.com/aktos-io/scadajs-template).
+
+# Tested on
+
+* **Linux**
+    * Debian 8
+    * Raspbian (on Raspberry 2 and 3)
+    
+
