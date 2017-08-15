@@ -71,5 +71,7 @@ You can simply build your webapp:
 * **Linux**
     * Debian 8
     * Raspbian (on Raspberry 2 and 3)
-    
+
+* **Windows**
+    * Win7 Pro (64bit)
 
