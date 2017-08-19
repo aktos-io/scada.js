@@ -33,7 +33,7 @@ Ractive.components['file-upload'] = Ractive.extend do
                 doc_id = __.get \doc_id
 
                 unless doc_id
-                    e.component.fire \state, \error, "Need Document ID!"
+                    e.component.error "Need Document ID!"
                     return
 
                 err, res <- db.get doc_id
@@ -46,7 +46,7 @@ Ractive.components['file-upload'] = Ractive.extend do
                 err, res <- db.put-attachment doc_id, filename, doc-rev, file, file.type
                 if err
                     console.log "err: ", err
-                    e.component.fire \state, \error, err.message
+                    e.component.error err.message
                 else
                     console.log "ok: ", res
                     __.set \filename, "#{doc_id}/#{filename}"

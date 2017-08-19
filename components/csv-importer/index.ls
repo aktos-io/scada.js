@@ -14,16 +14,15 @@ Ractive.components['csv-importer'] = Ractive.extend do
         __ = @
         ack-button = @find-component 'ack-button'
         delimiter = @get \delimiter
-        console.warn "FIXME: remove: sleep 0"
         try
             columns = @get \columns .split ',' |> map (.trim!)
             for column in columns
                 throw {message: "duplicate column name"} if columns.length isnt unique columns .length
                 throw {message: "column name can not be null"} if column in [null, '', undefined]
         catch
+            <~ sleep 0
             console.error "csv import:", e.message
-            sleep 0, ->
-                ack-button.fire \state, \error, e.message
+            ack-button.error e.message
             return
 
         @on do
@@ -31,14 +30,14 @@ Ractive.components['csv-importer'] = Ractive.extend do
                 csv = @get \csv
                 err, res <- get-csv csv, delimiter
                 if err
-                    return ev.component.fire \state, \error, "csv file isnt proper !!!"
+                    return ev.component.error "csv file isnt proper !!!"
 
                 column-list = []
                 unless res.length is 0
                     for imported in res
                         a = {}
                         if columns.length isnt imported.length
-                            return ev.component.fire \state, \error, "columns can not match with given csv file's columns !!!"
+                            return ev.component.error "columns can not match with given csv file's columns !!!"
 
                         for i, cell of imported
                             key = columns[i]
