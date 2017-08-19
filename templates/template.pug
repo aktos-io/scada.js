@@ -15,18 +15,21 @@ html(lang="en-GB")
         link(rel="icon" sizes="192x192" href="favicon.ico")
         block title
             title ScadaJS #{app}
-        block head
+            
         script if (typeof module === 'object') {window.module = module; module = undefined;}
         script(src="js/vendor.js")
         script if (window.module) module = window.module;
         link(rel="stylesheet", href="css/vendor.css")
+
+        block head-append
+
     body(ontouchstart)
         block content
-            #main-output 
+            #main-output.pusher 
                 .ui.centered.grid
                     .row
                         .column(style="padding-top: 10%")
-                            img.ui.small.centered.image(src="scadajs-text.png")
+                            img.ui.small.centered.image(src="scadajs-logo-long.svg")
 
                 .ui.active.big.text.loader#main-output
                     p Loading Application... (%#[b#percent])
@@ -38,14 +41,17 @@ html(lang="en-GB")
                         | Something went wrong while loading. Try to reload the page.
                             
                     block loading 
+                        
 
-
+        //- This section is for debugging purposes 
+        //- Enable it if you want to see the console messages in the HTML
+            pre#debugDiv
+            script
+                include:livescript ./debug-div.ls 
 
         #dynamic-script
-        //- 
-            block script
-                script(src='app.js')            
-        //-     
         script
             include:livescript ./load-app.ls 
+            
+        block body-append
             

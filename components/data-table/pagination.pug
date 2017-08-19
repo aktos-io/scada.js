@@ -1,0 +1,13 @@
++if('settings.pageSize > 0')
+    +if('(tableview_filtered.length / settings.pageSize) > 1')
+        tfoot
+            tr
+                th(colspan="{{ colNames.length }}")
+                    .ui.right.floated.pagination.menu
+                        +each('range(1, Math.ceil(tableview_filtered.length / settings.pageSize)):i')
+                            a(on-click="@.fire('selectPage', i)" class!="item {{#if currPage === i}}active{{/if}}") {{ . }}
+
+            +if('openingRowMsg')
+                tr 
+                    th(colspan="{{ colNames.length }}")
+                        | {{ openingRowMsg }}

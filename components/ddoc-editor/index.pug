@@ -9,14 +9,14 @@
         ace-editor(code="{{ designDocument.livescript }}" mode="livescript" theme="xcode")
         .ui.form 
             .field 
-                .ui.action.input 
-                    input(value="{{ documentId }}" placeholder="_design/myDesignDocument")
-                    ack-button.red(on-buttonclick="putDesignDocument").
-                        Put Auth Document!
-                ack-button.teal(on-buttonclick="compileDesignDocument").
-                    Compile
+                ack-button.teal(on-buttonclick="compileDesignDocument") Compile
             .field 
                 ace-editor(code="{{ designDocument.javascript }}" mode="javascript" theme="xcode")
+            .field
+                .ui.action.input 
+                    input(value="{{ documentId }}" placeholder="_design/myDesignDocument")
+                    ack-button.red(on-buttonclick="putDesignDocument") Put Auth Document!
+
 
     h3.ui.attached.header Dump All Design Documents
     .ui.segment 

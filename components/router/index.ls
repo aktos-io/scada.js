@@ -98,9 +98,6 @@ Ractive.components["a"] = Ractive.extend do
                         console.error "there seems a no valid link:", link
                         debugger
 
-                else
-                    console.error "can not determine action..."
-                    debugger
 
 
 Ractive.components['router'] = Ractive.extend do
@@ -142,7 +139,7 @@ Ractive.components['scene'] = Ractive.extend do
             #console.log "scene says: current is: ", curr
             this-page = @get \name
             default-page = @get 'default'
-            if this-page is default-page
+            if default-page
                 #console.log "#{@get 'name'} is the default scene. curr is: #{curr}"
                 if curr is ''
                     @set \visible, yes

@@ -1,10 +1,11 @@
-//- preload all images (should be above `img` tag)
-cache-asset(src="{{type}}/on.svg")
-cache-asset(src="{{type}}/off.svg")
+img.ui.image.led(src="{{type}}/on.svg" class="{{class}}" 
+    style="{{style}}; display: {{#if innerState === 'on'}}inline{{else}}none{{/if}}")
+    
+img.ui.image.led(src="{{type}}/off.svg" class="{{class}}" 
+    style="{{style}}; display: {{#if innerState === 'off'}}inline{{else}}none{{/if}}")
 
-//- actual led 
-img.ui.image.led(src="{{type}}/{{innerState}}" class="{{class}}")
-    
-    
+img.ui.image.led(src="{{type}}/unknown.gif" class="{{class}}" 
+    style="{{style}}; display: {{#if innerState === 'unknown'}}inline{{else}}none{{/if}}")
+
     
     

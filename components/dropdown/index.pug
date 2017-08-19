@@ -1,7 +1,18 @@
-.ui.search.selection.dropdown
-    input(type="hidden" name="{{_guid}}")
-    i.dropdown.icon 
-    .default.text {{ placeholder }}
-    .menu
-        +each('data')
-            .item(data-value="{{.id}}") {{.name}}
++iff('inline')
+    .ui.inline.dropdown
+        input(type="hidden" name="{{_guid}}")
+        i.dropdown.icon 
+        .default.text {{ placeholder }}
+        .menu
+            +each('data')
+                .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
+
++else
+    .ui.search.selection.dropdown
+        input(type="hidden" name="{{_guid}}")
+        i.dropdown.icon 
+        .default.text {{ placeholder }}
+        .menu
+            +each('data')
+                .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
++endif

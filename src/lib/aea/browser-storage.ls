@@ -3,7 +3,10 @@ export class BrowserStorage
         @s = local-storage
 
     set: (key, value) ->
-        @s.set-item "#{@name}-#{key}", JSON.stringify value
+        try
+            @s.set-item "#{@name}-#{key}", JSON.stringify value
+        catch
+            console.warn "FIXME: This is a workaround for iphone5s. Provide a fallback (to cookie?)"
 
     del: (key) ->
         @s.remove-item "#{@name}-#{key}"
