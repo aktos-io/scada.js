@@ -22,7 +22,7 @@ ScadaJS is a library to easily create Single Page Applications, targeted to indu
 * Fully compatible with aktos.io hardwares, such as [ScadaGateway](https://aktos.io/scada/pdf).
 * Supports tools and documentation for [DRY](https://en.wikipedia.org/wiki/Don't_repeat_yourself) and [TDD](https://en.wikipedia.org/wiki/Test-driven_development) in mind.
 * Provides build system via [Gulp](http://gulpjs.com).
-* Supports cross platfrom development. Tested on:
+* Supports cross platform development. Tested on:
    * Linux
        * Debian 8
        * Raspbian (on Raspberry 2 and 3)
