@@ -125,6 +125,14 @@ Ractive.components['ack-button'] = Ractive.extend do
             #console.log "yesno dialog has been processed by ack-button, action is: #{action}"
             callback action if typeof! callback is \Function
 
+
+        @heartbeat = ~>
+            console.log "ack-button received a heartbeat..."
+            @doing-watchdog.heartbeat!
+            @set \heartbeat, yes
+            <~ sleep 100ms
+            @set \heartbeat, no
+
         if @get \auto
             console.log "auto firing ack-button!"
             @fire \click
@@ -145,3 +153,4 @@ Ractive.components['ack-button'] = Ractive.extend do
         state: ''
         on-done: ->
         transparent: no
+        heartbeat: no

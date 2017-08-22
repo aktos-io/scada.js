@@ -8,7 +8,11 @@ btn(
     style="{{ style }} {{#if transparen}}background-color: transparent;{{/if}}"
     )
     +iff('state === "doing"')
-        i.icon #[.ui.active.mini.inverted.loader]
+        +iff('heartbeat')
+            i.icon.heart
+        +else
+            i.icon #[.ui.active.mini.inverted.loader]
+        +endif
     +elif('state === "done"')
         i.icon.checkmark
     +elif('state === "error"')
