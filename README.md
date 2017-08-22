@@ -11,24 +11,24 @@ ScadaJS is a library to easily create Single Page Applications, targeted to indu
 * Uses [RactiveJS](http://www.ractivejs.org/) in the heart for templating system with a custom (and optimized) component inclusion mechanizm
 * Supports desktop apps via [ElectronJS](http://electron.atom.io/).
 * Uses Distributed NoSQL database ([CouchDB](http://couchdb.apache.org/) in mind)
-* Supports variety of network and industrial protocol [servers](./src/server), including
-    * JSON over TCP
+* Supports variety of network and industrial protocol connectors, including
+    * Simple JSON over TCP
     * Long Polling
     * Modbus (TCP, RTU, ...)
     * Siemens Comm
     * Omron FINS, Hostlink, etc...
     * and many others...
 * Fully compatible with [aktos-dcs](https://github.com/aktos-io/aktos-dcs), a message passing library for distributed control systems.
-* Fully compatible with aktos.io hardwares, such as [ScadaGateway](https://aktos.io/scada/pdf).
+* Fully compatible with aktos.io hardwares, such as [Scada Gateway](https://aktos.io/scada/pdf).
 * Supports tools and documentation for [DRY](https://en.wikipedia.org/wiki/Don't_repeat_yourself) and [TDD](https://en.wikipedia.org/wiki/Test-driven_development) in mind.
 * Provides build system via [Gulp](http://gulpjs.com).
 * Supports cross platform development. Tested on:
-   * Linux
-       * Debian 8
-       * Raspbian (on Raspberry 2 and 3)
-   * Windows
-       * Win7 Pro (64bit)
-       * Win10 (64bit)
+  * Linux
+    * Debian 8
+    * Raspbian (on Raspberry 2 and 3)
+  * Windows
+    * Win7 Pro (64bit)
+    * Win10 (64bit)
 
 
 
