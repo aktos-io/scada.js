@@ -96,7 +96,7 @@ new Ractive({
     <link rel="stylesheet" href="css/vendor.css">
   </head>
   <body>
-    <h2>You can't see this line when app is fully loaded...</h2>
+    <h1>Loading...</h1>
     <script src="app.js"></script>
   </body>
 </html>
