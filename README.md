@@ -67,14 +67,14 @@ When you first create or clone a ScadaJS project, you need to install the depend
 
 1. Create the `webapps` folder which will hold all of your webapps: 
 
-    cd your-project 
-    mkdir webapps 
+       cd your-project 
+       mkdir webapps 
     
 2. Create `your-webapp`'s folder: 
 
-    cd webapps 
-    mkdir your-webapp
-    cd your-webapp
+       cd webapps 
+       mkdir your-webapp
+       cd your-webapp
     
 3. Create an `app.js` (or `app.ls`) here with the following contents: 
 
