@@ -23,14 +23,14 @@ Ractive.components['ack-button'] = Ractive.extend do
         @button-timeout = if @get \timeout
             that
         else
-            10_000ms
+            2_000ms
 
         @observe \tooltip, (new-val) ->
-            __.set \reason, new-val
+            @set \reason, new-val
 
         @on do
             click: ->
-                val = __.get \value
+                val = @get \value
                 @doing-watchdog.reset!
                 @set \tooltip, ""
                 @fire \buttonclick, {}, val
@@ -39,29 +39,29 @@ Ractive.components['ack-button'] = Ractive.extend do
                 self-disabled = no
 
                 if s in <[ done ]>
-                    __.set \state, \done
+                    @set \state, \done
 
                 if s in <[ done... ]>
-                    __.set \state, \done
-                    <- sleep 3000ms
-                    if __.get(\state) is \done
-                        __.set \state, ''
+                    @set \state, \done
+                    <~ sleep 3000ms
+                    if @get(\state) is \done
+                        @set \state, ''
 
                 if s in <[ done done... ]>
                     @doing-watchdog.go!
 
                 if s in <[ normal ]>
                     @doing-watchdog.go!
-                    __.set \state, \normal
+                    @set \state, \normal
 
                 if s in <[ doing ]>
-                    __.set \state, \doing
+                    @set \state, \doing
                     self-disabled = yes
                     reason <~ @doing-watchdog.wait @button-timeout
                     if reason is \timeout
-                        __.fire \error, "button timed out!"
+                        @error "button timed out!"
 
-                __.set \selfDisabled, self-disabled
+                @set \selfDisabled, self-disabled
 
                 if s in <[ error ]>
                     console.warn "scadajs: Deprecation: use \"ack-button.fire \\error\" instead"
@@ -125,6 +125,14 @@ Ractive.components['ack-button'] = Ractive.extend do
             #console.log "yesno dialog has been processed by ack-button, action is: #{action}"
             callback action if typeof! callback is \Function
 
+
+        @heartbeat = ~>
+            console.log "ack-button received a heartbeat..."
+            @doing-watchdog.heartbeat!
+            @set \heartbeat, yes
+            <~ sleep 100ms
+            @set \heartbeat, no
+
         if @get \auto
             console.log "auto firing ack-button!"
             @fire \click
@@ -145,3 +153,4 @@ Ractive.components['ack-button'] = Ractive.extend do
         state: ''
         on-done: ->
         transparent: no
+        heartbeat: no
