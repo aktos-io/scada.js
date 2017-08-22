@@ -23,7 +23,7 @@ Ractive.components['ack-button'] = Ractive.extend do
         @button-timeout = if @get \timeout
             that
         else
-            10_000ms
+            2_000ms
 
         @observe \tooltip, (new-val) ->
             __.set \reason, new-val
@@ -57,9 +57,10 @@ Ractive.components['ack-button'] = Ractive.extend do
                 if s in <[ doing ]>
                     __.set \state, \doing
                     self-disabled = yes
+                    debugger
                     reason <~ @doing-watchdog.wait @button-timeout
                     if reason is \timeout
-                        __.fire \error, "button timed out!"
+                        @error "button timed out!"
 
                 __.set \selfDisabled, self-disabled
 
