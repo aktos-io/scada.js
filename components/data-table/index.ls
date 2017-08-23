@@ -185,7 +185,7 @@ Ractive.components['data-table'] = Ractive.extend do
 
             save: (ev, val) ->
                 ev.component.fire \state, \doing
-                ...args <~ settings.on-save @get(\curr)
+                ...args <~ settings.on-save ev, @get(\curr)
                 if args.length isnt 1
                     ev.component.fire \error, """
                         Coding error: Save function requires error argument upon
@@ -197,8 +197,6 @@ Ractive.components['data-table'] = Ractive.extend do
                 else
                     ev.component.fire \state \done...
                     @refresh!
-                    <~ sleep 1000ms
-                    @fire \closeRow
 
             add-new-entry: (event, keypath) ~>
                 editing-doc = @get \curr
@@ -333,6 +331,6 @@ Ractive.components['data-table'] = Ractive.extend do
 
         lookup: (obj-array, key-field, key-value) ->
             x = find (.[key-field] is key-value), obj-array
-            console.log "lookup input: ", obj-array, key-field, key-value 
+            console.log "lookup input: ", obj-array, key-field, key-value
             console.log "lookup result: ", x
             x
