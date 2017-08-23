@@ -18,7 +18,7 @@ if only-compile
 console.log "------------------------------------------"
 
 require! <[ watchify gulp browserify glob path fs globby touch ]>
-require! 'prelude-ls': {union, join, keys, map, unique}
+require! 'prelude-ls': {union, join, keys, map, unique, empty}
 require! 'vinyl-source-stream': source
 require! 'vinyl-buffer': buffer
 require! 'gulp-watch': watch
@@ -118,6 +118,7 @@ for-assets =
 for-browserify =
     # livescript files in webapp folder
     "#{paths.client-webapps}/#{webapp}/**/*.ls"
+    "#{paths.client-webapps}/#{webapp}/**/*.js"
 
     # files in components
     "#{paths.components-src}/**/*.ls"
@@ -265,7 +266,7 @@ sep = if /^win/.test process.platform => '\\' else '/'
 gulp.task \assets, ->
     gulp.src for-assets
         .pipe rename (path) ->
-            path-parts = path.dirname.split sep 
+            path-parts = path.dirname.split sep
             parts = []
             found-assets = no
             for i in path-parts
@@ -306,13 +307,20 @@ gulp.task \preparserify-workaround ->
     gulp.src for-preparserify-workaround
         .pipe cache 'preparserify-workaround-cache'
         .pipe tap (file) ->
-            #console.log "preparserify-workaround: invalidating: ", file.path
+            #console.log "DEBUG: preparserify-workaround: invalidating: ", file.path
             unless first-browserify-done
                 #console.log "DEBUG: Ractive Preparserify: skipping because first browserify is not done yet"
                 return
             rel = preparserify-dep-list[file.path]
-            if typeof! rel is \Array
-                for js-file in unique rel
+            rel = [rel] unless typeof! rel is \Array
+            rel = unique [.. for rel when ..] # filter out undefined and duplicate files
+
+            if empty rel
+                log-info 'preparserify', """Dependency of an observed file should
+                    not be empty. This is possibly a bug in gulpfile.ls
+                    (restart gulp as a workaround)"""
+            else
+                for js-file in rel
                     console.log "INFO: Preparserify workaround: triggering for #{path.basename js-file}"
                     try
                         clear-timeout debounce[js-file]
@@ -323,6 +331,3 @@ gulp.task \preparserify-workaround ->
                     debounce[js-file] = sleep 100ms, ->
                         touch.sync js-file
                         delete debounce[js-file]
-            else
-                log-info 'preparserify', "related documents should be an array: "
-                console.log pack rel

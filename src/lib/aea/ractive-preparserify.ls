@@ -54,6 +54,12 @@ export ractive-preparserify = (file) ->
 
             if ext is \.html
                 template-html = template-contents
+
+                if preparserify-dep-list[template-full-path]
+                    preparserify-dep-list[template-full-path].push file
+                else
+                    preparserify-dep-list[template-full-path] = [file]
+
             else if ext is \.pug
                 try
                     # include templates/mixins.pug file
