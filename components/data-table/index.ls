@@ -132,8 +132,8 @@ Ractive.components['data-table'] = Ractive.extend do
                 opening-dimmer.dimmer \show
                 row-clone = clone row
                 curr <~ settings.on-create-view.call this, row-clone
-                if curr
-                    @set \curr, curr
+                @set \curr, that if curr
+                @set \origCurr, clone (@get \curr)
                 @set \row, row-clone
                 opening-dimmer.dimmer \hide
                 @set \openingRow, no
@@ -144,30 +144,41 @@ Ractive.components['data-table'] = Ractive.extend do
                 # TODO
 
             toggle-editing: ->
-                # ok, working
                 editable = @get \editable
                 @set \editable, not editable
 
             set-filter: (event, filter-name) ->
-                # ok, working
                 @logger.clog "DATA_TABLE: filter is set to #{filter-name}"
                 @set \selectedFilter, filter-name if filter-name
                 @set \currPage, 0
                 @refresh!
 
             select-page: (event, page-num) ->
-                # ok, working
                 @set \currPage, page-num
                 @refresh!
 
             close-row: ~>
-                # ok, working
+                <~ :lo(op) ~>
+                    if pack(@get \origCurr) isnt pack(@get \curr)
+                        console.error "do not close row because it is changed."
+                        answer <~ @logger.yesno "Do you want to discard changes?"
+                        if answer is \approved
+                            return op!
+                        else
+                            console.warn "Cancelled discarding changes."
+                    else
+                        return op!
+
                 @set \addingNew, false
                 @fire \endEditing
                 opening-dimmer.dimmer \hide
 
+            end-editing: ->
+                @set \clickedIndex, null
+                @set \editable, no
+                @set \editingDoc, null
+
             add-new-document: (ev) ~>
-                # ok, working
                 ev.component.fire \state, \doing
                 template = @get-default-document!
                 @set \prepareAddingNew, yes
@@ -176,12 +187,6 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \addingNew, yes
                 ev.component.fire \state, \normal
 
-            end-editing: ->
-                # ok, working
-                @set \clickedIndex, null
-                @set \editable, no
-                @set \editingDoc, null
-                # DO NOT ADD THIS AGAIN: (@get \create-view) (@get \curr)
 
             save: (ev, val) ->
                 ev.component.fire \state, \doing
@@ -195,6 +200,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 if err
                     ev.component.fire \error, pack err
                 else
+                    @set \origCurr, (@get \curr)
                     ev.component.fire \state \done...
                     @refresh!
 
@@ -213,19 +219,6 @@ Ractive.components['data-table'] = Ractive.extend do
 
                 @logger.clog "adding new entry: ", template
                 @set \curr, editing-doc
-
-
-            delete-document: (event, e) ->
-                e.component.fire \state, \doing
-                curr = @get \curr
-                curr.type = "_deleted_#{curr.type}"
-                err, res <- db.save curr
-                return e.component.error err.message  if err
-                e.component.fire \state, \done
-
-                tabledata = reject (._id is curr._id), __.get \tabledata
-                __.set \tabledata, tabledata
-                (__.get \create-view)!
 
 
         # add handlers to events
