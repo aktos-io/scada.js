@@ -50,8 +50,9 @@ html(lang="en-GB")
                 include:livescript ./debug-div.ls 
 
         #dynamic-script
-        script
-            include:livescript ./load-app.ls 
+        block app
+            script
+                include:livescript ./load-app.ls 
             
         block body-append
             
