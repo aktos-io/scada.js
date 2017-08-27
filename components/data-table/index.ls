@@ -131,6 +131,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \openingRowMsg, "Opening #{index}..."
                 opening-dimmer.dimmer \show
                 row-clone = clone row
+                @set \_tmp, {}
                 curr <~ settings.on-create-view.call this, row-clone
                 @set \curr, that if curr
                 @set \origCurr, clone (@get \curr)
@@ -192,33 +193,17 @@ Ractive.components['data-table'] = Ractive.extend do
                 ev.component.fire \state, \doing
                 ...args <~ settings.on-save ev, @get(\curr)
                 if args.length isnt 1
-                    ev.component.fire \error, """
+                    ev.component.error """
                         Coding error: Save function requires error argument upon
                         calling the callback."""
                     return
                 err = args.0
                 if err
-                    ev.component.fire \error, pack err
+                    ev.component.error pack err
                 else
                     @set \origCurr, (@get \curr)
                     ev.component.fire \state \done...
                     @refresh!
-
-            add-new-entry: (event, keypath) ~>
-                editing-doc = @get \curr
-                try
-                    template = (@get-default-document!)[keypath].0
-                catch
-                    @logger.error "Problem with keypath: #{keypath}: #{e}"
-                    return
-
-                if typeof! editing-doc[keypath] isnt \Array
-                    @logger.clog "Keypath is not an array, converting to array"
-                    editing-doc[keypath] = []
-                editing-doc[keypath] ++= template
-
-                @logger.clog "adding new entry: ", template
-                @set \curr, editing-doc
 
 
         # add handlers to events
@@ -249,6 +234,7 @@ Ractive.components['data-table'] = Ractive.extend do
         curr-page: 0
         opening-row: no
         opening-row-msg: ''
+        _tmp: {}
         is-editing-row: (index) ->
             return no unless @get \editable
             clicked-index = @get \clickedIndex
