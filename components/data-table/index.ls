@@ -63,13 +63,6 @@ Ractive.components['data-table'] = Ractive.extend do
         @set \colNames, settings.col-names
         opening-dimmer = $ @find \.table-section-of-data-table
 
-        # assign handlers
-        handlers = {}
-        for handler, func of settings.handlers
-            handlers[handler] = func.bind this
-
-        @set \handlers, handlers
-
         # assign filters
         data-filters = {}
         for name, func of settings.filters
@@ -122,7 +115,7 @@ Ractive.components['data-table'] = Ractive.extend do
             @refresh!
 
         events =
-            clicked: (ev, row) ~>
+            clicked: (ctx, row) ->
                 index = row.id
                 return if @get(\clickedIndex) is index # do not allow multiple clicks
                 @set \clickedIndex, index
@@ -158,7 +151,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \currPage, page-num
                 @refresh!
 
-            close-row: ~>
+            close-row: ->
                 <~ :lo(op) ~>
                     if pack(@get \origCurr) isnt pack(@get \curr)
                         console.error "do not close row because it is changed."
@@ -179,7 +172,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \editable, no
                 @set \editingDoc, null
 
-            add-new-document: (ev) ~>
+            add-new-document: (ev) ->
                 ev.component.fire \state, \doing
                 template = @get-default-document!
                 @set \prepareAddingNew, yes
@@ -205,12 +198,8 @@ Ractive.components['data-table'] = Ractive.extend do
                     ev.component.fire \state \done...
                     @refresh!
 
-
-        # add handlers to events
-        events `merge` handlers
-
         # register events
-        @on events
+        @on events <<< settings.handlers
 
         # run init function
         <~ settings.on-init
