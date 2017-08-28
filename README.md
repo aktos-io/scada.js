@@ -29,7 +29,7 @@ ScadaJS is a library to easily create Single Page Applications, targeted to indu
   * Windows
     * Win7 Pro (64bit)
     * Win10 (64bit)
-
+* Supports [microservices](https://en.wikipedia.org/wiki/Microservices) architecture by default.
 
 
 # DEMO
@@ -38,8 +38,8 @@ Demo application [source is here](https://github.com/aktos-io/scadajs-template) 
 
 # Usage
 
-1. You may use the [scadajs-template](https://github.com/aktos-io/scadajs-template) as a starting point
-2. Follow the steps to add ScadaJS to your existing project: 
+* You may use the [scadajs-template](https://github.com/aktos-io/scadajs-template) as a starting point
+* Follow the steps to add ScadaJS to your existing project: 
 
 ### 1. Install Global Dependencies 
 
