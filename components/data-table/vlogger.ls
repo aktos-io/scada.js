@@ -17,6 +17,12 @@ export class VLogger
             icon: "warning sign"
         @logger.fire \showDimmed, {}, m, {-closable}, callback
 
+    yesno: (msg, callback) ->
+        m =
+            message: msg
+            title: 'Yes No'
+            icon: "map signs"
+        @logger.fire \showDimmed, {}, m, {-closable, mode: \yesno}, callback
 
     clog: (...msg) ->
         console.log.apply console, (["vlogger"] ++ msg)

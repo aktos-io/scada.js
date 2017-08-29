@@ -63,13 +63,6 @@ Ractive.components['data-table'] = Ractive.extend do
         @set \colNames, settings.col-names
         opening-dimmer = $ @find \.table-section-of-data-table
 
-        # assign handlers
-        handlers = {}
-        for handler, func of settings.handlers
-            handlers[handler] = func.bind this
-
-        @set \handlers, handlers
-
         # assign filters
         data-filters = {}
         for name, func of settings.filters
@@ -122,7 +115,7 @@ Ractive.components['data-table'] = Ractive.extend do
             @refresh!
 
         events =
-            clicked: (ev, row) ~>
+            clicked: (ctx, row) ->
                 index = row.id
                 return if @get(\clickedIndex) is index # do not allow multiple clicks
                 @set \clickedIndex, index
@@ -131,9 +124,10 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \openingRowMsg, "Opening #{index}..."
                 opening-dimmer.dimmer \show
                 row-clone = clone row
+                @set \_tmp, {}
                 curr <~ settings.on-create-view.call this, row-clone
-                if curr
-                    @set \curr, curr
+                @set \curr, that if curr
+                @set \origCurr, clone (@get \curr)
                 @set \row, row-clone
                 opening-dimmer.dimmer \hide
                 @set \openingRow, no
@@ -144,95 +138,69 @@ Ractive.components['data-table'] = Ractive.extend do
                 # TODO
 
             toggle-editing: ->
-                # ok, working
                 editable = @get \editable
                 @set \editable, not editable
 
             set-filter: (event, filter-name) ->
-                # ok, working
                 @logger.clog "DATA_TABLE: filter is set to #{filter-name}"
                 @set \selectedFilter, filter-name if filter-name
                 @set \currPage, 0
                 @refresh!
 
             select-page: (event, page-num) ->
-                # ok, working
                 @set \currPage, page-num
                 @refresh!
 
-            close-row: ~>
-                # ok, working
+            close-row: ->
+                <~ :lo(op) ~>
+                    if pack(@get \origCurr) isnt pack(@get \curr)
+                        console.error "do not close row because it is changed."
+                        answer <~ @logger.yesno "Do you want to discard changes?"
+                        if answer is \approved
+                            return op!
+                        else
+                            console.warn "Cancelled discarding changes."
+                    else
+                        return op!
+
                 @set \addingNew, false
                 @fire \endEditing
                 opening-dimmer.dimmer \hide
 
-            add-new-document: (ev) ~>
-                # ok, working
+            end-editing: ->
+                @set \clickedIndex, null
+                @set \editable, no
+                @set \editingDoc, null
+
+            add-new-document: (ev) ->
                 ev.component.fire \state, \doing
                 template = @get-default-document!
                 @set \prepareAddingNew, yes
+                @set \row, {}
                 <~ settings.on-new-document template
                 @set \prepareAddingNew, no
                 @set \addingNew, yes
                 ev.component.fire \state, \normal
 
-            end-editing: ->
-                # ok, working
-                @set \clickedIndex, null
-                @set \editable, no
-                @set \editingDoc, null
-                # DO NOT ADD THIS AGAIN: (@get \create-view) (@get \curr)
 
             save: (ev, val) ->
                 ev.component.fire \state, \doing
                 ...args <~ settings.on-save ev, @get(\curr)
                 if args.length isnt 1
-                    ev.component.fire \error, """
+                    ev.component.error """
                         Coding error: Save function requires error argument upon
                         calling the callback."""
                     return
                 err = args.0
                 if err
-                    ev.component.fire \error, pack err
+                    ev.component.error pack err
                 else
+                    @set \origCurr, (@get \curr)
                     ev.component.fire \state \done...
                     @refresh!
 
-            add-new-entry: (event, keypath) ~>
-                editing-doc = @get \curr
-                try
-                    template = (@get-default-document!)[keypath].0
-                catch
-                    @logger.error "Problem with keypath: #{keypath}: #{e}"
-                    return
-
-                if typeof! editing-doc[keypath] isnt \Array
-                    @logger.clog "Keypath is not an array, converting to array"
-                    editing-doc[keypath] = []
-                editing-doc[keypath] ++= template
-
-                @logger.clog "adding new entry: ", template
-                @set \curr, editing-doc
-
-
-            delete-document: (event, e) ->
-                e.component.fire \state, \doing
-                curr = @get \curr
-                curr.type = "_deleted_#{curr.type}"
-                err, res <- db.save curr
-                return e.component.error err.message  if err
-                e.component.fire \state, \done
-
-                tabledata = reject (._id is curr._id), __.get \tabledata
-                __.set \tabledata, tabledata
-                (__.get \create-view)!
-
-
-        # add handlers to events
-        events `merge` handlers
-
         # register events
-        @on events
+        @on events <<< settings.handlers
 
         # run init function
         <~ settings.on-init
@@ -256,6 +224,7 @@ Ractive.components['data-table'] = Ractive.extend do
         curr-page: 0
         opening-row: no
         opening-row-msg: ''
+        _tmp: {}
         is-editing-row: (index) ->
             return no unless @get \editable
             clicked-index = @get \clickedIndex

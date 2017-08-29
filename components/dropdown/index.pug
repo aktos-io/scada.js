@@ -1,5 +1,5 @@
 +iff('inline')
-    .ui.inline.dropdown
+    .ui.inline.dropdown(class="{{class}}")
         input(type="hidden" name="{{_guid}}")
         i.dropdown.icon 
         .default.text {{ placeholder }}
@@ -7,8 +7,10 @@
             +each('data')
                 .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
 
++elif('custom')
+     | {{>content}}
 +else
-    .ui.search.selection.dropdown
+    .ui.search.selection.dropdown(class="{{class}}")
         input(type="hidden" name="{{_guid}}")
         i.dropdown.icon 
         .default.text {{ placeholder }}

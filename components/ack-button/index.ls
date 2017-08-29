@@ -126,11 +126,11 @@ Ractive.components['ack-button'] = Ractive.extend do
             callback action if typeof! callback is \Function
 
 
-        @heartbeat = ~>
-            console.log "ack-button received a heartbeat..."
-            @doing-watchdog.heartbeat!
+        @heartbeat = (duration) ~>
+            console.log "ack-button received a heartbeat: #{duration}"
+            @doing-watchdog.heartbeat duration
             @set \heartbeat, yes
-            <~ sleep 100ms
+            <~ sleep 200ms
             @set \heartbeat, no
 
         if @get \auto
@@ -151,6 +151,5 @@ Ractive.components['ack-button'] = Ractive.extend do
         self-disabled: no
         enabled: yes
         state: ''
-        on-done: ->
         transparent: no
         heartbeat: no
