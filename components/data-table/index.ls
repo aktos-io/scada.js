@@ -176,6 +176,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 ev.component.fire \state, \doing
                 template = @get-default-document!
                 @set \prepareAddingNew, yes
+                @set \row, {}
                 <~ settings.on-new-document template
                 @set \prepareAddingNew, no
                 @set \addingNew, yes
