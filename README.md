@@ -19,7 +19,7 @@ ScadaJS is a library to easily create Single Page Applications, targeted to indu
   * Windows
     * Win7 Pro (64bit)
     * Win10 (64bit)
-* Integrated with [aktos-dcs](https://github.com/aktos-io/aktos-dcs), a message passing library for distributed control systems. This makes ScadaJS support [microservices](https://en.wikipedia.org/wiki/Microservices) architecture out of the box.
+* Integrated with [aktos-dcs](https://github.com/aktos-io/aktos-dcs), a message passing library for distributed control systems, which makes ScadaJS support [microservices](https://en.wikipedia.org/wiki/Microservices) architecture out of the box.
    * Supports variety of network and industrial protocol connectors, including
      * Simple JSON over TCP
      * Long Polling
