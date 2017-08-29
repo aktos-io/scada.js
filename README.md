@@ -10,27 +10,21 @@ ScadaJS is a library to easily create Single Page Applications, targeted to indu
 * Uses Javascript and provides first-class support for [LiveScript](http://livescript.net) (with sourcemaps)
 * Uses [RactiveJS](http://www.ractivejs.org/) in the heart for templating system with a custom (and optimized) component inclusion mechanizm
 * Supports desktop apps via [ElectronJS](http://electron.atom.io/).
-* Uses Distributed NoSQL database ([CouchDB](http://couchdb.apache.org/) in mind)
-* Supports variety of network and industrial protocol connectors, including
-    * Simple JSON over TCP
-    * Long Polling
-    * Modbus (TCP, RTU, ...)
-    * Siemens Comm
-    * Omron FINS, Hostlink, etc...
-    * and many others...
-* Fully compatible with [aktos-dcs](https://github.com/aktos-io/aktos-dcs), a message passing library for distributed control systems.
-* Fully compatible with aktos.io hardwares, such as [Scada Gateway](https://aktos.io/scada/pdf).
-* Supports tools and documentation for [DRY](https://en.wikipedia.org/wiki/Don't_repeat_yourself) and [TDD](https://en.wikipedia.org/wiki/Test-driven_development) in mind.
+* Supports tools and documentation for [DRY](https://en.wikipedia.org/wiki/Don't_repeat_yourself) and [TDD](https://en.wikipedia.org/wiki/Test-driven_development).
 * Provides build system via [Gulp](http://gulpjs.com).
-* Supports cross platform development. Tested on:
-  * Linux
-    * Debian 8
-    * Raspbian (on Raspberry 2 and 3)
-  * Windows
-    * Win7 Pro (64bit)
-    * Win10 (64bit)
-* Supports [microservices](https://en.wikipedia.org/wiki/Microservices) architecture by default.
+* Supports cross platform development (see: [supported development platforms](./doc/supported-development-platforms.md))
+* Integrated with [aktos-dcs](https://github.com/aktos-io/aktos-dcs), a message passing library for distributed control systems, which makes ScadaJS support [microservices](https://en.wikipedia.org/wiki/Microservices) architecture out of the box.
+   * Supports variety of network and industrial protocol connectors, including
+     * Simple JSON over TCP
+     * Long Polling
+     * Modbus (TCP, RTU, ...)
+     * Siemens Comm
+     * Omron FINS, Hostlink, etc...
+     * and many others...
 
+   * Compatible with aktos.io hardwares, such as [Scada Gateway](https://aktos.io/scada/pdf).
+   * Supports any number and type (SQL, NoSQL) of databases in a single application at the same time. 
+     * Provides realtime layer tools for CouchDB which helps [overcoming CouchDB limitations](./doc/addressing-couchdb-problems.md)
 
 # DEMO
 
