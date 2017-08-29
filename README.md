@@ -24,7 +24,7 @@ ScadaJS is a library to easily create Single Page Applications, targeted to indu
 
    * Compatible with aktos.io hardwares, such as [Scada Gateway](https://aktos.io/scada/pdf).
    * Supports any number and type (SQL, NoSQL) of databases in a single application at the same time. 
-     * Provides realtime layer tools for CouchDB.
+     * Provides realtime layer tools for CouchDB which helps [overcoming CouchDB limitations](./doc/addressing-couchdb-problems.md)
 
 # DEMO
 
