@@ -4,7 +4,6 @@ require! './debug-log': {logger}
 require! 'colors': {bg-red, bg-green, bg-yellow}
 require! './packing': {pack}
 require! './sleep' : {sleep}
-require! './couch-helpers': {pack-id, unpack-id}
 
 
 export class CouchNano
@@ -40,10 +39,6 @@ export class CouchNano
 
         err = {reason: err.reason, name: err.name, message: err.reason} if err
         callback err, res, headers
-
-
-    pack-id: pack-id
-    unpack-id: unpack-id
 
     connect: (callback) ->
         if typeof! callback isnt \Function
