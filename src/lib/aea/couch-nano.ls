@@ -5,44 +5,50 @@ require! 'colors': {bg-red, bg-green, bg-yellow}
 require! './packing': {pack}
 require! './sleep' : {sleep}
 require! './couch-helpers': {pack-id, unpack-id}
+
+
 export class CouchNano
-    (@cfg) ~>
+    (@cfg) ->
         @log = new logger "db:#{@cfg.database}"
         @username = @cfg.user.name
         @password = @cfg.user.password
         @db-name = @cfg.database
         @db = nano url: @cfg.url
+        @connect!
 
-        @request = (opts, callback) ~>
+    request: (opts, callback) ~>
 
-            opts.headers = {} unless opts.headers
-            opts.headers['X-CouchDB-WWW-Authenticate'] = 'Cookie'
-            opts.headers.cookie = @cookie
+        opts.headers = {} unless opts.headers
+        opts.headers['X-CouchDB-WWW-Authenticate'] = 'Cookie'
+        opts.headers.cookie = @cookie
 
-            console.log "request opts : ", opts
-            err, res, headers <~ @db.request opts
-            if err => if err.statusCode is 401
-                # we are unauthorized, try to login again
-                @log.log bg-yellow "Trying to re-login"
-                @connect (err) ~>
-                    unless err
-                        @log.log bg-green "logged in again."
-                        @request opts, callback
-                return
+        #console.log "request opts : ", opts
+        err, res, headers <~ @db.request opts
+        if err => if err.statusCode is 401
+            # we are unauthorized, try to login again
+            @log.log bg-yellow "Trying to re-login"
+            @connect (err) ~>
+                unless err
+                    @log.log bg-green "logged in again."
+                    @request opts, callback
+            return
 
-            if headers?
-                if headers['set-cookie']
-                    @cookie = that
-                    @log.log bg-yellow "----------set-cookie is received, using it: #{that}"
+        if headers?
+            if headers['set-cookie']
+                @cookie = that
+                @log.log bg-yellow "----------set-cookie is received, using it: #{that}"
 
-            err = {reason: err.reason, name: err.name, message: err.reason} if err
-            callback err, res, headers
+        err = {reason: err.reason, name: err.name, message: err.reason} if err
+        callback err, res, headers
 
 
     pack-id: pack-id
     unpack-id: unpack-id
 
     connect: (callback) ->
+        if typeof! callback isnt \Function
+            callback = ->
+
         @log.log "Authenticating as #{@username}"
         @cookie = null
         err, body, headers <~ @db.auth @username, @password
@@ -71,22 +77,20 @@ export class CouchNano
         return callback {text: "unexpected response"}, null
 
     put: (doc, callback) ->
-        err, res, headers <~ @request do
+        @request do
             db: @db-name
             body: doc
             method: \post
-
-        callback err, res
+            , callback
 
     get: (doc-id, opts, callback) ->
         [callback, opts] = [opts, {}] if typeof! opts is \Function
 
-        err, res, headers <~ @request do
+        @request do
             db: @db-name
             doc: doc-id
             qs: opts
-
-        callback err, res
+            , callback
 
     all: (opts, callback) ->
         [callback, opts] = [opts, {}] if typeof! opts is \Function
@@ -174,9 +178,19 @@ export class CouchNano
         ``
         view(ddoc, viewName, meta, qs, callback)
 
+    get-attachment: (doc-id, att-name, opts, callback) ->
+        if typeof opts is \function
+            callback = opts
+            opts = {}
 
-
-
+        @request do
+            db: @db-name
+            doc: doc-id
+            qs: opts
+            att: attName
+            encoding: null
+            dontParse: true
+            , callback
 
 if require.main is module
     test = new CouchNano do
