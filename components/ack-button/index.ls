@@ -23,7 +23,7 @@ Ractive.components['ack-button'] = Ractive.extend do
         @button-timeout = if @get \timeout
             that
         else
-            2_000ms
+            3_200ms
 
         @observe \tooltip, (new-val) ->
             @set \reason, new-val
