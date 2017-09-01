@@ -11,77 +11,83 @@ include ./toggle-editform-buttons.pug
 
 //- Header part
 +iff('firstRunDone')
-    | {{>header}}
-    //- End Of Header
+    +iff('mode === "add-new"')
+        +iff('addingNew')
+            | {{> editForm }}
+        +endif 
+    +else
+        | {{>header}}
+        //- End Of Header
 
-    .ui.segments
-        +if('selectedFilter !== "all"')
-            .ui.attached.warning.message.segment
-                .header 
-                    i.warning.icon 
-                    | Filtered Content 
-                p.
-                    You are seeing a filtered content. 
-                    #[btn.blue.mini(on-buttonclick="setFilter" value="all") #[i.remove.icon] Clear Filter]
-                    
-        +if('addingNew')
-            h3.ui.attached.header #[i.edit.icon] New Document 
+        .ui.segments
+            +if('selectedFilter !== "all"')
+                .ui.attached.warning.message.segment
+                    .header 
+                        i.warning.icon 
+                        | Filtered Content 
+                    p.
+                        You are seeing a filtered content. 
+                        #[btn.blue.mini(on-buttonclick="setFilter" value="all") #[i.remove.icon] Clear Filter]
+                        
+            +if('addingNew')
+                h3.ui.attached.header #[i.edit.icon] New Document 
+                .ui.segment
+                    | {{> editForm }}
+
+            .ui.segment 
+                include ./pagination.pug
+
             .ui.segment
-                | {{> editForm }}
+                r-table
+                    r-head
+                        r-row                    
+                            +each('colNames')
+                                r-head-col {{>renderMarkup}}                    
+                    //- -----------------------------------------------
+                    //- body of table 
+                    //- -----------------------------------------------
+                    r-body
+                        +each('tableview_visible:i')
+                            tr(
+                                data-anchor="{{.id}}"
+                                on-click!="['clicked', this]"
+                                class!="{{#if isDisabled(.id)}}disabled{{/if}}"
+                                )    
+                                //- -----------------------------------------------
+                                //- edit form
+                                //- -----------------------------------------------
+                                +iff('isEditingRow(.id)')
+                                    td(colspan="{{ colNames.length }}")
+                                        | {{>controls}}
+                                        | {{>editForm}}
 
-        .ui.segment 
-            include ./pagination.pug
-
-        .ui.segment
-            r-table
-                r-head
-                    r-row                    
-                        +each('colNames')
-                            r-head-col {{>renderMarkup}}                    
-                //- -----------------------------------------------
-                //- body of table 
-                //- -----------------------------------------------
-                r-body
-                    +each('tableview_visible:i')
-                        tr(
-                            data-anchor="{{.id}}"
-                            on-click!="['clicked', this]"
-                            class!="{{#if isDisabled(.id)}}disabled{{/if}}"
-                            )    
-                            //- -----------------------------------------------
-                            //- edit form
-                            //- -----------------------------------------------
-                            +iff('isEditingRow(.id)')
-                                td(colspan="{{ colNames.length }}")
-                                    | {{>controls}}
-                                    | {{>editForm}}
-
-                            //- -----------------------------------------------
-                            //- view form
-                            //- -----------------------------------------------
-                            +elif('isViewingRow(.id)')
-                                td(colspan="{{ colNames.length }}")                            
-                                    | {{>controls}}
-                                    | {{>viewForm}}
-                                
-                            //- -----------------------------------------------
-                            //- normal rows 
-                            //- -----------------------------------------------
-                            +else
-                                +each(".cols:colindex")
-                                    td(data-th="{{colNames[colindex]}}")
-                                        +iff('colindex === 0 && isLastClicked(tableview_visible[i].id)')
-                                            +iff('isOpeningNow(tableview_visible[i].id)')
-                                                //- if row is opening, mark first column with teal ribbon label 
-                                                .ui.teal.ribbon.label {{>renderMarkup}}
-                                            +else
-                                                //- if row is opening, mark first column with orange ribbon label 
-                                                .ui.orange.ribbon.label {{>renderMarkup}}
+                                //- -----------------------------------------------
+                                //- view form
+                                //- -----------------------------------------------
+                                +elif('isViewingRow(.id)')
+                                    td(colspan="{{ colNames.length }}")                            
+                                        | {{>controls}}
+                                        | {{>viewForm}}
+                                    
+                                //- -----------------------------------------------
+                                //- normal rows 
+                                //- -----------------------------------------------
+                                +else
+                                    +each(".cols:colindex")
+                                        td(data-th="{{colNames[colindex]}}")
+                                            +iff('colindex === 0 && isLastClicked(tableview_visible[i].id)')
+                                                +iff('isOpeningNow(tableview_visible[i].id)')
+                                                    //- if row is opening, mark first column with teal ribbon label 
+                                                    .ui.teal.ribbon.label {{>renderMarkup}}
+                                                +else
+                                                    //- if row is opening, mark first column with orange ribbon label 
+                                                    .ui.orange.ribbon.label {{>renderMarkup}}
+                                                +endif
+                                            +else.
+                                                {{>renderMarkup}}
                                             +endif
-                                        +else.
-                                            {{>renderMarkup}}
-                                        +endif
-                            +endif
+                                +endif
+    +endif
 +else
     include ./first-loading.pug
 +endif

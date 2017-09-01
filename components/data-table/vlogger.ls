@@ -25,4 +25,4 @@ export class VLogger
         @logger.fire \showDimmed, {}, m, {-closable, mode: \yesno}, callback
 
     clog: (...msg) ->
-        console.log.apply console, (["vlogger"] ++ msg)
+        console.log.apply console, (["Visual Logger: "] ++ msg)

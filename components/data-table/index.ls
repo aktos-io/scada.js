@@ -173,14 +173,15 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \editingDoc, null
 
             add-new-document: (ev) ->
-                ev.component.fire \state, \doing
+                ev.component?.fire \state, \doing
                 template = @get-default-document!
                 @set \prepareAddingNew, yes
                 @set \row, {}
+                <~ settings.on-create-view.call this, null
                 <~ settings.on-new-document template
                 @set \prepareAddingNew, no
                 @set \addingNew, yes
-                ev.component.fire \state, \normal
+                ev.component?.fire \state, \normal
 
 
             save: (ev, val) ->
@@ -205,6 +206,9 @@ Ractive.components['data-table'] = Ractive.extend do
         # run init function
         <~ settings.on-init
         @set \firstRunDone, yes
+
+        switch @get \mode
+        | 'add-new' => @fire \addNewDocument
 
     data: ->
         firstRunDone: no
