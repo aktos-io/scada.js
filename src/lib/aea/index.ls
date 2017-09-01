@@ -5,7 +5,6 @@ require! {
     './debug-log': {debug-log, get-logger, logger, debug-levels}
     './packing': {pack, unpack, clone}
     './formatting': {unix-to-readable, readable-to-unix}
-    './couch-nano': {CouchNano}
     './convert-units': {convert-units}
 }
 
@@ -116,7 +115,6 @@ ip-to-hex = (ip) ->
 
 module.exports = {
     make-user-doc, PouchDB, make-design-doc, check-login, is-db-alive, gen-entry-id, hash8, hash8n
-    CouchNano
     sleep, after, clear-timer
     merge
     logger,
