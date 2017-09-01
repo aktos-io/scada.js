@@ -6,6 +6,12 @@
 
 2. Use `isolated: yes` in components if there is no obvious reason.
 
+
+3. Components MUST NOT modify their input data if there is no obvious reason to do so. 
+
+   > Eg: A `log` input is a read-write input, so a component may show log content and append a new event. That's normal. On the other hand, a `dropdown` data is considered read-only, so the component should not change the data, instead, it has to set another variable (attribute) for the selection. Modifying the input data with any kind of temporary data is **strictly disallowed**. 
+
+
 ## Test Your Components
 
 * If not matches with **MOST IMPORTANT**: Your component is alpha, not ready to go.
