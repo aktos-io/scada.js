@@ -41,8 +41,6 @@ Ractive.components['login-button'] = Ractive.extend do
     onrender: ->
         <~ sleep 10ms
         connector = null
-        @observe \transport-id, (transport-id) ->
-            connector := find-actor transport-id
 
         set-logout-variables = ~>
             @set \token, null
@@ -126,9 +124,12 @@ Ractive.components['login-button'] = Ractive.extend do
                 else
                     @fire \doLogin, ev
 
-        if @get \auto
-            #log.log "Performing auto clicking"
-            @fire \doLogin
+        @observe \transport-id, (transport-id) ->
+            connector := find-actor transport-id
+            if @get \auto
+                log.log "Performing automatic login."
+                @fire \doLogin
+
 
     data: ->
         loggedin: no
