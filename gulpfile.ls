@@ -7,14 +7,14 @@ else
     process.exit!
 
 webapp = argv.webapp
-only-compile = yes if argv.optimize is true
+optimize-for-production = yes if argv.production is true
 
 console.log "------------------------------------------"
 #console.log "App\t: #{app}"
 console.log "Webapp\t: #{webapp}"
-if only-compile
+if optimize-for-production
     console.log "------------------------------------------"
-    console.log " Gulp is running only once for optimization..."
+    console.log " Gulp will optimize the application for production."
 console.log "------------------------------------------"
 
 require! <[ watchify gulp browserify glob path fs globby touch ]>
@@ -147,7 +147,7 @@ gulp.task \default, ->
             \pug
             \preparserify-workaround
 
-    if only-compile
+    if optimize-for-production
         return
 
     watch pug-entry-files, ->
@@ -201,7 +201,7 @@ bundler = browserify do
     cache: browserify-cache
     package-cache: {}
     plugin:
-        watchify unless only-compile
+        watchify unless optimize-for-production
         ...
 
 bundler.transform browserify-livescript
@@ -224,7 +224,7 @@ function bundle
         .pipe buffer!
         #.pipe sourcemaps.init {+load-maps, +large-files}
 
-        .pipe if-else only-compile, my-uglify
+        .pipe if-else optimize-for-production, my-uglify
         #.pipe rename basename: 'app'
         #.pipe sourcemaps.write '.'
         .pipe gulp.dest paths.build-folder
@@ -242,11 +242,10 @@ gulp.task \browserify, ->
 gulp.task \vendor-js, ->
     gulp.src for-js
         .pipe cat "vendor.js"
-        .pipe if-else only-compile, my-uglify
+        .pipe if-else optimize-for-production, my-uglify
         .pipe through.obj (file, enc, cb) ->
             contents = file.contents.to-string!
             optimized = optimize-js contents
-            optimized = "//optimized by optimize.js\n" + optimized
             file.contents = new Buffer optimized
 
             cb null, file

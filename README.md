@@ -103,9 +103,7 @@ You may get up and running with ScadaJS in 2 different ways:
    You can simply build `your-webapp` with the following command:
 
        cd your-project/scada.js
-       gulp --webapp your-webapp [--optimize]
-
-   > `--optimize` will make your `app.js` minified and ready for production.
+       gulp --webapp your-webapp [--production]
 
    ### 6. See the result
 
