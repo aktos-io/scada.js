@@ -2,8 +2,7 @@ require! 'prelude-ls': {
     split, take, join, lists-to-obj, sum, filter
     camelize, find, reject, find-index
 }
-require! 'aea': {sleep, merge, clone, unix-to-readable, pack}
-require! './vlogger': {VLogger}
+require! 'aea': {sleep, merge, clone, unix-to-readable, pack, VLogger}
 
 Ractive.components['data-table'] = Ractive.extend do
     template: RACTIVE_PREPARSE('data-table.pug')
@@ -177,6 +176,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 template = @get-default-document!
                 @set \prepareAddingNew, yes
                 @set \row, {}
+                @set \editable, yes
                 <~ settings.on-create-view.call this, null
                 <~ settings.on-new-document template
                 @set \prepareAddingNew, no
