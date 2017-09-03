@@ -6,6 +6,9 @@ Ractive.components['r-head'] = Ractive.extend do
 Ractive.components['r-body'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug', '#r-body')
 
+Ractive.components['r-foot'] = Ractive.extend do
+    template: RACTIVE_PREPARSE('index.pug', '#r-foot')
+
 Ractive.components['r-row'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug', '#r-row')
     oncomplete: ->
@@ -26,7 +29,6 @@ Ractive.components['r-table'] = Ractive.extend do
         @on do
             updateColNames: ->
                 cols = $ @find 'thead > tr:last-of-type' .children!
-
                 if cols.length is 0
                     console.error "Column names are not found, missing thead > tr > th?"
                 col-names = [..inner-text for cols]

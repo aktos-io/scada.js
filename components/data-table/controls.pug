@@ -1,0 +1,19 @@
+//- table form controls 
++partial('controls')
+    .ui.buttons(class="{{cls}}" style="{{style}}")
+        +unless('readonly')
+            btn(
+                on-buttonclick="toggleEditing"
+                class!="{{#if editable}}red{{else}}blue{{/if}}"
+                active="{{editable}}"
+                tooltip="Düzenle"
+                )
+                i.write.icon 
+            .or
+        +iff('editable')
+            btn.blue(on-buttonclick="toggleEditing" tooltip="Close Editable")
+                i.remove.icon
+        +else
+            btn(on-buttonclick="closeRow" tooltip="Close Row")
+                i.remove.icon
+        +endif

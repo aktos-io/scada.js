@@ -13,6 +13,10 @@
     tbody(class="{{ class }}" style="{{ style }}") 
         | {{ yield }}
 
+#r-foot 
+    tfoot(class="{{ class }}" style="{{ style }}") 
+        | {{ yield }}
+
 #r-row 
     tr.r-table-row(class="{{ class }}" style="{{ style }}") 
         | {{ yield }}

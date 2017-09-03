@@ -117,6 +117,9 @@ Ractive.components['data-table'] = Ractive.extend do
             clicked: (ctx, row) ->
                 index = row.id
                 return if @get(\clickedIndex) is index # do not allow multiple clicks
+                if @get \addingNew
+                    return console.warn "adding new, not opening any rows"
+
                 @set \clickedIndex, index
                 @set \openingRow, yes
                 @set \openedRow, no
@@ -164,6 +167,7 @@ Ractive.components['data-table'] = Ractive.extend do
 
                 @set \addingNew, false
                 @fire \endEditing
+                @set \openedRow, no
                 opening-dimmer.dimmer \hide
 
             end-editing: ->
@@ -172,6 +176,9 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \editingDoc, null
 
             add-new-document: (ev) ->
+                if (@get \openedRow) and (@get('mode') isnt 'add-new')
+                    return console.warn "a row is opened, not adding new."
+
                 ev.component?.fire \state, \doing
                 template = @get-default-document!
                 @set \prepareAddingNew, yes
