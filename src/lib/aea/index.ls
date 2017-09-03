@@ -6,6 +6,7 @@ require! {
     './packing': {pack, unpack, clone}
     './formatting': {unix-to-readable, readable-to-unix}
     './convert-units': {convert-units}
+    './vlogger': {VLogger}
 }
 
 require! 'prelude-ls': {chars, unchars, reverse}
@@ -129,4 +130,5 @@ module.exports = {
     is-nodejs
     BrowserStorage
     hex, ip-to-hex
+    VLogger
 }
