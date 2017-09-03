@@ -10,6 +10,9 @@ Ractive.components['dropdown'] = Ractive.extend do
         if @get \name
             @set \nameField, that
 
+        if @get \disabled-mode
+            @set \class, "#{@get 'class'} disabled"
+
     onrender: ->
         __ = @
         ui = $ @find '.ui.dropdown'
@@ -31,6 +34,11 @@ Ractive.components['dropdown'] = Ractive.extend do
             if _new not in [undefined, null]
                 ui.dropdown 'set selected', _new
 
+                item = find ((x) -> x[keyField] is _new), __.get('data')
+                __.set \item, item
+
+
     data: ->
         keyField: \id
         nameField: \name
+        nothingSelected: '---'
