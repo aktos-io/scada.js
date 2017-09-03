@@ -1,25 +1,40 @@
 require! 'dcs/browser':{Signal}
+require! 'aea': {VLogger}
+
 
 Ractive.components['file-upload'] = Ractive.extend do
     isolated: yes
     template: RACTIVE_PREPARSE('index.pug')
     onrender: ->
-        file-input = $ @find "input[type='file']"
         data-url-signal = new Signal!
-        file-input.on \change, ~>
-            file = file-input.prop \files .0
+        logger = new VLogger this
 
-            reader = new FileReader!
-            reader.onload = (e) ~> data-url-signal.go e.target.result
-            reader.readAsDataURL file
+        @on do
+            file-select: (ctx) ->
+                keypath = ctx.resolve!
+                file = ctx.node.files.0
+                ctx.logger = logger
 
-            reason, file-data <~ data-url-signal.wait
-            @fire \choose, {}, do
-                blob: file
-                base64: file-data.split ',' .1
-                name: file.name
-                type: file.type
-                preview-url: window.URL.createObjectURL file
-            , @get \value
+                reader = new FileReader!
+                reader.onload = (e) ~>
+                    data-url-signal.go e.target.result
+                reader.readAsDataURL file
 
-            @set \file-name, file.name
+                reason, file-data <~ data-url-signal.wait
+                err <~ @fire \choose, ctx, do
+                    blob: file
+                    base64: file-data.split ',' .1
+                    name: file.name
+                    type: file.type
+                    preview-url: window.URL.createObjectURL file
+                    value: @get \value
+
+                unless err
+                    @set \file-name, file.name
+
+                # remove selected file so the same selection could trigger
+                # "file-select" function
+                @toggle \show
+                @toggle \show
+    data: ->
+        show: yes

@@ -1,7 +1,8 @@
 .fileUpload.ui.button(class="{{class}}")
     | {{yield}}
-    +iff('camera')
-        input.upload(type="file" capture="camera" accept="image/*")
-    +else
-        input.upload(type="file")
-    +endif
+    +if('show')
+        +iff('camera')
+            input.upload(type="file" on-change="fileSelect" capture="camera" accept="image/*")
+        +else
+            input.upload(type="file" on-change="fileSelect")
+        +endif
