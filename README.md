@@ -8,10 +8,12 @@ ScadaJS is a library to easily create Single Page Applications, targeted to indu
 
 * Uses HTML for building user interfaces and supports [Pug](https://pugjs.org) for advanced usage (and sanity)
 * Uses Javascript and provides first-class support for [LiveScript](http://livescript.net) (with sourcemaps)
-* Uses [RactiveJS](http://www.ractivejs.org/) in the heart for templating system with a custom (and optimized) component inclusion mechanizm
+* Uses [RactiveJS](http://www.ractivejs.org/) in the heart for templating system.
+  * Supports component based UI development.
 * Supports desktop apps via [ElectronJS](http://electron.atom.io/).
 * Supports tools and documentation for [DRY](https://en.wikipedia.org/wiki/Don't_repeat_yourself) and [TDD](https://en.wikipedia.org/wiki/Test-driven_development).
 * Provides build system via [Gulp](http://gulpjs.com).
+  * Supports a mechanism for integrate 3rd party libraries easily.
 * Supports cross platform development (see: [supported development platforms](./doc/supported-development-platforms.md))
 * Integrated with [aktos-dcs](https://github.com/aktos-io/aktos-dcs), a message passing library for distributed control systems, which makes ScadaJS support [microservices](https://en.wikipedia.org/wiki/Microservices) architecture out of the box.
    * Supports variety of network and industrial protocol connectors, including
