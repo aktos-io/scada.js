@@ -5,15 +5,9 @@
     .content {{ dimmedMessage }}
             
     .actions 
-        +iff('mode === "ok"')
-            .ui.green.ok.inverted.button 
-                i.remove.icon 
-                | Okay 
-        +else
-            .ui.red.basic.cancel.inverted.button 
-                i.remove.icon 
-                | No 
-            .ui.green.ok.inverted.button 
-                i.remove.icon 
-                | Yes 
-        +endif
+        +each('buttons')
+            .ui.inverted.button(class="{{.role}} {{.color}}")
+                +if('.icon')
+                    i.icon(class="{{.icon}}")
+                | {{.text}}
+                

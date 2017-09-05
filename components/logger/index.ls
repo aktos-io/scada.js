@@ -1,10 +1,11 @@
-require! 'aea': {merge}
+require! 'aea': {merge, logger: Logger}
 
 Ractive.components['logger'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->
         modal = $ @find '.ui.basic.modal'
+        @logger = new Logger "Ractive Logger"
 
         @on do
             # msg:
@@ -12,12 +13,15 @@ Ractive.components['logger'] = Ractive.extend do
             #   message
             # callback: is fired when modal is closed. parameter: action.
             show-dimmed: (ev, msg, options, callback) ->
-                console.log "Ractive Logger: msg: ", msg, "options: ", options
+                @logger.log "msg: ", msg, "options: ", options
                 if typeof! options is \Function
                     callback = options
                     options = {}
 
-                options = {+closable, mode: \ok} `merge` options
+                options = {+closable} <<< options
+
+                if options.buttons
+                    @set \buttons, that
 
                 @set \mode, options.mode
                 @set \icon, msg.icon
@@ -46,3 +50,9 @@ Ractive.components['logger'] = Ractive.extend do
         dimmed-message: "(there should be a message here)"
         mode: null
         icon: null
+        buttons:
+            * role: \ok     # 'ok' or 'cancel'
+              color: \green
+              text: \Okay
+              icon: \check
+            ...
