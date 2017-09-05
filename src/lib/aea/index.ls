@@ -1,5 +1,4 @@
 require! {
-    './cca-pouchdb': {PouchDB, make-user-doc, make-design-doc, check-login, is-db-alive, gen-entry-id, hash8, hash8n}
     './merge': {merge}
     './sleep': {sleep, after, clear-timer}
     './debug-log': {debug-log, get-logger, logger, debug-levels}
@@ -115,7 +114,6 @@ ip-to-hex = (ip) ->
     hex result
 
 module.exports = {
-    make-user-doc, PouchDB, make-design-doc, check-login, is-db-alive, gen-entry-id, hash8, hash8n
     sleep, after, clear-timer
     merge
     logger,

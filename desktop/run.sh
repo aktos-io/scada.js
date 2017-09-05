@@ -16,4 +16,4 @@ HELP
     exit
 fi
 
-$SCADA_ROOT/node_modules/.bin/electron $CURR_DIR/main.js --webapp $WEBAPP
+$CURR_DIR/node_modules/.bin/electron $CURR_DIR/main.js --webapp $WEBAPP
