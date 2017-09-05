@@ -87,16 +87,6 @@ export function is-db-alive (db, callback)
             callback err = true if typeof! callback is \Function
 
 
-export function make-design-doc (obj)
-    # convert functions to strings in design docs
-    for p of obj
-        try
-            throw if typeof! obj[p] isnt \Object
-            obj[p] = make-design-doc obj[p]
-        catch
-            if typeof! obj[p] is \Function
-                    obj[p] = '' + obj[p]
-    obj
 
 
 

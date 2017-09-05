@@ -1,7 +1,18 @@
 require! 'livescript': lsc
 require! 'prelude-ls': {camelize}
-require! 'aea': {merge, make-design-doc, pack, logger}
-# -------------------------------------------------
+require! 'aea': {merge, pack, logger}
+
+make-design-doc = (obj) ->
+    # convert functions to strings in design docs
+    for p of obj
+        try
+            throw if typeof! obj[p] isnt \Object
+            obj[p] = make-design-doc obj[p]
+        catch
+            if typeof! obj[p] is \Function
+                    obj[p] = '' + obj[p]
+    obj
+
 
 Ractive.components['ddoc-editor'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
