@@ -2,59 +2,32 @@
   "name": "scada",
   "version": "0.4.0",
   "description": "![ScadaJS](https://github.com/aktos-io/scada.js/blob/master/src/client/assets/scadajs.png)",
-  "main": "jquery-1.12.0.min.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "clean": "rm -rf ./build"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ceremcem/livescript-ractive-example-project.git"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Cerem Cem ASLAN",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ceremcem/livescript-ractive-example-project/issues"
+    "url": "https://github.com/aktos-io/scada.js/issues"
   },
-  "homepage": "https://github.com/ceremcem/livescript-ractive-example-project#readme",
+  "homepage": "https://github.com/aktos-io/scada.js",
   "dependencies": {
-    "bases": "^0.2.1",
-    "body-parser": "^1.15.2",
-    "bootstrap": "^3.3.7",
     "c3": "^0.4.14",
     "colors": "^1.1.2",
-    "cradle": "git://github.com/ceremcem/cradle.git#patch-1",
-    "crypto": "0.0.3",
     "csv-parse": "^1.1.7",
-    "electron": "^1.4.11",
-    "emailjs": "^1.0.5",
-    "engine.io": "^1.8.2",
     "express": "^4.14.0",
-    "express-http-proxy": "^0.8.0",
-    "hashids": "^1.1.1",
-    "http-proxy": "^1.14.0",
-    "jquery": "^3.0.0",
-    "jstransformer-marked": "^1.0.1",
     "livescript": "~1.4.0",
-    "mkdirp": "^0.5.1",
     "moment": "^2.18.1",
-    "nano": "^6.3.0",
     "nouislider": "^10.0.0",
-    "page": "^1.7.1",
     "prelude-ls": "^1.1.2",
-    "progressbar.js": "^1.0.1",
     "ractive": "^0.9.3",
     "randomstring": "^1.1.5",
     "rickshaw": "^1.6.0",
     "semantic-ui-calendar": "^0.0.8",
-    "serialport": "^4.0.1",
-    "serve-index": "^1.8.0",
     "sha.js": "^2.4.8",
-    "soap": "^0.16.0",
     "socket.io": "^2.0.2",
     "superagent": "^3.1.0",
-    "uuid4": "^1.0.0",
-    "xml2js": "^0.4.17"
+    "uuid4": "^1.0.0"
   },
   "devDependencies": {
     "browserify": "^13.1.1",
@@ -78,7 +51,6 @@
     "node-notifier": "^4.6.1",
     "optimize-js": "^1.0.2",
     "pug": "^2.0.0-beta6",
-    "run-sequence": "^1.2.2",
     "through2": "^2.0.3",
     "touch": "^1.0.0",
     "vinyl-buffer": "^1.0.0",
