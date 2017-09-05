@@ -41,25 +41,17 @@ export class logger
         if @level > debug-levels.silent
             console.log.apply console, [@get-prefix!] ++ args
 
-    log-green: ->
+    log-green: ~>
         @log green ...
 
-    err: (...args) ->
+    err: (...args) ~>
         if @level > debug-levels.silent
             console.error.apply console, [@get-prefix!] ++ args
 
-    section: (section, ...args) ->
-        if section in @sections
-            pfx = "#{get-prefix!} |#{section}| :"
-            console.log.apply console, [pfx] ++ args
-
-    err-section: (section, ...args) ->
-        if section in @sections
-            console.error.apply console, [@get-prefix!] ++ args
-
-    warn-section: (section, ...args) ->
-        if section in @sections
-            console.warn.apply console, [@get-prefix!] ++ args
-
-    warn: (...args) ->
+    warn: (...args) ~>
         console.warn.apply console, [@get-prefix!, yellow('[WARNING]')] ++ args
+
+    section: (section, ...args) ~>
+        if section in @sections
+            pfx = "#{@get-prefix!} |#{section}| :"
+            console.log.apply console, [pfx] ++ args
