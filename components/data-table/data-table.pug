@@ -56,14 +56,14 @@ include ./controls.pug
                         //- edit form
                         //- -----------------------------------------------
                         +iff('isEditingRow(.id)')
-                            td(colspan="{{ colNames.length }}")
+                            td(colspan="{{ colNames.length }}" class="data-table-opened-row")
                                 +apply('editForm')
 
                         //- -----------------------------------------------
                         //- view form
                         //- -----------------------------------------------
                         +elif('isViewingRow(.id)')
-                            td(colspan="{{ colNames.length }}")     
+                            td(colspan="{{ colNames.length }}" class="data-table-opened-row")     
                                 +apply('viewForm')
                             
                         //- -----------------------------------------------
