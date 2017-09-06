@@ -56,7 +56,7 @@ Ractive.components['checkbox'] = Ractive.extend do
 
                 if s in <[ error ]>
                     console.warn "scadajs: Deprecation: use \"checkbox.fire \\error\" instead"
-                    @fire \error, msg, callback
+                    @error msg, callback
 
                 __.set \selfDisabled, self-disabled
 

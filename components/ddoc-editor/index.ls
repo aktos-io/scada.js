@@ -35,7 +35,7 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                 ev.component.fire \state, \doing
                 err, res <~ db.all {startkey: "_design/", endkey: "_design0", +include_docs}
                 if err
-                    ev.component.fire \error, pack err
+                    ev.component.error pack err
                     console.log "this is error on list design documents: ", err
                     return
                 @set \designDocuments, [..key for res]
@@ -46,7 +46,7 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                 self = this
                 # get the _auth design document
                 err, res <- db.get doc-id
-                return ev.component.fire \error, err.message if err
+                return ev.component.error err.message if err
 
                 console.log "Current _auth document: ", res
                 ddoc = res
@@ -60,7 +60,7 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                 __ = @
                 ev.component.fire \state, \doing
                 err, res <- db.all {startkey: "_design/", endkey: "_design0", +include_docs}
-                return ev.component.fire \error, err.message if err
+                return ev.component.error err.message if err
 
                 __.set \allDesignDocs, ["\n\n\# ID: #{..doc._id} \n\n #{JSON.stringify(..doc, null, 2)}" for res].join('')
 
@@ -76,7 +76,7 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                     ev.component.fire \state, \done...
                 catch err
                     js = err.to-string!
-                    ev.component.fire \error, "See Output Textarea"
+                    ev.component.error "See Output Textarea"
                 @set \designDocument.javascript, js
 
             putDesignDocument: (ev, e) ->
@@ -91,14 +91,14 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                     delete ddoc._rev
                 id = ddoc._id
                 if id.split('/').1 is ''
-                    return ev.component.fire \error, "Design document name cannot be empty: #{id}"
+                    return ev.component.error "Design document name cannot be empty: #{id}"
                 ddoc-js = eval ddoc.javascript
 
                 # convert special functions to strings
                 try
                     ddoc.views = ddoc-js.views
                 catch
-                    ev.component.fire \error, "Did you compile your view?"
+                    ev.component.error "Did you compile your view?"
                     return
                 ddoc.lists = ddoc-js.lists
                 ddoc.validate_doc_update = ddoc-js.validate_doc_update
@@ -107,7 +107,7 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                 console.log "Full document to upload: ", ddoc
                 err, res <- db.put ddoc
                 if err
-                    ev.component.fire \error, err.message
+                    ev.component.error err.message
                     console.error "Error uploading ddoc-src document: ", err
                     return
 
