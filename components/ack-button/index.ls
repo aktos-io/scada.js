@@ -25,9 +25,6 @@ Ractive.components['ack-button'] = Ractive.extend do
         else
             3_200ms
 
-        @observe \tooltip, (new-val) ->
-            @set \reason, new-val
-
         @on do
             click: ->
                 val = @get \value
@@ -57,15 +54,15 @@ Ractive.components['ack-button'] = Ractive.extend do
                 if s in <[ doing ]>
                     @set \state, \doing
                     self-disabled = yes
-                    reason <~ @doing-watchdog.wait @button-timeout
-                    if reason is \timeout
+                    err <~ @doing-watchdog.wait @button-timeout
+                    if err
                         @error "button timed out!"
 
                 @set \selfDisabled, self-disabled
 
                 if s in <[ error ]>
                     console.warn "scadajs: Deprecation: use \"ack-button.fire \\error\" instead"
-                    @fire \error, msg, callback
+                    @error msg, callback
 
         @error = (msg, callback) ~>
             console.log "ack-button error: #{pack msg}"
@@ -85,7 +82,7 @@ Ractive.components['ack-button'] = Ractive.extend do
             action <~ logger.fire \showDimmed, {}, msg, {-closable}
 
             @set \state, \error
-            @set \reason, msg.message
+            @set \tooltip, msg.message
             @set \selfDisabled, no
 
             #console.log "error has been processed by ack-button, action is: #{action}"
@@ -141,8 +138,7 @@ Ractive.components['ack-button'] = Ractive.extend do
         @doing-watchdog.go!
 
     data: ->
-        __ = @
-        reason: ''
+        tooltip: ''
         type: "default"
         value: ""
         class: ""

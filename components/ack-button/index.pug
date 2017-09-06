@@ -1,7 +1,7 @@
 btn(
     on-buttonclick="click"
     value="{{value}}"
-    title="{{reason}}"
+    title="{{tooltip}}"
     class="{{ class }} ack-button {{#if (state === 'doing') || (state === 'done') || (state === 'error') }}labeled icon{{/if}}"
     type="{{ type }}"
     disabled="{{ (disabled || selfDisabled) || !(enabled) }}"
