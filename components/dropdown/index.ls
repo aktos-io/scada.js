@@ -1,4 +1,4 @@
-require! 'prelude-ls': {find}
+require! 'prelude-ls': {find, empty}
 require! 'dcs/browser': {RactiveActor}
 require! 'aea': {sleep}
 
@@ -33,9 +33,13 @@ Ractive.components['dropdown'] = Ractive.extend do
             if @get \data
                 item = find ((x) -> x[keyField] is key-value), that
                 @set \item, item
+                @set \selected-name, item?[nameField]
+                @set \selected-key, item?[keyField]
 
         @observe \data, (data) ~>
             if debug => @actor.log.log "data is changed: ", data
+            if data => unless empty data
+                @set \loading, no
             dd
                 .dropdown 'restore defaults'
                 .dropdown 'destroy'
@@ -43,9 +47,10 @@ Ractive.components['dropdown'] = Ractive.extend do
                     forceSelection: no
                     on-change: (value, text, selected) ~>
                         value = try
-                            (find (-> it[nameField] is text), data)[keyField]
+                            selected.attr 'data-value'
                         catch
                             null
+
                         debugger if debug
                         if value
                             @set \selected, value
@@ -63,3 +68,4 @@ Ractive.components['dropdown'] = Ractive.extend do
         nothingSelected: '---'
         selected: \hello
         item: {}
+        loading: yes

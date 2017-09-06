@@ -1,11 +1,12 @@
 +iff('~/["text-mode"]')
-    | {{ item ? item[nameField] : nothingSelected }}
+    +apply('text-mode')
+
 +elif('~/["readonly-mode"]')
     .ui.input.disabled
         input(twoway="false" value="{{ item ? item[nameField] : nothingSelected }}")
 +else
     +iff('inline')
-        .ui.inline.dropdown(class="{{class}}")
+        .ui.inline.dropdown(class="{{class}} {{#loading}}loading{{/}}")
             input(type="hidden" name="{{_guid}}")
             i.dropdown.icon 
             .default.text {{ placeholder }}
@@ -14,9 +15,9 @@
                     .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
 
     +elif('custom')
-        | {{>content}}
+        | {{>custom}}
     +else
-        .ui.search.selection.dropdown(class="{{class}}")
+        .ui.search.selection.dropdown(class="{{class}} {{#loading}}loading{{/}}")
             input(type="hidden" name="{{_guid}}")
             i.dropdown.icon 
             .default.text {{ placeholder }}
@@ -25,3 +26,6 @@
                     .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
     +endif
 +endif
+
++if('debug')
+    debug-obj(obj="{{item}}")
