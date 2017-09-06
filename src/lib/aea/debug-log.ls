@@ -37,7 +37,7 @@ export class logger
     get-prefix: ->
         get-prefix @source-name
 
-    log: (...args) ->
+    log: (...args) ~>
         if @level > debug-levels.silent
             console.log.apply console, [@get-prefix!] ++ args
 
