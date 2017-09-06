@@ -13,7 +13,7 @@ Ractive.components['logger'] = Ractive.extend do
             #   message
             # callback: is fired when modal is closed. parameter: action.
             show-dimmed: (ev, msg, options, callback) ->
-                @logger.log "msg: ", msg, "options: ", options
+                #@logger.log "msg: ", msg, "options: ", options
                 if typeof! options is \Function
                     callback = options
                     options = {}
