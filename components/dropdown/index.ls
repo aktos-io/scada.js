@@ -7,7 +7,9 @@ Ractive.components['dropdown'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     oninit: ->
-        @actor = new RactiveActor this, \dropdown
+        @actor = new RactiveActor this, do
+            name: \dropdown
+            debug: yes
 
         if @get \key
             @set \keyField, that
@@ -66,6 +68,6 @@ Ractive.components['dropdown'] = Ractive.extend do
         keyField: \id
         nameField: \name
         nothingSelected: '---'
-        selected: \hello
+        selected: null
         item: {}
         loading: yes
