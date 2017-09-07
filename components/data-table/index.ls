@@ -164,23 +164,21 @@ Ractive.components['data-table'] = Ractive.extend do
                         @logger.cerr "Not closing row because there are unsaved changes."
                         @logger.clog "orig: ", @get \origCurr
                         @logger.clog "curr: ", @get \curr
-                        answer <~ @logger.yesno {
+                        answer <~ @logger.yesno do
                             title: "Discard changes?"
                             message: "If you select 'Drop Changes' all changes will be lost."
-                            }, {
                             buttons:
-                                * role: \ok
-                                  color: \red
-                                  text: 'Drop Changes'
-                                  icon: \trash
+                                drop:
+                                    color: \red
+                                    text: 'Drop Changes'
+                                    icon: \trash
 
-                                * role: \cancel
-                                  color: \green
-                                  text: 'Cancel'
-                                  icon: \undo
-                            }
+                                cancel:
+                                    color: \green
+                                    text: 'Cancel'
+                                    icon: \undo
 
-                        if answer is \approved
+                        if answer is \drop
                             return op!
                         else
                             @logger.cwarn "Cancelled discarding changes."
