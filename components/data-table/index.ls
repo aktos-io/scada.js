@@ -16,7 +16,9 @@ Ractive.components['data-table'] = Ractive.extend do
         @logger = new VLogger this
         settings = @get \settings
 
-        @actor = new RactiveActor this, 'data-table'
+        @actor = new RactiveActor this, do
+            name: 'data-table'
+            debug: settings.debug
 
         # check parameters
         try
