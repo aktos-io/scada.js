@@ -1,4 +1,4 @@
-require! 'aea': {merge, sleep}
+require! 'aea': {merge, sleep, VLogger}
 require! 'dcs/browser': {Signal}
 
 # for debugging reasons
@@ -13,17 +13,19 @@ Ractive.components['ack-button'] = Ractive.extend do
                 @set \transparent, yes
 
     onrender: ->
-        __ = @
         @doing-watchdog = new Signal!
-        # logger utility is defined here
-        logger = @root.find-component \logger
-        console.error "No logger component is found!" unless logger
-        # end of logger utility
+        logger = new VLogger this, \ack-button
 
         @button-timeout = if @get \timeout
             that
         else
             3_200ms
+
+        set-button = (mode, message) ~>
+            @set \state, mode
+            @set \tooltip, message
+            unless mode is \doing
+                @doing-watchdog.go!
 
         @on do
             click: ->
@@ -33,105 +35,49 @@ Ractive.components['ack-button'] = Ractive.extend do
                 @fire \buttonclick, {}, val
 
             state: (_event, s, msg, callback) ->
-                self-disabled = no
+                switch s
+                    when \done =>
+                        set-button \done
 
-                if s in <[ done ]>
-                    @set \state, \done
+                    when \done... =>
+                        set-button \done
+                        <~ sleep 3000ms
+                        set-button \normal
 
-                if s in <[ done... ]>
-                    @set \state, \done
-                    <~ sleep 3000ms
-                    if @get(\state) is \done
-                        @set \state, ''
+                    when \normal =>
+                        set-button \normal
 
-                if s in <[ done done... ]>
-                    @doing-watchdog.go!
-
-                if s in <[ normal ]>
-                    @doing-watchdog.go!
-                    @set \state, \normal
-
-                if s in <[ doing ]>
-                    @set \state, \doing
-                    self-disabled = yes
-                    err <~ @doing-watchdog.wait @button-timeout
-                    if err
-                        @error "button timed out!"
-
-                @set \selfDisabled, self-disabled
-
-                if s in <[ error ]>
-                    console.warn "scadajs: Deprecation: use \"ack-button.fire \\error\" instead"
-                    @error msg, callback
+                    when \doing =>
+                        set-button \doing
+                        @set \selfDisabled, yes
+                        timeout <~ @doing-watchdog.wait @button-timeout
+                        @set \selfDisabled, no
+                        if timeout
+                            msg = "Button is timed out."
+                            logger.error msg
+                            set-button \error, msg
 
         @error = (msg, callback) ~>
-            console.log "ack-button error: #{pack msg}"
-            @doing-watchdog.go!
-
-            msg = if typeof! msg is \String
-                {message: msg}
-            else if not msg
-                {message: '(message is empty)'}
-            else
-                msg
-
-            msg = msg `merge` {
-                title: msg.title or 'Error'
-                icon: "warning sign"
-            }
-            action <~ logger.fire \showDimmed, {}, msg, {-closable}
-
-            @set \state, \error
-            @set \tooltip, msg.message
-            @set \selfDisabled, no
-
-            #console.log "error has been processed by ack-button, action is: #{action}"
-            callback action if typeof! callback is \Function
+            logger.error msg, callback
+            set-button \error, (msg.message or msg)
 
         @info = (msg, callback) ~>
-            @doing-watchdog.go!
-            msg = if typeof! msg is \String
-                {message: msg}
-            else if not msg
-                {message: '(message is empty)'}
-            else
-                msg
-
-            msg = msg `merge` {
-                title: msg.title or 'Info'
-                icon: "info circle"
-            }
-            action <- logger.fire \showDimmed, {}, msg, {-closable}
-            #console.log "info has been processed by ack-button, action is: #{action}"
-            callback action if typeof! callback is \Function
+            logger.info msg, callback
+            set-button \normal
 
         @yesno = (msg, callback) ~>
-            @doing-watchdog.go!
-            msg = if typeof! msg is \String
-                {message: msg}
-            else if not msg
-                {message: '(message is empty)'}
-            else
-                msg
-
-            msg = msg `merge` {
-                title: msg.title or 'Yes or No'
-                icon: "map signs"
-            }
-            action <- logger.fire \showDimmed, {}, msg, {-closable, mode: \yesno}
-            #console.log "yesno dialog has been processed by ack-button, action is: #{action}"
-            callback action if typeof! callback is \Function
-
+            logger.yesno msg, callback
+            set-button \normal
 
         @heartbeat = (duration) ~>
-            console.log "ack-button received a heartbeat: #{duration}"
+            logger.clog "ack-button received a heartbeat: #{duration}"
             @doing-watchdog.heartbeat duration
             @set \heartbeat, yes
             <~ sleep 200ms
             @set \heartbeat, no
 
         if @get \auto
-            console.log "auto firing ack-button!"
+            logger.clog "auto firing ack-button!"
             @fire \click
 
     onteardown: ->

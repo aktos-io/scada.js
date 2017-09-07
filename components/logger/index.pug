@@ -6,7 +6,7 @@
             
     .actions 
         +each('buttons')
-            .ui.inverted.button(class="{{.role}} {{.color}}")
+            .ui.inverted.button(class="{{.color}}" on-click="['selectionMade', .action]")
                 +if('.icon')
                     i.icon(class="{{.icon}}")
                 | {{.text}}
