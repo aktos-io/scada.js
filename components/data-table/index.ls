@@ -161,7 +161,7 @@ Ractive.components['data-table'] = Ractive.extend do
             close-row: ->
                 <~ :lo(op) ~>
                     if pack(@get \origCurr) isnt pack(@get \curr)
-                        @logger.cerr "Not closing row because there are unsaved changes."
+                        @logger.cwarn "Not closing row because there are unsaved changes."
                         @logger.clog "orig: ", @get \origCurr
                         @logger.clog "curr: ", @get \curr
                         answer <~ @logger.yesno do
