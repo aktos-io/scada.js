@@ -1,6 +1,7 @@
 # for debugging purposes
-require! colors: {green, gray, yellow}
+require! colors: {green, gray, yellow, bg-red, bg-yellow}
 require! moment
+require! 'prelude-ls': {map}
 
 fmt = 'HH:mm:ss.SSS'
 
@@ -16,9 +17,10 @@ get-timestamp = ->
     # differential time
     #moment.utc(moment((new moment), fmt).diff(moment(startTime, fmt))).format(fmt)
 
-get-prefix = (_source) ->
+get-prefix = (_source, color) ->
+    color = gray unless color
     padded = align-left 15, "#{_source}"
-    (gray "[#{get-timestamp!}] ") + "#{padded} :"
+    (color "[#{get-timestamp!}] ") + "#{padded} :"
 
 export debug-levels =
     silent: 0
@@ -34,8 +36,8 @@ export class logger
         @start-time = start-time
         @sections = []
 
-    get-prefix: ->
-        get-prefix @source-name
+    get-prefix: (color) ->
+        get-prefix @source-name, color
 
     log: (...args) ~>
         if @level > debug-levels.silent
@@ -46,10 +48,10 @@ export class logger
 
     err: (...args) ~>
         if @level > debug-levels.silent
-            console.error.apply console, [@get-prefix!] ++ args
+            console.error.apply console, [@get-prefix bg-red] ++ args
 
     warn: (...args) ~>
-        console.warn.apply console, [@get-prefix!, yellow('[WARNING]')] ++ args
+        console.warn.apply console, [@get-prefix(bg-yellow), yellow('[WARNING]')] ++ args
 
     section: (section, ...args) ~>
         if section in @sections
