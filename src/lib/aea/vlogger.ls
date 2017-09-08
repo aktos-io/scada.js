@@ -2,12 +2,16 @@ require! './debug-log': {logger: Logger}
 
 export class VLogger
     (@context, name)->
-        # context is the ractive context
-        @modal = @context.root.find-component \logger
         @logger = new Logger (name or \VLogger)
         @clog = @logger.log
         @cerr = @logger.err
         @cwarn = @logger.warn
+
+        @modal = @context.root.find-component \logger
+
+        unless @modal
+            @logger.err "VLogger class requires 'logger' component. Add it first."
+            return
 
     info: (msg, callback) ->
         if typeof! callback is \Object
