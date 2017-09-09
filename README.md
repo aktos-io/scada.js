@@ -36,9 +36,9 @@ Demo application [source is here](https://github.com/aktos-io/scadajs-template) 
 
 You may get up and running with ScadaJS in 2 different ways:
 
-### [OPTION: 1] Modify the template 
+### [OPTION: 1] Modify the template
 
-Download [scadajs-template](https://github.com/aktos-io/scadajs-template) and edit to your needs. 
+Download [scadajs-template](https://github.com/aktos-io/scadajs-template) and edit to your needs.
 
 ### [OPTION: 2] Install from scratch
 
@@ -63,9 +63,8 @@ You can add ScadaJS to any of your existing projects:
 When you first create or clone a project that depends on ScadaJS, you need to install the ScadaJS dependencies:
 
     cd your-project
-    git submodule update --init --recursive
-    cd scada.js
-    npm install
+    ./scada.js/update.sh
+    ./scada.js/install-modules.sh
 
 #### 4. Create a webapp
 
@@ -93,7 +92,7 @@ new Ractive({
 });
 ```
 
-4. Create your `app.html` (or `app.pug`) as your application template 
+4. Create your `app.html` (or `app.pug`) as your application template
 
 ```html
 <h2>hello {{name}}!</h2>
@@ -131,6 +130,6 @@ You can simply build `your-webapp` with the following command:
 
 You can see `your-webapp` by opening `your-project/scada.js/build/your-webapp/index.html` with any modern browser.
 
-#### 7. Next Steps 
+#### 7. Next Steps
 
 At this point, you will get a "hello world" application. In order to build an application that has a realtime layer, authentication support and so on, see the [showcase](https://github.com/aktos-io/scadajs-template).
