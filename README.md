@@ -36,13 +36,13 @@ Demo application [source is here](https://github.com/aktos-io/scadajs-template) 
 
 You may get up and running with ScadaJS in 2 different ways:
 
-### Modify the template 
+### [OPTION: 1] Modify the template 
 
-Download and edit [scadajs-template](https://github.com/aktos-io/scadajs-template)
+Download [scadajs-template](https://github.com/aktos-io/scadajs-template) and edit to your needs. 
 
-### Install from scratch
+### [OPTION: 2] Install from scratch
 
-Follow the steps below in order to add ScadaJS to your existing project:
+Follow the steps below to add ScadaJS into your existing project:
 
 #### 1. Install Global Dependencies
 
