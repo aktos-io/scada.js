@@ -15,7 +15,13 @@ include ./controls.pug
         +if('addingNew')
             +apply('editForm') 
     +else
-        r-table.selectable(class!="{{#openedRow}}inverted teal{{/}}")
+        r-table(class!="        \
+            {{#if openedRow}}   \
+                                \
+            {{else}}            \
+                selectable      \
+            {{/if}}             \
+            ")
             r-head
                 
                 +if('@.partials.header')
@@ -34,7 +40,7 @@ include ./controls.pug
                                     #[btn.blue.mini(on-buttonclick="setFilter" value="all") #[i.remove.icon] Clear Filter]
 
                 +if('addingNew')
-                    r-row
+                    r-row(class="active")
                         th(colspan="{{ colNames.length }}")
                             +apply('editForm')
                 r-row                    
@@ -50,7 +56,11 @@ include ./controls.pug
                     tr(
                         data-anchor="{{.id}}"
                         on-click!="['clicked', this]"
-                        class!="{{#if isDisabled(.id)}}disabled{{/if}}"
+                        class!="                            \
+                            {{#if isDisabled(.id)}}         \
+                                disabled                    \
+                            {{/if}}                         \
+                            "
                         )    
                         //- -----------------------------------------------
                         //- edit form
@@ -63,7 +73,7 @@ include ./controls.pug
                         //- view form
                         //- -----------------------------------------------
                         +elif('isViewingRow(.id)')
-                            td(colspan="{{ colNames.length }}" class="data-table-opened-row")     
+                            td(colspan="{{ colNames.length }}" class="data-table-opened-row")    
                                 +apply('viewForm')
                             
                         //- -----------------------------------------------
