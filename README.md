@@ -36,77 +36,101 @@ Demo application [source is here](https://github.com/aktos-io/scadajs-template) 
 
 You may get up and running with ScadaJS in 2 different ways:
 
-* Download and edit [scadajs-template](https://github.com/aktos-io/scadajs-template)
-* Follow the steps below in order to add ScadaJS to your existing project:
+### [OPTION: 1] Modify the template 
 
-   ### 1. Install Global Dependencies
+Download [scadajs-template](https://github.com/aktos-io/scadajs-template) and edit to your needs. 
 
-   1. Install [`NodeJs`](https://nodejs.org)
-   2. Install global `npm` dependencies:
+### [OPTION: 2] Install from scratch
 
-           npm install -g gulp yarn livescript@1.4.0
+Follow the steps below to add ScadaJS into your existing project:
 
-   ### 2. Add ScadaJS Into Your Project
+#### 1. Install Global Dependencies
 
-   You can add ScadaJS to any of your existing projects:
+1. Install [`NodeJs`](https://nodejs.org)
+2. Install global `npm` dependencies (**as root/admin**):
+
+        npm install -g gulp livescript@1.4.0
+
+#### 2. Add ScadaJS Into Your Project
+
+You can add ScadaJS to any of your existing projects:
+
+    cd your-project
+    git submodule add https://github.com/aktos-io/scada.js
+
+#### 3. Install ScadaJS Dependencies
+
+When you first create or clone a project that depends on ScadaJS, you need to install the ScadaJS dependencies:
+
+    cd your-project
+    git submodule update --init --recursive
+    cd scada.js
+    npm install
+
+#### 4. Create a webapp
+
+1. Create the `webapps` folder which will hold all of your webapps:
 
        cd your-project
-       git submodule add https://github.com/aktos-io/scada.js
+       mkdir webapps
 
-   ### 3. Install ScadaJS Dependencies
+2. Create `your-webapp`'s folder:
 
-   When you first create or clone a ScadaJS project, you need to install the dependencies:
+       cd webapps
+       mkdir your-webapp
+       cd your-webapp
 
-       cd your-project
-       git submodule update --init --recursive
-       cd scada.js
-       yarn  # or `npm install`
+3. Create an `app.js` (or `app.ls`) here with the following contents:
 
-   ### 4. Create a webapp
+```js
+new Ractive({
+  el: 'body',
+  template: RACTIVE_PREPARSE('app.pug'),
+  data: {
+    name: "world",
+    x: 35
+  }
+});
+```
 
-   1. Create the `webapps` folder which will hold all of your webapps:
+4. Create your `app.html` (or `app.pug`) as your application template 
 
-          cd your-project
-          mkdir webapps
+```html
+<h2>hello {{name}}!</h2>
+<input value="{{name}}" />
 
-   2. Create `your-webapp`'s folder:
+<h3>Slider/progress</h3>
+<slider inline value="{{x}}" />
+<progress type="circle" value="{{x}}" />
+```
 
-          cd webapps
-          mkdir your-webapp
-          cd your-webapp
+4. Create an `index.html` (or `index.pug`) here with the following contents:
 
-   3. Create an `app.js` (or `app.ls`) here with the following contents:
+```html
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="js/vendor.js"></script>
+    <link rel="stylesheet" href="css/vendor.css">
+  </head>
+  <body>
+    <h1>Loading...</h1>
+    <script src="app.js"></script>
+  </body>
+</html>
+```
 
-   ```js
-   new Ractive({
-     el: 'body',
-     template: "<h2>hello world!</h2>"
-   });
-   ```
+#### 5. Build your webapp
 
-   4. Create an `index.html` (or `index.pug`) here with the following contents:
+You can simply build `your-webapp` with the following command:
 
-   ```html
-   <html>
-     <head>
-       <meta charset="utf-8">
-       <script src="js/vendor.js"></script>
-       <link rel="stylesheet" href="css/vendor.css">
-     </head>
-     <body>
-       <h1>Loading...</h1>
-       <script src="app.js"></script>
-     </body>
-   </html>
-   ```
+    cd your-project/scada.js
+    gulp --webapp your-webapp [--production]
 
-   ### 5. Build Your Webapp
+#### 6. See the result
 
-   You can simply build `your-webapp` with the following command:
+You can see `your-webapp` by opening `your-project/scada.js/build/your-webapp/index.html` with any modern browser.
 
-       cd your-project/scada.js
-       gulp --webapp your-webapp [--production]
+#### 7. Next Steps 
 
-   ### 6. See the result
-
-   You can see `your-webapp` by opening `your-project/scada.js/build/your-webapp/index.html` with any modern browser.
+At this point, you will get a "hello world" application. In order to build an application that has a realtime layer, authentication support and so on, see the [showcase](https://github.com/aktos-io/scadajs-template).
