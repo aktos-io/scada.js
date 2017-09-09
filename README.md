@@ -60,7 +60,7 @@ You can add ScadaJS to any of your existing projects:
 
 #### 3. Install ScadaJS Dependencies
 
-When you first create or clone a ScadaJS project, you need to install the dependencies:
+When you first create or clone a project that depends on ScadaJS, you need to install the ScadaJS dependencies:
 
     cd your-project
     git submodule update --init --recursive
@@ -85,8 +85,23 @@ When you first create or clone a ScadaJS project, you need to install the depend
 ```js
 new Ractive({
   el: 'body',
-  template: "<h2>hello world!</h2>"
+  template: RACTIVE_PREPARSE('app.pug'),
+  data: {
+    name: "world",
+    x: 35
+  }
 });
+```
+
+4. Create your `app.html` (or `app.pug`) as your application template 
+
+```html
+<h2>hello {{name}}!</h2>
+<input value="{{name}}" />
+
+<h3>Slider/progress</h3>
+<slider inline value="{{x}}" />
+<progress type="circle" value="{{x}}" />
 ```
 
 4. Create an `index.html` (or `index.pug`) here with the following contents:
@@ -118,4 +133,4 @@ You can see `your-webapp` by opening `your-project/scada.js/build/your-webapp/in
 
 #### 7. Next Steps 
 
-At this point, you will get a "hello world" application. In order to build an application that has a realtime layer, authentication support, that is optimized for performance and so on, see the [showcase](https://github.com/aktos-io/scadajs-template).
+At this point, you will get a "hello world" application. In order to build an application that has a realtime layer, authentication support and so on, see the [showcase](https://github.com/aktos-io/scadajs-template).
