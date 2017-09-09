@@ -1,4 +1,8 @@
 #!/bin/bash
 
+DIR=$(dirname "$(readlink -f "$0")")
+
 git submodule update --recursive --init
-git submodule foreach git pull
+cd $DIR
+git submodule update --recursive --init
+
