@@ -1,2 +1,3 @@
-panel(type="danger" title="DEBUG OBJECT")
-    textarea(style="width: 100%" twoway="false" value="{{ JSON.stringify(debuggingObj, null, 2) }}")
+.ui.message.red
+    h3.ui.header Debugging Object {{#title}}({{title}}){{/}}
+    pre {{ JSON.stringify(obj, null, 2) }}

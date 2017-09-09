@@ -39,7 +39,6 @@ require! 'gulp-tap': tap
 require! 'gulp-cached': cache
 require! 'gulp-sourcemaps': sourcemaps
 require! 'browserify-livescript'
-require! 'run-sequence'
 require! 'through2':through
 require! 'optimize-js'
 require! 'gulp-if-else': if-else

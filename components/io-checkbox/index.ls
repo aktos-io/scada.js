@@ -35,7 +35,7 @@ Ractive.components['io-checkbox'] = Ractive.extend do
                 #console.log "checkbox for #{topic} is toggled to be #{next}"
                 err, res <~ actor.write cb-states[next]
                 if err
-                    ev.component.fire \error, message: "error writing output: #{err}"
+                    ev.component.error message: "error writing output: #{err}"
                 else
                     try
                         @set \curr, res.payload.curr
@@ -43,6 +43,6 @@ Ractive.components['io-checkbox'] = Ractive.extend do
                             ev.component.fire \state, next
                         else
                             ev.component.fire \state, curr
-                            ev.component.fire \error, message: "Could not change state!"
+                            ev.component.error message: "Could not change state!"
                     catch
                         debugger

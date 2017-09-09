@@ -19,8 +19,7 @@ export class ButtonActor extends Actor
         #@log.log "sending #{value}"
         @ack.clear!
         @send-io {val: value}
-        reason, msg <~ @ack.wait 4000ms
-        err = reason is \timeout
+        err, msg <~ @ack.wait 4000ms
         #@log.log "response arrived: "
         #console.log msg
 

@@ -1,4 +1,3 @@
-require! page
 require! 'aea': {sleep}
 require! 'prelude-ls': {take, drop, split}
 

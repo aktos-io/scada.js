@@ -1,24 +1,26 @@
 # for debugging purposes
-require! colors: {green, gray, yellow}
+require! colors: {green, gray, yellow, bg-red, bg-yellow}
+require! moment
+require! 'prelude-ls': {map}
 
-start-time = new Date! .get-time!
+fmt = 'HH:mm:ss.SSS'
 
-export debug-log = (...x) ->
-    console.warn yellow "Deprecated: Use logger class instead."
-    console.log.apply this, [(new Date! .get-time! - start-time) + "ms : "]  ++ x
+start-time = new moment
 
-function align-left width, inp
+align-left = (width, inp) ->
     x = (inp + " " * width).slice 0, width
 
-export get-logger = (debug-source, opts={}) ->
-    (...x) ->
-        console.warn yellow "Deprecated: Use logger class instead."
-        return if debug-level is \silent
-        if opts.incremental
-            timestamp = (new Date! .get-time! - start-time) + "ms"
-        else
-            timestamp = Date!
-        console.log.apply console, ["#{timestamp}:", (align-left 15, "#{debug-source}") + ":"] ++ x
+get-timestamp = ->
+    # current time
+    (new moment).format fmt
+
+    # differential time
+    #moment.utc(moment((new moment), fmt).diff(moment(startTime, fmt))).format(fmt)
+
+get-prefix = (_source, color) ->
+    color = gray unless color
+    padded = align-left 15, "#{_source}"
+    (color "[#{get-timestamp!}] ") + "#{padded} :"
 
 export debug-levels =
     silent: 0
@@ -34,48 +36,24 @@ export class logger
         @start-time = start-time
         @sections = []
 
-    log: (...args) ->
-        if @level > debug-levels.silent
-            console.log.apply this, [@_get-prefix!] ++ args
+    get-prefix: (color) ->
+        get-prefix @source-name, color
 
-    log-green: ->
+    log: (...args) ~>
+        if @level > debug-levels.silent
+            console.log.apply console, [@get-prefix!] ++ args
+
+    log-green: ~>
         @log green ...
 
-    debug-log: (...args) ->
-        if @level >= debug-levels.debug
-            console.warn "debug-log is depreciated. use log-section instead."
-            @log ...args
-
-    err: (...args) ->
+    err: (...args) ~>
         if @level > debug-levels.silent
-            console.error.apply console, [@_get-prefix!] ++ args
+            console.error.apply console, [@get-prefix bg-red] ++ args
 
-    section: (section, ...args) ->
+    warn: (...args) ~>
+        console.warn.apply console, [@get-prefix(bg-yellow), yellow('[WARNING]')] ++ args
+
+    section: (section, ...args) ~>
         if section in @sections
-            pfx = "#{@_get-prefix!} |#{section}| :"
+            pfx = "#{@get-prefix!} |#{section}| :"
             console.log.apply console, [pfx] ++ args
-
-    err-section: (section, ...args) ->
-        if section in @sections
-            console.error.apply console, [@_get-prefix!] ++ args
-
-    warn-section: (section, ...args) ->
-        if section in @sections
-            console.warn.apply console, [@_get-prefix!] ++ args
-
-    warn: (...args) ->
-        console.warn.apply console, [@_get-prefix!, yellow('[WARNING]')] ++ args
-
-
-    _get-timestamp: ->
-        "#{new Date! .get-time! - @start-time}ms"
-
-    _get-prefix: ->
-        src-name = align-left 15, "#{@source-name}"
-        (gray "#{@_get-timestamp!}: ") + "#{src-name} :"
-
-if testing=no
-    a = new logger \a
-    a.log "hello there"
-    # =>
-    # 1ms: a               : hello there

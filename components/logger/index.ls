@@ -1,48 +1,81 @@
-require! 'aea': {merge}
+require! 'aea': {merge, logger: Logger, pack, sleep}
+require! 'dcs/browser': {Signal}
 
 Ractive.components['logger'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->
         modal = $ @find '.ui.basic.modal'
-
+        @logger = new Logger "Global Modal"
+        selection-signal = new Signal!
         @on do
             # msg:
             #   title
             #   message
             # callback: is fired when modal is closed. parameter: action.
-            show-dimmed: (ev, msg, options, callback) ->
-                console.log "Ractive Logger: msg: ", msg, "options: ", options
-                if typeof! options is \Function
-                    callback = options
-                    options = {}
+            show-dimmed: (ev, msg, callback) ->
+                # print same message to the console for debugging purposes
+                @logger.log msg
+                
+                selection-signal.reset!
 
-                options = {+closable, mode: \ok} `merge` options
+                # DEPRECATION
+                if typeof! callback is \Object
+                    debugger
+                    throw
 
-                @set \mode, options.mode
-                @set \icon, msg.icon
-
-                @set \dimmedTitle, msg.title if msg.title
-                @set \dimmedMessage, (msg.message or msg)
+                # Set nop if callback is undefined
                 unless typeof! callback is \Function
                     callback = ->
 
-                action-taken = null
+                # default modal document options
+                default-opts =
+                    closable: yes
+                    title: 'Modal'
+                    buttons:
+                        ok:
+                            color: \green
+                            text: \Okay
+                            icon: \check
+
+                # set message content
+                # ------------------------------------
+                switch typeof! msg
+                    when \String => msg = {message: msg}
+                    when \Object =>
+                        unless msg.message
+                            msg.message = JSON.stringify msg.message, null, 2
+
+                msg = default-opts <<< msg
+
+                # create buttons
+                # ------------------------------------
+                @set \buttons, for name of msg.buttons
+                    msg.buttons[name].action = name
+                    msg.buttons[name]
+
+                # set message content
+                # ------------------------------------
+                @set do
+                    dimmedMessage: msg.message
+                    icon: msg.icon
+                    dimmedTitle: msg.title
+
                 modal.modal do
-                    closable: options.closable
-                    on-deny: ->
-                        action-taken := \denied
-                        callback action-taken
-                    on-approve: ->
-                        action-taken := \approved
-                        callback action-taken
-                    on-hide: ->
-                        callback \hidden unless action-taken
+                    closable: msg.closable
+                    on-hide: ~>
+                        selection-signal.go \hidden
+                        # this function must return `true`
+                        # in order to let the modal to disappear
+                        yes
 
                 modal.modal \show
 
-    data: ->
-        dimmed-title: "Upps!"
-        dimmed-message: "(there should be a message here)"
-        mode: null
-        icon: null
+                timeout, action <~ selection-signal.wait
+                @logger.log "selection made. action: ", action
+                modal.modal \hide
+                <~ sleep 0
+                callback action
+
+            selectionMade: (ctx, action) ->
+                selection-signal.go action

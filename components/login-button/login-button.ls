@@ -69,17 +69,17 @@ Ractive.components['login-button'] = Ractive.extend do
                     credentials =
                         token: token
                 else
-                    ev.component?.fire \error, "no credentials given"
+                    ev.component?.error "no credentials given"
                     return
 
                 log.log "Trying to login with credentials..."
                 err, res <~ connector.proxy.login credentials
 
                 if err
-                    <~ ev.component?.fire \error, "something went wrong with login: #{pack err}"
+                    <~ ev.component?.error "something went wrong with login: #{pack err}"
                 else
                     if res.auth.error
-                        ev.component?.fire \error, pack(that)
+                        ev.component?.error pack that
                     else if res.auth.session.token
                         ev.component?.fire \state, \done...
                         # calculate context
@@ -98,7 +98,7 @@ Ractive.components['login-button'] = Ractive.extend do
                         log.log "Will log out..."
                         set-logout-variables!
                     else
-                        <~ ev.component?.fire \error, "unexpected response on login: #{pack res}"
+                        <~ ev.component?.error "unexpected response on login: #{pack res}"
 
             do-logout: (ev) ->
                 log.log "Logging out."
@@ -106,7 +106,7 @@ Ractive.components['login-button'] = Ractive.extend do
                 ev.component?.fire \state, \doing
                 err, res <~ connector.proxy.logout
                 if err
-                    <~ ev.component.fire \error, "something went wrong while logging out"
+                    <~ ev.component.error "something went wrong while logging out"
                     #console.log "user pressed button on error screen. "
                     set-logout-variables!
                 else
@@ -115,7 +115,7 @@ Ractive.components['login-button'] = Ractive.extend do
                         #console.log "login button says: we got: ", res
                         set-logout-variables!
                     else
-                        <~ ev.component?.fire \error, "something went wrong while logging out, res: #{pack res}"
+                        <~ ev.component?.error "something went wrong while logging out, res: #{pack res}"
                         set-logout-variables!
 
             do-action: (ev) ->

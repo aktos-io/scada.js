@@ -3,6 +3,7 @@ require! 'prelude-ls': {
     camelize, find, reject, find-index
 }
 require! 'aea': {sleep, merge, clone, unix-to-readable, pack, VLogger}
+require! 'dcs/browser': {RactiveActor}
 
 Ractive.components['data-table'] = Ractive.extend do
     template: RACTIVE_PREPARSE('data-table.pug')
@@ -14,6 +15,10 @@ Ractive.components['data-table'] = Ractive.extend do
 
         @logger = new VLogger this
         settings = @get \settings
+
+        @actor = new RactiveActor this, do
+            name: 'data-table'
+            debug: settings.debug
 
         # check parameters
         try
@@ -40,7 +45,7 @@ Ractive.components['data-table'] = Ractive.extend do
             else
                 settings.on-init = settings.on-init.bind this
         catch
-            @logger.error e
+            @logger.cerr e
             return
 
         # function to use adding on new document
@@ -57,7 +62,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 else
                     clone settings.default
             catch
-                @logger.error e
+                @logger.cerr e
 
         @set \colNames, settings.col-names
         opening-dimmer = $ @find \.table-section-of-data-table
@@ -72,7 +77,7 @@ Ractive.components['data-table'] = Ractive.extend do
         @refresh = ~>
             filter-func = @get(\dataFilters)[@get(\selectedFilter)]
             if typeof! filter-func isnt \Function
-                @logger.error 'Filter function is not a function'
+                @logger.cerr 'Filter function is not a function'
 
             # get tableview
             tableview = @get \tableview
@@ -105,7 +110,7 @@ Ractive.components['data-table'] = Ractive.extend do
                         @logger.error "Column count does not match with after-filter output!"
                         return
                     for i in items when i.id in [undefined, null]
-                        return @logger.error "id can not be null or undefined: #{pack i}."
+                        return @logger.cerr "id can not be null or undefined: #{pack i}."
                 @set \tableview_visible, items
 
 
@@ -118,7 +123,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 index = row.id
                 return if @get(\clickedIndex) is index # do not allow multiple clicks
                 if @get \addingNew
-                    return console.warn "adding new, not opening any rows"
+                    return @logger.cwarn "adding new, not opening any rows"
 
                 @set \clickedIndex, index
                 @set \openingRow, yes
@@ -156,12 +161,27 @@ Ractive.components['data-table'] = Ractive.extend do
             close-row: ->
                 <~ :lo(op) ~>
                     if pack(@get \origCurr) isnt pack(@get \curr)
-                        console.error "do not close row because it is changed."
-                        answer <~ @logger.yesno "Do you want to discard changes?"
-                        if answer is \approved
+                        @logger.cwarn "Not closing row because there are unsaved changes."
+                        @logger.clog "orig: ", @get \origCurr
+                        @logger.clog "curr: ", @get \curr
+                        answer <~ @logger.yesno do
+                            title: "Discard changes?"
+                            message: "If you select 'Drop Changes' all changes will be lost."
+                            buttons:
+                                drop:
+                                    color: \red
+                                    text: 'Drop Changes'
+                                    icon: \trash
+
+                                cancel:
+                                    color: \green
+                                    text: 'Cancel'
+                                    icon: \undo
+
+                        if answer is \drop
                             return op!
                         else
-                            console.warn "Cancelled discarding changes."
+                            @logger.cwarn "Cancelled discarding changes."
                     else
                         return op!
 
@@ -177,13 +197,14 @@ Ractive.components['data-table'] = Ractive.extend do
 
             add-new-document: (ev) ->
                 if (@get \openedRow) and (@get('mode') isnt 'add-new')
-                    return console.warn "a row is opened, not adding new."
+                    return @logger.cwarn "a row is opened, not adding new."
 
                 ev.component?.fire \state, \doing
                 template = @get-default-document!
                 @set \prepareAddingNew, yes
                 @set \row, {}
                 @set \editable, yes
+                @set \origCurr, clone template
                 <~ settings.on-create-view.call this, null
                 <~ settings.on-new-document template
                 @set \prepareAddingNew, no
@@ -292,10 +313,10 @@ Ractive.components['data-table'] = Ractive.extend do
                     handler = params
 
             if typeof handlers[handler] is \function
-                #console.log "RUNNING HANDLER: #{handler}(#{param})"
+                #@logger.clog "RUNNING HANDLER: #{handler}(#{param})"
                 return handlers[handler].apply this, param
             else
-                console.log "no handler found with the name: ", handler
+                @logger.clog "no handler found with the name: ", handler
 
 
         # utility functions
@@ -311,6 +332,6 @@ Ractive.components['data-table'] = Ractive.extend do
 
         lookup: (obj-array, key-field, key-value) ->
             x = find (.[key-field] is key-value), obj-array
-            console.log "lookup input: ", obj-array, key-field, key-value
-            console.log "lookup result: ", x
+            @logger.clog "lookup input: ", obj-array, key-field, key-value
+            @logger.clog "lookup result: ", x
             x
