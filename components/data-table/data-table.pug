@@ -66,15 +66,17 @@ include ./controls.pug
                         //- edit form
                         //- -----------------------------------------------
                         +iff('isEditingRow(.id)')
-                            td(colspan="{{ colNames.length }}" class="data-table-opened-row")
-                                +apply('editForm')
+                            td(colspan="{{ colNames.length }}")
+                                .ui.container.data-table-opened-row
+                                    +apply('editForm')
 
                         //- -----------------------------------------------
                         //- view form
                         //- -----------------------------------------------
                         +elif('isViewingRow(.id)')
-                            td(colspan="{{ colNames.length }}" class="data-table-opened-row")    
-                                +apply('viewForm')
+                            td(colspan="{{ colNames.length }}")    
+                                .ui.container.data-table-opened-row
+                                    +apply('viewForm')
                             
                         //- -----------------------------------------------
                         //- normal rows 
