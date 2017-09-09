@@ -36,77 +36,86 @@ Demo application [source is here](https://github.com/aktos-io/scadajs-template) 
 
 You may get up and running with ScadaJS in 2 different ways:
 
-* Download and edit [scadajs-template](https://github.com/aktos-io/scadajs-template)
-* Follow the steps below in order to add ScadaJS to your existing project:
+### Modify the template 
 
-   ### 1. Install Global Dependencies
+Download and edit [scadajs-template](https://github.com/aktos-io/scadajs-template)
 
-   1. Install [`NodeJs`](https://nodejs.org)
-   2. Install global `npm` dependencies:
+### Install from scratch
 
-           npm install -g gulp yarn livescript@1.4.0
+Follow the steps below in order to add ScadaJS to your existing project:
 
-   ### 2. Add ScadaJS Into Your Project
+#### 1. Install Global Dependencies
 
-   You can add ScadaJS to any of your existing projects:
+1. Install [`NodeJs`](https://nodejs.org)
+2. Install global `npm` dependencies (**as root/admin**):
+
+        npm install -g gulp livescript@1.4.0
+
+#### 2. Add ScadaJS Into Your Project
+
+You can add ScadaJS to any of your existing projects:
+
+    cd your-project
+    git submodule add https://github.com/aktos-io/scada.js
+
+#### 3. Install ScadaJS Dependencies
+
+When you first create or clone a ScadaJS project, you need to install the dependencies:
+
+    cd your-project
+    git submodule update --init --recursive
+    cd scada.js
+    npm install
+
+#### 4. Create a webapp
+
+1. Create the `webapps` folder which will hold all of your webapps:
 
        cd your-project
-       git submodule add https://github.com/aktos-io/scada.js
+       mkdir webapps
 
-   ### 3. Install ScadaJS Dependencies
+2. Create `your-webapp`'s folder:
 
-   When you first create or clone a ScadaJS project, you need to install the dependencies:
+       cd webapps
+       mkdir your-webapp
+       cd your-webapp
 
-       cd your-project
-       git submodule update --init --recursive
-       cd scada.js
-       yarn  # or `npm install`
+3. Create an `app.js` (or `app.ls`) here with the following contents:
 
-   ### 4. Create a webapp
+```js
+new Ractive({
+  el: 'body',
+  template: "<h2>hello world!</h2>"
+});
+```
 
-   1. Create the `webapps` folder which will hold all of your webapps:
+4. Create an `index.html` (or `index.pug`) here with the following contents:
 
-          cd your-project
-          mkdir webapps
+```html
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="js/vendor.js"></script>
+    <link rel="stylesheet" href="css/vendor.css">
+  </head>
+  <body>
+    <h1>Loading...</h1>
+    <script src="app.js"></script>
+  </body>
+</html>
+```
 
-   2. Create `your-webapp`'s folder:
+#### 5. Build your webapp
 
-          cd webapps
-          mkdir your-webapp
-          cd your-webapp
+You can simply build `your-webapp` with the following command:
 
-   3. Create an `app.js` (or `app.ls`) here with the following contents:
+    cd your-project/scada.js
+    gulp --webapp your-webapp [--production]
 
-   ```js
-   new Ractive({
-     el: 'body',
-     template: "<h2>hello world!</h2>"
-   });
-   ```
+#### 6. See the result
 
-   4. Create an `index.html` (or `index.pug`) here with the following contents:
+You can see `your-webapp` by opening `your-project/scada.js/build/your-webapp/index.html` with any modern browser.
 
-   ```html
-   <html>
-     <head>
-       <meta charset="utf-8">
-       <script src="js/vendor.js"></script>
-       <link rel="stylesheet" href="css/vendor.css">
-     </head>
-     <body>
-       <h1>Loading...</h1>
-       <script src="app.js"></script>
-     </body>
-   </html>
-   ```
+#### 7. Next Steps 
 
-   ### 5. Build Your Webapp
-
-   You can simply build `your-webapp` with the following command:
-
-       cd your-project/scada.js
-       gulp --webapp your-webapp [--production]
-
-   ### 6. See the result
-
-   You can see `your-webapp` by opening `your-project/scada.js/build/your-webapp/index.html` with any modern browser.
+At this point, you will get a "hello world" application. In order to build an application that has a realtime layer, authentication support, that is optimized for performance and so on, see the [showcase](https://github.com/aktos-io/scadajs-template).
