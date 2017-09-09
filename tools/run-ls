@@ -49,6 +49,5 @@ if [[ -d $SCADA_DIR ]]; then
     done < <(find $PROJECT_PATH -type d -name "node_modules" | grep -v "node_modules\/" )
 fi
 
-NODE_PATH="${SCADA_MODULES}:${FOUND_MODULES}:${NODE_PATH}"
-
+export NODE_PATH="${SCADA_MODULES}:${FOUND_MODULES}:${NODE_PATH}"
 lsc $@
