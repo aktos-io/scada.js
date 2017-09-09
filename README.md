@@ -63,7 +63,7 @@ You can add ScadaJS to any of your existing projects:
 When you first create or clone a project that depends on ScadaJS, you need to install the ScadaJS dependencies:
 
     cd your-project
-    ./scada.js/update.sh
+    git submodule update --init --recursive
     ./scada.js/install-modules.sh
 
 #### 4. Create a webapp
