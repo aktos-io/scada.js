@@ -1,101 +1,70 @@
-require! 'aea': {pack, merge, sleep}
+require! 'aea': {sleep, VLogger}
 
 Ractive.components['checkbox'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     oninit: ->
-        if @get \class .index-of(\transparent)  > -1
-            @set \transparent, yes
-
-        @sync = @find-component \sync
-        if @sync
-            @sync.on \receive, (event, msg) ~>
-                @set \state, if msg.payload then \checked else \unchecked
+        if @get \class
+            if that.index-of(\transparent)  > -1
+                @set \transparent, yes
 
     onrender: ->
-        __ = @
+        logger = new VLogger this, \checkbox
 
-        logger = @root.find-component \logger
-        console.error "No logger component is found!" unless logger
 
-        @observe \checked, (_new, _old) ~>
-            __.set \state, if _new then 'checked' else 'unchecked'
-            if @sync
-                @sync.actor.send (@get \state), (@sync.get \topic)
+        @observe \checked, (checked) ~>
+            @set \checkState, if checked
+                \checked
+            else
+                \unchecked
 
         @on do
-            toggleChecked: ->
-                __.set \timestamp, Date.now!
+            _statechange: (ctx) ->
                 if @has-event 'statechange'
-                    if __.get(\checked) then
-                        [curr-state, intended-state] = <[ checked unchecked ]>
+                    ctx.component.fire \state, \doing
+
+                    ctx.component.observe-once \state, (_new) ~>
+                        logger.clog "state changed: ", _new
+                        @set \checkState, if @get \checked
+                            \checked
+                        else
+                            \unchecked
+
+                    @set \checkState, \doing
+                    checked = @get \checked
+                    checked = not checked
+
+                    ctx.logger = logger
+                    err, callback <~ @fire \statechange, ctx, checked
+
+                    if arguments.length isnt 1
+                        logger.cerr "statechange callback should have exactly
+                            1 argument, #{arguments.length} is given."
+                        return
+
+                    if err
+                        logger.error err, callback
                     else
-                        [curr-state, intended-state] = <[ unchecked checked ]>
-                    parameter = __.get(\value)
+                        logger.clog "no error returned, toggling checkbox"
+                        @set \checkState, if checked
+                            \checked
+                        else
+                            \unchecked
 
-                    __.fire \statechange curr-state, intended-state, parameter
+                        @set \checked, checked
+                    ctx.component.fire \state, \done
+
                 else
-                    __.toggle \checked
+                    checked = @get \checked
+                    checked = not checked
+                    @set \checkState, if checked
+                        \checked
+                    else
+                        \unchecked
 
-            state: (event, s, msg, callback ) ->
-                self-disabled = no
-
-                @set \prevState, @get \state
-
-                if s in <[ checked ]>
-                    __.set \state, \checked
-                    __.set \checked, yes
-
-                if s in <[ unchecked ]>
-                    __.set \state, \unchecked
-                    __.set \checked, no
-
-                if s in <[ doing ]>
-                    __.set \state, \doing
-                    self-disabled = yes
-
-                if s in <[ error ]>
-                    console.warn "scadajs: Deprecation: use \"checkbox.fire \\error\" instead"
-                    @error msg, callback
-
-                __.set \selfDisabled, self-disabled
-
-        @error = (msg, callback) ~>
-            msg = if typeof! msg is \String
-                {message: msg}
-            else if not msg
-                {message: '(message is empty)'}
-            else
-                msg
-
-            msg = msg `merge` {
-                title: msg.title or 'Error'
-                icon: "warning sign"
-            }
-
-            @set \reason, msg.message
-            @set \selfDisabled, no
-            @set \state, @get \prevState
-            action <- logger.fire \showDimmed, {}, msg, {-closable}
-            #console.log "error has been processed by ack-button, action is: #{action}"
-            callback action if typeof! callback is \Function
-
-
+                    @set \checked, checked
 
     data: ->
         checked: no
-        style: ''
-        reason: ''
-        type: "default"
-        value: ""
-        class: ""
-        disabled: no
-        self-disabled: no
-        enabled: yes
-        angle: 0
-        tooltip: ''
-        timestamp: null
-        state: null
-        prev-state: null
+        checkState: \unchecked
         transparent: no
-        msg: null
