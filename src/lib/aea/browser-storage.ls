@@ -1,15 +1,21 @@
+require! './debug-log': {logger: Logger}
+
 export class BrowserStorage
     (@name) ->
         @s = local-storage
+        @logger = new Logger \BrowserStorage
 
     set: (key, value) ->
         try
             @s.set-item "#{@name}-#{key}", JSON.stringify value
         catch
-            console.warn "FIXME: This is a workaround for iphone5s. Provide a fallback (to cookie?)"
+            @logger.err "Error while saving key: ", e
 
     del: (key) ->
         @s.remove-item "#{@name}-#{key}"
 
     get: (key) ->
-        JSON.parse @s.get-item "#{@name}-#{key}"
+        try
+            JSON.parse @s.get-item "#{@name}-#{key}"
+        catch
+            @logger.err "Error while getting key: ", e

@@ -6,6 +6,7 @@ require! {
     './formatting': {unix-to-readable, readable-to-unix}
     './convert-units': {convert-units}
     './vlogger': {VLogger}
+    './event-emitter': {EventEmitter}
 }
 
 require! 'prelude-ls': {chars, unchars, reverse}
@@ -129,4 +130,5 @@ module.exports = {
     BrowserStorage
     hex, ip-to-hex
     VLogger
+    EventEmitter
 }

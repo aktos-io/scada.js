@@ -2,6 +2,7 @@
 require! colors: {green, gray, yellow, bg-red, bg-yellow}
 require! moment
 require! 'prelude-ls': {map}
+require! './event-emitter': {EventEmitter}
 
 fmt = 'HH:mm:ss.SSS'
 
@@ -20,40 +21,39 @@ get-timestamp = ->
 get-prefix = (_source, color) ->
     color = gray unless color
     padded = align-left 15, "#{_source}"
-    (color "[#{get-timestamp!}] ") + "#{padded} :"
+    (color "[#{get-timestamp!}]") + " #{padded} :"
 
-export debug-levels =
-    silent: 0
-    normal: 1
-    verbose: 2
-    debug: 3
+class LogManager extends EventEmitter
+    @@instance = null
+    ->
+        return @@instance if @@instance
+        super!
+        @@instance := this
+        @loggers = []
 
-export class logger
+    register: (ctx) ->
+        @loggers.push ctx
+
+
+export class logger extends EventEmitter
     (source-name, opts={}) ->
+        super!
         @source-name = source-name
-        @level = debug-levels.normal
-        @opts = opts
-        @start-time = start-time
-        @sections = []
+        @mgr = new LogManager!
 
     get-prefix: (color) ->
         get-prefix @source-name, color
 
     log: (...args) ~>
-        if @level > debug-levels.silent
-            console.log.apply console, [@get-prefix!] ++ args
+        console.log.apply console, [@get-prefix!] ++ args
 
     log-green: ~>
         @log green ...
 
     err: (...args) ~>
-        if @level > debug-levels.silent
-            console.error.apply console, [@get-prefix bg-red] ++ args
+        console.error.apply console, ([@get-prefix bg-red] ++ args)
+        @trigger \err, ...args
+        @mgr.trigger \err, ...args
 
     warn: (...args) ~>
         console.warn.apply console, [@get-prefix(bg-yellow), yellow('[WARNING]')] ++ args
-
-    section: (section, ...args) ~>
-        if section in @sections
-            pfx = "#{@get-prefix!} |#{section}| :"
-            console.log.apply console, [pfx] ++ args
