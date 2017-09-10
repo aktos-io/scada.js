@@ -135,8 +135,9 @@ You can simply build `your-webapp` with the following command:
 
 You can see `your-webapp` by opening `your-project/scada.js/build/your-webapp/index.html` with any modern browser.
 
-# Projects Using ScadaJS
+# Projects/Companies Using ScadaJS
 
 * [Template](https://github.com/aktos-io/scadajs-template) : Bare minimum example to show how to get up and running with ScadaJS.
 * [Showcase](https://github.com/aktos-io/scadajs-showcase) : Showcase for components and authentication/authorization mechanism.
-* [Omron Tester](https://github.com/aktos-io/omron-tester) : Example app to demonstrate how to communicate with a PLC
+* [Aktos Electronics](https://aktos.io) : Aktos Electronics uses ScadaJS as its company website, MRP tool and the Enterprise Online SCADA Service infrastructure.
+* [Omron Tester](https://github.com/aktos-io/omron-tester) : Example app to demonstrate how to communicate with an Omron PLC.
