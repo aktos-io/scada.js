@@ -130,12 +130,62 @@ You can simply build `your-webapp` with the following command:
 
     cd your-project/scada.js
     gulp --webapp your-webapp [--production]
+    
+    
+#### 6. Serve your webapp
 
-#### 6. See the result
+Create a webserver that supports Socket.io and aktos-dcs:
 
-You can see `your-webapp` by opening `your-project/scada.js/build/your-webapp/index.html` with any modern browser.
+```ls
+require! <[ path express dcs ]>
+app = express!
+http = require \http .Server app
+app.use "/", express.static path.resolve "./scada.js/build/your-webapp"
+http.listen 4001, -> console.log "listening on *:4001"
 
-# Projects/Companies Using ScadaJS
+# create a socket.io-DCS connector
+new dcs.SocketIOServer http
+
+# optionally create a TCP-DCS Connector
+new TCPProxyServer {port: 4002}
+ ```
+ 
+
+#### 7. See the result
+
+You can see `your-webapp` by opening http://localhost:4001 with any modern browser.
+
+#### 8. Start adding your microservices
+
+You can add any number of microservices (in any programming language that supports aktos-dcs) and make them communicate with eachother over the DCS network:
+
+```ls
+require! dcs
+
+class Example extends dcs.Actor
+    ->
+        super "My Example Microservice"
+        @subscribe '**'
+        @log.log "subscribed: #{@subscriptions}"
+
+        @on \data, (msg) ~>
+            @log.log "received a message: ", msg
+            # do something with the message
+            
+    action: ->
+        @log.log "#{@name} started..."
+        i = 0
+        <~ :lo(op) ~> 
+            # do something useful here  
+            @send "public.hello", {val: i++}
+            <~ sleep 2000ms
+            lo(op)
+
+new Example!
+new dcs.TCPProxyClient port: 4002 .login!  # supply credentials here
+```
+
+# Projects and Companies Using ScadaJS
 
 | Name | Description |
 | ---- | ----- |
