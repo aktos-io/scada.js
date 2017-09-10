@@ -30,7 +30,7 @@ ScadaJS is a library to easily create Single Page Applications, targeted to indu
 
 # DEMO
 
-Demo application [source is here](https://github.com/aktos-io/scadajs-template) and can be seen in action at https://aktos.io/showcase
+Demo application [source is here](https://github.com/aktos-io/scadajs-showcase) and can be seen in action at https://aktos.io/showcase
 
 # Usage
 
@@ -38,7 +38,7 @@ You may get up and running with ScadaJS in 2 different ways:
 
 ### [OPTION: 1] Modify the template
 
-Download [scadajs-template](https://github.com/aktos-io/scadajs-template) and edit to your needs.
+Download [scadajs-template](https://github.com/aktos-io/scadajs-template) and edit according to your needs.
 
 ### [OPTION: 2] Install from scratch
 
@@ -95,12 +95,17 @@ new Ractive({
 4. Create your `app.html` (or `app.pug`) as your application template
 
 ```html
+<aktos-dcs></aktos-dcs>
+
 <h2>hello {{name}}!</h2>
 <input value="{{name}}" />
 
 <h3>Slider/progress</h3>
 <slider inline value="{{x}}" />
 <progress type="circle" value="{{x}}" />
+
+<sync topic="public.name" value="{{name}}" />
+<sync topic="public.hello" value="{{x}}" />
 ```
 
 4. Create an `index.html` (or `index.pug`) here with the following contents:
@@ -130,6 +135,7 @@ You can simply build `your-webapp` with the following command:
 
 You can see `your-webapp` by opening `your-project/scada.js/build/your-webapp/index.html` with any modern browser.
 
-#### 7. Next Steps
+# Projects Using ScadaJS
 
-At this point, you will get a "hello world" application. In order to build an application that has a realtime layer, authentication support and so on, see the [showcase](https://github.com/aktos-io/scadajs-template).
+* [Showcase](https://github.com/aktos-io/scadajs-showcase) : Showcase for components and authentication/authorization mechanism.
+* [Omron Tester](https://github.com/aktos-io/omron-tester) : Example app to demonstrate how to communicate with a PLC
