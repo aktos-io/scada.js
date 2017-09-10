@@ -11,3 +11,9 @@
                     i.icon(class="{{.icon}}")
                 | {{.text}}
                 
++if('debug')
+    .ui.message.red
+        h2 #[code Logger] Debug Output
+        textarea
+            +each('debugErrorMessages')
+                | {{.}}

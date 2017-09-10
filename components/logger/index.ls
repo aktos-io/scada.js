@@ -7,6 +7,11 @@ Ractive.components['logger'] = Ractive.extend do
     onrender: ->
         modal = $ @find '.ui.basic.modal'
         @logger = new Logger "Global Modal"
+
+        if @get \debug
+            @logger.mgr.on \err, (...args) ~>
+                @push \debugErrorMessages, pack args
+
         selection-signal = new Signal!
         @on do
             # msg:
@@ -16,7 +21,7 @@ Ractive.components['logger'] = Ractive.extend do
             show-dimmed: (ev, msg, callback) ->
                 # print same message to the console for debugging purposes
                 @logger.log msg
-                
+
                 selection-signal.reset!
 
                 # DEPRECATION
@@ -79,3 +84,6 @@ Ractive.components['logger'] = Ractive.extend do
 
             selectionMade: (ctx, action) ->
                 selection-signal.go action
+
+    data: ->
+        debugErrorMessages: []
