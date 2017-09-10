@@ -7,15 +7,16 @@ btn(
     disabled="{{ (disabled || selfDisabled) || !(enabled) }}"
     style="{{ style }} {{#if transparen}}background-color: transparent;{{/if}}"
     )
-    +iff('state === "doing"')
-        +iff('heartbeat')
-            i.icon.heart
-        +else
-            i.icon #[.ui.active.mini.inverted.loader]
+    +unless('custom')
+        +iff('state === "doing"')
+            +iff('heartbeat')
+                i.icon.heart
+            +else
+                i.icon #[.ui.active.mini.inverted.loader]
+            +endif
+        +elif('state === "done"')
+            i.icon.checkmark
+        +elif('state === "error"')
+            i.warning.sign.icon
         +endif
-    +elif('state === "done"')
-        i.icon.checkmark
-    +elif('state === "error"')
-        i.warning.sign.icon
-    +endif
     | {{yield}}

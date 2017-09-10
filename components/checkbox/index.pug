@@ -1,17 +1,19 @@
-btn(
-    on-buttonclick="toggleChecked"
-    tooltip="{{tooltip}}"
-    class!="{{#if !transparent }}basic{{/if}} gray {{ class }} aea-checkbox"
-    style="{{ style }} {{#if transparent}}background-color: transparent;{{/if}} text-align: left; "
-    disabled="{{ (disabled || selfDisabled) || !(enabled) }}"
+ack-button.aea-checkbox(
+    on-buttonclick="_statechange"
+    class!="                        \
+        {{^transparent}}basic{{/}}  \
+        gray {{ class }}            \
+        "
+    style="{{ style }} {{#transparent}}background-color: transparent;{{/}} text-align: left; "
     type="{{type}}"
+    custom
     )
-    +iff("state === 'checked'")
+    +iff("checkState === 'checked'")
         icon.checkmark.box
-    +elif("state === 'unchecked'")
+    +elif("checkState === 'unchecked'")
         icon.square.outline
-    +elif("state === 'doing'")
-        icon.setting.loading 
+    +elif("checkState === 'doing'")
+        i.icon #[.ui.active.mini.inverted.loader]
     +endif
     | {{yield}}
         
