@@ -137,5 +137,6 @@ You can see `your-webapp` by opening `your-project/scada.js/build/your-webapp/in
 
 # Projects Using ScadaJS
 
+* [Template](https://github.com/aktos-io/scadajs-template) : Bare minimum example to show how to get up and running with ScadaJS.
 * [Showcase](https://github.com/aktos-io/scadajs-showcase) : Showcase for components and authentication/authorization mechanism.
 * [Omron Tester](https://github.com/aktos-io/omron-tester) : Example app to demonstrate how to communicate with a PLC
