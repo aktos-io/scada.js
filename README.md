@@ -132,23 +132,21 @@ You can simply build `your-webapp` with the following command:
     gulp --webapp your-webapp [--production]
     
     
-#### 6. Serve your webapp with DCS
+#### 6. Serve your webapp
 
 Create a webserver that supports Socket.io and aktos-dcs:
 
 ```ls
 require! <[ path express dcs ]>
-
 app = express!
 http = require \http .Server app
 app.use "/", express.static path.resolve "./scada.js/build/your-webapp"
+http.listen 4001, -> console.log "listening on *:4001"
 
-http.listen 4001, ->
-    console.log "listening on *:4001"
-
+# create a socket.io-DCS connector
 new dcs.SocketIOServer http
 
-# optionally create a TCP DCS server
+# optionally create a TCP-DCS Connector
 new TCPProxyServer {port: 4002}
  ```
  
