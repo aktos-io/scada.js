@@ -30,7 +30,7 @@ ScadaJS is a library to easily create Single Page Applications, targeted to indu
 
 # DEMO
 
-Demo application [source is here](https://github.com/aktos-io/scadajs-template) and can be seen in action at https://aktos.io/showcase
+Demo application [source is here](https://github.com/aktos-io/scadajs-showcase) and can be seen in action at https://aktos.io/showcase
 
 # Usage
 
@@ -38,7 +38,7 @@ You may get up and running with ScadaJS in 2 different ways:
 
 ### [OPTION: 1] Modify the template
 
-Download [scadajs-template](https://github.com/aktos-io/scadajs-template) and edit to your needs.
+Download [scadajs-template](https://github.com/aktos-io/scadajs-template) and edit according to your needs.
 
 ### [OPTION: 2] Install from scratch
 
