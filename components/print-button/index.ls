@@ -2,7 +2,8 @@ require! 'prelude-ls': {
     map
 }
 
-require! 'aea':{gen-entry-id, sleep}
+require! 'aea':{sleep}
+require! uuid4
 
 /*
 response =
@@ -16,7 +17,7 @@ Ractive.components['print-button'] = Ractive.extend do
     onrender: ->
         id = @get \data-source
         unless id
-            id = "print-#{gen-entry-id!}"
+            id = "print-#{uuid4!}"
             @set \data-source, id
 
         @on do
