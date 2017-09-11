@@ -1,8 +1,16 @@
-btn(
-    on-buttonclick="click"
+.ui.button(
+    on-click="_click"
     value="{{value}}"
     title="{{tooltip}}"
-    class="{{ class }} ack-button {{#if (state === 'doing') || (state === 'done') || (state === 'error') }}labeled icon{{/if}}"
+    class="                                                         \
+        {{ class }}                                                 \
+        ack-button                                                  \
+        {{#if state === 'doing' || state === 'done' || state === 'error' }}    \
+            labeled icon                                            \
+        {{/if}}                                                     \
+        {{#disabled}}disabled{{/}}                                  \
+        {{#active}}active{{/}}                                      \
+        "
     type="{{ type }}"
     disabled="{{ (disabled || selfDisabled) || !(enabled) }}"
     style="{{ style }} {{#if transparen}}background-color: transparent;{{/if}}"

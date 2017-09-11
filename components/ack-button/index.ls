@@ -26,12 +26,15 @@ Ractive.components['ack-button'] = Ractive.extend do
                 @doing-watchdog.go!
 
         @on do
-            click: (ctx) ->
+            _click: (ctx) ->
+                const c = ctx.getParent yes
+                c.refire = yes
+                c.actor = actor
+
                 val = @get \value
                 @doing-watchdog.reset!
                 @set \tooltip, ""
-                ctx.actor = actor
-                @fire \buttonclick, ctx, val
+                @fire \buttonclick, c, val
 
             state: (_event, s, msg, callback) ->
                 switch s
