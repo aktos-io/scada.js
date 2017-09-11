@@ -1,5 +1,6 @@
 require! 'aea': {sleep}
 require! 'prelude-ls': {take, drop, split}
+require! 'dcs/browser':  {RactiveActor}
 
 Ractive.components['anchor'] = Ractive.extend do
     template: '<a data-id="{{yield}}"></a>'
@@ -103,6 +104,12 @@ Ractive.components['router'] = Ractive.extend do
     template: ''
     isolated: yes
     oncomplete: ->
+        actor = new RactiveActor this, 'router'
+
+        prev =
+            scene: undefined
+            anchor: undefined
+
         do handle-hash = ~>
             curr = parse-link get-window-hash!
             if curr
@@ -110,6 +117,14 @@ Ractive.components['router'] = Ractive.extend do
                 @set \anchor, curr.anchor
                 sleep 50ms, -> scroll-to curr.anchor
                 #console.log """hash changed: scene: #{curr.scene}, anchor: #{curr.anchor}"""
+
+                change = {}
+                if curr.scene isnt prev.scene
+                    change.scene = curr.scene
+                if curr.anchor isnt prev.anchor
+                    change.anchor = curr.anchor
+                actor.send 'my.router.changes', change
+                prev <<< curr
 
         $ window .on \hashchange, ->
             #console.log "this is hashchange run: #{window.location.hash}"
