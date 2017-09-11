@@ -39,7 +39,7 @@ while IFS= read -r module; do
             modules="$modules:$module_dir"
         fi
     fi
-done < <(find . -name "node_modules" -prune -o -name "package.json")
+done < <(find . -name "node_modules" -prune -a ! -name "node_modules" -o -name "package.json")
 
 echo
 echo "Installing Modules"
