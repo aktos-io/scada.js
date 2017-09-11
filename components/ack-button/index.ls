@@ -1,8 +1,5 @@
 require! 'aea': {merge, sleep, VLogger}
-require! 'dcs/browser': {Signal}
-
-# for debugging reasons
-require! 'aea':{pack}
+require! 'dcs/browser': {Signal, RactiveActor}
 
 Ractive.components['ack-button'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
@@ -15,6 +12,7 @@ Ractive.components['ack-button'] = Ractive.extend do
     onrender: ->
         @doing-watchdog = new Signal!
         logger = new VLogger this, \ack-button
+        actor = new RactiveActor this, 'ack-button'
 
         @button-timeout = if @get \timeout
             that
@@ -28,11 +26,12 @@ Ractive.components['ack-button'] = Ractive.extend do
                 @doing-watchdog.go!
 
         @on do
-            click: ->
+            click: (ctx) ->
                 val = @get \value
                 @doing-watchdog.reset!
                 @set \tooltip, ""
-                @fire \buttonclick, {}, val
+                ctx.actor = actor
+                @fire \buttonclick, ctx, val
 
             state: (_event, s, msg, callback) ->
                 switch s
