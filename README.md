@@ -83,12 +83,12 @@ When you first create or clone a project that depends on ScadaJS, you need to in
 
 ```js
 new Ractive({
-  el: 'body',
-  template: RACTIVE_PREPARSE('app.pug'),
-  data: {
-    name: "world",
-    x: 35
-  }
+    el: 'body',
+    template: RACTIVE_PREPARSE('app.pug'),
+    data: {
+        name: "world",
+        x: 35
+    }
 });
 ```
 
@@ -112,15 +112,15 @@ new Ractive({
 
 ```html
 <html>
-  <head>
-    <meta charset="utf-8">
-    <script src="js/vendor.js"></script>
-    <link rel="stylesheet" href="css/vendor.css">
-  </head>
-  <body>
-    <h1>Loading...</h1>
-    <script src="app.js"></script>
-  </body>
+    <head>
+        <meta charset="utf-8">
+        <script src="js/vendor.js"></script>
+        <link rel="stylesheet" href="css/vendor.css">
+    </head>
+    <body>
+        <h1>Loading...</h1>
+        <script src="app.js"></script>
+    </body>
 </html>
 ```
 
@@ -134,7 +134,7 @@ You can simply build `your-webapp` with the following command:
     
 #### 6. Serve your webapp
 
-Create a webserver that supports Socket.io and aktos-dcs:
+Create a webserver that supports *Socket.io* and *aktos-dcs*:
 
 ```ls
 require! <[ path express dcs ]>
@@ -147,7 +147,7 @@ http.listen 4001, -> console.log "listening on *:4001"
 new dcs.SocketIOServer http
 
 # optionally create a TCP-DCS Connector
-new TCPProxyServer {port: 4002}
+new TCPProxyServer port: 4002
  ```
  
 
@@ -182,7 +182,7 @@ class Example extends dcs.Actor
             lo(op)
 
 new Example!
-new dcs.TCPProxyClient port: 4002 .login!  # supply credentials here
+new dcs.TCPProxyClient port: 4002 .login!
 ```
 
 # Projects and Companies Using ScadaJS
