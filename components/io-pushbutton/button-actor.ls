@@ -5,22 +5,12 @@ export class ButtonActor extends Actor
         @topic = "#{@opts.topic}"
         super @topic
         @subscribe @topic
-
-        @ack = new Signal!
-
-        @on \data, (msg) ~>
-            #@log.log "change value: #{msg.payload.curr} (before: #{msg.payload.prev})"
-            @ack.go msg
+        @timeout = 4000ms
 
     send-io: (data) ->
         @send data, @topic
 
-    write: (value, callback) ->
+    write: (val, callback) ->
         #@log.log "sending #{value}"
-        @ack.clear!
-        @send-io {val: value}
-        err, msg <~ @ack.wait 4000ms
-        #@log.log "response arrived: "
-        #console.log msg
-
-        callback err, msg
+        timeout, msg <~ @send-request {@topic, @timeout}, {val}
+        callback (timeout or msg.payload.err), msg
