@@ -1,0 +1,18 @@
+.ui.button(
+    class!="                            \
+        {{#disabled}}disabled{{/}}      \
+        {{#active}}active{{/}}          \
+        {{ class }}                     \
+        {{#if state === 'pressed'}}     \
+            yellow                      \
+        {{elseif state == 'released'}}  \
+            green                       \
+        {{else}}                        \
+            basic red                   \
+        {{/if}}                         \
+    "
+    style="{{style}}"
+    title="{{title}}{{tooltip}}"
+    on-click="pressRelease"
+    ) 
+    | {{yield}}
