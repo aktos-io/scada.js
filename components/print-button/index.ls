@@ -65,5 +65,9 @@ Ractive.components['print-button'] = Ractive.extend do
                         <script>window.print(); window.close()</script>
                     </html>
                     """
+                @actor.send 'app.log.info', do
+                    title: "Print window"
+                    message: "Close the print window before continue"
+
                 printWindow.document.writeln doc
                 printWindow.document.close!
