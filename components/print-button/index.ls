@@ -32,6 +32,7 @@ Ractive.components['print-button'] = Ractive.extend do
                     """
                     <html  moznomarginboxes mozdisallowselectionprint>
                         <head>
+                            <script src="js/vendor.js"></script>
                             <link rel="stylesheet" href="css/vendor.css">
                             <title>#{res.title}</title>
                             <style>
