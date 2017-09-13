@@ -3,13 +3,13 @@ require! 'dcs/browser': {RactiveActor}
 Ractive.components['pushbutton'] = Ractive.extend do
     template: RACTIVE_PREPARSE("index.pug")
     isolated: no
+    oninit: ->
+        @actor = new RactiveActor this, do
+            name: \pushbutton
+
     onrender: ->
         button = $ @find \.ui.button
 
-        topic = @get \topic
-        actor = new RactiveActor this, do
-            name: \pushbutton
-            topic: topic
 
         name-state = (state) ~>
             @set \state, if state
@@ -19,16 +19,18 @@ Ractive.components['pushbutton'] = Ractive.extend do
 
         turn = (state) ~>
             @set \state, \doing
-            err <~ @fire \toggle, {next-state: state}
+            err <~ @fire \toggle, {@actor}, state
             unless err
                 name-state state
+            else
+                @actor.send 'app.log.error', do
+                    title: 'Pushbutton Error'
+                    message: err 
+                @actor.log.err err
 
         @observe \pressed, (_new) ~>
-            name-state _new
-
-        @on do
-            pressRelease: (ctx) ->
-                debugger
+            if typeof! _new isnt \Undefined
+                name-state _new
 
         # for desktop
         button.on \mousedown, ->
@@ -48,14 +50,19 @@ Ractive.components['pushbutton'] = Ractive.extend do
         button.on 'touchend', (e) ->
             turn off
 
-        actor.on \data, (msg) ~>
-            if msg.payload
-                if that.curr
-                    name-state that
-                    @set \pressed, that
+        @actor.on \data, (msg) ~>
+            curr = msg.payload.curr
+            if curr?
+                name-state curr
+                @set \pressed, curr
 
-        if topic
-            actor.request-update that 
+        if @get \topic
+            @actor.subscribe that
+            @actor.request-update that
+
 
     data: ->
+        pressed: undefined
         state: \doing
+        'pressed-color': \red
+        'released-color': \green

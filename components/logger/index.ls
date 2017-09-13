@@ -1,5 +1,5 @@
 require! 'aea': {merge, logger: Logger, pack, sleep}
-require! 'dcs/browser': {Signal}
+require! 'dcs/browser': {Signal, RactiveActor, topic-match}
 
 Ractive.components['logger'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
@@ -7,6 +7,14 @@ Ractive.components['logger'] = Ractive.extend do
     onrender: ->
         modal = $ @find '.ui.basic.modal'
         @logger = new Logger "Global Modal"
+        @actor = new RactiveActor this, do
+            name: "Global Modal"
+            subscribe: 'app.log.**'
+
+        @actor.on \data, (msg) ~>
+            if msg.topic `topic-match` 'app.log.**'
+                action <~ @fire \showDimmed, {}, msg.payload
+                @actor.send-response msg, {action}
 
         if @get \debug
             @logger.mgr.on \err, (...args) ~>
@@ -48,9 +56,9 @@ Ractive.components['logger'] = Ractive.extend do
                 switch typeof! msg
                     when \String => msg = {message: msg}
                     when \Object =>
-                        unless msg.message
+                        if typeof! msg.message in <[ Object Array ]>
                             msg.message = JSON.stringify msg.message, null, 2
-
+                        
                 msg = default-opts <<< msg
 
                 # create buttons

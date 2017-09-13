@@ -4,15 +4,14 @@
         {{#active}}active{{/}}          \
         {{ class }}                     \
         {{#if state === 'pressed'}}     \
-            yellow                      \
+            {{ ~/['pressed-color'] }}   \
         {{elseif state == 'released'}}  \
-            green                       \
-        {{else}}                        \
-            basic red                   \
+            {{ ~/['released-color'] }}  \
+        {{elseif state === 'doing'}}    \
+            shadowed-button             \
         {{/if}}                         \
     "
     style="{{style}}"
     title="{{title}}{{tooltip}}"
-    on-click="pressRelease"
     ) 
     | {{yield}}
