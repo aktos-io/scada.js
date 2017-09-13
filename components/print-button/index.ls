@@ -1,31 +1,22 @@
-require! 'prelude-ls': {
-    map
-}
-
 require! 'aea':{sleep}
-require! uuid4
+require! 'dcs/browser': {RactiveActor}
 
-/*
-response =
-    content: content of print area
-    title: title (if exists)
-*/
 
 Ractive.components['print-button'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->
-        id = @get \data-source
-        unless id
-            id = "print-#{uuid4!}"
-            @set \data-source, id
+        @actor = new RactiveActor this, name: 'print button'
 
         @on do
-            __prepare-print: ->
-                __ = @
-                source-node = $ "[data-source=#{id}]"
-                err, res <- @fire \print, source-node.html!, @get('value')
-                return console.error "Error while printing: ", err.message if err
+            _preparePrint: (ctx) ->
+                const c = ctx.getParent yes
+                c.refire = yes
+                err, res <~ @fire \print, c
+                if err
+                    @actor.send 'app.log.err', do
+                        message: {"Error while printing": err}
+                    return
 
                 printWindow = window.open('', '', 'scrollbars=yes, resizable=yes, width=800, height=500')
                 unless printWindow
@@ -43,21 +34,27 @@ Ractive.components['print-button'] = Ractive.extend do
                         <head>
                             <link rel="stylesheet" href="css/vendor.css">
                             <style>
+                                @page {
+                                    margin: 0; /* in order to disable page header and footer */
+                                }
                                 .no-print {
                                     display: none;
                                 }
+                                \#page-container {
+                                    margin: 15mm;
+                                }
 
+                                /* custom style */
                                 #{res.style}
                             </style>
                         </head>
                         <body>
-                            #{res.body}
+                            <div id="page-container">
+                                #{res.body}
+                            </div>
                         </body>
                         <script>window.print(); window.close()</script>
                     </html>
                     """
                 printWindow.document.writeln doc
                 printWindow.document.close!
-    data: ->
-        'source-class': null
-        value: null
