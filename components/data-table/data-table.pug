@@ -67,7 +67,7 @@ include ./controls.pug
                         //- -----------------------------------------------
                         +iff('isEditingRow(.id)')
                             td(colspan="{{ colNames.length }}")
-                                .ui.container.data-table-opened-row
+                                .data-table-opened-row
                                     +apply('editForm')
 
                         //- -----------------------------------------------
@@ -75,7 +75,7 @@ include ./controls.pug
                         //- -----------------------------------------------
                         +elif('isViewingRow(.id)')
                             td(colspan="{{ colNames.length }}")    
-                                .ui.container.data-table-opened-row
+                                .data-table-opened-row
                                     +apply('viewForm')
                             
                         //- -----------------------------------------------
