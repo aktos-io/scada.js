@@ -33,6 +33,7 @@ Ractive.components['print-button'] = Ractive.extend do
                     <html  moznomarginboxes mozdisallowselectionprint>
                         <head>
                             <link rel="stylesheet" href="css/vendor.css">
+                            <title>#{res.title}</title>
                             <style>
                                 @page {
                                     margin: 0; /* in order to disable page header and footer */
@@ -44,6 +45,13 @@ Ractive.components['print-button'] = Ractive.extend do
                                     margin: 15mm;
                                 }
 
+                                @media print {
+                                    html, body {
+                                        border: 1px solid white;
+                                        page-break-after: avoid;
+                                        page-break-before: avoid;
+                                    }
+                                }
                                 /* custom style */
                                 #{res.style}
                             </style>
