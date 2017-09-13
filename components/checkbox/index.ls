@@ -8,6 +8,8 @@ Ractive.components['checkbox'] = Ractive.extend do
             if that.index-of(\transparent)  > -1
                 @set \transparent, yes
 
+        @debug = @get \debug 
+
     onrender: ->
         logger = new VLogger this, \checkbox
 
@@ -63,7 +65,8 @@ Ractive.components['checkbox'] = Ractive.extend do
                         logger.clog "no error returned, toggling checkbox"
                         set-state checked
                 else
-                    set-state if get \checked => 0 else 1
+                    debugger if @debug
+                    set-state if @get \checked => 0 else 1
 
     data: ->
         checked: undefined
