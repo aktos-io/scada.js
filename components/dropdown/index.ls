@@ -48,6 +48,8 @@ Ractive.components['dropdown'] = Ractive.extend do
                 .dropdown 'destroy'
                 .dropdown 'setting', do
                     forceSelection: no
+                    full-text-search: 'exact'
+
                     on-change: (value, text, selected) ~>
                         value = try
                             selected.attr 'data-value'
