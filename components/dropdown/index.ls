@@ -39,10 +39,6 @@ Ractive.components['dropdown'] = Ractive.extend do
         dd = $ @find '.ui.dropdown'
         if @get \multiple
             dd.add-class \multiple
-            debugger if @get \debug
-            @set \selected-key, []
-            @set \item, [{}]
-
 
         dd.add-class \inline if @get \inline
         dd.add-class \fluid if @get \fit-width
@@ -54,19 +50,21 @@ Ractive.components['dropdown'] = Ractive.extend do
             if @get \data
                 data = that
                 if @get \multiple
-                    _values = value-of-key.split ','
                     items = []
                     selected-keys = []
                     selected-names = []
-                    for val in _values
-                        if find (-> it[keyField] is val), data
-                            items.push that
-                            selected-keys.push that[keyField]
-                            selected-names.push that[nameField]
-                        else
-                            # how can't we find the item?
-                            debugger
+                    if value-of-key
+                        _values = that.split ','
+                        for val in _values
+                            if find (-> it[keyField] is val), data
+                                items.push that
+                                selected-keys.push that[keyField]
+                                selected-names.push that[nameField]
+                            else
+                                # how can't we find the item?
+                                debugger
 
+                    debugger if @get \debug
                     @set \item, unless empty items => items else [{}]
                     @set \selected-key, selected-keys
                     @set \selected-name, selected-names
@@ -81,6 +79,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                         # why didn't we find it?
                         debugger
 
+        shandler = null
 
         @observe \data, (data) ~>
             @actor.log.log "data is changed: ", data if @get \debug
@@ -94,22 +93,24 @@ Ractive.components['dropdown'] = Ractive.extend do
                     forceSelection: no
                     full-text-search: 'exact'
                     on-change: (_value, _text, selected) ~>
-                        debugger if @get \debug
+                        if shandler then that.silence!
+                        @actor.log.log "#{@_guid}: dropdown is changed: ", _value if @get \debug
+                        #debugger if @get \debug
                         set-item _value
+                        if shandler then that.resume!
 
-        @observe \selected-key, (_new) ->
+        shandler = @observe \selected-key, (_new) ->
             debugger if @get \debug
-            @actor.log.log "selected is changed: ", _new if @get \debug
-            if _new in [undefined, null] and not @get \multiple
-                return
-            dd.dropdown 'set selected', _new
-            #set-item _new,
+            @actor.log.log "#{@_guid}: selected is changed: ", _new if @get \debug
+            if @get \multiple
+                dd.dropdown 'set exactly', _new
+            else
+                dd.dropdown 'set selected', _new
 
     data: ->
         data: undefined
         keyField: \id
         nameField: \name
         nothingSelected: '---'
-        selected: null
         item: {}
         loading: yes
