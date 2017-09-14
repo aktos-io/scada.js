@@ -1,4 +1,5 @@
-require! 'aea': {BrowserStorage, Logger}
+require! 'aea': {Logger}
+require! 'dcs/browser': {BrowserStorage}
 
 
 Ractive.components['browser-storage'] = Ractive.extend do
@@ -20,7 +21,7 @@ Ractive.components['browser-storage'] = Ractive.extend do
         catch
             console.error "error while getting key #{key} from browser-storage: ", e
             null
-            
+
         #@log.log "set initial value: ", @get \value
 
         @observe \value, (_new) ->
