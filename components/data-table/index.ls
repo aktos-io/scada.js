@@ -240,13 +240,7 @@ Ractive.components['data-table'] = Ractive.extend do
                     # else this is a prefix
                     if curr._id.split /[0-9]+/ .length is 1
                         # no numeric part, this is a prefix
-
-                        # remove any `- / . # ...` chars
-                        prefix = curr._id.split /[^a-zA-Z]/ .0
-                        if prefix
-                            curr._id = "#{prefix}\#\#\#\#"
-                        else
-                            return next "Not a valid prefix: #{prefix}"
+                        curr._id += '####'
 
                 if @get \_tmp.new_attachments
                     curr._attachments = (curr._attachments or {}) <<< that
