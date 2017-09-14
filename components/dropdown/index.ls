@@ -39,8 +39,9 @@ Ractive.components['dropdown'] = Ractive.extend do
                 @set \selected-key, item?[keyField]
 
         @observe \data, (data) ~>
-            if debug => @actor.log.log "data is changed: ", data
-            if data => unless empty data
+            @actor.log.log "data is changed: ", data if debug
+
+            if data and not empty data
                 @set \loading, no
             dd
                 .dropdown 'restore defaults'
@@ -65,6 +66,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                 set-item _new
 
     data: ->
+        data: undefined
         keyField: \id
         nameField: \name
         nothingSelected: '---'

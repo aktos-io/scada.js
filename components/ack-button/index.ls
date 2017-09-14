@@ -1,8 +1,5 @@
 require! 'aea': {merge, sleep, VLogger}
-require! 'dcs/browser': {Signal}
-
-# for debugging reasons
-require! 'aea':{pack}
+require! 'dcs/browser': {Signal, RactiveActor}
 
 Ractive.components['ack-button'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
@@ -11,6 +8,8 @@ Ractive.components['ack-button'] = Ractive.extend do
         if @get \class
             if that.index-of(\transparent)  > -1
                 @set \transparent, yes
+
+        @actor = new RactiveActor this, 'ack-button'
 
     onrender: ->
         @doing-watchdog = new Signal!
@@ -28,11 +27,15 @@ Ractive.components['ack-button'] = Ractive.extend do
                 @doing-watchdog.go!
 
         @on do
-            click: ->
+            _click: (ctx) ->
+                const c = ctx.getParent yes
+                c.refire = yes
+                c.actor = @actor
+
                 val = @get \value
                 @doing-watchdog.reset!
                 @set \tooltip, ""
-                @fire \buttonclick, {}, val
+                @fire \buttonclick, c, val
 
             state: (_event, s, msg, callback) ->
                 switch s

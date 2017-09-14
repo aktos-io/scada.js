@@ -1,7 +1,5 @@
-//-
-    parameters:
-        col-names="comma, separated, column, names"
-        filename="generated file's filename"
-        tabledata="tableview formatted data (see data-table component)"
-
-a.ui.button(on-click="__preparePrint" class="{{class}}") {{yield}}
+.ui.button(
+    on-click="_preparePrint" 
+    class="{{class}}"
+    )
+    | {{yield}}

@@ -31,15 +31,17 @@ while IFS= read -r module; do
     module_path_name="${module_dir#"$DIR/"}"
     if [[ "$module_path_name" == "$DIR" ]]; then
         modules="$modules:$module_dir"
+        echo "scada.js dependencies: [REQUIRED]"
     elif [[ "$module_path_name" == "src/lib/dcs" ]]; then
         modules="$modules:$module_dir"
+        echo "aktos-dcs dependencies: [REQUIRED]"
     else
-        if prompt_yes_no " -> $module_path_name? "; then
+        if prompt_yes_no " -> $module_path_name dependencies? "; then
             #echo "+++ $module_path_name"
             modules="$modules:$module_dir"
         fi
     fi
-done < <(find . -name "node_modules" -prune -o -name "package.json")
+done < <(find . -name "node_modules" -prune -a ! -name "node_modules" -o -name "package.json" | tac )
 
 echo
 echo "Installing Modules"

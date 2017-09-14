@@ -1,3 +1,9 @@
-.ui.message.red
-    h3.ui.header Debugging Object {{#title}}({{title}}){{/}}
+.ui.red.message
+    h1.ui.red.header 
+        +iff('title')
+            | {{title}}
+        +else
+            | Debugging Object
+        +endif
+
     pre {{ JSON.stringify(obj, null, 2) }}

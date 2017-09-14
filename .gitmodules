@@ -4,3 +4,6 @@
 [submodule "src/lib/aktos-dcs"]
 	path = src/lib/dcs
 	url = https://github.com/aktos-io/aktos-dcs-node
+[submodule "tools/create-gist"]
+	path = tools/create-gist
+	url = https://github.com/ceremcem/create-gist

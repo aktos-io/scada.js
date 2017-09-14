@@ -51,7 +51,7 @@ Ractive.components['time-series'] = Ractive.extend do
 
         hover-detail = new Rickshaw.Graph.HoverDetail do
             graph: graph
-            x-formatter: (x) -> unix-to-readable (1000 * x)
+            x-formatter: (x) -> unix-to-readable x
             y-formatter: (x) -> displayFormat y-format, x .full-text
 
 
@@ -68,7 +68,7 @@ Ractive.components['time-series'] = Ractive.extend do
 
         append-new = (_new) ->
             if typeof! _new isnt \Array
-                _new = [{key: (Date.now! / 1000), value: _new}]
+                _new = [{key: (Date.now!), value: _new}]
 
             serie = graph.series.0.data
             if last serie
