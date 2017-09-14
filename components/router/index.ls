@@ -61,7 +61,7 @@ Ractive.components["a"] = Ractive.extend do
                     {{#if href}}cursor: pointer;{{/if}}
                     {{style}}
                     "
-                on-click="click"
+                on-click="_click"
                 {{#if @.get("data-id")}}data-id=\'{{@.get("data-id")}}\' {{/if}}
                 title="{{href}}"
                 >
@@ -74,7 +74,7 @@ Ractive.components["a"] = Ractive.extend do
         newtab = @get \newtab
 
         @on do
-            click: (event) ->
+            _click: (ctx) ->
                 href = @get \href
 
                 if newtab
@@ -97,6 +97,11 @@ Ractive.components["a"] = Ractive.extend do
                     else
                         console.error "there seems a no valid link:", link
                         debugger
+
+                const c = ctx.getParent yes
+                c.refire = yes
+                @fire \click, c
+
 
 
 

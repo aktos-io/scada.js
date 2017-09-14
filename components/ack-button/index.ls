@@ -9,10 +9,11 @@ Ractive.components['ack-button'] = Ractive.extend do
             if that.index-of(\transparent)  > -1
                 @set \transparent, yes
 
+        @actor = new RactiveActor this, 'ack-button'
+
     onrender: ->
         @doing-watchdog = new Signal!
         logger = new VLogger this, \ack-button
-        actor = new RactiveActor this, 'ack-button'
 
         @button-timeout = if @get \timeout
             that
@@ -29,7 +30,7 @@ Ractive.components['ack-button'] = Ractive.extend do
             _click: (ctx) ->
                 const c = ctx.getParent yes
                 c.refire = yes
-                c.actor = actor
+                c.actor = @actor
 
                 val = @get \value
                 @doing-watchdog.reset!

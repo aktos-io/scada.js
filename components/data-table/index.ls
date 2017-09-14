@@ -34,18 +34,17 @@ Ractive.components['data-table'] = Ractive.extend do
                 throw "after-filter is required"
             else
                 settings.after-filter = settings.after-filter.bind this
-            if not readonly
-                unless typeof! settings.on-save is \Function
-                    throw "data-table is not readonly, on-save function is required"
-                else
-                    settings.on-save = settings.on-save.bind this
+            if typeof! settings.on-save is \Function
+                settings.on-save = settings.on-save.bind this
 
             unless settings.on-init
                 throw "on-init is required"
             else
                 settings.on-init = settings.on-init.bind this
         catch
-            @logger.cerr e
+            @actor.send 'app.log.err', do
+                title: 'data-table component'
+                message: e
             return
 
         # function to use adding on new document
@@ -214,7 +213,7 @@ Ractive.components['data-table'] = Ractive.extend do
 
             save: (ev, val) ->
                 ev.component.fire \state, \doing
-                ...args <~ settings.on-save ev, @get(\curr)
+                ...args <~ @fire 'onSave', ev, @get(\curr)
                 if args.length isnt 1
                     ev.component.error """
                         Coding error: Save function requires error argument upon
@@ -227,6 +226,38 @@ Ractive.components['data-table'] = Ractive.extend do
                     @set \origCurr, (@get \curr)
                     ev.component.fire \state \done...
                     @refresh!
+
+            on-save: (ev, curr, next) ->
+                timeout = 15_000ms
+                ev.component.heartbeat timeout
+
+                unless curr._id
+                    return next "ID is required!"
+
+                unless curr._rev
+                    # this is a new document, use exact ID or pfx + autoincrement
+                    # if curr._id has numeric portion, this is an exact ID
+                    # else this is a prefix
+                    if curr._id.split /[0-9]+/ .length is 1
+                        # no numeric part, this is a prefix
+                        curr._id += '####'
+
+                if @get \_tmp.new_attachments
+                    curr._attachments = (curr._attachments or {}) <<< that
+
+                err, res <~ @get \db .put curr, {timeout}
+                if err
+                    @logger.clog "err is: ", err
+                else
+                    @logger.clog "res is: ", res
+                    curr <<< {_id: res.id, _rev: res.rev}
+                    # use preview url's as downloaded url's
+                    tmp-att = (@get "_tmp._attachments") or {}
+                    tmp-att <<< @get "_tmp.previews"
+                    @set "_tmp._attachments", tmp-att
+                    @set \curr, curr
+                next err
+
 
         # register events
         @on events <<< settings.handlers

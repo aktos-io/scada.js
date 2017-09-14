@@ -33,6 +33,9 @@ require! './src/lib/aea/ractive-preparserify': {
     ractive-preparserify
     preparserify-dep-list
 }
+require! './src/lib/aea/pug-preparserify': {
+    pug-preparserify
+}
 require! './src/lib/aea/browserify-optimize-js'
 require! 'gulp-flatten': flatten
 require! 'gulp-tap': tap
@@ -203,8 +206,9 @@ bundler = browserify do
         watchify unless optimize-for-production
         ...
 
-bundler.transform browserify-livescript
+bundler.transform pug-preparserify
 bundler.transform ractive-preparserify
+bundler.transform browserify-livescript
 bundler.transform browserify-optimize-js
 
 first-browserify-done = no
