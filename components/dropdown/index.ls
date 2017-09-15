@@ -93,9 +93,12 @@ Ractive.components['dropdown'] = Ractive.extend do
 
         @observe \data, (data) ~>
             @actor.log.log "data is changed: ", data if @get \debug
+            do
+                @set \loading, yes
+                <~ sleep 500ms
+                if data and not empty data
+                    @set \loading, no
 
-            if data and not empty data
-                @set \loading, no
             dd
                 .dropdown 'restore defaults'
                 .dropdown 'destroy'
