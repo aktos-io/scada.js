@@ -8,7 +8,7 @@
 +else
     | <div
     |    class='ui button {{#if disabled}}disabled{{/if}} {{#if active}}active{{/if}} {{ class }}'
-    |    {{#if ! disabled}}on-click="['buttonclick', value]" {{/if}}
+    |    {{#if ! disabled}}on-click="_click" {{/if}}
     |    style='{{style}}'
     |    title="{{title}}{{tooltip}}" >
     |    {{yield}}
