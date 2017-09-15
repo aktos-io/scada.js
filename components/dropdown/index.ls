@@ -56,7 +56,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                     if value-of-key
                         _values = that.split ','
                         for val in _values
-                            if find (-> it[keyField] is val), data
+                            if find (.[keyField] is val), data
                                 items.push that
                                 selected-keys.push that[keyField]
                                 selected-names.push that[nameField]
@@ -71,13 +71,14 @@ Ractive.components['dropdown'] = Ractive.extend do
 
                 else
                     # set a single value
-                    if find (-> it[keyField] is value-of-key), data
-                        @set \item, that
-                        @set \selected-key, that[keyField]
-                        @set \selected-name, that[nameField]
-                    else
-                        # why didn't we find it?
-                        debugger
+                    if value-of-key
+                        if find (.[keyField] is value-of-key), data
+                            @set \item, that
+                            @set \selected-key, that[keyField]
+                            @set \selected-name, that[nameField]
+                        else
+                            # why didn't we find it?
+                            debugger
 
         shandler = null
 
