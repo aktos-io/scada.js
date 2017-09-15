@@ -81,6 +81,9 @@ Ractive.components['dropdown'] = Ractive.extend do
 
         shandler = null
 
+
+        update-dropdown = (->)
+
         @observe \data, (data) ~>
             @actor.log.log "data is changed: ", data if @get \debug
 
@@ -95,17 +98,24 @@ Ractive.components['dropdown'] = Ractive.extend do
                     on-change: (_value, _text, selected) ~>
                         if shandler then that.silence!
                         @actor.log.log "#{@_guid}: dropdown is changed: ", _value if @get \debug
-                        #debugger if @get \debug
+                        debugger if @get \debug
                         set-item _value
                         if shandler then that.resume!
 
+            update-dropdown := (_new) ~>
+                debugger if @get \debug
+                @actor.log.log "#{@_guid}: selected is changed: ", _new if @get \debug
+                if @get \multiple
+                    dd.dropdown 'set exactly', _new
+                else
+                    dd.dropdown 'set selected', _new
+
+            if (typeof! data is \Array) and not empty data
+                <~ sleep 10ms 
+                update-dropdown @get \selected-key
+
         shandler = @observe \selected-key, (_new) ->
-            debugger if @get \debug
-            @actor.log.log "#{@_guid}: selected is changed: ", _new if @get \debug
-            if @get \multiple
-                dd.dropdown 'set exactly', _new
-            else
-                dd.dropdown 'set selected', _new
+            update-dropdown _new
 
     data: ->
         data: undefined
