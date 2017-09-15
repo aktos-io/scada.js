@@ -9,17 +9,22 @@
             +each('checklist')
                 .item
                     +iff('isEditing(.id) && isEditable')
-                        form.ui.form.red
+                        .ui.form.red
                             .fields
                                 .field
-                                    input(value="{{ editingContent }}")
+                                    label Content 
+                                    input(value="{{ ~/tmp.content }}")
+                            .fields 
                                 .field
-                                    date-picker(unix="{{ newDueTimestamp }}")
+                                    label Due Date 
+                                    date-picker(unix="{{ ~/tmp.dueTimestamp }}")
+                            
+                            .fields
                                 .field
                                     .ui.buttons.right.floated
-                                        ack-button.green(value="{{ . }}" on-buttonclick="saveChanges") Save
+                                        ack-button.green(on-buttonclick="saveChanges") Save
                                         .or
-                                        btn.red(on-buttonclick="cancelEdit") Cancel
+                                        ack-button.red(on-buttonclick="cancelEdit") Cancel
 
                     +else
                         checkbox.transparent(
@@ -31,9 +36,8 @@
                                 {{ .content }} ({{ unixToReadable(.dueTimestamp)}})
 
                         +if('isEditable')
-                            btn.basic.right.floated(
+                            ack-button.basic.right.floated(
                                 on-buttonclick="startEditing"
-                                value="{{ .id }}"
                                 disabled="{{ isEditing(.id) || .isDone }}"
                                 ) Edit
                     +endif 
