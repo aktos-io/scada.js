@@ -14,11 +14,14 @@
     +iff('inline')
         //- inline 
         //- ------------------
-        .ui.inline.dropdown(class="{{class}} {{#loading}}loading{{/}}")
-            input(type="hidden" name="{{_guid}}")
+        .ui.inline.dropdown(class="{{class}} {{#loading}}loading{{/}}")                
             i.dropdown.icon 
             .default.text {{ placeholder }}
             .menu
+                .ui.icon.search.input
+                    i.search.icon
+                    input(type="text" placeholder="Search...")
+
                 +each('data')
                     .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
 
