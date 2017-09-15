@@ -73,17 +73,13 @@ Ractive.components['todo'] = Ractive.extend do
             cancelEdit: (ev) ->
                 @set \editingItem, -1
 
-            statechanged: (ev, curr-state, intended-state, item-id) ->
+            statechanged: (ctx, checked, next) ->
                 # add new action to the log
-                item = find (.id is item-id), @get \checklist
-                item.is-done = intended-state is \checked
-                log = @get \log
-                log.unshift do
-                    action: intended-state
-                    target-id: item-id
+                ctx.set \.isDone, checked
+                @unshift \log, do
+                    action: if checked => 'completed' else 'undone'
+                    target-id: ctx.get \.id
                     timestamp: Date.now!
-                @set \log, log
-                @update \checklist
 
             error: (ev, msg, callback) ->
                 msg = {message: msg} unless msg.message

@@ -25,10 +25,9 @@
                         checkbox.transparent(
                             checked="{{ .isDone }}"
                             on-statechange="statechanged"
-                            value="{{ .id }}"
                             inline
                             )
-                            span(class!="{{# .isDone}}todo-item-done {{/}}").
+                            span(class-todo-item-done=".isDone").
                                 {{ .content }} ({{ unixToReadable(.dueTimestamp)}})
 
                         +if('isEditable')

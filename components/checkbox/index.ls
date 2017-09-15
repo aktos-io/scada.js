@@ -8,7 +8,7 @@ Ractive.components['checkbox'] = Ractive.extend do
             if that.index-of(\transparent)  > -1
                 @set \transparent, yes
 
-        @debug = @get \debug 
+        @debug = @get \debug
 
     onrender: ->
         logger = new VLogger this, \checkbox
@@ -51,8 +51,13 @@ Ractive.components['checkbox'] = Ractive.extend do
                     checked = @get \checked
                     checked = not checked
 
-                    ctx.logger = logger
-                    err, callback <~ @fire \statechange, ctx, checked
+                    const c = ctx.getParent yes
+                    c.refire = yes
+                    c.actor = @actor
+                    c.logger = ->
+                        console.warn "This is deprecated, use actor.send 'app.log.err' instead"
+
+                    err, callback <~ @fire \statechange, c, checked
 
                     if arguments.length isnt 1
                         logger.cerr "statechange callback should have exactly
