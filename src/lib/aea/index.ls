@@ -101,7 +101,6 @@ if make-tests=no
             throw
     console.log "finished tr-to-ascii tests"
 
-require! './browser-storage': {BrowserStorage}
 
 
 hex = (n) -> n.to-string 16 .to-upper-case!
@@ -127,7 +126,6 @@ module.exports = {
     tr-to-ascii
     convert-units
     is-nodejs
-    BrowserStorage
     hex, ip-to-hex
     VLogger
     EventEmitter
