@@ -206,10 +206,13 @@ bundler = browserify do
         watchify unless optimize-for-production
         ...
 
-bundler.transform pug-preparserify
+# WARNING: Plugin sequence is important
+# ------------------------------------------------------------------------------
+bundler.transform pug-preparserify          # MUST be before browserify-livescript
+bundler.transform browserify-livescript     # MUST be before ractive-preparserify
 bundler.transform ractive-preparserify
-bundler.transform browserify-livescript
 bundler.transform browserify-optimize-js
+# ------------------------------------------------------------------------------
 
 first-browserify-done = no
 
