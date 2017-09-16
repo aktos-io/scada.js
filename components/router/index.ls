@@ -55,18 +55,19 @@ parse-link = (link) ->
 
 
 Ractive.components["a"] = Ractive.extend do
-    template: '
+    template: '''
         <a class="{{class}}"
-                style="
-                    {{#if href}}cursor: pointer;{{/if}}
-                    {{style}}
-                    "
-                on-click="_click"
-                {{#if @.get("data-id")}}data-id=\'{{@.get("data-id")}}\' {{/if}}
-                title="{{href}}"
-                >
+            style="
+                {{#href}}cursor: pointer;{{/if}}
+                {{style}}
+                "
+            on-click="_click"
+            data-id="{{~['data-id']}}"
+            title="{{href}}"
+            >
             {{yield}}
-        </a>'
+        </a>
+        '''
     isolated: no
     components: {a: false}
     onrender: ->
@@ -97,7 +98,7 @@ Ractive.components["a"] = Ractive.extend do
                         console.error "there seems a no valid link:", link
                         debugger
 
-                if not ctx.from-my-click 
+                if not ctx.from-my-click
                     const c = ctx.getParent yes
                     c.refire = yes
                     c.a-has-fired = yes
