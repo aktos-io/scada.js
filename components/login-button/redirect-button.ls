@@ -4,9 +4,10 @@ Ractive.components['redirect-button'] = Ractive.extend do
     template: RACTIVE_PREPARSE('redirect-button.pug')
     isolated: yes
     onrender: ->
+        link-button = @find-component \a
         @on do
             click: ->
-                @find-component \a .fire \click
+                link-button.fire \click
 
         redirect-delay = @get \redirect-delay
         i = 0
