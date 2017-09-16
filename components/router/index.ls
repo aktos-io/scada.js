@@ -58,7 +58,7 @@ Ractive.components["a"] = Ractive.extend do
     template: '''
         <a class="{{class}}"
             style="
-                {{#href}}cursor: pointer;{{/if}}
+                {{#href}}cursor: pointer;{{/}}
                 {{style}}
                 "
             on-click="_click"
@@ -109,8 +109,6 @@ Ractive.components["a"] = Ractive.extend do
                 c.refire = yes
                 c.from-my-click = yes
                 @fire \_click, c
-
-
 
 
 
