@@ -76,7 +76,6 @@ Ractive.components["a"] = Ractive.extend do
         @on do
             _click: (ctx) ->
                 href = @get \href
-
                 if newtab
                     return window.open href
 
@@ -98,9 +97,18 @@ Ractive.components["a"] = Ractive.extend do
                         console.error "there seems a no valid link:", link
                         debugger
 
+                if not ctx.from-my-click 
+                    const c = ctx.getParent yes
+                    c.refire = yes
+                    c.a-has-fired = yes
+                    @fire \click, c
+
+            click: (ctx) ->
                 const c = ctx.getParent yes
                 c.refire = yes
-                @fire \click, c
+                c.from-my-click = yes
+                @fire \_click, c
+
 
 
 
