@@ -36,16 +36,18 @@ Ractive.components['print-button'] = Ractive.extend do
                             <link rel="stylesheet" href="css/vendor.css">
                             <title>#{res.title}</title>
                             <style>
+                                /* in order to disable page header and footer */
                                 @page {
-                                    margin: 0; /* in order to disable page header and footer */
+                                    margin: 0;
                                 }
-                                .no-print {
-                                    display: none;
-                                }
+                                /* Re-create A4 sized div */
                                 \#page-container {
-                                    margin: 15mm;
+                                    padding: 15mm;
+                                    width: 210mm;
+                                    height: 297mm;
+                                    border: 1px dashed red; /* for debugging purposes */
                                 }
-
+                                /* prevent last empty page */
                                 @media print {
                                     html, body {
                                         border: 1px solid white;
@@ -53,16 +55,28 @@ Ractive.components['print-button'] = Ractive.extend do
                                         page-break-before: avoid;
                                     }
                                 }
-                                /* custom style */
-                                #{res.style}
+
+                                /* in order to be able to use absolute css in
+                                our print pages' templates */
+                                \#page-inner {
+                                    position: relative;
+                                }
+
+
+                                .no-print {
+                                    display: none;
+                                }
+                                #{res.style} /* additional styles */
                             </style>
                         </head>
                         <body>
                             <div id="page-container">
-                                #{res.body}
+                                <div id="page-inner">
+                                    #{res.body}
+                                </div>
                             </div>
+                            <!-- <script>window.print(); window.close()</script> -->
                         </body>
-                        <script>window.print(); window.close()</script>
                     </html>
                     """
                 @actor.send 'app.log.info', do
