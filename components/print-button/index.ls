@@ -13,19 +13,23 @@ Ractive.components['print-button'] = Ractive.extend do
             _preparePrint: (ctx) ->
                 const c = ctx.getParent yes
                 c.refire = yes
-                err, res <~ @fire \print, c
-                if err
-                    @actor.send 'app.log.err', do
-                        message: {"Error while printing": err}
-                    return
+                c.button = ctx.component
 
+                # important: open printWindow before doing anything async.
                 printWindow = window.open('', '', 'scrollbars=yes, resizable=yes, width=800, height=500')
                 unless printWindow
-                    return alert 'Your browser does not let me open a window!'
+                    return c.button.error do
+                        title: \Error
+                        icon: "warning sign"
+                        message: 'Your browser does not let me open a window!'
+                printWindow.document.writeln """
+                    <h2>Preparing content...</h2>
+                    """
+                printWindow.document.close!
 
-                # TODO: add stylesheets in place
-                #a = document.styleSheets
-                #debugger
+                err, res <~ @fire \print, c
+                if err
+                    return c.button.error message: {"Error while printing": err}
 
                 doc = if res.html
                     res.html
