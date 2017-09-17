@@ -29,7 +29,9 @@ Ractive.components['ack-button'] = Ractive.extend do
         @on do
             _click: (ctx) ->
                 if @get(\state) is \doing
-                    logger.cwarn "ack-button prevents multiple click."
+                    logger.cwarn "ack-button prevents multiple click.
+                        We shouldn't see this message as 'disabled' state
+                        should have taken care of this problem."
                     return
 
                 const c = ctx.getParent yes
