@@ -1,5 +1,6 @@
 require! 'aea':{sleep}
 require! 'dcs/browser': {RactiveActor}
+require! 'mustache'
 
 
 Ractive.components['print-button'] = Ractive.extend do
@@ -29,12 +30,17 @@ Ractive.components['print-button'] = Ractive.extend do
                 doc = if res.html
                     res.html
                 else
+                    body = if res.template
+                        mustache.render that, res.data
+                    else
+                        res.body
+
                     """
                     <html  moznomarginboxes mozdisallowselectionprint>
                         <head>
                             <script src="js/vendor.js"></script>
                             <link rel="stylesheet" href="css/vendor.css">
-                            <title>#{res.title}</title>
+                            <title>#{res.title or res.data.title}</title>
                             <style>
                                 /* in order to disable page header and footer */
                                 @page {
@@ -72,7 +78,7 @@ Ractive.components['print-button'] = Ractive.extend do
                         <body>
                             <div id="page-container">
                                 <div id="page-inner">
-                                    #{res.body}
+                                    #{body}
                                 </div>
                             </div>
                             <!-- <script>window.print(); window.close()</script> -->
