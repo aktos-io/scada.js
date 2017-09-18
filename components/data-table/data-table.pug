@@ -42,7 +42,9 @@ include ./controls.pug
                 +if('addingNew')
                     r-row(class="active")
                         th(colspan="{{ colNames.length }}")
-                            +apply('editForm')
+                            .data-table-opened-row(slide-in="true")
+                                +apply('editForm')
+
                 r-row                    
                     +each('colNames')
                         r-head-col 
