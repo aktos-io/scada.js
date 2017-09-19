@@ -2,12 +2,9 @@ require! 'aea': {sleep}
 require! 'prelude-ls': {take, drop, split}
 require! 'dcs/browser':  {RactiveActor}
 
-Ractive.components['anchor'] = Ractive.extend do
-    template: '<a data-id="{{yield}}"></a>'
-    isolated: yes
-
 scroll-to = (anchor) ->
-    offset = $ "a[data-id='#{anchor}']" .offset!
+    offset = $ "span[data-id='#{anchor}']" .offset!
+    debugger
     if offset
         $ 'html, body' .animate do
             scroll-top: offset.top - 55px
@@ -111,6 +108,9 @@ Ractive.components["a"] = Ractive.extend do
                 @fire \_click, c
 
 
+Ractive.components['anchor'] = Ractive.extend do
+    template: '<span data-id="{{yield}}"></span>'
+    isolated: yes
 
 Ractive.components['router'] = Ractive.extend do
     template: ''
