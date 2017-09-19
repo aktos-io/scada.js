@@ -24,9 +24,9 @@ mixin unless(condition)
     != '{{/unless}}'
 
 mixin each(name)
-    != '{{#' + name + '}}'
+    != '{{#each ' + name + '}}'
     block
-    != '{{/' + name + '}}'
+    != '{{/each}}'
 
 mixin with(name)
     != '{{#with ' + name + '}}'
