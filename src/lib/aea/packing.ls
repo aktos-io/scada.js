@@ -1,13 +1,5 @@
-export function pack x
-    JSON.stringify x, (key, val) ->
-        if typeof! val is \Function
-            return val + ''  # implicitly convert to string
-        #else if val is undefined  => return null # DO NOT DO THAT!
-        val
+require! '../dcs/lib': {pack, unpack, clone}
 
-export function unpack x
-    JSON.parse x
-
-
-export clone = (x) ->
-    unpack pack x
+module.exports = {
+    pack, unpack, clone
+}

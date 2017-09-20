@@ -1,15 +1,14 @@
 require! {
-    './merge': {merge}
-    './sleep': {sleep, after, clear-timer}
-    './debug-log': {debug-log, get-logger, logger, debug-levels}
+    './sleep': {sleep, clear-timer}
     './packing': {pack, unpack, clone}
+    './merge': {merge}
+    './logger': {Logger}
     './formatting': {unix-to-readable, readable-to-unix}
     './convert-units': {convert-units}
     './vlogger': {VLogger}
-    './event-emitter': {EventEmitter}
 }
-
 require! 'prelude-ls': {chars, unchars, reverse}
+require! './copy-to-clipboard': {copyToClipboard}
 
 export function assert (condition, message)
     unless condition
@@ -48,37 +47,6 @@ export attach = (obj, key, val) ->
         obj[key] = [val]
 
 
-``
-// Copies a string to the clipboard. Must be called from within an
-// event handler such as click. May return false if it failed, but
-// this is not always possible. Browser support for Chrome 43+,
-// Firefox 42+, Safari 10+, Edge and IE 10+.
-// IE: The clipboard feature may be disabled by an administrator. By
-// default a prompt is shown the first time the clipboard is
-// used (per session).
-function copyToClipboard(text) {
-    if (window.clipboardData && window.clipboardData.setData) {
-        // IE specific code path to prevent textarea being shown while dialog is visible.
-        return clipboardData.setData("Text", text);
-
-    } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
-        var textarea = document.createElement("textarea");
-        textarea.textContent = text;
-        textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
-        document.body.appendChild(textarea);
-        textarea.select();
-        try {
-            return document.execCommand("copy");  // Security exception may be thrown by some browsers.
-        } catch (ex) {
-            console.warn("Copy to clipboard failed.", ex);
-            return false;
-        } finally {
-            document.body.removeChild(textarea);
-        }
-    }
-}
-``
-
 export tr-to-ascii = (x) ->
     _from = "çalışöğünisÇALIŞÖĞÜNİŞ"
     _to = "calisogunisCALISOGUNIS"
@@ -102,22 +70,10 @@ if make-tests=no
     console.log "finished tr-to-ascii tests"
 
 
-
-hex = (n) -> n.to-string 16 .to-upper-case!
-
-ip-to-hex = (ip) ->
-    i = 0
-    result = 0
-    for part in reverse ip.split '.'
-        result += part * (256**i++)
-
-    hex result
-
 module.exports = {
-    sleep, after, clear-timer
+    sleep, clear-timer
     merge
-    logger,
-    Logger: logger,
+    Logger,
     pack, unpack, clone
     unix-to-readable, readable-to-unix
     assert
@@ -126,7 +82,5 @@ module.exports = {
     tr-to-ascii
     convert-units
     is-nodejs
-    hex, ip-to-hex
     VLogger
-    EventEmitter
 }
