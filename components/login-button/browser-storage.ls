@@ -1,5 +1,5 @@
 require! 'aea': {Logger}
-require! 'dcs/browser': {BrowserStorage}
+require! 'actors': {BrowserStorage}
 
 
 Ractive.components['browser-storage'] = Ractive.extend do

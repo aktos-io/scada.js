@@ -1,4 +1,5 @@
-require! 'dcs/browser': {find-actor, topic-match}
+require! 'dcs/browser': {topic-match}
+require! 'actors': {RactiveActor}
 require! 'aea': {sleep, pack, logger, merge}
 
 log = new logger "login-button"
@@ -39,6 +40,7 @@ Ractive.components['login-button'] = Ractive.extend do
     isolated: yes
     template: RACTIVE_PREPARSE('login-button.pug')
     onrender: ->
+        @actor = new RactiveActor this
         <~ sleep 10ms
         connector = null
 
@@ -73,7 +75,7 @@ Ractive.components['login-button'] = Ractive.extend do
                     return
 
                 log.log "Trying to login with credentials..."
-                err, res <~ connector.proxy.login credentials
+                err, res <~ connector.login credentials
 
                 if err
                     <~ ev.component?.error "something went wrong with login: #{pack err}"
@@ -104,7 +106,7 @@ Ractive.components['login-button'] = Ractive.extend do
                 log.log "Logging out."
 
                 ev.component?.fire \state, \doing
-                err, res <~ connector.proxy.logout
+                err, res <~ connector.logout
                 if err
                     <~ ev.component.error "something went wrong while logging out"
                     #console.log "user pressed button on error screen. "
@@ -125,7 +127,7 @@ Ractive.components['login-button'] = Ractive.extend do
                     @fire \doLogin, ev
 
         @observe \transport-id, (transport-id) ->
-            connector := find-actor transport-id
+            connector := @actor.mgr.find-actor transport-id
             if @get \auto
                 log.log "Performing automatic login."
                 @fire \doLogin

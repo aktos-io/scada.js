@@ -1,4 +1,4 @@
-require! 'dcs/browser': {IoActor}
+require! 'actors': {IoActor}
 
 Ractive.components['sync'] = Ractive.extend do
     isolated: yes

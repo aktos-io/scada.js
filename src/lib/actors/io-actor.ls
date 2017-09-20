@@ -17,7 +17,7 @@ IoActor is an actor that subscribes IoMessage messages
  */
 
 require! './ractive-actor': {RactiveActor}
-require! './filters': {FpsExec}
+require! 'dcs/browser': {FpsExec}
 require! 'aea': {sleep}
 
 context-switch = sleep 0

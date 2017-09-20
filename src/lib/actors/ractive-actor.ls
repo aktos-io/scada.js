@@ -1,6 +1,5 @@
-require! './actor': {Actor}
 require! 'aea': {pack, sleep}
-require! './signal': {Signal}
+require! 'dcs/browser': {Signal, Actor}
 
 export class RactiveActor extends Actor
     (@ractive, opts={}) ->
@@ -12,7 +11,7 @@ export class RactiveActor extends Actor
 
         # subscriptions
         @subscribe that if opts.subscribe
-        @subscribe @default-topic
+        @subscribe that if @default-topic
         @subscribe 'my.router.changes'
 
         # teleport signal is used for restoring a node after teleportation

@@ -1,5 +1,6 @@
 require! 'aea': {merge, sleep, VLogger}
-require! 'dcs/browser': {Signal, RactiveActor}
+require! 'dcs/browser': {Signal}
+require! 'actors': {RactiveActor}
 
 Ractive.components['ack-button'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
@@ -79,7 +80,7 @@ Ractive.components['ack-button'] = Ractive.extend do
             set-button \normal
 
         @heartbeat = (duration) ~>
-            logger.clog "ack-button received a heartbeat: #{duration}"
+            logger.clog "ack-button received a heartbeat" + if duration => ": #{that}" else "."
             @doing-watchdog.heartbeat duration
             @set \heartbeat, yes
             <~ sleep 200ms

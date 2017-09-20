@@ -1,5 +1,5 @@
 require! 'aea':{sleep}
-require! 'dcs/browser': {RactiveActor}
+require! 'actors': {RactiveActor}
 require! 'mustache'
 
 

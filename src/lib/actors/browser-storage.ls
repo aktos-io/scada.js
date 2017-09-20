@@ -1,4 +1,4 @@
-require! './actor': {Actor}
+require! 'dcs/browser': {Actor}
 require! 'aea': {sleep}
 
 export class BrowserStorage extends Actor
@@ -31,7 +31,7 @@ export class BrowserStorage extends Actor
                 if that is "undefined"
                     return undefined
                 else
-                    JSON.parse that 
+                    JSON.parse that
         catch
             @del key
             err =

@@ -1,5 +1,6 @@
-require! 'aea': {merge, logger: Logger, pack, sleep}
-require! 'dcs/browser': {Signal, RactiveActor, topic-match}
+require! 'aea': {merge, Logger, pack, sleep}
+require! 'dcs/browser': {Signal, topic-match}
+require! 'actors': {RactiveActor}
 
 Ractive.components['logger'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
@@ -58,7 +59,7 @@ Ractive.components['logger'] = Ractive.extend do
                     when \Object =>
                         if typeof! msg.message in <[ Object Array ]>
                             msg.message = JSON.stringify msg.message, null, 2
-                        
+
                 msg = default-opts <<< msg
 
                 # create buttons
