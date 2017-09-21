@@ -28,15 +28,15 @@ require! './templates/filters': {pug-filters}
 require! 'node-notifier': notifier
 require! 'gulp-concat': cat
 require! 'gulp-uglify': uglify
-require! './src/lib/aea': {sleep, pack}
-require! './src/lib/aea/ractive-preparserify': {
+require! './lib/aea': {sleep, pack}
+require! './lib/aea/ractive-preparserify': {
     ractive-preparserify
     preparserify-dep-list
 }
-require! './src/lib/aea/pug-preparserify': {
+require! './lib/aea/pug-preparserify': {
     pug-preparserify
 }
-require! './src/lib/aea/browserify-optimize-js'
+require! './lib/aea/browserify-optimize-js'
 require! 'gulp-flatten': flatten
 require! 'gulp-tap': tap
 require! 'gulp-cached': cache
@@ -54,7 +54,7 @@ notification-enabled = yes
 paths =
     vendor-folder: "#{__dirname}/vendor"
     build-folder: "#{__dirname}/build"
-    lib-src: "#{__dirname}/src/lib"
+    lib-src: "#{__dirname}/lib"
     client-webapps: "#{__dirname}/../webapps"
     client-root: "#{__dirname}/.."
 
