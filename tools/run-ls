@@ -36,7 +36,7 @@ SCADA_DIR=$(find_scada_root $base_dir)
 
 if [[ -d $SCADA_DIR ]]; then
     #echo "DEBUG: found scada root: $SCADA_DIR"
-    SCADA_MODULES="${SCADA_DIR}/src/lib"
+    SCADA_MODULES="${SCADA_DIR}/lib"
     PROJECT_PATH=$(realpath "${SCADA_DIR}/..")
 
     echo "ScadaJS project path: ${PROJECT_PATH}"
