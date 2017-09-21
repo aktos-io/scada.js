@@ -1,8 +1,8 @@
 require! 'dcs/browser': {topic-match}
 require! 'actors': {RactiveActor}
-require! 'aea': {sleep, pack, logger, merge}
+require! 'aea': {sleep, pack, Logger, merge}
 
-log = new logger "login-button"
+log = new Logger "login-button"
 
 # Permission calculation mechanism
 helpers = Ractive.defaults.data
