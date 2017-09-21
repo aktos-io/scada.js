@@ -3,7 +3,7 @@ require! 'prelude-ls': {
     camelize, find, reject, find-index
 }
 require! 'aea': {sleep, merge, clone, unix-to-readable, pack, VLogger}
-require! 'dcs/browser': {RactiveActor}
+require! 'actors': {RactiveActor}
 
 Ractive.components['data-table'] = Ractive.extend do
     template: RACTIVE_PREPARSE('data-table.pug')

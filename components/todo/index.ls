@@ -1,6 +1,6 @@
 require! 'prelude-ls': {filter, each, find}
 require! 'aea': {merge, unix-to-readable}
-require! 'dcs/browser': {RactiveActor}
+require! 'actors': {RactiveActor}
 require! uuid4
 
 Ractive.components['todo'] = Ractive.extend do

@@ -1,6 +1,6 @@
 require! 'livescript': lsc
 require! 'prelude-ls': {camelize}
-require! 'aea': {merge, pack, logger}
+require! 'aea': {merge, pack, Logger}
 
 make-design-doc = (obj) ->
     # convert functions to strings in design docs
@@ -18,7 +18,7 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->
-        @log = new logger \ddoc-editor
+        @log = new Logger \ddoc-editor
         if @get \db
             db = that
         else

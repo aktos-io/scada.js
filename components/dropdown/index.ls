@@ -1,5 +1,5 @@
 require! 'prelude-ls': {find, empty}
-require! 'dcs/browser': {RactiveActor}
+require! 'actors': {RactiveActor}
 require! 'aea': {sleep}
 
 class RactiveVar

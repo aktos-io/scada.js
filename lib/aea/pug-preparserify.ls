@@ -1,7 +1,7 @@
 require! 'through2': through
 require! <[ pug path cheerio fs ]>
 require! 'prelude-ls': {map, keys}
-require! '../../../templates/filters': {pug-filters}
+require! '../../templates/filters': {pug-filters}
 
 export preparserify-dep-list = {}
 

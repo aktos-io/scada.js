@@ -1,10 +1,9 @@
 require! 'aea': {sleep}
 require! 'prelude-ls': {take, drop, split}
-require! 'dcs/browser':  {RactiveActor}
+require! 'actors':  {RactiveActor}
 
 scroll-to = (anchor) ->
     offset = $ "span[data-id='#{anchor}']" .offset!
-    debugger
     if offset
         $ 'html, body' .animate do
             scroll-top: offset.top - 55px

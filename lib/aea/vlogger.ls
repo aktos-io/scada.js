@@ -1,4 +1,4 @@
-require! './debug-log': {logger: Logger}
+require! './logger': {Logger}
 
 export class VLogger
     (@context, name)->
