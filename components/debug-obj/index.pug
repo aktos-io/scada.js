@@ -1,9 +1,9 @@
-.ui.red.message(style="max-width: 200px; width: 100%; overflow: auto; max-height: 200px; height: auto; width: auto")
-    h1.ui.red.header 
-        +iff('title')
-            | {{title}}
-        +else
-            | Debugging Object
-        +endif
++if('show')
+    .ui.form.red
+        .field
+            label {{#if title}}{{title}}{{else}}Debugging Object{{/if}}
 
-    pre(style="white-space: pre-wrap") {{ JSON.stringify(obj, null, 2) }}
+            textarea(style="white-space: pre-wrap") {{ JSON.stringify(obj, null, 2) }}
+
+
+.ui.button.small.basic.blue(on-click="@.toggle('show')") #[code {{title}}]
