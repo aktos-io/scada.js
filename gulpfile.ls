@@ -27,7 +27,7 @@ require! './templates/filters': {pug-filters}
 
 require! 'node-notifier': notifier
 require! 'gulp-concat': cat
-require! 'gulp-uglify': uglify
+require! 'gulp-uglify-es': {default: uglify}
 require! './lib/aea': {sleep, pack}
 require! './lib/aea/ractive-preparserify': {
     ractive-preparserify
@@ -189,7 +189,7 @@ gulp.task \html, ->
 
 
 my-uglify = (x) ->
-    uglify {mangle: except: ['$super']}, x
+    uglify x
     .on \error, gutil.log
 
 browserify-cache = {}
