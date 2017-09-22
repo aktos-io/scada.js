@@ -46,6 +46,7 @@ require! 'through2':through
 require! 'optimize-js'
 require! 'gulp-if-else': if-else
 require! 'gulp-rename': rename
+require! 'gulp-util': gutil
 
 # Build Settings
 notification-enabled = yes
@@ -189,6 +190,7 @@ gulp.task \html, ->
 
 my-uglify = (x) ->
     uglify {mangle: except: ['$super']}, x
+    .on \error, gutil.log
 
 browserify-cache = {}
 bundler = browserify do
@@ -231,6 +233,7 @@ function bundle
         #.pipe sourcemaps.init {+load-maps, +large-files}
 
         .pipe if-else optimize-for-production, my-uglify
+
         #.pipe rename basename: 'app'
         #.pipe sourcemaps.write '.'
         .pipe gulp.dest paths.build-folder

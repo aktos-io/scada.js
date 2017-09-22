@@ -17,6 +17,7 @@
     "colors": "^1.1.2",
     "csv-parse": "^1.1.7",
     "express": "^4.14.0",
+    "gulp-util": "^3.0.8",
     "livescript": "~1.4.0",
     "moment": "^2.18.1",
     "mustache": "^2.3.0",
