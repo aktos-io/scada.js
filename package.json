@@ -21,7 +21,6 @@
     "gulp-util": "^3.0.8",
     "livescript": "~1.4.0",
     "moment": "^2.18.1",
-    "mustache": "^2.3.0",
     "nouislider": "^10.0.0",
     "prelude-ls": "^1.1.2",
     "ractive": "^1.0.0-build-66",

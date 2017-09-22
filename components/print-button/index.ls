@@ -1,6 +1,5 @@
 require! 'aea':{sleep}
 require! 'actors': {RactiveActor}
-require! 'mustache'
 
 
 Ractive.components['print-button'] = Ractive.extend do
@@ -27,19 +26,23 @@ Ractive.components['print-button'] = Ractive.extend do
                     """
                 printWindow.document.close!
 
-                err, res <~ @fire \print, c
-                if err
-                    return c.button.error message: {"Error while printing": err}
+                res <~ @fire \print, c
 
-                doc = if res.html
-                    res.html
+                if res.html
+                    doc = that
                 else
-                    body = if res.template
-                        mustache.render that, res.data
+                    if res.body
+                        body = that
                     else
-                        res.body
+                        r = new Ractive do
+                            template: res.template
+                            data: res.data
 
-                    """
+                        body = r.toHTML!
+
+                res.title = that if @get \title
+
+                doc = """
                     <html  moznomarginboxes mozdisallowselectionprint>
                         <head>
                             <script src="js/vendor.js"></script>
