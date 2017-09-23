@@ -2,8 +2,8 @@
 (function (global){
 /*
 	Ractive.js v1.0.0-edge
-	Build: 7d28142126f02e59cd3ac57690caaf18f4c79713
-	Date: Fri Sep 08 2017 22:01:24 GMT+0000 (UTC)
+	Build: 55fac29311aa067e871490d4c7aeb8f00808ccf1
+	Date: Sun Jun 04 2017 18:20:45 GMT+0000 (UTC)
 	Website: http://ractivejs.org
 	License: MIT
 */
@@ -18,269 +18,6 @@
 	})();
 }(this, (function () { 'use strict';
 
-/* istanbul ignore if */
-if (!Array.prototype.find) {
-	Object.defineProperty( Array.prototype, 'find', {
-		value: function value (callback, thisArg) {
-			if (this === null || this === undefined)
-				{ throw new TypeError('Array.prototype.find called on null or undefined'); }
-
-			if (typeof callback !== 'function')
-				{ throw new TypeError((callback + " is not a function")); }
-
-			var array = Object(this);
-			var arrayLength = array.length >>> 0;
-
-			for (var index = 0; index < arrayLength; index++) {
-				if (!Object.hasOwnProperty.call(array, index)) { continue; }
-				if (!callback.call(thisArg, array[index], index, array)) { continue; }
-				return array[index];
-			}
-
-			return undefined;
-		},
-		configurable: true,
-		writable: true
-	});
-}
-
-// NOTE: Node doesn't exist in IE8. Nothing can be done.
-/* istanbul ignore if */
-if (typeof window !== 'undefined' && window.Node && window.Node.prototype && !window.Node.prototype.contains) {
-	Node.prototype.contains = function (node) {
-		var this$1 = this;
-
-		if (!node)
-			{ throw new TypeError('node required'); }
-
-		do {
-			if (this$1 === node) { return true; }
-		} while (node = node && node.parentNode);
-
-		return false;
-	};
-}
-
-/* istanbul ignore if */
-if (!Object.assign) {
-	Object.assign = function (target) {
-		var sources = [], len = arguments.length - 1;
-		while ( len-- > 0 ) sources[ len ] = arguments[ len + 1 ];
-
-		if (target == null)
-			{ throw new TypeError('Cannot convert undefined or null to object'); }
-
-		var to = Object(target);
-		var sourcesLength = sources.length;
-
-		for (var index = 0; index < sourcesLength; index++) {
-			var nextSource = sources[index];
-			for (var nextKey in nextSource) {
-				if (!Object.prototype.hasOwnProperty.call(nextSource, nextKey)) { continue; }
-				to[nextKey] = nextSource[nextKey];
-			}
-		}
-
-		return to;
-	};
-}
-
-/* istanbul ignore if */
-if (typeof window !== 'undefined' && window.performance && !window.performance.now) {
-	window.performance = window.performance || {};
-
-	var nowOffset = Date.now();
-
-	window.performance.now = function () {
-		return Date.now() - nowOffset;
-	};
-}
-
-/* istanbul ignore if */
-if (typeof window !== 'undefined' && !window.Promise) {
-	var PENDING = {};
-	var FULFILLED = {};
-	var REJECTED = {};
-
-	var Promise$1 = window.Promise = function (callback) {
-		var fulfilledHandlers = [];
-		var rejectedHandlers = [];
-		var state = PENDING;
-		var result;
-		var dispatchHandlers;
-
-		var makeResolver = function (newState) {
-			return function (value) {
-				if (state !== PENDING) { return; }
-				result = value;
-				state = newState;
-				dispatchHandlers = makeDispatcher((state === FULFILLED ? fulfilledHandlers : rejectedHandlers), result);
-				wait(dispatchHandlers);
-			};
-		};
-
-		var fulfill = makeResolver(FULFILLED);
-		var reject = makeResolver(REJECTED);
-
-		try {
-			callback(fulfill, reject);
-		} catch (err) {
-			reject(err);
-		}
-
-		return {
-			// `then()` returns a Promise - 2.2.7
-			then: function then(onFulfilled, onRejected) {
-				var promise2 = new Promise$1(function (fulfill, reject) {
-
-					var processResolutionHandler = function (handler, handlers, forward) {
-						if (typeof handler === 'function') {
-							handlers.push(function (p1result) {
-								try {
-									resolve$1(promise2, handler(p1result), fulfill, reject);
-								} catch (err) {
-									reject(err);
-								}
-							});
-						} else {
-							handlers.push(forward);
-						}
-					};
-
-					processResolutionHandler(onFulfilled, fulfilledHandlers, fulfill);
-					processResolutionHandler(onRejected, rejectedHandlers, reject);
-
-					if (state !== PENDING) {
-						wait(dispatchHandlers);
-					}
-
-				});
-				return promise2;
-			},
-			'catch': function catch$1(onRejected) {
-				return this.then(null, onRejected);
-			}
-		};
-	};
-
-	Promise$1.all = function (promises) {
-		return new Promise$1(function (fulfil, reject) {
-			var result = [];
-			var pending;
-			var i;
-
-			if (!promises.length) {
-				fulfil(result);
-				return;
-			}
-
-			var processPromise = function (promise, i) {
-				if (promise && typeof promise.then === 'function') {
-					promise.then(function (value) {
-						result[i] = value;
-						--pending || fulfil(result);
-					}, reject);
-				} else {
-					result[i] = promise;
-					--pending || fulfil(result);
-				}
-			};
-
-			pending = i = promises.length;
-
-			while (i--) {
-				processPromise(promises[i], i);
-			}
-		});
-	};
-
-	Promise$1.resolve = function (value) {
-		return new Promise$1(function (fulfill) {
-			fulfill(value);
-		});
-	};
-
-	Promise$1.reject = function (reason) {
-		return new Promise$1(function (fulfill, reject) {
-			reject(reason);
-		});
-	};
-
-	// TODO use MutationObservers or something to simulate setImmediate
-	var wait = function (callback) {
-		setTimeout(callback, 0);
-	};
-
-	var makeDispatcher = function (handlers, result) {
-		return function () {
-			for (var handler = (void 0); handler = handlers.shift();) {
-				handler(result);
-			}
-		};
-	};
-
-	var resolve$1 = function (promise, x, fulfil, reject) {
-		var then;
-		if (x === promise) {
-			throw new TypeError("A promise's fulfillment handler cannot return the same promise");
-		}
-		if (x instanceof Promise$1) {
-			x.then(fulfil, reject);
-		} else if (x && (typeof x === 'object' || typeof x === 'function')) {
-			try {
-				then = x.then;
-			} catch (e) {
-				reject(e);
-				return;
-			}
-			if (typeof then === 'function') {
-				var called;
-
-				var resolvePromise = function (y) {
-					if (called) { return; }
-					called = true;
-					resolve$1(promise, y, fulfil, reject);
-				};
-				var rejectPromise = function (r) {
-					if (called) { return; }
-					called = true;
-					reject(r);
-				};
-
-				try {
-					then.call(x, resolvePromise, rejectPromise);
-				} catch (e) {
-					if (!called) {
-						reject(e);
-						called = true;
-						return;
-					}
-				}
-			} else {
-				fulfil(x);
-			}
-		} else {
-			fulfil(x);
-		}
-	};
-
-}
-
-/* istanbul ignore if */
-if (typeof window !== 'undefined' && !(window.requestAnimationFrame && window.cancelAnimationFrame)) {
-	var lastTime = 0;
-	window.requestAnimationFrame = function (callback) {
-		var currentTime = Date.now();
-		var timeToNextCall = Math.max(0, 16 - (currentTime - lastTime));
-		var id = window.setTimeout(function () { callback(currentTime + timeToNextCall); }, timeToNextCall);
-		lastTime = currentTime + timeToNextCall;
-		return id;
-	};
-	window.cancelAnimationFrame = function (id) {
-		clearTimeout(id);
-	};
-}
-
 var defaults = {
 	// render placement:
 	el:                     void 0,
@@ -291,7 +28,6 @@ var defaults = {
 	template:               null,
 
 	// parse:
-	allowExpressions:       true,
 	delimiters:             [ '{{', '}}' ],
 	tripleDelimiters:       [ '{{{', '}}}' ],
 	staticDelimiters:       [ '[[', ']]' ],
@@ -353,15 +89,10 @@ var defaults = {
 
 var easing = {
 	linear: function linear ( pos ) { return pos; },
-	easeIn: function easeIn ( pos ) {
-		/* istanbul ignore next */
-		return Math.pow( pos, 3 );
-	},
+	easeIn: function easeIn ( pos ) { return Math.pow( pos, 3 ); },
 	easeOut: function easeOut ( pos ) { return ( Math.pow( ( pos - 1 ), 3 ) + 1 ); },
 	easeInOut: function easeInOut ( pos ) {
-		/* istanbul ignore next */
 		if ( ( pos /= 0.5 ) < 1 ) { return ( 0.5 * Math.pow( pos, 3 ) ); }
-		/* istanbul ignore next */
 		return ( 0.5 * ( Math.pow( ( pos - 2 ), 3 ) + 2 ) );
 	}
 };
@@ -569,6 +300,10 @@ function interpolate ( from, to, ractive, type ) {
 	       null;
 }
 
+function snap ( to ) {
+	return function () { return to; };
+}
+
 var interpolators = {
 	number: function number ( from, to ) {
 		if ( !isNumeric( from ) || !isNumeric( to ) ) {
@@ -633,20 +368,18 @@ var interpolators = {
 		var intermediate = {};
 		var interpolators = {};
 
-		var loop = function ( prop ) {
+		for ( var prop in from ) {
 			if ( from.hasOwnProperty( prop ) ) {
 				if ( to.hasOwnProperty( prop ) ) {
 					properties.push( prop );
-					interpolators[ prop ] = interpolate( from[ prop ], to[ prop ] ) || ( function () { return to[ prop ]; } );
+					interpolators[ prop ] = interpolate( from[ prop ], to[ prop ] ) || snap( to[ prop ] );
 				}
 
 				else {
 					intermediate[ prop ] = from[ prop ];
 				}
 			}
-		};
-
-		for ( var prop in from ) loop( prop );
+		}
 
 		for ( var prop$1 in to ) {
 			if ( to.hasOwnProperty( prop$1 ) && !from.hasOwnProperty( prop$1 ) ) {
@@ -669,48 +402,6 @@ var interpolators = {
 		};
 	}
 };
-
-var refPattern = /\[\s*(\*|[0-9]|[1-9][0-9]+)\s*\]/g;
-var splitPattern = /([^\\](?:\\\\)*)\./;
-var escapeKeyPattern = /\\|\./g;
-var unescapeKeyPattern = /((?:\\)+)\1|\\(\.)/g;
-
-function escapeKey ( key ) {
-	if ( typeof key === 'string' ) {
-		return key.replace( escapeKeyPattern, '\\$&' );
-	}
-
-	return key;
-}
-
-function normalise ( ref ) {
-	return ref ? ref.replace( refPattern, '.$1' ) : '';
-}
-
-function splitKeypath ( keypath ) {
-	var result = [];
-	var match;
-
-	keypath = normalise( keypath );
-
-	while ( match = splitPattern.exec( keypath ) ) {
-		var index = match.index + match[1].length;
-		result.push( keypath.substr( 0, index ) );
-		keypath = keypath.substr( index + 1 );
-	}
-
-	result.push( keypath );
-
-	return result;
-}
-
-function unescapeKey ( key ) {
-	if ( typeof key === 'string' ) {
-		return key.replace( unescapeKeyPattern, '$1$2' );
-	}
-
-	return key;
-}
 
 function addToArray ( array, value ) {
 	var index = array.indexOf( value );
@@ -811,854 +502,6 @@ function findMap ( array, fn ) {
 	}
 }
 
-var stack = [];
-var captureGroup;
-
-function startCapturing () {
-	stack.push( captureGroup = [] );
-}
-
-function stopCapturing () {
-	var dependencies = stack.pop();
-	captureGroup = stack[ stack.length - 1 ];
-	return dependencies;
-}
-
-function capture ( model ) {
-	if ( captureGroup ) {
-		captureGroup.push( model );
-	}
-}
-
-var KeyModel = function KeyModel ( key, parent ) {
-	this.value = key;
-	this.isReadonly = this.isKey = true;
-	this.deps = [];
-	this.links = [];
-	this.parent = parent;
-};
-var KeyModel__proto__ = KeyModel.prototype;
-
-KeyModel__proto__.get = function get ( shouldCapture ) {
-	if ( shouldCapture ) { capture( this ); }
-	return unescapeKey( this.value );
-};
-
-KeyModel__proto__.getKeypath = function getKeypath () {
-	return unescapeKey( this.value );
-};
-
-KeyModel__proto__.rebind = function rebind ( next, previous ) {
-		var this$1 = this;
-
-	var i = this.deps.length;
-	while ( i-- ) { this$1.deps[i].rebind( next, previous, false ); }
-
-	i = this.links.length;
-	while ( i-- ) { this$1.links[i].relinking( next, false ); }
-};
-
-KeyModel__proto__.register = function register ( dependant ) {
-	this.deps.push( dependant );
-};
-
-KeyModel__proto__.registerLink = function registerLink ( link ) {
-	addToArray( this.links, link );
-};
-
-KeyModel__proto__.unregister = function unregister ( dependant ) {
-	removeFromArray( this.deps, dependant );
-};
-
-KeyModel__proto__.unregisterLink = function unregisterLink ( link ) {
-	removeFromArray( this.links, link );
-};
-
-KeyModel.prototype.reference = noop;
-KeyModel.prototype.unreference = noop;
-
-function bind               ( x ) { x.bind(); }
-function cancel             ( x ) { x.cancel(); }
-function destroyed          ( x ) { x.destroyed(); }
-function handleChange       ( x ) { x.handleChange(); }
-function mark               ( x ) { x.mark(); }
-function markForce          ( x ) { x.mark( true ); }
-function marked             ( x ) { x.marked(); }
-function markedAll          ( x ) { x.markedAll(); }
-function render             ( x ) { x.render(); }
-function shuffled           ( x ) { x.shuffled(); }
-function teardown           ( x ) { x.teardown(); }
-function unbind             ( x ) { x.unbind(); }
-function unrender           ( x ) { x.unrender(); }
-function unrenderAndDestroy ( x ) { x.unrender( true ); }
-function update             ( x ) { x.update(); }
-function toString$1           ( x ) { return x.toString(); }
-function toEscapedString    ( x ) { return x.toString( true ); }
-
-var KeypathModel = function KeypathModel ( parent, ractive ) {
-	this.parent = parent;
-	this.ractive = ractive;
-	this.value = ractive ? parent.getKeypath( ractive ) : parent.getKeypath();
-	this.deps = [];
-	this.children = {};
-	this.isReadonly = this.isKeypath = true;
-};
-var KeypathModel__proto__ = KeypathModel.prototype;
-
-KeypathModel__proto__.get = function get ( shouldCapture ) {
-	if ( shouldCapture ) { capture( this ); }
-	return this.value;
-};
-
-KeypathModel__proto__.getChild = function getChild ( ractive ) {
-	if ( !( ractive._guid in this.children ) ) {
-		var model = new KeypathModel( this.parent, ractive );
-		this.children[ ractive._guid ] = model;
-		model.owner = this;
-	}
-	return this.children[ ractive._guid ];
-};
-
-KeypathModel__proto__.getKeypath = function getKeypath () {
-	return this.value;
-};
-
-KeypathModel__proto__.handleChange = function handleChange$1 () {
-		var this$1 = this;
-
-	var keys = Object.keys( this.children );
-	var i = keys.length;
-	while ( i-- ) {
-		this$1.children[ keys[i] ].handleChange();
-	}
-
-	this.deps.forEach( handleChange );
-};
-
-KeypathModel__proto__.rebindChildren = function rebindChildren ( next ) {
-		var this$1 = this;
-
-	var keys = Object.keys( this.children );
-	var i = keys.length;
-	while ( i-- ) {
-		var child = this$1.children[keys[i]];
-		child.value = next.getKeypath( child.ractive );
-		child.handleChange();
-	}
-};
-
-KeypathModel__proto__.rebind = function rebind ( next, previous ) {
-		var this$1 = this;
-
-	var model = next ? next.getKeypathModel( this.ractive ) : undefined;
-
-	var keys = Object.keys( this.children );
-	var i = keys.length;
-	while ( i-- ) {
-		this$1.children[ keys[i] ].rebind( next, previous, false );
-	}
-
-	i = this.deps.length;
-	while ( i-- ) {
-		this$1.deps[i].rebind( model, this$1, false );
-	}
-};
-
-KeypathModel__proto__.register = function register ( dep ) {
-	this.deps.push( dep );
-};
-
-KeypathModel__proto__.removeChild = function removeChild ( model ) {
-	if ( model.ractive ) { delete this.children[ model.ractive._guid ]; }
-};
-
-KeypathModel__proto__.teardown = function teardown () {
-		var this$1 = this;
-
-	if ( this.owner ) { this.owner.removeChild( this ); }
-
-	var keys = Object.keys( this.children );
-	var i = keys.length;
-	while ( i-- ) {
-		this$1.children[ keys[i] ].teardown();
-	}
-};
-
-KeypathModel__proto__.unregister = function unregister ( dep ) {
-	removeFromArray( this.deps, dep );
-	if ( !this.deps.length ) { this.teardown(); }
-};
-
-KeypathModel.prototype.reference = noop;
-KeypathModel.prototype.unreference = noop;
-
-var fnBind = Function.prototype.bind;
-
-function bind$1 ( fn, context ) {
-	if ( !/this/.test( fn.toString() ) ) { return fn; }
-
-	var bound = fnBind.call( fn, context );
-	for ( var prop in fn ) { bound[ prop ] = fn[ prop ]; }
-
-	return bound;
-}
-
-var hasProp = Object.prototype.hasOwnProperty;
-
-var shuffleTasks = { early: [], mark: [] };
-var registerQueue = { early: [], mark: [] };
-
-var ModelBase = function ModelBase ( parent ) {
-	this.deps = [];
-
-	this.children = [];
-	this.childByKey = {};
-	this.links = [];
-
-	this.keyModels = {};
-
-	this.bindings = [];
-	this.patternObservers = [];
-
-	if ( parent ) {
-		this.parent = parent;
-		this.root = parent.root;
-	}
-};
-var ModelBase__proto__ = ModelBase.prototype;
-
-ModelBase__proto__.addShuffleTask = function addShuffleTask ( task, stage ) {
-	if ( stage === void 0 ) stage = 'early';
- shuffleTasks[stage].push( task ); };
-ModelBase__proto__.addShuffleRegister = function addShuffleRegister ( item, stage ) {
-	if ( stage === void 0 ) stage = 'early';
- registerQueue[stage].push({ model: this, item: item }); };
-
-ModelBase__proto__.downstreamChanged = function downstreamChanged () {};
-
-ModelBase__proto__.findMatches = function findMatches ( keys ) {
-	var len = keys.length;
-
-	var existingMatches = [ this ];
-	var matches;
-	var i;
-
-	var loop = function (  ) {
-		var key = keys[i];
-
-		if ( key === '*' ) {
-			matches = [];
-			existingMatches.forEach( function (model) {
-				matches.push.apply( matches, model.getValueChildren( model.get() ) );
-			});
-		} else {
-			matches = existingMatches.map( function (model) { return model.joinKey( key ); } );
-		}
-
-		existingMatches = matches;
-	};
-
-		for ( i = 0; i < len; i += 1 ) loop(  );
-
-	return matches;
-};
-
-ModelBase__proto__.getKeyModel = function getKeyModel ( key, skip ) {
-	if ( key !== undefined && !skip ) { return this.parent.getKeyModel( key, true ); }
-
-	if ( !( key in this.keyModels ) ) { this.keyModels[ key ] = new KeyModel( escapeKey( key ), this ); }
-
-	return this.keyModels[ key ];
-};
-
-ModelBase__proto__.getKeypath = function getKeypath ( ractive ) {
-	if ( ractive !== this.ractive && this._link ) { return this._link.target.getKeypath( ractive ); }
-
-	if ( !this.keypath ) {
-		var parent = this.parent && this.parent.getKeypath( ractive );
-		this.keypath = parent ? ((this.parent.getKeypath( ractive )) + "." + (escapeKey( this.key ))) : escapeKey( this.key );
-	}
-
-	return this.keypath;
-};
-
-ModelBase__proto__.getValueChildren = function getValueChildren ( value ) {
-		var this$1 = this;
-
-	var children;
-	if ( Array.isArray( value ) ) {
-		children = [];
-		if ( 'length' in this && this.length !== value.length ) {
-			children.push( this.joinKey( 'length' ) );
-		}
-		value.forEach( function ( m, i ) {
-			children.push( this$1.joinKey( i ) );
-		});
-	}
-
-	else if ( isObject( value ) || typeof value === 'function' ) {
-		children = Object.keys( value ).map( function (key) { return this$1.joinKey( key ); } );
-	}
-
-	else if ( value != null ) {
-		return [];
-	}
-
-	return children;
-};
-
-ModelBase__proto__.getVirtual = function getVirtual ( shouldCapture ) {
-		var this$1 = this;
-
-	var value = this.get( shouldCapture, { virtual: false } );
-	if ( isObject( value ) ) {
-		var result = Array.isArray( value ) ? [] : {};
-
-		var keys = Object.keys( value );
-		var i = keys.length;
-		while ( i-- ) {
-			var child = this$1.childByKey[ keys[i] ];
-			if ( !child ) { result[ keys[i] ] = value[ keys[i] ]; }
-			else if ( child._link ) { result[ keys[i] ] = child._link.getVirtual(); }
-			else { result[ keys[i] ] = child.getVirtual(); }
-		}
-
-		i = this.children.length;
-		while ( i-- ) {
-			var child$1 = this$1.children[i];
-			if ( !( child$1.key in result ) && child$1._link ) {
-				result[ child$1.key ] = child$1._link.getVirtual();
-			}
-		}
-
-		return result;
-	} else { return value; }
-};
-
-ModelBase__proto__.has = function has ( key ) {
-	if ( this._link ) { return this._link.has( key ); }
-
-	var value = this.get();
-	if ( !value ) { return false; }
-
-	key = unescapeKey( key );
-	if ( hasProp.call( value, key ) ) { return true; }
-
-	// We climb up the constructor chain to find if one of them contains the key
-	var constructor = value.constructor;
-	while ( constructor !== Function && constructor !== Array && constructor !== Object ) {
-		if ( hasProp.call( constructor.prototype, key ) ) { return true; }
-		constructor = constructor.constructor;
-	}
-
-	return false;
-};
-
-ModelBase__proto__.joinAll = function joinAll ( keys, opts ) {
-	var model = this;
-	for ( var i = 0; i < keys.length; i += 1 ) {
-		if ( opts && opts.lastLink === false && i + 1 === keys.length && model.childByKey[keys[i]] && model.childByKey[keys[i]]._link ) { return model.childByKey[keys[i]]; }
-		model = model.joinKey( keys[i], opts );
-	}
-
-	return model;
-};
-
-ModelBase__proto__.notifyUpstream = function notifyUpstream ( startPath ) {
-		var this$1 = this;
-
-	var parent = this.parent;
-	var path = startPath || [ this.key ];
-	while ( parent ) {
-		if ( parent.patternObservers.length ) { parent.patternObservers.forEach( function (o) { return o.notify( path.slice() ); } ); }
-		path.unshift( parent.key );
-		parent.links.forEach( function (l) { return l.notifiedUpstream( path, this$1.root ); } );
-		parent.deps.forEach( function (d) { return d.handleChange( path ); } );
-		parent.downstreamChanged( startPath );
-		parent = parent.parent;
-	}
-};
-
-ModelBase__proto__.rebind = function rebind ( next, previous, safe ) {
-		var this$1 = this;
-
-	if ( this._link ) {
-		this._link.rebind( next, previous, false );
-	}
-
-	// tell the deps to move to the new target
-	var i = this.deps.length;
-	while ( i-- ) {
-		if ( this$1.deps[i].rebind ) { this$1.deps[i].rebind( next, previous, safe ); }
-	}
-
-	i = this.links.length;
-	while ( i-- ) {
-		var link = this$1.links[i];
-		// only relink the root of the link tree
-		if ( link.owner._link ) { link.relinking( next, safe ); }
-	}
-
-	i = this.children.length;
-	while ( i-- ) {
-		var child = this$1.children[i];
-		child.rebind( next ? next.joinKey( child.key ) : undefined, child, safe );
-	}
-
-	if ( this.keypathModel ) { this.keypathModel.rebind( next, previous, false ); }
-
-	i = this.bindings.length;
-	while ( i-- ) {
-		this$1.bindings[i].rebind( next, previous, safe );
-	}
-};
-
-ModelBase__proto__.reference = function reference () {
-	'refs' in this ? this.refs++ : this.refs = 1;
-};
-
-ModelBase__proto__.register = function register ( dep ) {
-	this.deps.push( dep );
-};
-
-ModelBase__proto__.registerLink = function registerLink ( link ) {
-	addToArray( this.links, link );
-};
-
-ModelBase__proto__.registerPatternObserver = function registerPatternObserver ( observer ) {
-	this.patternObservers.push( observer );
-	this.register( observer );
-};
-
-ModelBase__proto__.registerTwowayBinding = function registerTwowayBinding ( binding ) {
-	this.bindings.push( binding );
-};
-
-ModelBase__proto__.unreference = function unreference () {
-	if ( 'refs' in this ) { this.refs--; }
-};
-
-ModelBase__proto__.unregister = function unregister ( dep ) {
-	removeFromArray( this.deps, dep );
-};
-
-ModelBase__proto__.unregisterLink = function unregisterLink ( link ) {
-	removeFromArray( this.links, link );
-};
-
-ModelBase__proto__.unregisterPatternObserver = function unregisterPatternObserver ( observer ) {
-	removeFromArray( this.patternObservers, observer );
-	this.unregister( observer );
-};
-
-ModelBase__proto__.unregisterTwowayBinding = function unregisterTwowayBinding ( binding ) {
-	removeFromArray( this.bindings, binding );
-};
-
-ModelBase__proto__.updateFromBindings = function updateFromBindings$1 ( cascade ) {
-		var this$1 = this;
-
-	var i = this.bindings.length;
-	while ( i-- ) {
-		var value = this$1.bindings[i].getValue();
-		if ( value !== this$1.value ) { this$1.set( value ); }
-	}
-
-	// check for one-way bindings if there are no two-ways
-	if ( !this.bindings.length ) {
-		var oneway = findBoundValue( this.deps );
-		if ( oneway && oneway.value !== this.value ) { this.set( oneway.value ); }
-	}
-
-	if ( cascade ) {
-		this.children.forEach( updateFromBindings );
-		this.links.forEach( updateFromBindings );
-		if ( this._link ) { this._link.updateFromBindings( cascade ); }
-	}
-};
-
-// TODO: this may be better handled by overreiding `get` on models with a parent that isRoot
-function maybeBind ( model, value, shouldBind ) {
-	if ( shouldBind && typeof value === 'function' && model.parent && model.parent.isRoot ) {
-		if ( !model.boundValue ) {
-			model.boundValue = bind$1( value._r_unbound || value, model.parent.ractive );
-		}
-
-		return model.boundValue;
-	}
-
-	return value;
-}
-
-function updateFromBindings ( model ) {
-	model.updateFromBindings( true );
-}
-
-function findBoundValue( list ) {
-	var i = list.length;
-	while ( i-- ) {
-		if ( list[i].bound ) {
-			var owner = list[i].owner;
-			if ( owner ) {
-				var value = owner.name === 'checked' ?
-					owner.node.checked :
-					owner.node.value;
-				return { value: value };
-			}
-		}
-	}
-}
-
-function fireShuffleTasks ( stage ) {
-	if ( !stage ) {
-		fireShuffleTasks( 'early' );
-		fireShuffleTasks( 'mark' );
-	} else {
-		var tasks = shuffleTasks[stage];
-		shuffleTasks[stage] = [];
-		var i = tasks.length;
-		while ( i-- ) { tasks[i](); }
-
-		var register = registerQueue[stage];
-		registerQueue[stage] = [];
-		i = register.length;
-		while ( i-- ) { register[i].model.register( register[i].item ); }
-	}
-}
-
-function shuffle ( model, newIndices, link, unsafe ) {
-	model.shuffling = true;
-
-	var i = newIndices.length;
-	while ( i-- ) {
-		var idx = newIndices[ i ];
-		// nothing is actually changing, so move in the index and roll on
-		if ( i === idx ) {
-			continue;
-		}
-
-		// rebind the children on i to idx
-		if ( i in model.childByKey ) { model.childByKey[ i ].rebind( !~idx ? undefined : model.joinKey( idx ), model.childByKey[ i ], !unsafe ); }
-
-		if ( !~idx && model.keyModels[ i ] ) {
-			model.keyModels[i].rebind( undefined, model.keyModels[i], false );
-		} else if ( ~idx && model.keyModels[ i ] ) {
-			if ( !model.keyModels[ idx ] ) { model.childByKey[ idx ].getKeyModel( idx ); }
-			model.keyModels[i].rebind( model.keyModels[ idx ], model.keyModels[i], false );
-		}
-	}
-
-	var upstream = model.source().length !== model.source().value.length;
-
-	model.links.forEach( function (l) { return l.shuffle( newIndices ); } );
-	if ( !link ) { fireShuffleTasks( 'early' ); }
-
-	i = model.deps.length;
-	while ( i-- ) {
-		if ( model.deps[i].shuffle ) { model.deps[i].shuffle( newIndices ); }
-	}
-
-	model[ link ? 'marked' : 'mark' ]();
-	if ( !link ) { fireShuffleTasks( 'mark' ); }
-
-	if ( upstream ) { model.notifyUpstream(); }
-
-	model.shuffling = false;
-}
-
-KeyModel.prototype.addShuffleTask = ModelBase.prototype.addShuffleTask;
-KeyModel.prototype.addShuffleRegister = ModelBase.prototype.addShuffleRegister;
-KeypathModel.prototype.addShuffleTask = ModelBase.prototype.addShuffleTask;
-KeypathModel.prototype.addShuffleRegister = ModelBase.prototype.addShuffleRegister;
-
-// this is the dry method of checking to see if a rebind applies to
-// a particular keypath because in some cases, a dep may be bound
-// directly to a particular keypath e.g. foo.bars.0.baz and need
-// to avoid getting kicked to foo.bars.1.baz if foo.bars is unshifted
-function rebindMatch ( template, next, previous, fragment ) {
-	var keypath = template.r || template;
-
-	// no valid keypath, go with next
-	if ( !keypath || typeof keypath !== 'string' ) { return next; }
-
-	// completely contextual ref, go with next
-	if ( keypath === '.' || keypath[0] === '@' || ( next || previous ).isKey || ( next || previous ).isKeypath ) { return next; }
-
-	var parts = keypath.split( '/' );
-	var keys = splitKeypath( parts[ parts.length - 1 ] );
-	var last = keys[ keys.length - 1 ];
-
-	// check the keypath against the model keypath to see if it matches
-	var model = next || previous;
-
-	// check to see if this was an alias
-	if ( model && keys.length === 1 && last !== model.key && fragment ) {
-		keys = findAlias( last, fragment ) || keys;
-	}
-
-	var i = keys.length;
-	var match = true;
-	var shuffling = false;
-
-	while ( model && i-- ) {
-		if ( model.shuffling ) { shuffling = true; }
-		// non-strict comparison to account for indices in keypaths
-		if ( keys[i] != model.key ) { match = false; }
-		model = model.parent;
-	}
-
-	// next is undefined, but keypath is shuffling and previous matches
-	if ( !next && match && shuffling ) { return previous; }
-	// next is defined, but doesn't match the keypath
-	else if ( next && !match && shuffling ) { return previous; }
-	else { return next; }
-}
-
-function findAlias ( name, fragment ) {
-	while ( fragment ) {
-		var z = fragment.aliases;
-		if ( z && z[ name ] ) {
-			var aliases = ( fragment.owner.iterations ? fragment.owner : fragment ).owner.template.z;
-			for ( var i = 0; i < aliases.length; i++ ) {
-				if ( aliases[i].n === name ) {
-					var alias = aliases[i].x;
-					if ( !alias.r ) { return false; }
-					var parts = alias.r.split( '/' );
-					return splitKeypath( parts[ parts.length - 1 ] );
-				}
-			}
-			return;
-		}
-
-		fragment = fragment.componentParent || fragment.parent;
-	}
-}
-
-// temporary placeholder target for detached implicit links
-var Missing = {
-	key: '@missing',
-	animate: noop,
-	applyValue: noop,
-	get: noop,
-	getKeypath: function getKeypath () { return this.key; },
-	joinAll: function joinAll () { return this; },
-	joinKey: function joinKey () { return this; },
-	mark: noop,
-	registerLink: noop,
-	shufle: noop,
-	set: noop,
-	unregisterLink: noop
-};
-Missing.parent = Missing;
-
-var LinkModel = (function (ModelBase) {
-	function LinkModel ( parent, owner, target, key ) {
-		ModelBase.call( this, parent );
-
-		this.owner = owner;
-		this.target = target;
-		this.key = key === undefined ? owner.key : key;
-		if ( owner.isLink ) { this.sourcePath = (owner.sourcePath) + "." + (this.key); }
-
-		target.registerLink( this );
-
-		if ( parent ) { this.isReadonly = parent.isReadonly; }
-
-		this.isLink = true;
-	}
-
-	if ( ModelBase ) LinkModel.__proto__ = ModelBase;
-	var LinkModel__proto__ = LinkModel.prototype = Object.create( ModelBase && ModelBase.prototype );
-	LinkModel__proto__.constructor = LinkModel;
-
-	LinkModel__proto__.animate = function animate ( from, to, options, interpolator ) {
-		return this.target.animate( from, to, options, interpolator );
-	};
-
-	LinkModel__proto__.applyValue = function applyValue ( value ) {
-		if ( this.boundValue ) { this.boundValue = null; }
-		this.target.applyValue( value );
-	};
-
-	LinkModel__proto__.attach = function attach ( fragment ) {
-		var model = resolveReference( fragment, this.key );
-		if ( model ) {
-			this.relinking( model, false );
-		} else { // if there is no link available, move everything here to real models
-			this.owner.unlink();
-		}
-	};
-
-	LinkModel__proto__.detach = function detach () {
-		this.relinking( Missing, false );
-	};
-
-	LinkModel__proto__.get = function get ( shouldCapture, opts ) {
-		if ( opts === void 0 ) opts = {};
-
-		if ( shouldCapture ) {
-			capture( this );
-
-			// may need to tell the target to unwrap
-			opts.unwrap = true;
-		}
-
-		var bind$$1 = 'shouldBind' in opts ? opts.shouldBind : true;
-		opts.shouldBind = this.mapping && this.target.parent && this.target.parent.isRoot;
-
-		return maybeBind( this, this.target.get( false, opts ), bind$$1 );
-	};
-
-	LinkModel__proto__.getKeypath = function getKeypath ( ractive ) {
-		if ( ractive && ractive !== this.root.ractive ) { return this.target.getKeypath( ractive ); }
-
-		return ModelBase.prototype.getKeypath.call( this, ractive );
-	};
-
-	LinkModel__proto__.getKeypathModel = function getKeypathModel ( ractive ) {
-		if ( !this.keypathModel ) { this.keypathModel = new KeypathModel( this ); }
-		if ( ractive && ractive !== this.root.ractive ) { return this.keypathModel.getChild( ractive ); }
-		return this.keypathModel;
-	};
-
-	LinkModel__proto__.handleChange = function handleChange$2 () {
-		this.deps.forEach( handleChange );
-		this.links.forEach( handleChange );
-		this.notifyUpstream();
-	};
-
-	LinkModel__proto__.isDetached = function isDetached () { return this.virtual && this.target === Missing; };
-
-	LinkModel__proto__.joinKey = function joinKey ( key ) {
-		// TODO: handle nested links
-		if ( key === undefined || key === '' ) { return this; }
-
-		if ( !this.childByKey.hasOwnProperty( key ) ) {
-			var child = new LinkModel( this, this, this.target.joinKey( key ), key );
-			this.children.push( child );
-			this.childByKey[ key ] = child;
-		}
-
-		return this.childByKey[ key ];
-	};
-
-	LinkModel__proto__.mark = function mark ( force ) {
-		this.target.mark( force );
-	};
-
-	LinkModel__proto__.marked = function marked$1 () {
-		if ( this.boundValue ) { this.boundValue = null; }
-
-		this.links.forEach( marked );
-
-		this.deps.forEach( handleChange );
-	};
-
-	LinkModel__proto__.markedAll = function markedAll$1 () {
-		this.children.forEach( markedAll );
-		this.marked();
-	};
-
-	LinkModel__proto__.notifiedUpstream = function notifiedUpstream ( startPath, root ) {
-		var this$1 = this;
-
-		this.links.forEach( function (l) { return l.notifiedUpstream( startPath, this$1.root ); } );
-		this.deps.forEach( handleChange );
-		if ( startPath && this.rootLink && this.root !== root ) {
-			var path = startPath.slice( 1 );
-			path.unshift( this.key );
-			this.notifyUpstream( path );
-		}
-	};
-
-	LinkModel__proto__.relinked = function relinked () {
-		this.target.registerLink( this );
-		this.children.forEach( function (c) { return c.relinked(); } );
-	};
-
-	LinkModel__proto__.relinking = function relinking ( target, safe ) {
-		var this$1 = this;
-
-		if ( this.rootLink && this.sourcePath ) { target = rebindMatch( this.sourcePath, target, this.target ); }
-		if ( !target || this.target === target ) { return; }
-
-		this.target.unregisterLink( this );
-		if ( this.keypathModel ) { this.keypathModel.rebindChildren( target ); }
-
-		this.target = target;
-		this.children.forEach( function (c) {
-			c.relinking( target.joinKey( c.key ), safe );
-		});
-
-		if ( this.rootLink ) { this.addShuffleTask( function () {
-			this$1.relinked();
-			if ( !safe ) {
-				this$1.markedAll();
-				this$1.notifyUpstream();
-			}
-		}); }
-	};
-
-	LinkModel__proto__.set = function set ( value ) {
-		if ( this.boundValue ) { this.boundValue = null; }
-		this.target.set( value );
-	};
-
-	LinkModel__proto__.shuffle = function shuffle$1 ( newIndices ) {
-		// watch for extra shuffles caused by a shuffle in a downstream link
-		if ( this.shuffling ) { return; }
-
-		// let the real model handle firing off shuffles
-		if ( !this.target.shuffling ) {
-			this.target.shuffle( newIndices );
-		} else {
-			shuffle( this, newIndices, true );
-		}
-
-	};
-
-	LinkModel__proto__.source = function source () {
-		if ( this.target.source ) { return this.target.source(); }
-		else { return this.target; }
-	};
-
-	LinkModel__proto__.teardown = function teardown$2 () {
-		if ( this._link ) { this._link.teardown(); }
-		this.target.unregisterLink( this );
-		this.children.forEach( teardown );
-	};
-
-	return LinkModel;
-}(ModelBase));
-
-ModelBase.prototype.link = function link ( model, keypath, options ) {
-	var lnk = this._link || new LinkModel( this.parent, this, model, this.key );
-	lnk.implicit = options && options.implicit;
-	lnk.mapping = options && options.mapping;
-	lnk.sourcePath = keypath;
-	lnk.rootLink = true;
-	if ( this._link ) { this._link.relinking( model, false ); }
-	this.rebind( lnk, this, false );
-	fireShuffleTasks();
-
-	this._link = lnk;
-	lnk.markedAll();
-
-	this.notifyUpstream();
-	return lnk;
-};
-
-ModelBase.prototype.unlink = function unlink () {
-	if ( this._link ) {
-		var ln = this._link;
-		this._link = undefined;
-		ln.rebind( this, ln, false );
-		fireShuffleTasks();
-		ln.teardown();
-		this.notifyUpstream();
-	}
-};
-
 var TransitionManager = function TransitionManager ( callback, parent ) {
 	this.callback = callback;
 	this.parent = parent;
@@ -1676,48 +519,47 @@ var TransitionManager = function TransitionManager ( callback, parent ) {
 		parent.addChild( this );
 	}
 };
-var TransitionManager__proto__ = TransitionManager.prototype;
 
-TransitionManager__proto__.add = function add ( transition ) {
+TransitionManager.prototype.add = function add ( transition ) {
 	var list = transition.isIntro ? this.intros : this.outros;
 	transition.starting = true;
 	list.push( transition );
 };
 
-TransitionManager__proto__.addChild = function addChild ( child ) {
+TransitionManager.prototype.addChild = function addChild ( child ) {
 	this.children.push( child );
 
 	this.totalChildren += 1;
 	this.outroChildren += 1;
 };
 
-TransitionManager__proto__.decrementOutros = function decrementOutros () {
+TransitionManager.prototype.decrementOutros = function decrementOutros () {
 	this.outroChildren -= 1;
 	check( this );
 };
 
-TransitionManager__proto__.decrementTotal = function decrementTotal () {
+TransitionManager.prototype.decrementTotal = function decrementTotal () {
 	this.totalChildren -= 1;
 	check( this );
 };
 
-TransitionManager__proto__.detachNodes = function detachNodes () {
+TransitionManager.prototype.detachNodes = function detachNodes () {
 	this.detachQueue.forEach( detach );
 	this.children.forEach( _detachNodes );
 	this.detachQueue = [];
 };
 
-TransitionManager__proto__.ready = function ready () {
+TransitionManager.prototype.ready = function ready () {
 	if ( this.detachQueue.length ) { detachImmediate( this ); }
 };
 
-TransitionManager__proto__.remove = function remove ( transition ) {
+TransitionManager.prototype.remove = function remove ( transition ) {
 	var list = transition.isIntro ? this.intros : this.outros;
 	removeFromArray( list, transition );
 	check( this );
 };
 
-TransitionManager__proto__.start = function start () {
+TransitionManager.prototype.start = function start () {
 	this.children.forEach( function (c) { return c.start(); } );
 	this.intros.concat( this.outros ).forEach( function (t) { return t.start(); } );
 	this.ready = true;
@@ -1812,7 +654,7 @@ function collectAllOutros ( manager, _list ) {
 var batch;
 
 var runloop = {
-	start: function start () {
+	start: function start ( instance ) {
 		var fulfilPromise;
 		var promise = new Promise( function (f) { return ( fulfilPromise = f ); } );
 
@@ -1823,6 +665,7 @@ var runloop = {
 			tasks: [],
 			immediateObservers: [],
 			deferredObservers: [],
+			instance: instance,
 			promise: promise
 		};
 
@@ -1942,6 +785,881 @@ function flushChanges () {
 	if ( batch.fragments.length || batch.immediateObservers.length || batch.deferredObservers.length || batch.tasks.length ) { return flushChanges(); }
 }
 
+var refPattern = /\[\s*(\*|[0-9]|[1-9][0-9]+)\s*\]/g;
+var splitPattern = /([^\\](?:\\\\)*)\./;
+var escapeKeyPattern = /\\|\./g;
+var unescapeKeyPattern = /((?:\\)+)\1|\\(\.)/g;
+
+function escapeKey ( key ) {
+	if ( typeof key === 'string' ) {
+		return key.replace( escapeKeyPattern, '\\$&' );
+	}
+
+	return key;
+}
+
+function normalise ( ref ) {
+	return ref ? ref.replace( refPattern, '.$1' ) : '';
+}
+
+function splitKeypath ( keypath ) {
+	var result = [];
+	var match;
+
+	keypath = normalise( keypath );
+
+	while ( match = splitPattern.exec( keypath ) ) {
+		var index = match.index + match[1].length;
+		result.push( keypath.substr( 0, index ) );
+		keypath = keypath.substr( index + 1 );
+	}
+
+	result.push( keypath );
+
+	return result;
+}
+
+function unescapeKey ( key ) {
+	if ( typeof key === 'string' ) {
+		return key.replace( unescapeKeyPattern, '$1$2' );
+	}
+
+	return key;
+}
+
+var stack = [];
+var captureGroup;
+
+function startCapturing () {
+	stack.push( captureGroup = [] );
+}
+
+function stopCapturing () {
+	var dependencies = stack.pop();
+	captureGroup = stack[ stack.length - 1 ];
+	return dependencies;
+}
+
+function capture ( model ) {
+	if ( captureGroup ) {
+		captureGroup.push( model );
+	}
+}
+
+var KeyModel = function KeyModel ( key, parent ) {
+	this.value = key;
+	this.isReadonly = this.isKey = true;
+	this.deps = [];
+	this.links = [];
+	this.parent = parent;
+};
+
+KeyModel.prototype.get = function get ( shouldCapture ) {
+	if ( shouldCapture ) { capture( this ); }
+	return unescapeKey( this.value );
+};
+
+KeyModel.prototype.getKeypath = function getKeypath () {
+	return unescapeKey( this.value );
+};
+
+KeyModel.prototype.rebind = function rebind ( next, previous ) {
+		var this$1 = this;
+
+	var i = this.deps.length;
+	while ( i-- ) { this$1.deps[i].rebind( next, previous, false ); }
+
+	i = this.links.length;
+	while ( i-- ) { this$1.links[i].rebind( next, previous, false ); }
+};
+
+KeyModel.prototype.register = function register ( dependant ) {
+	this.deps.push( dependant );
+};
+
+KeyModel.prototype.registerLink = function registerLink ( link ) {
+	addToArray( this.links, link );
+};
+
+KeyModel.prototype.unregister = function unregister ( dependant ) {
+	removeFromArray( this.deps, dependant );
+};
+
+KeyModel.prototype.unregisterLink = function unregisterLink ( link ) {
+	removeFromArray( this.links, link );
+};
+
+KeyModel.prototype.reference = noop;
+KeyModel.prototype.unreference = noop;
+
+function bind               ( x ) { x.bind(); }
+function cancel             ( x ) { x.cancel(); }
+function destroyed          ( x ) { x.destroyed(); }
+function handleChange       ( x ) { x.handleChange(); }
+function mark               ( x ) { x.mark(); }
+function marked             ( x ) { x.marked(); }
+function markedAll          ( x ) { x.markedAll(); }
+function render             ( x ) { x.render(); }
+function shuffled           ( x ) { x.shuffled(); }
+function teardown           ( x ) { x.teardown(); }
+function unbind             ( x ) { x.unbind(); }
+function unrender           ( x ) { x.unrender(); }
+function unrenderAndDestroy ( x ) { x.unrender( true ); }
+function update             ( x ) { x.update(); }
+function toString$1           ( x ) { return x.toString(); }
+function toEscapedString    ( x ) { return x.toString( true ); }
+
+var KeypathModel = function KeypathModel ( parent, ractive ) {
+	this.parent = parent;
+	this.ractive = ractive;
+	this.value = ractive ? parent.getKeypath( ractive ) : parent.getKeypath();
+	this.deps = [];
+	this.children = {};
+	this.isReadonly = this.isKeypath = true;
+};
+
+KeypathModel.prototype.get = function get ( shouldCapture ) {
+	if ( shouldCapture ) { capture( this ); }
+	return this.value;
+};
+
+KeypathModel.prototype.getChild = function getChild ( ractive ) {
+	if ( !( ractive._guid in this.children ) ) {
+		var model = new KeypathModel( this.parent, ractive );
+		this.children[ ractive._guid ] = model;
+		model.owner = this;
+	}
+	return this.children[ ractive._guid ];
+};
+
+KeypathModel.prototype.getKeypath = function getKeypath () {
+	return this.value;
+};
+
+KeypathModel.prototype.handleChange = function handleChange$1 () {
+		var this$1 = this;
+
+	var keys = Object.keys( this.children );
+	var i = keys.length;
+	while ( i-- ) {
+		this$1.children[ keys[i] ].handleChange();
+	}
+
+	this.deps.forEach( handleChange );
+};
+
+KeypathModel.prototype.rebindChildren = function rebindChildren ( next ) {
+		var this$1 = this;
+
+	var keys = Object.keys( this.children );
+	var i = keys.length;
+	while ( i-- ) {
+		var child = this$1.children[keys[i]];
+		child.value = next.getKeypath( child.ractive );
+		child.handleChange();
+	}
+};
+
+KeypathModel.prototype.rebind = function rebind ( next, previous ) {
+		var this$1 = this;
+
+	var model = next ? next.getKeypathModel( this.ractive ) : undefined;
+
+	var keys = Object.keys( this.children );
+	var i = keys.length;
+	while ( i-- ) {
+		this$1.children[ keys[i] ].rebind( next, previous, false );
+	}
+
+	i = this.deps.length;
+	while ( i-- ) {
+		this$1.deps[i].rebind( model, this$1, false );
+	}
+};
+
+KeypathModel.prototype.register = function register ( dep ) {
+	this.deps.push( dep );
+};
+
+KeypathModel.prototype.removeChild = function removeChild ( model ) {
+	if ( model.ractive ) { delete this.children[ model.ractive._guid ]; }
+};
+
+KeypathModel.prototype.teardown = function teardown$$1 () {
+		var this$1 = this;
+
+	if ( this.owner ) { this.owner.removeChild( this ); }
+
+	var keys = Object.keys( this.children );
+	var i = keys.length;
+	while ( i-- ) {
+		this$1.children[ keys[i] ].teardown();
+	}
+};
+
+KeypathModel.prototype.unregister = function unregister ( dep ) {
+	removeFromArray( this.deps, dep );
+	if ( !this.deps.length ) { this.teardown(); }
+};
+
+KeypathModel.prototype.reference = noop;
+KeypathModel.prototype.unreference = noop;
+
+var fnBind = Function.prototype.bind;
+
+function bind$1 ( fn, context ) {
+	if ( !/this/.test( fn.toString() ) ) { return fn; }
+
+	var bound = fnBind.call( fn, context );
+	for ( var prop in fn ) { bound[ prop ] = fn[ prop ]; }
+
+	return bound;
+}
+
+var hasProp = Object.prototype.hasOwnProperty;
+
+var shuffleTasks = { early: [], mark: [] };
+var registerQueue = { early: [], mark: [] };
+
+var ModelBase = function ModelBase ( parent ) {
+	this.deps = [];
+
+	this.children = [];
+	this.childByKey = {};
+	this.links = [];
+
+	this.keyModels = {};
+
+	this.bindings = [];
+	this.patternObservers = [];
+
+	if ( parent ) {
+		this.parent = parent;
+		this.root = parent.root;
+	}
+};
+
+ModelBase.prototype.addShuffleTask = function addShuffleTask ( task, stage ) {
+	if ( stage === void 0 ) stage = 'early';
+ shuffleTasks[stage].push( task ); };
+ModelBase.prototype.addShuffleRegister = function addShuffleRegister ( item, stage ) {
+	if ( stage === void 0 ) stage = 'early';
+ registerQueue[stage].push({ model: this, item: item }); };
+
+ModelBase.prototype.findMatches = function findMatches ( keys ) {
+	var len = keys.length;
+
+	var existingMatches = [ this ];
+	var matches;
+	var i;
+
+	var loop = function (  ) {
+		var key = keys[i];
+
+		if ( key === '*' ) {
+			matches = [];
+			existingMatches.forEach( function (model) {
+				matches.push.apply( matches, model.getValueChildren( model.get() ) );
+			});
+		} else {
+			matches = existingMatches.map( function (model) { return model.joinKey( key ); } );
+		}
+
+		existingMatches = matches;
+	};
+
+		for ( i = 0; i < len; i += 1 ) loop(  );
+
+	return matches;
+};
+
+ModelBase.prototype.getKeyModel = function getKeyModel ( key, skip ) {
+	if ( key !== undefined && !skip ) { return this.parent.getKeyModel( key, true ); }
+
+	if ( !( key in this.keyModels ) ) { this.keyModels[ key ] = new KeyModel( escapeKey( key ), this ); }
+
+	return this.keyModels[ key ];
+};
+
+ModelBase.prototype.getKeypath = function getKeypath ( ractive ) {
+	if ( ractive !== this.ractive && this._link ) { return this._link.target.getKeypath( ractive ); }
+
+	if ( !this.keypath ) {
+		var parent = this.parent && this.parent.getKeypath( ractive );
+		this.keypath = parent ? ((this.parent.getKeypath( ractive )) + "." + (escapeKey( this.key ))) : escapeKey( this.key );
+	}
+
+	return this.keypath;
+};
+
+ModelBase.prototype.getValueChildren = function getValueChildren ( value ) {
+		var this$1 = this;
+
+	var children;
+	if ( Array.isArray( value ) ) {
+		children = [];
+		if ( 'length' in this && this.length !== value.length ) {
+			children.push( this.joinKey( 'length' ) );
+		}
+		value.forEach( function ( m, i ) {
+			children.push( this$1.joinKey( i ) );
+		});
+	}
+
+	else if ( isObject( value ) || typeof value === 'function' ) {
+		children = Object.keys( value ).map( function (key) { return this$1.joinKey( key ); } );
+	}
+
+	else if ( value != null ) {
+		return [];
+	}
+
+	return children;
+};
+
+ModelBase.prototype.getVirtual = function getVirtual ( shouldCapture ) {
+		var this$1 = this;
+
+	var value = this.get( shouldCapture, { virtual: false } );
+	if ( isObject( value ) ) {
+		var result = Array.isArray( value ) ? [] : {};
+
+		var keys = Object.keys( value );
+		var i = keys.length;
+		while ( i-- ) {
+			var child = this$1.childByKey[ keys[i] ];
+			if ( !child ) { result[ keys[i] ] = value[ keys[i] ]; }
+			else if ( child._link ) { result[ keys[i] ] = child._link.getVirtual(); }
+			else { result[ keys[i] ] = child.getVirtual(); }
+		}
+
+		i = this.children.length;
+		while ( i-- ) {
+			var child$1 = this$1.children[i];
+			if ( !( child$1.key in result ) && child$1._link ) {
+				result[ child$1.key ] = child$1._link.getVirtual();
+			}
+		}
+
+		return result;
+	} else { return value; }
+};
+
+ModelBase.prototype.has = function has ( key ) {
+	if ( this._link ) { return this._link.has( key ); }
+
+	var value = this.get();
+	if ( !value ) { return false; }
+
+	key = unescapeKey( key );
+	if ( hasProp.call( value, key ) ) { return true; }
+
+	// We climb up the constructor chain to find if one of them contains the key
+	var constructor = value.constructor;
+	while ( constructor !== Function && constructor !== Array && constructor !== Object ) {
+		if ( hasProp.call( constructor.prototype, key ) ) { return true; }
+		constructor = constructor.constructor;
+	}
+
+	return false;
+};
+
+ModelBase.prototype.joinAll = function joinAll ( keys, opts ) {
+	var model = this;
+	for ( var i = 0; i < keys.length; i += 1 ) {
+		if ( opts && opts.lastLink === false && i + 1 === keys.length && model.childByKey[keys[i]] && model.childByKey[keys[i]]._link ) { return model.childByKey[keys[i]]; }
+		model = model.joinKey( keys[i], opts );
+	}
+
+	return model;
+};
+
+ModelBase.prototype.notifyUpstream = function notifyUpstream ( startPath ) {
+		var this$1 = this;
+
+	var parent = this.parent;
+	var path = startPath || [ this.key ];
+	while ( parent ) {
+		if ( parent.patternObservers.length ) { parent.patternObservers.forEach( function (o) { return o.notify( path.slice() ); } ); }
+		path.unshift( parent.key );
+		parent.links.forEach( function (l) { return l.notifiedUpstream( path, this$1.root ); } );
+		parent.deps.forEach( handleChange );
+		parent = parent.parent;
+	}
+};
+
+ModelBase.prototype.rebind = function rebind ( next, previous, safe ) {
+		var this$1 = this;
+
+	// tell the deps to move to the new target
+	var i = this.deps.length;
+	while ( i-- ) {
+		if ( this$1.deps[i].rebind ) { this$1.deps[i].rebind( next, previous, safe ); }
+	}
+
+	i = this.links.length;
+	while ( i-- ) {
+		var link = this$1.links[i];
+		// only relink the root of the link tree
+		if ( link.owner._link ) { link.relinking( next, safe ); }
+	}
+
+	i = this.children.length;
+	while ( i-- ) {
+		var child = this$1.children[i];
+		child.rebind( next ? next.joinKey( child.key ) : undefined, child, safe );
+	}
+
+	if ( this.keypathModel ) { this.keypathModel.rebind( next, previous, false ); }
+
+	i = this.bindings.length;
+	while ( i-- ) {
+		this$1.bindings[i].rebind( next, previous, safe );
+	}
+};
+
+ModelBase.prototype.reference = function reference () {
+	'refs' in this ? this.refs++ : this.refs = 1;
+};
+
+ModelBase.prototype.register = function register ( dep ) {
+	this.deps.push( dep );
+};
+
+ModelBase.prototype.registerLink = function registerLink ( link ) {
+	addToArray( this.links, link );
+};
+
+ModelBase.prototype.registerPatternObserver = function registerPatternObserver ( observer ) {
+	this.patternObservers.push( observer );
+	this.register( observer );
+};
+
+ModelBase.prototype.registerTwowayBinding = function registerTwowayBinding ( binding ) {
+	this.bindings.push( binding );
+};
+
+ModelBase.prototype.unreference = function unreference () {
+	if ( 'refs' in this ) { this.refs--; }
+};
+
+ModelBase.prototype.unregister = function unregister ( dep ) {
+	removeFromArray( this.deps, dep );
+};
+
+ModelBase.prototype.unregisterLink = function unregisterLink ( link ) {
+	removeFromArray( this.links, link );
+};
+
+ModelBase.prototype.unregisterPatternObserver = function unregisterPatternObserver ( observer ) {
+	removeFromArray( this.patternObservers, observer );
+	this.unregister( observer );
+};
+
+ModelBase.prototype.unregisterTwowayBinding = function unregisterTwowayBinding ( binding ) {
+	removeFromArray( this.bindings, binding );
+};
+
+ModelBase.prototype.updateFromBindings = function updateFromBindings$1 ( cascade ) {
+		var this$1 = this;
+
+	var i = this.bindings.length;
+	while ( i-- ) {
+		var value = this$1.bindings[i].getValue();
+		if ( value !== this$1.value ) { this$1.set( value ); }
+	}
+
+	// check for one-way bindings if there are no two-ways
+	if ( !this.bindings.length ) {
+		var oneway = findBoundValue( this.deps );
+		if ( oneway && oneway.value !== this.value ) { this.set( oneway.value ); }
+	}
+
+	if ( cascade ) {
+		this.children.forEach( updateFromBindings );
+		this.links.forEach( updateFromBindings );
+		if ( this._link ) { this._link.updateFromBindings( cascade ); }
+	}
+};
+
+// TODO: this may be better handled by overreiding `get` on models with a parent that isRoot
+function maybeBind ( model, value, shouldBind ) {
+	if ( shouldBind && typeof value === 'function' && model.parent && model.parent.isRoot ) {
+		if ( !model.boundValue ) {
+			model.boundValue = bind$1( value._r_unbound || value, model.parent.ractive );
+		}
+
+		return model.boundValue;
+	}
+
+	return value;
+}
+
+function updateFromBindings ( model ) {
+	model.updateFromBindings( true );
+}
+
+function findBoundValue( list ) {
+	var i = list.length;
+	while ( i-- ) {
+		if ( list[i].bound ) {
+			var owner = list[i].owner;
+			if ( owner ) {
+				var value = owner.name === 'checked' ?
+					owner.node.checked :
+					owner.node.value;
+				return { value: value };
+			}
+		}
+	}
+}
+
+function fireShuffleTasks ( stage ) {
+	if ( !stage ) {
+		fireShuffleTasks( 'early' );
+		fireShuffleTasks( 'mark' );
+	} else {
+		var tasks = shuffleTasks[stage];
+		shuffleTasks[stage] = [];
+		var i = tasks.length;
+		while ( i-- ) { tasks[i](); }
+
+		var register = registerQueue[stage];
+		registerQueue[stage] = [];
+		i = register.length;
+		while ( i-- ) { register[i].model.register( register[i].item ); }
+	}
+}
+
+function shuffle ( model, newIndices, link ) {
+	model.shuffling = true;
+
+	var i = newIndices.length;
+	while ( i-- ) {
+		var idx = newIndices[ i ];
+		// nothing is actually changing, so move in the index and roll on
+		if ( i === idx ) {
+			continue;
+		}
+
+		// rebind the children on i to idx
+		if ( i in model.childByKey ) { model.childByKey[ i ].rebind( !~idx ? undefined : model.joinKey( idx ), model.childByKey[ i ], true ); }
+
+		if ( !~idx && model.keyModels[ i ] ) {
+			model.keyModels[i].rebind( undefined, model.keyModels[i], false );
+		} else if ( ~idx && model.keyModels[ i ] ) {
+			if ( !model.keyModels[ idx ] ) { model.childByKey[ idx ].getKeyModel( idx ); }
+			model.keyModels[i].rebind( model.keyModels[ idx ], model.keyModels[i], false );
+		}
+	}
+
+	var upstream = model.source().length !== model.source().value.length;
+
+	model.links.forEach( function (l) { return l.shuffle( newIndices ); } );
+	if ( !link ) { fireShuffleTasks( 'early' ); }
+
+	i = model.deps.length;
+	while ( i-- ) {
+		if ( model.deps[i].shuffle ) { model.deps[i].shuffle( newIndices ); }
+	}
+
+	model[ link ? 'marked' : 'mark' ]();
+	if ( !link ) { fireShuffleTasks( 'mark' ); }
+
+	if ( upstream ) { model.notifyUpstream(); }
+
+	model.shuffling = false;
+}
+
+KeyModel.prototype.addShuffleTask = ModelBase.prototype.addShuffleTask;
+KeyModel.prototype.addShuffleRegister = ModelBase.prototype.addShuffleRegister;
+KeypathModel.prototype.addShuffleTask = ModelBase.prototype.addShuffleTask;
+KeypathModel.prototype.addShuffleRegister = ModelBase.prototype.addShuffleRegister;
+
+// this is the dry method of checking to see if a rebind applies to
+// a particular keypath because in some cases, a dep may be bound
+// directly to a particular keypath e.g. foo.bars.0.baz and need
+// to avoid getting kicked to foo.bars.1.baz if foo.bars is unshifted
+function rebindMatch ( template, next, previous, fragment ) {
+	var keypath = template.r || template;
+
+	// no valid keypath, go with next
+	if ( !keypath || typeof keypath !== 'string' ) { return next; }
+
+	// completely contextual ref, go with next
+	if ( keypath === '.' || keypath[0] === '@' || ( next || previous ).isKey || ( next || previous ).isKeypath ) { return next; }
+
+	var parts = keypath.split( '/' );
+	var keys = splitKeypath( parts[ parts.length - 1 ] );
+	var last = keys[ keys.length - 1 ];
+
+	// check the keypath against the model keypath to see if it matches
+	var model = next || previous;
+
+	// check to see if this was an alias
+	if ( model && keys.length === 1 && last !== model.key && fragment ) {
+		keys = findAlias( last, fragment ) || keys;
+	}
+
+	var i = keys.length;
+	var match = true;
+	var shuffling = false;
+
+	while ( model && i-- ) {
+		if ( model.shuffling ) { shuffling = true; }
+		// non-strict comparison to account for indices in keypaths
+		if ( keys[i] != model.key ) { match = false; }
+		model = model.parent;
+	}
+
+	// next is undefined, but keypath is shuffling and previous matches
+	if ( !next && match && shuffling ) { return previous; }
+	// next is defined, but doesn't match the keypath
+	else if ( next && !match && shuffling ) { return previous; }
+	else { return next; }
+}
+
+function findAlias ( name, fragment ) {
+	while ( fragment ) {
+		var z = fragment.aliases;
+		if ( z && z[ name ] ) {
+			var aliases = ( fragment.owner.iterations ? fragment.owner : fragment ).owner.template.z;
+			for ( var i = 0; i < aliases.length; i++ ) {
+				if ( aliases[i].n === name ) {
+					var alias = aliases[i].x;
+					if ( !alias.r ) { return false; }
+					var parts = alias.r.split( '/' );
+					return splitKeypath( parts[ parts.length - 1 ] );
+				}
+			}
+			return;
+		}
+
+		fragment = fragment.componentParent || fragment.parent;
+	}
+}
+
+// temporary placeholder target for detached implicit links
+var Missing = {
+	key: '@missing',
+	animate: noop,
+	applyValue: noop,
+	get: noop,
+	getKeypath: function getKeypath () { return this.key; },
+	joinAll: function joinAll () { return this; },
+	joinKey: function joinKey () { return this; },
+	mark: noop,
+	registerLink: noop,
+	shufle: noop,
+	set: noop,
+	unregisterLink: noop
+};
+Missing.parent = Missing;
+
+var LinkModel = (function (ModelBase$$1) {
+	function LinkModel ( parent, owner, target, key ) {
+		ModelBase$$1.call( this, parent );
+
+		this.owner = owner;
+		this.target = target;
+		this.key = key === undefined ? owner.key : key;
+		if ( owner.isLink ) { this.sourcePath = (owner.sourcePath) + "." + (this.key); }
+
+		target.registerLink( this );
+
+		if ( parent ) { this.isReadonly = parent.isReadonly; }
+
+		this.isLink = true;
+	}
+
+	if ( ModelBase$$1 ) LinkModel.__proto__ = ModelBase$$1;
+	LinkModel.prototype = Object.create( ModelBase$$1 && ModelBase$$1.prototype );
+	LinkModel.prototype.constructor = LinkModel;
+
+	LinkModel.prototype.animate = function animate ( from, to, options, interpolator ) {
+		return this.target.animate( from, to, options, interpolator );
+	};
+
+	LinkModel.prototype.applyValue = function applyValue ( value ) {
+		if ( this.boundValue ) { this.boundValue = null; }
+		this.target.applyValue( value );
+	};
+
+	LinkModel.prototype.attach = function attach ( fragment ) {
+		var model = resolveReference( fragment, this.key );
+		if ( model ) {
+			this.relinking( model, false );
+		} else { // if there is no link available, move everything here to real models
+			this.owner.unlink();
+		}
+	};
+
+	LinkModel.prototype.detach = function detach () {
+		this.relinking( Missing, false );
+	};
+
+	LinkModel.prototype.get = function get ( shouldCapture, opts ) {
+		if ( opts === void 0 ) opts = {};
+
+		if ( shouldCapture ) {
+			capture( this );
+
+			// may need to tell the target to unwrap
+			opts.unwrap = true;
+		}
+
+		var bind$$1 = 'shouldBind' in opts ? opts.shouldBind : true;
+		opts.shouldBind = false;
+
+		return maybeBind( this, this.target.get( false, opts ), bind$$1 );
+	};
+
+	LinkModel.prototype.getKeypath = function getKeypath ( ractive ) {
+		if ( ractive && ractive !== this.root.ractive ) { return this.target.getKeypath( ractive ); }
+
+		return ModelBase$$1.prototype.getKeypath.call( this, ractive );
+	};
+
+	LinkModel.prototype.getKeypathModel = function getKeypathModel ( ractive ) {
+		if ( !this.keypathModel ) { this.keypathModel = new KeypathModel( this ); }
+		if ( ractive && ractive !== this.root.ractive ) { return this.keypathModel.getChild( ractive ); }
+		return this.keypathModel;
+	};
+
+	LinkModel.prototype.handleChange = function handleChange$1 () {
+		this.deps.forEach( handleChange );
+		this.links.forEach( handleChange );
+		this.notifyUpstream();
+	};
+
+	LinkModel.prototype.isDetached = function isDetached () { return this.virtual && this.target === Missing; };
+
+	LinkModel.prototype.joinKey = function joinKey ( key ) {
+		// TODO: handle nested links
+		if ( key === undefined || key === '' ) { return this; }
+
+		if ( !this.childByKey.hasOwnProperty( key ) ) {
+			var child = new LinkModel( this, this, this.target.joinKey( key ), key );
+			this.children.push( child );
+			this.childByKey[ key ] = child;
+		}
+
+		return this.childByKey[ key ];
+	};
+
+	LinkModel.prototype.mark = function mark$$1 ( force ) {
+		this.target.mark( force );
+	};
+
+	LinkModel.prototype.marked = function marked$1 () {
+		if ( this.boundValue ) { this.boundValue = null; }
+
+		this.links.forEach( marked );
+
+		this.deps.forEach( handleChange );
+	};
+
+	LinkModel.prototype.markedAll = function markedAll$1 () {
+		this.children.forEach( markedAll );
+		this.marked();
+	};
+
+	LinkModel.prototype.notifiedUpstream = function notifiedUpstream ( startPath, root ) {
+		var this$1 = this;
+
+		this.links.forEach( function (l) { return l.notifiedUpstream( startPath, this$1.root ); } );
+		this.deps.forEach( handleChange );
+		if ( startPath && this.rootLink && this.root !== root ) {
+			var path = startPath.slice( 1 );
+			path.unshift( this.key );
+			this.notifyUpstream( path );
+		}
+	};
+
+	LinkModel.prototype.relinked = function relinked () {
+		this.target.registerLink( this );
+		this.children.forEach( function (c) { return c.relinked(); } );
+	};
+
+	LinkModel.prototype.relinking = function relinking ( target, safe ) {
+		var this$1 = this;
+
+		if ( this.rootLink && this.sourcePath ) { target = rebindMatch( this.sourcePath, target, this.target ); }
+		if ( !target || this.target === target ) { return; }
+
+		this.target.unregisterLink( this );
+		if ( this.keypathModel ) { this.keypathModel.rebindChildren( target ); }
+
+		this.target = target;
+		this.children.forEach( function (c) {
+			c.relinking( target.joinKey( c.key ), safe );
+		});
+
+		if ( this.rootLink ) { this.addShuffleTask( function () {
+			this$1.relinked();
+			if ( !safe ) { this$1.notifyUpstream(); }
+		}); }
+	};
+
+	LinkModel.prototype.set = function set ( value ) {
+		if ( this.boundValue ) { this.boundValue = null; }
+		this.target.set( value );
+	};
+
+	LinkModel.prototype.shuffle = function shuffle$1 ( newIndices ) {
+		// watch for extra shuffles caused by a shuffle in a downstream link
+		if ( this.shuffling ) { return; }
+
+		// let the real model handle firing off shuffles
+		if ( !this.target.shuffling ) {
+			this.target.shuffle( newIndices );
+		} else {
+			shuffle( this, newIndices, true );
+		}
+
+	};
+
+	LinkModel.prototype.source = function source () {
+		if ( this.target.source ) { return this.target.source(); }
+		else { return this.target; }
+	};
+
+	LinkModel.prototype.teardown = function teardown$1 () {
+		if ( this._link ) { this._link.teardown(); }
+		this.target.unregisterLink( this );
+		this.children.forEach( teardown );
+	};
+
+	return LinkModel;
+}(ModelBase));
+
+ModelBase.prototype.link = function link ( model, keypath, options ) {
+	var lnk = this._link || new LinkModel( this.parent, this, model, this.key );
+	lnk.implicit = options && options.implicit;
+	lnk.sourcePath = keypath;
+	lnk.rootLink = true;
+	if ( this._link ) { this._link.relinking( model, true, false ); }
+	this.rebind( lnk, this, false );
+	fireShuffleTasks();
+
+	this._link = lnk;
+	lnk.markedAll();
+
+	this.notifyUpstream();
+	return lnk;
+};
+
+ModelBase.prototype.unlink = function unlink () {
+	if ( this._link ) {
+		var ln = this._link;
+		this._link = undefined;
+		ln.rebind( this, this._link );
+		fireShuffleTasks();
+		ln.teardown();
+		this.notifyUpstream();
+	}
+};
+
 // TODO what happens if a transition is aborted?
 
 var tickers = [];
@@ -1987,9 +1705,8 @@ var Ticker = function Ticker ( options ) {
 	tickers.push( this );
 	if ( !running ) { requestAnimationFrame( tick ); }
 };
-var Ticker__proto__ = Ticker.prototype;
 
-Ticker__proto__.tick = function tick ( now ) {
+Ticker.prototype.tick = function tick ( now ) {
 	if ( !this.running ) { return false; }
 
 	if ( now > this.end ) {
@@ -2007,7 +1724,7 @@ Ticker__proto__.tick = function tick ( now ) {
 	return true;
 };
 
-Ticker__proto__.stop = function stop () {
+Ticker.prototype.stop = function stop () {
 	if ( this.abort ) { this.abort(); }
 	this.running = false;
 };
@@ -2015,7 +1732,6 @@ Ticker__proto__.stop = function stop () {
 var prefixers = {};
 
 // TODO this is legacy. sooner we can replace the old adaptor API the better
-/* istanbul ignore next */
 function prefixKeypath ( obj, prefix ) {
 	var prefixed = {};
 
@@ -2040,7 +1756,6 @@ function getPrefixer ( rootKeypath ) {
 	if ( !prefixers[ rootKeypath ] ) {
 		rootDot = rootKeypath ? rootKeypath + '.' : '';
 
-		/* istanbul ignore next */
 		prefixers[ rootKeypath ] = function ( relativeKeypath, value ) {
 			var obj;
 
@@ -2060,9 +1775,9 @@ function getPrefixer ( rootKeypath ) {
 	return prefixers[ rootKeypath ];
 }
 
-var Model = (function (ModelBase) {
+var Model = (function (ModelBase$$1) {
 	function Model ( parent, key ) {
-		ModelBase.call( this, parent );
+		ModelBase$$1.call( this, parent );
 
 		this.ticker = null;
 
@@ -2078,11 +1793,11 @@ var Model = (function (ModelBase) {
 		}
 	}
 
-	if ( ModelBase ) Model.__proto__ = ModelBase;
-	var Model__proto__ = Model.prototype = Object.create( ModelBase && ModelBase.prototype );
-	Model__proto__.constructor = Model;
+	if ( ModelBase$$1 ) Model.__proto__ = ModelBase$$1;
+	Model.prototype = Object.create( ModelBase$$1 && ModelBase$$1.prototype );
+	Model.prototype.constructor = Model;
 
-	Model__proto__.adapt = function adapt () {
+	Model.prototype.adapt = function adapt () {
 		var this$1 = this;
 
 		var adaptors = this.root.adaptors;
@@ -2136,7 +1851,7 @@ var Model = (function (ModelBase) {
 		}
 	};
 
-	Model__proto__.animate = function animate ( from, to, options, interpolator ) {
+	Model.prototype.animate = function animate ( from, to, options, interpolator ) {
 		var this$1 = this;
 
 		if ( this.ticker ) { this.ticker.stop(); }
@@ -2165,7 +1880,7 @@ var Model = (function (ModelBase) {
 		return promise;
 	};
 
-	Model__proto__.applyValue = function applyValue ( value, notify ) {
+	Model.prototype.applyValue = function applyValue ( value, notify ) {
 		if ( notify === void 0 ) notify = true;
 
 		if ( isEqual( value, this.value ) ) { return; }
@@ -2215,14 +1930,14 @@ var Model = (function (ModelBase) {
 		}
 	};
 
-	Model__proto__.createBranch = function createBranch ( key ) {
+	Model.prototype.createBranch = function createBranch ( key ) {
 		var branch = isNumeric( key ) ? [] : {};
 		this.applyValue( branch, false );
 
 		return branch;
 	};
 
-	Model__proto__.get = function get ( shouldCapture, opts ) {
+	Model.prototype.get = function get ( shouldCapture, opts ) {
 		if ( this._link ) { return this._link.get( shouldCapture, opts ); }
 		if ( shouldCapture ) { capture( this ); }
 		// if capturing, this value needs to be unwrapped because it's for external use
@@ -2230,12 +1945,12 @@ var Model = (function (ModelBase) {
 		return maybeBind( this, ( ( opts && 'unwrap' in opts ) ? opts.unwrap !== false : shouldCapture ) && this.wrapper ? this.wrapperValue : this.value, !opts || opts.shouldBind !== false );
 	};
 
-	Model__proto__.getKeypathModel = function getKeypathModel () {
+	Model.prototype.getKeypathModel = function getKeypathModel () {
 		if ( !this.keypathModel ) { this.keypathModel = new KeypathModel( this ); }
 		return this.keypathModel;
 	};
 
-	Model__proto__.joinKey = function joinKey ( key, opts ) {
+	Model.prototype.joinKey = function joinKey ( key, opts ) {
 		if ( this._link ) {
 			if ( opts && opts.lastLink !== false && ( key === undefined || key === '' ) ) { return this; }
 			return this._link.joinKey( key );
@@ -2254,13 +1969,13 @@ var Model = (function (ModelBase) {
 		return this.childByKey[ key ];
 	};
 
-	Model__proto__.mark = function mark$1 ( force ) {
-		if ( this._link ) { return this._link.mark( force ); }
+	Model.prototype.mark = function mark$1 ( force ) {
+		if ( this._link ) { return this._link.mark(); }
 
-		var old = this.value;
 		var value = this.retrieve();
 
-		if ( force || !isEqual( value, old ) ) {
+		if ( force || !isEqual( value, this.value ) ) {
+			var old = this.value;
 			this.value = value;
 			if ( this.boundValue ) { this.boundValue = null; }
 
@@ -2278,14 +1993,14 @@ var Model = (function (ModelBase) {
 				this.isArray = false;
 			}
 
-			this.children.forEach( force ? markForce : mark );
+			this.children.forEach( mark );
 			this.links.forEach( marked );
 
 			this.deps.forEach( handleChange );
 		}
 	};
 
-	Model__proto__.merge = function merge ( array, comparator ) {
+	Model.prototype.merge = function merge ( array, comparator ) {
 		var oldArray = this.value;
 		var newArray = array;
 		if ( oldArray === newArray ) { oldArray = recreateArray( this ); }
@@ -2324,25 +2039,25 @@ var Model = (function (ModelBase) {
 		});
 
 		this.parent.value[ this.key ] = array;
-		this.shuffle( newIndices, true );
+		this.shuffle( newIndices );
 	};
 
-	Model__proto__.retrieve = function retrieve () {
+	Model.prototype.retrieve = function retrieve () {
 		return this.parent.value ? this.parent.value[ this.key ] : undefined;
 	};
 
-	Model__proto__.set = function set ( value ) {
+	Model.prototype.set = function set ( value ) {
 		if ( this.ticker ) { this.ticker.stop(); }
 		this.applyValue( value );
 	};
 
-	Model__proto__.shuffle = function shuffle$2 ( newIndices, unsafe ) {
-		shuffle( this, newIndices, false, unsafe );
+	Model.prototype.shuffle = function shuffle$1 ( newIndices ) {
+		shuffle( this, newIndices, false );
 	};
 
-	Model__proto__.source = function source () { return this; };
+	Model.prototype.source = function source () { return this; };
 
-	Model__proto__.teardown = function teardown$3 () {
+	Model.prototype.teardown = function teardown$1 () {
 		if ( this._link ) { this._link.teardown(); }
 		this.children.forEach( teardown );
 		if ( this.wrapper ) { this.wrapper.teardown(); }
@@ -2365,9 +2080,9 @@ function recreateArray( model ) {
 /* global global */
 var data = {};
 
-var SharedModel = (function (Model) {
+var SharedModel = (function (Model$$1) {
 	function SharedModel ( value, name ) {
-		Model.call( this, null, ("@" + name) );
+		Model$$1.call( this, null, ("@" + name) );
 		this.key = "@" + name;
 		this.value = value;
 		this.isRoot = true;
@@ -2375,15 +2090,13 @@ var SharedModel = (function (Model) {
 		this.adaptors = [];
 	}
 
-	if ( Model ) SharedModel.__proto__ = Model;
-	var SharedModel__proto__ = SharedModel.prototype = Object.create( Model && Model.prototype );
-	SharedModel__proto__.constructor = SharedModel;
+	if ( Model$$1 ) SharedModel.__proto__ = Model$$1;
+	SharedModel.prototype = Object.create( Model$$1 && Model$$1.prototype );
+	SharedModel.prototype.constructor = SharedModel;
 
-	SharedModel__proto__.getKeypath = function getKeypath () {
+	SharedModel.prototype.getKeypath = function getKeypath () {
 		return this.key;
 	};
-
-	SharedModel__proto__.retrieve = function retrieve () { return this.value; };
 
 	return SharedModel;
 }(Model));
@@ -2458,7 +2171,7 @@ function resolveReference ( fragment, ref ) {
 			var repeater = fragment.findRepeatingFragment();
 			// make sure the found fragment is actually an iteration
 			if ( !repeater.isIteration ) { return; }
-			return repeater.context && repeater.context.getKeyModel( repeater[ ref[1] === 'i' ? 'index' : 'key' ] );
+			return repeater.context.getKeyModel( repeater[ ref[1] === 'i' ? 'index' : 'key' ] );
 		}
 
 		// @global referring to window or global
@@ -2491,11 +2204,6 @@ function resolveReference ( fragment, ref ) {
 		// @context-local data
 		else if ( base === '@local' ) {
 			return fragment.getContext()._data.joinAll( keys );
-		}
-
-		// @style shared model
-		else if ( base === '@style' ) {
-			return fragment.ractive.constructor._cssModel.joinAll( keys );
 		}
 
 		// nope
@@ -2561,9 +2269,11 @@ function resolveReference ( fragment, ref ) {
 	}
 
 	// if enabled, check the instance for a match
-	var instance = initialFragment.ractive;
-	if ( instance.resolveInstanceMembers && base !== 'data' && base in instance ) {
-		return instance.viewmodel.getRactiveModel().joinKey( base ).joinAll( keys );
+	if ( initialFragment.ractive.resolveInstanceMembers ) {
+		var model$1 = initialFragment.ractive.viewmodel.getRactiveModel();
+		if ( model$1.has( base ) ) {
+			return model$1.joinKey( base ).joinAll( keys );
+		}
 	}
 
 	if ( shouldWarn ) {
@@ -2612,21 +2322,14 @@ var proto$1 = FakeFragment.prototype;
 proto$1.getContext = getContext;
 proto$1.find = proto$1.findComponent = proto$1.findAll = proto$1.findAllComponents = noop;
 
-function findParentWithContext ( fragment ) {
-	var frag = fragment;
-	while ( frag && !frag.context ) { frag = frag.parent; }
-	if ( !frag ) { return fragment && fragment.ractive.fragment; }
-	else { return frag; }
-}
-
 var keep = false;
 
-function set ( pairs, options ) {
+function set ( ractive, pairs, options ) {
 	var k = keep;
 
 	var deep = options && options.deep;
 	var shuffle = options && options.shuffle;
-	var promise = runloop.start();
+	var promise = runloop.start( ractive, true );
 	if ( options && 'keep' in options ) { keep = options.keep; }
 
 	var i = pairs.length;
@@ -2647,18 +2350,12 @@ function set ( pairs, options ) {
 			// shuffle target array with itself
 			if ( !array ) { array = target; }
 
-			// if there's not an array there yet, go ahead and set
-			if ( target === undefined ) {
-				model.set( array );
-			} else {
-				if ( !Array.isArray( target ) || !Array.isArray( array ) ) {
-					runloop.end();
-					throw new Error( 'You cannot merge an array with a non-array' );
-				}
-
-				var comparator = getComparator( shuffle );
-				model.merge( array, comparator );
+			if ( !Array.isArray( target ) || !Array.isArray( array ) ) {
+				throw new Error( 'You cannot merge an array with a non-array' );
 			}
+
+			var comparator = getComparator( shuffle );
+			model.merge( array, comparator );
 		} else { model.set( value ); }
 	}
 
@@ -2753,7 +2450,7 @@ function add ( ractive, keypath, d, options ) {
 
 	var sets = build( ractive, keypath, d, options && options.isolated );
 
-	return set( sets.map( function (pair) {
+	return set( ractive, sets.map( function (pair) {
 		var model = pair[0];
 		var add = pair[1];
 		var value = model.get();
@@ -2790,8 +2487,7 @@ function getOptions ( options, instance ) {
 		easing: easing$$1 || linear,
 		duration: 'duration' in options ? options.duration : 400,
 		complete: options.complete || noop,
-		step: options.step || noop,
-		interpolator: options.interpolator
+		step: options.step || noop
 	};
 }
 
@@ -3071,7 +2767,7 @@ function attachChild ( child, options ) {
 
 	attachHook.fire( child );
 
-	var promise = runloop.start();
+	var promise = runloop.start( child, true );
 
 	if ( meta.target ) {
 		unrenderChild( meta );
@@ -3128,7 +2824,7 @@ function detachChild ( child ) {
 
 	if ( !meta || child.parent !== this ) { throw new Error( ("Instance " + (child._guid) + " is not attached to this instance.") ); }
 
-	var promise = runloop.start();
+	var promise = runloop.start( child, true );
 
 	if ( meta.anchor ) { meta.anchor.removeChild( meta ); }
 	if ( !child.isolated ) { child.viewmodel.detached(); }
@@ -3137,7 +2833,9 @@ function detachChild ( child ) {
 
 	children.splice( index, 1 );
 	if ( meta.target ) {
-		this.splice( ("@this.children.byName." + (meta.target)), children.byName[ meta.target ].indexOf(meta), 1 );
+		var list = children.byName[ meta.target ];
+		list.splice( list.indexOf( meta ), 1 );
+		this.set( ("@this.children.byName." + (meta.target)), null, { shuffle: true } );
 		updateAnchors( this, meta.target );
 	}
 	child.set({
@@ -3268,80 +2966,6 @@ function Ractive$findParent ( selector ) {
 	return null;
 }
 
-var TEXT              = 1;
-var INTERPOLATOR      = 2;
-var TRIPLE            = 3;
-var SECTION           = 4;
-var INVERTED          = 5;
-var CLOSING           = 6;
-var ELEMENT           = 7;
-var PARTIAL           = 8;
-var COMMENT           = 9;
-var DELIMCHANGE       = 10;
-var ANCHOR            = 11;
-var ATTRIBUTE         = 13;
-var CLOSING_TAG       = 14;
-var COMPONENT         = 15;
-var YIELDER           = 16;
-var INLINE_PARTIAL    = 17;
-var DOCTYPE           = 18;
-var ALIAS             = 19;
-
-var NUMBER_LITERAL    = 20;
-var STRING_LITERAL    = 21;
-var ARRAY_LITERAL     = 22;
-var OBJECT_LITERAL    = 23;
-var BOOLEAN_LITERAL   = 24;
-var REGEXP_LITERAL    = 25;
-
-var GLOBAL            = 26;
-var KEY_VALUE_PAIR    = 27;
-
-
-var REFERENCE         = 30;
-var REFINEMENT        = 31;
-var MEMBER            = 32;
-var PREFIX_OPERATOR   = 33;
-var BRACKETED         = 34;
-var CONDITIONAL       = 35;
-var INFIX_OPERATOR    = 36;
-
-var INVOCATION        = 40;
-
-var SECTION_IF        = 50;
-var SECTION_UNLESS    = 51;
-var SECTION_EACH      = 52;
-var SECTION_WITH      = 53;
-var SECTION_IF_WITH   = 54;
-
-var ELSE              = 60;
-var ELSEIF            = 61;
-
-var EVENT             = 70;
-var DECORATOR         = 71;
-var TRANSITION        = 72;
-var BINDING_FLAG      = 73;
-var DELEGATE_FLAG     = 74;
-
-function findElement( start, orComponent, name ) {
-	if ( orComponent === void 0 ) orComponent = true;
-
-	while ( start && ( start.type !== ELEMENT || ( name && start.name !== name ) ) && ( !orComponent || ( start.type !== COMPONENT && start.type !== ANCHOR ) ) ) {
-		// start is a fragment - look at the owner
-		if ( start.owner ) { start = start.owner; }
-		// start is a component or yielder - look at the container
-		else if ( start.component ) { start = start.containerFragment || start.component.parentFragment; }
-		// start is an item - look at the parent
-		else if ( start.parent ) { start = start.parent; }
-		// start is an item without a parent - look at the parent fragment
-		else if ( start.parentFragment ) { start = start.parentFragment; }
-
-		else { start = undefined; }
-	}
-
-	return start;
-}
-
 // This function takes an array, the name of a mutator method, and the
 // arguments to call that mutator method with, and returns an array that
 // maps the old indices to their new indices.
@@ -3468,7 +3092,7 @@ var makeArrayMethod = function ( methodName ) {
 			if ( array === undefined ) {
 				array = [];
 				var result$1 = arrayProto[ methodName ].apply( array, args );
-				var promise$1 = runloop.start().then( function () { return result$1; } );
+				var promise$1 = runloop.start( this, true ).then( function () { return result$1; } );
 				mdl.set( array );
 				runloop.end();
 				return promise$1;
@@ -3480,7 +3104,7 @@ var makeArrayMethod = function ( methodName ) {
 		var newIndices = getNewIndices( array.length, methodName, args );
 		var result = arrayProto[ methodName ].apply( array, args );
 
-		var promise = runloop.start().then( function () { return result; } );
+		var promise = runloop.start( this, true ).then( function () { return result; } );
 		promise.result = result;
 
 		if ( newIndices ) {
@@ -3506,7 +3130,7 @@ function update$1 ( ractive, model, options ) {
 		model.parent.adapt();
 	}
 
-	var promise = runloop.start();
+	var promise = runloop.start( ractive, true );
 
 	model.mark( options && options.force );
 
@@ -3533,6 +3157,80 @@ function Ractive$update ( keypath, options ) {
 	return update$1( this, path ? this.viewmodel.joinAll( path ) : this.viewmodel, opts );
 }
 
+var TEXT              = 1;
+var INTERPOLATOR      = 2;
+var TRIPLE            = 3;
+var SECTION           = 4;
+var INVERTED          = 5;
+var CLOSING           = 6;
+var ELEMENT           = 7;
+var PARTIAL           = 8;
+var COMMENT           = 9;
+var DELIMCHANGE       = 10;
+var ANCHOR            = 11;
+var ATTRIBUTE         = 13;
+var CLOSING_TAG       = 14;
+var COMPONENT         = 15;
+var YIELDER           = 16;
+var INLINE_PARTIAL    = 17;
+var DOCTYPE           = 18;
+var ALIAS             = 19;
+
+var NUMBER_LITERAL    = 20;
+var STRING_LITERAL    = 21;
+var ARRAY_LITERAL     = 22;
+var OBJECT_LITERAL    = 23;
+var BOOLEAN_LITERAL   = 24;
+var REGEXP_LITERAL    = 25;
+
+var GLOBAL            = 26;
+var KEY_VALUE_PAIR    = 27;
+
+
+var REFERENCE         = 30;
+var REFINEMENT        = 31;
+var MEMBER            = 32;
+var PREFIX_OPERATOR   = 33;
+var BRACKETED         = 34;
+var CONDITIONAL       = 35;
+var INFIX_OPERATOR    = 36;
+
+var INVOCATION        = 40;
+
+var SECTION_IF        = 50;
+var SECTION_UNLESS    = 51;
+var SECTION_EACH      = 52;
+var SECTION_WITH      = 53;
+var SECTION_IF_WITH   = 54;
+
+var ELSE              = 60;
+var ELSEIF            = 61;
+
+var EVENT             = 70;
+var DECORATOR         = 71;
+var TRANSITION        = 72;
+var BINDING_FLAG      = 73;
+var DELEGATE_FLAG     = 74;
+
+function findElement( start, orComponent, name ) {
+	if ( orComponent === void 0 ) orComponent = true;
+
+	while ( start && ( start.type !== ELEMENT || ( name && start.name !== name ) ) && ( !orComponent || ( start.type !== COMPONENT && start.type !== ANCHOR ) ) ) {
+		// start is a fragment - look at the owner
+		if ( start.owner ) { start = start.owner; }
+		// start is a component or yielder - look at the container
+		else if ( start.component ) { start = start.containerFragment || start.component.parentFragment; }
+		// start is an item - look at the parent
+		else if ( start.parent ) { start = start.parent; }
+		// start is an item without a parent - look at the parent fragment
+		else if ( start.parentFragment ) { start = start.parentFragment; }
+
+		else { start = undefined; }
+	}
+
+	return start;
+}
+
 var modelPush = makeArrayMethod( 'push' ).model;
 var modelPop = makeArrayMethod( 'pop' ).model;
 var modelShift = makeArrayMethod( 'shift' ).model;
@@ -3541,9 +3239,9 @@ var modelSort = makeArrayMethod( 'sort' ).model;
 var modelSplice = makeArrayMethod( 'splice' ).model;
 var modelReverse = makeArrayMethod( 'reverse' ).model;
 
-var ContextData = (function (Model) {
+var ContextData = (function (Model$$1) {
 	function ContextData ( options ) {
-		Model.call( this, null, null );
+		Model$$1.call( this, null, null );
 
 		this.isRoot = true;
 		this.root = this;
@@ -3553,11 +3251,11 @@ var ContextData = (function (Model) {
 		this.context = options.context;
 	}
 
-	if ( Model ) ContextData.__proto__ = Model;
-	var ContextData__proto__ = ContextData.prototype = Object.create( Model && Model.prototype );
-	ContextData__proto__.constructor = ContextData;
+	if ( Model$$1 ) ContextData.__proto__ = Model$$1;
+	ContextData.prototype = Object.create( Model$$1 && Model$$1.prototype );
+	ContextData.prototype.constructor = ContextData;
 
-	ContextData__proto__.getKeypath = function getKeypath () {
+	ContextData.prototype.getKeypath = function getKeypath () {
 		return '@context.data';
 	};
 
@@ -3571,14 +3269,13 @@ var Context = function Context ( fragment, element ) {
 	this.ractive = fragment.ractive;
 	this.root = this;
 };
-var Context__proto__ = Context.prototype;
 
 var prototypeAccessors = { decorators: {},_data: {} };
 
 prototypeAccessors.decorators.get = function () {
 	var items = {};
 	if ( !this.element ) { return items; }
-	this.element.decorators.forEach( function (d) { return items[ d.name ] = d.handle; } );
+	this.element.decorators.forEach( function (d) { return items[ d.name ] = d.intermediary; } );
 	return items;
 };
 
@@ -3587,10 +3284,10 @@ prototypeAccessors._data.get = function () {
 };
 
 // the usual mutation suspects
-Context__proto__.add = function add ( keypath, d, options ) {
+Context.prototype.add = function add ( keypath, d, options ) {
 	var num = typeof d === 'number' ? +d : 1;
 	var opts = typeof d === 'object' ? d : options;
-	return set( build$1( this, keypath, num ).map( function (pair) {
+	return set( this.ractive, build$1( this, keypath, num ).map( function (pair) {
 		var model = pair[0];
 			var val = pair[1];
 		var value = model.get();
@@ -3599,13 +3296,13 @@ Context__proto__.add = function add ( keypath, d, options ) {
 	}), opts );
 };
 
-Context__proto__.animate = function animate$1 ( keypath, value, options ) {
+Context.prototype.animate = function animate$$1 ( keypath, value, options ) {
 	var model = findModel( this, keypath ).model;
 	return animate( this.ractive, model, value, options );
 };
 
 // get relative keypaths and values
-Context__proto__.get = function get ( keypath ) {
+Context.prototype.get = function get ( keypath ) {
 	if ( !keypath ) { return this.fragment.findContext().get( true ); }
 
 	var ref = findModel( this, keypath );
@@ -3614,29 +3311,16 @@ Context__proto__.get = function get ( keypath ) {
 	return model ? model.get( true ) : undefined;
 };
 
-Context__proto__.getParent = function getParent ( component ) {
-	var fragment = this.fragment;
-
-	if ( fragment.context ) { fragment = findParentWithContext( fragment.parent || ( component && fragment.componentParent ) ); }
-	else {
-		fragment = findParentWithContext( fragment.parent || ( component && fragment.componentParent ) );
-		if ( fragment ) { fragment = findParentWithContext( fragment.parent || ( component && fragment.componentParent ) ); }
-	}
-
-	if ( !fragment || fragment === this.fragment ) { return; }
-	else { return fragment.getContext(); }
-};
-
-Context__proto__.link = function link ( source, dest ) {
+Context.prototype.link = function link ( source, dest ) {
 	var there = findModel( this, source ).model;
 	var here = findModel( this, dest ).model;
-	var promise = runloop.start();
+	var promise = runloop.start( this.ractive, true );
 	here.link( there, source );
 	runloop.end();
 	return promise;
 };
 
-Context__proto__.listen = function listen ( event, handler ) {
+Context.prototype.listen = function listen ( event, handler ) {
 	var el = this.element;
 	el.on( event, handler );
 	return {
@@ -3644,7 +3328,7 @@ Context__proto__.listen = function listen ( event, handler ) {
 	};
 };
 
-Context__proto__.observe = function observe ( keypath, callback, options ) {
+Context.prototype.observe = function observe ( keypath, callback, options ) {
 		if ( options === void 0 ) options = {};
 
 	if ( isObject( keypath ) ) { options = callback || {}; }
@@ -3652,7 +3336,7 @@ Context__proto__.observe = function observe ( keypath, callback, options ) {
 	return this.ractive.observe( keypath, callback, options );
 };
 
-Context__proto__.observeOnce = function observeOnce ( keypath, callback, options ) {
+Context.prototype.observeOnce = function observeOnce ( keypath, callback, options ) {
 		if ( options === void 0 ) options = {};
 
 	if ( isObject( keypath ) ) { options = callback || {}; }
@@ -3660,28 +3344,26 @@ Context__proto__.observeOnce = function observeOnce ( keypath, callback, options
 	return this.ractive.observeOnce( keypath, callback, options );
 };
 
-Context__proto__.pop = function pop ( keypath ) {
+Context.prototype.pop = function pop ( keypath ) {
 	return modelPop( findModel( this, keypath ).model, [] );
 };
 
-Context__proto__.push = function push ( keypath ) {
+Context.prototype.push = function push ( keypath ) {
 		var values = [], len = arguments.length - 1;
 		while ( len-- > 0 ) values[ len ] = arguments[ len + 1 ];
 
 	return modelPush( findModel( this, keypath ).model, values );
 };
 
-Context__proto__.raise = function raise ( name, event ) {
-		var args = [], len$1 = arguments.length - 2;
-		while ( len$1-- > 0 ) args[ len$1 ] = arguments[ len$1 + 2 ];
+Context.prototype.raise = function raise ( name, event ) {
+		var args = [], len = arguments.length - 2;
+		while ( len-- > 0 ) args[ len ] = arguments[ len + 2 ];
 
 	var element = this.element;
-	var events, len, i;
 
 	while ( element ) {
-		events = element.events;
-		len = events && events.length;
-		for ( i = 0; i < len; i++ ) {
+		var events = element.events;
+		for ( var i = 0; i < events.length; i++ ) {
 			var ev = events[i];
 			if ( ~ev.template.n.indexOf( name ) ) {
 				var ctx = !event || !( 'original' in event ) ?
@@ -3695,30 +3377,30 @@ Context__proto__.raise = function raise ( name, event ) {
 	}
 };
 
-Context__proto__.readLink = function readLink ( keypath, options ) {
+Context.prototype.readLink = function readLink ( keypath, options ) {
 	return this.ractive.readLink( this.resolve( keypath ), options );
 };
 
-Context__proto__.resolve = function resolve ( path, ractive ) {
+Context.prototype.resolve = function resolve ( path, ractive ) {
 	var ref = findModel( this, path );
 		var model = ref.model;
 		var instance = ref.instance;
 	return model ? model.getKeypath( ractive || instance ) : path;
 };
 
-Context__proto__.reverse = function reverse ( keypath ) {
+Context.prototype.reverse = function reverse ( keypath ) {
 	return modelReverse( findModel( this, keypath ).model, [] );
 };
 
-Context__proto__.set = function set$2 ( keypath, value, options ) {
-	return set( build$1( this, keypath, value ), options );
+Context.prototype.set = function set$$1 ( keypath, value, options ) {
+	return set( this.ractive, build$1( this, keypath, value ), options );
 };
 
-Context__proto__.shift = function shift ( keypath ) {
+Context.prototype.shift = function shift ( keypath ) {
 	return modelShift( findModel( this, keypath ).model, [] );
 };
 
-Context__proto__.splice = function splice ( keypath, index, drop ) {
+Context.prototype.splice = function splice ( keypath, index, drop ) {
 		var add = [], len = arguments.length - 3;
 		while ( len-- > 0 ) add[ len ] = arguments[ len + 3 ];
 
@@ -3726,14 +3408,14 @@ Context__proto__.splice = function splice ( keypath, index, drop ) {
 	return modelSplice( findModel( this, keypath ).model, add );
 };
 
-Context__proto__.sort = function sort ( keypath ) {
+Context.prototype.sort = function sort ( keypath ) {
 	return modelSort( findModel( this, keypath ).model, [] );
 };
 
-Context__proto__.subtract = function subtract ( keypath, d, options ) {
+Context.prototype.subtract = function subtract ( keypath, d, options ) {
 	var num = typeof d === 'number' ? d : 1;
 	var opts = typeof d === 'object' ? d : options;
-	return set( build$1( this, keypath, num ).map( function (pair) {
+	return set( this.ractive, build$1( this, keypath, num ).map( function (pair) {
 		var model = pair[0];
 			var val = pair[1];
 		var value = model.get();
@@ -3742,76 +3424,76 @@ Context__proto__.subtract = function subtract ( keypath, d, options ) {
 	}), opts );
 };
 
-Context__proto__.toggle = function toggle ( keypath, options ) {
+Context.prototype.toggle = function toggle ( keypath, options ) {
 	var ref = findModel( this, keypath );
 		var model = ref.model;
-	return set( [ [ model, !model.get() ] ], options );
+	return set( this.ractive, [ [ model, !model.get() ] ], options );
 };
 
-Context__proto__.unlink = function unlink ( dest ) {
+Context.prototype.unlink = function unlink ( dest ) {
 	var here = findModel( this, dest ).model;
-	var promise = runloop.start();
+	var promise = runloop.start( this.ractive, true );
 	if ( here.owner && here.owner._link ) { here.owner.unlink(); }
 	runloop.end();
 	return promise;
 };
 
-Context__proto__.unlisten = function unlisten ( event, handler ) {
+Context.prototype.unlisten = function unlisten ( event, handler ) {
 	this.element.off( event, handler );
 };
 
-Context__proto__.unshift = function unshift ( keypath ) {
+Context.prototype.unshift = function unshift ( keypath ) {
 		var add = [], len = arguments.length - 1;
 		while ( len-- > 0 ) add[ len ] = arguments[ len + 1 ];
 
 	return modelUnshift( findModel( this, keypath ).model, add );
 };
 
-Context__proto__.update = function update ( keypath, options ) {
+Context.prototype.update = function update$$1 ( keypath, options ) {
 	return update$1( this.ractive, findModel( this, keypath ).model, options );
 };
 
-Context__proto__.updateModel = function updateModel ( keypath, cascade ) {
+Context.prototype.updateModel = function updateModel ( keypath, cascade ) {
 	var ref = findModel( this, keypath );
 		var model = ref.model;
-	var promise = runloop.start();
+	var promise = runloop.start( this.ractive, true );
 	model.updateFromBindings( cascade );
 	runloop.end();
 	return promise;
 };
 
 // two-way binding related helpers
-Context__proto__.isBound = function isBound () {
+Context.prototype.isBound = function isBound () {
 	var ref = this.getBindingModel( this );
 		var model = ref.model;
 	return !!model;
 };
 
-Context__proto__.getBindingPath = function getBindingPath ( ractive ) {
+Context.prototype.getBindingPath = function getBindingPath ( ractive ) {
 	var ref = this.getBindingModel( this );
 		var model = ref.model;
 		var instance = ref.instance;
 	if ( model ) { return model.getKeypath( ractive || instance ); }
 };
 
-Context__proto__.getBinding = function getBinding () {
+Context.prototype.getBinding = function getBinding () {
 	var ref = this.getBindingModel( this );
 		var model = ref.model;
 	if ( model ) { return model.get( true ); }
 };
 
-Context__proto__.getBindingModel = function getBindingModel ( ctx ) {
+Context.prototype.getBindingModel = function getBindingModel ( ctx ) {
 	var el = ctx.element;
 	return { model: el.binding && el.binding.model, instance: el.parentFragment.ractive };
 };
 
-Context__proto__.setBinding = function setBinding ( value ) {
+Context.prototype.setBinding = function setBinding ( value ) {
 	var ref = this.getBindingModel( this );
 		var model = ref.model;
-	return set( [ [ model, value ] ] );
+	return set( this.ractive, [ [ model, value ] ] );
 };
 
-Object.defineProperties( Context__proto__, prototypeAccessors );
+Object.defineProperties( Context.prototype, prototypeAccessors );
 
 Context.forRactive = getRactiveContext;
 // circular deps are fun
@@ -3852,21 +3534,15 @@ function Ractive$fire ( eventName ) {
 	var args = [], len = arguments.length - 1;
 	while ( len-- > 0 ) args[ len ] = arguments[ len + 1 ];
 
-	var ctx;
-
 	// watch for reproxy
-	if ( args[0] instanceof Context  ) {
+	if ( args[0] instanceof Context ) {
 		var proto = args.shift();
-		ctx = Object.create( proto );
+		var ctx = Object.create( proto );
 		Object.assign( ctx, proto );
-	} else if ( typeof args[0] === 'object' && ( args[0] === null || args[0].constructor === Object ) ) {
-		ctx = Context.forRactive( this, args.shift() );
+		return fireEvent( this, eventName, ctx, args );
 	} else {
-		ctx = Context.forRactive( this );
+		return fireEvent( this, eventName, Context.forRactive( this ), args );
 	}
-
-
-	return fireEvent( this, eventName, ctx, args );
 }
 
 function Ractive$get ( keypath, opts ) {
@@ -3948,7 +3624,6 @@ var makeFunction;
 
 // Test for SVG support
 if ( !svg ) {
-	/* istanbul ignore next */
 	createElement = function ( type, ns, extend ) {
 		if ( ns && ns !== html ) {
 			throw 'This browser does not support namespaces other than http://www.w3.org/1999/xhtml. The most likely cause of this error is that you\'re trying to render SVG in an older browser. See http://docs.ractivejs.org/latest/svg-and-older-browsers for more information';
@@ -3981,7 +3656,6 @@ function getElement ( input ) {
 
 	if ( !input || typeof input === 'boolean' ) { return; }
 
-	/* istanbul ignore next */
 	if ( !win || !doc || !input ) {
 		return null;
 	}
@@ -3998,9 +3672,7 @@ function getElement ( input ) {
 
 		// then as selector, if possible
 		if ( !output && doc.querySelector ) {
-			try {
-				output = doc.querySelector( input );
-			} catch (e) { /* this space intentionally left blank */ }
+			output = doc.querySelector( input );
 		}
 
 		// did it work?
@@ -4049,8 +3721,7 @@ if ( !isClient ) {
 		}
 	}
 
-	// IE8... and apparently phantom some?
-	/* istanbul ignore next */
+	// IE8...
 	if ( !matches ) {
 		matches = function ( node, selector ) {
 			var parentNode, i;
@@ -4091,7 +3762,7 @@ function detachNode ( node ) {
 }
 
 function safeToStringValue ( value ) {
-	return ( value == null || ( typeof value === 'number' && isNaN( value ) ) || !value.toString ) ? '' : '' + value;
+	return ( value == null || !value.toString ) ? '' : '' + value;
 }
 
 function safeAttributeString ( string ) {
@@ -4133,7 +3804,7 @@ function fireInsertHook( ractive ) {
 	});
 }
 
-function link ( there, here, options ) {
+function link( there, here, options ) {
 	var model;
 	var target = ( options && ( options.ractive || options.instance ) ) || this;
 
@@ -4153,7 +3824,7 @@ function link ( there, here, options ) {
 
 	var promise = runloop.start();
 
-	dest.link( src, ( options && options.keypath ) || there );
+	dest.link( src, there );
 
 	runloop.end();
 
@@ -4193,9 +3864,8 @@ var Observer = function Observer ( ractive, model, callback, options ) {
 
 	this.dirty = false;
 };
-var Observer__proto__ = Observer.prototype;
 
-Observer__proto__.cancel = function cancel () {
+Observer.prototype.cancel = function cancel () {
 	this.cancelled = true;
 	if ( this.model ) {
 		this.model.unregister( this );
@@ -4205,7 +3875,7 @@ Observer__proto__.cancel = function cancel () {
 	removeFromArray( this.ractive._observers, this );
 };
 
-Observer__proto__.dispatch = function dispatch () {
+Observer.prototype.dispatch = function dispatch () {
 	if ( !this.cancelled ) {
 		this.callback.call( this.context, this.newValue, this.oldValue, this.keypath );
 		this.oldValue = this.old.call( this.oldContext, this.oldValue, this.model ? this.model.get() : this.newValue );
@@ -4213,7 +3883,7 @@ Observer__proto__.dispatch = function dispatch () {
 	}
 };
 
-Observer__proto__.handleChange = function handleChange () {
+Observer.prototype.handleChange = function handleChange () {
 		var this$1 = this;
 
 	if ( !this.dirty ) {
@@ -4231,7 +3901,7 @@ Observer__proto__.handleChange = function handleChange () {
 	}
 };
 
-Observer__proto__.rebind = function rebind ( next, previous ) {
+Observer.prototype.rebind = function rebind ( next, previous ) {
 		var this$1 = this;
 
 	next = rebindMatch( this.keypath, next, previous );
@@ -4242,7 +3912,7 @@ Observer__proto__.rebind = function rebind ( next, previous ) {
 	if ( next ) { next.addShuffleTask( function () { return this$1.resolved( next ); } ); }
 };
 
-Observer__proto__.resolved = function resolved ( model ) {
+Observer.prototype.resolved = function resolved ( model ) {
 	this.model = model;
 
 	this.oldValue = undefined;
@@ -4298,14 +3968,13 @@ var PatternObserver = function PatternObserver ( ractive, baseModel, keys, callb
 
 	baseModel.registerPatternObserver( this );
 };
-var PatternObserver__proto__ = PatternObserver.prototype;
 
-PatternObserver__proto__.cancel = function cancel () {
+PatternObserver.prototype.cancel = function cancel () {
 	this.baseModel.unregisterPatternObserver( this );
 	removeFromArray( this.ractive._observers, this );
 };
 
-PatternObserver__proto__.dispatch = function dispatch () {
+PatternObserver.prototype.dispatch = function dispatch () {
 		var this$1 = this;
 
 	var newValues = this.newValues;
@@ -4339,11 +4008,11 @@ PatternObserver__proto__.dispatch = function dispatch () {
 	this.dirty = false;
 };
 
-PatternObserver__proto__.notify = function notify ( key ) {
+PatternObserver.prototype.notify = function notify ( key ) {
 	this.changed.push( key );
 };
 
-PatternObserver__proto__.shuffle = function shuffle ( newIndices ) {
+PatternObserver.prototype.shuffle = function shuffle ( newIndices ) {
 		var this$1 = this;
 
 	if ( !Array.isArray( this.baseModel.value ) ) { return; }
@@ -4360,7 +4029,7 @@ PatternObserver__proto__.shuffle = function shuffle ( newIndices ) {
 	}
 };
 
-PatternObserver__proto__.handleChange = function handleChange () {
+PatternObserver.prototype.handleChange = function handleChange () {
 		var this$1 = this;
 
 	if ( !this.dirty || this.changed.length ) {
@@ -4439,31 +4108,30 @@ var ArrayObserver = function ArrayObserver ( ractive, model, callback, options )
 		this.sliced = this.slice();
 	}
 };
-var ArrayObserver__proto__ = ArrayObserver.prototype;
 
-ArrayObserver__proto__.cancel = function cancel () {
+ArrayObserver.prototype.cancel = function cancel () {
 	this.model.unregister( this );
 	removeFromArray( this.ractive._observers, this );
 };
 
-ArrayObserver__proto__.dispatch = function dispatch () {
+ArrayObserver.prototype.dispatch = function dispatch () {
 	this.callback( this.pending );
 	this.pending = null;
 	if ( this.options.once ) { this.cancel(); }
 };
 
-ArrayObserver__proto__.handleChange = function handleChange ( path ) {
+ArrayObserver.prototype.handleChange = function handleChange () {
 	if ( this.pending ) {
 		// post-shuffle
 		runloop.addObserver( this, this.options.defer );
-	} else if ( !path ) {
+	} else {
 		// entire array changed
 		this.shuffle( this.sliced.map( negativeOne ) );
 		this.handleChange();
 	}
 };
 
-ArrayObserver__proto__.shuffle = function shuffle ( newIndices ) {
+ArrayObserver.prototype.shuffle = function shuffle ( newIndices ) {
 		var this$1 = this;
 
 	var newValue = this.slice();
@@ -4497,7 +4165,7 @@ ArrayObserver__proto__.shuffle = function shuffle ( newIndices ) {
 	this.sliced = newValue;
 };
 
-ArrayObserver__proto__.slice = function slice () {
+ArrayObserver.prototype.slice = function slice () {
 	var value = this.model.get();
 	return Array.isArray( value ) ? value.slice() : [];
 };
@@ -4740,17 +4408,16 @@ var isDirty = false;
 var styleElement = null;
 var useCssText = null;
 
-function addCSS ( styleDefinition ) {
+function addCSS( styleDefinition ) {
 	styleDefinitions.push( styleDefinition );
 	isDirty = true;
 }
 
-function applyCSS ( force ) {
-	var styleElement = style();
+function applyCSS() {
 
 	// Apply only seems to make sense when we're in the DOM. Server-side renders
 	// can call toCSS to get the updated CSS.
-	if ( !styleElement || ( !force && !isDirty ) ) { return; }
+	if ( !doc || !isDirty ) { return; }
 
 	if ( useCssText ) {
 		styleElement.styleSheet.cssText = getCSS( null );
@@ -4761,26 +4428,52 @@ function applyCSS ( force ) {
 	isDirty = false;
 }
 
-function getCSS ( cssIds ) {
+function getCSS( cssIds ) {
+
 	var filteredStyleDefinitions = cssIds ? styleDefinitions.filter( function (style) { return ~cssIds.indexOf( style.id ); } ) : styleDefinitions;
 
-	filteredStyleDefinitions.forEach( function (d) { return d.applied = true; } );
+	return filteredStyleDefinitions.reduce( function ( styles, style ) { return (styles + "\n\n/* {" + (style.id) + "} */\n" + (style.styles)); }, PREFIX );
 
-	return filteredStyleDefinitions.reduce( function ( styles, style ) { return ("" + (styles ? (styles + "\n\n/* {" + (style.id) + "} */\n" + (style.styles)) : '')); }, PREFIX );
 }
 
-function style () {
-	// If we're on the browser, additional setup needed.
-	if ( doc && !styleElement ) {
-		styleElement = doc.createElement( 'style' );
-		styleElement.type = 'text/css';
+// If we're on the browser, additional setup needed.
+if ( doc && ( !styleElement || !styleElement.parentNode ) ) {
 
-		doc.getElementsByTagName( 'head' )[0].appendChild( styleElement );
+	styleElement = doc.createElement( 'style' );
+	styleElement.type = 'text/css';
 
-		useCssText = !!styleElement.styleSheet;
+	doc.getElementsByTagName( 'head' )[ 0 ].appendChild( styleElement );
+
+	useCssText = !!styleElement.styleSheet;
+}
+
+function fillGaps ( target ) {
+	var sources = [], len = arguments.length - 1;
+	while ( len-- > 0 ) sources[ len ] = arguments[ len + 1 ];
+
+
+	for (var i = 0; i < sources.length; i++){
+		var source = sources[i];
+		for ( var key in source ) {
+			// Source can be a prototype-less object.
+			if ( key in target || !Object.prototype.hasOwnProperty.call( source, key ) ) { continue; }
+			target[ key ] = source[ key ];
+		}
 	}
 
-	return styleElement;
+	return target;
+}
+
+function toPairs ( obj ) {
+	if ( obj === void 0 ) obj = {};
+
+	var pairs = [];
+	for ( var key in obj ) {
+		// Source can be a prototype-less object.
+		if ( !Object.prototype.hasOwnProperty.call( obj, key ) ) { continue; }
+		pairs.push( [ key, obj[ key ] ] );
+	}
+	return pairs;
 }
 
 var adaptConfigurator = {
@@ -4897,105 +4590,13 @@ function uuid() {
 	return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 }
 
-function setCSSData ( keypath, value, options ) {
-	var opts = typeof keypath === 'object' ? value : options;
-	var model = this._cssModel;
-
-	model.locked = true;
-	var promise = set( build( { viewmodel: model }, keypath, value, true ), opts );
-	model.locked = false;
-
-	var cascade = runloop.start();
-	this.extensions.forEach( function (e) {
-		var model = e._cssModel;
-		model.mark();
-		model.downstreamChanged( '', 1 );
-	});
-	runloop.end();
-
-	applyChanges( this, !opts || opts.apply !== false );
-
-	return promise.then( function () { return cascade; } );
-}
-
-function applyChanges ( component, apply ) {
-	var local = recomputeCSS( component );
-	var child = component.extensions.map( function (e) { return applyChanges( e, false ); } ).
-	  reduce( function ( a, c ) { return c || a; }, false );
-
-	if ( apply && ( local || child ) ) {
-		var def = component._cssDef;
-		if ( !def || ( def && def.applied ) ) { applyCSS( true ); }
-	}
-
-	return local || child;
-}
-
-function recomputeCSS ( component ) {
-	var css = component._css;
-
-	if ( typeof css !== 'function' ) { return; }
-
-	var def = component._cssDef;
-	var result = evalCSS( component, css );
-	var styles = def.transform ? transformCss( result, def.id ) : result;
-
-	if ( def.styles === styles ) { return; }
-
-	def.styles = styles;
-
-	return true;
-}
-
-var CSSModel = (function (SharedModel) {
-	function CSSModel ( component ) {
-		SharedModel.call( this, component.cssData, '@style' );
-		this.component = component;
-	}
-
-	if ( SharedModel ) CSSModel.__proto__ = SharedModel;
-	var CSSModel__proto__ = CSSModel.prototype = Object.create( SharedModel && SharedModel.prototype );
-	CSSModel__proto__.constructor = CSSModel;
-
-	CSSModel__proto__.downstreamChanged = function downstreamChanged ( path, depth ) {
-		if ( this.locked ) { return; }
-
-		var component = this.component;
-
-		component.extensions.forEach( function (e) {
-			var model = e._cssModel;
-			model.mark();
-			model.downstreamChanged( path, depth || 1 );
-		});
-
-		if ( !depth ) {
-			applyChanges( component, true );
-		}
-	};
-
-	return CSSModel;
-}(SharedModel));
-
 var hasCurly = /\{/;
 var cssConfigurator = {
 	name: 'css',
 
 	// Called when creating a new component definition
-	extend: function ( Parent, proto, options, Child ) {
-		Child._cssIds = gatherIds( Parent );
-
-		Object.defineProperty( Child, 'cssData', {
-			configurable: true,
-			value: Object.assign( Object.create( Parent.cssData ), options.cssData || {} )
-		});
-
-		Object.defineProperty( Child, '_cssModel', {
-			configurable: true,
-			value: new CSSModel( Child )
-		});
-
+	extend: function ( Parent, proto, options ) {
 		if ( !options.css ) { return; }
-
 		var css = typeof options.css === 'string' && !hasCurly.test( options.css ) ?
 			( getElement( options.css ) || options.css ) :
 			options.css;
@@ -5004,18 +4605,15 @@ var cssConfigurator = {
 
 		if ( typeof css === 'object' ) {
 			css = 'textContent' in css ? css.textContent : css.innerHTML;
-		} else if ( typeof css === 'function' ) {
-			Child._css = options.css;
-			css = evalCSS( Child, css );
 		}
 
-		var def = Child._cssDef = { transform: !options.noCssTransform };
+		if ( !css ) { return; }
 
-		def.styles = def.transform ? transformCss( css, id ) : css;
-		def.id = proto.cssId = id;
-		Child._cssIds.push( id );
+		var styles = options.noCssTransform ? css : transformCss( css, id );
 
-		addCSS( Child._cssDef );
+		proto.cssId = id;
+
+		addCSS( { id: id, styles: styles } );
 	},
 
 	// Called when creating a new component instance
@@ -5024,31 +4622,8 @@ var cssConfigurator = {
 
 		warnIfDebug( "\nThe css option is currently not supported on a per-instance basis and will be discarded. Instead, we recommend instantiating from a component definition with a css option.\n\nconst Component = Ractive.extend({\n\t...\n\tcss: '/* your css */',\n\t...\n});\n\nconst componentInstance = new Component({ ... })\n\t\t" );
 	}
+
 };
-
-function gatherIds ( start ) {
-	var cmp = start;
-	var ids = [];
-
-	while ( cmp ) {
-		if ( cmp.prototype.cssId ) { ids.push( cmp.prototype.cssId ); }
-		cmp = cmp.Parent;
-	}
-
-	return ids;
-}
-
-function evalCSS ( component, css ) {
-	var cssData = component.cssData;
-	var model = component._cssModel;
-	var data = function data ( path ) {
-		return model.joinAll( splitKeypath( path ) ).get();
-	};
-	data.__proto__ = cssData;
-
-	var result = css.call( component, data );
-	return typeof result === 'string' ? result : '';
-}
 
 function validate ( data ) {
 	// Warn if userOptions.data is a non-POJO
@@ -5202,6 +4777,26 @@ function fromComputationString ( str, bindTo ) {
 	if ( hasThis ) { functionBody = "var __ractive = this; " + functionBody; }
 	var fn = new Function( functionBody );
 	return hasThis ? fn.bind( bindTo ) : fn;
+}
+
+var functions = Object.create( null );
+
+function getFunction ( str, i ) {
+	if ( functions[ str ] ) { return functions[ str ]; }
+	return functions[ str ] = createFunction( str, i );
+}
+
+function addFunctions( template ) {
+	if ( !template ) { return; }
+
+	var exp = template.e;
+
+	if ( !exp ) { return; }
+
+	Object.keys( exp ).forEach( function ( str ) {
+		if ( functions[ str ] ) { return; }
+		functions[ str ] = exp[ str ];
+	});
 }
 
 var leadingWhitespace = /^\s+/;
@@ -5363,7 +4958,7 @@ Parser.prototype = {
 		return this.str.charAt( this.pos );
 	},
 
-	warn: function warn ( message ) {
+	warn: function warn$$1 ( message ) {
 		var msg = this.getContextMessage( this.pos, message )[2];
 
 		warnIfDebug( msg );
@@ -5504,7 +5099,6 @@ function escapeHtml ( str ) {
 // to replace them ourselves
 //
 // Source: http://en.wikipedia.org/wiki/Character_encodings_in_HTML#Illegal_characters
-/* istanbul ignore next */
 function validateCode ( code ) {
 	if ( !code ) {
 		return invalid;
@@ -5941,7 +5535,7 @@ var globals = /^(?:Array|console|Date|RegExp|decodeURIComponent|decodeURI|encode
 var keywords = /^(?:break|case|catch|continue|debugger|default|delete|do|else|finally|for|function|if|in|instanceof|new|return|switch|throw|try|typeof|var|void|while|with)$/;
 
 var prefixPattern = /^(?:\@\.|\@|~\/|(?:\^\^\/(?:\^\^\/)*(?:\.\.\/)*)|(?:\.\.\/)+|\.\/(?:\.\.\/)*|\.)/;
-var specials = /^(key|index|keypath|rootpath|this|global|shared|context|event|node|local|style)/;
+var specials = /^(key|index|keypath|rootpath|this|global|shared|context|event|node|local)/;
 
 function readReference ( parser ) {
 	var prefix, name$$1, global, reference, lastDotIndex;
@@ -6011,14 +5605,9 @@ function readReference ( parser ) {
 		// but only if the reference was actually a member and not a refinement
 		lastDotIndex = reference.lastIndexOf( '.' );
 		if ( lastDotIndex !== -1 && name$$1[ name$$1.length - 1 ] !== ']' ) {
-			if ( lastDotIndex === 0 ) {
-				reference = '.';
-				parser.pos = startPos;
-			} else {
-				var refLength = reference.length;
-				reference = reference.substr( 0, lastDotIndex );
-				parser.pos = startPos + ( actual - ( refLength - lastDotIndex ) );
-			}
+			var refLength = reference.length;
+			reference = reference.substr( 0, lastDotIndex );
+			parser.pos = startPos + ( actual - ( refLength - lastDotIndex ) );
 		} else {
 			parser.pos -= 1;
 		}
@@ -6306,13 +5895,6 @@ function getConditional ( parser ) {
 }
 
 function readExpression ( parser ) {
-	// if eval is false, no expressions
-	if ( parser.allowExpressions === false ) {
-		var ref = readReference( parser );
-		parser.allowWhitespace();
-		return ref;
-	}
-
 	// The conditional operator is the lowest precedence operator (except yield,
 	// assignment operators, and commas, none of which are supported), so we
 	// start there. If it doesn't match, it 'falls through' to progressively
@@ -7926,16 +7508,14 @@ function readElement$1 ( parser ) {
 				closed = true;
 			}
 
-			else {
-				// implicit close by closing section tag. TODO clean this up
-				var tag = { open: parser.standardDelimiters[0], close: parser.standardDelimiters[1] };
-				var implicitCloseCase = [ readClosing, readElseIf, readElse ];
-				if (  implicitCloseCase.some( function (r) { return r( parser, tag ); } ) ) {
-					closed = true;
-					parser.pos = pos;
-				}
+			// implicit close by closing section tag. TODO clean this up
+			else if ( child = readClosing( parser, { open: parser.standardDelimiters[0], close: parser.standardDelimiters[1] } ) ) {
+				closed = true;
+				parser.pos = pos;
+			}
 
-				else if ( child = parser.read( PARTIAL_READERS ) ) {
+			else {
+				if ( child = parser.read( PARTIAL_READERS ) ) {
 					if ( partials[ child.n ] ) {
 						parser.pos = pos;
 						parser.error( 'Duplicate partial definition' );
@@ -8245,9 +7825,6 @@ var StandardParser = Parser.extend({
 		this.includeLinePositions = options.includeLinePositions;
 		this.textOnlyMode = options.textOnlyMode;
 		this.csp = options.csp;
-		this.allowExpressions = options.allowExpressions;
-
-		if ( options.attributes ) { this.inTag = true; }
 
 		this.transforms = options.transforms || options.parserTransforms;
 		if ( this.transforms ) {
@@ -8300,7 +7877,7 @@ var StandardParser = Parser.extend({
 						}
 
 						// watch for partials
-						if ( node.p && !Array.isArray( node.p ) ) {
+						if ( node.p ) {
 							for ( var k in node.p ) { walk( node.p[k] ); }
 						}
 					}
@@ -8313,7 +7890,7 @@ var StandardParser = Parser.extend({
 			walk( result[0].t );
 
 			// watch for root partials
-			if ( result[0].p && !Array.isArray( result[0].p ) ) {
+			if ( result[0].p ) {
 				for ( var k in result[0].p ) { walk( result[0].p[k] ); }
 			}
 		}
@@ -8354,10 +7931,7 @@ var parseOptions = [
 	'preserveWhitespace',
 	'sanitize',
 	'stripComments',
-	'contextLines',
-	'parserTransforms',
-	'allowExpressions',
-	'attributes'
+	'contextLines'
 ];
 
 var TEMPLATE_INSTRUCTIONS = "Either preparse or use a ractive runtime source that includes the parser. ";
@@ -8432,26 +8006,6 @@ var parser = {
 		return this.parse( template, this.getParseOptions( ractive ) );
 	}
 };
-
-var functions = Object.create( null );
-
-function getFunction ( str, i ) {
-	if ( functions[ str ] ) { return functions[ str ]; }
-	return functions[ str ] = createFunction( str, i );
-}
-
-function addFunctions( template ) {
-	if ( !template ) { return; }
-
-	var exp = template.e;
-
-	if ( !exp ) { return; }
-
-	Object.keys( exp ).forEach( function ( str ) {
-		if ( functions[ str ] ) { return; }
-		functions[ str ] = exp[ str ];
-	});
-}
 
 var templateConfigurator = {
 	name: 'template',
@@ -8617,19 +8171,18 @@ var Registry = function Registry ( name, useDefaults ) {
 	this.name = name;
 	this.useDefaults = useDefaults;
 };
-var Registry__proto__ = Registry.prototype;
 
-Registry__proto__.extend = function extend ( Parent, proto, options ) {
+Registry.prototype.extend = function extend ( Parent, proto, options ) {
 	var parent = this.useDefaults ? Parent.defaults : Parent;
 	var target = this.useDefaults ? proto : proto.constructor;
 	this.configure( parent, target, options );
 };
 
-Registry__proto__.init = function init () {
+Registry.prototype.init = function init () {
 	// noop
 };
 
-Registry__proto__.configure = function configure ( Parent, target, options ) {
+Registry.prototype.configure = function configure ( Parent, target, options ) {
 	var name = this.name;
 	var option = options[ name ];
 
@@ -8642,7 +8195,7 @@ Registry__proto__.configure = function configure ( Parent, target, options ) {
 	target[ name ] = registry;
 };
 
-Registry__proto__.reset = function reset ( ractive ) {
+Registry.prototype.reset = function reset ( ractive ) {
 	var registry = ractive[ this.name ];
 	var changed = false;
 
@@ -8748,7 +8301,7 @@ var defaultKeys = Object.keys( defaults );
 var isStandardKey = makeObj( defaultKeys.filter( function (key) { return !custom[ key ]; } ) );
 
 // blacklisted keys that we don't double extend
-var isBlacklisted = makeObj( defaultKeys.concat( registries.map( function (r) { return r.name; } ), [ 'on', 'observe', 'attributes', 'cssData' ] ) );
+var isBlacklisted = makeObj( defaultKeys.concat( registries.map( function (r) { return r.name; } ), [ 'on', 'observe', 'attributes' ] ) );
 
 var order = [].concat(
 	defaultKeys.filter( function (key) { return !registries[ key ] && !custom[ key ]; } ),
@@ -8759,12 +8312,12 @@ var order = [].concat(
 );
 
 var config = {
-	extend: function ( Parent, proto$$1, options, Child ) { return configure( 'extend', Parent, proto$$1, options, Child ); },
+	extend: function ( Parent, proto$$1, options ) { return configure( 'extend', Parent, proto$$1, options ); },
 	init: function ( Parent, ractive, options ) { return configure( 'init', Parent, ractive, options ); },
 	reset: function (ractive) { return order.filter( function (c) { return c.reset && c.reset( ractive ); } ).map( function (c) { return c.name; } ); }
 };
 
-function configure ( method, Parent, target, options, Child ) {
+function configure ( method, Parent, target, options ) {
 	deprecate( options );
 
 	for ( var key in options ) {
@@ -8792,12 +8345,12 @@ function configure ( method, Parent, target, options, Child ) {
 	}
 
 	registries.forEach( function (registry) {
-		registry[ method ]( Parent, target, options, Child );
+		registry[ method ]( Parent, target, options );
 	});
 
-	adaptConfigurator[ method ]( Parent, target, options, Child );
-	templateConfigurator[ method ]( Parent, target, options, Child );
-	cssConfigurator[ method ]( Parent, target, options, Child );
+	adaptConfigurator[ method ]( Parent, target, options );
+	templateConfigurator[ method ]( Parent, target, options );
+	cssConfigurator[ method ]( Parent, target, options );
 
 	extendOtherMethods( Parent.prototype, target, options );
 }
@@ -8837,36 +8390,35 @@ var Item = function Item ( options ) {
 
 	this.dirty = false;
 };
-var Item__proto__ = Item.prototype;
 
-Item__proto__.bubble = function bubble () {
+Item.prototype.bubble = function bubble () {
 	if ( !this.dirty ) {
 		this.dirty = true;
 		this.parentFragment.bubble();
 	}
 };
 
-Item__proto__.destroyed = function destroyed () {
+Item.prototype.destroyed = function destroyed () {
 	if ( this.fragment ) { this.fragment.destroyed(); }
 };
 
-Item__proto__.find = function find () {
+Item.prototype.find = function find () {
 	return null;
 };
 
-Item__proto__.findComponent = function findComponent () {
+Item.prototype.findComponent = function findComponent () {
 	return null;
 };
 
-Item__proto__.findNextNode = function findNextNode () {
+Item.prototype.findNextNode = function findNextNode () {
 	return this.parentFragment.findNextNode( this );
 };
 
-Item__proto__.shuffled = function shuffled () {
+Item.prototype.shuffled = function shuffled () {
 	if ( this.fragment ) { this.fragment.shuffled(); }
 };
 
-Item__proto__.valueOf = function valueOf () {
+Item.prototype.valueOf = function valueOf () {
 	return this.toString();
 };
 
@@ -8879,66 +8431,62 @@ var ContainerItem = (function (Item) {
 	}
 
 	if ( Item ) ContainerItem.__proto__ = Item;
-	var ContainerItem__proto__ = ContainerItem.prototype = Object.create( Item && Item.prototype );
-	ContainerItem__proto__.constructor = ContainerItem;
+	ContainerItem.prototype = Object.create( Item && Item.prototype );
+	ContainerItem.prototype.constructor = ContainerItem;
 
-	ContainerItem__proto__.detach = function detach () {
+	ContainerItem.prototype.detach = function detach () {
 		return this.fragment ? this.fragment.detach() : createDocumentFragment();
 	};
 
-	ContainerItem__proto__.find = function find ( selector ) {
+	ContainerItem.prototype.find = function find ( selector ) {
 		if ( this.fragment ) {
 			return this.fragment.find( selector );
 		}
 	};
 
-	ContainerItem__proto__.findAll = function findAll ( selector, options ) {
+	ContainerItem.prototype.findAll = function findAll ( selector, options ) {
 		if ( this.fragment ) {
 			this.fragment.findAll( selector, options );
 		}
 	};
 
-	ContainerItem__proto__.findComponent = function findComponent ( name ) {
+	ContainerItem.prototype.findComponent = function findComponent ( name ) {
 		if ( this.fragment ) {
 			return this.fragment.findComponent( name );
 		}
 	};
 
-	ContainerItem__proto__.findAllComponents = function findAllComponents ( name, options ) {
+	ContainerItem.prototype.findAllComponents = function findAllComponents ( name, options ) {
 		if ( this.fragment ) {
 			this.fragment.findAllComponents( name, options );
 		}
 	};
 
-	ContainerItem__proto__.firstNode = function firstNode ( skipParent ) {
+	ContainerItem.prototype.firstNode = function firstNode ( skipParent ) {
 		return this.fragment && this.fragment.firstNode( skipParent );
 	};
 
-	ContainerItem__proto__.toString = function toString ( escape ) {
+	ContainerItem.prototype.toString = function toString ( escape ) {
 		return this.fragment ? this.fragment.toString( escape ) : '';
 	};
 
 	return ContainerItem;
 }(Item));
 
-var ComputationChild = (function (Model) {
+var ComputationChild = (function (Model$$1) {
 	function ComputationChild ( parent, key ) {
-		Model.call( this, parent, key );
+		Model$$1.call( this, parent, key );
 
 		this.isReadonly = !this.root.ractive.syncComputedChildren;
 		this.dirty = true;
 	}
 
-	if ( Model ) ComputationChild.__proto__ = Model;
-	var ComputationChild__proto__ = ComputationChild.prototype = Object.create( Model && Model.prototype );
-	ComputationChild__proto__.constructor = ComputationChild;
+	if ( Model$$1 ) ComputationChild.__proto__ = Model$$1;
+	ComputationChild.prototype = Object.create( Model$$1 && Model$$1.prototype );
+	ComputationChild.prototype.constructor = ComputationChild;
 
-	var prototypeAccessors$1 = { setRoot: {} };
-
-	prototypeAccessors$1.setRoot.get = function () { return this.parent.setRoot; };
-
-	ComputationChild__proto__.applyValue = function applyValue ( value ) {
-		Model.prototype.applyValue.call( this, value );
+	ComputationChild.prototype.applyValue = function applyValue ( value ) {
+		Model$$1.prototype.applyValue.call( this, value );
 
 		if ( !this.isReadonly ) {
 			var source = this.parent;
@@ -8951,13 +8499,9 @@ var ComputationChild = (function (Model) {
 				source.dependencies.forEach( mark );
 			}
 		}
-
-		if ( this.setRoot ) {
-			this.setRoot.set( this.setRoot.value );
-		}
 	};
 
-	ComputationChild__proto__.get = function get ( shouldCapture ) {
+	ComputationChild.prototype.get = function get ( shouldCapture ) {
 		if ( shouldCapture ) { capture( this ); }
 
 		if ( this.dirty ) {
@@ -8969,7 +8513,7 @@ var ComputationChild = (function (Model) {
 		return this.value;
 	};
 
-	ComputationChild__proto__.handleChange = function handleChange$3 () {
+	ComputationChild.prototype.handleChange = function handleChange$1 () {
 		this.dirty = true;
 
 		if ( this.boundValue ) { this.boundValue = null; }
@@ -8979,7 +8523,7 @@ var ComputationChild = (function (Model) {
 		this.children.forEach( handleChange );
 	};
 
-	ComputationChild__proto__.joinKey = function joinKey ( key ) {
+	ComputationChild.prototype.joinKey = function joinKey ( key ) {
 		if ( key === undefined || key === '' ) { return this; }
 
 		if ( !this.childByKey.hasOwnProperty( key ) ) {
@@ -8991,17 +8535,15 @@ var ComputationChild = (function (Model) {
 		return this.childByKey[ key ];
 	};
 
-	Object.defineProperties( ComputationChild__proto__, prototypeAccessors$1 );
-
 	return ComputationChild;
 }(Model));
 
 /* global console */
 /* eslint no-console:"off" */
 
-var Computation = (function (Model) {
+var Computation = (function (Model$$1) {
 	function Computation ( viewmodel, signature, key ) {
-		Model.call( this, null, null );
+		Model$$1.call( this, null, null );
 
 		this.root = this.parent = viewmodel;
 		this.signature = signature;
@@ -9026,17 +8568,11 @@ var Computation = (function (Model) {
 		this.shuffle = undefined;
 	}
 
-	if ( Model ) Computation.__proto__ = Model;
-	var Computation__proto__ = Computation.prototype = Object.create( Model && Model.prototype );
-	Computation__proto__.constructor = Computation;
+	if ( Model$$1 ) Computation.__proto__ = Model$$1;
+	Computation.prototype = Object.create( Model$$1 && Model$$1.prototype );
+	Computation.prototype.constructor = Computation;
 
-	var prototypeAccessors$2 = { setRoot: {} };
-
-	prototypeAccessors$2.setRoot.get = function () {
-		if ( this.signature.setter ) { return this; }
-	};
-
-	Computation__proto__.get = function get ( shouldCapture ) {
+	Computation.prototype.get = function get ( shouldCapture ) {
 		if ( shouldCapture ) { capture( this ); }
 
 		if ( this.dirty ) {
@@ -9052,7 +8588,7 @@ var Computation = (function (Model) {
 		return maybeBind( this, shouldCapture && this.wrapper ? this.wrapperValue : this.value );
 	};
 
-	Computation__proto__.getValue = function getValue () {
+	Computation.prototype.getValue = function getValue () {
 		startCapturing();
 		var result;
 
@@ -9078,16 +8614,16 @@ var Computation = (function (Model) {
 		return result;
 	};
 
-	Computation__proto__.mark = function mark () {
+	Computation.prototype.mark = function mark () {
 		this.handleChange();
 	};
 
-	Computation__proto__.rebind = function rebind ( next, previous ) {
+	Computation.prototype.rebind = function rebind ( next, previous ) {
 		// computations will grab all of their deps again automagically
 		if ( next !== previous ) { this.handleChange(); }
 	};
 
-	Computation__proto__.set = function set ( value ) {
+	Computation.prototype.set = function set ( value ) {
 		if ( this.isReadonly ) {
 			throw new Error( ("Cannot set read-only computed value '" + (this.key) + "'") );
 		}
@@ -9096,7 +8632,7 @@ var Computation = (function (Model) {
 		this.mark();
 	};
 
-	Computation__proto__.setDependencies = function setDependencies ( dependencies ) {
+	Computation.prototype.setDependencies = function setDependencies ( dependencies ) {
 		var this$1 = this;
 
 		// unregister any soft dependencies we no longer have
@@ -9116,7 +8652,7 @@ var Computation = (function (Model) {
 		this.dependencies = dependencies;
 	};
 
-	Computation__proto__.teardown = function teardown () {
+	Computation.prototype.teardown = function teardown () {
 		var this$1 = this;
 
 		var i = this.dependencies.length;
@@ -9124,10 +8660,8 @@ var Computation = (function (Model) {
 			if ( this$1.dependencies[i] ) { this$1.dependencies[i].unregister( this$1 ); }
 		}
 		if ( this.root.computations[this.key] === this ) { delete this.root.computations[this.key]; }
-		Model.prototype.teardown.call(this);
+		Model$$1.prototype.teardown.call(this);
 	};
-
-	Object.defineProperties( Computation__proto__, prototypeAccessors$2 );
 
 	return Computation;
 }(Model));
@@ -9137,11 +8671,11 @@ var child = ComputationChild.prototype;
 prototype$1.handleChange = child.handleChange;
 prototype$1.joinKey = child.joinKey;
 
-var ExpressionProxy = (function (Model) {
+var ExpressionProxy = (function (Model$$1) {
 	function ExpressionProxy ( fragment, template ) {
 		var this$1 = this;
 
-		Model.call( this, fragment.ractive.viewmodel, null );
+		Model$$1.call( this, fragment.ractive.viewmodel, null );
 
 		this.fragment = fragment;
 		this.template = template;
@@ -9149,9 +8683,7 @@ var ExpressionProxy = (function (Model) {
 		this.isReadonly = true;
 		this.dirty = true;
 
-		this.fn = fragment.ractive.allowExpressions === false ?
-			noop :
-			getFunction( template.s, template.r.length );
+		this.fn = getFunction( template.s, template.r.length );
 
 		this.models = this.template.r.map( function (ref) {
 			return resolveReference( this$1.fragment, ref );
@@ -9163,11 +8695,11 @@ var ExpressionProxy = (function (Model) {
 		this.bubble();
 	}
 
-	if ( Model ) ExpressionProxy.__proto__ = Model;
-	var ExpressionProxy__proto__ = ExpressionProxy.prototype = Object.create( Model && Model.prototype );
-	ExpressionProxy__proto__.constructor = ExpressionProxy;
+	if ( Model$$1 ) ExpressionProxy.__proto__ = Model$$1;
+	ExpressionProxy.prototype = Object.create( Model$$1 && Model$$1.prototype );
+	ExpressionProxy.prototype.constructor = ExpressionProxy;
 
-	ExpressionProxy__proto__.bubble = function bubble ( actuallyChanged ) {
+	ExpressionProxy.prototype.bubble = function bubble ( actuallyChanged ) {
 		if ( actuallyChanged === void 0 ) actuallyChanged = true;
 
 		// refresh the keypath
@@ -9178,7 +8710,7 @@ var ExpressionProxy = (function (Model) {
 		}
 	};
 
-	ExpressionProxy__proto__.getKeypath = function getKeypath () {
+	ExpressionProxy.prototype.getKeypath = function getKeypath () {
 		var this$1 = this;
 
 		if ( !this.template ) { return '@undefined'; }
@@ -9194,7 +8726,7 @@ var ExpressionProxy = (function (Model) {
 		return this.keypath;
 	};
 
-	ExpressionProxy__proto__.getValue = function getValue () {
+	ExpressionProxy.prototype.getValue = function getValue () {
 		var this$1 = this;
 
 		startCapturing();
@@ -9222,9 +8754,7 @@ var ExpressionProxy = (function (Model) {
 		return result;
 	};
 
-	ExpressionProxy__proto__.notifyUpstream = function notifyUpstream () {};
-
-	ExpressionProxy__proto__.rebind = function rebind ( next, previous, safe ) {
+	ExpressionProxy.prototype.rebind = function rebind ( next, previous, safe ) {
 		var idx = this.models.indexOf( previous );
 
 		if ( ~idx ) {
@@ -9238,26 +8768,26 @@ var ExpressionProxy = (function (Model) {
 		this.bubble( !safe );
 	};
 
-	ExpressionProxy__proto__.retrieve = function retrieve () {
+	ExpressionProxy.prototype.retrieve = function retrieve () {
 		return this.get();
 	};
 
-	ExpressionProxy__proto__.teardown = function teardown () {
+	ExpressionProxy.prototype.teardown = function teardown () {
 		var this$1 = this;
 
 		this.unbind();
 		this.fragment = undefined;
 		if ( this.dependencies ) { this.dependencies.forEach( function (d) { return d.unregister( this$1 ); } ); }
-		Model.prototype.teardown.call(this);
+		Model$$1.prototype.teardown.call(this);
 	};
 
-	ExpressionProxy__proto__.unreference = function unreference () {
-		Model.prototype.unreference.call(this);
+	ExpressionProxy.prototype.unreference = function unreference () {
+		Model$$1.prototype.unreference.call(this);
 		if ( !this.deps.length && !this.refs ) { this.teardown(); }
 	};
 
-	ExpressionProxy__proto__.unregister = function unregister ( dep ) {
-		Model.prototype.unregister.call( this, dep );
+	ExpressionProxy.prototype.unregister = function unregister ( dep ) {
+		Model$$1.prototype.unregister.call( this, dep );
 		if ( !this.deps.length && !this.refs ) { this.teardown(); }
 	};
 
@@ -9272,17 +8802,16 @@ prototype.joinKey = computation.joinKey;
 prototype.mark = computation.mark;
 prototype.unbind = noop;
 
-var ReferenceExpressionChild = (function (Model) {
+var ReferenceExpressionChild = (function (Model$$1) {
 	function ReferenceExpressionChild ( parent, key ) {
-		Model.call ( this, parent, key );
-		this.dirty = true;
+		Model$$1.call ( this, parent, key );
 	}
 
-	if ( Model ) ReferenceExpressionChild.__proto__ = Model;
-	var ReferenceExpressionChild__proto__ = ReferenceExpressionChild.prototype = Object.create( Model && Model.prototype );
-	ReferenceExpressionChild__proto__.constructor = ReferenceExpressionChild;
+	if ( Model$$1 ) ReferenceExpressionChild.__proto__ = Model$$1;
+	ReferenceExpressionChild.prototype = Object.create( Model$$1 && Model$$1.prototype );
+	ReferenceExpressionChild.prototype.constructor = ReferenceExpressionChild;
 
-	ReferenceExpressionChild__proto__.applyValue = function applyValue ( value ) {
+	ReferenceExpressionChild.prototype.applyValue = function applyValue ( value ) {
 		if ( isEqual( value, this.value ) ) { return; }
 
 		var parent = this.parent;
@@ -9300,12 +8829,12 @@ var ReferenceExpressionChild = (function (Model) {
 		}
 	};
 
-	ReferenceExpressionChild__proto__.get = function get ( shouldCapture, opts ) {
-		this.retrieve();
-		return Model.prototype.get.call( this, shouldCapture, opts );
+	ReferenceExpressionChild.prototype.get = function get ( shouldCapture, opts ) {
+		this.value = this.retrieve();
+		return Model$$1.prototype.get.call( this, shouldCapture, opts );
 	};
 
-	ReferenceExpressionChild__proto__.joinKey = function joinKey ( key ) {
+	ReferenceExpressionChild.prototype.joinKey = function joinKey ( key ) {
 		if ( key === undefined || key === '' ) { return this; }
 
 		if ( !this.childByKey.hasOwnProperty( key ) ) {
@@ -9317,31 +8846,19 @@ var ReferenceExpressionChild = (function (Model) {
 		return this.childByKey[ key ];
 	};
 
-	ReferenceExpressionChild__proto__.mark = function mark () {
-		this.dirty = true;
-		Model.prototype.mark.call(this);
-	};
-
-	ReferenceExpressionChild__proto__.retrieve = function retrieve () {
-		if ( this.dirty ) {
-			this.dirty = false;
-			var parent = this.parent.get();
-			this.value = parent && parent[ this.key ];
-		}
-
-		return this.value;
+	ReferenceExpressionChild.prototype.retrieve = function retrieve () {
+		var parent = this.parent.get();
+		return parent && parent[ this.key ];
 	};
 
 	return ReferenceExpressionChild;
 }(Model));
 
-var missing = { get: function get() {} };
-
-var ReferenceExpressionProxy = (function (Model) {
+var ReferenceExpressionProxy = (function (Model$$1) {
 	function ReferenceExpressionProxy ( fragment, template ) {
 		var this$1 = this;
 
-		Model.call( this, null, null );
+		Model$$1.call( this, null, null );
 		this.dirty = true;
 		this.root = fragment.ractive.viewmodel;
 		this.template = template;
@@ -9363,7 +8880,7 @@ var ReferenceExpressionProxy = (function (Model) {
 						// only direct references will rebind... expressions handle themselves
 						next = rebindMatch( template.m[idx].n, next, previous );
 						if ( next !== this$1.members[idx] ) {
-							this$1.members.splice( idx, 1, next || missing );
+							this$1.members.splice( idx, 1, next );
 						}
 					}
 				}
@@ -9397,16 +8914,16 @@ var ReferenceExpressionProxy = (function (Model) {
 		this.bubble();
 	}
 
-	if ( Model ) ReferenceExpressionProxy.__proto__ = Model;
-	var ReferenceExpressionProxy__proto__ = ReferenceExpressionProxy.prototype = Object.create( Model && Model.prototype );
-	ReferenceExpressionProxy__proto__.constructor = ReferenceExpressionProxy;
+	if ( Model$$1 ) ReferenceExpressionProxy.__proto__ = Model$$1;
+	ReferenceExpressionProxy.prototype = Object.create( Model$$1 && Model$$1.prototype );
+	ReferenceExpressionProxy.prototype.constructor = ReferenceExpressionProxy;
 
-	ReferenceExpressionProxy__proto__.bubble = function bubble () {
+	ReferenceExpressionProxy.prototype.bubble = function bubble () {
 		if ( !this.base ) { return; }
 		if ( !this.dirty ) { this.handleChange(); }
 	};
 
-	ReferenceExpressionProxy__proto__.get = function get ( shouldCapture ) {
+	ReferenceExpressionProxy.prototype.get = function get ( shouldCapture ) {
 		if ( this.dirty ) {
 			this.bubble();
 
@@ -9437,7 +8954,7 @@ var ReferenceExpressionProxy = (function (Model) {
 	};
 
 	// indirect two-way bindings
-	ReferenceExpressionProxy__proto__.getValue = function getValue () {
+	ReferenceExpressionProxy.prototype.getValue = function getValue () {
 		var this$1 = this;
 
 		this.value = this.model ? this.model.get() : undefined;
@@ -9455,16 +8972,16 @@ var ReferenceExpressionProxy = (function (Model) {
 		return this.value;
 	};
 
-	ReferenceExpressionProxy__proto__.getKeypath = function getKeypath () {
+	ReferenceExpressionProxy.prototype.getKeypath = function getKeypath () {
 		return this.model ? this.model.getKeypath() : '@undefined';
 	};
 
-	ReferenceExpressionProxy__proto__.handleChange = function handleChange () {
+	ReferenceExpressionProxy.prototype.handleChange = function handleChange$$1 () {
 		this.dirty = true;
 		this.mark();
 	};
 
-	ReferenceExpressionProxy__proto__.joinKey = function joinKey ( key ) {
+	ReferenceExpressionProxy.prototype.joinKey = function joinKey ( key ) {
 		if ( key === undefined || key === '' ) { return this; }
 
 		if ( !this.childByKey.hasOwnProperty( key ) ) {
@@ -9476,7 +8993,7 @@ var ReferenceExpressionProxy = (function (Model) {
 		return this.childByKey[ key ];
 	};
 
-	ReferenceExpressionProxy__proto__.mark = function mark$2 () {
+	ReferenceExpressionProxy.prototype.mark = function mark$1 () {
 		if ( this.dirty ) {
 			this.deps.forEach( handleChange );
 		}
@@ -9485,17 +9002,15 @@ var ReferenceExpressionProxy = (function (Model) {
 		this.children.forEach( mark );
 	};
 
-	ReferenceExpressionProxy__proto__.rebind = function rebind () { this.handleChange(); };
-
-	ReferenceExpressionProxy__proto__.retrieve = function retrieve () {
+	ReferenceExpressionProxy.prototype.retrieve = function retrieve () {
 		return this.value;
 	};
 
-	ReferenceExpressionProxy__proto__.set = function set ( value ) {
+	ReferenceExpressionProxy.prototype.set = function set ( value ) {
 		this.model.set( value );
 	};
 
-	ReferenceExpressionProxy__proto__.teardown = function teardown () {
+	ReferenceExpressionProxy.prototype.teardown = function teardown$$1 () {
 		var this$1 = this;
 
 		if ( this.model ) {
@@ -9507,18 +9022,20 @@ var ReferenceExpressionProxy = (function (Model) {
 		}
 	};
 
-	ReferenceExpressionProxy__proto__.unreference = function unreference () {
-		Model.prototype.unreference.call(this);
+	ReferenceExpressionProxy.prototype.unreference = function unreference () {
+		Model$$1.prototype.unreference.call(this);
 		if ( !this.deps.length && !this.refs ) { this.teardown(); }
 	};
 
-	ReferenceExpressionProxy__proto__.unregister = function unregister ( dep ) {
-		Model.prototype.unregister.call( this, dep );
+	ReferenceExpressionProxy.prototype.unregister = function unregister ( dep ) {
+		Model$$1.prototype.unregister.call( this, dep );
 		if ( !this.deps.length && !this.refs ) { this.teardown(); }
 	};
 
 	return ReferenceExpressionProxy;
 }(Model));
+
+ReferenceExpressionProxy.prototype.rebind = noop;
 
 function resolve ( fragment, template ) {
 	if ( template.r ) {
@@ -9548,18 +9065,18 @@ function resolveAliases( aliases, fragment ) {
 	return resolved;
 }
 
-var Alias = (function (ContainerItem) {
+var Alias = (function (ContainerItem$$1) {
 	function Alias ( options ) {
-		ContainerItem.call( this, options );
+		ContainerItem$$1.call( this, options );
 
 		this.fragment = null;
 	}
 
-	if ( ContainerItem ) Alias.__proto__ = ContainerItem;
-	var Alias__proto__ = Alias.prototype = Object.create( ContainerItem && ContainerItem.prototype );
-	Alias__proto__.constructor = Alias;
+	if ( ContainerItem$$1 ) Alias.__proto__ = ContainerItem$$1;
+	Alias.prototype = Object.create( ContainerItem$$1 && ContainerItem$$1.prototype );
+	Alias.prototype.constructor = Alias;
 
-	Alias__proto__.bind = function bind () {
+	Alias.prototype.bind = function bind () {
 		this.fragment = new Fragment({
 			owner: this,
 			template: this.template.f
@@ -9569,12 +9086,12 @@ var Alias = (function (ContainerItem) {
 		this.fragment.bind();
 	};
 
-	Alias__proto__.render = function render ( target ) {
+	Alias.prototype.render = function render ( target ) {
 		this.rendered = true;
 		if ( this.fragment ) { this.fragment.render( target ); }
 	};
 
-	Alias__proto__.unbind = function unbind () {
+	Alias.prototype.unbind = function unbind () {
 		var this$1 = this;
 
 		for ( var k in this$1.fragment.aliases ) {
@@ -9585,12 +9102,12 @@ var Alias = (function (ContainerItem) {
 		if ( this.fragment ) { this.fragment.unbind(); }
 	};
 
-	Alias__proto__.unrender = function unrender ( shouldDestroy ) {
+	Alias.prototype.unrender = function unrender ( shouldDestroy ) {
 		if ( this.rendered && this.fragment ) { this.fragment.unrender( shouldDestroy ); }
 		this.rendered = false;
 	};
 
-	Alias__proto__.update = function update () {
+	Alias.prototype.update = function update () {
 		if ( this.dirty ) {
 			this.dirty = false;
 			this.fragment.update();
@@ -9599,12 +9116,6 @@ var Alias = (function (ContainerItem) {
 
 	return Alias;
 }(ContainerItem));
-
-var hyphenateCamel = function ( camelCaseStr ) {
-	return camelCaseStr.replace( /([A-Z])/g, function ( match, $1 ) {
-		return '-' + $1.toLowerCase();
-	});
-};
 
 var space = /\s+/;
 
@@ -9635,6 +9146,12 @@ function readClass ( str ) {
 
 	return list;
 }
+
+var hyphenateCamel = function ( camelCaseStr ) {
+	return camelCaseStr.replace( /([A-Z])/g, function ( match, $1 ) {
+		return '-' + $1.toLowerCase();
+	});
+};
 
 var textTypes = [ undefined, 'text', 'search', 'url', 'email', 'hidden', 'password', 'search', 'reset', 'submit' ];
 
@@ -9874,12 +9391,9 @@ function updateInlineStyle ( reset ) {
 		this.style = hyphenateCamel( this.name.substr( 6 ) );
 	}
 
-	if ( reset && this.node.style.getPropertyValue( this.style ) !== this.last ) { return; }
-
 	var value = reset ? '' : safeToStringValue( this.getValue() );
 	var safe = value.replace( '!important', '' );
 	this.node.style.setProperty( this.style, safe, safe.length !== value.length ? 'important' : '' );
-	this.last = safe;
 }
 
 function updateClassName ( reset ) {
@@ -9938,9 +9452,8 @@ function updateBoolean ( reset ) {
 			if ( this.useProperty ) {
 				this.node[ this.propertyName ] = this.getValue();
 			} else {
-				var val = this.getValue();
-				if ( val ) {
-					this.node.setAttribute( this.propertyName, typeof val === 'string' ? val : '' );
+				if ( this.getValue() ) {
+					this.node.setAttribute( this.propertyName, '' );
 				} else {
 					this.node.removeAttribute( this.propertyName );
 				}
@@ -9950,25 +9463,13 @@ function updateBoolean ( reset ) {
 }
 
 function updateAttribute ( reset ) {
-	if ( reset ) {
-		if ( this.node.getAttribute( this.name ) === this.value ) {
-			this.node.removeAttribute( this.name );
-		}
-	} else {
-		this.value = safeToStringValue( this.getString() );
-		this.node.setAttribute( this.name, this.value );
-	}
+	if ( reset ) { this.node.removeAttribute( this.name ); }
+	else { this.node.setAttribute( this.name, safeToStringValue( this.getString() ) ); }
 }
 
 function updateNamespacedAttribute ( reset ) {
-	if ( reset ) {
-		if ( this.value === this.node.getAttributeNS( this.namespace, this.name.slice( this.name.indexOf( ':' ) + 1 ) ) ) {
-			this.node.removeAttributeNS( this.namespace, this.name.slice( this.name.indexOf( ':' ) + 1 ) );
-		}
-	} else {
-		this.value = safeToStringValue( this.getString() );
-		this.node.setAttributeNS( this.namespace, this.name.slice( this.name.indexOf( ':' ) + 1 ), this.value );
-	}
+	if ( reset ) { this.node.removeAttributeNS( this.namespace, this.name.slice( this.name.indexOf( ':' ) + 1 ) ); }
+	else { this.node.setAttributeNS( this.namespace, this.name.slice( this.name.indexOf( ':' ) + 1 ), safeToStringValue( this.getString() ) ); }
 }
 
 var propertyNames = {
@@ -10003,9 +9504,9 @@ function doInAttributes( fn ) {
 	attributes = false;
 }
 
-var ConditionalAttribute = (function (Item) {
+var ConditionalAttribute = (function (Item$$1) {
 	function ConditionalAttribute ( options ) {
-		Item.call( this, options );
+		Item$$1.call( this, options );
 
 		this.attributes = [];
 
@@ -10022,26 +9523,22 @@ var ConditionalAttribute = (function (Item) {
 		this.dirty = false;
 	}
 
-	if ( Item ) ConditionalAttribute.__proto__ = Item;
-	var ConditionalAttribute__proto__ = ConditionalAttribute.prototype = Object.create( Item && Item.prototype );
-	ConditionalAttribute__proto__.constructor = ConditionalAttribute;
+	if ( Item$$1 ) ConditionalAttribute.__proto__ = Item$$1;
+	ConditionalAttribute.prototype = Object.create( Item$$1 && Item$$1.prototype );
+	ConditionalAttribute.prototype.constructor = ConditionalAttribute;
 
-	ConditionalAttribute__proto__.bind = function bind () {
+	ConditionalAttribute.prototype.bind = function bind () {
 		this.fragment.bind();
 	};
 
-	ConditionalAttribute__proto__.bubble = function bubble () {
+	ConditionalAttribute.prototype.bubble = function bubble () {
 		if ( !this.dirty ) {
 			this.dirty = true;
 			this.owner.bubble();
 		}
 	};
 
-	ConditionalAttribute__proto__.destroyed = function destroyed () {
-		this.unrender();
-	};
-
-	ConditionalAttribute__proto__.render = function render () {
+	ConditionalAttribute.prototype.render = function render () {
 		this.node = this.owner.node;
 		if ( this.node ) {
 			this.isSvg = this.node.namespaceURI === svg$1;
@@ -10056,20 +9553,20 @@ var ConditionalAttribute = (function (Item) {
 		attributes = false;
 	};
 
-	ConditionalAttribute__proto__.toString = function toString () {
+	ConditionalAttribute.prototype.toString = function toString () {
 		return this.fragment.toString();
 	};
 
-	ConditionalAttribute__proto__.unbind = function unbind () {
+	ConditionalAttribute.prototype.unbind = function unbind () {
 		this.fragment.unbind();
 	};
 
-	ConditionalAttribute__proto__.unrender = function unrender () {
+	ConditionalAttribute.prototype.unrender = function unrender () {
 		this.rendered = false;
 		this.fragment.unrender();
 	};
 
-	ConditionalAttribute__proto__.update = function update () {
+	ConditionalAttribute.prototype.update = function update () {
 		var this$1 = this;
 
 		var str;
@@ -10081,10 +9578,10 @@ var ConditionalAttribute = (function (Item) {
 			var current = attributes;
 			attributes = true;
 			this.fragment.update();
+			attributes = current || false;
 
 			if ( this.rendered && this.node ) {
 				str = this.fragment.toString();
-
 				attrs = parseAttributes( str, this.isSvg );
 
 				// any attributes that previously existed but no longer do
@@ -10099,17 +9596,13 @@ var ConditionalAttribute = (function (Item) {
 
 				this.attributes = attrs;
 			}
-
-			attributes = current || false;
 		}
 	};
 
 	return ConditionalAttribute;
 }(Item));
 
-var onlyWhitespace = /^\s*$/;
 function parseAttributes ( str, isSvg ) {
-	if ( onlyWhitespace.test( str ) ) { return []; }
 	var tagName = isSvg ? 'svg' : 'div';
 	return str
 		? (div$1.innerHTML = "<" + tagName + " " + str + "></" + tagName + ">") &&
@@ -10143,9 +9636,9 @@ function lookupNamespace ( node, prefix ) {
 var attribute = false;
 function inAttribute () { return attribute; }
 
-var Attribute = (function (Item) {
+var Attribute = (function (Item$$1) {
 	function Attribute ( options ) {
-		Item.call( this, options );
+		Item$$1.call( this, options );
 
 		this.name = options.template.n;
 		this.namespace = null;
@@ -10183,17 +9676,17 @@ var Attribute = (function (Item) {
 		if ( this.interpolator ) { this.interpolator.owner = this; }
 	}
 
-	if ( Item ) Attribute.__proto__ = Item;
-	var Attribute__proto__ = Attribute.prototype = Object.create( Item && Item.prototype );
-	Attribute__proto__.constructor = Attribute;
+	if ( Item$$1 ) Attribute.__proto__ = Item$$1;
+	Attribute.prototype = Object.create( Item$$1 && Item$$1.prototype );
+	Attribute.prototype.constructor = Attribute;
 
-	Attribute__proto__.bind = function bind () {
+	Attribute.prototype.bind = function bind () {
 		if ( this.fragment ) {
 			this.fragment.bind();
 		}
 	};
 
-	Attribute__proto__.bubble = function bubble () {
+	Attribute.prototype.bubble = function bubble () {
 		if ( !this.dirty ) {
 			this.parentFragment.bubble();
 			this.element.bubble();
@@ -10201,9 +9694,7 @@ var Attribute = (function (Item) {
 		}
 	};
 
-	Attribute__proto__.firstNode = function firstNode () {};
-
-	Attribute__proto__.getString = function getString () {
+	Attribute.prototype.getString = function getString () {
 		attribute = true;
 		var value = this.fragment ?
 			this.fragment.toString() :
@@ -10214,14 +9705,14 @@ var Attribute = (function (Item) {
 
 	// TODO could getValue ever be called for a static attribute,
 	// or can we assume that this.fragment exists?
-	Attribute__proto__.getValue = function getValue () {
+	Attribute.prototype.getValue = function getValue () {
 		attribute = true;
 		var value = this.fragment ? this.fragment.valueOf() : booleanAttributes.test( this.name ) ? true : this.value;
 		attribute = false;
 		return value;
 	};
 
-	Attribute__proto__.render = function render () {
+	Attribute.prototype.render = function render () {
 		var node = this.element.node;
 		this.node = node;
 
@@ -10258,7 +9749,7 @@ var Attribute = (function (Item) {
 		this.updateDelegate();
 	};
 
-	Attribute__proto__.toString = function toString () {
+	Attribute.prototype.toString = function toString () {
 		if ( inAttributes() ) { return ''; }
 		attribute = true;
 
@@ -10289,7 +9780,7 @@ var Attribute = (function (Item) {
 			return;
 		}
 
-		if ( booleanAttributes.test( this.name ) ) { return value ? ( typeof value === 'string' ? ((this.name) + "=\"" + (safeAttributeString(value)) + "\"") : this.name ) : ''; }
+		if ( booleanAttributes.test( this.name ) ) { return value ? this.name : ''; }
 		if ( value == null ) { return ''; }
 
 		var str = safeAttributeString( this.getString() );
@@ -10300,17 +9791,17 @@ var Attribute = (function (Item) {
 			this.name;
 	};
 
-	Attribute__proto__.unbind = function unbind () {
+	Attribute.prototype.unbind = function unbind () {
 		if ( this.fragment ) { this.fragment.unbind(); }
 	};
 
-	Attribute__proto__.unrender = function unrender () {
+	Attribute.prototype.unrender = function unrender () {
 		this.updateDelegate( true );
 
 		this.rendered = false;
 	};
 
-	Attribute__proto__.update = function update () {
+	Attribute.prototype.update = function update () {
 		if ( this.dirty ) {
 			this.dirty = false;
 			if ( this.fragment ) { this.fragment.update(); }
@@ -10324,9 +9815,9 @@ var Attribute = (function (Item) {
 	return Attribute;
 }(Item));
 
-var BindingFlag = (function (Item) {
+var BindingFlag = (function (Item$$1) {
 	function BindingFlag ( options ) {
-		Item.call( this, options );
+		Item$$1.call( this, options );
 
 		this.owner = options.owner || options.parentFragment.owner || findElement( options.parentFragment );
 		this.element = this.owner.attributeByName ? this.owner : findElement( options.parentFragment );
@@ -10347,46 +9838,46 @@ var BindingFlag = (function (Item) {
 		}
 	}
 
-	if ( Item ) BindingFlag.__proto__ = Item;
-	var BindingFlag__proto__ = BindingFlag.prototype = Object.create( Item && Item.prototype );
-	BindingFlag__proto__.constructor = BindingFlag;
+	if ( Item$$1 ) BindingFlag.__proto__ = Item$$1;
+	BindingFlag.prototype = Object.create( Item$$1 && Item$$1.prototype );
+	BindingFlag.prototype.constructor = BindingFlag;
 
-	BindingFlag__proto__.bind = function bind () {
+	BindingFlag.prototype.bind = function bind () {
 		if ( this.fragment ) { this.fragment.bind(); }
 		set$1( this, this.getValue(), true );
 	};
 
-	BindingFlag__proto__.bubble = function bubble () {
+	BindingFlag.prototype.bubble = function bubble () {
 		if ( !this.dirty ) {
 			this.element.bubble();
 			this.dirty = true;
 		}
 	};
 
-	BindingFlag__proto__.getValue = function getValue () {
+	BindingFlag.prototype.getValue = function getValue () {
 		if ( this.fragment ) { return this.fragment.valueOf(); }
 		else if ( 'value' in this ) { return this.value; }
 		else if ( 'f' in this.template ) { return this.template.f; }
 		else { return true; }
 	};
 
-	BindingFlag__proto__.render = function render () {
+	BindingFlag.prototype.render = function render () {
 		set$1( this, this.getValue(), true );
 	};
 
-	BindingFlag__proto__.toString = function toString () { return ''; };
+	BindingFlag.prototype.toString = function toString () { return ''; };
 
-	BindingFlag__proto__.unbind = function unbind () {
+	BindingFlag.prototype.unbind = function unbind () {
 		if ( this.fragment ) { this.fragment.unbind(); }
 
 		delete this.element[ this.flag ];
 	};
 
-	BindingFlag__proto__.unrender = function unrender () {
+	BindingFlag.prototype.unrender = function unrender () {
 		if ( this.element.rendered ) { this.element.recreateTwowayBinding(); }
 	};
 
-	BindingFlag__proto__.update = function update () {
+	BindingFlag.prototype.update = function update () {
 		if ( this.dirty ) {
 			if ( this.fragment ) { this.fragment.update(); }
 			set$1( this, this.getValue(), true );
@@ -10416,64 +9907,39 @@ function set$1 ( flag, value, update ) {
 	return flag.value;
 }
 
-var teardownHook = new Hook( 'teardown' );
-var destructHook = new Hook( 'destruct' );
-
-// Teardown. This goes through the root fragment and all its children, removing observers
-// and generally cleaning up after itself
-
-function Ractive$teardown () {
-	var this$1 = this;
-
-	if ( this.torndown ) {
-		warnIfDebug( 'ractive.teardown() was called on a Ractive instance that was already torn down' );
-		return Promise.resolve();
-	}
-
-	this.shouldDestroy = true;
-	return teardown$1( this, function () { return this$1.fragment.rendered ? this$1.unrender() : Promise.resolve(); } );
-}
-
-function teardown$1 ( instance, getPromise ) {
-	instance.torndown = true;
-	instance.viewmodel.teardown();
-	instance.fragment.unbind();
-	instance._observers.slice().forEach( cancel );
-
-	if ( instance.el && instance.el.__ractive_instances__ ) {
-		removeFromArray( instance.el.__ractive_instances__, instance );
-	}
-
-	var promise = getPromise();
-
-	teardownHook.fire( instance );
-	promise.then( function () { return destructHook.fire( instance ); } );
-
-	return promise;
-}
-
-var RactiveModel = (function (SharedModel) {
+var RactiveModel = (function (Model$$1) {
 	function RactiveModel ( ractive ) {
-		SharedModel.call( this, ractive, '@this' );
+		Model$$1.call( this, null, '' );
+		this.value = ractive;
+		this.isRoot = true;
+		this.root = this;
+		this.adaptors = [];
 		this.ractive = ractive;
 	}
 
-	if ( SharedModel ) RactiveModel.__proto__ = SharedModel;
-	var RactiveModel__proto__ = RactiveModel.prototype = Object.create( SharedModel && SharedModel.prototype );
-	RactiveModel__proto__.constructor = RactiveModel;
+	if ( Model$$1 ) RactiveModel.__proto__ = Model$$1;
+	RactiveModel.prototype = Object.create( Model$$1 && Model$$1.prototype );
+	RactiveModel.prototype.constructor = RactiveModel;
 
-	RactiveModel__proto__.joinKey = function joinKey ( key ) {
-		var model = SharedModel.prototype.joinKey.call( this, key );
+	RactiveModel.prototype.joinKey = function joinKey ( key ) {
+		var model = Model$$1.prototype.joinKey.call( this, key );
 
 		if ( ( key === 'root' || key === 'parent' ) && !model.isLink ) { return initLink( model, key ); }
 		else if ( key === 'data' ) { return this.ractive.viewmodel; }
-		else if ( key === 'cssData' ) { return this.ractive.constructor._cssModel; }
 
 		return model;
 	};
 
+	RactiveModel.prototype.getKeypath = function getKeypath () {
+		return '@this';
+	};
+
+	RactiveModel.prototype.retrieve = function retrieve () {
+		return this.ractive;
+	};
+
 	return RactiveModel;
-}(SharedModel));
+}(Model));
 
 function initLink ( model, key ) {
 	model.applyValue = function ( value ) {
@@ -10495,9 +9961,9 @@ function initLink ( model, key ) {
 
 var hasProp$1 = Object.prototype.hasOwnProperty;
 
-var RootModel = (function (Model) {
+var RootModel = (function (Model$$1) {
 	function RootModel ( options ) {
-		Model.call( this, null, null );
+		Model$$1.call( this, null, null );
 
 		this.isRoot = true;
 		this.root = this;
@@ -10511,22 +9977,22 @@ var RootModel = (function (Model) {
 		this.computations = {};
 	}
 
-	if ( Model ) RootModel.__proto__ = Model;
-	var RootModel__proto__ = RootModel.prototype = Object.create( Model && Model.prototype );
-	RootModel__proto__.constructor = RootModel;
+	if ( Model$$1 ) RootModel.__proto__ = Model$$1;
+	RootModel.prototype = Object.create( Model$$1 && Model$$1.prototype );
+	RootModel.prototype.constructor = RootModel;
 
-	RootModel__proto__.attached = function attached ( fragment ) {
+	RootModel.prototype.attached = function attached ( fragment ) {
 		attachImplicits( this, fragment );
 	};
 
-	RootModel__proto__.compute = function compute ( key, signature ) {
+	RootModel.prototype.compute = function compute ( key, signature ) {
 		var computation = new Computation( this, signature, key );
 		this.computations[ escapeKey( key ) ] = computation;
 
 		return computation;
 	};
 
-	RootModel__proto__.createLink = function createLink ( keypath, target, targetPath, options ) {
+	RootModel.prototype.createLink = function createLink ( keypath, target, targetPath, options ) {
 		var keys = splitKeypath( keypath );
 
 		var model = this;
@@ -10538,11 +10004,11 @@ var RootModel = (function (Model) {
 		return model.link( target, targetPath, options );
 	};
 
-	RootModel__proto__.detached = function detached () {
+	RootModel.prototype.detached = function detached () {
 		detachImplicits( this );
 	};
 
-	RootModel__proto__.get = function get ( shouldCapture, options ) {
+	RootModel.prototype.get = function get ( shouldCapture, options ) {
 		var this$1 = this;
 
 		if ( shouldCapture ) { capture( this ); }
@@ -10561,18 +10027,18 @@ var RootModel = (function (Model) {
 		}
 	};
 
-	RootModel__proto__.getKeypath = function getKeypath () {
+	RootModel.prototype.getKeypath = function getKeypath () {
 		return '';
 	};
 
-	RootModel__proto__.getRactiveModel = function getRactiveModel () {
+	RootModel.prototype.getRactiveModel = function getRactiveModel () {
 		return this.ractiveModel || ( this.ractiveModel = new RactiveModel( this.ractive ) );
 	};
 
-	RootModel__proto__.getValueChildren = function getValueChildren () {
+	RootModel.prototype.getValueChildren = function getValueChildren () {
 		var this$1 = this;
 
-		var children = Model.prototype.getValueChildren.call( this, this.value );
+		var children = Model$$1.prototype.getValueChildren.call( this, this.value );
 
 		this.children.forEach( function (child) {
 			if ( child._link ) {
@@ -10589,13 +10055,13 @@ var RootModel = (function (Model) {
 		return children;
 	};
 
-	RootModel__proto__.has = function has ( key ) {
+	RootModel.prototype.has = function has ( key ) {
 		var value = this.value;
 		var unescapedKey = unescapeKey( key );
 
-		if ( unescapedKey === '@this' || unescapedKey === '@global' || unescapedKey === '@shared' || unescapedKey === '@style' ) { return true; }
+		if ( unescapedKey === '@this' || unescapedKey === '@global' || unescapedKey === '@shared' ) { return true; }
 		if ( unescapedKey[0] === '~' && unescapedKey[1] === '/' ) { unescapedKey = unescapedKey.slice( 2 ); }
-		if ( key === '' || hasProp$1.call( value, unescapedKey ) ) { return true; }
+		if ( hasProp$1.call( value, unescapedKey ) ) { return true; }
 
 		// mappings/links and computations
 		if ( key in this.computations || this.childByKey[unescapedKey] && this.childByKey[unescapedKey]._link ) { return true; }
@@ -10610,22 +10076,21 @@ var RootModel = (function (Model) {
 		return false;
 	};
 
-	RootModel__proto__.joinKey = function joinKey ( key, opts ) {
+	RootModel.prototype.joinKey = function joinKey ( key, opts ) {
 		if ( key[0] === '@' ) {
 			if ( key === '@this' || key === '@' ) { return this.getRactiveModel(); }
 			if ( key === '@global' ) { return GlobalModel; }
 			if ( key === '@shared' ) { return SharedModel$1; }
-			if ( key === '@style' ) { return this.getRactiveModel().joinKey( 'cssData' ); }
 			return;
 		}
 
 		if ( key[0] === '~' && key[1] === '/' ) { key = key.slice( 2 ); }
 
 		return this.computations.hasOwnProperty( key ) ? this.computations[ key ] :
-		       Model.prototype.joinKey.call( this, key, opts );
+		       Model$$1.prototype.joinKey.call( this, key, opts );
 	};
 
-	RootModel__proto__.set = function set ( value ) {
+	RootModel.prototype.set = function set ( value ) {
 		// TODO wrapping root node is a baaaad idea. We should prevent this
 		var wrapper = this.wrapper;
 		if ( wrapper ) {
@@ -10646,14 +10111,14 @@ var RootModel = (function (Model) {
 		this.children.forEach( mark );
 	};
 
-	RootModel__proto__.retrieve = function retrieve () {
+	RootModel.prototype.retrieve = function retrieve () {
 		return this.wrapper ? this.wrapper.get() : this.value;
 	};
 
-	RootModel__proto__.teardown = function teardown () {
+	RootModel.prototype.teardown = function teardown$$1 () {
 		var this$1 = this;
 
-		Model.prototype.teardown.call(this);
+		Model$$1.prototype.teardown.call(this);
 		for ( var k in this$1.computations ) {
 			this$1.computations[ k ].teardown();
 		}
@@ -10661,6 +10126,7 @@ var RootModel = (function (Model) {
 
 	return RootModel;
 }(Model));
+
 RootModel.prototype.update = noop;
 
 function attachImplicits ( model, fragment ) {
@@ -10738,50 +10204,6 @@ function getComputationSignature ( ractive, key, signature ) {
 	};
 }
 
-function fillGaps ( target ) {
-	var sources = [], len = arguments.length - 1;
-	while ( len-- > 0 ) sources[ len ] = arguments[ len + 1 ];
-
-	for (var i = 0; i < sources.length; i++){
-		var source = sources[i];
-		for ( var key in source ) {
-			// Source can be a prototype-less object.
-			if ( key in target || !Object.prototype.hasOwnProperty.call( source, key ) ) { continue; }
-			target[ key ] = source[ key ];
-		}
-	}
-
-	return target;
-}
-
-function toPairs ( obj ) {
-	if ( obj === void 0 ) obj = {};
-
-	var pairs = [];
-	for ( var key in obj ) {
-		// Source can be a prototype-less object.
-		if ( !Object.prototype.hasOwnProperty.call( obj, key ) ) { continue; }
-		pairs.push( [ key, obj[ key ] ] );
-	}
-	return pairs;
-}
-
-function subscribe ( instance, options, type ) {
-	var subs = ( instance.constructor[ ("_" + type) ] || [] ).concat( toPairs( options[ type ] || [] ) );
-	var single = type === 'on' ? 'once' : (type + "Once");
-
-	subs.forEach( function (ref) {
-		var target = ref[0];
-		var config = ref[1];
-
-		if ( typeof config === 'function' ) {
-			instance[type]( target, config );
-		} else if ( typeof config === 'object' && typeof config.handler === 'function' ) {
-			instance[ config.once ? single : type ]( target, config.handler, config );
-		}
-	});
-}
-
 var constructHook = new Hook( 'construct' );
 
 var registryNames$1 = [
@@ -10802,9 +10224,6 @@ function construct ( ractive, options ) {
 
 	initialiseProperties( ractive );
 	handleAttributes( ractive );
-
-	// set up event subscribers
-	subscribe( ractive, options, 'on' );
 
 	// if there's not a delegation setting, inherit from parent if it's not default
 	if ( !options.hasOwnProperty( 'delegate' ) && ractive.parent && ractive.parent.delegate !== ractive.delegate ) {
@@ -10940,22 +10359,56 @@ function handleAttributes ( ractive ) {
 	}
 }
 
-var Component = (function (Item) {
+var teardownHook = new Hook( 'teardown' );
+var destructHook = new Hook( 'destruct' );
+
+// Teardown. This goes through the root fragment and all its children, removing observers
+// and generally cleaning up after itself
+
+function Ractive$teardown () {
+	var this$1 = this;
+
+	if ( this.torndown ) {
+		warnIfDebug( 'ractive.teardown() was called on a Ractive instance that was already torn down' );
+		return Promise.resolve();
+	}
+
+	this.shouldDestroy = true;
+	return teardown$1( this, function () { return this$1.fragment.rendered ? this$1.unrender() : Promise.resolve(); } );
+}
+
+function teardown$1 ( instance, getPromise ) {
+	instance.torndown = true;
+	instance.viewmodel.teardown();
+	instance.fragment.unbind();
+	instance._observers.slice().forEach( cancel );
+
+	if ( instance.el && instance.el.__ractive_instances__ ) {
+		removeFromArray( instance.el.__ractive_instances__, instance );
+	}
+
+	var promise = getPromise();
+
+	teardownHook.fire( instance );
+	promise.then( function () { return destructHook.fire( instance ); } );
+
+	return promise;
+}
+
+var Component = (function (Item$$1) {
 	function Component ( options, ComponentConstructor ) {
 		var this$1 = this;
 
-		Item.call( this, options );
-		var template = options.template;
-		this.isAnchor = template.t === ANCHOR;
+		Item$$1.call( this, options );
+		this.isAnchor = this.template.t === ANCHOR;
 		this.type = this.isAnchor ? ANCHOR : COMPONENT; // override ELEMENT from super
-		var attrs = template.m;
 
-		var partials = template.p || {};
-		if ( !( 'content' in partials ) ) { partials.content = template.f || []; }
+		var partials = options.template.p || {};
+		if ( !( 'content' in partials ) ) { partials.content = options.template.f || []; }
 		this._partials = partials; // TEMP
 
 		if ( this.isAnchor ) {
-			this.name = template.n;
+			this.name = options.template.n;
 
 			this.addChild = addChild;
 			this.removeChild = removeChild;
@@ -10963,7 +10416,7 @@ var Component = (function (Item) {
 			var instance = Object.create( ComponentConstructor.prototype );
 
 			this.instance = instance;
-			this.name = template.e;
+			this.name = options.template.e;
 
 			if ( instance.el ) {
 				warnIfDebug( ("The <" + (this.name) + "> component has a default 'el' property; it has been disregarded") );
@@ -10989,17 +10442,6 @@ var Component = (function (Item) {
 
 			construct( this.instance, { partials: partials });
 
-			// these can be modified during construction
-			template = this.template;
-			attrs = template.m;
-
-			// allow components that are so inclined to add programmatic mappings
-			if ( Array.isArray( this.mappings ) ) {
-				attrs = ( attrs || [] ).concat( this.mappings );
-			} else if ( typeof this.mappings === 'string' ) {
-				attrs = ( attrs || [] ).concat( parser.parse( this.mappings, { attributes: true } ).t );
-			}
-
 			// for hackability, this could be an open option
 			// for any ractive instance, but for now, just
 			// for components and just for ractive...
@@ -11007,49 +10449,48 @@ var Component = (function (Item) {
 		}
 
 		this.attributeByName = {};
+
+		this.events = [];
 		this.attributes = [];
+		var leftovers = [];
+		( this.template.m || [] ).forEach( function (template) {
+			switch ( template.t ) {
+				case ATTRIBUTE:
+				case EVENT:
+					this$1.attributes.push( createItem({
+						owner: this$1,
+						parentFragment: this$1.parentFragment,
+						template: template
+					}) );
+					break;
 
-		if (attrs) {
-			var leftovers = [];
-			attrs.forEach( function (template) {
-				switch ( template.t ) {
-					case ATTRIBUTE:
-					case EVENT:
-						this$1.attributes.push( createItem({
-							owner: this$1,
-							parentFragment: this$1.parentFragment,
-							template: template
-						}) );
-						break;
+				case TRANSITION:
+				case BINDING_FLAG:
+				case DECORATOR:
+					break;
 
-					case TRANSITION:
-					case BINDING_FLAG:
-					case DECORATOR:
-						break;
-
-					default:
-						leftovers.push( template );
-						break;
-				}
-			});
-
-			if ( leftovers.length ) {
-				this.attributes.push( new ConditionalAttribute({
-					owner: this,
-					parentFragment: this.parentFragment,
-					template: leftovers
-				}) );
+				default:
+					leftovers.push( template );
+					break;
 			}
+		});
+
+		if ( leftovers.length ) {
+			this.attributes.push( new ConditionalAttribute({
+				owner: this,
+				parentFragment: this.parentFragment,
+				template: leftovers
+			}) );
 		}
 
 		this.eventHandlers = [];
 	}
 
-	if ( Item ) Component.__proto__ = Item;
-	var Component__proto__ = Component.prototype = Object.create( Item && Item.prototype );
-	Component__proto__.constructor = Component;
+	if ( Item$$1 ) Component.__proto__ = Item$$1;
+	Component.prototype = Object.create( Item$$1 && Item$$1.prototype );
+	Component.prototype.constructor = Component;
 
-	Component__proto__.bind = function bind$2 () {
+	Component.prototype.bind = function bind$1 () {
 		if ( !this.isAnchor ) {
 			this.attributes.forEach( bind );
 
@@ -11065,18 +10506,18 @@ var Component = (function (Item) {
 		}
 	};
 
-	Component__proto__.bubble = function bubble () {
+	Component.prototype.bubble = function bubble () {
 		if ( !this.dirty ) {
 			this.dirty = true;
 			this.parentFragment.bubble();
 		}
 	};
 
-	Component__proto__.destroyed = function destroyed () {
+	Component.prototype.destroyed = function destroyed$$1 () {
 		if ( !this.isAnchor && this.instance.fragment ) { this.instance.fragment.destroyed(); }
 	};
 
-	Component__proto__.detach = function detach () {
+	Component.prototype.detach = function detach () {
 		if ( this.isAnchor ) {
 			if ( this.instance ) { return this.instance.fragment.detach(); }
 			return createDocumentFragment();
@@ -11085,15 +10526,15 @@ var Component = (function (Item) {
 		return this.instance.fragment.detach();
 	};
 
-	Component__proto__.find = function find ( selector, options ) {
+	Component.prototype.find = function find ( selector, options ) {
 		if ( this.instance ) { return this.instance.fragment.find( selector, options ); }
 	};
 
-	Component__proto__.findAll = function findAll ( selector, options ) {
+	Component.prototype.findAll = function findAll ( selector, options ) {
 		if ( this.instance ) { this.instance.fragment.findAll( selector, options ); }
 	};
 
-	Component__proto__.findComponent = function findComponent ( name, options ) {
+	Component.prototype.findComponent = function findComponent ( name, options ) {
 		if ( !name || this.name === name ) { return this.instance; }
 
 		if ( this.instance.fragment ) {
@@ -11101,7 +10542,7 @@ var Component = (function (Item) {
 		}
 	};
 
-	Component__proto__.findAllComponents = function findAllComponents ( name, options ) {
+	Component.prototype.findAllComponents = function findAllComponents ( name, options ) {
 		var result = options.result;
 
 		if ( this.instance && ( !name || this.name === name ) ) {
@@ -11111,19 +10552,19 @@ var Component = (function (Item) {
 		if ( this.instance ) { this.instance.findAllComponents( name, options ); }
 	};
 
-	Component__proto__.firstNode = function firstNode ( skipParent ) {
+	Component.prototype.firstNode = function firstNode ( skipParent ) {
 		if ( this.instance ) { return this.instance.fragment.firstNode( skipParent ); }
 	};
 
-	Component__proto__.getContext = function getContext () {
+	Component.prototype.getContext = function getContext$$1 () {
 		var assigns = [], len = arguments.length;
 		while ( len-- ) assigns[ len ] = arguments[ len ];
 
-		assigns.unshift( this.instance );
+		assigns.unshift( this );
 		return getRactiveContext.apply( null, assigns );
 	};
 
-	Component__proto__.render = function render$2 ( target, occupants ) {
+	Component.prototype.render = function render$1$$1 ( target, occupants ) {
 		if ( this.isAnchor ) {
 			this.rendered = true;
 			this.target = target;
@@ -11148,11 +10589,11 @@ var Component = (function (Item) {
 		}
 	};
 
-	Component__proto__.toString = function toString () {
+	Component.prototype.toString = function toString$$1 () {
 		if ( this.instance ) { return this.instance.toHTML(); }
 	};
 
-	Component__proto__.unbind = function unbind$1 () {
+	Component.prototype.unbind = function unbind$1 () {
 		if ( !this.isAnchor ) {
 			this.bound = false;
 
@@ -11162,7 +10603,7 @@ var Component = (function (Item) {
 		}
 	};
 
-	Component__proto__.unrender = function unrender$1 ( shouldDestroy ) {
+	Component.prototype.unrender = function unrender$1 ( shouldDestroy ) {
 		this.shouldDestroy = shouldDestroy;
 
 		if ( this.isAnchor ) {
@@ -11182,7 +10623,7 @@ var Component = (function (Item) {
 		this.rendered = false;
 	};
 
-	Component__proto__.update = function update$2 () {
+	Component.prototype.update = function update$1 () {
 		this.dirty = false;
 		if ( this.instance ) {
 			this.instance.fragment.update();
@@ -11236,10 +10677,9 @@ function renderItem ( anchor, meta ) {
 	}
 
 	meta.partials = meta.instance.partials;
-	meta.instance.partials = Object.assign( Object.create( meta.partials ), meta.partials, anchor._partials );
+	meta.instance.partials = Object.assign( {}, meta.partials, anchor._partials );
 
 	meta.instance.fragment.unbind();
-	meta.instance.fragment.componentParent = anchor.parentFragment;
 	meta.instance.fragment.bind( meta.instance.viewmodel );
 
 	anchor.attributes.forEach( bind );
@@ -11267,7 +10707,6 @@ function unrenderItem ( anchor, meta ) {
 	anchor.attributes.forEach( unbind );
 
 	meta.instance.el = meta.instance.anchor = null;
-	meta.instance.fragment.componentParent = null;
 	meta.parentFragment = null;
 	meta.anchor = null;
 	anchor.item = null;
@@ -11334,34 +10773,30 @@ var Decorator = function Decorator ( options ) {
 	this.name = template.n;
 
 	this.node = null;
-	this.handle = null;
+	this.intermediary = null;
 
 	this.element.decorators.push( this );
 };
-var Decorator__proto__ = Decorator.prototype;
 
-Decorator__proto__.bind = function bind () {
+Decorator.prototype.bind = function bind () {
 	setupArgsFn( this, this.template, this.parentFragment, { register: true } );
 };
 
-Decorator__proto__.bubble = function bubble () {
+Decorator.prototype.bubble = function bubble () {
 	if ( !this.dirty ) {
 		this.dirty = true;
 		this.owner.bubble();
 	}
 };
 
-Decorator__proto__.destroyed = function destroyed () {
-	if ( this.handle ) {
-		this.handle.teardown();
-		this.handle = null;
-	}
+Decorator.prototype.destroyed = function destroyed () {
+	if ( this.intermediary ) { this.intermediary.teardown(); }
 	this.shouldDestroy = true;
 };
 
-Decorator__proto__.handleChange = function handleChange () { this.bubble(); };
+Decorator.prototype.handleChange = function handleChange () { this.bubble(); };
 
-Decorator__proto__.rebind = function rebind ( next, previous, safe ) {
+Decorator.prototype.rebind = function rebind ( next, previous, safe ) {
 	var idx = this.models.indexOf( previous );
 	if ( !~idx ) { return; }
 
@@ -11375,17 +10810,15 @@ Decorator__proto__.rebind = function rebind ( next, previous, safe ) {
 	if ( !safe ) { this.bubble(); }
 };
 
-Decorator__proto__.render = function render () {
+Decorator.prototype.render = function render () {
 		var this$1 = this;
 
-	this.shouldDestroy = false;
-	if ( this.handle ) { this.unrender(); }
 	runloop.scheduleTask( function () {
 		var fn = findInViewHierarchy( 'decorators', this$1.ractive, this$1.name );
 
 		if ( !fn ) {
 			warnOnce( missingPlugin( this$1.name, 'decorator' ) );
-			this$1.handle = missingDecorator;
+			this$1.intermediary = missingDecorator;
 			return;
 		}
 
@@ -11401,64 +10834,56 @@ Decorator__proto__.render = function render () {
 			args = this$1.fn.apply( this$1.ractive, args );
 		}
 
-		this$1.handle = fn.apply( this$1.ractive, [ this$1.node ].concat( args ) );
+		this$1.intermediary = fn.apply( this$1.ractive, [ this$1.node ].concat( args ) );
 
-		if ( !this$1.handle || !this$1.handle.teardown ) {
+		if ( !this$1.intermediary || !this$1.intermediary.teardown ) {
 			throw new Error( ("The '" + (this$1.name) + "' decorator must return an object with a teardown method") );
 		}
 
 		// watch out for decorators that cause their host element to be unrendered
 		if ( this$1.shouldDestroy ) { this$1.destroyed(); }
 	}, true );
+	this.rendered = true;
 };
 
-Decorator__proto__.toString = function toString () { return ''; };
+Decorator.prototype.toString = function toString () { return ''; };
 
-Decorator__proto__.unbind = function unbind () {
+Decorator.prototype.unbind = function unbind () {
 	teardownArgsFn( this, this.template );
 };
 
-Decorator__proto__.unrender = function unrender ( shouldDestroy ) {
-	if ( ( !shouldDestroy || this.element.rendered ) && this.handle ) {
-		this.handle.teardown();
-		this.handle = null;
-	}
+Decorator.prototype.unrender = function unrender ( shouldDestroy ) {
+	if ( ( !shouldDestroy || this.element.rendered ) && this.intermediary ) { this.intermediary.teardown(); }
+	this.rendered = false;
 };
 
-Decorator__proto__.update = function update () {
-	var instance = this.handle;
-
-	if ( !this.dirty ) {
-		if ( instance && instance.invalidate ) {
-			runloop.scheduleTask( function () { return instance.invalidate(); }, true );
-		}
-		return;
-	}
+Decorator.prototype.update = function update () {
+	if ( !this.dirty ) { return; }
 
 	this.dirty = false;
 
-	if ( instance ) {
-		if ( !instance.update ) {
+	if ( this.intermediary ) {
+		if ( !this.intermediary.update ) {
 			this.unrender();
 			this.render();
 		}
 		else {
 			var args = this.models.map( function (model) { return model && model.get(); } );
-			instance.update.apply( this.ractive, this.fn.apply( this.ractive, args ) );
+			this.intermediary.update.apply( this.ractive, this.fn.apply( this.ractive, args ) );
 		}
 	}
 };
 
-var Doctype = (function (Item) {
+var Doctype = (function (Item$$1) {
 	function Doctype () {
-		Item.apply(this, arguments);
+		Item$$1.apply(this, arguments);
 	}
 
-	if ( Item ) Doctype.__proto__ = Item;
-	var Doctype__proto__ = Doctype.prototype = Object.create( Item && Item.prototype );
-	Doctype__proto__.constructor = Doctype;
+	if ( Item$$1 ) Doctype.__proto__ = Item$$1;
+	Doctype.prototype = Object.create( Item$$1 && Item$$1.prototype );
+	Doctype.prototype.constructor = Doctype;
 
-	Doctype__proto__.toString = function toString () {
+	Doctype.prototype.toString = function toString () {
 		return '<!DOCTYPE' + this.template.a + '>';
 	};
 
@@ -11480,7 +10905,7 @@ var Binding = function Binding ( element, name ) {
 
 	var model = interpolator.model;
 
-	if ( model.isReadonly && !model.setRoot ) {
+	if ( model.isReadonly ) {
 		var keypath = model.getKeypath().replace( /^@/, '' );
 		warnOnceIfDebug( ("Cannot use two-way binding on <" + (element.name) + "> element: " + keypath + " is read-only. To suppress this warning use <" + (element.name) + " twoway='false'...>"), { ractive: this.ractive });
 		return false;
@@ -11505,19 +10930,18 @@ var Binding = function Binding ( element, name ) {
 		parentForm.formBindings.push( this );
 	}
 };
-var Binding__proto__ = Binding.prototype;
 
-Binding__proto__.bind = function bind () {
+Binding.prototype.bind = function bind () {
 	this.model.registerTwowayBinding( this );
 };
 
-Binding__proto__.handleChange = function handleChange () {
+Binding.prototype.handleChange = function handleChange () {
 		var this$1 = this;
 
 	var value = this.getValue();
 	if ( this.lastVal() === value ) { return; }
 
-	runloop.start();
+	runloop.start( this.root );
 	this.attribute.locked = true;
 	this.model.set( value );
 	this.lastVal( true, value );
@@ -11529,12 +10953,12 @@ Binding__proto__.handleChange = function handleChange () {
 	runloop.end();
 };
 
-Binding__proto__.lastVal = function lastVal ( setting, value ) {
+Binding.prototype.lastVal = function lastVal ( setting, value ) {
 	if ( setting ) { this.lastValue = value; }
 	else { return this.lastValue; }
 };
 
-Binding__proto__.rebind = function rebind ( next, previous ) {
+Binding.prototype.rebind = function rebind ( next, previous ) {
 		var this$1 = this;
 
 	if ( this.model && this.model === previous ) { previous.unregisterTwowayBinding( this ); }
@@ -11544,17 +10968,17 @@ Binding__proto__.rebind = function rebind ( next, previous ) {
 	}
 };
 
-Binding__proto__.render = function render () {
+Binding.prototype.render = function render () {
 	this.node = this.element.node;
 	this.node._ractive.binding = this;
 	this.rendered = true; // TODO is this used anywhere?
 };
 
-Binding__proto__.setFromNode = function setFromNode ( node ) {
+Binding.prototype.setFromNode = function setFromNode ( node ) {
 	this.model.set( node.value );
 };
 
-Binding__proto__.unbind = function unbind () {
+Binding.prototype.unbind = function unbind () {
 	this.model.unregisterTwowayBinding( this );
 };
 
@@ -11566,17 +10990,17 @@ function handleDomEvent () {
 	this._ractive.binding.handleChange();
 }
 
-var CheckboxBinding = (function (Binding) {
+var CheckboxBinding = (function (Binding$$1) {
 	function CheckboxBinding ( element ) {
-		Binding.call( this, element, 'checked' );
+		Binding$$1.call( this, element, 'checked' );
 	}
 
-	if ( Binding ) CheckboxBinding.__proto__ = Binding;
-	var CheckboxBinding__proto__ = CheckboxBinding.prototype = Object.create( Binding && Binding.prototype );
-	CheckboxBinding__proto__.constructor = CheckboxBinding;
+	if ( Binding$$1 ) CheckboxBinding.__proto__ = Binding$$1;
+	CheckboxBinding.prototype = Object.create( Binding$$1 && Binding$$1.prototype );
+	CheckboxBinding.prototype.constructor = CheckboxBinding;
 
-	CheckboxBinding__proto__.render = function render () {
-		Binding.prototype.render.call(this);
+	CheckboxBinding.prototype.render = function render () {
+		Binding$$1.prototype.render.call(this);
 
 		this.element.on( 'change', handleDomEvent );
 
@@ -11585,20 +11009,20 @@ var CheckboxBinding = (function (Binding) {
 		}
 	};
 
-	CheckboxBinding__proto__.unrender = function unrender () {
+	CheckboxBinding.prototype.unrender = function unrender () {
 		this.element.off( 'change', handleDomEvent );
 		this.element.off( 'click', handleDomEvent );
 	};
 
-	CheckboxBinding__proto__.getInitialValue = function getInitialValue () {
+	CheckboxBinding.prototype.getInitialValue = function getInitialValue () {
 		return !!this.element.getAttribute( 'checked' );
 	};
 
-	CheckboxBinding__proto__.getValue = function getValue () {
+	CheckboxBinding.prototype.getValue = function getValue () {
 		return this.node.checked;
 	};
 
-	CheckboxBinding__proto__.setFromNode = function setFromNode ( node ) {
+	CheckboxBinding.prototype.setFromNode = function setFromNode ( node ) {
 		this.model.set( node.checked );
 	};
 
@@ -11622,26 +11046,25 @@ var BindingGroup = function BindingGroup ( hash, model, getValue ) {
 
 	this.bindings = [];
 };
-var BindingGroup__proto__ = BindingGroup.prototype;
 
-BindingGroup__proto__.add = function add ( binding ) {
+BindingGroup.prototype.add = function add ( binding ) {
 	this.bindings.push( binding );
 };
 
-BindingGroup__proto__.bind = function bind () {
+BindingGroup.prototype.bind = function bind () {
 	this.value = this.model.get();
 	this.model.registerTwowayBinding( this );
 	this.bound = true;
 };
 
-BindingGroup__proto__.remove = function remove ( binding ) {
+BindingGroup.prototype.remove = function remove ( binding ) {
 	removeFromArray( this.bindings, binding );
 	if ( !this.bindings.length ) {
 		this.unbind();
 	}
 };
 
-BindingGroup__proto__.unbind = function unbind () {
+BindingGroup.prototype.unbind = function unbind () {
 	this.model.unregisterTwowayBinding( this );
 	this.bound = false;
 	delete this.model[this.hash];
@@ -11660,9 +11083,9 @@ function getValue() {
 	return res;
 }
 
-var CheckboxNameBinding = (function (Binding) {
+var CheckboxNameBinding = (function (Binding$$1) {
 	function CheckboxNameBinding ( element ) {
-		Binding.call( this, element, 'name' );
+		Binding$$1.call( this, element, 'name' );
 
 		this.checkboxName = true; // so that ractive.updateModel() knows what to do with this
 
@@ -11688,17 +11111,17 @@ var CheckboxNameBinding = (function (Binding) {
 		}
 	}
 
-	if ( Binding ) CheckboxNameBinding.__proto__ = Binding;
-	var CheckboxNameBinding__proto__ = CheckboxNameBinding.prototype = Object.create( Binding && Binding.prototype );
-	CheckboxNameBinding__proto__.constructor = CheckboxNameBinding;
+	if ( Binding$$1 ) CheckboxNameBinding.__proto__ = Binding$$1;
+	CheckboxNameBinding.prototype = Object.create( Binding$$1 && Binding$$1.prototype );
+	CheckboxNameBinding.prototype.constructor = CheckboxNameBinding;
 
-	CheckboxNameBinding__proto__.bind = function bind () {
+	CheckboxNameBinding.prototype.bind = function bind () {
 		if ( !this.group.bound ) {
 			this.group.bind();
 		}
 	};
 
-	CheckboxNameBinding__proto__.getInitialValue = function getInitialValue () {
+	CheckboxNameBinding.prototype.getInitialValue = function getInitialValue () {
 		// This only gets called once per group (of inputs that
 		// share a name), because it only gets called if there
 		// isn't an initial value. By the same token, we can make
@@ -11710,11 +11133,11 @@ var CheckboxNameBinding = (function (Binding) {
 		return [];
 	};
 
-	CheckboxNameBinding__proto__.getValue = function getValue () {
+	CheckboxNameBinding.prototype.getValue = function getValue () {
 		return this.group.value;
 	};
 
-	CheckboxNameBinding__proto__.handleChange = function handleChange () {
+	CheckboxNameBinding.prototype.handleChange = function handleChange () {
 		this.isChecked = this.element.node.checked;
 		this.group.value = this.model.get();
 		var value = this.element.getAttribute( 'value' );
@@ -11725,11 +11148,11 @@ var CheckboxNameBinding = (function (Binding) {
 		}
 		// make sure super knows there's a change
 		this.lastValue = null;
-		Binding.prototype.handleChange.call(this);
+		Binding$$1.prototype.handleChange.call(this);
 	};
 
-	CheckboxNameBinding__proto__.render = function render () {
-		Binding.prototype.render.call(this);
+	CheckboxNameBinding.prototype.render = function render () {
+		Binding$$1.prototype.render.call(this);
 
 		var node = this.node;
 
@@ -11752,7 +11175,7 @@ var CheckboxNameBinding = (function (Binding) {
 		}
 	};
 
-	CheckboxNameBinding__proto__.setFromNode = function setFromNode ( node ) {
+	CheckboxNameBinding.prototype.setFromNode = function setFromNode ( node ) {
 		this.group.bindings.forEach( function (binding) { return binding.wasUndefined = true; } );
 
 		if ( node.checked ) {
@@ -11763,18 +11186,18 @@ var CheckboxNameBinding = (function (Binding) {
 		}
 	};
 
-	CheckboxNameBinding__proto__.unbind = function unbind () {
+	CheckboxNameBinding.prototype.unbind = function unbind () {
 		this.group.remove( this );
 	};
 
-	CheckboxNameBinding__proto__.unrender = function unrender () {
+	CheckboxNameBinding.prototype.unrender = function unrender () {
 		var el = this.element;
 
 		el.off( 'change', handleDomEvent );
 		el.off( 'click', handleDomEvent );
 	};
 
-	CheckboxNameBinding__proto__.arrayContains = function arrayContains ( selectValue, optionValue ) {
+	CheckboxNameBinding.prototype.arrayContains = function arrayContains ( selectValue, optionValue ) {
 		var this$1 = this;
 
 		var i = selectValue.length;
@@ -11784,7 +11207,7 @@ var CheckboxNameBinding = (function (Binding) {
 		return false;
 	};
 
-	CheckboxNameBinding__proto__.removeFromArray = function removeFromArray ( array, item ) {
+	CheckboxNameBinding.prototype.removeFromArray = function removeFromArray ( array, item ) {
 		var this$1 = this;
 
 		if (!array) { return; }
@@ -11799,25 +11222,25 @@ var CheckboxNameBinding = (function (Binding) {
 	return CheckboxNameBinding;
 }(Binding));
 
-var ContentEditableBinding = (function (Binding) {
+var ContentEditableBinding = (function (Binding$$1) {
 	function ContentEditableBinding () {
-		Binding.apply(this, arguments);
+		Binding$$1.apply(this, arguments);
 	}
 
-	if ( Binding ) ContentEditableBinding.__proto__ = Binding;
-	var ContentEditableBinding__proto__ = ContentEditableBinding.prototype = Object.create( Binding && Binding.prototype );
-	ContentEditableBinding__proto__.constructor = ContentEditableBinding;
+	if ( Binding$$1 ) ContentEditableBinding.__proto__ = Binding$$1;
+	ContentEditableBinding.prototype = Object.create( Binding$$1 && Binding$$1.prototype );
+	ContentEditableBinding.prototype.constructor = ContentEditableBinding;
 
-	ContentEditableBinding__proto__.getInitialValue = function getInitialValue () {
+	ContentEditableBinding.prototype.getInitialValue = function getInitialValue () {
 		return this.element.fragment ? this.element.fragment.toString() : '';
 	};
 
-	ContentEditableBinding__proto__.getValue = function getValue () {
+	ContentEditableBinding.prototype.getValue = function getValue () {
 		return this.element.node.innerHTML;
 	};
 
-	ContentEditableBinding__proto__.render = function render () {
-		Binding.prototype.render.call(this);
+	ContentEditableBinding.prototype.render = function render () {
+		Binding$$1.prototype.render.call(this);
 
 		var el = this.element;
 
@@ -11833,11 +11256,11 @@ var ContentEditableBinding = (function (Binding) {
 		}
 	};
 
-	ContentEditableBinding__proto__.setFromNode = function setFromNode ( node ) {
+	ContentEditableBinding.prototype.setFromNode = function setFromNode ( node ) {
 		this.model.set( node.innerHTML );
 	};
 
-	ContentEditableBinding__proto__.unrender = function unrender () {
+	ContentEditableBinding.prototype.unrender = function unrender () {
 		var el = this.element;
 
 		el.off( 'blur', handleDomEvent );
@@ -11872,25 +11295,25 @@ function handleDelay ( delay ) {
 	};
 }
 
-var GenericBinding = (function (Binding) {
+var GenericBinding = (function (Binding$$1) {
 	function GenericBinding () {
-		Binding.apply(this, arguments);
+		Binding$$1.apply(this, arguments);
 	}
 
-	if ( Binding ) GenericBinding.__proto__ = Binding;
-	var GenericBinding__proto__ = GenericBinding.prototype = Object.create( Binding && Binding.prototype );
-	GenericBinding__proto__.constructor = GenericBinding;
+	if ( Binding$$1 ) GenericBinding.__proto__ = Binding$$1;
+	GenericBinding.prototype = Object.create( Binding$$1 && Binding$$1.prototype );
+	GenericBinding.prototype.constructor = GenericBinding;
 
-	GenericBinding__proto__.getInitialValue = function getInitialValue () {
+	GenericBinding.prototype.getInitialValue = function getInitialValue () {
 		return '';
 	};
 
-	GenericBinding__proto__.getValue = function getValue () {
+	GenericBinding.prototype.getValue = function getValue () {
 		return this.node.value;
 	};
 
-	GenericBinding__proto__.render = function render () {
-		Binding.prototype.render.call(this);
+	GenericBinding.prototype.render = function render () {
+		Binding$$1.prototype.render.call(this);
 
 		// any lazy setting for this element overrides the root
 		// if the value is a number, it's a timeout
@@ -11913,21 +11336,19 @@ var GenericBinding = (function (Binding) {
 
 		el.on( 'change', handleDomEvent );
 
-		if ( node.type !== 'file' ) {
-			if ( !lazy ) {
-				el.on( 'input', this.handler );
+		if ( !lazy ) {
+			el.on( 'input', this.handler );
 
-				// IE is a special snowflake
-				if ( node.attachEvent ) {
-					el.on( 'keyup', this.handler );
-				}
+			// IE is a special snowflake
+			if ( node.attachEvent ) {
+				el.on( 'keyup', this.handler );
 			}
-
-			el.on( 'blur', handleBlur );
 		}
+
+		el.on( 'blur', handleBlur );
 	};
 
-	GenericBinding__proto__.unrender = function unrender () {
+	GenericBinding.prototype.unrender = function unrender () {
 		var el = this.element;
 		this.rendered = false;
 
@@ -11940,34 +11361,29 @@ var GenericBinding = (function (Binding) {
 	return GenericBinding;
 }(Binding));
 
-var FileBinding = (function (GenericBinding) {
+var FileBinding = (function (GenericBinding$$1) {
 	function FileBinding () {
-		GenericBinding.apply(this, arguments);
+		GenericBinding$$1.apply(this, arguments);
 	}
 
-	if ( GenericBinding ) FileBinding.__proto__ = GenericBinding;
-	var FileBinding__proto__ = FileBinding.prototype = Object.create( GenericBinding && GenericBinding.prototype );
-	FileBinding__proto__.constructor = FileBinding;
+	if ( GenericBinding$$1 ) FileBinding.__proto__ = GenericBinding$$1;
+	FileBinding.prototype = Object.create( GenericBinding$$1 && GenericBinding$$1.prototype );
+	FileBinding.prototype.constructor = FileBinding;
 
-	FileBinding__proto__.getInitialValue = function getInitialValue () {
-		/* istanbul ignore next */
+	FileBinding.prototype.getInitialValue = function getInitialValue () {
 		return undefined;
 	};
 
-	FileBinding__proto__.getValue = function getValue () {
-		/* istanbul ignore next */
+	FileBinding.prototype.getValue = function getValue () {
 		return this.node.files;
 	};
 
-	FileBinding__proto__.render = function render () {
-		/* istanbul ignore next */
+	FileBinding.prototype.render = function render () {
 		this.element.lazy = false;
-		/* istanbul ignore next */
-		GenericBinding.prototype.render.call(this);
+		GenericBinding$$1.prototype.render.call(this);
 	};
 
-	FileBinding__proto__.setFromNode = function setFromNode ( node ) {
-		/* istanbul ignore next */
+	FileBinding.prototype.setFromNode = function setFromNode ( node ) {
 		this.model.set( node.files );
 	};
 
@@ -11975,7 +11391,6 @@ var FileBinding = (function (GenericBinding) {
 }(GenericBinding));
 
 function getSelectedOptions ( select ) {
-	/* istanbul ignore next */
 	return select.selectedOptions
 		? toArray( select.selectedOptions )
 		: select.options
@@ -11983,22 +11398,22 @@ function getSelectedOptions ( select ) {
 			: [];
 }
 
-var MultipleSelectBinding = (function (Binding) {
+var MultipleSelectBinding = (function (Binding$$1) {
 	function MultipleSelectBinding () {
-		Binding.apply(this, arguments);
+		Binding$$1.apply(this, arguments);
 	}
 
-	if ( Binding ) MultipleSelectBinding.__proto__ = Binding;
-	var MultipleSelectBinding__proto__ = MultipleSelectBinding.prototype = Object.create( Binding && Binding.prototype );
-	MultipleSelectBinding__proto__.constructor = MultipleSelectBinding;
+	if ( Binding$$1 ) MultipleSelectBinding.__proto__ = Binding$$1;
+	MultipleSelectBinding.prototype = Object.create( Binding$$1 && Binding$$1.prototype );
+	MultipleSelectBinding.prototype.constructor = MultipleSelectBinding;
 
-	MultipleSelectBinding__proto__.getInitialValue = function getInitialValue () {
+	MultipleSelectBinding.prototype.getInitialValue = function getInitialValue () {
 		return this.element.options
 			.filter( function (option) { return option.getAttribute( 'selected' ); } )
 			.map( function (option) { return option.getAttribute( 'value' ); } );
 	};
 
-	MultipleSelectBinding__proto__.getValue = function getValue () {
+	MultipleSelectBinding.prototype.getValue = function getValue () {
 		var options = this.element.node.options;
 		var len = options.length;
 
@@ -12016,21 +11431,21 @@ var MultipleSelectBinding = (function (Binding) {
 		return selectedValues;
 	};
 
-	MultipleSelectBinding__proto__.handleChange = function handleChange () {
+	MultipleSelectBinding.prototype.handleChange = function handleChange () {
 		var attribute = this.attribute;
 		var previousValue = attribute.getValue();
 
 		var value = this.getValue();
 
 		if ( previousValue === undefined || !arrayContentsMatch( value, previousValue ) ) {
-			Binding.prototype.handleChange.call(this);
+			Binding$$1.prototype.handleChange.call(this);
 		}
 
 		return this;
 	};
 
-	MultipleSelectBinding__proto__.render = function render () {
-		Binding.prototype.render.call(this);
+	MultipleSelectBinding.prototype.render = function render () {
+		Binding$$1.prototype.render.call(this);
 
 		this.element.on( 'change', handleDomEvent );
 
@@ -12040,7 +11455,7 @@ var MultipleSelectBinding = (function (Binding) {
 		}
 	};
 
-	MultipleSelectBinding__proto__.setFromNode = function setFromNode ( node ) {
+	MultipleSelectBinding.prototype.setFromNode = function setFromNode ( node ) {
 		var selectedOptions = getSelectedOptions( node );
 		var i = selectedOptions.length;
 		var result = new Array( i );
@@ -12053,32 +11468,32 @@ var MultipleSelectBinding = (function (Binding) {
 		this.model.set( result );
 	};
 
-	MultipleSelectBinding__proto__.unrender = function unrender () {
+	MultipleSelectBinding.prototype.unrender = function unrender () {
 		this.element.off( 'change', handleDomEvent );
 	};
 
 	return MultipleSelectBinding;
 }(Binding));
 
-var NumericBinding = (function (GenericBinding) {
+var NumericBinding = (function (GenericBinding$$1) {
 	function NumericBinding () {
-		GenericBinding.apply(this, arguments);
+		GenericBinding$$1.apply(this, arguments);
 	}
 
-	if ( GenericBinding ) NumericBinding.__proto__ = GenericBinding;
-	var NumericBinding__proto__ = NumericBinding.prototype = Object.create( GenericBinding && GenericBinding.prototype );
-	NumericBinding__proto__.constructor = NumericBinding;
+	if ( GenericBinding$$1 ) NumericBinding.__proto__ = GenericBinding$$1;
+	NumericBinding.prototype = Object.create( GenericBinding$$1 && GenericBinding$$1.prototype );
+	NumericBinding.prototype.constructor = NumericBinding;
 
-	NumericBinding__proto__.getInitialValue = function getInitialValue () {
+	NumericBinding.prototype.getInitialValue = function getInitialValue () {
 		return undefined;
 	};
 
-	NumericBinding__proto__.getValue = function getValue () {
+	NumericBinding.prototype.getValue = function getValue () {
 		var value = parseFloat( this.node.value );
 		return isNaN( value ) ? undefined : value;
 	};
 
-	NumericBinding__proto__.setFromNode = function setFromNode ( node ) {
+	NumericBinding.prototype.setFromNode = function setFromNode ( node ) {
 		var value = parseFloat( node.value );
 		if ( !isNaN( value ) ) { this.model.set( value ); }
 	};
@@ -12092,24 +11507,24 @@ function getSiblings ( hash ) {
 	return siblings[ hash ] || ( siblings[ hash ] = [] );
 }
 
-var RadioBinding = (function (Binding) {
+var RadioBinding = (function (Binding$$1) {
 	function RadioBinding ( element ) {
-		Binding.call( this, element, 'checked' );
+		Binding$$1.call( this, element, 'checked' );
 
 		this.siblings = getSiblings( this.ractive._guid + this.element.getAttribute( 'name' ) );
 		this.siblings.push( this );
 	}
 
-	if ( Binding ) RadioBinding.__proto__ = Binding;
-	var RadioBinding__proto__ = RadioBinding.prototype = Object.create( Binding && Binding.prototype );
-	RadioBinding__proto__.constructor = RadioBinding;
+	if ( Binding$$1 ) RadioBinding.__proto__ = Binding$$1;
+	RadioBinding.prototype = Object.create( Binding$$1 && Binding$$1.prototype );
+	RadioBinding.prototype.constructor = RadioBinding;
 
-	RadioBinding__proto__.getValue = function getValue () {
+	RadioBinding.prototype.getValue = function getValue () {
 		return this.node.checked;
 	};
 
-	RadioBinding__proto__.handleChange = function handleChange () {
-		runloop.start();
+	RadioBinding.prototype.handleChange = function handleChange () {
+		runloop.start( this.root );
 
 		this.siblings.forEach( function (binding) {
 			binding.model.set( binding.getValue() );
@@ -12118,8 +11533,8 @@ var RadioBinding = (function (Binding) {
 		runloop.end();
 	};
 
-	RadioBinding__proto__.render = function render () {
-		Binding.prototype.render.call(this);
+	RadioBinding.prototype.render = function render () {
+		Binding$$1.prototype.render.call(this);
 
 		this.element.on( 'change', handleDomEvent );
 
@@ -12128,15 +11543,15 @@ var RadioBinding = (function (Binding) {
 		}
 	};
 
-	RadioBinding__proto__.setFromNode = function setFromNode ( node ) {
+	RadioBinding.prototype.setFromNode = function setFromNode ( node ) {
 		this.model.set( node.checked );
 	};
 
-	RadioBinding__proto__.unbind = function unbind () {
+	RadioBinding.prototype.unbind = function unbind () {
 		removeFromArray( this.siblings, this );
 	};
 
-	RadioBinding__proto__.unrender = function unrender () {
+	RadioBinding.prototype.unrender = function unrender () {
 		this.element.off( 'change', handleDomEvent );
 		this.element.off( 'click', handleDomEvent );
 	};
@@ -12151,9 +11566,9 @@ function getValue$1() {
 	}
 }
 
-var RadioNameBinding = (function (Binding) {
+var RadioNameBinding = (function (Binding$$1) {
 	function RadioNameBinding ( element ) {
-		Binding.call( this, element, 'name' );
+		Binding$$1.call( this, element, 'name' );
 
 		this.group = getBindingGroup( 'radioname', this.model, getValue$1 );
 		this.group.add( this );
@@ -12163,11 +11578,11 @@ var RadioNameBinding = (function (Binding) {
 		}
 	}
 
-	if ( Binding ) RadioNameBinding.__proto__ = Binding;
-	var RadioNameBinding__proto__ = RadioNameBinding.prototype = Object.create( Binding && Binding.prototype );
-	RadioNameBinding__proto__.constructor = RadioNameBinding;
+	if ( Binding$$1 ) RadioNameBinding.__proto__ = Binding$$1;
+	RadioNameBinding.prototype = Object.create( Binding$$1 && Binding$$1.prototype );
+	RadioNameBinding.prototype.constructor = RadioNameBinding;
 
-	RadioNameBinding__proto__.bind = function bind () {
+	RadioNameBinding.prototype.bind = function bind () {
 		var this$1 = this;
 
 		if ( !this.group.bound ) {
@@ -12183,33 +11598,33 @@ var RadioNameBinding = (function (Binding) {
 		this.model.getKeypathModel().register( this.nameAttributeBinding );
 	};
 
-	RadioNameBinding__proto__.getInitialValue = function getInitialValue () {
+	RadioNameBinding.prototype.getInitialValue = function getInitialValue () {
 		if ( this.element.getAttribute( 'checked' ) ) {
 			return this.element.getAttribute( 'value' );
 		}
 	};
 
-	RadioNameBinding__proto__.getValue = function getValue () {
+	RadioNameBinding.prototype.getValue = function getValue () {
 		return this.element.getAttribute( 'value' );
 	};
 
-	RadioNameBinding__proto__.handleChange = function handleChange () {
+	RadioNameBinding.prototype.handleChange = function handleChange () {
 		// If this <input> is the one that's checked, then the value of its
 		// `name` model gets set to its value
 		if ( this.node.checked ) {
 			this.group.value = this.getValue();
-			Binding.prototype.handleChange.call(this);
+			Binding$$1.prototype.handleChange.call(this);
 		}
 	};
 
-	RadioNameBinding__proto__.lastVal = function lastVal ( setting, value ) {
+	RadioNameBinding.prototype.lastVal = function lastVal ( setting, value ) {
 		if ( !this.group ) { return; }
 		if ( setting ) { this.group.lastValue = value; }
 		else { return this.group.lastValue; }
 	};
 
-	RadioNameBinding__proto__.render = function render () {
-		Binding.prototype.render.call(this);
+	RadioNameBinding.prototype.render = function render () {
+		Binding$$1.prototype.render.call(this);
 
 		var node = this.node;
 
@@ -12223,19 +11638,19 @@ var RadioNameBinding = (function (Binding) {
 		}
 	};
 
-	RadioNameBinding__proto__.setFromNode = function setFromNode ( node ) {
+	RadioNameBinding.prototype.setFromNode = function setFromNode ( node ) {
 		if ( node.checked ) {
 			this.group.model.set( this.element.getAttribute( 'value' ) );
 		}
 	};
 
-	RadioNameBinding__proto__.unbind = function unbind () {
+	RadioNameBinding.prototype.unbind = function unbind () {
 		this.group.remove( this );
 
 		this.model.getKeypathModel().unregister( this.nameAttributeBinding );
 	};
 
-	RadioNameBinding__proto__.unrender = function unrender () {
+	RadioNameBinding.prototype.unrender = function unrender () {
 		var el = this.element;
 
 		el.off( 'change', handleDomEvent );
@@ -12245,16 +11660,16 @@ var RadioNameBinding = (function (Binding) {
 	return RadioNameBinding;
 }(Binding));
 
-var SingleSelectBinding = (function (Binding) {
+var SingleSelectBinding = (function (Binding$$1) {
 	function SingleSelectBinding () {
-		Binding.apply(this, arguments);
+		Binding$$1.apply(this, arguments);
 	}
 
-	if ( Binding ) SingleSelectBinding.__proto__ = Binding;
-	var SingleSelectBinding__proto__ = SingleSelectBinding.prototype = Object.create( Binding && Binding.prototype );
-	SingleSelectBinding__proto__.constructor = SingleSelectBinding;
+	if ( Binding$$1 ) SingleSelectBinding.__proto__ = Binding$$1;
+	SingleSelectBinding.prototype = Object.create( Binding$$1 && Binding$$1.prototype );
+	SingleSelectBinding.prototype.constructor = SingleSelectBinding;
 
-	SingleSelectBinding__proto__.forceUpdate = function forceUpdate () {
+	SingleSelectBinding.prototype.forceUpdate = function forceUpdate () {
 		var this$1 = this;
 
 		var value = this.getValue();
@@ -12266,7 +11681,7 @@ var SingleSelectBinding = (function (Binding) {
 		}
 	};
 
-	SingleSelectBinding__proto__.getInitialValue = function getInitialValue () {
+	SingleSelectBinding.prototype.getInitialValue = function getInitialValue () {
 		if ( this.element.getAttribute( 'value' ) !== undefined ) {
 			return;
 		}
@@ -12314,7 +11729,7 @@ var SingleSelectBinding = (function (Binding) {
 		return value;
 	};
 
-	SingleSelectBinding__proto__.getValue = function getValue () {
+	SingleSelectBinding.prototype.getValue = function getValue () {
 		var options = this.node.options;
 		var len = options.length;
 
@@ -12328,17 +11743,17 @@ var SingleSelectBinding = (function (Binding) {
 		}
 	};
 
-	SingleSelectBinding__proto__.render = function render () {
-		Binding.prototype.render.call(this);
+	SingleSelectBinding.prototype.render = function render () {
+		Binding$$1.prototype.render.call(this);
 		this.element.on( 'change', handleDomEvent );
 	};
 
-	SingleSelectBinding__proto__.setFromNode = function setFromNode ( node ) {
+	SingleSelectBinding.prototype.setFromNode = function setFromNode ( node ) {
 		var option = getSelectedOptions( node )[0];
 		this.model.set( option._ractive ? option._ractive.value : option.value );
 	};
 
-	SingleSelectBinding__proto__.unrender = function unrender () {
+	SingleSelectBinding.prototype.unrender = function unrender () {
 		this.element.off( 'change', handleDomEvent );
 	};
 
@@ -12348,7 +11763,7 @@ var SingleSelectBinding = (function (Binding) {
 function isBindable ( attribute ) {
 
 	// The fragment must be a single non-string fragment
-	if ( !attribute || !attribute.template.f || attribute.template.f.length !== 1 || attribute.template.f[0].s ) { return false; }
+	if ( !attribute || !attribute.template.f || !attribute.template.f.length === 1 || attribute.template.f[0].s ) { return false; }
 
 	// A binding is an interpolator `{{ }}`, yey.
 	if ( attribute.template.f[0].t === INTERPOLATOR ) { return true; }
@@ -12441,13 +11856,14 @@ function selectBinding ( element ) {
 
 var endsWithSemi = /;\s*$/;
 
-var Element = (function (ContainerItem) {
+var Element = (function (ContainerItem$$1) {
 	function Element ( options ) {
 		var this$1 = this;
 
-		ContainerItem.call( this, options );
+		ContainerItem$$1.call( this, options );
 
 		this.name = options.template.e.toLowerCase();
+		this.isVoid = voidElementNames.test( this.name );
 
 		// find parent element
 		this.parent = findElement( this.parentFragment, false );
@@ -12457,65 +11873,47 @@ var Element = (function (ContainerItem) {
 		}
 
 		this.decorators = [];
+		this.listeners = {};
+		this.events = [];
 
 		// create attributes
 		this.attributeByName = {};
 
-		var attrs;
-		var n, attr, val, cls, name, template, leftovers;
-
-		var m = this.template.m;
-		var len = ( m && m.length ) || 0;
-
-		for ( var i = 0; i < len; i++ ) {
-			template = m[i];
+		this.attributes = [];
+		var leftovers = [];
+		( this.template.m || [] ).forEach( function (template) {
 			switch ( template.t ) {
 				case ATTRIBUTE:
 				case BINDING_FLAG:
 				case DECORATOR:
 				case EVENT:
 				case TRANSITION:
-					attr = createItem({
+					this$1.attributes.push( createItem({
 						owner: this$1,
 						parentFragment: this$1.parentFragment,
 						template: template
-					});
-
-					n = template.n;
-
-					attrs = attrs || ( attrs = this$1.attributes = [] );
-
-					if ( n === 'value' ) { val = attr; }
-					else if ( n === 'name' ) { name = attr; }
-					else if ( n === 'class' ) { cls = attr; }
-					else { attrs.push( attr ); }
-
+					}) );
 					break;
 
 				case DELEGATE_FLAG:
-					this$1.delegate = false;
+				  this$1.delegate = false;
 					break;
 
 				default:
-					( leftovers || ( leftovers = [] ) ).push( template );
+					leftovers.push( template );
 					break;
 			}
-		}
+		});
 
-		if ( name ) { attrs.push( name ); }
-		if ( val ) { attrs.push( val ); }
-		if ( cls ) { attrs.unshift( cls ); }
-
-		if ( leftovers ) {
-			( attrs || ( this.attributes = [] ) ).push( new ConditionalAttribute({
+		if ( leftovers.length ) {
+			this.attributes.push( new ConditionalAttribute({
 				owner: this,
 				parentFragment: this.parentFragment,
 				template: leftovers
 			}) );
-
-			// empty leftovers array
-			leftovers = [];
 		}
+
+		this.attributes.sort( sortAttributes );
 
 		// create children
 		if ( options.template.f && !options.deferContent ) {
@@ -12529,17 +11927,14 @@ var Element = (function (ContainerItem) {
 		this.binding = null; // filled in later
 	}
 
-	if ( ContainerItem ) Element.__proto__ = ContainerItem;
-	var Element__proto__ = Element.prototype = Object.create( ContainerItem && ContainerItem.prototype );
-	Element__proto__.constructor = Element;
+	if ( ContainerItem$$1 ) Element.__proto__ = ContainerItem$$1;
+	Element.prototype = Object.create( ContainerItem$$1 && ContainerItem$$1.prototype );
+	Element.prototype.constructor = Element;
 
-	Element__proto__.bind = function bind$3 () {
-		var attrs = this.attributes;
-		if ( attrs ) {
-			attrs.binding = true;
-			attrs.forEach( bind );
-			attrs.binding = false;
-		}
+	Element.prototype.bind = function bind$1 () {
+		this.attributes.binding = true;
+		this.attributes.forEach( bind );
+		this.attributes.binding = false;
 
 		if ( this.fragment ) { this.fragment.bind(); }
 
@@ -12548,7 +11943,7 @@ var Element = (function (ContainerItem) {
 		else { this.binding.bind(); }
 	};
 
-	Element__proto__.createTwowayBinding = function createTwowayBinding () {
+	Element.prototype.createTwowayBinding = function createTwowayBinding () {
 		if ( 'twoway' in this ? this.twoway : this.ractive.twoway ) {
 			var Binding = selectBinding( this );
 			if ( Binding ) {
@@ -12558,12 +11953,12 @@ var Element = (function (ContainerItem) {
 		}
 	};
 
-	Element__proto__.destroyed = function destroyed$1 () {
+	Element.prototype.destroyed = function destroyed$1 () {
 		var this$1 = this;
 
-		if ( this.attributes ) { this.attributes.forEach( destroyed ); }
+		this.attributes.forEach( destroyed );
 
-		if ( !this.parentFragment.delegate && this.listeners ) {
+		if ( !this.parentFragment.delegate ) {
 			var ls = this.listeners;
 			for ( var k in ls ) {
 				if ( ls[k] && ls[k].length ) { this$1.node.removeEventListener( k, handler ); }
@@ -12573,21 +11968,21 @@ var Element = (function (ContainerItem) {
 		if ( this.fragment ) { this.fragment.destroyed(); }
 	};
 
-	Element__proto__.detach = function detach () {
+	Element.prototype.detach = function detach () {
 		// if this element is no longer rendered, the transitions are complete and the attributes can be torn down
 		if ( !this.rendered ) { this.destroyed(); }
 
 		return detachNode( this.node );
 	};
 
-	Element__proto__.find = function find ( selector, options ) {
+	Element.prototype.find = function find ( selector, options ) {
 		if ( this.node && matches( this.node, selector ) ) { return this.node; }
 		if ( this.fragment ) {
 			return this.fragment.find( selector, options );
 		}
 	};
 
-	Element__proto__.findAll = function findAll ( selector, options ) {
+	Element.prototype.findAll = function findAll ( selector, options ) {
 		var result = options.result;
 
 		if ( matches( this.node, selector ) ) {
@@ -12599,20 +11994,20 @@ var Element = (function (ContainerItem) {
 		}
 	};
 
-	Element__proto__.findNextNode = function findNextNode () {
+	Element.prototype.findNextNode = function findNextNode () {
 		return null;
 	};
 
-	Element__proto__.firstNode = function firstNode () {
+	Element.prototype.firstNode = function firstNode () {
 		return this.node;
 	};
 
-	Element__proto__.getAttribute = function getAttribute ( name ) {
+	Element.prototype.getAttribute = function getAttribute ( name ) {
 		var attribute = this.attributeByName[ name ];
 		return attribute ? attribute.getValue() : undefined;
 	};
 
-	Element__proto__.getContext = function getContext () {
+	Element.prototype.getContext = function getContext () {
 		var assigns = [], len = arguments.length;
 		while ( len-- ) assigns[ len ] = arguments[ len ];
 
@@ -12624,17 +12019,17 @@ var Element = (function (ContainerItem) {
 		var ref;
 	};
 
-	Element__proto__.off = function off ( event, callback, capture ) {
+	Element.prototype.off = function off ( event, callback, capture ) {
 		if ( capture === void 0 ) capture = false;
 
 		var delegate = this.parentFragment.delegate;
-		var ref = this.listeners && this.listeners[event];
+		var ref = this.listeners[event];
 
 		if ( !ref ) { return; }
 		removeFromArray( ref, callback );
 
 		if ( delegate ) {
-			var listeners = ( delegate.listeners || ( delegate.listeners = [] ) ) && ( delegate.listeners[event] || ( delegate.listeners[event] = [] ) );
+			var listeners = delegate.listeners[event] || ( delegate.listeners[event] = [] );
 			if ( listeners.refs && !--listeners.refs ) { delegate.off( event, delegateHandler, true ); }
 		} else if ( this.rendered ) {
 			var n = this.node;
@@ -12650,14 +12045,14 @@ var Element = (function (ContainerItem) {
 		}
 	};
 
-	Element__proto__.on = function on ( event, callback, capture ) {
+	Element.prototype.on = function on ( event, callback, capture ) {
 		if ( capture === void 0 ) capture = false;
 
 		var delegate = this.parentFragment.delegate;
-		var ref = ( this.listeners || ( this.listeners = {} ) )[event] || ( this.listeners[event] = [] );
+		var ref = this.listeners[event] || ( this.listeners[event] = [] );
 
 		if ( delegate ) {
-			var listeners = ( delegate.listeners || ( delegate.listeners = [] ) ) && delegate.listeners[event] || ( delegate.listeners[event] = [] );
+			var listeners = delegate.listeners[event] || ( delegate.listeners[event] = [] );
 			if ( !listeners.refs ) {
 				listeners.refs = 0;
 				delegate.on( event, delegateHandler, true );
@@ -12681,7 +12076,7 @@ var Element = (function (ContainerItem) {
 		addToArray( this.listeners[event], callback );
 	};
 
-	Element__proto__.recreateTwowayBinding = function recreateTwowayBinding () {
+	Element.prototype.recreateTwowayBinding = function recreateTwowayBinding () {
 		if ( this.binding ) {
 			this.binding.unbind();
 			this.binding.unrender();
@@ -12693,7 +12088,7 @@ var Element = (function (ContainerItem) {
 		}
 	};
 
-	Element__proto__.render = function render$3 ( target, occupants ) {
+	Element.prototype.render = function render$1 ( target, occupants ) {
 		var this$1 = this;
 
 		// TODO determine correct namespace
@@ -12715,12 +12110,6 @@ var Element = (function (ContainerItem) {
 			}
 		}
 
-		if ( !existing && this.node ) {
-			node = this.node;
-			target.appendChild( node );
-			existing = true;
-		}
-
 		if ( !node ) {
 			var name = this.template.e;
 			node = createElement( this.namespace === html ? name.toLowerCase() : name, this.namespace, this.getAttribute( 'is' ) );
@@ -12731,9 +12120,14 @@ var Element = (function (ContainerItem) {
 		Object.defineProperty( node, '_ractive', {
 			value: {
 				proxy: this
-			},
-			configurable: true
+			}
 		});
+
+		// Is this a top-level node of a component? If so, we may need to add
+		// a data-ractive-css attribute, for CSS encapsulation
+		if ( this.parentFragment.cssIds ) {
+			node.setAttribute( 'data-ractive-css', this.parentFragment.cssIds.map( function (x) { return ("{" + x + "}"); } ).join( ' ' ) );
+		}
 
 		if ( existing && this.foundNode ) { this.foundNode( node ); }
 
@@ -12767,16 +12161,10 @@ var Element = (function (ContainerItem) {
 			}
 		}
 
-		// Is this a top-level node of a component? If so, we may need to add
-		// a data-ractive-css attribute, for CSS encapsulation
-		if ( this.parentFragment.cssIds ) {
-			node.setAttribute( 'data-ractive-css', this.parentFragment.cssIds.map( function (x) { return ("{" + x + "}"); } ).join( ' ' ) );
-		}
-
-		if ( this.attributes ) { this.attributes.forEach( render ); }
+		this.attributes.forEach( render );
 		if ( this.binding ) { this.binding.render(); }
 
-		if ( !this.parentFragment.delegate && this.listeners ) {
+		if ( !this.parentFragment.delegate ) {
 			var ls = this.listeners;
 			for ( var k in ls ) {
 				if ( ls[k] && ls[k].length ) { this$1.node.addEventListener( k, handler, !!ls[k].refs ); }
@@ -12790,10 +12178,10 @@ var Element = (function (ContainerItem) {
 		this.rendered = true;
 	};
 
-	Element__proto__.toString = function toString () {
+	Element.prototype.toString = function toString$$1 () {
 		var tagName = this.template.e;
 
-		var attrs = ( this.attributes && this.attributes.map( stringifyAttribute ).join( '' ) ) || '';
+		var attrs = this.attributes.map( stringifyAttribute ).join( '' );
 
 		// Special case - selected options
 		if ( this.name === 'option' && this.isSelected() ) {
@@ -12807,7 +12195,7 @@ var Element = (function (ContainerItem) {
 
 		// Special case style and class attributes and directives
 		var style, cls;
-		this.attributes && this.attributes.forEach( function (attr) {
+		this.attributes.forEach( function (attr) {
 			if ( attr.name === 'class' ) {
 				cls = ( cls || '' ) + ( cls ? ' ' : '' ) + safeAttributeString( attr.getString() );
 			} else if ( attr.name === 'style' ) {
@@ -12829,7 +12217,7 @@ var Element = (function (ContainerItem) {
 
 		var str = "<" + tagName + attrs + ">";
 
-		if ( voidElementNames.test( this.name ) ) { return str; }
+		if ( this.isVoid ) { return str; }
 
 		// Special case - textarea
 		if ( this.name === 'textarea' && this.getAttribute( 'value' ) !== undefined ) {
@@ -12849,19 +12237,16 @@ var Element = (function (ContainerItem) {
 		return str;
 	};
 
-	Element__proto__.unbind = function unbind$2 () {
-		var attrs = this.attributes;
-		if ( attrs ) {
-			attrs.unbinding = true;
-			attrs.forEach( unbind );
-			attrs.unbinding = false;
-		}
+	Element.prototype.unbind = function unbind$1 () {
+		this.attributes.unbinding = true;
+		this.attributes.forEach( unbind );
+		this.attributes.unbinding = false;
 
 		if ( this.binding ) { this.binding.unbind(); }
 		if ( this.fragment ) { this.fragment.unbind(); }
 	};
 
-	Element__proto__.unrender = function unrender ( shouldDestroy ) {
+	Element.prototype.unrender = function unrender$$1 ( shouldDestroy ) {
 		if ( !this.rendered ) { return; }
 		this.rendered = false;
 
@@ -12893,11 +12278,11 @@ var Element = (function (ContainerItem) {
 		if ( this.binding ) { this.binding.unrender(); }
 	};
 
-	Element__proto__.update = function update$3 () {
+	Element.prototype.update = function update$1 () {
 		if ( this.dirty ) {
 			this.dirty = false;
 
-			this.attributes && this.attributes.forEach( update );
+			this.attributes.forEach( update );
 
 			if ( this.fragment ) { this.fragment.update(); }
 		}
@@ -12905,6 +12290,15 @@ var Element = (function (ContainerItem) {
 
 	return Element;
 }(ContainerItem));
+
+var toFront = [ 'min', 'max', 'class', 'type' ];
+function sortAttributes ( left, right ) {
+	left = left.name;
+	right = right.name;
+	var l = left === 'value' ? 1 : ~toFront.indexOf( left );
+	var r = right === 'value' ? 1 : ~toFront.indexOf( right );
+	return l < r ? -1 : l > r ? 1 : 0;
+}
 
 function inputIsCheckedRadio ( element ) {
 	var nameAttr = element.attributeByName.name;
@@ -12942,22 +12336,18 @@ function getNamespace ( element ) {
 function delegateHandler ( ev ) {
 	var name = ev.type;
 	var end = ev.currentTarget;
-	var endEl = end._ractive && end._ractive.proxy;
 	var node = ev.target;
 	var bubble = true;
 	var listeners;
 
 	// starting with the origin node, walk up the DOM looking for ractive nodes with a matching event listener
 	while ( bubble && node && node !== end ) {
-		var proxy = node._ractive && node._ractive.proxy;
-		if ( proxy && proxy.parentFragment.delegate === endEl && shouldFire( ev, node, end ) ) {
-			listeners = proxy.listeners && proxy.listeners[name];
+		listeners = node._ractive && node._ractive.proxy && node._ractive.proxy.listeners[name];
 
-			if ( listeners ) {
-				listeners.forEach( function (l) {
-					bubble = l.call( node, ev ) !== false && bubble;
-				});
-			}
+		if ( listeners ) {
+			listeners.forEach( function (l) {
+				bubble = l.call( node, ev ) !== false && bubble;
+			});
 		}
 
 		node = node.parentNode;
@@ -12966,45 +12356,32 @@ function delegateHandler ( ev ) {
 	return bubble;
 }
 
-var UIEvent = win !== null ? win.UIEvent : null;
-function shouldFire ( event, start, end ) {
-	if ( UIEvent && event instanceof UIEvent ) {
-		var node = start;
-		while ( node && node !== end ) {
-			if ( node.disabled ) { return false; }
-			node = node.parentNode;
-		}
-	}
-
-	return true;
-}
-
 function handler ( ev ) {
 	var this$1 = this;
 
 	var el = this._ractive.proxy;
-	if ( !el.listeners || !el.listeners[ ev.type ] ) { return; }
+	if ( !el.listeners[ ev.type ] ) { return; }
 	el.listeners[ ev.type ].forEach( function (l) { return l.call( this$1, ev ); } );
 }
 
-var Form = (function (Element) {
+var Form = (function (Element$$1) {
 	function Form ( options ) {
-		Element.call( this, options );
+		Element$$1.call( this, options );
 		this.formBindings = [];
 	}
 
-	if ( Element ) Form.__proto__ = Element;
-	var Form__proto__ = Form.prototype = Object.create( Element && Element.prototype );
-	Form__proto__.constructor = Form;
+	if ( Element$$1 ) Form.__proto__ = Element$$1;
+	Form.prototype = Object.create( Element$$1 && Element$$1.prototype );
+	Form.prototype.constructor = Form;
 
-	Form__proto__.render = function render ( target, occupants ) {
-		Element.prototype.render.call( this, target, occupants );
+	Form.prototype.render = function render ( target, occupants ) {
+		Element$$1.prototype.render.call( this, target, occupants );
 		this.on( 'reset', handleReset );
 	};
 
-	Form__proto__.unrender = function unrender ( shouldDestroy ) {
+	Form.prototype.unrender = function unrender ( shouldDestroy ) {
 		this.off( 'reset', handleReset );
-		Element.prototype.unrender.call( this, shouldDestroy );
+		Element$$1.prototype.unrender.call( this, shouldDestroy );
 	};
 
 	return Form;
@@ -13031,9 +12408,8 @@ var DOMEvent = function DOMEvent ( name, owner ) {
 	this.owner = owner;
 	this.handler = null;
 };
-var DOMEvent__proto__ = DOMEvent.prototype;
 
-DOMEvent__proto__.listen = function listen ( directive ) {
+DOMEvent.prototype.listen = function listen ( directive ) {
 	var node = this.owner.node;
 	var name = this.name;
 
@@ -13050,7 +12426,7 @@ DOMEvent__proto__.listen = function listen ( directive ) {
 	});
 };
 
-DOMEvent__proto__.unlisten = function unlisten () {
+DOMEvent.prototype.unlisten = function unlisten () {
 	if ( this.handler ) { this.owner.off( this.name, this.handler ); }
 };
 
@@ -13060,9 +12436,8 @@ var CustomEvent = function CustomEvent ( eventPlugin, owner, name ) {
 	this.name = name;
 	this.handler = null;
 };
-var CustomEvent__proto__ = CustomEvent.prototype;
 
-CustomEvent__proto__.listen = function listen ( directive ) {
+CustomEvent.prototype.listen = function listen ( directive ) {
 		var this$1 = this;
 
 	var node = this.owner.node;
@@ -13079,7 +12454,7 @@ CustomEvent__proto__.listen = function listen ( directive ) {
 	});
 };
 
-CustomEvent__proto__.unlisten = function unlisten () {
+CustomEvent.prototype.unlisten = function unlisten () {
 	this.handler.teardown();
 };
 
@@ -13088,9 +12463,8 @@ var RactiveEvent = function RactiveEvent ( component, name ) {
 	this.name = name;
 	this.handler = null;
 };
-var RactiveEvent__proto__ = RactiveEvent.prototype;
 
-RactiveEvent__proto__.listen = function listen ( directive ) {
+RactiveEvent.prototype.listen = function listen ( directive ) {
 	var ractive = this.component.instance;
 
 	this.handler = ractive.on( this.name, function () {
@@ -13111,7 +12485,7 @@ RactiveEvent__proto__.listen = function listen ( directive ) {
 	});
 };
 
-RactiveEvent__proto__.unlisten = function unlisten () {
+RactiveEvent.prototype.unlisten = function unlisten () {
 	this.handler.cancel();
 };
 
@@ -13142,6 +12516,16 @@ var EventDirective = function EventDirective ( options ) {
 			if ( fn ) {
 				this$1.events.push( new CustomEvent( fn, this$1.element, n ) );
 			} else {
+				/*if ( delegate ) {
+					if ( !delegate.delegates[n] ) {
+						const ev = new DOMEvent( n, delegate, true );
+						delegate.delegates[n] = ev;
+						// if the element is already rendered, render the event too
+						if ( delegate.rendered ) ev.listen( DelegateProxy );
+					}
+				} else {
+					this.events.push( new DOMEvent( n, this.element ) );
+				}*/
 				this$1.events.push( new DOMEvent( n, this$1.element ) );
 			}
 		});
@@ -13150,24 +12534,23 @@ var EventDirective = function EventDirective ( options ) {
 	// method calls
 	this.models = null;
 };
-var EventDirective__proto__ = EventDirective.prototype;
 
-EventDirective__proto__.bind = function bind () {
-	addToArray( ( this.element.events || ( this.element.events = [] ) ), this );
+EventDirective.prototype.bind = function bind () {
+	addToArray( this.element.events, this );
 
 	setupArgsFn( this, this.template );
 	if ( !this.fn ) { this.action = this.template.f; }
 };
 
-EventDirective__proto__.destroyed = function destroyed () {
+EventDirective.prototype.destroyed = function destroyed () {
 	this.events.forEach( function (e) { return e.unlisten(); } );
 };
 
-EventDirective__proto__.fire = function fire ( event, args ) {
+EventDirective.prototype.fire = function fire ( event, args ) {
 		var this$1 = this;
 		if ( args === void 0 ) args = [];
 
-	var context = event instanceof Context && event.refire ? event : this.element.getContext( event );
+	var context = this.element.getContext( event );
 
 	if ( this.fn ) {
 		var values = [];
@@ -13263,22 +12646,22 @@ EventDirective__proto__.fire = function fire ( event, args ) {
 	}
 };
 
-EventDirective__proto__.handleChange = function handleChange () {};
+EventDirective.prototype.handleChange = function handleChange () {};
 
-EventDirective__proto__.render = function render () {
+EventDirective.prototype.render = function render () {
 		var this$1 = this;
 
 	// render events after everything else, so they fire after bindings
-	runloop.scheduleTask( function () { return this$1.events.forEach( function (e) { return e.listen( this$1 ); } ); }, true );
+	runloop.scheduleTask( function () { return this$1.events.forEach( function (e) { return e.listen( this$1 ); }, true ); } );
 };
 
-EventDirective__proto__.toString = function toString () { return ''; };
+EventDirective.prototype.toString = function toString () { return ''; };
 
-EventDirective__proto__.unbind = function unbind () {
+EventDirective.prototype.unbind = function unbind () {
 	removeFromArray( this.element.events, this );
 };
 
-EventDirective__proto__.unrender = function unrender () {
+EventDirective.prototype.unrender = function unrender () {
 	this.events.forEach( function (e) { return e.unlisten(); } );
 };
 
@@ -13314,9 +12697,9 @@ function progressiveText ( item, target, occupants, text ) {
 	}
 }
 
-var Mustache = (function (Item) {
+var Mustache = (function (Item$$1) {
 	function Mustache ( options ) {
-		Item.call( this, options );
+		Item$$1.call( this, options );
 
 		this.parentFragment = options.parentFragment;
 		this.template = options.template;
@@ -13329,11 +12712,11 @@ var Mustache = (function (Item) {
 		this.dirty = false;
 	}
 
-	if ( Item ) Mustache.__proto__ = Item;
-	var Mustache__proto__ = Mustache.prototype = Object.create( Item && Item.prototype );
-	Mustache__proto__.constructor = Mustache;
+	if ( Item$$1 ) Mustache.__proto__ = Item$$1;
+	Mustache.prototype = Object.create( Item$$1 && Item$$1.prototype );
+	Mustache.prototype.constructor = Mustache;
 
-	Mustache__proto__.bind = function bind () {
+	Mustache.prototype.bind = function bind () {
 		// yield mustaches should resolve in container context
 		var start = this.containerFragment || this.parentFragment;
 		// try to find a model for this view
@@ -13352,11 +12735,11 @@ var Mustache = (function (Item) {
 		}
 	};
 
-	Mustache__proto__.handleChange = function handleChange () {
+	Mustache.prototype.handleChange = function handleChange () {
 		this.bubble();
 	};
 
-	Mustache__proto__.rebind = function rebind ( next, previous, safe ) {
+	Mustache.prototype.rebind = function rebind ( next, previous, safe ) {
 		next = rebindMatch( this.template, next, previous, this.parentFragment );
 		if ( next === this.model ) { return false; }
 
@@ -13369,7 +12752,7 @@ var Mustache = (function (Item) {
 		return true;
 	};
 
-	Mustache__proto__.unbind = function unbind () {
+	Mustache.prototype.unbind = function unbind () {
 		if ( !this.isStatic ) {
 			this.model && this.model.unregister( this );
 			this.model = undefined;
@@ -13379,14 +12762,14 @@ var Mustache = (function (Item) {
 	return Mustache;
 }(Item));
 
-var MustacheContainer = (function (ContainerItem) {
+var MustacheContainer = (function (ContainerItem$$1) {
 	function MustacheContainer ( options ) {
-		ContainerItem.call( this, options );
+		ContainerItem$$1.call( this, options );
 	}
 
-	if ( ContainerItem ) MustacheContainer.__proto__ = ContainerItem;
-	var MustacheContainer__proto__ = MustacheContainer.prototype = Object.create( ContainerItem && ContainerItem.prototype );
-	MustacheContainer__proto__.constructor = MustacheContainer;
+	if ( ContainerItem$$1 ) MustacheContainer.__proto__ = ContainerItem$$1;
+	MustacheContainer.prototype = Object.create( ContainerItem$$1 && ContainerItem$$1.prototype );
+	MustacheContainer.prototype.constructor = MustacheContainer;
 
 	return MustacheContainer;
 }(ContainerItem));
@@ -13397,33 +12780,33 @@ proto$3.handleChange = mustache.handleChange;
 proto$3.rebind = mustache.rebind;
 proto$3.unbind = mustache.unbind;
 
-var Interpolator = (function (Mustache) {
+var Interpolator = (function (Mustache$$1) {
 	function Interpolator () {
-		Mustache.apply(this, arguments);
+		Mustache$$1.apply(this, arguments);
 	}
 
-	if ( Mustache ) Interpolator.__proto__ = Mustache;
-	var Interpolator__proto__ = Interpolator.prototype = Object.create( Mustache && Mustache.prototype );
-	Interpolator__proto__.constructor = Interpolator;
+	if ( Mustache$$1 ) Interpolator.__proto__ = Mustache$$1;
+	Interpolator.prototype = Object.create( Mustache$$1 && Mustache$$1.prototype );
+	Interpolator.prototype.constructor = Interpolator;
 
-	Interpolator__proto__.bubble = function bubble () {
+	Interpolator.prototype.bubble = function bubble () {
 		if ( this.owner ) { this.owner.bubble(); }
-		Mustache.prototype.bubble.call(this);
+		Mustache$$1.prototype.bubble.call(this);
 	};
 
-	Interpolator__proto__.detach = function detach () {
+	Interpolator.prototype.detach = function detach () {
 		return detachNode( this.node );
 	};
 
-	Interpolator__proto__.firstNode = function firstNode () {
+	Interpolator.prototype.firstNode = function firstNode () {
 		return this.node;
 	};
 
-	Interpolator__proto__.getString = function getString () {
+	Interpolator.prototype.getString = function getString () {
 		return this.model ? safeToStringValue( this.model.get() ) : '';
 	};
 
-	Interpolator__proto__.render = function render ( target, occupants ) {
+	Interpolator.prototype.render = function render ( target, occupants ) {
 		if ( inAttributes() ) { return; }
 		var value = this.getString();
 
@@ -13432,17 +12815,17 @@ var Interpolator = (function (Mustache) {
 		progressiveText( this, target, occupants, value );
 	};
 
-	Interpolator__proto__.toString = function toString ( escape ) {
+	Interpolator.prototype.toString = function toString ( escape ) {
 		var string = this.getString();
 		return escape ? escapeHtml( string ) : string;
 	};
 
-	Interpolator__proto__.unrender = function unrender ( shouldDestroy ) {
+	Interpolator.prototype.unrender = function unrender ( shouldDestroy ) {
 		if ( shouldDestroy ) { this.detach(); }
 		this.rendered = false;
 	};
 
-	Interpolator__proto__.update = function update () {
+	Interpolator.prototype.update = function update () {
 		if ( this.dirty ) {
 			this.dirty = false;
 			if ( this.rendered ) {
@@ -13451,27 +12834,27 @@ var Interpolator = (function (Mustache) {
 		}
 	};
 
-	Interpolator__proto__.valueOf = function valueOf () {
+	Interpolator.prototype.valueOf = function valueOf () {
 		return this.model ? this.model.get() : undefined;
 	};
 
 	return Interpolator;
 }(Mustache));
 
-var Input = (function (Element) {
+var Input = (function (Element$$1) {
 	function Input () {
-		Element.apply(this, arguments);
+		Element$$1.apply(this, arguments);
 	}
 
-	if ( Element ) Input.__proto__ = Element;
-	var Input__proto__ = Input.prototype = Object.create( Element && Element.prototype );
-	Input__proto__.constructor = Input;
+	if ( Element$$1 ) Input.__proto__ = Element$$1;
+	Input.prototype = Object.create( Element$$1 && Element$$1.prototype );
+	Input.prototype.constructor = Input;
 
-	Input__proto__.render = function render ( target, occupants ) {
-		Element.prototype.render.call( this, target, occupants );
+	Input.prototype.render = function render ( target, occupants ) {
+		Element$$1.prototype.render.call( this, target, occupants );
 		this.node.defaultValue = this.node.value;
 	};
-	Input__proto__.compare = function compare ( value, attrValue ) {
+	Input.prototype.compare = function compare ( value, attrValue ) {
 		var comparator = this.getAttribute( 'value-comparator' );
 		if ( comparator ) {
 			if ( typeof comparator === 'function' ) {
@@ -13504,7 +12887,7 @@ var specialsPattern = new RegExp( '^(?:' + Object.keys( specials$1 ).join( '|' )
 var numberPattern$1 = /^(?:[+-]?)(?:(?:(?:0|[1-9]\d*)?\.\d+)|(?:(?:0|[1-9]\d*)\.)|(?:0|[1-9]\d*))(?:[eE][+-]?\d+)?/;
 var placeholderPattern = /\$\{([^\}]+)\}/g;
 var placeholderAtStartPattern = /^\$\{([^\}]+)\}/;
-var onlyWhitespace$1 = /^\s*$/;
+var onlyWhitespace = /^\s*$/;
 
 var JsonParser = Parser.extend({
 	init: function init ( str, options ) {
@@ -13513,7 +12896,7 @@ var JsonParser = Parser.extend({
 	},
 
 	postProcess: function postProcess ( result ) {
-		if ( result.length !== 1 || !onlyWhitespace$1.test( this.leftover ) ) {
+		if ( result.length !== 1 || !onlyWhitespace.test( this.leftover ) ) {
 			return null;
 		}
 
@@ -13644,9 +13027,9 @@ var parseJSON = function ( str, values ) {
 	return parser.result;
 };
 
-var Mapping = (function (Item) {
+var Mapping = (function (Item$$1) {
 	function Mapping ( options ) {
-		Item.call( this, options );
+		Item$$1.call( this, options );
 
 		this.name = options.template.n;
 
@@ -13660,11 +13043,11 @@ var Mapping = (function (Item) {
 		this.value = options.template.f;
 	}
 
-	if ( Item ) Mapping.__proto__ = Item;
-	var Mapping__proto__ = Mapping.prototype = Object.create( Item && Item.prototype );
-	Mapping__proto__.constructor = Mapping;
+	if ( Item$$1 ) Mapping.__proto__ = Item$$1;
+	Mapping.prototype = Object.create( Item$$1 && Item$$1.prototype );
+	Mapping.prototype.constructor = Mapping;
 
-	Mapping__proto__.bind = function bind () {
+	Mapping.prototype.bind = function bind () {
 		var template = this.template.f;
 		var viewmodel = this.element.instance.viewmodel;
 
@@ -13683,9 +13066,9 @@ var Mapping = (function (Item) {
 		}
 	};
 
-	Mapping__proto__.render = function render () {};
+	Mapping.prototype.render = function render () {};
 
-	Mapping__proto__.unbind = function unbind () {
+	Mapping.prototype.unbind = function unbind () {
 		if ( this.model ) { this.model.unregister( this ); }
 		if ( this.boundFragment ) { this.boundFragment.unbind(); }
 
@@ -13694,9 +13077,9 @@ var Mapping = (function (Item) {
 		}
 	};
 
-	Mapping__proto__.unrender = function unrender () {};
+	Mapping.prototype.unrender = function unrender () {};
 
-	Mapping__proto__.update = function update () {
+	Mapping.prototype.update = function update () {
 		if ( this.dirty ) {
 			this.dirty = false;
 			if ( this.boundFragment ) { this.boundFragment.update(); }
@@ -13718,7 +13101,7 @@ function createMapping ( item ) {
 		// if the interpolator is not static
 		if ( !template[0].s ) {
 			item.model = model;
-			item.link = viewmodel.createLink( item.name, model, template[0].r, { mapping: true } );
+			item.link = viewmodel.createLink( item.name, model, template[0].r );
 
 			// initialize parent side of the mapping from child data
 			if ( val === undefined && !model.isReadonly && item.name in childData ) {
@@ -13758,7 +13141,7 @@ function createMapping ( item ) {
 	}
 }
 
-var Option = (function (Element) {
+var Option = (function (Element$$1) {
 	function Option ( options ) {
 		var template = options.template;
 		if ( !template.a ) { template.a = {}; }
@@ -13769,18 +13152,18 @@ var Option = (function (Element) {
 			template.a.value = template.f || '';
 		}
 
-		Element.call( this, options );
+		Element$$1.call( this, options );
 
 		this.select = findElement( this.parent || this.parentFragment, false, 'select' );
 	}
 
-	if ( Element ) Option.__proto__ = Element;
-	var Option__proto__ = Option.prototype = Object.create( Element && Element.prototype );
-	Option__proto__.constructor = Option;
+	if ( Element$$1 ) Option.__proto__ = Element$$1;
+	Option.prototype = Object.create( Element$$1 && Element$$1.prototype );
+	Option.prototype.constructor = Option;
 
-	Option__proto__.bind = function bind () {
+	Option.prototype.bind = function bind () {
 		if ( !this.select ) {
-			Element.prototype.bind.call(this);
+			Element$$1.prototype.bind.call(this);
 			return;
 		}
 
@@ -13793,25 +13176,25 @@ var Option = (function (Element) {
 			delete this.attributeByName.selected;
 		}
 
-		Element.prototype.bind.call(this);
+		Element$$1.prototype.bind.call(this);
 		this.select.options.push( this );
 	};
 
-	Option__proto__.bubble = function bubble () {
+	Option.prototype.bubble = function bubble () {
 		// if we're using content as value, may need to update here
 		var value = this.getAttribute( 'value' );
 		if ( this.node && this.node.value !== value ) {
 			this.node._ractive.value = value;
 		}
-		Element.prototype.bubble.call(this);
+		Element$$1.prototype.bubble.call(this);
 	};
 
-	Option__proto__.getAttribute = function getAttribute ( name ) {
+	Option.prototype.getAttribute = function getAttribute ( name ) {
 		var attribute = this.attributeByName[ name ];
 		return attribute ? attribute.getValue() : name === 'value' && this.fragment ? this.fragment.valueOf() : undefined;
 	};
 
-	Option__proto__.isSelected = function isSelected () {
+	Option.prototype.isSelected = function isSelected () {
 		var this$1 = this;
 
 		var optionValue = this.getAttribute( 'value' );
@@ -13836,16 +13219,16 @@ var Option = (function (Element) {
 		}
 	};
 
-	Option__proto__.render = function render ( target, occupants ) {
-		Element.prototype.render.call( this, target, occupants );
+	Option.prototype.render = function render ( target, occupants ) {
+		Element$$1.prototype.render.call( this, target, occupants );
 
 		if ( !this.attributeByName.value ) {
 			this.node._ractive.value = this.getAttribute( 'value' );
 		}
 	};
 
-	Option__proto__.unbind = function unbind () {
-		Element.prototype.unbind.call(this);
+	Option.prototype.unbind = function unbind () {
+		Element$$1.prototype.unbind.call(this);
 
 		if ( this.select ) {
 			removeFromArray( this.select.options, this );
@@ -13854,8 +13237,6 @@ var Option = (function (Element) {
 
 	return Option;
 }(Element));
-
-var hasOwn = Object.prototype.hasOwnProperty;
 
 function getPartialTemplate ( ractive, name, parentFragment ) {
 	// If the partial in instance or view heirarchy instances, great
@@ -13942,7 +13323,7 @@ function findConstructor ( constructor, key ) {
 
 function findParentPartial( name, parent ) {
 	if ( parent ) {
-		if ( parent.template && parent.template.p && !Array.isArray( parent.template.p ) && hasOwn.call( parent.template.p, name ) ) {
+		if ( parent.template && parent.template.p && parent.template.p[name] ) {
 			return parent.template.p[name];
 		} else if ( parent.parentFragment && parent.parentFragment.owner ) {
 			return findParentPartial( name, parent.parentFragment.owner );
@@ -13950,9 +13331,9 @@ function findParentPartial( name, parent ) {
 	}
 }
 
-var Partial = (function (MustacheContainer) {
+var Partial = (function (MustacheContainer$$1) {
 	function Partial ( options ) {
-		MustacheContainer.call( this, options );
+		MustacheContainer$$1.call( this, options );
 
 		this.yielder = options.template.t === YIELDER;
 
@@ -13968,11 +13349,11 @@ var Partial = (function (MustacheContainer) {
 		}
 	}
 
-	if ( MustacheContainer ) Partial.__proto__ = MustacheContainer;
-	var Partial__proto__ = Partial.prototype = Object.create( MustacheContainer && MustacheContainer.prototype );
-	Partial__proto__.constructor = Partial;
+	if ( MustacheContainer$$1 ) Partial.__proto__ = MustacheContainer$$1;
+	Partial.prototype = Object.create( MustacheContainer$$1 && MustacheContainer$$1.prototype );
+	Partial.prototype.constructor = Partial;
 
-	Partial__proto__.bind = function bind () {
+	Partial.prototype.bind = function bind () {
 		var this$1 = this;
 
 		// keep track of the reference name for future resets
@@ -13988,7 +13369,7 @@ var Partial = (function (MustacheContainer) {
 		}
 
 		if ( !template ) {
-			MustacheContainer.prototype.bind.call(this);
+			MustacheContainer$$1.prototype.bind.call(this);
 			if ( ( templateObj = this.model.get() ) && typeof templateObj === 'object' && ( typeof templateObj.template === 'string' || Array.isArray( templateObj.t ) ) ) {
 				if ( templateObj.template ) {
 					this.source = templateObj.template;
@@ -14027,20 +13408,20 @@ var Partial = (function (MustacheContainer) {
 		this.fragment.bind();
 	};
 
-	Partial__proto__.bubble = function bubble () {
+	Partial.prototype.bubble = function bubble () {
 		if ( this.yielder && !this.dirty ) {
 			this.containerFragment.bubble();
 			this.dirty = true;
 		} else {
-			MustacheContainer.prototype.bubble.call(this);
+			MustacheContainer$$1.prototype.bubble.call(this);
 		}
 	};
 
-	Partial__proto__.findNextNode = function findNextNode () {
-		return this.yielder ? this.containerFragment.findNextNode( this ) : MustacheContainer.prototype.findNextNode.call(this);
+	Partial.prototype.findNextNode = function findNextNode () {
+		return this.yielder ? this.containerFragment.findNextNode( this ) : MustacheContainer$$1.prototype.findNextNode.call(this);
 	};
 
-	Partial__proto__.forceResetTemplate = function forceResetTemplate () {
+	Partial.prototype.forceResetTemplate = function forceResetTemplate () {
 		var this$1 = this;
 
 		this.partialTemplate = undefined;
@@ -14069,11 +13450,11 @@ var Partial = (function (MustacheContainer) {
 		this.bubble();
 	};
 
-	Partial__proto__.render = function render ( target, occupants ) {
+	Partial.prototype.render = function render ( target, occupants ) {
 		return this.fragment.render( target, occupants );
 	};
 
-	Partial__proto__.setTemplate = function setTemplate ( name, template ) {
+	Partial.prototype.setTemplate = function setTemplate ( name, template ) {
 		this.name = name;
 
 		if ( !template && template !== null ) { template = getPartialTemplate( this.ractive, name, this.parentFragment ); }
@@ -14085,17 +13466,17 @@ var Partial = (function (MustacheContainer) {
 		this.partialTemplate = template || [];
 	};
 
-	Partial__proto__.unbind = function unbind () {
-		MustacheContainer.prototype.unbind.call(this);
+	Partial.prototype.unbind = function unbind () {
+		MustacheContainer$$1.prototype.unbind.call(this);
 		this.fragment.aliases = {};
 		this.fragment.unbind();
 	};
 
-	Partial__proto__.unrender = function unrender ( shouldDestroy ) {
+	Partial.prototype.unrender = function unrender ( shouldDestroy ) {
 		this.fragment.unrender( shouldDestroy );
 	};
 
-	Partial__proto__.update = function update () {
+	Partial.prototype.update = function update () {
 		var template;
 
 		if ( this.dirty ) {
@@ -14150,11 +13531,9 @@ var RepeatedFragment = function RepeatedFragment ( options ) {
 	this.parentFragment = this;
 	this.owner = options.owner;
 	this.ractive = this.parent.ractive;
-	this.delegate = this.ractive.delegate !== false && ( this.parent.delegate || findDelegate( findElement( options.owner ) ) );
+	this.delegate = this.parent.delegate || findElement( options.owner );
 	// delegation disabled by directive
 	if ( this.delegate && this.delegate.delegate === false ) { this.delegate = false; }
-	// let the element know it's a delegate handler
-	if ( this.delegate ) { this.delegate.delegate = this.delegate; }
 
 	// encapsulated styles should be inherited until they get applied by an element
 	this.cssIds = 'cssIds' in options ? options.cssIds : ( this.parent ? this.parent.cssIds : null );
@@ -14174,13 +13553,11 @@ var RepeatedFragment = function RepeatedFragment ( options ) {
 	// track array versus object so updates of type rest
 	this.isArray = false;
 };
-var RepeatedFragment__proto__ = RepeatedFragment.prototype;
 
-RepeatedFragment__proto__.bind = function bind ( context ) {
+RepeatedFragment.prototype.bind = function bind$$1 ( context ) {
 		var this$1 = this;
 
 	this.context = context;
-	this.bound = true;
 	var value = context.get();
 
 	// {{#each array}}...
@@ -14212,14 +13589,14 @@ RepeatedFragment__proto__.bind = function bind ( context ) {
 	return this;
 };
 
-RepeatedFragment__proto__.bubble = function bubble ( index ) {
+RepeatedFragment.prototype.bubble = function bubble ( index ) {
 	if  ( !this.bubbled ) { this.bubbled = []; }
 	this.bubbled.push( index );
 
 	this.owner.bubble();
 };
 
-RepeatedFragment__proto__.createIteration = function createIteration ( key, index ) {
+RepeatedFragment.prototype.createIteration = function createIteration ( key, index ) {
 	var fragment = new Fragment({
 		owner: this,
 		template: this.template
@@ -14241,37 +13618,33 @@ RepeatedFragment__proto__.createIteration = function createIteration ( key, inde
 	return fragment.bind( model );
 };
 
-RepeatedFragment__proto__.destroyed = function destroyed$2 () {
+RepeatedFragment.prototype.destroyed = function destroyed$1 () {
 	this.iterations.forEach( destroyed );
 };
 
-RepeatedFragment__proto__.detach = function detach () {
+RepeatedFragment.prototype.detach = function detach () {
 	var docFrag = createDocumentFragment();
 	this.iterations.forEach( function (fragment) { return docFrag.appendChild( fragment.detach() ); } );
 	return docFrag;
 };
 
-RepeatedFragment__proto__.find = function find ( selector, options ) {
+RepeatedFragment.prototype.find = function find ( selector, options ) {
 	return findMap( this.iterations, function (i) { return i.find( selector, options ); } );
 };
 
-RepeatedFragment__proto__.findAll = function findAll ( selector, options ) {
+RepeatedFragment.prototype.findAll = function findAll ( selector, options ) {
 	return this.iterations.forEach( function (i) { return i.findAll( selector, options ); } );
 };
 
-RepeatedFragment__proto__.findAllComponents = function findAllComponents ( name, options ) {
-	return this.iterations.forEach( function (i) { return i.findAllComponents( name, options ); } );
-};
-
-RepeatedFragment__proto__.findComponent = function findComponent ( name, options ) {
+RepeatedFragment.prototype.findComponent = function findComponent ( name, options ) {
 	return findMap( this.iterations, function (i) { return i.findComponent( name, options ); } );
 };
 
-RepeatedFragment__proto__.findContext = function findContext () {
-	return this.context;
+RepeatedFragment.prototype.findAllComponents = function findAllComponents ( name, options ) {
+	return this.iterations.forEach( function (i) { return i.findAllComponents( name, options ); } );
 };
 
-RepeatedFragment__proto__.findNextNode = function findNextNode ( iteration ) {
+RepeatedFragment.prototype.findNextNode = function findNextNode ( iteration ) {
 		var this$1 = this;
 
 	if ( iteration.index < this.iterations.length - 1 ) {
@@ -14284,11 +13657,11 @@ RepeatedFragment__proto__.findNextNode = function findNextNode ( iteration ) {
 	return this.owner.findNextNode();
 };
 
-RepeatedFragment__proto__.firstNode = function firstNode ( skipParent ) {
+RepeatedFragment.prototype.firstNode = function firstNode ( skipParent ) {
 	return this.iterations[0] ? this.iterations[0].firstNode( skipParent ) : null;
 };
 
-RepeatedFragment__proto__.rebind = function rebind ( next ) {
+RepeatedFragment.prototype.rebind = function rebind ( next ) {
 		var this$1 = this;
 
 	this.context = next;
@@ -14302,7 +13675,7 @@ RepeatedFragment__proto__.rebind = function rebind ( next ) {
 	});
 };
 
-RepeatedFragment__proto__.render = function render ( target, occupants ) {
+RepeatedFragment.prototype.render = function render$$1 ( target, occupants ) {
 	// TODO use docFrag.cloneNode...
 
 	var xs = this.iterations;
@@ -14316,7 +13689,7 @@ RepeatedFragment__proto__.render = function render ( target, occupants ) {
 	this.rendered = true;
 };
 
-RepeatedFragment__proto__.shuffle = function shuffle ( newIndices ) {
+RepeatedFragment.prototype.shuffle = function shuffle ( newIndices ) {
 		var this$1 = this;
 
 	if ( !this.pendingNewIndices ) { this.previousIterations = this.iterations.slice(); }
@@ -14341,23 +13714,22 @@ RepeatedFragment__proto__.shuffle = function shuffle ( newIndices ) {
 	this.bubble();
 };
 
-RepeatedFragment__proto__.shuffled = function shuffled$1 () {
+RepeatedFragment.prototype.shuffled = function shuffled$1 () {
 	this.iterations.forEach( shuffled );
 };
 
-RepeatedFragment__proto__.toString = function toString ( escape ) {
+RepeatedFragment.prototype.toString = function toString$1$$1 ( escape ) {
 	return this.iterations ?
 		this.iterations.map( escape ? toEscapedString : toString$1 ).join( '' ) :
 		'';
 };
 
-RepeatedFragment__proto__.unbind = function unbind$3 () {
-	this.bound = false;
+RepeatedFragment.prototype.unbind = function unbind$1 () {
 	this.iterations.forEach( unbind );
 	return this;
 };
 
-RepeatedFragment__proto__.unrender = function unrender$2 ( shouldDestroy ) {
+RepeatedFragment.prototype.unrender = function unrender$1 ( shouldDestroy ) {
 	this.iterations.forEach( shouldDestroy ? unrenderAndDestroy : unrender );
 	if ( this.pendingNewIndices && this.previousIterations ) {
 		this.previousIterations.forEach( function (fragment) {
@@ -14368,7 +13740,7 @@ RepeatedFragment__proto__.unrender = function unrender$2 ( shouldDestroy ) {
 };
 
 // TODO smart update
-RepeatedFragment__proto__.update = function update$4 () {
+RepeatedFragment.prototype.update = function update$1 () {
 		var this$1 = this;
 
 	// skip dirty check, since this is basically just a facade
@@ -14428,12 +13800,12 @@ RepeatedFragment__proto__.update = function update$4 () {
 
 	// update the remaining ones
 	if ( !reset && this.isArray && this.bubbled && this.bubbled.length ) {
-		var bubbled = this.bubbled;
-		this.bubbled = [];
-		bubbled.forEach( function (i) { return this$1.iterations[i] && this$1.iterations[i].update(); } );
+		this.bubbled.forEach( function (i) { return this$1.iterations[i] && this$1.iterations[i].update(); } );
 	} else {
 		this.iterations.forEach( update );
 	}
+
+	if ( this.bubbled ) { this.bubbled.length = 0; }
 
 	// add new iterations
 	var newLength = Array.isArray( value ) ?
@@ -14491,7 +13863,7 @@ RepeatedFragment__proto__.update = function update$4 () {
 	this.updating = false;
 };
 
-RepeatedFragment__proto__.updatePostShuffle = function updatePostShuffle () {
+RepeatedFragment.prototype.updatePostShuffle = function updatePostShuffle () {
 		var this$1 = this;
 
 	var newIndices = this.pendingNewIndices[ 0 ];
@@ -14585,21 +13957,6 @@ RepeatedFragment__proto__.updatePostShuffle = function updatePostShuffle () {
 	this.shuffled();
 };
 
-RepeatedFragment.prototype.getContext = getContext;
-
-// find the topmost delegate
-function findDelegate ( start ) {
-	var el = start;
-	var delegate = start;
-
-	while ( el ) {
-		if ( el.delegate ) { delegate = el; }
-		el = el.parent;
-	}
-
-	return delegate;
-}
-
 function isEmpty ( value ) {
 	return !value ||
 	       ( Array.isArray( value ) && value.length === 0 ) ||
@@ -14613,9 +13970,9 @@ function getType ( value, hasIndexRef ) {
 	return SECTION_IF;
 }
 
-var Section = (function (MustacheContainer) {
+var Section = (function (MustacheContainer$$1) {
 	function Section ( options ) {
-		MustacheContainer.call( this, options );
+		MustacheContainer$$1.call( this, options );
 
 		this.sectionType = options.template.n || null;
 		this.templateSectionType = this.sectionType;
@@ -14623,12 +13980,12 @@ var Section = (function (MustacheContainer) {
 		this.fragment = null;
 	}
 
-	if ( MustacheContainer ) Section.__proto__ = MustacheContainer;
-	var Section__proto__ = Section.prototype = Object.create( MustacheContainer && MustacheContainer.prototype );
-	Section__proto__.constructor = Section;
+	if ( MustacheContainer$$1 ) Section.__proto__ = MustacheContainer$$1;
+	Section.prototype = Object.create( MustacheContainer$$1 && MustacheContainer$$1.prototype );
+	Section.prototype.constructor = Section;
 
-	Section__proto__.bind = function bind () {
-		MustacheContainer.prototype.bind.call(this);
+	Section.prototype.bind = function bind () {
+		MustacheContainer$$1.prototype.bind.call(this);
 
 		if ( this.subordinate ) {
 			this.sibling = this.parentFragment.items[ this.parentFragment.items.indexOf( this ) - 1 ];
@@ -14647,47 +14004,47 @@ var Section = (function (MustacheContainer) {
 		}
 	};
 
-	Section__proto__.detach = function detach () {
+	Section.prototype.detach = function detach () {
 		var frag = this.fragment || this.detached;
-		return frag ? frag.detach() : MustacheContainer.prototype.detach.call(this);
+		return frag ? frag.detach() : MustacheContainer$$1.prototype.detach.call(this);
 	};
 
-	Section__proto__.isTruthy = function isTruthy () {
+	Section.prototype.isTruthy = function isTruthy () {
 		if ( this.subordinate && this.sibling.isTruthy() ) { return true; }
 		var value = !this.model ? undefined : this.model.isRoot ? this.model.value : this.model.get();
 		return !!value && ( this.templateSectionType === SECTION_IF_WITH || !isEmpty( value ) );
 	};
 
-	Section__proto__.rebind = function rebind ( next, previous, safe ) {
-		if ( MustacheContainer.prototype.rebind.call( this, next, previous, safe ) ) {
+	Section.prototype.rebind = function rebind ( next, previous, safe ) {
+		if ( MustacheContainer$$1.prototype.rebind.call( this, next, previous, safe ) ) {
 			if ( this.fragment && this.sectionType !== SECTION_IF && this.sectionType !== SECTION_UNLESS ) {
 				this.fragment.rebind( next );
 			}
 		}
 	};
 
-	Section__proto__.render = function render ( target, occupants ) {
+	Section.prototype.render = function render ( target, occupants ) {
 		this.rendered = true;
 		if ( this.fragment ) { this.fragment.render( target, occupants ); }
 	};
 
-	Section__proto__.shuffle = function shuffle ( newIndices ) {
+	Section.prototype.shuffle = function shuffle ( newIndices ) {
 		if ( this.fragment && this.sectionType === SECTION_EACH ) {
 			this.fragment.shuffle( newIndices );
 		}
 	};
 
-	Section__proto__.unbind = function unbind () {
-		MustacheContainer.prototype.unbind.call(this);
+	Section.prototype.unbind = function unbind () {
+		MustacheContainer$$1.prototype.unbind.call(this);
 		if ( this.fragment ) { this.fragment.unbind(); }
 	};
 
-	Section__proto__.unrender = function unrender ( shouldDestroy ) {
+	Section.prototype.unrender = function unrender ( shouldDestroy ) {
 		if ( this.rendered && this.fragment ) { this.fragment.unrender( shouldDestroy ); }
 		this.rendered = false;
 	};
 
-	Section__proto__.update = function update () {
+	Section.prototype.update = function update () {
 		var this$1 = this;
 
 		if ( !this.dirty ) { return; }
@@ -14731,7 +14088,6 @@ var Section = (function (MustacheContainer) {
 					this.rendered = true;
 				}
 
-				if ( !this.fragment.bound ) { this.fragment.bind( this.model ); }
 				this.fragment.update();
 			} else {
 				if ( this.sectionType === SECTION_EACH ) {
@@ -14756,9 +14112,7 @@ var Section = (function (MustacheContainer) {
 				} else {
 					this.unrender( false );
 					this.detached = this.fragment;
-					runloop.promise().then( function () {
-						if ( this$1.detached ) { this$1.detach(); }
-					});
+					runloop.scheduleTask( function () { return this$1.detach(); } );
 				}
 			} else if ( this.fragment ) {
 				this.fragment.unbind();
@@ -14797,17 +14151,17 @@ function attach ( section, fragment ) {
 	}
 }
 
-var Select = (function (Element) {
+var Select = (function (Element$$1) {
 	function Select ( options ) {
-		Element.call( this, options );
+		Element$$1.call( this, options );
 		this.options = [];
 	}
 
-	if ( Element ) Select.__proto__ = Element;
-	var Select__proto__ = Select.prototype = Object.create( Element && Element.prototype );
-	Select__proto__.constructor = Select;
+	if ( Element$$1 ) Select.__proto__ = Element$$1;
+	Select.prototype = Object.create( Element$$1 && Element$$1.prototype );
+	Select.prototype.constructor = Select;
 
-	Select__proto__.foundNode = function foundNode ( node ) {
+	Select.prototype.foundNode = function foundNode ( node ) {
 		if ( this.binding ) {
 			var selectedOptions = getSelectedOptions( node );
 
@@ -14817,8 +14171,8 @@ var Select = (function (Element) {
 		}
 	};
 
-	Select__proto__.render = function render ( target, occupants ) {
-		Element.prototype.render.call( this, target, occupants );
+	Select.prototype.render = function render ( target, occupants ) {
+		Element$$1.prototype.render.call( this, target, occupants );
 		this.sync();
 
 		var node = this.node;
@@ -14831,7 +14185,7 @@ var Select = (function (Element) {
 		this.rendered = true;
 	};
 
-	Select__proto__.sync = function sync () {
+	Select.prototype.sync = function sync () {
 		var this$1 = this;
 
 		var selectNode = this.node;
@@ -14885,7 +14239,7 @@ var Select = (function (Element) {
 			this.binding.forceUpdate();
 		}
 	};
-	Select__proto__.valueContains = function valueContains ( selectValue, optionValue ) {
+	Select.prototype.valueContains = function valueContains ( selectValue, optionValue ) {
 		var this$1 = this;
 
 		var i = selectValue.length;
@@ -14893,7 +14247,7 @@ var Select = (function (Element) {
 			if ( this$1.compare( optionValue, selectValue[i] ) ) { return true; }
 		}
 	};
-	Select__proto__.compare = function compare (optionValue, selectValue) {
+	Select.prototype.compare = function compare (optionValue, selectValue) {
 		var comparator = this.getAttribute( 'value-comparator' );
 		if ( comparator ) {
 			if (typeof comparator === 'function') {
@@ -14905,9 +14259,9 @@ var Select = (function (Element) {
 		}
 		return selectValue == optionValue;
 	};
-	Select__proto__.update = function update () {
+	Select.prototype.update = function update () {
 		var dirty = this.dirty;
-		Element.prototype.update.call(this);
+		Element$$1.prototype.update.call(this);
 		if ( dirty ) {
 			this.sync();
 		}
@@ -14916,18 +14270,18 @@ var Select = (function (Element) {
 	return Select;
 }(Element));
 
-var Textarea = (function (Input) {
+var Textarea = (function (Input$$1) {
 	function Textarea( options ) {
 		var template = options.template;
 
 		options.deferContent = true;
 
-		Input.call( this, options );
+		Input$$1.call( this, options );
 
 		// check for single interpolator binding
 		if ( !this.attributeByName.value ) {
 			if ( template.f && isBindable( { template: template } ) ) {
-				( this.attributes || ( this.attributes = [] ) ).push( createItem( {
+				this.attributes.push( createItem( {
 					owner: this,
 					template: { t: ATTRIBUTE, f: template.f, n: 'value' },
 					parentFragment: this.parentFragment
@@ -14938,11 +14292,11 @@ var Textarea = (function (Input) {
 		}
 	}
 
-	if ( Input ) Textarea.__proto__ = Input;
-	var Textarea__proto__ = Textarea.prototype = Object.create( Input && Input.prototype );
-	Textarea__proto__.constructor = Textarea;
+	if ( Input$$1 ) Textarea.__proto__ = Input$$1;
+	Textarea.prototype = Object.create( Input$$1 && Input$$1.prototype );
+	Textarea.prototype.constructor = Textarea;
 
-	Textarea__proto__.bubble = function bubble () {
+	Textarea.prototype.bubble = function bubble () {
 		var this$1 = this;
 
 		if ( !this.dirty ) {
@@ -14962,41 +14316,41 @@ var Textarea = (function (Input) {
 	return Textarea;
 }(Input));
 
-var Text = (function (Item) {
+var Text = (function (Item$$1) {
 	function Text ( options ) {
-		Item.call( this, options );
+		Item$$1.call( this, options );
 		this.type = TEXT;
 	}
 
-	if ( Item ) Text.__proto__ = Item;
-	var Text__proto__ = Text.prototype = Object.create( Item && Item.prototype );
-	Text__proto__.constructor = Text;
+	if ( Item$$1 ) Text.__proto__ = Item$$1;
+	Text.prototype = Object.create( Item$$1 && Item$$1.prototype );
+	Text.prototype.constructor = Text;
 
-	Text__proto__.detach = function detach () {
+	Text.prototype.detach = function detach () {
 		return detachNode( this.node );
 	};
 
-	Text__proto__.firstNode = function firstNode () {
+	Text.prototype.firstNode = function firstNode () {
 		return this.node;
 	};
 
-	Text__proto__.render = function render ( target, occupants ) {
+	Text.prototype.render = function render ( target, occupants ) {
 		if ( inAttributes() ) { return; }
 		this.rendered = true;
 
 		progressiveText( this, target, occupants, this.template );
 	};
 
-	Text__proto__.toString = function toString ( escape ) {
+	Text.prototype.toString = function toString ( escape ) {
 		return escape ? escapeHtml( this.template ) : this.template;
 	};
 
-	Text__proto__.unrender = function unrender ( shouldDestroy ) {
+	Text.prototype.unrender = function unrender ( shouldDestroy ) {
 		if ( this.rendered && shouldDestroy ) { this.detach(); }
 		this.rendered = false;
 	};
 
-	Text__proto__.valueOf = function valueOf () {
+	Text.prototype.valueOf = function valueOf () {
 		return this.template;
 	};
 
@@ -15006,13 +14360,55 @@ var Text = (function (Item) {
 var proto$4 = Text.prototype;
 proto$4.bind = proto$4.unbind = proto$4.update = noop;
 
+var camelizeHyphenated = function ( hyphenatedStr ) {
+	return hyphenatedStr.replace( /-([a-zA-Z])/g, function ( match, $1 ) {
+		return $1.toUpperCase();
+	});
+};
+
+var prefix;
+
+if ( !isClient ) {
+	prefix = null;
+} else {
+	var prefixCache = {};
+	var testStyle = createElement( 'div' ).style;
+
+	prefix = function ( prop ) {
+		prop = camelizeHyphenated( prop );
+
+		if ( !prefixCache[ prop ] ) {
+			if ( testStyle[ prop ] !== undefined ) {
+				prefixCache[ prop ] = prop;
+			}
+
+			else {
+				// test vendors...
+				var capped = prop.charAt( 0 ).toUpperCase() + prop.substring( 1 );
+
+				var i = vendors.length;
+				while ( i-- ) {
+					var vendor = vendors[i];
+					if ( testStyle[ vendor + capped ] !== undefined ) {
+						prefixCache[ prop ] = vendor + capped;
+						break;
+					}
+				}
+			}
+		}
+
+		return prefixCache[ prop ];
+	};
+}
+
+var prefix$1 = prefix;
+
 var visible;
 var hidden = 'hidden';
 
 if ( doc ) {
 	var prefix$2;
 
-	/* istanbul ignore next */
 	if ( hidden in doc ) {
 		prefix$2 = '';
 	} else {
@@ -15028,7 +14424,6 @@ if ( doc ) {
 		}
 	}
 
-	/* istanbul ignore else */
 	if ( prefix$2 !== undefined ) {
 		doc.addEventListener( prefix$2 + 'visibilitychange', onChange );
 		onChange();
@@ -15055,61 +14450,25 @@ function onChange () {
 	visible = !doc[ hidden ];
 }
 
-/* istanbul ignore next */
 function onHide () {
 	visible = false;
 }
 
-/* istanbul ignore next */
 function onShow () {
 	visible = true;
 }
 
-var prefix;
+var unprefixPattern = new RegExp( '^-(?:' + vendors.join( '|' ) + ')-' );
 
-/* istanbul ignore next */
-if ( !isClient ) {
-	prefix = null;
-} else {
-	var prefixCache = {};
-	var testStyle = createElement( 'div' ).style;
-
-	// technically this also normalizes on hyphenated styles as well
-	prefix = function ( prop ) {
-		if ( !prefixCache[ prop ] ) {
-			var name = hyphenateCamel( prop );
-
-			if ( testStyle[ prop ] !== undefined ) {
-				prefixCache[ prop ] = name;
-			}
-
-			/* istanbul ignore next */
-			else {
-				// test vendors...
-				var i = vendors.length;
-				while ( i-- ) {
-					var vendor = "-" + (vendors[i]) + "-" + name;
-					if ( testStyle[ vendor ] !== undefined ) {
-						prefixCache[ prop ] = vendor;
-						break;
-					}
-				}
-			}
-		}
-
-		return prefixCache[ prop ];
-	};
-}
-
-var prefix$1 = prefix;
+var unprefix = function ( prop ) {
+	return prop.replace( unprefixPattern, '' );
+};
 
 var vendorPattern = new RegExp( '^(?:' + vendors.join( '|' ) + ')([A-Z])' );
 
 var hyphenate = function ( str ) {
-	/* istanbul ignore next */
 	if ( !str ) { return ''; } // edge case
 
-	/* istanbul ignore next */
 	if ( vendorPattern.test( str ) ) { str = '-' + str; }
 
 	return str.replace( /[A-Z]/g, function (match) { return '-' + match.toLowerCase(); } );
@@ -15184,8 +14543,14 @@ if ( !isClient ) {
 				duration: style[ TRANSITION_DURATION ]
 			};
 
+			style[ TRANSITION_PROPERTY ] = changedProperties.map( prefix$1 ).map( hyphenate ).join( ',' );
+			var easingName = hyphenate( options.easing || 'linear' );
+			style[ TRANSITION_TIMING_FUNCTION ] = easingName;
+			var cssTiming = style[ TRANSITION_TIMING_FUNCTION ] === easingName;
+			style[ TRANSITION_DURATION ] = ( options.duration / 1000 ) + 's';
+
 			function transitionEndHandler ( event ) {
-				var index = changedProperties.indexOf( event.propertyName );
+				var index = changedProperties.indexOf( camelizeHyphenated( unprefix( event.propertyName ) ) );
 
 				if ( index !== -1 ) {
 					changedProperties.splice( index, 1 );
@@ -15220,16 +14585,10 @@ if ( !isClient ) {
 			}, options.duration + ( options.delay || 0 ) + 50 );
 			t.registerCompleteHandler( transitionDone );
 
-			style[ TRANSITION_PROPERTY ] = changedProperties.join( ',' );
-			var easingName = hyphenate( options.easing || 'linear' );
-			style[ TRANSITION_TIMING_FUNCTION ] = easingName;
-			var cssTiming = style[ TRANSITION_TIMING_FUNCTION ] === easingName;
-			style[ TRANSITION_DURATION ] = ( options.duration / 1000 ) + 's';
-
 			setTimeout( function () {
 				var i = changedProperties.length;
 				var hash;
-				var originalValue = null;
+				var originalValue;
 				var index;
 				var propertiesToTransitionInJs = [];
 				var prop;
@@ -15241,12 +14600,11 @@ if ( !isClient ) {
 					hash = hashPrefix + prop;
 
 					if ( cssTiming && CSS_TRANSITIONS_ENABLED && !cannotUseCssTransitions[ hash ] ) {
-						var initial = style[ prop ];
-						style[ prop ] = to[ prop ];
+						style[ prefix$1( prop ) ] = to[ prop ];
 
 						// If we're not sure if CSS transitions are supported for
 						// this tag/property combo, find out now
-						if ( !( hash in canUseCssTransitions ) ) {
+						if ( !canUseCssTransitions[ hash ] ) {
 							originalValue = t.getStyle( prop );
 
 							// if this property is transitionable in this browser,
@@ -15256,14 +14614,16 @@ if ( !isClient ) {
 
 							// Reset, if we're going to use timers after all
 							if ( cannotUseCssTransitions[ hash ] ) {
-								style[ prop ] = initial;
+								style[ prefix$1( prop ) ] = originalValue;
 							}
 						}
 					}
 
 					if ( !cssTiming || !CSS_TRANSITIONS_ENABLED || cannotUseCssTransitions[ hash ] ) {
 						// we need to fall back to timer-based stuff
-						if ( originalValue === null ) { originalValue = t.getStyle( prop ); }
+						if ( originalValue === undefined ) {
+							originalValue = t.getStyle( prop );
+						}
 
 						// need to remove this from changedProperties, otherwise transitionEndHandler
 						// will get confused
@@ -15276,21 +14636,15 @@ if ( !isClient ) {
 
 						// TODO Determine whether this property is animatable at all
 
-						suffix = /[^\d]*$/.exec( originalValue )[0];
-						interpolator = interpolate( parseFloat( originalValue ), parseFloat( to[ prop ] ) );
+						suffix = /[^\d]*$/.exec( to[ prop ] )[0];
+						interpolator = interpolate( parseFloat( originalValue ), parseFloat( to[ prop ] ) ) || ( function () { return to[ prop ]; } );
 
 						// ...then kick off a timer-based transition
-						if ( interpolator ) {
-							propertiesToTransitionInJs.push({
-								name: prop,
-								interpolator: interpolator,
-								suffix: suffix
-							});
-						} else {
-							style[ prop ] = to[ prop ];
-						}
-
-						originalValue = null;
+						propertiesToTransitionInJs.push({
+							name: prefix$1( prop ),
+							interpolator: interpolator,
+							suffix: suffix
+						});
 					}
 				}
 
@@ -15318,7 +14672,7 @@ if ( !isClient ) {
 							var i = propertiesToTransitionInJs.length;
 							while ( i-- ) {
 								var prop = propertiesToTransitionInJs[i];
-								style[ prop.name ] = prop.interpolator( pos ) + prop.suffix;
+								t.node.style[ prop.name ] = prop.interpolator( pos ) + prop.suffix;
 							}
 						},
 						complete: function complete () {
@@ -15330,11 +14684,7 @@ if ( !isClient ) {
 					jsTransitionsComplete = true;
 				}
 
-				if ( changedProperties.length ) {
-					style[ TRANSITION_PROPERTY ] = changedProperties.join( ',' );
-				} else {
-					style[ TRANSITION_PROPERTY ] = 'none';
-
+				if ( !changedProperties.length ) {
 					// We need to cancel the transitionEndHandler, and deal with
 					// the fact that it will never fire
 					t.node.removeEventListener( TRANSITIONEND, transitionEndHandler, false );
@@ -15347,6 +14697,17 @@ if ( !isClient ) {
 }
 
 var createTransitions$1 = createTransitions;
+
+function resetStyle ( node, style ) {
+	if ( style ) {
+		node.setAttribute( 'style', style );
+	} else {
+		// Next line is necessary, to remove empty style attribute!
+		// See http://stackoverflow.com/a/7167553
+		node.getAttribute( 'style' );
+		node.removeAttribute( 'style' );
+	}
+}
 
 var getComputedStyle = win && win.getComputedStyle;
 var resolved = Promise.resolve();
@@ -15366,9 +14727,8 @@ var Transition = function Transition ( options ) {
 	this.options = options;
 	this.onComplete = [];
 };
-var Transition__proto__ = Transition.prototype;
 
-Transition__proto__.animateStyle = function animateStyle ( style, value, options ) {
+Transition.prototype.animateStyle = function animateStyle ( style, value, options ) {
 		var this$1 = this;
 
 	if ( arguments.length === 4 ) {
@@ -15394,6 +14754,16 @@ Transition__proto__.animateStyle = function animateStyle ( style, value, options
 		options = value;
 	}
 
+	// As of 0.3.9, transition authors should supply an `option` object with
+	// `duration` and `easing` properties (and optional `delay`), plus a
+	// callback function that gets called after the animation completes
+
+	// TODO remove this check in a future version
+	if ( !options ) {
+		warnOnceIfDebug( 'The "%s" transition does not supply an options object to `t.animateStyle()`. This will break in a future version of Ractive. For more info see https://github.com/RactiveJS/Ractive/issues/340', this.name );
+		options = this;
+	}
+
 	return new Promise( function (fulfil) {
 		// Edge case - if duration is zero, set style synchronously and complete
 		if ( !options.duration ) {
@@ -15412,27 +14782,17 @@ Transition__proto__.animateStyle = function animateStyle ( style, value, options
 		var i = propertyNames.length;
 		while ( i-- ) {
 			var prop = propertyNames[i];
-			var name = prefix$1( prop );
-
 			var current = computedStyle[ prefix$1( prop ) ];
 
-			// record the starting points
-			var init = this$1.node.style[name];
-			if ( !( name in this$1.originals ) ) { this$1.originals[ name ] = this$1.node.style[ name ]; }
-			this$1.node.style[ name ] = to[ prop ];
-			this$1.targets[ name ] = this$1.node.style[ name ];
-			this$1.node.style[ name ] = init;
+			if ( current === '0px' ) { current = 0; }
 
 			// we need to know if we're actually changing anything
 			if ( current != to[ prop ] ) { // use != instead of !==, so we can compare strings with numbers
-				changedProperties.push( name );
-
-				// if we happened to prefix, make sure there is a properly prefixed value
-				to[ name ] = to[ prop ];
+				changedProperties.push( prop );
 
 				// make the computed style explicit, so we can animate where
 				// e.g. height='auto'
-				this$1.node.style[ name ] = current;
+				this$1.node.style[ prefix$1( prop ) ] = current;
 			}
 		}
 
@@ -15447,7 +14807,7 @@ Transition__proto__.animateStyle = function animateStyle ( style, value, options
 	});
 };
 
-Transition__proto__.bind = function bind () {
+Transition.prototype.bind = function bind () {
 	var options = this.options;
 	var type = options.template && options.template.v;
 	if ( type ) {
@@ -15478,7 +14838,7 @@ Transition__proto__.bind = function bind () {
 	setupArgsFn( this, options.template );
 };
 
-Transition__proto__.getParams = function getParams () {
+Transition.prototype.getParams = function getParams () {
 	if ( this.params ) { return this.params; }
 
 	// get expression args if supplied
@@ -15492,11 +14852,12 @@ Transition__proto__.getParams = function getParams () {
 	}
 };
 
-Transition__proto__.getStyle = function getStyle ( props ) {
+Transition.prototype.getStyle = function getStyle ( props ) {
 	var computedStyle = getComputedStyle( this.node );
 
 	if ( typeof props === 'string' ) {
-		return computedStyle[ prefix$1( props ) ];
+		var value = computedStyle[ prefix$1( props ) ];
+		return value === '0px' ? 0 : value;
 	}
 
 	if ( !Array.isArray( props ) ) {
@@ -15508,16 +14869,16 @@ Transition__proto__.getStyle = function getStyle ( props ) {
 	var i = props.length;
 	while ( i-- ) {
 		var prop = props[i];
-		var value = computedStyle[ prefix$1( prop ) ];
+		var value$1 = computedStyle[ prefix$1( prop ) ];
 
-		if ( value === '0px' ) { value = 0; }
-		styles[ prop ] = value;
+		if ( value$1 === '0px' ) { value$1 = 0; }
+		styles[ prop ] = value$1;
 	}
 
 	return styles;
 };
 
-Transition__proto__.processParams = function processParams ( params, defaults ) {
+Transition.prototype.processParams = function processParams ( params, defaults ) {
 	if ( typeof params === 'number' ) {
 		params = { duration: params };
 	}
@@ -15537,25 +14898,22 @@ Transition__proto__.processParams = function processParams ( params, defaults ) 
 	return Object.assign( {}, defaults, params );
 };
 
-Transition__proto__.registerCompleteHandler = function registerCompleteHandler ( fn ) {
+Transition.prototype.registerCompleteHandler = function registerCompleteHandler ( fn ) {
 	addToArray( this.onComplete, fn );
 };
 
-Transition__proto__.setStyle = function setStyle ( style, value ) {
+Transition.prototype.setStyle = function setStyle ( style, value ) {
 		var this$1 = this;
 
 	if ( typeof style === 'string' ) {
-		var name = prefix$1(  style );
-		if ( !this.originals.hasOwnProperty( name ) ) { this.originals[ name ] = this.node.style[ name ]; }
-		this.node.style[ name ] = value;
-		this.targets[ name ] = this.node.style[ name ];
+		this.node.style[ prefix$1( style ) ] = value;
 	}
 
 	else {
 		var prop;
 		for ( prop in style ) {
 			if ( style.hasOwnProperty( prop ) ) {
-				this$1.setStyle( prop, style[ prop ] );
+				this$1.node.style[ prefix$1( prop ) ] = style[ prop ];
 			}
 		}
 	}
@@ -15563,7 +14921,7 @@ Transition__proto__.setStyle = function setStyle ( style, value ) {
 	return this;
 };
 
-Transition__proto__.shouldFire = function shouldFire ( type ) {
+Transition.prototype.shouldFire = function shouldFire ( type ) {
 	if ( !this.ractive.transitionsEnabled ) { return false; }
 
 	// check for noIntro and noOutro cases, which only apply when the owner ractive is rendering and unrendering, respectively
@@ -15575,7 +14933,7 @@ Transition__proto__.shouldFire = function shouldFire ( type ) {
 	if ( !this.element.parent ) { return true; }
 
 	// if there is a local param, it takes precedent
-	if ( params && params[0] && isObject(params[0]) && 'nested' in params[0] ) {
+	if ( params && params[0] && 'nested' in params[0] ) {
 		if ( params[0].nested !== false ) { return true; }
 	} else { // use the nearest instance setting
 		// find the nearest instance that actually has a nested setting
@@ -15592,12 +14950,11 @@ Transition__proto__.shouldFire = function shouldFire ( type ) {
 	return true;
 };
 
-Transition__proto__.start = function start () {
+Transition.prototype.start = function start () {
 		var this$1 = this;
 
 	var node = this.node = this.element.node;
-	var originals = this.originals = {};  //= node.getAttribute( 'style' );
-	var targets = this.targets = {};
+	var originalStyle = node.getAttribute( 'style' );
 
 	var completed;
 	var args = this.getParams();
@@ -15613,9 +14970,7 @@ Transition__proto__.start = function start () {
 
 		this$1.onComplete.forEach( function (fn) { return fn(); } );
 		if ( !noReset && this$1.isIntro ) {
-			for ( var k in targets ) {
-				if ( node.style[ k ] === targets[ k ] ) { node.style[ k ] = originals[ k ]; }
-			}
+			resetStyle( node, originalStyle);
 		}
 
 		this$1._manager.remove( this$1 );
@@ -15633,9 +14988,9 @@ Transition__proto__.start = function start () {
 	if ( promise ) { promise.then( this.complete ); }
 };
 
-Transition__proto__.toString = function toString () { return ''; };
+Transition.prototype.toString = function toString () { return ''; };
 
-Transition__proto__.unbind = function unbind () {
+Transition.prototype.unbind = function unbind () {
 	if ( !this.element.attributes.unbinding ) {
 		var type = this.options && this.options.template && this.options.template.v;
 		if ( type === 't0' || type === 't1' ) { this.element.intro = null; }
@@ -15643,7 +14998,7 @@ Transition__proto__.unbind = function unbind () {
 	}
 };
 
-Transition__proto__.unregisterCompleteHandler = function unregisterCompleteHandler ( fn ) {
+Transition.prototype.unregisterCompleteHandler = function unregisterCompleteHandler ( fn ) {
 	removeFromArray( this.onComplete, fn );
 };
 
@@ -15667,7 +15022,7 @@ var ieBlacklist;
 
 try {
 	createElement( 'table' ).innerHTML = 'foo';
-} catch /* istanbul ignore next */ ( err ) {
+} catch ( err ) {
 	ieBug = true;
 
 	ieBlacklist = {
@@ -15689,7 +15044,6 @@ var insertHtml = function ( html$$1, node ) {
 	var wrapper;
 	var selectedOption;
 
-	/* istanbul ignore if */
 	if ( ieBug && ( wrapper = ieBlacklist[ node.tagName ] ) ) {
 		container = element( 'DIV' );
 		container.innerHTML = wrapper[0] + html$$1 + wrapper[1];
@@ -15753,22 +15107,22 @@ function element ( tagName ) {
 	return elementCache[ tagName ] || ( elementCache[ tagName ] = createElement( tagName ) );
 }
 
-var Triple = (function (Mustache) {
+var Triple = (function (Mustache$$1) {
 	function Triple ( options ) {
-		Mustache.call( this, options );
+		Mustache$$1.call( this, options );
 	}
 
-	if ( Mustache ) Triple.__proto__ = Mustache;
-	var Triple__proto__ = Triple.prototype = Object.create( Mustache && Mustache.prototype );
-	Triple__proto__.constructor = Triple;
+	if ( Mustache$$1 ) Triple.__proto__ = Mustache$$1;
+	Triple.prototype = Object.create( Mustache$$1 && Mustache$$1.prototype );
+	Triple.prototype.constructor = Triple;
 
-	Triple__proto__.detach = function detach () {
+	Triple.prototype.detach = function detach () {
 		var docFrag = createDocumentFragment();
 		if ( this.nodes ) { this.nodes.forEach( function (node) { return docFrag.appendChild( node ); } ); }
 		return docFrag;
 	};
 
-	Triple__proto__.find = function find ( selector ) {
+	Triple.prototype.find = function find ( selector ) {
 		var this$1 = this;
 
 		var len = this.nodes.length;
@@ -15788,7 +15142,7 @@ var Triple = (function (Mustache) {
 		return null;
 	};
 
-	Triple__proto__.findAll = function findAll ( selector, options ) {
+	Triple.prototype.findAll = function findAll ( selector, options ) {
 		var this$1 = this;
 
 		var result = options.result;
@@ -15809,15 +15163,15 @@ var Triple = (function (Mustache) {
 		}
 	};
 
-	Triple__proto__.findComponent = function findComponent () {
+	Triple.prototype.findComponent = function findComponent () {
 		return null;
 	};
 
-	Triple__proto__.firstNode = function firstNode () {
+	Triple.prototype.firstNode = function firstNode () {
 		return this.rendered && this.nodes[0];
 	};
 
-	Triple__proto__.render = function render ( target, occupants ) {
+	Triple.prototype.render = function render ( target, occupants ) {
 		var this$1 = this;
 
 		var parentNode = this.parentFragment.findParentNode();
@@ -15875,23 +15229,20 @@ var Triple = (function (Mustache) {
 		this.rendered = true;
 	};
 
-	Triple__proto__.toString = function toString () {
+	Triple.prototype.toString = function toString () {
 		var value = this.model && this.model.get();
 		value = value != null ? '' + value : '';
 
 		return inAttribute() ? decodeCharacterReferences( value ) : value;
 	};
 
-	Triple__proto__.unrender = function unrender () {
-		if ( this.nodes ) { this.nodes.forEach( function (node) {
-			// defer detachment until all relevant outros are done
-			runloop.detachWhenReady( { node: node, detach: function detach() { detachNode( node ); } } );
-		}); }
+	Triple.prototype.unrender = function unrender () {
+		if ( this.nodes ) { this.nodes.forEach( function (node) { return detachNode( node ); } ); }
 		this.rendered = false;
 		this.nodes = null;
 	};
 
-	Triple__proto__.update = function update () {
+	Triple.prototype.update = function update () {
 		if ( this.rendered && this.dirty ) {
 			this.dirty = false;
 
@@ -16054,11 +15405,7 @@ var Fragment = function Fragment ( options ) {
 	this.rendered = false;
 
 	// encapsulated styles should be inherited until they get applied by an element
-	if ( 'cssIds' in options ) {
-		this.cssIds = options.cssIds && options.cssIds.length && options.cssIds;
-	} else {
-		this.cssIds = this.parent ? this.parent.cssIds : null;
-	}
+	this.cssIds = 'cssIds' in options ? options.cssIds : ( this.parent ? this.parent.cssIds : null );
 
 	this.dirty = false;
 	this.dirtyValue = true; // used for attribute values
@@ -16066,9 +15413,8 @@ var Fragment = function Fragment ( options ) {
 	this.template = options.template || [];
 	this.createItems();
 };
-var Fragment__proto__ = Fragment.prototype;
 
-Fragment__proto__.bind = function bind$4 ( context ) {
+Fragment.prototype.bind = function bind$1 ( context ) {
 	this.context = context;
 	this.items.forEach( bind );
 	this.bound = true;
@@ -16081,7 +15427,7 @@ Fragment__proto__.bind = function bind$4 ( context ) {
 	return this;
 };
 
-Fragment__proto__.bubble = function bubble () {
+Fragment.prototype.bubble = function bubble () {
 	this.dirtyValue = true;
 
 	if ( !this.dirty ) {
@@ -16099,7 +15445,7 @@ Fragment__proto__.bubble = function bubble () {
 	}
 };
 
-Fragment__proto__.createItems = function createItems () {
+Fragment.prototype.createItems = function createItems () {
 		var this$1 = this;
 
 	// this is a hot code path
@@ -16110,11 +15456,11 @@ Fragment__proto__.createItems = function createItems () {
 	}
 };
 
-Fragment__proto__.destroyed = function destroyed$3 () {
+Fragment.prototype.destroyed = function destroyed$1 () {
 	this.items.forEach( destroyed );
 };
 
-Fragment__proto__.detach = function detach () {
+Fragment.prototype.detach = function detach () {
 	var docFrag = createDocumentFragment();
 	var xs = this.items;
 	var len = xs.length;
@@ -16124,43 +15470,42 @@ Fragment__proto__.detach = function detach () {
 	return docFrag;
 };
 
-Fragment__proto__.find = function find ( selector, options ) {
+Fragment.prototype.find = function find ( selector, options ) {
 	return findMap( this.items, function (i) { return i.find( selector, options ); } );
 };
 
-Fragment__proto__.findAll = function findAll ( selector, options ) {
+Fragment.prototype.findAll = function findAll ( selector, options ) {
 	if ( this.items ) {
 		this.items.forEach( function (i) { return i.findAll && i.findAll( selector, options ); } );
 	}
 };
 
-Fragment__proto__.findComponent = function findComponent ( name, options ) {
+Fragment.prototype.findComponent = function findComponent ( name, options ) {
 	return findMap( this.items, function (i) { return i.findComponent( name, options ); } );
 };
 
-Fragment__proto__.findAllComponents = function findAllComponents ( name, options ) {
+Fragment.prototype.findAllComponents = function findAllComponents ( name, options ) {
 	if ( this.items ) {
 		this.items.forEach( function (i) { return i.findAllComponents && i.findAllComponents( name, options ); } );
 	}
 };
 
-Fragment__proto__.findContext = function findContext () {
-	var base = findParentWithContext( this );
-	if ( !base || !base.context ) { return this.ractive.viewmodel; }
-	else { return base.context; }
+Fragment.prototype.findContext = function findContext () {
+	var fragment = this;
+	while ( fragment && !fragment.context ) { fragment = fragment.parent; }
+	if ( !fragment ) { return this.ractive.viewmodel; }
+	else { return fragment.context; }
 };
 
-Fragment__proto__.findNextNode = function findNextNode ( item ) {
+Fragment.prototype.findNextNode = function findNextNode ( item ) {
 		var this$1 = this;
 
 	// search for the next node going forward
 	if ( item ) {
-		var it;
 		for ( var i = item.index + 1; i < this.items.length; i++ ) {
-			it = this$1.items[i];
-			if ( !it || !it.firstNode ) { continue; }
+			if ( !this$1.items[ i ] ) { continue; }
 
-			var node = it.firstNode( true );
+			var node = this$1.items[ i ].firstNode( true );
 			if ( node ) { return node; }
 		}
 	}
@@ -16180,7 +15525,7 @@ Fragment__proto__.findNextNode = function findNextNode ( item ) {
 	if ( this.parent ) { return this.owner.findNextNode( this ); } // the argument is in case the parent is a RepeatedFragment
 };
 
-Fragment__proto__.findParentNode = function findParentNode () {
+Fragment.prototype.findParentNode = function findParentNode () {
 	var fragment = this;
 
 	do {
@@ -16202,7 +15547,7 @@ Fragment__proto__.findParentNode = function findParentNode () {
 	throw new Error( 'Could not find parent node' ); // TODO link to issue tracker
 };
 
-Fragment__proto__.findRepeatingFragment = function findRepeatingFragment () {
+Fragment.prototype.findRepeatingFragment = function findRepeatingFragment () {
 	var fragment = this;
 	// TODO better check than fragment.parent.iterations
 	while ( ( fragment.parent || fragment.componentParent ) && !fragment.isIteration ) {
@@ -16212,7 +15557,7 @@ Fragment__proto__.findRepeatingFragment = function findRepeatingFragment () {
 	return fragment;
 };
 
-Fragment__proto__.firstNode = function firstNode ( skipParent ) {
+Fragment.prototype.firstNode = function firstNode ( skipParent ) {
 	var node = findMap( this.items, function (i) { return i.firstNode( true ); } );
 	if ( node ) { return node; }
 	if ( skipParent ) { return null; }
@@ -16220,11 +15565,11 @@ Fragment__proto__.firstNode = function firstNode ( skipParent ) {
 	return this.parent.findNextNode( this.owner );
 };
 
-Fragment__proto__.rebind = function rebind ( next ) {
+Fragment.prototype.rebind = function rebind ( next ) {
 	this.context = next;
 };
 
-Fragment__proto__.render = function render ( target, occupants ) {
+Fragment.prototype.render = function render$$1 ( target, occupants ) {
 	if ( this.rendered ) { throw new Error( 'Fragment is already rendered!' ); }
 	this.rendered = true;
 
@@ -16235,7 +15580,7 @@ Fragment__proto__.render = function render ( target, occupants ) {
 	}
 };
 
-Fragment__proto__.resetTemplate = function resetTemplate ( template ) {
+Fragment.prototype.resetTemplate = function resetTemplate ( template ) {
 	var wasBound = this.bound;
 	var wasRendered = this.rendered;
 
@@ -16267,15 +15612,15 @@ Fragment__proto__.resetTemplate = function resetTemplate ( template ) {
 	}
 };
 
-Fragment__proto__.shuffled = function shuffled$2 () {
+Fragment.prototype.shuffled = function shuffled$1 () {
 	this.items.forEach( shuffled );
 };
 
-Fragment__proto__.toString = function toString ( escape ) {
+Fragment.prototype.toString = function toString$1$$1 ( escape ) {
 	return this.items.map( escape ? toEscapedString : toString$1 ).join( '' );
 };
 
-Fragment__proto__.unbind = function unbind$4 () {
+Fragment.prototype.unbind = function unbind$1 () {
 	this.context = null;
 	this.items.forEach( unbind );
 	this.bound = false;
@@ -16283,12 +15628,12 @@ Fragment__proto__.unbind = function unbind$4 () {
 	return this;
 };
 
-Fragment__proto__.unrender = function unrender$3 ( shouldDestroy ) {
+Fragment.prototype.unrender = function unrender$1 ( shouldDestroy ) {
 	this.items.forEach( shouldDestroy ? unrenderAndDestroy$1 : unrender );
 	this.rendered = false;
 };
 
-Fragment__proto__.update = function update$5 () {
+Fragment.prototype.update = function update$1 () {
 	if ( this.dirty ) {
 		if ( !this.updating ) {
 			this.dirty = false;
@@ -16301,7 +15646,7 @@ Fragment__proto__.update = function update$5 () {
 	}
 };
 
-Fragment__proto__.valueOf = function valueOf () {
+Fragment.prototype.valueOf = function valueOf () {
 	if ( this.items.length === 1 ) {
 		return this.items[0].valueOf();
 	}
@@ -16320,6 +15665,7 @@ Fragment__proto__.valueOf = function valueOf () {
 
 	return this.value;
 };
+
 Fragment.prototype.getContext = getContext;
 
 function getChildQueue ( queue, ractive ) {
@@ -16345,13 +15691,12 @@ var HookQueue = function HookQueue ( event ) {
 	this.inProcess = {};
 	this.queue = {};
 };
-var HookQueue__proto__ = HookQueue.prototype;
 
-HookQueue__proto__.begin = function begin ( ractive ) {
+HookQueue.prototype.begin = function begin ( ractive ) {
 	this.inProcess[ ractive._guid ] = true;
 };
 
-HookQueue__proto__.end = function end ( ractive ) {
+HookQueue.prototype.end = function end ( ractive ) {
 	var parent = ractive.parent;
 
 	// If this is *isn't* a child of a component that's in process,
@@ -16379,10 +15724,16 @@ function initialise ( ractive, userOptions, options ) {
 		}
 	});
 
+	// set up event subscribers
+	subscribe( ractive, userOptions, 'on' );
+
 	// init config from Parent and options
 	config.init( ractive.constructor, ractive, userOptions );
 
 	configHook.fire( ractive );
+
+	// general config done, set up observers
+	subscribe( ractive, userOptions, 'observe' );
 
 	initHook.begin( ractive );
 
@@ -16390,9 +15741,6 @@ function initialise ( ractive, userOptions, options ) {
 	if ( fragment ) { fragment.bind( ractive.viewmodel ); }
 
 	initHook.end( ractive );
-
-	// general config done, set up observers
-	subscribe( ractive, userOptions, 'observe' );
 
 	if ( fragment ) {
 		// render automatically ( if `el` is specified )
@@ -16417,7 +15765,15 @@ function createFragment ( ractive, options ) {
 	if ( options === void 0 ) options = {};
 
 	if ( ractive.template ) {
-		var cssIds = [].concat( ractive.constructor._cssIds || [], options.cssIds || [] );
+		var cssIds;
+
+		if ( options.cssIds || ractive.cssId ) {
+			cssIds = options.cssIds ? options.cssIds.slice() : [];
+
+			if ( ractive.cssId ) {
+				cssIds.push( ractive.cssId );
+			}
+		}
 
 		return new Fragment({
 			owner: ractive,
@@ -16427,6 +15783,22 @@ function createFragment ( ractive, options ) {
 	}
 }
 
+function subscribe ( instance, options, type ) {
+	var subs = ( instance.constructor[ ("_" + type) ] || [] ).concat( toPairs( options[ type ] || [] ) );
+	var single = type === 'on' ? 'once' : (type + "Once");
+
+	subs.forEach( function (ref) {
+		var target = ref[0];
+		var config$$1 = ref[1];
+
+		if ( typeof config$$1 === 'function' ) {
+			instance[type]( target, config$$1 );
+		} else if ( typeof config$$1 === 'object' && typeof config$$1.handler === 'function' ) {
+			instance[ config$$1.once ? single : type ]( target, config$$1.handler, config$$1 );
+		}
+	});
+}
+
 var renderHook = new Hook( 'render' );
 var completeHook = new Hook( 'complete' );
 
@@ -16434,7 +15806,7 @@ function render$1 ( ractive, target, anchor, occupants ) {
 	// set a flag to let any transitions know that this instance is currently rendering
 	ractive.rendering = true;
 
-	var promise = runloop.start();
+	var promise = runloop.start( ractive, true );
 	runloop.scheduleTask( function () { return renderHook.fire( ractive ); }, true );
 
 	if ( ractive.fragment.rendered ) {
@@ -16523,7 +15895,7 @@ function Ractive$reset ( data ) {
 	// TEMP need to tidy this up
 	data = dataConfigurator.init( this.constructor, this, { data: data });
 
-	var promise = runloop.start();
+	var promise = runloop.start( this, true );
 
 	// If the root object is wrapped, try and use the wrapper's reset value
 	var wrapper = this.viewmodel.wrapper;
@@ -16605,7 +15977,7 @@ var resetPartial = function ( name, partial ) {
 	var collection = [];
 	collect( this.fragment.items, name, false, collection );
 
-	var promise = runloop.start();
+	var promise = runloop.start( this, true );
 
 	this.partials[ name ] = partial;
 	collection.forEach( forceResetTemplate );
@@ -16671,7 +16043,7 @@ function Ractive$set ( keypath, value, options ) {
 
 	var opts = typeof keypath === 'object' ? value : options;
 
-	return set( build( ractive, keypath, value, opts && opts.isolated ), opts );
+	return set( ractive, build( ractive, keypath, value, opts && opts.isolated ), opts );
 }
 
 var shift = makeArrayMethod( 'shift' ).path;
@@ -16691,7 +16063,7 @@ function Ractive$toggle ( keypath, options ) {
 		throw new TypeError( badArguments );
 	}
 
-	return set( gather( this, keypath, null, options && options.isolated ).map( function (m) { return [ m, !m.get() ]; } ), options );
+	return set( this, gather( this, keypath, null, options && options.isolated ).map( function (m) { return [ m, !m.get() ]; } ), options );
 }
 
 function Ractive$toCSS() {
@@ -16737,7 +16109,7 @@ function Ractive$transition ( name, node, params ) {
 	var transition = new Transition({ owner: owner, parentFragment: owner.parentFragment, name: name, params: params });
 	transition.bind();
 
-	var promise = runloop.start();
+	var promise = runloop.start( this, true );
 	runloop.registerTransition( transition );
 	runloop.end();
 
@@ -16761,7 +16133,7 @@ function Ractive$unrender () {
 	}
 
 	this.unrendering = true;
-	var promise = runloop.start();
+	var promise = runloop.start( this, true );
 
 	// If this is a component, and the component isn't marked for destruction,
 	// don't detach nodes from the DOM unnecessarily
@@ -16782,7 +16154,7 @@ function Ractive$unrender () {
 var unshift = makeArrayMethod( 'unshift' ).path;
 
 function Ractive$updateModel ( keypath, cascade ) {
-	var promise = runloop.start();
+	var promise = runloop.start( this, true );
 
 	if ( !keypath ) {
 		this.viewmodel.updateFromBindings( true );
@@ -16854,14 +16226,7 @@ function isInstance ( object ) {
 	return object && object instanceof this;
 }
 
-function sharedSet ( keypath, value, options ) {
-	var opts = typeof keypath === 'object' ? value : options;
-	var model = SharedModel$1;
-
-	return set( build( { viewmodel: model }, keypath, value, true ), opts );
-}
-
-var callsSuper = /super\s*\(|\.call\s*\(\s*this/;
+var callsSuper = /super\s\(|\.call\s*\(\s*this/;
 
 function extend () {
 	var options = [], len = arguments.length;
@@ -16918,26 +16283,22 @@ function extendOne ( Parent, options, Target ) {
 		// alias prototype as defaults
 		defaults: { value: proto },
 
+		// extendable
 		extend: { value: extend, writable: true, configurable: true },
-		extendWith: { value: extendWith, writable: true, configurable: true },
-		extensions: { value: [] },
-
-		isInstance: { value: isInstance },
+		extendClass: { value: extendWith, writable: true, configurable: true },
 
 		Parent: { value: Parent },
 		Ractive: { value: Ractive },
 
-		styleSet: { value: setCSSData.bind( Child ), configurable: true }
+		isInstance: { value: isInstance }
 	});
 
 	// extend configuration
-	config.extend( Parent, proto, options, Child );
+	config.extend( Parent, proto, options );
 
 	// store event and observer registries on the constructor when extending
 	Child._on = ( Parent._on || [] ).concat( toPairs( options.on ) );
 	Child._observe = ( Parent._observe || [] ).concat( toPairs( options.observe ) );
-
-	Parent.extensions.push( Child );
 
 	// attribute defs are not inherited, but they need to be stored
 	if ( options.attributes ) {
@@ -16957,7 +16318,7 @@ function extendOne ( Parent, options, Target ) {
 		Child.attributes = attrs;
 	}
 
-	dataConfigurator.extend( Parent, proto, options, Child );
+	dataConfigurator.extend( Parent, proto, options );
 
 	if ( options.computed ) {
 		proto.computed = Object.assign( Object.create( Parent.prototype.computed ), options.computed );
@@ -16965,12 +16326,6 @@ function extendOne ( Parent, options, Target ) {
 
 	return Child;
 }
-
-// styleSet for Ractive
-Object.defineProperty( Ractive, 'styleSet', { configurable: true, value: setCSSData.bind( Ractive ) } );
-
-// sharedSet for Ractive
-Object.defineProperty( Ractive, 'sharedSet', { value: sharedSet } );
 
 function joinKeys () {
 	var keys = [], len = arguments.length;
@@ -16996,13 +16351,12 @@ function Ractive ( options ) {
 
 // check to see if we're being asked to force Ractive as a global for some weird environments
 if ( win && !win.Ractive ) {
-	var opts$1 = '';
-	var script = document.currentScript || /* istanbul ignore next */ document.querySelector( 'script[data-ractive-options]' );
+	var opts = '';
+	var script = document.currentScript || document.querySelector( 'script[data-ractive-options]' );
 
-	if ( script ) { opts$1 = script.getAttribute( 'data-ractive-options' ) || ''; }
+	if ( script ) { opts = script.getAttribute( 'data-ractive-options' ) || ''; }
 
-	/* istanbul ignore next */
-	if ( ~opts$1.indexOf( 'ForceGlobal' ) ) { win.Ractive = Ractive; }
+	if ( ~opts.indexOf( 'ForceGlobal' ) ) { win.Ractive = Ractive; }
 }
 
 Object.assign( Ractive.prototype, proto, defaults );
@@ -17026,18 +16380,17 @@ Object.defineProperties( Ractive, {
 	extend:           { value: extend },
 	extendWith:       { value: extendWith },
 	escapeKey:        { value: escapeKey },
-	evalObjectString: { value: parseJSON },
-	findPlugin:       { value: findPlugin },
 	getContext:       { value: getContext$2 },
-	getCSS:           { value: getCSS },
 	getNodeInfo:      { value: getNodeInfo$1 },
 	isInstance:       { value: isInstance },
 	joinKeys:         { value: joinKeys },
-	normaliseKeypath: { value: normalise },
 	parse:            { value: parse },
 	splitKeypath:     { value: splitKeypath$1 },
-	// sharedSet and styleSet are in _extend because circular refs
 	unescapeKey:      { value: unescapeKey },
+	getCSS:           { value: getCSS },
+	normaliseKeypath: { value: normalise },
+	findPlugin:       { value: findPlugin },
+	evalObjectString: { value: parseJSON },
 
 	// support
 	enhance:          { writable: true, value: false },
@@ -17052,22 +16405,13 @@ Object.defineProperties( Ractive, {
 	decorators:       { writable: true, value: {} },
 	easing:           { writable: true, value: easing },
 	events:           { writable: true, value: {} },
-	extensions:       { value: [] },
 	interpolators:    { writable: true, value: interpolators },
 	partials:         { writable: true, value: {} },
 	transitions:      { writable: true, value: {} },
 
-	// CSS variables
-	cssData:          { configurable: true, value: {} },
-
-	// access to @shared without an instance
-	sharedData:       { value: data },
-
 	// for getting the source Ractive lib from a constructor
 	Ractive:          { value: Ractive }
 });
-
-Object.defineProperty( Ractive, '_cssModel', { configurable: true, value: new CSSModel( Ractive ) } );
 
 return Ractive;
 
