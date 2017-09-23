@@ -52,7 +52,7 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                 ddoc = res
                 ddoc.livescript = res.src
                 self.set \documentId, ddoc._id
-                self.set (camelize \design-document), ddoc
+                self.set \designDocument, ddoc
                 ev.component.fire \state, \done...
 
             get-all-design-documents: (ev) ->
