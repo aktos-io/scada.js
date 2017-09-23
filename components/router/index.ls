@@ -1,13 +1,9 @@
 require! 'aea': {sleep}
 require! 'prelude-ls': {take, drop, split}
-require! 'dcs/browser':  {RactiveActor}
-
-Ractive.components['anchor'] = Ractive.extend do
-    template: '<a data-id="{{yield}}"></a>'
-    isolated: yes
+require! 'actors':  {RactiveActor}
 
 scroll-to = (anchor) ->
-    offset = $ "a[data-id='#{anchor}']" .offset!
+    offset = $ "span[data-id='#{anchor}']" .offset!
     if offset
         $ 'html, body' .animate do
             scroll-top: offset.top - 55px
@@ -55,18 +51,19 @@ parse-link = (link) ->
 
 
 Ractive.components["a"] = Ractive.extend do
-    template: '
+    template: '''
         <a class="{{class}}"
-                style="
-                    {{#if href}}cursor: pointer;{{/if}}
-                    {{style}}
-                    "
-                on-click="_click"
-                {{#if @.get("data-id")}}data-id=\'{{@.get("data-id")}}\' {{/if}}
-                title="{{href}}"
-                >
+            style="
+                {{#href}}cursor: pointer;{{/}}
+                {{style}}
+                "
+            on-click="_click"
+            data-id="{{~['data-id']}}"
+            title="{{href}}"
+            >
             {{yield}}
-        </a>'
+        </a>
+        '''
     isolated: no
     components: {a: false}
     onrender: ->
@@ -76,7 +73,6 @@ Ractive.components["a"] = Ractive.extend do
         @on do
             _click: (ctx) ->
                 href = @get \href
-
                 if newtab
                     return window.open href
 
@@ -98,12 +94,22 @@ Ractive.components["a"] = Ractive.extend do
                         console.error "there seems a no valid link:", link
                         debugger
 
+                if not ctx.from-my-click
+                    const c = ctx.getParent yes
+                    c.refire = yes
+                    c.a-has-fired = yes
+                    @fire \click, c
+
+            click: (ctx) ->
                 const c = ctx.getParent yes
                 c.refire = yes
-                @fire \click, c
+                c.from-my-click = yes
+                @fire \_click, c
 
 
-
+Ractive.components['anchor'] = Ractive.extend do
+    template: '<span data-id="{{yield}}"></span>'
+    isolated: yes
 
 Ractive.components['router'] = Ractive.extend do
     template: ''

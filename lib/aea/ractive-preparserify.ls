@@ -2,7 +2,7 @@ require! 'through2': through
 require! <[ pug path cheerio fs ]>
 require! 'ractive':Ractive
 require! 'prelude-ls': {map, keys}
-require! '../../../templates/filters': {pug-filters}
+require! '../../templates/filters': {pug-filters}
 
 #console.log "pug filters: ", pug-filters
 

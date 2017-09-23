@@ -1,22 +1,37 @@
 +iff('~/["text-mode"]')
+    //- Show the "text-mode" partial 
+    //- ---------------------------- 
     +apply('text-mode')
 
 +elif('~/["readonly-mode"]')
+    //- Show a readonly input 
+    //- ---------------------
     .ui.input.disabled
         input(twoway="false" value="{{ item ? item[nameField] : nothingSelected }}")
 +else
+    //- Show the dropdown 
+    //- -----------------
     +iff('inline')
-        .ui.inline.dropdown(class="{{class}} {{#loading}}loading{{/}}")
-            input(type="hidden" name="{{_guid}}")
+        //- inline 
+        //- ------------------
+        .ui.inline.dropdown(class="{{class}} {{#loading}}loading{{/}}")                
             i.dropdown.icon 
             .default.text {{ placeholder }}
             .menu
+                .ui.icon.search.input
+                    i.search.icon
+                    input(type="text" placeholder="Search...")
+
                 +each('data')
                     .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
 
     +elif('custom')
-        | {{>custom}}
+        //- custom 
+        //- ------------------
+        +apply('custom')
     +else
+        //- default 
+        //- ------------------
         .ui.search.selection.dropdown(class="{{class}} {{#loading}}loading{{/}}")
             input(type="hidden" name="{{_guid}}")
             i.dropdown.icon 
@@ -27,6 +42,10 @@
     +endif
 +endif
 
+//- ----------------------------------------------------------------------------
+//- Debug output
+//- ----------------------------------------------------------------------------
 +if('debug')
-    debug-obj(obj="{{item}}" title="Selected item")
+    debug-obj(obj="{{~/['selected-key']}}" title="'selected-key'")
+    debug-obj(obj="{{item}}" title="Selected 'item'")
     debug-obj(obj="{{data}}" title="data")

@@ -1,7 +1,7 @@
 require! 'through2': through
 require! <[ pug path cheerio fs ]>
 require! 'prelude-ls': {map, keys}
-require! '../../../templates/filters': {pug-filters}
+require! '../../templates/filters': {pug-filters}
 
 export preparserify-dep-list = {}
 
@@ -27,7 +27,7 @@ Example pug file:
         .ui.form
             .fields
                 .field
-                    label Kısa Tarif 
+                    label Kısa Tarif
                     | #{entry.name}
 
 */
@@ -87,9 +87,9 @@ export pug-preparserify = (file) ->
             console.log "---------------"
             # End of debug
 
-            template-html = template-html.replace /#(?!{)/g, '\\#'
+            template-html = template-html.replace /#/g, '\\#'
 
-            h = "\"\"\" #{template-html} \"\"\""
+            h = "'''" + template-html + "'''"
 
             console.log h
             return h

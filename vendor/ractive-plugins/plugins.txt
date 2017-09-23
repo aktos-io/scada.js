@@ -1,0 +1,3 @@
+https://cdn.jsdelivr.net/npm/ractive-transitions-fade
+https://cdn.jsdelivr.net/npm/ractive-transitions-slide
+https://cdn.jsdelivr.net/npm/ractive-transitions-fly

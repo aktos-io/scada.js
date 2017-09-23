@@ -27,16 +27,16 @@ require! './templates/filters': {pug-filters}
 
 require! 'node-notifier': notifier
 require! 'gulp-concat': cat
-require! 'gulp-uglify': uglify
-require! './src/lib/aea': {sleep, pack}
-require! './src/lib/aea/ractive-preparserify': {
+require! 'gulp-uglify-es': {default: uglify}
+require! './lib/aea': {sleep, pack}
+require! './lib/aea/ractive-preparserify': {
     ractive-preparserify
     preparserify-dep-list
 }
-require! './src/lib/aea/pug-preparserify': {
+require! './lib/aea/pug-preparserify': {
     pug-preparserify
 }
-require! './src/lib/aea/browserify-optimize-js'
+require! './lib/aea/browserify-optimize-js'
 require! 'gulp-flatten': flatten
 require! 'gulp-tap': tap
 require! 'gulp-cached': cache
@@ -46,6 +46,7 @@ require! 'through2':through
 require! 'optimize-js'
 require! 'gulp-if-else': if-else
 require! 'gulp-rename': rename
+require! 'gulp-util': gutil
 
 # Build Settings
 notification-enabled = yes
@@ -54,7 +55,7 @@ notification-enabled = yes
 paths =
     vendor-folder: "#{__dirname}/vendor"
     build-folder: "#{__dirname}/build"
-    lib-src: "#{__dirname}/src/lib"
+    lib-src: "#{__dirname}/lib"
     client-webapps: "#{__dirname}/../webapps"
     client-root: "#{__dirname}/.."
 
@@ -188,7 +189,8 @@ gulp.task \html, ->
 
 
 my-uglify = (x) ->
-    uglify {mangle: except: ['$super']}, x
+    uglify x
+    .on \error, gutil.log
 
 browserify-cache = {}
 bundler = browserify do
@@ -206,10 +208,13 @@ bundler = browserify do
         watchify unless optimize-for-production
         ...
 
-bundler.transform pug-preparserify
+# WARNING: Plugin sequence is important
+# ------------------------------------------------------------------------------
+bundler.transform pug-preparserify          # MUST be before browserify-livescript
+bundler.transform browserify-livescript     # MUST be before ractive-preparserify
 bundler.transform ractive-preparserify
-bundler.transform browserify-livescript
 bundler.transform browserify-optimize-js
+# ------------------------------------------------------------------------------
 
 first-browserify-done = no
 
@@ -228,6 +233,7 @@ function bundle
         #.pipe sourcemaps.init {+load-maps, +large-files}
 
         .pipe if-else optimize-for-production, my-uglify
+
         #.pipe rename basename: 'app'
         #.pipe sourcemaps.write '.'
         .pipe gulp.dest paths.build-folder

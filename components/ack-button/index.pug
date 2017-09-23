@@ -6,12 +6,16 @@
         {{ class }}                                                 \
         ack-button                                                  \
         {{#if state === 'doing' || state === 'done' || state === 'error' }}    \
-            labeled icon                                            \
+            {{^custom}}                                             \
+                labeled icon                                        \
+            {{/}}                                                   \
         {{/if}}                                                     \
         {{#disabled}}disabled{{/}}                                  \
+        {{#if state === 'doing'}}disabled{{/if}}                    \
         {{#active}}active{{/}}                                      \
         "
     type="{{ type }}"
+    
     disabled="{{ (disabled || selfDisabled) || !(enabled) }}"
     style="{{ style }} {{#if transparen}}background-color: transparent;{{/if}}"
     )

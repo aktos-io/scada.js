@@ -32,7 +32,7 @@ while IFS= read -r module; do
     if [[ "$module_path_name" == "$DIR" ]]; then
         modules="$modules:$module_dir"
         echo "scada.js dependencies: [REQUIRED]"
-    elif [[ "$module_path_name" == "src/lib/dcs" ]]; then
+    elif [[ "$module_path_name" == "lib/dcs" ]]; then
         modules="$modules:$module_dir"
         echo "aktos-dcs dependencies: [REQUIRED]"
     else

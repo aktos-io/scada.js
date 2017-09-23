@@ -3,7 +3,7 @@ require! 'prelude-ls': {
     camelize, find, reject, find-index
 }
 require! 'aea': {sleep, merge, clone, unix-to-readable, pack, VLogger}
-require! 'dcs/browser': {RactiveActor}
+require! 'actors': {RactiveActor}
 
 Ractive.components['data-table'] = Ractive.extend do
     template: RACTIVE_PREPARSE('data-table.pug')
@@ -238,15 +238,10 @@ Ractive.components['data-table'] = Ractive.extend do
                     # this is a new document, use exact ID or pfx + autoincrement
                     # if curr._id has numeric portion, this is an exact ID
                     # else this is a prefix
+                    curr._id = curr._id.to-upper-case!
                     if curr._id.split /[0-9]+/ .length is 1
                         # no numeric part, this is a prefix
-
-                        # remove any `- / . # ...` chars
-                        prefix = curr._id.split /[^a-zA-Z]/ .0
-                        if prefix
-                            curr._id = "#{prefix}\#\#\#\#"
-                        else
-                            return next "Not a valid prefix: #{prefix}"
+                        curr._id += '####'
 
                 if @get \_tmp.new_attachments
                     curr._attachments = (curr._attachments or {}) <<< that

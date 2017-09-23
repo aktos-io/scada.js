@@ -2,7 +2,7 @@
 	path = tools/service-runner
 	url = https://github.com/aktos-io/service-runner
 [submodule "src/lib/aktos-dcs"]
-	path = src/lib/dcs
+	path = lib/dcs
 	url = https://github.com/aktos-io/aktos-dcs-node
 [submodule "tools/create-gist"]
 	path = tools/create-gist

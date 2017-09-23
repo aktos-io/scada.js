@@ -1,4 +1,4 @@
-require! 'dcs/browser': {RactiveActor}
+require! 'actors': {RactiveActor}
 
 Ractive.components['pushbutton'] = Ractive.extend do
     template: RACTIVE_PREPARSE("index.pug")
@@ -25,7 +25,7 @@ Ractive.components['pushbutton'] = Ractive.extend do
             else
                 @actor.send 'app.log.error', do
                     title: 'Pushbutton Error'
-                    message: err 
+                    message: err
                 @actor.log.err err
 
         @observe \pressed, (_new) ~>
