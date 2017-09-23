@@ -28,19 +28,22 @@ Ractive.components['print-button'] = Ractive.extend do
 
                 res <~ @fire \print, c
 
-                if res.html
-                    doc = that
-                else
-                    if res.body
-                        body = that
+                try
+                    if res.html
+                        doc = that
                     else
-                        r = new Ractive do
-                            template: res.template
-                            data: res.data
+                        if res.body
+                            body = that
+                        else
+                            r = new Ractive do
+                                template: res.template
+                                data: res.data
 
-                        body = r.toHTML!
+                            body = r.toHTML!
 
-                res.title = that if @get \title
+                    res.title = that if @get \title
+                catch
+                    debugger 
 
                 doc = """
                     <html  moznomarginboxes mozdisallowselectionprint>

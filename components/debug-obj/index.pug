@@ -3,7 +3,7 @@
         .field
             label {{#if title}}{{title}}{{else}}Debugging Object{{/if}}
 
-            textarea(style="white-space: pre-wrap") {{ JSON.stringify(obj, null, 2) }}
+            textarea(style="white-space: pre-wrap" twoway="false") {{ JSON.stringify(obj, null, 2) }}
 
 
 .ui.button.small.basic.blue(on-click="@.toggle('show')") #[code {{title}}]
