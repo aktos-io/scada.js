@@ -2,7 +2,7 @@
 
 # Description
 
-ScadaJS is a library to easily create Single Page Applications, targeted to industrial SCADA and MRP/ERP systems. Main objective of this library is to provide an integrated Distributed Control System layer which will make it possible to communicate with any type of hardware in realtime in any location (distributed), within the browser.
+ScadaJS is a library to easily create Single Page Web Applications, targeted to industrial distributed SCADA and MRP/ERP systems.
 
 # Key features
 
@@ -15,7 +15,8 @@ ScadaJS is a library to easily create Single Page Applications, targeted to indu
 * Provides build system via [Gulp](http://gulpjs.com).
   * Supports a mechanism for integrating 3rd party libraries easily.
 * Supports cross platform development (see: [supported development platforms](./doc/supported-development-platforms.md))
-* Integrated with [aktos-dcs](https://github.com/aktos-io/aktos-dcs), a message passing library for distributed control systems, which makes ScadaJS support [microservices](https://en.wikipedia.org/wiki/Microservices) architecture out of the box.
+* Integrated with [aktos-dcs-node](https://github.com/aktos-io/aktos-dcs-node), the NodeJS port of aktos-dcs. 
+   * [Microservices](https://en.wikipedia.org/wiki/Microservices) architecture is supported out of the box.
    * Supports variety of network and industrial protocol connectors, including
      * Simple JSON over TCP
      * Long Polling
@@ -26,7 +27,7 @@ ScadaJS is a library to easily create Single Page Applications, targeted to indu
 
    * Compatible with aktos.io hardwares, such as [Scada Gateway](https://aktos.io/scada/pdf).
    * Supports any number and type (SQL, NoSQL) of databases in a single application at the same time.
-     * Provides realtime layer tools for CouchDB which helps [overcoming CouchDB limitations](https://github.com/aktos-io/aktos-dcs-node/tree/master/src/couch-dcs)
+     * Provides realtime layer tools for CouchDB which helps [overcoming CouchDB limitations](https://github.com/aktos-io/aktos-dcs-node/tree/master/connectors/couch-dcs)
 
 # DEMO
 
@@ -160,9 +161,9 @@ You can see `your-webapp` by opening http://localhost:4001 with any modern brows
 You can add any number of microservices (in any programming language that supports aktos-dcs) and make them communicate with eachother over the DCS network:
 
 ```ls
-require! dcs
+require! dcs: {Actor, sleep, TCPProxyClient}
 
-class Example extends dcs.Actor
+class Example extends Actor
     ->
         super "My Example Microservice"
         @subscribe '**'
@@ -182,7 +183,7 @@ class Example extends dcs.Actor
             lo(op)
 
 new Example!
-new dcs.TCPProxyClient port: 4002 .login!
+new TCPProxyClient port: 4002 .login! 
 ```
 
 # Projects and Companies Using ScadaJS
