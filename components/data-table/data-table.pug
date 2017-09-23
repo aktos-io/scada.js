@@ -61,6 +61,10 @@ include ./controls.pug
                         class!="                            \
                             {{#if isDisabled(.id)}}         \
                                 disabled                    \
+                            {{else}}                        \
+                                {{#if ! isEditingRow(.id) && ! isViewingRow(.id)}} \
+                                    data-table-clickable-row    \
+                                {{/if}}                     \
                             {{/if}}                         \
                             "
                         )    

@@ -1,8 +1,13 @@
-.data-table-opened-row{
+.data-table-opened-row {
     color: black !important;
     -webkit-box-shadow: 0px 3px 13px 0px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 3px 13px 0px rgba(0,0,0,0.75);
     box-shadow: 0px 3px 13px 0px rgba(0,0,0,0.75);
     border-radius: 3px;
     margin: -15px;
+    
+}
+
+.data-table-clickable-row {
+    cursor: pointer;
 }
