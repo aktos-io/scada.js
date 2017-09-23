@@ -196,7 +196,9 @@ Ractive.components['data-table'] = Ractive.extend do
 
             add-new-document: (ev) ->
                 if (@get \openedRow) and (@get('mode') isnt 'add-new')
-                    return @logger.cwarn "a row is opened, not adding new."
+                    return @logger.info do
+                        closable: yes 
+                        message: "a row is opened, not adding new."
 
                 ev.component?.fire \state, \doing
                 template = @get-default-document!
