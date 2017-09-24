@@ -37,13 +37,13 @@ Demo application [source is here](https://github.com/aktos-io/scadajs-showcase) 
 
 You may get up and running with ScadaJS in 2 different ways:
 
-### [OPTION: 1] Modify the template
+### *EITHER:* Download and Modify The Template
 
-Download [scadajs-template](https://github.com/aktos-io/scadajs-template) and edit according to your needs.
+Download [scadajs-template](https://github.com/aktos-io/scadajs-template), follow the instructions to setup and edit the examples according to your needs.
 
-### [OPTION: 2] Install from scratch
+### *OR:* Add To Your [Existing] Project From Scratch
 
-Follow the steps below to add ScadaJS into your existing project:
+Follow the steps below to add ScadaJS into your [existing] project:
 
 #### 1. Install Global Dependencies
 
@@ -83,13 +83,15 @@ When you first create or clone a project that depends on ScadaJS, you need to in
 3. Create an `app.js` (or `app.ls`) here with the following contents:
 
 ```js
+require('components');
+
 new Ractive({
-    el: 'body',
-    template: RACTIVE_PREPARSE('app.pug'),
-    data: {
-        name: "world",
-        x: 35
-    }
+  el: 'body',
+  template: RACTIVE_PREPARSE('app.pug'),
+  data: {
+    name: "world",
+    x: 35
+  }
 });
 ```
 
@@ -113,15 +115,15 @@ new Ractive({
 
 ```html
 <html>
-    <head>
-        <meta charset="utf-8">
-        <script src="js/vendor.js"></script>
-        <link rel="stylesheet" href="css/vendor.css">
-    </head>
-    <body>
-        <h1>Loading...</h1>
-        <script src="app.js"></script>
-    </body>
+  <head>
+    <meta charset="utf-8">
+    <script src="js/vendor.js"></script>
+    <link rel="stylesheet" href="css/vendor.css">
+  </head>
+  <body>
+    <h1>Loading...</h1>
+    <script src="app.js"></script>
+  </body>
 </html>
 ```
 
@@ -164,23 +166,23 @@ You can add any number of microservices (in any programming language that suppor
 require! dcs: {Actor, sleep, TCPProxyClient}
 
 class Example extends Actor
-    ->
-        super "My Example Microservice"
-        @subscribe '**'
-        @log.log "subscribed: #{@subscriptions}"
+  ->
+    super "My Example Microservice"
+    @subscribe '**'
+    @log.log "subscribed: #{@subscriptions}"
 
-        @on \data, (msg) ~>
-            @log.log "received a message: ", msg
-            # do something with the message
+    @on \data, (msg) ~>
+      @log.log "received a message: ", msg
+      # do something with the message
             
-    action: ->
-        @log.log "#{@name} started..."
-        i = 0
-        <~ :lo(op) ~> 
-            # do something useful here  
-            @send "public.hello", {val: i++}
-            <~ sleep 2000ms
-            lo(op)
+  action: ->
+    @log.log "#{@name} started..."
+    i = 0
+    <~ :lo(op) ~> 
+      # do something useful here  
+      @send "public.hello", {val: i++}
+      <~ sleep 2000ms
+      lo(op)
 
 new Example!
 new TCPProxyClient port: 4002 .login! 
