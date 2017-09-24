@@ -1,7 +1,8 @@
 +if('settings.pageSize > 0')
     +if('(tableview_filtered.length / settings.pageSize) > 1')
-        .ui.pagination.menu
-            +each('range(1, Math.ceil(tableview_filtered.length / settings.pageSize)):i')
-                a(
-                    on-click="@.fire('selectPage', i)" 
-                    class!="item {{#if currPage === i}}active{{/if}}") {{ . }}
+        scroll-x
+            .ui.pagination.menu
+                +each('range(1, Math.ceil(tableview_filtered.length / settings.pageSize)):i')
+                    a(
+                        on-click="@.fire('selectPage', i)" 
+                        class!="item {{#if currPage === i}}active{{/if}}") {{ . }}
