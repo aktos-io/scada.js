@@ -17,7 +17,7 @@ Ractive.components['checkbox'] = Ractive.extend do
 
         set-state = (state) ~>
             if typeof! state in <[ Undefined Null ]>
-                @set \checkState, \doing
+                @set \checkState, 'undefined'
             else
                 @set \checked, state
                 @set \checkState, if state
@@ -75,5 +75,5 @@ Ractive.components['checkbox'] = Ractive.extend do
 
     data: ->
         checked: undefined
-        checkState: \doing
+        checkState: 'undefined'
         transparent: no
