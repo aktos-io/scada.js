@@ -160,7 +160,7 @@ You can see `your-webapp` by opening http://localhost:4001 with any modern brows
 
 #### 8. Start adding your microservices
 
-You can add any number of microservices (in any programming language that supports aktos-dcs) and make them communicate with eachother over the DCS network:
+You can add any number of microservices (in any programming language that has an implementation of [aktos-dcs](https://github.com/aktos-io/aktos-dcs)) and make them communicate with eachother over the DCS network:
 
 ```ls
 require! dcs: {Actor, sleep, TCPProxyClient}
