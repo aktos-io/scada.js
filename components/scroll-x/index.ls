@@ -3,16 +3,14 @@ require! 'aea': {sleep}
 
 Ractive.components['scroll-x'] = Ractive.extend do
     template: '''
-        <div class="scroll-x-container">
-            {{yield}}
+        <div class="scroll-x-outer">
+            <div class="scroll-x-container">
+                {{yield}}
+            </div>
         </div>
     '''
     isolated: no
     onrender: ->
+        outer = $ @find \.scroll-x-outer
         container = $ @find \.scroll-x-container
-
-        do set-parent-width = ->
-            container .css \width, \1px  # This is important in order to calculate parent width
-            container.css \width, container.parent!.width!
-
-        $ window .resize -> set-parent-width!
+        outer.css \height, container.height!

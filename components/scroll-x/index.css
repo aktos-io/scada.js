@@ -1,4 +1,16 @@
+.scroll-x-outer {
+    position: relative;
+    left: 0;
+    right: 0;
+}
+
 .scroll-x-container {
     overflow-x: auto;
     white-space: nowrap;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    min-height: 10px;
+    min-width: 100px;
 }
