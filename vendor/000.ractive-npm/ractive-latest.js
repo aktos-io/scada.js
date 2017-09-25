@@ -17142,6 +17142,14 @@ Ractive.events.longpress = function(node, fire){
     }
   };
 };
+Ractive.Context.findKeypathId = function(postfix){
+  "Use to find a unique DOM element near the context\n\nUsage:\n\n    1.  define a DOM element with a unique id:\n\n        <div id=\"{{@keypath}}-mypostfix\" > ... </div>\n\n    2. Find this DOM element within the handler, using ctx:\n\n        myhandler: (ctx) ->\n            the-div = ctx.find-keypath-id '-mypostfix'\n";
+  postfix == null && (postfix = '');
+  return this.ractive.find('#' + Ractive.escapeKey(this.resolve()) + postfix);
+};
+Ractive.Context.removeMe = function(){
+  return this.splice('..', this.get('@index'), 1);
+};
 window.Ractive = Ractive;
 
 
