@@ -134,7 +134,7 @@ Ractive.components['router'] = Ractive.extend do
                     change.scene = curr.scene
                 if curr.anchor isnt prev.anchor
                     change.anchor = curr.anchor
-                actor.send 'my.router.changes', change
+                actor.send 'app.router.changes', change
                 prev <<< curr
 
         $ window .on \hashchange, ->
