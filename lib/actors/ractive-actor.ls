@@ -22,7 +22,7 @@ export class RactiveActor extends Actor
 
         orig-location = @ractive.target
 
-        @on-topic @default-topic, (msg) ~> 
+        @on-topic @default-topic, (msg) ~>
             if typeof! msg.payload is \Object
                 if \get of msg.payload
                     keypath = msg.payload.get
@@ -66,7 +66,9 @@ export class RactiveActor extends Actor
         @log.warn ...arguments
 
     v-log: (doc, callback)->
+        callback = (->) unless typeof! callback is \Function
         @send-request 'app.log.log', doc, callback
 
     v-err: (doc, callback)->
+        callback = (->) unless typeof! callback is \Function
         @send-request 'app.log.err', doc, callback
