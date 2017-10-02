@@ -50,6 +50,11 @@ Ractive.components['login-button'] = Ractive.extend do
                 loggedin: no
             @actor.send 'app.login', {loggedin: no}
 
+        @actor.on-topic 'app.login.update', ~>
+            state = @get \context.loggedin
+            @actor.send 'app.login', {loggedin: state, +update}
+
+
         @on do
             click: ->
                 @find-component 'ack-button' .fire \buttonclick
