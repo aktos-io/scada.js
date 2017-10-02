@@ -53,7 +53,7 @@ Ractive.components['checkbox'] = Ractive.extend do
 
                     const c = ctx.getParent yes
                     c.refire = yes
-                    c.actor = @actor
+                    c.actor = ack-button.actor
                     c.logger = ->
                         console.warn "This is deprecated, use actor.send 'app.log.err' instead"
 
