@@ -69,19 +69,23 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
 
             compileDesignDocument: (ev)->
                 console.log "Compiling auth document..."
-                ev.component.fire \state, \doing
+                ev.component?.fire \state, \doing
                 try
                     js = lsc.compile (@get \designDocument.livescript), {+bare, -header}
                     console.log "Compiled output: ", js
-                    ev.component.fire \state, \done...
+                    ev.component?.fire \state, \done...
                 catch err
                     js = err.to-string!
-                    ev.component.error "See Output Textarea"
+                    ev.component?.error "See Output Textarea"
+                    @set \autoCompile, off
                 @set \designDocument.javascript, js
 
             putDesignDocument: (ev, e) ->
                 self = @
+
                 ev.component.fire \state, \doing
+                if @get \autoCompile
+                    @fire \compileDesignDocument
 
                 ddoc = self.get \designDocument
                 new-id = self.get \documentId
@@ -127,3 +131,4 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
         allDesignDocs: ''
         designDocuments: []
         documentId: ''
+        autoCompile: yes

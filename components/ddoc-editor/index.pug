@@ -1,23 +1,28 @@
-.ui.segments 
-    .ui.segment 
-        ack-button.green(on-buttonclick="listDesignDocuments") Get List
-        .ui.buttons 
-            +each('designDocuments')
-                ack-button(on-buttonclick="getDesignDocument" value="{{ . }}")
-                    code {{ . }}
+.ui.segment 
+    ack-button.green(on-buttonclick="listDesignDocuments") Get List
+    .ui.buttons 
+        +each('designDocuments')
+            ack-button(on-buttonclick="getDesignDocument" value="{{ . }}")
+                code {{ . }}
 
-        ace-editor(code="{{ designDocument.livescript }}" mode="livescript" theme="xcode")
-        .ui.form 
-            .field 
+    .ui.form 
+        .field
+            ace-editor(code="{{ designDocument.livescript }}" mode="livescript" theme="xcode")
+        .field 
+            checkbox(checked="{{autoCompile}}") Autocompile
+            +unless('autoCompile')
                 ack-button.teal(on-buttonclick="compileDesignDocument") Compile
+        +unless('autoCompile')
             .field 
                 ace-editor(code="{{ designDocument.javascript }}" mode="javascript" theme="xcode")
-            .field
-                .ui.action.input 
-                    input(value="{{ documentId }}" placeholder="_design/myDesignDocument")
-                    ack-button.red(on-buttonclick="putDesignDocument") Put Auth Document!
+        .field
+            .ui.action.input 
+                input(value="{{ documentId }}" placeholder="_design/myDesignDocument")
+                ack-button.red(on-buttonclick="putDesignDocument") Put Auth Document!
 
-
+        .field
+            checkbox(checked="{{dumpAllSection}}") Dump All
++if('dumpAllSection')
     h3.ui.attached.header Dump All Design Documents
     .ui.segment 
         .ui.form 
