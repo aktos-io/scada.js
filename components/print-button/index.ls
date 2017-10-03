@@ -70,7 +70,7 @@ Ractive.components['print-button'] = Ractive.extend do
                     .fit-image {
                       flex: 1;
                       /*border: 1px solid yellow;*/
-                      background-size: contain;
+                      background-size: contain !important;
                       background-repeat: no-repeat;
                       background-size: auto 100%;
                       background-position: center center;
