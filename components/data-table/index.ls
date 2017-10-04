@@ -24,18 +24,26 @@ Ractive.components['data-table'] = Ractive.extend do
         try
             unless typeof! settings is \Object
                 throw "No settings found!"
+
             unless settings.name
                 throw 'data-table name is required'
+
             unless typeof! settings.col-names is \Array
                 throw 'Column names are missing'
+
             unless settings.default
                 throw 'Default document is required'
+
             unless settings.after-filter
                 throw "after-filter is required"
             else
                 settings.after-filter = settings.after-filter.bind this
+
             if typeof! settings.on-save is \Function
                 settings.on-save = settings.on-save.bind this
+
+            if typeof! settings.data is \Function
+                settings.data = settings.data.bind this
 
             unless settings.on-init
                 throw "on-init is required"
@@ -197,7 +205,7 @@ Ractive.components['data-table'] = Ractive.extend do
             add-new-document: (ev) ->
                 if (@get \openedRow) and (@get('mode') isnt 'add-new')
                     return @logger.info do
-                        closable: yes 
+                        closable: yes
                         message: "a row is opened, not adding new."
 
                 ev.component?.fire \state, \doing
@@ -264,6 +272,9 @@ Ractive.components['data-table'] = Ractive.extend do
 
         # register events
         @on events <<< settings.handlers
+
+        for data, value of settings.data
+            @set data, value
 
         # run init function
         <~ settings.on-init
