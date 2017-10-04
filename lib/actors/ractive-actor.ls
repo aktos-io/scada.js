@@ -4,10 +4,9 @@ require! 'dcs/browser': {Signal, Actor}
 export class RactiveActor extends Actor
     (@ractive, opts={}) ->
         name = opts if typeof! opts is \String
-        super "#{name}", opts
-
         @default-topic = "app.wid.#{that}" if @ractive.get \wid
         @name = @default-topic or opts.name or name
+        super "#{@name}", opts
 
         # subscriptions
         @subscribe that if opts.subscribe

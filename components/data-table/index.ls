@@ -13,8 +13,8 @@ Ractive.components['data-table'] = Ractive.extend do
         title-provided = if @partials.addnewTitle then yes else no
         @set \readonly, readonly
 
-        @logger = new VLogger this
         settings = @get \settings
+        @logger = new VLogger this, (settings.name or \my)
 
         @actor = new RactiveActor this, do
             name: 'data-table'
@@ -122,7 +122,7 @@ Ractive.components['data-table'] = Ractive.extend do
 
 
         @observe \tableview, ~>
-            @logger.clog "tableview changed, refreshing..."
+            @logger.clog "DEBUG MODE: tableview changed, refreshing..." if @get \debug
             @refresh!
 
         events =
