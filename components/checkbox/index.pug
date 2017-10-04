@@ -3,6 +3,9 @@ ack-button.aea-checkbox(
     class!="                        \
         {{^transparent}}basic{{/}}  \
         gray {{ class }}            \
+        {{#if checkState === 'doing'}}  \
+        labeled                         \
+        {{/if}}                         \
         icon                        \
         "
     style="{{ style }} {{#transparent}}background-color: transparent;{{/}} text-align: left; "
@@ -10,11 +13,14 @@ ack-button.aea-checkbox(
     custom
     )
     +iff("checkState === 'checked'")
-        icon.checkmark.box
+        i.icon.checkmark.box
     +elif("checkState === 'unchecked'")
-        icon.square.outline
+        i.icon.square.outline
+    +elif("checkState === 'undefined'")
+        i.icon.minus.square.outline
     +elif("checkState === 'doing'")
-        i.icon #[.ui.active.mini.inverted.loader]
+        i.icon 
+            .ui.active.mini.inverted.loader
     +endif
     | {{yield}}
         

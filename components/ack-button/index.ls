@@ -27,6 +27,9 @@ Ractive.components['ack-button'] = Ractive.extend do
             unless mode is \doing
                 @doing-watchdog.go!
 
+        if @actor.default-topic
+            @actor.c-log "here is default topic: ", @actor.default-topic
+
         @on do
             _click: (ctx) ->
                 if @get(\state) is \doing
@@ -42,6 +45,10 @@ Ractive.components['ack-button'] = Ractive.extend do
                 val = @get \value
                 @doing-watchdog.reset!
                 @set \tooltip, ""
+
+                @actor.c-log "firing on-buttonclick, default topic:", @actor.default-topic
+                @actor.send-wid {ctx: c}
+
                 @fire \buttonclick, c, val
 
             state: (_event, s, msg, callback) ->

@@ -1,7 +1,6 @@
 require! 'aea':{sleep}
 require! 'actors': {RactiveActor}
 
-
 Ractive.components['print-button'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
@@ -43,46 +42,69 @@ Ractive.components['print-button'] = Ractive.extend do
 
                     res.title = that if @get \title
                 catch
-                    debugger 
+                    debugger
+
+                print-css = '''
+                    /* in order to disable page header and footer */
+                    @page {
+                        margin: 0;
+                    }
+
+                    /* Re-create A4 sized div */
+                    #page-container {
+                        border: 1px dashed red; /* for debugging purposes */
+                        padding: 1cm;
+                        width: 210mm;
+                        height: 297mm;
+                    }
+
+                    /* to be able to use absolute css */
+                    #page-inner {
+                        position: relative;
+                        height: 100%;
+                        /*border: 1px dotted green;*/
+                        display:flex;
+                        flex-flow: column nowrap;
+                    }
+
+                    .fit-image {
+                      flex: 1;
+                      /*border: 1px solid yellow;*/
+                      background-size: contain !important;
+                      background-repeat: no-repeat;
+                      background-size: auto 100%;
+                      background-position: center center;
+                    }
+
+
+
+                    /* Defining all page breaks */
+                    a {
+                        page-break-inside:avoid
+                    }
+                    blockquote {
+                        page-break-inside: avoid;
+                    }
+                    h1, h2, h3, h4, h5, h6 { page-break-after:avoid;
+                         page-break-inside:avoid }
+                    img { page-break-inside:avoid;
+                         page-break-after:avoid; }
+                    table, pre { page-break-inside:avoid }
+                    ul, ol, dl  { page-break-before:avoid }
+
+                '''
 
                 doc = """
                     <html  moznomarginboxes mozdisallowselectionprint>
                         <head>
-                            <script src="js/vendor.js"></script>
                             <link rel="stylesheet" href="css/vendor.css">
+                            <script src="js/vendor.js"></script>
                             <title>#{res.title or res.data.title}</title>
                             <style>
-                                /* in order to disable page header and footer */
-                                @page {
-                                    margin: 0;
+                                @media all{
+                                    #{print-css}
+                                    #{res.style} /* additional styles */
                                 }
-                                /* Re-create A4 sized div */
-                                \#page-container {
-                                    padding: 15mm;
-                                    width: 210mm;
-                                    height: 297mm;
-                                    border: 1px dashed red; /* for debugging purposes */
-                                }
-                                /* prevent last empty page */
-                                @media print {
-                                    html, body {
-                                        border: 1px solid white;
-                                        page-break-after: avoid;
-                                        page-break-before: avoid;
-                                    }
-                                }
-
-                                /* in order to be able to use absolute css in
-                                our print pages' templates */
-                                \#page-inner {
-                                    position: relative;
-                                }
-
-
-                                .no-print {
-                                    display: none;
-                                }
-                                #{res.style} /* additional styles */
                             </style>
                         </head>
                         <body>
@@ -95,9 +117,6 @@ Ractive.components['print-button'] = Ractive.extend do
                         </body>
                     </html>
                     """
-                @actor.send 'app.log.info', do
-                    title: "Print window"
-                    message: "Close the print window before continue"
 
                 printWindow.document.writeln doc
                 printWindow.document.close!

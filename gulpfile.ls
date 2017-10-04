@@ -189,7 +189,7 @@ gulp.task \html, ->
 
 
 my-uglify = (x) ->
-    uglify x
+    uglify {-mangle}, x
     .on \error, gutil.log
 
 browserify-cache = {}

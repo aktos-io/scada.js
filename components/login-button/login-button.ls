@@ -40,7 +40,7 @@ Ractive.components['login-button'] = Ractive.extend do
     isolated: yes
     template: RACTIVE_PREPARSE('login-button.pug')
     onrender: ->
-        @actor = new RactiveActor this
+        @actor = new RactiveActor this, name: 'login-button'
         <~ sleep 10ms
         connector = null
 
@@ -48,6 +48,12 @@ Ractive.components['login-button'] = Ractive.extend do
             @set \token, null
             @set \context, do
                 loggedin: no
+            @actor.send 'app.login', {loggedin: no}
+
+        @actor.on-topic 'app.login.update', ~>
+            state = @get \context.loggedin
+            @actor.send 'app.login', {loggedin: state, +update}
+
 
         @on do
             click: ->
@@ -99,6 +105,7 @@ Ractive.components['login-button'] = Ractive.extend do
                     else if res.auth.session.logout is \yes
                         log.log "Will log out..."
                         set-logout-variables!
+
                     else
                         <~ ev.component?.error "unexpected response on login: #{pack res}"
 
@@ -128,6 +135,11 @@ Ractive.components['login-button'] = Ractive.extend do
 
         @observe \transport-id, (transport-id) ->
             connector := @actor.mgr.find-actor transport-id
+                ..on \logged-in, ~>
+                    <~ sleep 200ms
+                    @actor.c-log "triggering app.login"
+                    @actor.send 'app.login', {loggedin: yes}
+
             if @get \auto
                 log.log "Performing automatic login."
                 @fire \doLogin

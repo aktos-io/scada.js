@@ -2,8 +2,8 @@
 (function (global){
 /*
 	Ractive.js v1.0.0-edge
-	Build: 7d28142126f02e59cd3ac57690caaf18f4c79713
-	Date: Fri Sep 08 2017 22:01:24 GMT+0000 (UTC)
+	Build: 4266a32a69f78e61407c3db5d8ea910893007c25
+	Date: Thu Sep 21 2017 18:59:51 GMT+0000 (UTC)
 	Website: http://ractivejs.org
 	License: MIT
 */
@@ -3034,6 +3034,7 @@ function attachChild ( child, options ) {
 	if ( options === void 0 ) options = {};
 
 	var children = this._children;
+	var idx;
 
 	if ( child.parent && child.parent !== this ) { throw new Error( ("Instance " + (child._guid) + " is already attached to a different instance " + (child.parent._guid) + ". Please detach it from the other instance using detachChild first.") ); }
 	else if ( child.parent ) { throw new Error( ("Instance " + (child._guid) + " is already attached to this instance.") ); }
@@ -3058,8 +3059,7 @@ function attachChild ( child, options ) {
 			list = [];
 			this.set( ("@this.children.byName." + (meta.target)), list );
 		}
-		var idx = options.prepend ? 0 : options.insertAt !== undefined ? options.insertAt : list.length;
-		list.splice( idx, 0, meta );
+		idx = options.prepend ? 0 : options.insertAt !== undefined ? options.insertAt : list.length;
 	}
 
 	child.set({
@@ -3075,7 +3075,7 @@ function attachChild ( child, options ) {
 
 	if ( meta.target ) {
 		unrenderChild( meta );
-		this.set( ("@this.children.byName." + (meta.target)), null, { shuffle: true } );
+		this.splice( ("@this.children.byName." + (meta.target)), idx, 0, meta );
 		updateAnchors( this, meta.target );
 	} else {
 		if ( !child.isolated ) { child.viewmodel.attached( this.fragment ); }
@@ -9394,6 +9394,8 @@ var ReferenceExpressionProxy = (function (Model) {
 			return model;
 		});
 
+		this.base.register( intermediary );
+
 		this.bubble();
 	}
 
@@ -10777,7 +10779,7 @@ function subscribe ( instance, options, type ) {
 		if ( typeof config === 'function' ) {
 			instance[type]( target, config );
 		} else if ( typeof config === 'object' && typeof config.handler === 'function' ) {
-			instance[ config.once ? single : type ]( target, config.handler, config );
+			instance[ config.once ? single : type ]( target, config.handler, Object.create( config ) );
 		}
 	});
 }
@@ -13954,18 +13956,9 @@ var Partial = (function (MustacheContainer) {
 	function Partial ( options ) {
 		MustacheContainer.call( this, options );
 
+		this.options = options;
+
 		this.yielder = options.template.t === YIELDER;
-
-		if ( this.yielder ) {
-			this.container = options.parentFragment.ractive;
-			this.component = this.container.component;
-
-			this.containerFragment = options.parentFragment;
-			this.parentFragment = this.component.parentFragment;
-
-			// {{yield}} is equivalent to {{yield content}}
-			if ( !options.template.r && !options.template.rx && !options.template.x ) { options.template.r = 'content'; }
-		}
 	}
 
 	if ( MustacheContainer ) Partial.__proto__ = MustacheContainer;
@@ -13974,6 +13967,32 @@ var Partial = (function (MustacheContainer) {
 
 	Partial__proto__.bind = function bind () {
 		var this$1 = this;
+
+		var options = this.options;
+
+		if ( this.yielder ) {
+			this.container = options.parentFragment.ractive;
+			this.component = this.container.component;
+
+			if ( this.component ) {
+				this.containerFragment = options.parentFragment;
+				this.parentFragment = this.component.parentFragment;
+
+				// {{yield}} is equivalent to {{yield content}}
+				if ( !options.template.r && !options.template.rx && !options.template.x ) { options.template.r = 'content'; }
+			} else { // this is a plain-ish instance that may be anchored at a later date
+				this.fragment = new Fragment({
+					template: [],
+					owner: this,
+					parentFragment: options.parentFragment,
+					ractive: options.parentFragment.ractive
+				});
+				this.containerFragment = options.parentFragment;
+				this.parentFragment = options.parentFragment;
+				this.fragment.bind();
+				return;
+			}
+		}
 
 		// keep track of the reference name for future resets
 		this.refName = this.template.r;
@@ -14004,7 +14023,7 @@ var Partial = (function (MustacheContainer) {
 			}
 		}
 
-		var options = {
+		options = {
 			owner: this,
 			template: this.partialTemplate
 		};
@@ -17064,7 +17083,10 @@ Object.defineProperties( Ractive, {
 	sharedData:       { value: data },
 
 	// for getting the source Ractive lib from a constructor
-	Ractive:          { value: Ractive }
+	Ractive:          { value: Ractive },
+
+	// to allow extending contexts
+	Context:          { value: extern.Context.prototype }
 });
 
 Object.defineProperty( Ractive, '_cssModel', { configurable: true, value: new CSSModel( Ractive ) } );
@@ -17119,6 +17141,14 @@ Ractive.events.longpress = function(node, fire){
       return node.removeEventListener('mouseup', mouseUpHandler);
     }
   };
+};
+Ractive.Context.findKeypathId = function(postfix){
+  "Use to find a unique DOM element near the context\n\nUsage:\n\n    1.  define a DOM element with a unique id:\n\n        <div id=\"{{@keypath}}-mypostfix\" > ... </div>\n\n    2. Find this DOM element within the handler, using ctx:\n\n        myhandler: (ctx) ->\n            the-div = ctx.find-keypath-id '-mypostfix'\n";
+  postfix == null && (postfix = '');
+  return this.ractive.find('#' + Ractive.escapeKey(this.resolve()) + postfix);
+};
+Ractive.Context.removeMe = function(){
+  return this.splice('..', this.get('@index'), 1);
 };
 window.Ractive = Ractive;
 

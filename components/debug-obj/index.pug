@@ -1,9 +1,16 @@
-+if('show')
-    .ui.form.red
++iff('show')
+    .ui.form.red(fade-in="true")
         .field
-            label {{#if title}}{{title}}{{else}}Debugging Object{{/if}}
+            label 
+                .ui.mini.button.blue.circular.icon(on-click="@.toggle('show')" title="{{title}}") 
+                    i.info.icon 
+                |
+                | {{#if title}}{{title}}{{else}}Debugging Object{{/if}}
 
             textarea(style="white-space: pre-wrap" twoway="false") {{ JSON.stringify(obj, null, 2) }}
 
 
-.ui.button.small.basic.blue(on-click="@.toggle('show')") #[code {{title}}]
++else 
+    .ui.mini.button.basic.circular.icon(on-click="@.toggle('show')" title="{{title}}") 
+        i.info.icon 
++endif

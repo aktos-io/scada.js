@@ -6,5 +6,5 @@ NAME=$(basename $DIR)
 
 echo "updating $NAME from this node modules"
 
-#cp -av $NODE_MODULES/rickshaw/*.min.css $DIR
-cp -av $NODE_MODULES/rickshaw/rickshaw.css $DIR
+cp -av $NODE_MODULES/cropperjs/dist/cropper.min.js $DIR
+cp -av $NODE_MODULES/cropperjs/dist/cropper.min.css $DIR

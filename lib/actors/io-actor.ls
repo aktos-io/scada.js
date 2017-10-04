@@ -46,7 +46,7 @@ export class IoActor extends RactiveActor
             if first-time
                 first-time := no
                 return
-            fps.exec @send, _new, topic
+            fps.exec @send, topic, _new
 
 
         @on \data, (msg) ~>
