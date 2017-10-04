@@ -13,4 +13,18 @@ Ractive.components['scroll-x'] = Ractive.extend do
     onrender: ->
         outer = $ @find \.scroll-x-outer
         container = $ @find \.scroll-x-container
-        outer.css \height, container.height!
+        height = container.height!
+
+        if height is 0
+            copied = container.clone!
+                .attr \id, false
+                .css do
+                    visibility:"hidden"
+                    display:"block",
+                    position:"absolute"
+
+            $ \body .append copied
+            height = copied.height!
+            copied.remove!
+
+        outer.css \height, height
