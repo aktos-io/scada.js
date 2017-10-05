@@ -55,6 +55,11 @@ export class RactiveActor extends Actor
             if @default-topic
                 @send that, msg
 
+    wid-fire: (target-wid, ...args) ->
+        # TODO: this method will find target widget, will call the "fire" method
+        # on target with the supplied arguments
+        debugger 
+
     c-log: ->
         @log.log ...arguments
 
