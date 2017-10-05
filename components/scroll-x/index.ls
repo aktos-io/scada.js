@@ -16,6 +16,8 @@ Ractive.components['scroll-x'] = Ractive.extend do
         height = container.height!
 
         if height is 0
+            # component is inside a "display: none" div
+            # calculate its actual height
             copied = container.clone!
                 .attr \id, false
                 .css do
