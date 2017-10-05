@@ -43,12 +43,10 @@ Ractive.components['checkbox'] = Ractive.extend do
                     ctx.component.fire \state, \doing
                     ctx.component.heartbeat 9999999999ms
 
-                    ctx.component.observe-once \state, (_new) ~>
-                        logger.clog "state changed: ", _new
-                        set-state _new
-
                     @set \checkState, \doing
                     checked = @get \checked
+
+                    #logger.clog "sending handler the next check state: from", checked, "to", (not checked)
                     checked = not checked
 
                     const c = ctx.getParent yes
@@ -67,7 +65,7 @@ Ractive.components['checkbox'] = Ractive.extend do
                     if err
                         logger.error err, callback
                     else
-                        logger.clog "no error returned, toggling checkbox"
+                        #logger.clog "no error returned, setting checkbox to ", checked
                         set-state checked
                 else
                     debugger if @debug
