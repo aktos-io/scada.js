@@ -260,7 +260,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 if err
                     @logger.clog "err is: ", err
                 else
-                    @logger.clog "res is: ", res
+                    #@logger.clog "res is: ", res
                     curr <<< {_id: res.id, _rev: res.rev}
                     # use preview url's as downloaded url's
                     tmp-att = (@get "_tmp._attachments") or {}
