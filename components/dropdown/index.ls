@@ -21,7 +21,7 @@ Ractive.components['dropdown'] = Ractive.extend do
     isolated: yes
     oninit: ->
         @actor = new RactiveActor this, do
-            name: \dropdown
+            name: "dropdown.#{@_guid}"
             debug: yes
 
         if @get \key
@@ -33,7 +33,7 @@ Ractive.components['dropdown'] = Ractive.extend do
         if @get \disabled-mode
             @set \class, "#{@get 'class'} disabled"
 
-        @link \selected, \selected-key
+        @link \selected-key, \selected
 
     onrender: ->
         dd = $ @find '.ui.dropdown'
@@ -45,7 +45,6 @@ Ractive.components['dropdown'] = Ractive.extend do
         keyField = @get \keyField
         nameField = @get \nameField
 
-
         set-item = (value-of-key) ~>
             if @get \data
                 data = that
@@ -55,11 +54,13 @@ Ractive.components['dropdown'] = Ractive.extend do
                     selected-names = []
                     if value-of-key
                         _values = that.split ','
+
                         for val in _values
                             if find (.[keyField] is val), data
                                 items.push that
                                 selected-keys.push that[keyField]
                                 selected-names.push that[nameField]
+                                @actor.c-log "Found #{val} in .[#{keyField}]", that[keyField]
                             else
                                 # how can't we find the item?
                                 debugger
@@ -76,6 +77,8 @@ Ractive.components['dropdown'] = Ractive.extend do
                             @set \item, that
                             @set \selected-key, that[keyField]
                             @set \selected-name, that[nameField]
+                            @actor.c-log "Found #{value-of-key} in .[#{keyField}]", that, that[keyField]
+
                         else
                             # why didn't we find it?
                             debugger
@@ -93,7 +96,8 @@ Ractive.components['dropdown'] = Ractive.extend do
 
         @observe \data, (data) ~>
             @actor.log.log "data is changed: ", data if @get \debug
-            do
+
+            do  # show loading icon
                 @set \loading, yes
                 <~ sleep 500ms
                 if data and not empty data
@@ -116,8 +120,10 @@ Ractive.components['dropdown'] = Ractive.extend do
                 <~ sleep 10ms
                 update-dropdown @get \selected-key
 
-        shandler = @observe \selected-key, (_new) ->
+        shandler = @observe \selected-key, (_new) ~>
+            @actor.c-log "selected key set to:", _new
             update-dropdown _new
+            set-item _new
 
     data: ->
         data: undefined
@@ -126,3 +132,8 @@ Ractive.components['dropdown'] = Ractive.extend do
         nothingSelected: '---'
         item: {}
         loading: yes
+        'selected-key': null
+        'selected-name': null
+        selected: null  # this is very important. if you omit this, "selected"
+                        # variable will be bound to class prototype (thus shared
+                        # across the instances)
