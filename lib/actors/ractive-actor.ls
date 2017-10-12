@@ -16,7 +16,7 @@ export class RactiveActor extends Actor
 
         @ractive.on do
             teardown: ~>
-                @log.log "Ractive actor is being killed because component is tearing down"
+                #@log.log "Ractive actor is being killed because component is tearing down"
                 @kill \unrender
 
         orig-location = @ractive.target
@@ -54,6 +54,11 @@ export class RactiveActor extends Actor
         @send-wid = (msg) ~>
             if @default-topic
                 @send that, msg
+
+    wid-fire: (target-wid, ...args) ->
+        # TODO: this method will find target widget, will call the "fire" method
+        # on target with the supplied arguments
+        debugger
 
     c-log: ->
         @log.log ...arguments

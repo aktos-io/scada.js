@@ -1,9 +1,9 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (global){
 /*
-	Ractive.js v1.0.0-edge
-	Build: 4266a32a69f78e61407c3db5d8ea910893007c25
-	Date: Thu Sep 21 2017 18:59:51 GMT+0000 (UTC)
+	Ractive.js v0.9.4
+	Build: bfb687b620991b7313ef17aea1092d1af98fc3bf
+	Date: Sat Sep 30 2017 01:15:45 GMT+0000 (UTC)
 	Website: http://ractivejs.org
 	License: MIT
 */
@@ -291,7 +291,6 @@ var defaults = {
 	template:               null,
 
 	// parse:
-	allowExpressions:       true,
 	delimiters:             [ '{{', '}}' ],
 	tripleDelimiters:       [ '{{{', '}}}' ],
 	staticDelimiters:       [ '[[', ']]' ],
@@ -420,13 +419,13 @@ var welcome;
 
 if ( hasConsole ) {
 	var welcomeIntro = [
-		"%cRactive.js %c1.0.0-edge %cin debug mode, %cmore...",
+		"%cRactive.js %c0.9.4 %cin debug mode, %cmore...",
 		'color: rgb(114, 157, 52); font-weight: normal;',
 		'color: rgb(85, 85, 85); font-weight: normal;',
 		'color: rgb(85, 85, 85); font-weight: normal;',
 		'color: rgb(82, 140, 224); font-weight: normal; text-decoration: underline;'
 	];
-	var welcomeMessage = "You're running Ractive 1.0.0-edge in debug mode - messages will be printed to the console to help you fix problems and optimise your application.\n\nTo disable debug mode, add this line at the start of your app:\n  Ractive.DEBUG = false;\n\nTo disable debug mode when your app is minified, add this snippet:\n  Ractive.DEBUG = /unminified/.test(function(){/*unminified*/});\n\nGet help and support:\n  http://docs.ractivejs.org\n  http://stackoverflow.com/questions/tagged/ractivejs\n  http://groups.google.com/forum/#!forum/ractive-js\n  http://twitter.com/ractivejs\n\nFound a bug? Raise an issue:\n  https://github.com/ractivejs/ractive/issues\n\n";
+	var welcomeMessage = "You're running Ractive 0.9.4 in debug mode - messages will be printed to the console to help you fix problems and optimise your application.\n\nTo disable debug mode, add this line at the start of your app:\n  Ractive.DEBUG = false;\n\nTo disable debug mode when your app is minified, add this snippet:\n  Ractive.DEBUG = /unminified/.test(function(){/*unminified*/});\n\nGet help and support:\n  http://docs.ractivejs.org\n  http://stackoverflow.com/questions/tagged/ractivejs\n  http://groups.google.com/forum/#!forum/ractive-js\n  http://twitter.com/ractivejs\n\nFound a bug? Raise an issue:\n  https://github.com/ractivejs/ractive/issues\n\n";
 
 	welcome = function () {
 		if ( Ractive.WELCOME_MESSAGE === false ) {
@@ -2769,9 +2768,9 @@ function Ractive$add ( keypath, d, options ) {
 }
 
 function immediate ( value ) {
-	var result = Promise.resolve( value );
-	Object.defineProperty( result, 'stop', { value: noop });
-	return result;
+	var promise = Promise.resolve( value );
+	Object.defineProperty( promise, 'stop', { value: noop });
+	return promise;
 }
 
 var linear = easing.linear;
@@ -2825,7 +2824,6 @@ function Ractive$animate ( keypath, to, options ) {
 
 		throw new Error( ("ractive.animate(...) no longer supports objects. Instead of ractive.animate({\n  " + (keys.map( function (key) { return ("'" + key + "': " + (keypath[ key ])); } ).join( '\n  ' )) + "\n}, {...}), do\n\n" + (keys.map( function (key) { return ("ractive.animate('" + key + "', " + (keypath[ key ]) + ", {...});"); } ).join( '\n' )) + "\n") );
 	}
-
 
 	return animate( this, this.viewmodel.joinAll( splitKeypath( keypath ) ), to, options );
 }
@@ -6306,13 +6304,6 @@ function getConditional ( parser ) {
 }
 
 function readExpression ( parser ) {
-	// if eval is false, no expressions
-	if ( parser.allowExpressions === false ) {
-		var ref = readReference( parser );
-		parser.allowWhitespace();
-		return ref;
-	}
-
 	// The conditional operator is the lowest precedence operator (except yield,
 	// assignment operators, and commas, none of which are supported), so we
 	// start there. If it doesn't match, it 'falls through' to progressively
@@ -8245,7 +8236,6 @@ var StandardParser = Parser.extend({
 		this.includeLinePositions = options.includeLinePositions;
 		this.textOnlyMode = options.textOnlyMode;
 		this.csp = options.csp;
-		this.allowExpressions = options.allowExpressions;
 
 		if ( options.attributes ) { this.inTag = true; }
 
@@ -9149,9 +9139,7 @@ var ExpressionProxy = (function (Model) {
 		this.isReadonly = true;
 		this.dirty = true;
 
-		this.fn = fragment.ractive.allowExpressions === false ?
-			noop :
-			getFunction( template.s, template.r.length );
+		this.fn = getFunction( template.s, template.r.length );
 
 		this.models = this.template.r.map( function (ref) {
 			return resolveReference( this$1.fragment, ref );
@@ -17063,7 +17051,7 @@ Object.defineProperties( Ractive, {
 	svg:              { value: svg },
 
 	// version
-	VERSION:          { value: '1.0.0-edge' },
+	VERSION:          { value: '0.9.4' },
 
 	// plugins
 	adaptors:         { writable: true, value: {} },

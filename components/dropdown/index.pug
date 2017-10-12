@@ -32,13 +32,14 @@
     +else
         //- default 
         //- ------------------
-        .ui.search.selection.dropdown(class="{{class}} {{#loading}}loading{{/}}")
-            input(type="hidden" name="{{_guid}}")
-            i.dropdown.icon 
-            .default.text {{ placeholder }}
-            .menu
-                +each('data')
-                    .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
+        div(style="display: inline-block")
+            .ui.search.selection.dropdown(class="{{class}} {{#loading}}loading{{/}}")
+                input(type="hidden" name="{{_guid}}")
+                i.dropdown.icon 
+                .default.text {{ placeholder }}
+                .menu
+                    +each('data')
+                        .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
     +endif
 +endif
 
@@ -46,6 +47,7 @@
 //- Debug output
 //- ----------------------------------------------------------------------------
 +if('debug')
+    p guid: {{_guid}}
     debug-obj(obj="{{~/['selected-key']}}" title="'selected-key'")
     debug-obj(obj="{{item}}" title="Selected 'item'")
     debug-obj(obj="{{data}}" title="data")
