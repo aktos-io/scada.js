@@ -2,7 +2,7 @@
 
 # Description
 
-ScadaJS is a library to easily create Single Page Web Applications, targeted to industrial distributed SCADA and MRP/ERP systems.
+ScadaJS is a library to create [Distributed](https://en.wikipedia.org/wiki/Distributed_Computing) Realtime [Webapps](https://en.wikipedia.org/wiki/Single-page_application), targeted to industrial distributed SCADA and MRP/ERP systems.
 
 # Key features
 
