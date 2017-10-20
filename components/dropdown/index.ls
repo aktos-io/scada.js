@@ -80,8 +80,8 @@ Ractive.components['dropdown'] = Ractive.extend do
                             @actor.c-log "Found #{value-of-key} in .[#{keyField}]", that, that[keyField]
 
                         else
-                            # why didn't we find it?
-                            debugger
+                            # we might not be able to find that key because 
+                            # key might be changed outside (ie. by a input)
 
         shandler = null
 
