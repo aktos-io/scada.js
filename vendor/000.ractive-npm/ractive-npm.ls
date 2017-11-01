@@ -8,6 +8,10 @@ Ractive.defaults.has-event = (event-name) ->
         a.t is 70 and a.n.indexOf(event-name) > -1
     return @component and @component.template.m.find fn
 
+# by @evs-chris, https://gitter.im/ractivejs/ractive?at=59fa35f8d6c36fca31c4e427
+Ractive.prototype.delete = (root, key) ->
+    delete @get(root)[key]
+    @update root
 
 # Events
 # ---------------------------------------------

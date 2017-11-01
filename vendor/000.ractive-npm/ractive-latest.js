@@ -1,9 +1,9 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (global){
 /*
-	Ractive.js v0.9.4
-	Build: bfb687b620991b7313ef17aea1092d1af98fc3bf
-	Date: Sat Sep 30 2017 01:15:45 GMT+0000 (UTC)
+	Ractive.js v0.9.8
+	Build: aa108aafd75129703d2f27c6d5a094dc197cf0d1
+	Date: Fri Oct 27 2017 18:29:54 GMT+0000 (UTC)
 	Website: http://ractivejs.org
 	License: MIT
 */
@@ -19,20 +19,134 @@
 }(this, (function () { 'use strict';
 
 /* istanbul ignore if */
+if (!Object.assign) {
+	Object.assign = function (target) {
+		var sources = [], len = arguments.length - 1;
+		while ( len-- > 0 ) sources[ len ] = arguments[ len + 1 ];
+
+		if (target == null)
+			{ throw new TypeError('Cannot convert undefined or null to object'); }
+
+		var to = Object(target);
+		var sourcesLength = sources.length;
+
+		for (var index = 0; index < sourcesLength; index++) {
+			var nextSource = sources[index];
+			for (var nextKey in nextSource) {
+				if (!Object.prototype.hasOwnProperty.call(nextSource, nextKey)) { continue; }
+				to[nextKey] = nextSource[nextKey];
+			}
+		}
+
+		return to;
+	};
+}
+
+function hasOwn ( obj, prop ) {
+	return Object.prototype.hasOwnProperty.call( obj, prop );
+}
+
+function fillGaps ( target ) {
+	var sources = [], len = arguments.length - 1;
+	while ( len-- > 0 ) sources[ len ] = arguments[ len + 1 ];
+
+	for (var i = 0; i < sources.length; i++){
+		var source = sources[i];
+		for ( var key in source ) {
+			// Source can be a prototype-less object.
+			if ( key in target || !hasOwn( source, key ) ) { continue; }
+			target[ key ] = source[ key ];
+		}
+	}
+
+	return target;
+}
+
+function toPairs ( obj ) {
+	if ( obj === void 0 ) obj = {};
+
+	var pairs = [];
+	for ( var key in obj ) {
+		// Source can be a prototype-less object.
+		if ( !hasOwn( obj, key ) ) { continue; }
+		pairs.push( [ key, obj[ key ] ] );
+	}
+	return pairs;
+}
+
+var obj$1 = Object;
+
+var assign = obj$1.assign;
+
+var create = obj$1.create;
+
+var defineProperty = obj$1.defineProperty;
+
+var defineProperties = obj$1.defineProperties;
+
+var keys = obj$1.keys;
+
+var toString = Object.prototype.toString;
+
+
+var isArray = Array.isArray;
+
+function isEqual ( a, b ) {
+	if ( a === null && b === null ) {
+		return true;
+	}
+
+	if ( isObjectType( a ) || isObjectType( b ) ) {
+		return false;
+	}
+
+	return a === b;
+}
+
+// http://stackoverflow.com/questions/18082/validate-numbers-in-javascript-isnumeric
+function isNumeric ( thing ) {
+	return !isNaN( parseFloat( thing ) ) && isFinite( thing );
+}
+
+function isObject ( thing ) {
+	return ( thing && toString.call( thing ) === '[object Object]' );
+}
+
+function isObjectLike ( thing ) {
+	return !!( thing && ( isObjectType( thing ) || isFunction( thing ) ) );
+}
+
+function isObjectType ( thing ) {
+	return typeof thing === 'object';
+}
+
+function isFunction ( thing ) {
+	return typeof thing === 'function';
+}
+
+function isString ( thing ) {
+	return typeof thing === 'string';
+}
+
+function isNumber ( thing ) {
+	return typeof thing === 'number';
+}
+
+/* istanbul ignore if */
 if (!Array.prototype.find) {
-	Object.defineProperty( Array.prototype, 'find', {
+	defineProperty( Array.prototype, 'find', {
 		value: function value (callback, thisArg) {
 			if (this === null || this === undefined)
 				{ throw new TypeError('Array.prototype.find called on null or undefined'); }
 
-			if (typeof callback !== 'function')
+			if (!isFunction( callback ))
 				{ throw new TypeError((callback + " is not a function")); }
 
 			var array = Object(this);
 			var arrayLength = array.length >>> 0;
 
 			for (var index = 0; index < arrayLength; index++) {
-				if (!Object.hasOwnProperty.call(array, index)) { continue; }
+				if (!hasOwn(array, index)) { continue; }
 				if (!callback.call(thisArg, array[index], index, array)) { continue; }
 				return array[index];
 			}
@@ -58,30 +172,6 @@ if (typeof window !== 'undefined' && window.Node && window.Node.prototype && !wi
 		} while (node = node && node.parentNode);
 
 		return false;
-	};
-}
-
-/* istanbul ignore if */
-if (!Object.assign) {
-	Object.assign = function (target) {
-		var sources = [], len = arguments.length - 1;
-		while ( len-- > 0 ) sources[ len ] = arguments[ len + 1 ];
-
-		if (target == null)
-			{ throw new TypeError('Cannot convert undefined or null to object'); }
-
-		var to = Object(target);
-		var sourcesLength = sources.length;
-
-		for (var index = 0; index < sourcesLength; index++) {
-			var nextSource = sources[index];
-			for (var nextKey in nextSource) {
-				if (!Object.prototype.hasOwnProperty.call(nextSource, nextKey)) { continue; }
-				to[nextKey] = nextSource[nextKey];
-			}
-		}
-
-		return to;
 	};
 }
 
@@ -134,7 +224,7 @@ if (typeof window !== 'undefined' && !window.Promise) {
 				var promise2 = new Promise$1(function (fulfill, reject) {
 
 					var processResolutionHandler = function (handler, handlers, forward) {
-						if (typeof handler === 'function') {
+						if (isFunction( handler )) {
 							handlers.push(function (p1result) {
 								try {
 									resolve$1(promise2, handler(p1result), fulfill, reject);
@@ -175,7 +265,7 @@ if (typeof window !== 'undefined' && !window.Promise) {
 			}
 
 			var processPromise = function (promise, i) {
-				if (promise && typeof promise.then === 'function') {
+				if (promise && isFunction( promise.then )) {
 					promise.then(function (value) {
 						result[i] = value;
 						--pending || fulfil(result);
@@ -226,14 +316,14 @@ if (typeof window !== 'undefined' && !window.Promise) {
 		}
 		if (x instanceof Promise$1) {
 			x.then(fulfil, reject);
-		} else if (x && (typeof x === 'object' || typeof x === 'function')) {
+		} else if (x && (isObjectType( x ) || isFunction( x ))) {
 			try {
 				then = x.then;
 			} catch (e) {
 				reject(e);
 				return;
 			}
-			if (typeof then === 'function') {
+			if (isFunction( then )) {
 				var called;
 
 				var resolvePromise = function (y) {
@@ -301,7 +391,6 @@ var defaults = {
 	sanitize:               false,
 	stripComments:          true,
 	contextLines:           0,
-	parserTransforms:       [],
 
 	// data & binding:
 	data:                   {},
@@ -365,41 +454,11 @@ var easing = {
 	}
 };
 
-var toString = Object.prototype.toString;
-
-
-function isEqual ( a, b ) {
-	if ( a === null && b === null ) {
-		return true;
-	}
-
-	if ( typeof a === 'object' || typeof b === 'object' ) {
-		return false;
-	}
-
-	return a === b;
-}
-
-// http://stackoverflow.com/questions/18082/validate-numbers-in-javascript-isnumeric
-function isNumeric ( thing ) {
-	return !isNaN( parseFloat( thing ) ) && isFinite( thing );
-}
-
-function isObject ( thing ) {
-	return ( thing && toString.call( thing ) === '[object Object]' );
-}
-
-function isObjectLike ( thing ) {
-	if ( !thing ) { return false; }
-	var type = typeof thing;
-	if ( type === 'object' || type === 'function' ) { return true; }
-}
-
 /* eslint no-console:"off" */
-var win = typeof window !== 'undefined' ? window : null;
+var win =  typeof window !== 'undefined' ? window : null;
 var doc = win ? document : null;
 var isClient = !!doc;
-var hasConsole = ( typeof console !== 'undefined' && typeof console.warn === 'function' && typeof console.warn.apply === 'function' );
+var hasConsole = ( typeof console !== 'undefined' && isFunction( console.warn ) && isFunction( console.warn.apply ) );
 
 var svg = doc ?
 	doc.implementation.hasFeature( 'http://www.w3.org/TR/SVG11/feature#BasicStructure', '1.1' ) :
@@ -419,13 +478,13 @@ var welcome;
 
 if ( hasConsole ) {
 	var welcomeIntro = [
-		"%cRactive.js %c0.9.4 %cin debug mode, %cmore...",
+		"%cRactive.js %c0.9.8 %cin debug mode, %cmore...",
 		'color: rgb(114, 157, 52); font-weight: normal;',
 		'color: rgb(85, 85, 85); font-weight: normal;',
 		'color: rgb(85, 85, 85); font-weight: normal;',
 		'color: rgb(82, 140, 224); font-weight: normal; text-decoration: underline;'
 	];
-	var welcomeMessage = "You're running Ractive 0.9.4 in debug mode - messages will be printed to the console to help you fix problems and optimise your application.\n\nTo disable debug mode, add this line at the start of your app:\n  Ractive.DEBUG = false;\n\nTo disable debug mode when your app is minified, add this snippet:\n  Ractive.DEBUG = /unminified/.test(function(){/*unminified*/});\n\nGet help and support:\n  http://docs.ractivejs.org\n  http://stackoverflow.com/questions/tagged/ractivejs\n  http://groups.google.com/forum/#!forum/ractive-js\n  http://twitter.com/ractivejs\n\nFound a bug? Raise an issue:\n  https://github.com/ractivejs/ractive/issues\n\n";
+	var welcomeMessage = "You're running Ractive 0.9.8 in debug mode - messages will be printed to the console to help you fix problems and optimise your application.\n\nTo disable debug mode, add this line at the start of your app:\n  Ractive.DEBUG = false;\n\nTo disable debug mode when your app is minified, add this snippet:\n  Ractive.DEBUG = /unminified/.test(function(){/*unminified*/});\n\nGet help and support:\n  http://ractive.js.org\n  http://stackoverflow.com/questions/tagged/ractivejs\n  http://groups.google.com/forum/#!forum/ractive-js\n  http://twitter.com/ractivejs\n\nFound a bug? Raise an issue:\n  https://github.com/ractivejs/ractive/issues\n\n";
 
 	welcome = function () {
 		if ( Ractive.WELCOME_MESSAGE === false ) {
@@ -447,7 +506,7 @@ if ( hasConsole ) {
 		welcome();
 
 		// extract information about the instance this message pertains to, if applicable
-		if ( typeof args[ args.length - 1 ] === 'object' ) {
+		if ( isObjectType( args[ args.length - 1 ] ) ) {
 			var options = args.pop();
 			var ractive = options ? options.ractive : null;
 
@@ -531,7 +590,7 @@ function warnOnceIfDebug () {
 // Error messages that are used (or could be) in multiple places
 var badArguments = 'Bad arguments';
 var noRegistryFunctionReturn = 'A function was specified for "%s" %s, but no %s was returned';
-var missingPlugin = function ( name, type ) { return ("Missing \"" + name + "\" " + type + " plugin. You may need to download a plugin via http://docs.ractivejs.org/latest/plugins#" + type + "s"); };
+var missingPlugin = function ( name, type ) { return ("Missing \"" + name + "\" " + type + " plugin. You may need to download a plugin via http://ractive.js.org/integrations/#" + type + "s"); };
 
 function findInViewHierarchy ( registryName, ractive, name ) {
 	var instance = findInstance( registryName, ractive, name );
@@ -591,7 +650,7 @@ var interpolators = {
 	array: function array ( from, to ) {
 		var len, i;
 
-		if ( !Array.isArray( from ) || !Array.isArray( to ) ) {
+		if ( !isArray( from ) || !isArray( to ) ) {
 			return null;
 		}
 
@@ -633,8 +692,8 @@ var interpolators = {
 		var interpolators = {};
 
 		var loop = function ( prop ) {
-			if ( from.hasOwnProperty( prop ) ) {
-				if ( to.hasOwnProperty( prop ) ) {
+			if ( hasOwn( from, prop ) ) {
+				if ( hasOwn( to, prop ) ) {
 					properties.push( prop );
 					interpolators[ prop ] = interpolate( from[ prop ], to[ prop ] ) || ( function () { return to[ prop ]; } );
 				}
@@ -648,7 +707,7 @@ var interpolators = {
 		for ( var prop in from ) loop( prop );
 
 		for ( var prop$1 in to ) {
-			if ( to.hasOwnProperty( prop$1 ) && !from.hasOwnProperty( prop$1 ) ) {
+			if ( hasOwn( to, prop$1 ) && !hasOwn( from, prop$1 ) ) {
 				intermediate[ prop$1 ] = to[ prop$1 ];
 			}
 		}
@@ -675,7 +734,7 @@ var escapeKeyPattern = /\\|\./g;
 var unescapeKeyPattern = /((?:\\)+)\1|\\(\.)/g;
 
 function escapeKey ( key ) {
-	if ( typeof key === 'string' ) {
+	if ( isString( key ) ) {
 		return key.replace( escapeKeyPattern, '\\$&' );
 	}
 
@@ -704,7 +763,7 @@ function splitKeypath ( keypath ) {
 }
 
 function unescapeKey ( key ) {
-	if ( typeof key === 'string' ) {
+	if ( isString( key ) ) {
 		return key.replace( unescapeKeyPattern, '$1$2' );
 	}
 
@@ -732,7 +791,7 @@ function arrayContains ( array, value ) {
 function arrayContentsMatch ( a, b ) {
 	var i;
 
-	if ( !Array.isArray( a ) || !Array.isArray( b ) ) {
+	if ( !isArray( a ) || !isArray( b ) ) {
 		return false;
 	}
 
@@ -751,7 +810,7 @@ function arrayContentsMatch ( a, b ) {
 }
 
 function ensureArray ( x ) {
-	if ( typeof x === 'string' ) {
+	if ( isString( x ) ) {
 		return [ x ];
 	}
 
@@ -925,10 +984,10 @@ KeypathModel__proto__.getKeypath = function getKeypath () {
 KeypathModel__proto__.handleChange = function handleChange$1 () {
 		var this$1 = this;
 
-	var keys = Object.keys( this.children );
-	var i = keys.length;
+	var keys$$1 = keys( this.children );
+	var i = keys$$1.length;
 	while ( i-- ) {
-		this$1.children[ keys[i] ].handleChange();
+		this$1.children[ keys$$1[i] ].handleChange();
 	}
 
 	this.deps.forEach( handleChange );
@@ -937,10 +996,10 @@ KeypathModel__proto__.handleChange = function handleChange$1 () {
 KeypathModel__proto__.rebindChildren = function rebindChildren ( next ) {
 		var this$1 = this;
 
-	var keys = Object.keys( this.children );
-	var i = keys.length;
+	var keys$$1 = keys( this.children );
+	var i = keys$$1.length;
 	while ( i-- ) {
-		var child = this$1.children[keys[i]];
+		var child = this$1.children[keys$$1[i]];
 		child.value = next.getKeypath( child.ractive );
 		child.handleChange();
 	}
@@ -951,10 +1010,10 @@ KeypathModel__proto__.rebind = function rebind ( next, previous ) {
 
 	var model = next ? next.getKeypathModel( this.ractive ) : undefined;
 
-	var keys = Object.keys( this.children );
-	var i = keys.length;
+	var keys$$1 = keys( this.children );
+	var i = keys$$1.length;
 	while ( i-- ) {
-		this$1.children[ keys[i] ].rebind( next, previous, false );
+		this$1.children[ keys$$1[i] ].rebind( next, previous, false );
 	}
 
 	i = this.deps.length;
@@ -976,10 +1035,10 @@ KeypathModel__proto__.teardown = function teardown () {
 
 	if ( this.owner ) { this.owner.removeChild( this ); }
 
-	var keys = Object.keys( this.children );
-	var i = keys.length;
+	var keys$$1 = keys( this.children );
+	var i = keys$$1.length;
 	while ( i-- ) {
-		this$1.children[ keys[i] ].teardown();
+		this$1.children[ keys$$1[i] ].teardown();
 	}
 };
 
@@ -1001,8 +1060,6 @@ function bind$1 ( fn, context ) {
 
 	return bound;
 }
-
-var hasProp = Object.prototype.hasOwnProperty;
 
 var shuffleTasks = { early: [], mark: [] };
 var registerQueue = { early: [], mark: [] };
@@ -1035,15 +1092,15 @@ ModelBase__proto__.addShuffleRegister = function addShuffleRegister ( item, stag
 
 ModelBase__proto__.downstreamChanged = function downstreamChanged () {};
 
-ModelBase__proto__.findMatches = function findMatches ( keys ) {
-	var len = keys.length;
+ModelBase__proto__.findMatches = function findMatches ( keys$$1 ) {
+	var len = keys$$1.length;
 
 	var existingMatches = [ this ];
 	var matches;
 	var i;
 
 	var loop = function (  ) {
-		var key = keys[i];
+		var key = keys$$1[i];
 
 		if ( key === '*' ) {
 			matches = [];
@@ -1085,7 +1142,7 @@ ModelBase__proto__.getValueChildren = function getValueChildren ( value ) {
 		var this$1 = this;
 
 	var children;
-	if ( Array.isArray( value ) ) {
+	if ( isArray( value ) ) {
 		children = [];
 		if ( 'length' in this && this.length !== value.length ) {
 			children.push( this.joinKey( 'length' ) );
@@ -1095,8 +1152,8 @@ ModelBase__proto__.getValueChildren = function getValueChildren ( value ) {
 		});
 	}
 
-	else if ( isObject( value ) || typeof value === 'function' ) {
-		children = Object.keys( value ).map( function (key) { return this$1.joinKey( key ); } );
+	else if ( isObject( value ) || isFunction( value ) ) {
+		children = keys( value ).map( function (key) { return this$1.joinKey( key ); } );
 	}
 
 	else if ( value != null ) {
@@ -1111,15 +1168,15 @@ ModelBase__proto__.getVirtual = function getVirtual ( shouldCapture ) {
 
 	var value = this.get( shouldCapture, { virtual: false } );
 	if ( isObject( value ) ) {
-		var result = Array.isArray( value ) ? [] : {};
+		var result = isArray( value ) ? [] : {};
 
-		var keys = Object.keys( value );
-		var i = keys.length;
+		var keys$$1 = keys( value );
+		var i = keys$$1.length;
 		while ( i-- ) {
-			var child = this$1.childByKey[ keys[i] ];
-			if ( !child ) { result[ keys[i] ] = value[ keys[i] ]; }
-			else if ( child._link ) { result[ keys[i] ] = child._link.getVirtual(); }
-			else { result[ keys[i] ] = child.getVirtual(); }
+			var child = this$1.childByKey[ keys$$1[i] ];
+			if ( !child ) { result[ keys$$1[i] ] = value[ keys$$1[i] ]; }
+			else if ( child._link ) { result[ keys$$1[i] ] = child._link.getVirtual(); }
+			else { result[ keys$$1[i] ] = child.getVirtual(); }
 		}
 
 		i = this.children.length;
@@ -1141,23 +1198,23 @@ ModelBase__proto__.has = function has ( key ) {
 	if ( !value ) { return false; }
 
 	key = unescapeKey( key );
-	if ( hasProp.call( value, key ) ) { return true; }
+	if ( hasOwn( value, key ) ) { return true; }
 
 	// We climb up the constructor chain to find if one of them contains the key
 	var constructor = value.constructor;
 	while ( constructor !== Function && constructor !== Array && constructor !== Object ) {
-		if ( hasProp.call( constructor.prototype, key ) ) { return true; }
+		if ( hasOwn( constructor.prototype, key ) ) { return true; }
 		constructor = constructor.constructor;
 	}
 
 	return false;
 };
 
-ModelBase__proto__.joinAll = function joinAll ( keys, opts ) {
+ModelBase__proto__.joinAll = function joinAll ( keys$$1, opts ) {
 	var model = this;
-	for ( var i = 0; i < keys.length; i += 1 ) {
-		if ( opts && opts.lastLink === false && i + 1 === keys.length && model.childByKey[keys[i]] && model.childByKey[keys[i]]._link ) { return model.childByKey[keys[i]]; }
-		model = model.joinKey( keys[i], opts );
+	for ( var i = 0; i < keys$$1.length; i += 1 ) {
+		if ( opts && opts.lastLink === false && i + 1 === keys$$1.length && model.childByKey[keys$$1[i]] && model.childByKey[keys$$1[i]]._link ) { return model.childByKey[keys$$1[i]]; }
+		model = model.joinKey( keys$$1[i], opts );
 	}
 
 	return model;
@@ -1278,7 +1335,7 @@ ModelBase__proto__.updateFromBindings = function updateFromBindings$1 ( cascade 
 
 // TODO: this may be better handled by overreiding `get` on models with a parent that isRoot
 function maybeBind ( model, value, shouldBind ) {
-	if ( shouldBind && typeof value === 'function' && model.parent && model.parent.isRoot ) {
+	if ( shouldBind && isFunction( value ) && model.parent && model.parent.isRoot ) {
 		if ( !model.boundValue ) {
 			model.boundValue = bind$1( value._r_unbound || value, model.parent.ractive );
 		}
@@ -1378,7 +1435,7 @@ function rebindMatch ( template, next, previous, fragment ) {
 	var keypath = template.r || template;
 
 	// no valid keypath, go with next
-	if ( !keypath || typeof keypath !== 'string' ) { return next; }
+	if ( !keypath || !isString( keypath ) ) { return next; }
 
 	// completely contextual ref, go with next
 	if ( keypath === '.' || keypath[0] === '@' || ( next || previous ).isKey || ( next || previous ).isKeypath ) { return next; }
@@ -1532,7 +1589,7 @@ var LinkModel = (function (ModelBase) {
 		// TODO: handle nested links
 		if ( key === undefined || key === '' ) { return this; }
 
-		if ( !this.childByKey.hasOwnProperty( key ) ) {
+		if ( !hasOwn( this.childByKey, key ) ) {
 			var child = new LinkModel( this, this, this.target.joinKey( key ), key );
 			this.children.push( child );
 			this.childByKey[ key ] = child;
@@ -1750,7 +1807,7 @@ function check ( tm ) {
 	// Once everything is done, we can notify parent transition
 	// manager and call the callback
 	if ( !tm.intros.length && !tm.totalChildren ) {
-		if ( typeof tm.callback === 'function' ) {
+		if ( isFunction( tm.callback ) ) {
 			tm.callback();
 		}
 
@@ -2025,7 +2082,7 @@ function prefixKeypath ( obj, prefix ) {
 	prefix += '.';
 
 	for ( var key in obj ) {
-		if ( obj.hasOwnProperty( key ) ) {
+		if ( hasOwn( obj, key ) ) {
 			prefixed[ prefix + key ] = obj[ key ];
 		}
 	}
@@ -2043,13 +2100,13 @@ function getPrefixer ( rootKeypath ) {
 		prefixers[ rootKeypath ] = function ( relativeKeypath, value ) {
 			var obj;
 
-			if ( typeof relativeKeypath === 'string' ) {
+			if ( isString( relativeKeypath ) ) {
 				obj = {};
 				obj[ rootDot + relativeKeypath ] = value;
 				return obj;
 			}
 
-			if ( typeof relativeKeypath === 'object' ) {
+			if ( isObjectType( relativeKeypath ) ) {
 				// 'relativeKeypath' is in fact a hash, not a keypath
 				return rootDot ? prefixKeypath( relativeKeypath, rootKeypath ) : relativeKeypath;
 			}
@@ -2071,7 +2128,7 @@ var Model = (function (ModelBase) {
 
 			if ( parent.value ) {
 				this.value = parent.value[ this.key ];
-				if ( Array.isArray( this.value ) ) { this.length = this.value.length; }
+				if ( isArray( this.value ) ) { this.length = this.value.length; }
 				this.adapt();
 			}
 		}
@@ -2104,16 +2161,17 @@ var Model = (function (ModelBase) {
 
 			if ( shouldTeardown ) {
 				this.wrapper.teardown();
-				this.wrapper = null;
+				delete this.wrapper;
+				delete this.wrapperValue;
 
 				// don't branch for undefined values
 				if ( this.value !== undefined ) {
 					var parentValue = this.parent.value || this.parent.createBranch( this.key );
 					if ( parentValue[ this.key ] !== value ) { parentValue[ this.key ] = value; }
+					this.value = value;
 				}
 			} else {
 				delete this.newWrapperValue;
-				this.wrapperValue = value;
 				this.value = this.wrapper.get();
 				return;
 			}
@@ -2194,7 +2252,7 @@ var Model = (function (ModelBase) {
 		}
 
 		// keep track of array stuff
-		if ( Array.isArray( value ) ) {
+		if ( isArray( value ) ) {
 			this.length = value.length;
 			this.isArray = true;
 		} else {
@@ -2243,7 +2301,7 @@ var Model = (function (ModelBase) {
 		if ( key === undefined || key === '' ) { return this; }
 
 
-		if ( !this.childByKey.hasOwnProperty( key ) ) {
+		if ( !hasOwn( this.childByKey, key ) ) {
 			var child = new Model( this, key );
 			this.children.push( child );
 			this.childByKey[ key ] = child;
@@ -2270,7 +2328,7 @@ var Model = (function (ModelBase) {
 			}
 
 			// keep track of array stuff
-			if ( Array.isArray( value ) ) {
+			if ( isArray( value ) ) {
 				this.length = value.length;
 				this.isArray = true;
 			} else {
@@ -2415,7 +2473,7 @@ function resolveReference ( fragment, ref ) {
 			context$1 = null;
 			while ( frag && !context$1 ) {
 				context$1 = frag.context;
-				frag = frag.parent.component ? frag.parent.component.parentFragment : frag.parent;
+				frag = frag.parent.component ? frag.parent.component.up : frag.parent;
 			}
 		}
 
@@ -2439,21 +2497,21 @@ function resolveReference ( fragment, ref ) {
 		return context$1.joinAll( splitKeypath( ref ) );
 	}
 
-	var keys = splitKeypath( ref );
-	if ( !keys.length ) { return; }
-	var base = keys.shift();
+	var keys$$1 = splitKeypath( ref );
+	if ( !keys$$1.length ) { return; }
+	var base = keys$$1.shift();
 
 	// special refs
 	if ( base[0] === '@' ) {
 		// shorthand from outside the template
 		// @this referring to local ractive instance
 		if ( base === '@this' || base === '@' ) {
-			return fragment.ractive.viewmodel.getRactiveModel().joinAll( keys );
+			return fragment.ractive.viewmodel.getRactiveModel().joinAll( keys$$1 );
 		}
 
 		// @index or @key referring to the nearest repeating index or key
 		else if ( base === '@index' || base === '@key' ) {
-			if ( keys.length ) { badReference( base ); }
+			if ( keys$$1.length ) { badReference( base ); }
 			var repeater = fragment.findRepeatingFragment();
 			// make sure the found fragment is actually an iteration
 			if ( !repeater.isIteration ) { return; }
@@ -2462,12 +2520,12 @@ function resolveReference ( fragment, ref ) {
 
 		// @global referring to window or global
 		else if ( base === '@global' ) {
-			return GlobalModel.joinAll( keys );
+			return GlobalModel.joinAll( keys$$1 );
 		}
 
 		// @global referring to window or global
 		else if ( base === '@shared' ) {
-			return SharedModel$1.joinAll( keys );
+			return SharedModel$1.joinAll( keys$$1 );
 		}
 
 		// @keypath or @rootpath, the current keypath string
@@ -2477,7 +2535,7 @@ function resolveReference ( fragment, ref ) {
 
 			// skip over component roots, which provide no context
 			while ( root && context$2.isRoot && context$2.ractive.component ) {
-				context$2 = context$2.ractive.component.parentFragment.findContext();
+				context$2 = context$2.ractive.component.up.findContext();
 			}
 
 			return context$2.getKeypathModel( root );
@@ -2489,12 +2547,12 @@ function resolveReference ( fragment, ref ) {
 
 		// @context-local data
 		else if ( base === '@local' ) {
-			return fragment.getContext()._data.joinAll( keys );
+			return fragment.getContext()._data.joinAll( keys$$1 );
 		}
 
 		// @style shared model
 		else if ( base === '@style' ) {
-			return fragment.ractive.constructor._cssModel.joinAll( keys );
+			return fragment.ractive.constructor._cssModel.joinAll( keys$$1 );
 		}
 
 		// nope
@@ -2507,7 +2565,7 @@ function resolveReference ( fragment, ref ) {
 
 	// check immediate context for a match
 	if ( context.has( base ) ) {
-		return context.joinKey( base ).joinAll( keys );
+		return context.joinKey( base ).joinAll( keys$$1 );
 	}
 
 	// walk up the fragment hierarchy looking for a matching ref, alias, or key in a context
@@ -2518,23 +2576,23 @@ function resolveReference ( fragment, ref ) {
 		// repeated fragments
 		if ( fragment.isIteration ) {
 			if ( base === fragment.parent.keyRef ) {
-				if ( keys.length ) { badReference( base ); }
+				if ( keys$$1.length ) { badReference( base ); }
 				return fragment.context.getKeyModel( fragment.key );
 			}
 
 			if ( base === fragment.parent.indexRef ) {
-				if ( keys.length ) { badReference( base ); }
+				if ( keys$$1.length ) { badReference( base ); }
 				return fragment.context.getKeyModel( fragment.index );
 			}
 		}
 
 		// alias node or iteration
-		if ( fragment.aliases  && fragment.aliases.hasOwnProperty( base ) ) {
+		if ( fragment.aliases && hasOwn( fragment.aliases, base ) ) {
 			var model = fragment.aliases[ base ];
 
-			if ( keys.length === 0 ) { return model; }
-			else if ( typeof model.joinAll === 'function' ) {
-				return model.joinAll( keys );
+			if ( keys$$1.length === 0 ) { return model; }
+			else if ( isFunction( model.joinAll ) ) {
+				return model.joinAll( keys$$1 );
 			}
 		}
 
@@ -2543,16 +2601,16 @@ function resolveReference ( fragment, ref ) {
 			// this is an implicit mapping
 			if ( createMapping ) {
 				if ( shouldWarn ) { warnIfDebug( ("'" + ref + "' resolved but is ambiguous and will create a mapping to a parent component.") ); }
-				return context.root.createLink( base, fragment.context.joinKey( base ), base, { implicit: true }).joinAll( keys );
+				return context.root.createLink( base, fragment.context.joinKey( base ), base, { implicit: true }).joinAll( keys$$1 );
 			}
 
 			if ( shouldWarn ) { warnIfDebug( ("'" + ref + "' resolved but is ambiguous.") ); }
-			return fragment.context.joinKey( base ).joinAll( keys );
+			return fragment.context.joinKey( base ).joinAll( keys$$1 );
 		}
 
 		if ( ( fragment.componentParent || ( !fragment.parent && fragment.ractive.component ) ) && !fragment.ractive.isolated ) {
 			// ascend through component boundary
-			fragment = fragment.componentParent || fragment.ractive.component.parentFragment;
+			fragment = fragment.componentParent || fragment.ractive.component.up;
 			createMapping = true;
 		} else {
 			fragment = fragment.parent;
@@ -2562,7 +2620,7 @@ function resolveReference ( fragment, ref ) {
 	// if enabled, check the instance for a match
 	var instance = initialFragment.ractive;
 	if ( instance.resolveInstanceMembers && base !== 'data' && base in instance ) {
-		return instance.viewmodel.getRactiveModel().joinKey( base ).joinAll( keys );
+		return instance.viewmodel.getRactiveModel().joinKey( base ).joinAll( keys$$1 );
 	}
 
 	if ( shouldWarn ) {
@@ -2570,7 +2628,7 @@ function resolveReference ( fragment, ref ) {
 	}
 
 	// didn't find anything, so go ahead and create the key on the local model
-	return context.joinKey( base ).joinAll( keys );
+	return context.joinKey( base ).joinAll( keys$$1 );
 }
 
 function badReference ( key ) {
@@ -2598,8 +2656,8 @@ function getContext () {
 	while ( len-- ) assigns[ len ] = arguments[ len ];
 
 	if ( !this.ctx ) { this.ctx = new extern.Context( this ); }
-	assigns.unshift( Object.create( this.ctx ) );
-	return Object.assign.apply( null, assigns );
+	assigns.unshift( create( this.ctx ) );
+	return assign.apply( null, assigns );
 }
 
 var FakeFragment = function FakeFragment ( ractive ) {
@@ -2650,7 +2708,7 @@ function set ( pairs, options ) {
 			if ( target === undefined ) {
 				model.set( array );
 			} else {
-				if ( !Array.isArray( target ) || !Array.isArray( array ) ) {
+				if ( !isArray( target ) || !isArray( array ) ) {
 					runloop.end();
 					throw new Error( 'You cannot merge an array with a non-array' );
 				}
@@ -2675,21 +2733,21 @@ function gather ( ractive, keypath, base, isolated ) {
 		return [];
 	}
 
-	var keys = splitKeypath( keypath );
+	var keys$$1 = splitKeypath( keypath );
 	var model = base || ractive.viewmodel;
 
 	if ( star.test( keypath ) ) {
-		return model.findMatches( keys );
+		return model.findMatches( keys$$1 );
 	} else {
 		if ( model === ractive.viewmodel ) {
 			// allow implicit mappings
-			if ( ractive.component && !ractive.isolated && !model.has( keys[0] ) && keypath[0] !== '@' && keypath[0] && !isolated ) {
+			if ( ractive.component && !ractive.isolated && !model.has( keys$$1[0] ) && keypath[0] !== '@' && keypath[0] && !isolated ) {
 				return [ resolveReference( ractive.fragment || new FakeFragment( ractive ), keypath ) ];
 			} else {
-				return [ model.joinAll( keys ) ];
+				return [ model.joinAll( keys$$1 ) ];
 			}
 		} else {
-			return [ model.joinAll( keys ) ];
+			return [ model.joinAll( keys$$1 ) ];
 		}
 	}
 }
@@ -2700,7 +2758,7 @@ function build ( ractive, keypath, value, isolated ) {
 	// set multiple keypaths in one go
 	if ( isObject( keypath ) ) {
 		var loop = function ( k ) {
-			if ( keypath.hasOwnProperty( k ) ) {
+			if ( hasOwn( keypath, k ) ) {
 				sets.push.apply( sets, gather( ractive, k, null, isolated ).map( function (m) { return [ m, keypath[k], k ]; } ) );
 			}
 		};
@@ -2721,11 +2779,11 @@ function deepSet( model, value ) {
 	var dest = model.get( false, deepOpts );
 
 	// if dest doesn't exist, just set it
-	if ( dest == null || typeof value !== 'object' ) { return model.set( value ); }
-	if ( typeof dest !== 'object' ) { return model.set( value ); }
+	if ( dest == null || !isObjectType( value ) ) { return model.set( value ); }
+	if ( !isObjectType( dest ) ) { return model.set( value ); }
 
 	for ( var k in value ) {
-		if ( value.hasOwnProperty( k ) ) {
+		if ( hasOwn( value, k ) ) {
 			deepSet( model.joinKey( k ), value[k] );
 		}
 	}
@@ -2734,9 +2792,9 @@ function deepSet( model, value ) {
 var comparators = {};
 function getComparator ( option ) {
 	if ( option === true ) { return null; } // use existing arrays
-	if ( typeof option === 'function' ) { return option; }
+	if ( isFunction( option ) ) { return option; }
 
-	if ( typeof option === 'string' ) {
+	if ( isString( option ) ) {
 		return comparators[ option ] || ( comparators[ option ] = function (thing) { return thing[ option ]; } );
 	}
 
@@ -2746,7 +2804,7 @@ function getComparator ( option ) {
 var errorMessage = 'Cannot add to a non-numeric value';
 
 function add ( ractive, keypath, d, options ) {
-	if ( typeof keypath !== 'string' || !isNumeric( d ) ) {
+	if ( !isString( keypath ) || !isNumeric( d ) ) {
 		throw new Error( 'Bad arguments' );
 	}
 
@@ -2762,15 +2820,15 @@ function add ( ractive, keypath, d, options ) {
 }
 
 function Ractive$add ( keypath, d, options ) {
-	var num = typeof d === 'number' ? d : 1;
-	var opts = typeof d === 'object' ? d : options;
+	var num = isNumber( d ) ? d : 1;
+	var opts = isObjectType( d ) ? d : options;
 	return add( this, keypath, num, opts );
 }
 
 function immediate ( value ) {
-	var promise = Promise.resolve( value );
-	Object.defineProperty( promise, 'stop', { value: noop });
-	return promise;
+	var result = Promise.resolve( value );
+	defineProperty( result, 'stop', { value: noop });
+	return result;
 }
 
 var linear = easing.linear;
@@ -2780,7 +2838,7 @@ function getOptions ( options, instance ) {
 
 	var easing$$1;
 	if ( options.easing ) {
-		easing$$1 = typeof options.easing === 'function' ?
+		easing$$1 = isFunction( options.easing ) ?
 			options.easing :
 			instance.easing[ options.easing ];
 	}
@@ -2819,10 +2877,10 @@ function animate ( ractive, model, to, options ) {
 }
 
 function Ractive$animate ( keypath, to, options ) {
-	if ( typeof keypath === 'object' ) {
-		var keys = Object.keys( keypath );
+	if ( isObjectType( keypath ) ) {
+		var keys$$1 = keys( keypath );
 
-		throw new Error( ("ractive.animate(...) no longer supports objects. Instead of ractive.animate({\n  " + (keys.map( function (key) { return ("'" + key + "': " + (keypath[ key ])); } ).join( '\n  ' )) + "\n}, {...}), do\n\n" + (keys.map( function (key) { return ("ractive.animate('" + key + "', " + (keypath[ key ]) + ", {...});"); } ).join( '\n' )) + "\n") );
+		throw new Error( ("ractive.animate(...) no longer supports objects. Instead of ractive.animate({\n  " + (keys$$1.map( function (key) { return ("'" + key + "': " + (keypath[ key ])); } ).join( '\n  ' )) + "\n}, {...}), do\n\n" + (keys$$1.map( function (key) { return ("ractive.animate('" + key + "', " + (keypath[ key ]) + ", {...});"); } ).join( '\n' )) + "\n") );
 	}
 
 	return animate( this, this.viewmodel.joinAll( splitKeypath( keypath ) ), to, options );
@@ -3049,7 +3107,7 @@ function attachChild ( child, options ) {
 
 	// child is managing itself
 	if ( !meta.target ) {
-		meta.parentFragment = this.fragment;
+		meta.up = this.fragment;
 		meta.external = true;
 	} else {
 		var list;
@@ -3173,7 +3231,7 @@ function Ractive$findAll ( selector, options ) {
 
 	if ( !this.el ) { throw new Error( ("Cannot call ractive.findAll('" + selector + "', ...) unless instance is rendered to the DOM") ); }
 
-	if ( !Array.isArray( options.result ) ) { options.result = []; }
+	if ( !isArray( options.result ) ) { options.result = []; }
 
 	this.fragment.findAll( selector, options );
 
@@ -3190,14 +3248,14 @@ function Ractive$findAll ( selector, options ) {
 }
 
 function Ractive$findAllComponents ( selector, options ) {
-	if ( !options && typeof selector === 'object' ) {
+	if ( !options && isObjectType( selector ) ) {
 		options = selector;
 		selector = '';
 	}
 
 	options = options || {};
 
-	if ( !Array.isArray( options.result ) ) { options.result = []; }
+	if ( !isArray( options.result ) ) { options.result = []; }
 
 	this.fragment.findAllComponents( selector, options );
 
@@ -3221,7 +3279,7 @@ function Ractive$findComponent ( selector, options ) {
 	var this$1 = this;
 	if ( options === void 0 ) options = {};
 
-	if ( typeof selector === 'object' ) {
+	if ( isObjectType( selector ) ) {
 		options = selector;
 		selector = '';
 	}
@@ -3328,11 +3386,11 @@ function findElement( start, orComponent, name ) {
 		// start is a fragment - look at the owner
 		if ( start.owner ) { start = start.owner; }
 		// start is a component or yielder - look at the container
-		else if ( start.component ) { start = start.containerFragment || start.component.parentFragment; }
+		else if ( start.component ) { start = start.containerFragment || start.component.up; }
 		// start is an item - look at the parent
 		else if ( start.parent ) { start = start.parent; }
 		// start is an item without a parent - look at the parent fragment
-		else if ( start.parentFragment ) { start = start.parentFragment; }
+		else if ( start.up ) { start = start.up; }
 
 		else { start = undefined; }
 	}
@@ -3419,7 +3477,7 @@ function getSpliceEquivalent ( length, methodName, args ) {
 				args.push( length - args[0] );
 			}
 
-			if ( typeof args[1] !== 'number' ) {
+			if ( !isNumber( args[1] ) ) {
 				args[1] = length - args[0];
 			}
 
@@ -3462,7 +3520,7 @@ var makeArrayMethod = function ( methodName ) {
 	function model ( mdl, args ) {
 		var array = mdl.get();
 
-		if ( !Array.isArray( array ) ) {
+		if ( !isArray( array ) ) {
 			if ( array === undefined ) {
 				array = [];
 				var result$1 = arrayProto[ methodName ].apply( array, args );
@@ -3521,7 +3579,7 @@ function update$1 ( ractive, model, options ) {
 function Ractive$update ( keypath, options ) {
 	var opts, path;
 
-	if ( typeof keypath === 'string' ) {
+	if ( isString( keypath ) ) {
 		path = splitKeypath( keypath );
 		opts = options;
 	} else {
@@ -3586,8 +3644,8 @@ prototypeAccessors._data.get = function () {
 
 // the usual mutation suspects
 Context__proto__.add = function add ( keypath, d, options ) {
-	var num = typeof d === 'number' ? +d : 1;
-	var opts = typeof d === 'object' ? d : options;
+	var num = isNumber( d ) ? +d : 1;
+	var opts = isObjectType( d ) ? d : options;
 	return set( build$1( this, keypath, num ).map( function (pair) {
 		var model = pair[0];
 			var val = pair[1];
@@ -3729,8 +3787,8 @@ Context__proto__.sort = function sort ( keypath ) {
 };
 
 Context__proto__.subtract = function subtract ( keypath, d, options ) {
-	var num = typeof d === 'number' ? d : 1;
-	var opts = typeof d === 'object' ? d : options;
+	var num = isNumber( d ) ? d : 1;
+	var opts = isObjectType( d ) ? d : options;
 	return set( build$1( this, keypath, num ).map( function (pair) {
 		var model = pair[0];
 			var val = pair[1];
@@ -3800,7 +3858,7 @@ Context__proto__.getBinding = function getBinding () {
 
 Context__proto__.getBindingModel = function getBindingModel ( ctx ) {
 	var el = ctx.element;
-	return { model: el.binding && el.binding.model, instance: el.parentFragment.ractive };
+	return { model: el.binding && el.binding.model, instance: el.up.ractive };
 };
 
 Context__proto__.setBinding = function setBinding ( value ) {
@@ -3822,7 +3880,7 @@ function build$1 ( ctx, keypath, value ) {
 	// set multiple keypaths in one go
 	if ( isObject( keypath ) ) {
 		for ( var k in keypath ) {
-			if ( keypath.hasOwnProperty( k ) ) {
+			if ( hasOwn( keypath, k ) ) {
 				sets.push( [ findModel( ctx, k ).model, keypath[k] ] );
 			}
 		}
@@ -3839,7 +3897,7 @@ function build$1 ( ctx, keypath, value ) {
 function findModel ( ctx, path ) {
 	var frag = ctx.fragment;
 
-	if ( typeof path !== 'string' ) {
+	if ( !isString( path ) ) {
 		return { model: frag.findContext(), instance: path };
 	}
 
@@ -3855,9 +3913,9 @@ function Ractive$fire ( eventName ) {
 	// watch for reproxy
 	if ( args[0] instanceof Context  ) {
 		var proto = args.shift();
-		ctx = Object.create( proto );
-		Object.assign( ctx, proto );
-	} else if ( typeof args[0] === 'object' && ( args[0] === null || args[0].constructor === Object ) ) {
+		ctx = create( proto );
+		assign( ctx, proto );
+	} else if ( isObjectType( args[0] ) && ( args[0] === null || args[0].constructor === Object ) ) {
 		ctx = Context.forRactive( this, args.shift() );
 	} else {
 		ctx = Context.forRactive( this );
@@ -3868,7 +3926,7 @@ function Ractive$fire ( eventName ) {
 }
 
 function Ractive$get ( keypath, opts ) {
-	if ( typeof keypath !== 'string' ) { return this.viewmodel.get( true, keypath ); }
+	if ( !isString( keypath ) ) { return this.viewmodel.get( true, keypath ); }
 
 	var keys = splitKeypath( keypath );
 	var key = keys[0];
@@ -3890,7 +3948,7 @@ function Ractive$get ( keypath, opts ) {
 var query = doc && doc.querySelector;
 
 function getContext$2 ( node ) {
-	if ( typeof node === 'string' && query ) {
+	if ( isString( node ) && query ) {
 		node = query.call( document, node );
 	}
 
@@ -3910,7 +3968,7 @@ function getNodeInfo$1 ( node ) {
 }
 
 function getContext$1 ( node, options ) {
-	if ( typeof node === 'string' ) {
+	if ( isString( node ) ) {
 		node = this.find( node, options );
 	}
 
@@ -3918,7 +3976,7 @@ function getContext$1 ( node, options ) {
 }
 
 function getNodeInfo$$1 ( node, options ) {
-	if ( typeof node === 'string' ) {
+	if ( isString( node ) ) {
 		node = this.find( node, options );
 	}
 
@@ -3949,7 +4007,7 @@ if ( !svg ) {
 	/* istanbul ignore next */
 	createElement = function ( type, ns, extend ) {
 		if ( ns && ns !== html ) {
-			throw 'This browser does not support namespaces other than http://www.w3.org/1999/xhtml. The most likely cause of this error is that you\'re trying to render SVG in an older browser. See http://docs.ractivejs.org/latest/svg-and-older-browsers for more information';
+			throw 'This browser does not support namespaces other than http://www.w3.org/1999/xhtml. The most likely cause of this error is that you\'re trying to render SVG in an older browser. See http://ractive.js.org/support/#svgs for more information';
 		}
 
 		return extend ?
@@ -3990,7 +4048,7 @@ function getElement ( input ) {
 	}
 
 	// Get node from string
-	if ( typeof input === 'string' ) {
+	if ( isString( input ) ) {
 		// try ID first
 		output = doc.getElementById( input );
 
@@ -4089,7 +4147,7 @@ function detachNode ( node ) {
 }
 
 function safeToStringValue ( value ) {
-	return ( value == null || ( typeof value === 'number' && isNaN( value ) ) || !value.toString ) ? '' : '' + value;
+	return ( value == null || ( isNumber( value ) && isNaN( value ) ) || !value.toString ) ? '' : '' + value;
 }
 
 function safeAttributeString ( string ) {
@@ -4138,7 +4196,7 @@ function link ( there, here, options ) {
 	// may need to allow a mapping to resolve implicitly
 	var sourcePath = splitKeypath( there );
 	if ( !target.viewmodel.has( sourcePath[0] ) && target.component ) {
-		model = resolveReference( target.component.parentFragment, sourcePath[0] );
+		model = resolveReference( target.component.up, sourcePath[0] );
 		model = model.joinAll( sourcePath.slice( 1 ) );
 	}
 
@@ -4161,7 +4219,7 @@ function link ( there, here, options ) {
 function isUpstream ( check, start ) {
 	var model = start;
 	while ( model ) {
-		if ( model === check ) { return true; }
+		if ( model === check || model.owner === check ) { return true; }
 		model = model.target || model.parent;
 	}
 }
@@ -4175,18 +4233,16 @@ var Observer = function Observer ( ractive, model, callback, options ) {
 
 	if ( model ) { this.resolved( model ); }
 
-	if ( typeof options.old === 'function' ) {
-		this.oldContext = Object.create( ractive );
-		this.old = options.old;
-	} else {
-		this.old = old;
+	if ( isFunction( options.old ) ) {
+		this.oldContext = create( ractive );
+		this.oldFn = options.old;
 	}
 
 	if ( options.init !== false ) {
 		this.dirty = true;
 		this.dispatch();
 	} else {
-		this.oldValue = this.old.call( this.oldContext, undefined, this.newValue );
+		updateOld( this );
 	}
 
 	this.dirty = false;
@@ -4206,7 +4262,7 @@ Observer__proto__.cancel = function cancel () {
 Observer__proto__.dispatch = function dispatch () {
 	if ( !this.cancelled ) {
 		this.callback.call( this.context, this.newValue, this.oldValue, this.keypath );
-		this.oldValue = this.old.call( this.oldContext, this.oldValue, this.model ? this.model.get() : this.newValue );
+		updateOld( this, true );
 		this.dirty = false;
 	}
 };
@@ -4233,7 +4289,6 @@ Observer__proto__.rebind = function rebind ( next, previous ) {
 		var this$1 = this;
 
 	next = rebindMatch( this.keypath, next, previous );
-	// TODO: set up a resolver if next is undefined?
 	if ( next === this.model ) { return false; }
 
 	if ( this.model ) { this.model.unregister( this ); }
@@ -4249,26 +4304,31 @@ Observer__proto__.resolved = function resolved ( model ) {
 	model.register( this );
 };
 
-function old ( previous, next ) {
-	return next;
+function updateOld( observer, fresh ) {
+	var next = fresh ? ( observer.model ? observer.model.get() : observer.newValue ) : observer.newValue;
+	observer.oldValue = observer.oldFn ? observer.oldFn.call( observer.oldContext, undefined, next, observer.keypath ) : next;
 }
 
 var star$1 = /\*+/g;
 
-var PatternObserver = function PatternObserver ( ractive, baseModel, keys, callback, options ) {
+var PatternObserver = function PatternObserver ( ractive, baseModel, keys$$1, callback, options ) {
 	var this$1 = this;
 
 	this.context = options.context || ractive;
 	this.ractive = ractive;
 	this.baseModel = baseModel;
-	this.keys = keys;
+	this.keys = keys$$1;
 	this.callback = callback;
 
-	var pattern = keys.join( '\\.' ).replace( star$1, '(.+)' );
+	var pattern = keys$$1.join( '\\.' ).replace( star$1, '(.+)' );
 	var baseKeypath = this.baseKeypath = baseModel.getKeypath( ractive );
 	this.pattern = new RegExp( ("^" + (baseKeypath ? baseKeypath + '\\.' : '') + pattern + "$") );
-	this.recursive = keys.length === 1 && keys[0] === '**';
+	this.recursive = keys$$1.length === 1 && keys$$1[0] === '**';
 	if ( this.recursive ) { this.keys = [ '*' ]; }
+	if ( options.old ) {
+		this.oldContext = create( ractive );
+		this.oldFn = options.old;
+	}
 
 	this.oldValues = {};
 	this.newValues = {};
@@ -4291,7 +4351,7 @@ var PatternObserver = function PatternObserver ( ractive, baseModel, keys, callb
 	if ( options.init !== false ) {
 		this.dispatch();
 	} else {
-		this.oldValues = this.newValues;
+		updateOld$1( this, this.newValues );
 	}
 
 	baseModel.registerPatternObserver( this );
@@ -4308,7 +4368,7 @@ PatternObserver__proto__.dispatch = function dispatch () {
 
 	var newValues = this.newValues;
 	this.newValues = {};
-	Object.keys( newValues ).forEach( function (keypath) {
+	keys( newValues ).forEach( function (keypath) {
 		var newValue = newValues[ keypath ];
 		var oldValue = this$1.oldValues[ keypath ];
 
@@ -4326,13 +4386,7 @@ PatternObserver__proto__.dispatch = function dispatch () {
 		this$1.callback.apply( this$1.context, args );
 	});
 
-	if ( this.partial ) {
-		for ( var k in newValues ) {
-			this$1.oldValues[k] = newValues[k];
-		}
-	} else {
-		this.oldValues = newValues;
-	}
+	updateOld$1( this, newValues, this.partial );
 
 	this.dirty = false;
 };
@@ -4344,7 +4398,7 @@ PatternObserver__proto__.notify = function notify ( key ) {
 PatternObserver__proto__.shuffle = function shuffle ( newIndices ) {
 		var this$1 = this;
 
-	if ( !Array.isArray( this.baseModel.value ) ) { return; }
+	if ( !isArray( this.baseModel.value ) ) { return; }
 
 	var max = this.baseModel.value.length;
 
@@ -4374,16 +4428,16 @@ PatternObserver__proto__.handleChange = function handleChange () {
 			var count = 0;
 
 			if ( this.recursive ) {
-				this.changed.forEach( function (keys) {
-					var model = this$1.baseModel.joinAll( keys );
+				this.changed.forEach( function (keys$$1) {
+					var model = this$1.baseModel.joinAll( keys$$1 );
 					if ( model.isLink && !this$1.links ) { return; }
 					count++;
 					this$1.newValues[ model.getKeypath( this$1.ractive ) ] = model.get();
 				});
 			} else {
 				var ok = this.baseModel.isRoot ?
-					this.changed.map( function (keys) { return keys.map( escapeKey ).join( '.' ); } ) :
-					this.changed.map( function (keys) { return this$1.baseKeypath + '.' + keys.map( escapeKey ).join( '.' ); } );
+					this.changed.map( function (keys$$1) { return keys$$1.map( escapeKey ).join( '.' ); } ) :
+					this.changed.map( function (keys$$1) { return this$1.baseKeypath + '.' + keys$$1.map( escapeKey ).join( '.' ); } );
 
 				this.baseModel.findMatches( this.keys ).forEach( function (model) {
 					var keypath = model.getKeypath( this$1.ractive );
@@ -4413,6 +4467,29 @@ PatternObserver__proto__.handleChange = function handleChange () {
 		if ( this.once ) { this.cancel(); }
 	}
 };
+
+function updateOld$1( observer, vals, partial ) {
+	var olds = observer.oldValues;
+
+	if ( observer.oldFn ) {
+		if ( !partial ) { observer.oldValues = {}; }
+
+		keys( vals ).forEach( function (k) {
+			var args = [ olds[k], vals[k], k ];
+			var parts = observer.pattern.exec( k );
+			if ( parts ) {
+				args.push.apply( args, parts.slice( 1 ) );
+			}
+			observer.oldValues[k] = observer.oldFn.apply( observer.oldContext, args );
+		});
+	} else {
+		if ( partial ) {
+			keys( vals ).forEach( function (k) { return olds[k] = vals[k]; } );
+		} else {
+			observer.oldValues = vals;
+		}
+	}
+}
 
 function negativeOne () {
 	return -1;
@@ -4497,7 +4574,7 @@ ArrayObserver__proto__.shuffle = function shuffle ( newIndices ) {
 
 ArrayObserver__proto__.slice = function slice () {
 	var value = this.model.get();
-	return Array.isArray( value ) ? value.slice() : [];
+	return isArray( value ) ? value.slice() : [];
 };
 
 function observe ( keypath, callback, options ) {
@@ -4511,7 +4588,7 @@ function observe ( keypath, callback, options ) {
 		map = keypath;
 		opts = callback || {};
 	} else {
-		if ( typeof keypath === 'function' ) {
+		if ( isFunction( keypath ) ) {
 			map = { '': keypath };
 			opts = callback || {};
 		} else {
@@ -4522,7 +4599,7 @@ function observe ( keypath, callback, options ) {
 	}
 
 	var silent = false;
-	Object.keys( map ).forEach( function (keypath) {
+	keys( map ).forEach( function (keypath) {
 		var callback = map[ keypath ];
 		var caller = function () {
 			var args = [], len = arguments.length;
@@ -4555,60 +4632,60 @@ function observe ( keypath, callback, options ) {
 }
 
 function createObserver ( ractive, keypath, callback, options ) {
-	var keys = splitKeypath( keypath );
-	var wildcardIndex = keys.indexOf( '*' );
-	if ( !~wildcardIndex ) { wildcardIndex = keys.indexOf( '**' ); }
+	var keys$$1 = splitKeypath( keypath );
+	var wildcardIndex = keys$$1.indexOf( '*' );
+	if ( !~wildcardIndex ) { wildcardIndex = keys$$1.indexOf( '**' ); }
 
 	options.fragment = options.fragment || ractive.fragment;
 
 	var model;
 	if ( !options.fragment ) {
-		model = ractive.viewmodel.joinKey( keys[0] );
+		model = ractive.viewmodel.joinKey( keys$$1[0] );
 	} else {
 		// .*.whatever relative wildcard is a special case because splitkeypath doesn't handle the leading .
-		if ( ~keys[0].indexOf( '.*' ) ) {
+		if ( ~keys$$1[0].indexOf( '.*' ) ) {
 			model = options.fragment.findContext();
 			wildcardIndex = 0;
-			keys[0] = keys[0].slice( 1 );
+			keys$$1[0] = keys$$1[0].slice( 1 );
 		} else {
-			model = wildcardIndex === 0 ? options.fragment.findContext() : resolveReference( options.fragment, keys[0] );
+			model = wildcardIndex === 0 ? options.fragment.findContext() : resolveReference( options.fragment, keys$$1[0] );
 		}
 	}
 
 	// the model may not exist key
-	if ( !model ) { model = ractive.viewmodel.joinKey( keys[0] ); }
+	if ( !model ) { model = ractive.viewmodel.joinKey( keys$$1[0] ); }
 
 	if ( !~wildcardIndex ) {
-		model = model.joinAll( keys.slice( 1 ) );
+		model = model.joinAll( keys$$1.slice( 1 ) );
 		if ( options.array ) {
 			return new ArrayObserver( ractive, model, callback, options );
 		} else {
 			return new Observer( ractive, model, callback, options );
 		}
 	} else {
-		var double = keys.indexOf( '**' );
+		var double = keys$$1.indexOf( '**' );
 		if ( ~double ) {
-			if ( double + 1 !== keys.length || ~keys.indexOf( '*' ) ) {
+			if ( double + 1 !== keys$$1.length || ~keys$$1.indexOf( '*' ) ) {
 				warnOnceIfDebug( "Recursive observers may only specify a single '**' at the end of the path." );
 				return;
 			}
 		}
 
-		model = model.joinAll( keys.slice( 1, wildcardIndex ) );
+		model = model.joinAll( keys$$1.slice( 1, wildcardIndex ) );
 
-		return new PatternObserver( ractive, model, keys.slice( wildcardIndex ), callback, options );
+		return new PatternObserver( ractive, model, keys$$1.slice( wildcardIndex ), callback, options );
 	}
 }
 
 var onceOptions = { init: false, once: true };
 
 function observeOnce ( keypath, callback, options ) {
-	if ( isObject( keypath ) || typeof keypath === 'function' ) {
-		options = Object.assign( callback || {}, onceOptions );
+	if ( isObject( keypath ) || isFunction( keypath ) ) {
+		options = assign( callback || {}, onceOptions );
 		return this.observe( keypath, options );
 	}
 
-	options = Object.assign( options || {}, onceOptions );
+	options = assign( options || {}, onceOptions );
 	return this.observe( keypath, callback, options );
 }
 
@@ -4654,9 +4731,9 @@ function Ractive$on ( eventName, callback ) {
 	var this$1 = this;
 
 	// eventName may already be a map
-	var map = typeof eventName === 'object' ? eventName : {};
+	var map = isObjectType( eventName ) ? eventName : {};
 	// or it may be a string along with a callback
-	if ( typeof eventName === 'string' ) { map[ eventName ] = callback; }
+	if ( isString( eventName ) ) { map[ eventName ] = callback; }
 
 	var silent = false;
 	var events = [];
@@ -4674,7 +4751,7 @@ function Ractive$on ( eventName, callback ) {
 			handler: caller
 		};
 
-		if ( map.hasOwnProperty( k ) ) {
+		if ( hasOwn( map, k ) ) {
 			var names = k.split( ' ' ).map( trim ).filter( notEmptyString );
 			names.forEach( function (n) {
 				( this$1._subs[ n ] || ( this$1._subs[ n ] = [] ) ).push( entry );
@@ -4772,6 +4849,7 @@ function style () {
 	if ( doc && !styleElement ) {
 		styleElement = doc.createElement( 'style' );
 		styleElement.type = 'text/css';
+		styleElement.setAttribute( 'data-ractive-css', '' );
 
 		doc.getElementsByTagName( 'head' )[0].appendChild( styleElement );
 
@@ -4896,7 +4974,7 @@ function uuid() {
 }
 
 function setCSSData ( keypath, value, options ) {
-	var opts = typeof keypath === 'object' ? value : options;
+	var opts = isObjectType( keypath ) ? value : options;
 	var model = this._cssModel;
 
 	model.locked = true;
@@ -4932,7 +5010,7 @@ function applyChanges ( component, apply ) {
 function recomputeCSS ( component ) {
 	var css = component._css;
 
-	if ( typeof css !== 'function' ) { return; }
+	if ( !isFunction( css ) ) { return; }
 
 	var def = component._cssDef;
 	var result = evalCSS( component, css );
@@ -4982,38 +5060,17 @@ var cssConfigurator = {
 	extend: function ( Parent, proto, options, Child ) {
 		Child._cssIds = gatherIds( Parent );
 
-		Object.defineProperty( Child, 'cssData', {
+		defineProperty( Child, 'cssData', {
 			configurable: true,
-			value: Object.assign( Object.create( Parent.cssData ), options.cssData || {} )
+			value: assign( create( Parent.cssData ), options.cssData || {} )
 		});
 
-		Object.defineProperty( Child, '_cssModel', {
+		defineProperty( Child, '_cssModel', {
 			configurable: true,
 			value: new CSSModel( Child )
 		});
 
-		if ( !options.css ) { return; }
-
-		var css = typeof options.css === 'string' && !hasCurly.test( options.css ) ?
-			( getElement( options.css ) || options.css ) :
-			options.css;
-
-		var id = options.cssId || uuid();
-
-		if ( typeof css === 'object' ) {
-			css = 'textContent' in css ? css.textContent : css.innerHTML;
-		} else if ( typeof css === 'function' ) {
-			Child._css = options.css;
-			css = evalCSS( Child, css );
-		}
-
-		var def = Child._cssDef = { transform: !options.noCssTransform };
-
-		def.styles = def.transform ? transformCss( css, id ) : css;
-		def.id = proto.cssId = id;
-		Child._cssIds.push( id );
-
-		addCSS( Child._cssDef );
+		if ( options.css ) { initCSS( options, Child, proto ); }
 	},
 
 	// Called when creating a new component instance
@@ -5045,15 +5102,38 @@ function evalCSS ( component, css ) {
 	data.__proto__ = cssData;
 
 	var result = css.call( component, data );
-	return typeof result === 'string' ? result : '';
+	return isString( result ) ? result : '';
+}
+
+function initCSS ( options, target, proto ) {
+	var css = isString( options.css ) && !hasCurly.test( options.css ) ?
+		( getElement( options.css ) || options.css ) :
+		options.css;
+
+	var id = options.cssId || uuid();
+
+	if ( isObjectType( css ) ) {
+		css = 'textContent' in css ? css.textContent : css.innerHTML;
+	} else if ( isFunction( css ) ) {
+		target._css = options.css;
+		css = evalCSS( target, css );
+	}
+
+	var def = target._cssDef = { transform: !options.noCssTransform };
+
+	def.styles = def.transform ? transformCss( css, id ) : css;
+	def.id = proto.cssId = id;
+	target._cssIds.push( id );
+
+	addCSS( target._cssDef );
 }
 
 function validate ( data ) {
 	// Warn if userOptions.data is a non-POJO
 	if ( data && data.constructor !== Object ) {
-		if ( typeof data === 'function' ) {
+		if ( isFunction( data ) ) {
 			// TODO do we need to support this in the new Ractive() case?
-		} else if ( typeof data !== 'object' ) {
+		} else if ( !isObjectType( data ) ) {
 			fatal( ("data option must be an object or a function, `" + data + "` is not valid") );
 		} else {
 			warnIfDebug( 'If supplied, options.data should be a plain JavaScript object - using a non-POJO as the root object may work, but is discouraged' );
@@ -5073,8 +5153,8 @@ var dataConfigurator = {
 			for ( key in options.data ) {
 				value = options.data[ key ];
 
-				if ( value && typeof value === 'object' ) {
-					if ( isObject( value ) || Array.isArray( value ) ) {
+				if ( value && isObjectType( value ) ) {
+					if ( isObject( value ) || isArray( value ) ) {
 						warnIfDebug( "Passing a `data` option with object and array properties to Ractive.extend() is discouraged, as mutating them is likely to cause bugs. Consider using a data function instead:\n\n  // this...\n  data: function () {\n    return {\n      myObject: {}\n    };\n  })\n\n  // instead of this:\n  data: {\n    myObject: {}\n  }" );
 					}
 				}
@@ -5087,13 +5167,13 @@ var dataConfigurator = {
 	init: function ( Parent, ractive, options ) {
 		var result = combine$1( Parent.prototype.data, options.data );
 
-		if ( typeof result === 'function' ) { result = result.call( ractive ); }
+		if ( isFunction( result ) ) { result = result.call( ractive ); }
 
 		// bind functions to the ractive instance at the top level,
 		// unless it's a non-POJO (in which case alarm bells should ring)
 		if ( result && result.constructor === Object ) {
 			for ( var prop in result ) {
-				if ( typeof result[ prop ] === 'function' ) {
+				if ( isFunction( result[ prop ] ) ) {
 					var value = result[ prop ];
 					result[ prop ] = bind$1( value, ractive );
 					result[ prop ]._r_unbound = value;
@@ -5111,18 +5191,22 @@ var dataConfigurator = {
 	}
 };
 
+function emptyData () { return {}; }
+
 function combine$1 ( parentValue, childValue ) {
 	validate( childValue );
 
-	var parentIsFn = typeof parentValue === 'function';
-	var childIsFn = typeof childValue === 'function';
+	var parentIsFn = isFunction( parentValue );
 
 	// Very important, otherwise child instance can become
 	// the default data object on Ractive or a component.
 	// then ractive.set() ends up setting on the prototype!
 	if ( !childValue && !parentIsFn ) {
-		childValue = {};
+		// this needs to be a function so that it can still inherit parent defaults
+		childValue = emptyData;
 	}
+
+	var childIsFn = isFunction( childValue );
 
 	// Fast path, where we just need to copy properties from
 	// parent to child
@@ -5143,7 +5227,7 @@ function callDataFunction ( fn, context ) {
 
 	if ( !data ) { return; }
 
-	if ( typeof data !== 'object' ) {
+	if ( !isObjectType( data ) ) {
 		fatal( 'Data function must return an object' );
 	}
 
@@ -5349,7 +5433,7 @@ Parser.prototype = {
 		}
 	},
 
-	allowWhitespace: function allowWhitespace () {
+	sp: function sp () {
 		this.matchPattern( leadingWhitespace );
 	},
 
@@ -5374,10 +5458,10 @@ Parser.extend = function ( proto ) {
 		Parser.call( this, str, options );
 	};
 
-	Child.prototype = Object.create( Parent.prototype );
+	Child.prototype = create( Parent.prototype );
 
 	for ( var key in proto ) {
-		if ( proto.hasOwnProperty( key ) ) {
+		if ( hasOwn( proto, key ) ) {
 			Child.prototype[ key ] = proto[ key ];
 		}
 	}
@@ -5397,7 +5481,7 @@ function readDelimiterChange ( parser ) {
 	var start = parser.pos;
 
 	// allow whitespace before new opening delimiter
-	parser.allowWhitespace();
+	parser.sp();
 
 	var opening = parser.matchPattern( delimiterChangePattern );
 	if ( !opening ) {
@@ -5417,7 +5501,7 @@ function readDelimiterChange ( parser ) {
 	}
 
 	// allow whitespace before closing '='
-	parser.allowWhitespace();
+	parser.sp();
 
 	if ( !parser.matchString( '=' ) ) {
 		parser.pos = start;
@@ -5460,8 +5544,8 @@ var voidElementNames = /^(?:area|base|br|col|command|doctype|embed|hr|img|input|
 
 var htmlEntities = { quot: 34, amp: 38, apos: 39, lt: 60, gt: 62, nbsp: 160, iexcl: 161, cent: 162, pound: 163, curren: 164, yen: 165, brvbar: 166, sect: 167, uml: 168, copy: 169, ordf: 170, laquo: 171, not: 172, shy: 173, reg: 174, macr: 175, deg: 176, plusmn: 177, sup2: 178, sup3: 179, acute: 180, micro: 181, para: 182, middot: 183, cedil: 184, sup1: 185, ordm: 186, raquo: 187, frac14: 188, frac12: 189, frac34: 190, iquest: 191, Agrave: 192, Aacute: 193, Acirc: 194, Atilde: 195, Auml: 196, Aring: 197, AElig: 198, Ccedil: 199, Egrave: 200, Eacute: 201, Ecirc: 202, Euml: 203, Igrave: 204, Iacute: 205, Icirc: 206, Iuml: 207, ETH: 208, Ntilde: 209, Ograve: 210, Oacute: 211, Ocirc: 212, Otilde: 213, Ouml: 214, times: 215, Oslash: 216, Ugrave: 217, Uacute: 218, Ucirc: 219, Uuml: 220, Yacute: 221, THORN: 222, szlig: 223, agrave: 224, aacute: 225, acirc: 226, atilde: 227, auml: 228, aring: 229, aelig: 230, ccedil: 231, egrave: 232, eacute: 233, ecirc: 234, euml: 235, igrave: 236, iacute: 237, icirc: 238, iuml: 239, eth: 240, ntilde: 241, ograve: 242, oacute: 243, ocirc: 244, otilde: 245, ouml: 246, divide: 247, oslash: 248, ugrave: 249, uacute: 250, ucirc: 251, uuml: 252, yacute: 253, thorn: 254, yuml: 255, OElig: 338, oelig: 339, Scaron: 352, scaron: 353, Yuml: 376, fnof: 402, circ: 710, tilde: 732, Alpha: 913, Beta: 914, Gamma: 915, Delta: 916, Epsilon: 917, Zeta: 918, Eta: 919, Theta: 920, Iota: 921, Kappa: 922, Lambda: 923, Mu: 924, Nu: 925, Xi: 926, Omicron: 927, Pi: 928, Rho: 929, Sigma: 931, Tau: 932, Upsilon: 933, Phi: 934, Chi: 935, Psi: 936, Omega: 937, alpha: 945, beta: 946, gamma: 947, delta: 948, epsilon: 949, zeta: 950, eta: 951, theta: 952, iota: 953, kappa: 954, lambda: 955, mu: 956, nu: 957, xi: 958, omicron: 959, pi: 960, rho: 961, sigmaf: 962, sigma: 963, tau: 964, upsilon: 965, phi: 966, chi: 967, psi: 968, omega: 969, thetasym: 977, upsih: 978, piv: 982, ensp: 8194, emsp: 8195, thinsp: 8201, zwnj: 8204, zwj: 8205, lrm: 8206, rlm: 8207, ndash: 8211, mdash: 8212, lsquo: 8216, rsquo: 8217, sbquo: 8218, ldquo: 8220, rdquo: 8221, bdquo: 8222, dagger: 8224, Dagger: 8225, bull: 8226, hellip: 8230, permil: 8240, prime: 8242, Prime: 8243, lsaquo: 8249, rsaquo: 8250, oline: 8254, frasl: 8260, euro: 8364, image: 8465, weierp: 8472, real: 8476, trade: 8482, alefsym: 8501, larr: 8592, uarr: 8593, rarr: 8594, darr: 8595, harr: 8596, crarr: 8629, lArr: 8656, uArr: 8657, rArr: 8658, dArr: 8659, hArr: 8660, forall: 8704, part: 8706, exist: 8707, empty: 8709, nabla: 8711, isin: 8712, notin: 8713, ni: 8715, prod: 8719, sum: 8721, minus: 8722, lowast: 8727, radic: 8730, prop: 8733, infin: 8734, ang: 8736, and: 8743, or: 8744, cap: 8745, cup: 8746, int: 8747, there4: 8756, sim: 8764, cong: 8773, asymp: 8776, ne: 8800, equiv: 8801, le: 8804, ge: 8805, sub: 8834, sup: 8835, nsub: 8836, sube: 8838, supe: 8839, oplus: 8853, otimes: 8855, perp: 8869, sdot: 8901, lceil: 8968, rceil: 8969, lfloor: 8970, rfloor: 8971, lang: 9001, rang: 9002, loz: 9674, spades: 9824, clubs: 9827, hearts: 9829, diams: 9830	};
 var controlCharacters = [ 8364, 129, 8218, 402, 8222, 8230, 8224, 8225, 710, 8240, 352, 8249, 338, 141, 381, 143, 144, 8216, 8217, 8220, 8221, 8226, 8211, 8212, 732, 8482, 353, 8250, 339, 157, 382, 376 ];
-var entityPattern = new RegExp( '&(#?(?:x[\\w\\d]+|\\d+|' + Object.keys( htmlEntities ).join( '|' ) + '));?', 'g' );
-var codePointSupport = typeof String.fromCodePoint === 'function';
+var entityPattern = new RegExp( '&(#?(?:x[\\w\\d]+|\\d+|' + keys( htmlEntities ).join( '|' ) + '));?', 'g' );
+var codePointSupport = isFunction( String.fromCodePoint );
 var codeToChar = codePointSupport ? String.fromCodePoint : String.fromCharCode;
 
 function decodeCharacterReferences ( html ) {
@@ -5704,14 +5788,14 @@ function readTemplateStringLiteral ( parser ) {
 					parts.push({ t: STRING_LITERAL, v: getString( literal ) });
 					literal = '';
 
-					parser.allowWhitespace();
+					parser.sp();
 					var expr = readExpression( parser );
 
 					if ( !expr ) { parser.error( 'Expected valid expression' ); }
 
 					parts.push({ t: BRACKETED, x: expr });
 
-					parser.allowWhitespace();
+					parser.sp();
 					if ( !parser.matchString( '}' ) ) { parser.error( "Expected closing '}' after interpolated expression" ); }
 				} else {
 					literal += '$';
@@ -5787,7 +5871,7 @@ function readKeyValuePair ( parser ) {
 	var start = parser.pos;
 
 	// allow whitespace between '{' and key
-	parser.allowWhitespace();
+	parser.sp();
 
 	var refKey = parser.nextChar() !== '\'' && parser.nextChar() !== '"';
 	if ( refKey ) { spread = parser.matchPattern( spreadPattern ); }
@@ -5799,7 +5883,7 @@ function readKeyValuePair ( parser ) {
 	}
 
 	// allow whitespace between key and ':'
-	parser.allowWhitespace();
+	parser.sp();
 
 	// es2015 shorthand property
 	if ( refKey && ( parser.nextChar() === ',' || parser.nextChar() === '}' ) ) {
@@ -5831,7 +5915,7 @@ function readKeyValuePair ( parser ) {
 	}
 
 	// allow whitespace between ':' and value
-	parser.allowWhitespace();
+	parser.sp();
 
 	// next expression must be a, well... expression
 	var value = readExpression( parser );
@@ -5875,7 +5959,7 @@ var readObjectLiteral = function ( parser ) {
 	var start = parser.pos;
 
 	// allow whitespace
-	parser.allowWhitespace();
+	parser.sp();
 
 	if ( !parser.matchString( '{' ) ) {
 		parser.pos = start;
@@ -5885,7 +5969,7 @@ var readObjectLiteral = function ( parser ) {
 	var keyValuePairs = readKeyValuePairs( parser );
 
 	// allow whitespace between final value and '}'
-	parser.allowWhitespace();
+	parser.sp();
 
 	if ( !parser.matchString( '}' ) ) {
 		parser.pos = start;
@@ -5902,7 +5986,7 @@ var readArrayLiteral = function ( parser ) {
 	var start = parser.pos;
 
 	// allow whitespace before '['
-	parser.allowWhitespace();
+	parser.sp();
 
 	if ( !parser.matchString( '[' ) ) {
 		parser.pos = start;
@@ -6031,13 +6115,13 @@ function readReference ( parser ) {
 function readBracketedExpression ( parser ) {
 	if ( !parser.matchString( '(' ) ) { return null; }
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	var expr = readExpression( parser );
 
 	if ( !expr ) { parser.error( expectedExpression ); }
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	if ( !parser.matchString( ')' ) ) { parser.error( expectedParen ); }
 
@@ -6056,12 +6140,12 @@ var readPrimary = function ( parser ) {
 function readRefinement ( parser ) {
 	// some things call for strict refinement (partial names), meaning no space between reference and refinement
 	if ( !parser.strictRefinement ) {
-		parser.allowWhitespace();
+		parser.sp();
 	}
 
 	// "." name
 	if ( parser.matchString( '.' ) ) {
-		parser.allowWhitespace();
+		parser.sp();
 
 		var name$$1 = parser.matchPattern( name );
 		if ( name$$1 ) {
@@ -6076,12 +6160,12 @@ function readRefinement ( parser ) {
 
 	// "[" expression "]"
 	if ( parser.matchString( '[' ) ) {
-		parser.allowWhitespace();
+		parser.sp();
 
 		var expr = readExpression( parser );
 		if ( !expr ) { parser.error( expectedExpression ); }
 
-		parser.allowWhitespace();
+		parser.sp();
 
 		if ( !parser.matchString( ']' ) ) { parser.error( "Expected ']'" ); }
 
@@ -6110,10 +6194,10 @@ var readMemberOrInvocation = function ( parser ) {
 		}
 
 		else if ( parser.matchString( '(' ) ) {
-			parser.allowWhitespace();
+			parser.sp();
 			var expressionList = readExpressionList( parser, true );
 
-			parser.allowWhitespace();
+			parser.sp();
 
 			if ( !parser.matchString( ')' ) ) {
 				parser.error( expectedParen );
@@ -6149,7 +6233,7 @@ var makePrefixSequenceMatcher = function ( symbol, fallthrough ) {
 			return null;
 		}
 
-		parser.allowWhitespace();
+		parser.sp();
 
 		expression = readExpression( parser );
 		if ( !expression ) {
@@ -6204,7 +6288,7 @@ var makeInfixSequenceMatcher = function ( symbol, fallthrough ) {
 		while ( true ) {
 			start = parser.pos;
 
-			parser.allowWhitespace();
+			parser.sp();
 
 			if ( !parser.matchString( symbol ) ) {
 				parser.pos = start;
@@ -6217,7 +6301,7 @@ var makeInfixSequenceMatcher = function ( symbol, fallthrough ) {
 				return left;
 			}
 
-			parser.allowWhitespace();
+			parser.sp();
 
 			// right operand must also consist of only higher-precedence operators
 			right = fallthrough( parser );
@@ -6270,27 +6354,27 @@ function getConditional ( parser ) {
 
 	var start = parser.pos;
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	if ( !parser.matchString( '?' ) ) {
 		parser.pos = start;
 		return expression;
 	}
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	var ifTrue = readExpression( parser );
 	if ( !ifTrue ) {
 		parser.error( expectedExpression );
 	}
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	if ( !parser.matchString( ':' ) ) {
 		parser.error( 'Expected ":"' );
 	}
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	var ifFalse = readExpression( parser );
 	if ( !ifFalse ) {
@@ -6320,7 +6404,7 @@ function readExpressionList ( parser, spread ) {
 	var pos = parser.pos;
 
 	do {
-		parser.allowWhitespace();
+		parser.sp();
 
 		if ( spread ) {
 			isSpread = parser.matchPattern( spreadPattern );
@@ -6341,7 +6425,7 @@ function readExpressionList ( parser, spread ) {
 
 		expressions.push( expr );
 
-		parser.allowWhitespace();
+		parser.sp();
 	} while ( parser.matchString( ',' ) );
 
 	return expressions;
@@ -6395,7 +6479,7 @@ function flattenExpression ( expression ) {
 	}
 
 	function stringify ( node ) {
-		if ( typeof node === 'string' ) {
+		if ( isString( node ) ) {
 			return node;
 		}
 
@@ -6484,7 +6568,7 @@ function hasSpread ( list ) {
 
 // TODO maybe refactor this?
 function extractRefs ( node, refs ) {
-	if ( node.t === REFERENCE && typeof node.n === 'string' ) {
+	if ( node.t === REFERENCE && isString( node.n ) ) {
 		if ( !~refs.indexOf( node.n ) ) {
 			refs.unshift( node.n );
 		}
@@ -6502,7 +6586,7 @@ function extractRefs ( node, refs ) {
 		}
 	}
 
-	if ( node.k && node.t === KEY_VALUE_PAIR && typeof node.k !== 'string' ) {
+	if ( node.k && node.t === KEY_VALUE_PAIR && !isString( node.k ) ) {
 		extractRefs( node.k, refs );
 	}
 
@@ -6613,7 +6697,7 @@ function splitEvent ( str ) {
 function readAttribute ( parser ) {
 	var name, i, nearest, idx;
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	name = parser.matchPattern( attributeNamePattern );
 	if ( !name ) {
@@ -6644,14 +6728,14 @@ function readAttributeValue ( parser ) {
 		parser.error( 'Expected `=`, `/`, `>` or whitespace' );
 	}
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	if ( !parser.matchString( '=' ) ) {
 		parser.pos = start;
 		return null;
 	}
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	var valueStart = parser.pos;
 	var startDepth = parser.sectionDepth;
@@ -6673,7 +6757,7 @@ function readAttributeValue ( parser ) {
 		return '';
 	}
 
-	if ( value.length === 1 && typeof value[0] === 'string' ) {
+	if ( value.length === 1 && isString( value[0] ) ) {
 		return decodeCharacterReferences( value[0] );
 	}
 
@@ -6780,7 +6864,7 @@ function readAttributeOrDirective ( parser ) {
 		attribute.t = directive.t;
 		if ( directive.v ) { attribute.v = directive.v; }
 		delete attribute.n; // no name necessary
-		parser.allowWhitespace();
+		parser.sp();
 		if ( parser.nextChar() === '=' ) { attribute.f = readAttributeValue( parser ); }
 	}
 
@@ -6831,7 +6915,7 @@ function readAttributeOrDirective ( parser ) {
 	}
 
 	else {
-		parser.allowWhitespace();
+		parser.sp();
 		var value = parser.nextChar() === '=' ? readAttributeValue( parser ) : null;
 		attribute.f = value != null ? value : attribute.f;
 
@@ -6851,12 +6935,12 @@ function readProxyEvent ( parser, attribute ) {
 	if ( !parser.matchString( '=' ) ) { parser.error( "Missing required directive arguments" ); }
 
 	var quote = parser.matchString( "'" ) || parser.matchString( "\"" );
-	parser.allowWhitespace();
+	parser.sp();
 	var proxy = parser.matchPattern( proxyEvent );
 
 	if ( proxy !== undefined ) {
 		if ( quote ) {
-			parser.allowWhitespace();
+			parser.sp();
 			if ( !parser.matchString( quote ) ) { parser.pos = start; }
 			else { return ( attribute.f = proxy ) || true; }
 		} else if ( !parser.matchPattern( whitespace ) ) {
@@ -6873,12 +6957,12 @@ function readArguments ( parser, attribute, required, single ) {
 	if ( required === void 0 ) required = false;
 	if ( single === void 0 ) single = false;
 
-	parser.allowWhitespace();
+	parser.sp();
 	if ( !parser.matchString( '=' ) ) {
 		if ( required ) { parser.error( "Missing required directive arguments" ); }
 		return;
 	}
-	parser.allowWhitespace();
+	parser.sp();
 
 	var quote = parser.matchString( '"' ) || parser.matchString( "'" );
 	var spread = parser.spreadArgs;
@@ -6889,7 +6973,7 @@ function readArguments ( parser, attribute, required, single ) {
 	parser.spreadArgs = spread;
 
 	if ( quote ) {
-		parser.allowWhitespace();
+		parser.sp();
 		if ( parser.matchString( quote ) !== quote ) { parser.error( ("Expected matching quote '" + quote + "'") ); }
 	}
 
@@ -6922,7 +7006,7 @@ function readMustache ( parser ) {
 	if ( parser.inTag && !parser.inAttribute ) {
 		mustache = readAttributeOrDirective( parser );
 		if ( mustache ) {
-			parser.allowWhitespace();
+			parser.sp();
 			return mustache;
 		}
 	}
@@ -6956,7 +7040,7 @@ function readMustacheOfType ( parser, tag ) {
 		return delimiterChangeToken;
 	}
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	// illegal section closer
 	if ( parser.matchString( '/' ) ) {
@@ -7017,7 +7101,7 @@ function readUnescaped ( parser, tag ) {
 		return null;
 	}
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	var expression = readExpression( parser );
 
@@ -7043,7 +7127,7 @@ function readAliases( parser ) {
 	var alias;
 	var start = parser.pos;
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	alias = readAlias( parser );
 
@@ -7051,7 +7135,7 @@ function readAliases( parser ) {
 		alias.x = refineExpression( alias.x, {} );
 		aliases.push( alias );
 
-		parser.allowWhitespace();
+		parser.sp();
 
 		while ( parser.matchString(',') ) {
 			alias = readAlias( parser );
@@ -7063,7 +7147,7 @@ function readAliases( parser ) {
 			alias.x = refineExpression( alias.x, {} );
 			aliases.push( alias );
 
-			parser.allowWhitespace();
+			parser.sp();
 		}
 
 		return aliases;
@@ -7076,7 +7160,7 @@ function readAliases( parser ) {
 function readAlias( parser ) {
 	var start = parser.pos;
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	var expr = readExpression( parser, [] );
 
@@ -7085,14 +7169,14 @@ function readAlias( parser ) {
 		return null;
 	}
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	if ( !parser.matchPattern( asRE ) ) {
 		parser.pos = start;
 		return null;
 	}
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	var alias = parser.matchPattern( legalAlias );
 
@@ -7110,7 +7194,7 @@ function readPartial ( parser, tag ) {
 
 	if ( !type ) { return null; }
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	if ( type === '>' || !( aliases = parser.matchString( 'with' ) ) ) {
 		// Partial names can include hyphens, so we can't use readExpression
@@ -7125,12 +7209,12 @@ function readPartial ( parser, tag ) {
 
 		if ( expression ) {
 			refineExpression( expression, partial ); // TODO...
-			parser.allowWhitespace();
+			parser.sp();
 			if ( type !== '>' ) { aliases = parser.matchString( 'with' ); }
 		}
 	}
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	// check for alias context e.g. `{{>foo bar as bat, bip as bop}}`
 	if ( aliases || type === '>' ) {
@@ -7155,7 +7239,7 @@ function readPartial ( parser, tag ) {
 		}
 	}
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	if ( !parser.matchString( tag.close ) ) {
 		parser.error( ("Expected closing delimiter '" + (tag.close) + "'") );
@@ -7227,14 +7311,14 @@ function readClosing ( parser, tag ) {
 		return null;
 	}
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	if ( !parser.matchString( '/' ) ) {
 		parser.pos = start;
 		return null;
 	}
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	var remaining = parser.remaining();
 	var index = remaining.indexOf( tag.close );
@@ -7316,7 +7400,7 @@ var handlebarsBlockCodes = {
 
 var indexRefPattern = /^\s*:\s*([a-zA-Z_$][a-zA-Z_$0-9]*)/;
 var keyIndexRefPattern = /^\s*,\s*([a-zA-Z_$][a-zA-Z_$0-9]*)/;
-var handlebarsBlockPattern = new RegExp( '^(' + Object.keys( handlebarsBlockCodes ).join( '|' ) + ')\\b' );
+var handlebarsBlockPattern = new RegExp( '^(' + keys( handlebarsBlockCodes ).join( '|' ) + ')\\b' );
 
 function readSection ( parser, tag ) {
 	var expression, section, child, children, hasElse, block, unlessBlock, closed, i, expectedClose;
@@ -7347,7 +7431,7 @@ function readSection ( parser, tag ) {
 		return null;
 	}
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	if ( block === 'with' ) {
 		var aliases = readAliases( parser );
@@ -7387,7 +7471,7 @@ function readSection ( parser, tag ) {
 		}
 	}
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	if ( !parser.matchString( tag.close ) ) {
 		parser.error( ("Expected closing delimiter '" + (tag.close) + "'") );
@@ -7570,10 +7654,6 @@ var stripStandalones = function ( items ) {
 	return items;
 };
 
-function isString ( item ) {
-	return typeof item === 'string';
-}
-
 function isComment ( item ) {
 	return item.t === COMMENT || item.t === DELIMCHANGE;
 }
@@ -7587,7 +7667,7 @@ var trimWhitespace = function ( items, leadingPattern, trailingPattern ) {
 
 	if ( leadingPattern ) {
 		item = items[0];
-		if ( typeof item === 'string' ) {
+		if ( isString( item ) ) {
 			item = item.replace( leadingPattern, '' );
 
 			if ( !item ) {
@@ -7600,7 +7680,7 @@ var trimWhitespace = function ( items, leadingPattern, trailingPattern ) {
 
 	if ( trailingPattern ) {
 		item = lastItem( items );
-		if ( typeof item === 'string' ) {
+		if ( isString( item ) ) {
 			item = item.replace( trailingPattern, '' );
 
 			if ( !item ) {
@@ -7620,7 +7700,7 @@ var leadingNewLine = /^(?:\r\n|\r|\n)/;
 var trailingNewLine = /(?:\r\n|\r|\n)$/;
 
 function cleanup ( items, stripComments, preserveWhitespace, removeLeadingWhitespace, removeTrailingWhitespace ) {
-	if ( typeof items === 'string' ) { return; }
+	if ( isString( items ) ) { return; }
 
 	var i,
 		item,
@@ -7670,12 +7750,12 @@ function cleanup ( items, stripComments, preserveWhitespace, removeLeadingWhites
 
 				// if the previous item was a text item with trailing whitespace,
 				// remove leading whitespace inside the fragment
-				if ( !previousItem || ( typeof previousItem === 'string' && trailingWhitespace.test( previousItem ) ) ) {
+				if ( !previousItem || ( isString( previousItem ) && trailingWhitespace.test( previousItem ) ) ) {
 					removeLeadingWhitespaceInsideFragment = true;
 				}
 
 				// and vice versa
-				if ( !nextItem || ( typeof nextItem === 'string' && leadingWhitespace$1.test( nextItem ) ) ) {
+				if ( !nextItem || ( isString( nextItem ) && leadingWhitespace$1.test( nextItem ) ) ) {
 					removeTrailingWhitespaceInsideFragment = true;
 				}
 			}
@@ -7703,8 +7783,8 @@ function cleanup ( items, stripComments, preserveWhitespace, removeLeadingWhites
 	// final pass - fuse text nodes together
 	i = items.length;
 	while ( i-- ) {
-		if ( typeof items[i] === 'string' ) {
-			if ( typeof items[i+1] === 'string' ) {
+		if ( isString( items[i] ) ) {
+			if ( isString( items[i+1] ) ) {
 				items[i] = items[i] + items[i+1];
 				items.splice( i + 1, 1 );
 			}
@@ -7807,7 +7887,7 @@ function readElement$1 ( parser ) {
 	}
 	// check for anchor
 	else if ( anchor = parser.matchString( '#' ) ) {
-		parser.allowWhitespace();
+		parser.sp();
 		element.t = ANCHOR;
 		element.n = parser.matchPattern( anchorPattern );
 	}
@@ -7827,7 +7907,7 @@ function readElement$1 ( parser ) {
 		parser.error( 'Illegal tag name' );
 	}
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	parser.inTag = true;
 
@@ -7838,13 +7918,13 @@ function readElement$1 ( parser ) {
 			element.m.push( attribute );
 		}
 
-		parser.allowWhitespace();
+		parser.sp();
 	}
 
 	parser.inTag = false;
 
 	// allow whitespace before closing solidus
-	parser.allowWhitespace();
+	parser.sp();
 
 	// self-closing solidus?
 	if ( parser.matchString( '/' ) ) {
@@ -7871,7 +7951,7 @@ function readElement$1 ( parser ) {
 		}
 
 		children = [];
-		partials = Object.create( null );
+		partials = create( null );
 
 		do {
 			pos = parser.pos;
@@ -7986,14 +8066,14 @@ function readAnchorClose ( parser, name ) {
 	}
 
 	parser.matchString( '#' );
-	parser.allowWhitespace();
+	parser.sp();
 
 	if ( !parser.matchString( name ) ) {
 		parser.pos = pos;
 		return null;
 	}
 
-	parser.allowWhitespace();
+	parser.sp();
 
 	if ( !parser.matchString( '>' ) ) {
 		parser.pos = pos;
@@ -8078,7 +8158,7 @@ function readPartialDefinitionSection ( parser ) {
 		parser.error( 'expected legal partial name' );
 	}
 
-	parser.allowWhitespace();
+	parser.sp();
 	if ( !parser.matchString( delimiters[1] ) ) {
 		parser.error( ("Expected closing delimiter '" + (delimiters[1]) + "'") );
 	}
@@ -8117,7 +8197,7 @@ function readPartialDefinitionSection ( parser ) {
 
 function readTemplate ( parser ) {
 	var fragment = [];
-	var partials = Object.create( null );
+	var partials = create( null );
 	var hasPartials = false;
 
 	var preserveWhitespace = parser.preserveWhitespace;
@@ -8156,8 +8236,7 @@ function readTemplate ( parser ) {
 }
 
 function insertExpressions ( obj, expr ) {
-
-	Object.keys( obj ).forEach( function (key) {
+	keys( obj ).forEach( function (key) {
 		if  ( isExpression( key, obj ) ) { return addTo( obj, expr ); }
 
 		var ref = obj[ key ];
@@ -8166,7 +8245,7 @@ function insertExpressions ( obj, expr ) {
 }
 
 function isExpression( key, obj ) {
-	return key === 's' && Array.isArray( obj.r );
+	return key === 's' && isArray( obj.r );
 }
 
 function addTo( obj, expr ) {
@@ -8176,7 +8255,7 @@ function addTo( obj, expr ) {
 }
 
 function hasChildren( ref ) {
-	return Array.isArray( ref ) || isObject( ref );
+	return isArray( ref ) || isObject( ref );
 }
 
 var shared = {};
@@ -8186,7 +8265,6 @@ var shared = {};
 
 var STANDARD_READERS = [ readPartial, readUnescaped, readSection, readInterpolator, readComment ];
 var TRIPLE_READERS = [ readTriple ];
-var STATIC_READERS = [ readUnescaped, readSection, readInterpolator ]; // TODO does it make sense to have a static section?
 
 var READERS = [ readMustache, readHtmlComment, readElement$1, readText ];
 var PARTIAL_READERS = [ readPartialDefinitionSection ];
@@ -8206,7 +8284,7 @@ var StandardParser = Parser.extend({
 		this.tags = [
 			{ isStatic: false, isTriple: false, open: this.standardDelimiters[0], close: this.standardDelimiters[1], readers: STANDARD_READERS },
 			{ isStatic: false, isTriple: true,  open: tripleDelimiters[0],        close: tripleDelimiters[1],        readers: TRIPLE_READERS },
-			{ isStatic: true,  isTriple: false, open: staticDelimiters[0],        close: staticDelimiters[1],        readers: STATIC_READERS },
+			{ isStatic: true,  isTriple: false, open: staticDelimiters[0],        close: staticDelimiters[1],        readers: STANDARD_READERS },
 			{ isStatic: true,  isTriple: true,  open: staticTripleDelimiters[0],  close: staticTripleDelimiters[1],  readers: TRIPLE_READERS }
 		];
 
@@ -8217,7 +8295,7 @@ var StandardParser = Parser.extend({
 		this.sectionDepth = 0;
 		this.elementStack = [];
 
-		this.interpolate = Object.create( options.interpolate || shared.defaults.interpolate || {} );
+		this.interpolate = create( options.interpolate || shared.defaults.interpolate || {} );
 		this.interpolate.textarea = true;
 		defaultInterpolate.forEach( function (t) { return this$1.interpolate[ t ] = !options.interpolate || options.interpolate[ t ] !== false; } );
 
@@ -8238,13 +8316,6 @@ var StandardParser = Parser.extend({
 		this.csp = options.csp;
 
 		if ( options.attributes ) { this.inTag = true; }
-
-		this.transforms = options.transforms || options.parserTransforms;
-		if ( this.transforms ) {
-			this.transforms = this.transforms.concat( shared.defaults.parserTransforms );
-		} else {
-			this.transforms = shared.defaults.parserTransforms;
-		}
 	},
 
 	postProcess: function postProcess ( result ) {
@@ -8259,59 +8330,10 @@ var StandardParser = Parser.extend({
 
 		cleanup( result[0].t, this.stripComments, this.preserveWhitespace, !this.preserveWhitespace, !this.preserveWhitespace );
 
-		var transforms = this.transforms;
-		if ( transforms.length ) {
-			var tlen = transforms.length;
-			var walk = function ( fragment ) {
-				var len = fragment.length;
-
-				for ( var i = 0; i < len; i++ ) {
-					var node = fragment[i];
-
-					if ( node.t === ELEMENT ) {
-						for ( var j = 0; j < tlen; j++ ) {
-							var res = transforms[j].call( shared.Ractive, node );
-							if ( !res ) {
-								continue;
-							} else if ( res.remove ) {
-								fragment.splice( i--, 1 );
-								len--;
-								break;
-							} else if ( res.replace ) {
-								if ( Array.isArray( res.replace ) ) {
-									fragment.splice.apply( fragment, [ i--, 1 ].concat( res.replace ) );
-									len += res.replace.length - 1;
-								} else {
-									fragment[i--] = node = res.replace;
-								}
-
-								break;
-							}
-						}
-
-						// watch for partials
-						if ( node.p && !Array.isArray( node.p ) ) {
-							for ( var k in node.p ) { walk( node.p[k] ); }
-						}
-					}
-
-					if ( node.f ) { walk( node.f ); }
-				}
-			};
-
-			// process the root fragment
-			walk( result[0].t );
-
-			// watch for root partials
-			if ( result[0].p && !Array.isArray( result[0].p ) ) {
-				for ( var k in result[0].p ) { walk( result[0].p[k] ); }
-			}
-		}
-
 		if ( this.csp !== false ) {
 			var expr = {};
 			insertExpressions( result[0].t, expr );
-			if ( Object.keys( expr ).length ) { result[0].e = expr; }
+			if ( keys( expr ).length ) { result[0].e = expr; }
 		}
 
 		return result[0];
@@ -8345,8 +8367,6 @@ var parseOptions = [
 	'sanitize',
 	'stripComments',
 	'contextLines',
-	'parserTransforms',
-	'allowExpressions',
 	'attributes'
 ];
 
@@ -8398,7 +8418,7 @@ var parser = {
 	},
 
 	isParsed: function isParsed ( template) {
-		return !( typeof template === 'string' );
+		return !isString( template );
 	},
 
 	getParseOptions: function getParseOptions ( ractive ) {
@@ -8423,7 +8443,7 @@ var parser = {
 	}
 };
 
-var functions = Object.create( null );
+var functions = create( null );
 
 function getFunction ( str, i ) {
 	if ( functions[ str ] ) { return functions[ str ]; }
@@ -8437,7 +8457,7 @@ function addFunctions( template ) {
 
 	if ( !exp ) { return; }
 
-	Object.keys( exp ).forEach( function ( str ) {
+	keys( exp ).forEach( function ( str ) {
 		if ( functions[ str ] ) { return; }
 		functions[ str ] = exp[ str ];
 	});
@@ -8451,7 +8471,7 @@ var templateConfigurator = {
 		if ( 'template' in options ) {
 			var template = options.template;
 
-			if ( typeof template === 'function' ) {
+			if ( isFunction ( template ) ) {
 				proto.template = template;
 			} else {
 				proto.template = parseTemplate( template, proto );
@@ -8466,7 +8486,7 @@ var templateConfigurator = {
 		var template = 'template' in options ? options.template : Parent.prototype.template;
 		template = template || { v: TEMPLATE_VERSION, t: [] };
 
-		if ( typeof template === 'function' ) {
+		if ( isFunction ( template ) ) {
 			var fn = template;
 			template = getDynamicTemplate( ractive, fn );
 
@@ -8534,7 +8554,7 @@ function getDynamicTemplate ( ractive, fn ) {
 }
 
 function parseTemplate ( template, ractive ) {
-	if ( typeof template === 'string' ) {
+	if ( isString ( template ) ) {
 		// parse will validate and add expression functions
 		template = parseAsString( template, ractive );
 	}
@@ -8564,7 +8584,7 @@ function validate$1( template ) {
 	}
 
 	// Check the parsed template has a version at all
-	else if ( typeof template.v !== 'number' ) {
+	else if ( !isNumber( template.v ) ) {
 		throw new Error( 'The template parser was passed a non-string template, but the template doesn\'t have a version.  Make sure you\'re passing in the template you think you are.' );
 	}
 
@@ -8581,7 +8601,7 @@ function extendPartials ( existingPartials, newPartials, overwrite ) {
 	// case, but not initially...
 
 	for ( var key in newPartials ) {
-		if ( overwrite || !existingPartials.hasOwnProperty( key ) ) {
+		if ( overwrite || !hasOwn( existingPartials, key ) ) {
 			existingPartials[ key ] = newPartials[ key ];
 		}
 	}
@@ -8623,7 +8643,7 @@ Registry__proto__.configure = function configure ( Parent, target, options ) {
 	var name = this.name;
 	var option = options[ name ];
 
-	var registry = Object.create( Parent[name] );
+	var registry = create( Parent[name] );
 
 	for ( var key in option ) {
 		registry[ key ] = option[ key ];
@@ -8636,7 +8656,7 @@ Registry__proto__.reset = function reset ( ractive ) {
 	var registry = ractive[ this.name ];
 	var changed = false;
 
-	Object.keys( registry ).forEach( function (key) {
+	keys( registry ).forEach( function (key) {
 		var item = registry[ key ];
 
 		if ( item._fn ) {
@@ -8688,7 +8708,7 @@ function getSuperMethod ( parent, name ) {
 	if ( name in parent ) {
 		var value = parent[ name ];
 
-		return typeof value === 'function' ?
+		return isFunction( value ) ?
 			value :
 			function () { return value; };
 	}
@@ -8721,7 +8741,7 @@ function deprecate ( options ) {
 	// Using extend with Component instead of options,
 	// like Human.extend( Spider ) means adaptors as a registry
 	// gets copied to options. So we have to check if actually an array
-	if ( Array.isArray( options.adaptors ) ) {
+	if ( isArray( options.adaptors ) ) {
 		deprecateOption( options, 'adaptors', 'adapt' );
 	}
 }
@@ -8733,7 +8753,7 @@ var custom = {
 	template: templateConfigurator
 };
 
-var defaultKeys = Object.keys( defaults );
+var defaultKeys = keys( defaults );
 
 var isStandardKey = makeObj( defaultKeys.filter( function (key) { return !custom[ key ]; } ) );
 
@@ -8758,7 +8778,7 @@ function configure ( method, Parent, target, options, Child ) {
 	deprecate( options );
 
 	for ( var key in options ) {
-		if ( isStandardKey.hasOwnProperty( key ) ) {
+		if ( hasOwn( isStandardKey, key ) ) {
 			var value = options[ key ];
 
 			// warn the developer if they passed a function and ignore its value
@@ -8766,7 +8786,7 @@ function configure ( method, Parent, target, options, Child ) {
 			// NOTE: we allow some functions on "el" because we duck type element lists
 			// and some libraries or ef'ed-up virtual browsers (phantomJS) return a
 			// function object as the result of querySelector methods
-			if ( key !== 'el' && typeof value === 'function' ) {
+			if ( key !== 'el' && isFunction( value ) ) {
 				warnIfDebug( (key + " is a Ractive option that does not expect a function and will be ignored"),
 					method === 'init' ? target : null );
 			}
@@ -8795,11 +8815,11 @@ function configure ( method, Parent, target, options, Child ) {
 var _super = /\b_super\b/;
 function extendOtherMethods ( parent, target, options ) {
 	for ( var key in options ) {
-		if ( !isBlacklisted[ key ] && options.hasOwnProperty( key ) ) {
+		if ( !isBlacklisted[ key ] && hasOwn( options, key ) ) {
 			var member = options[ key ];
 
 			// if this is a method that overwrites a method, wrap it:
-			if ( typeof member === 'function' ) {
+			if ( isFunction( member ) ) {
 				if ( key in proto && !_super.test( member.toString() ) ) {
 					warnIfDebug( ("Overriding Ractive prototype function '" + key + "' without calling the '" + _super + "' method can be very dangerous.") );
 				}
@@ -8818,8 +8838,8 @@ function makeObj ( array ) {
 }
 
 var Item = function Item ( options ) {
-	this.parentFragment = options.parentFragment;
-	this.ractive = options.parentFragment.ractive;
+	this.up = options.up;
+	this.ractive = options.up.ractive;
 
 	this.template = options.template;
 	this.index = options.index;
@@ -8832,7 +8852,7 @@ var Item__proto__ = Item.prototype;
 Item__proto__.bubble = function bubble () {
 	if ( !this.dirty ) {
 		this.dirty = true;
-		this.parentFragment.bubble();
+		this.up.bubble();
 	}
 };
 
@@ -8849,7 +8869,7 @@ Item__proto__.findComponent = function findComponent () {
 };
 
 Item__proto__.findNextNode = function findNextNode () {
-	return this.parentFragment.findNextNode( this );
+	return this.up.findNextNode( this );
 };
 
 Item__proto__.shuffled = function shuffled () {
@@ -8972,7 +8992,7 @@ var ComputationChild = (function (Model) {
 	ComputationChild__proto__.joinKey = function joinKey ( key ) {
 		if ( key === undefined || key === '' ) { return this; }
 
-		if ( !this.childByKey.hasOwnProperty( key ) ) {
+		if ( !hasOwn( this.childByKey, key ) ) {
 			var child = new ComputationChild( this, key );
 			this.children.push( child );
 			this.childByKey[ key ] = child;
@@ -9274,15 +9294,15 @@ var ReferenceExpressionChild = (function (Model) {
 		if ( isEqual( value, this.value ) ) { return; }
 
 		var parent = this.parent;
-		var keys = [ this.key ];
+		var keys$$1 = [ this.key ];
 		while ( parent ) {
 			if ( parent.base ) {
-				var target = parent.model.joinAll( keys );
+				var target = parent.model.joinAll( keys$$1 );
 				target.applyValue( value );
 				break;
 			}
 
-			keys.unshift( parent.key );
+			keys$$1.unshift( parent.key );
 
 			parent = parent.parent;
 		}
@@ -9296,7 +9316,7 @@ var ReferenceExpressionChild = (function (Model) {
 	ReferenceExpressionChild__proto__.joinKey = function joinKey ( key ) {
 		if ( key === undefined || key === '' ) { return this; }
 
-		if ( !this.childByKey.hasOwnProperty( key ) ) {
+		if ( !hasOwn( this.childByKey, key ) ) {
 			var child = new ReferenceExpressionChild( this, key );
 			this.children.push( child );
 			this.childByKey[ key ] = child;
@@ -9364,7 +9384,7 @@ var ReferenceExpressionProxy = (function (Model) {
 		};
 
 		this.members = template.m.map( function ( template ) {
-			if ( typeof template === 'string' ) {
+			if ( isString( template ) ) {
 				return { get: function () { return template; } };
 			}
 
@@ -9400,8 +9420,8 @@ var ReferenceExpressionProxy = (function (Model) {
 		if ( this.dirty ) {
 			this.bubble();
 
-			var keys = this.members.map( function (m) { return escapeKey( String( m.get() ) ); } );
-			var model = this.base.joinAll( keys );
+			var keys$$1 = this.members.map( function (m) { return escapeKey( String( m.get() ) ); } );
+			var model = this.base.joinAll( keys$$1 );
 
 			if ( model !== this.model ) {
 				if ( this.model ) {
@@ -9457,7 +9477,7 @@ var ReferenceExpressionProxy = (function (Model) {
 	ReferenceExpressionProxy__proto__.joinKey = function joinKey ( key ) {
 		if ( key === undefined || key === '' ) { return this; }
 
-		if ( !this.childByKey.hasOwnProperty( key ) ) {
+		if ( !hasOwn( this.childByKey, key ) ) {
 			var child = new ReferenceExpressionChild( this, key );
 			this.children.push( child );
 			this.childByKey[ key ] = child;
@@ -9555,7 +9575,7 @@ var Alias = (function (ContainerItem) {
 			template: this.template.f
 		});
 
-		this.fragment.aliases = resolveAliases( this.template.z, this.parentFragment );
+		this.fragment.aliases = resolveAliases( this.template.z, this.up );
 		this.fragment.bind();
 	};
 
@@ -9599,7 +9619,7 @@ var hyphenateCamel = function ( camelCaseStr ) {
 var space = /\s+/;
 
 function readStyle ( css ) {
-	if ( typeof css !== 'string' ) { return {}; }
+	if ( !isString( css ) ) { return {}; }
 
 	return cleanCss( css, function ( css, reconstruct ) {
 		return css.split( ';' )
@@ -9692,7 +9712,7 @@ function getUpdateDelegate ( attribute ) {
 function updateMultipleSelectValue ( reset ) {
 	var value = this.getValue();
 
-	if ( !Array.isArray( value ) ) { value = [ value ]; }
+	if ( !isArray( value ) ) { value = [ value ]; }
 
 	var options = this.node.options;
 	var i = options.length;
@@ -9821,7 +9841,7 @@ function updateCheckboxName ( reset ) {
 		// TODO: WAT?
 	}
 
-	if ( !Array.isArray( value ) ) {
+	if ( !isArray( value ) ) {
 		binding.isChecked = node.checked = element.compare( value, valueAttribute );
 	} else {
 		var i = value.length;
@@ -9838,14 +9858,14 @@ function updateCheckboxName ( reset ) {
 function updateStyleAttribute ( reset ) {
 	var props = reset ? {} : readStyle( this.getValue() || '' );
 	var style = this.node.style;
-	var keys = Object.keys( props );
+	var keys$$1 = keys( props );
 	var prev = this.previous || [];
 
 	var i = 0;
-	while ( i < keys.length ) {
-		if ( keys[i] in style ) {
-			var safe = props[ keys[i] ].replace( '!important', '' );
-			style.setProperty( keys[i], safe, safe.length !== props[ keys[i] ].length ? 'important' : '' );
+	while ( i < keys$$1.length ) {
+		if ( keys$$1[i] in style ) {
+			var safe = props[ keys$$1[i] ].replace( '!important', '' );
+			style.setProperty( keys$$1[i], safe, safe.length !== props[ keys$$1[i] ].length ? 'important' : '' );
 		}
 		i++;
 	}
@@ -9853,10 +9873,10 @@ function updateStyleAttribute ( reset ) {
 	// remove now-missing attrs
 	i = prev.length;
 	while ( i-- ) {
-		if ( !~keys.indexOf( prev[i] ) && prev[i] in style ) { style.setProperty( prev[i], '', '' ); }
+		if ( !~keys$$1.indexOf( prev[i] ) && prev[i] in style ) { style.setProperty( prev[i], '', '' ); }
 	}
 
-	this.previous = keys;
+	this.previous = keys$$1;
 }
 
 function updateInlineStyle ( reset ) {
@@ -9885,7 +9905,7 @@ function updateClassName ( reset ) {
 	var className = value.concat( attr.filter( function (c) { return !~prev.indexOf( c ); } ) ).join( ' ' );
 
 	if ( className !== cls ) {
-		if ( typeof this.node.className !== 'string' ) {
+		if ( !isString( this.node.className ) ) {
 			this.node.className.baseVal = className;
 		} else {
 			this.node.className = className;
@@ -9910,7 +9930,7 @@ function updateInlineClass ( reset ) {
 	if ( value && !~attr.indexOf( name ) ) { attr.push( name ); }
 	else if ( !value && ~attr.indexOf( name ) ) { attr.splice( attr.indexOf( name ), 1 ); }
 
-	if ( typeof this.node.className !== 'string' ) {
+	if ( !isString( this.node.className ) ) {
 		this.node.className.baseVal = attr.join( ' ' );
 	} else {
 		this.node.className = attr.join( ' ' );
@@ -9930,7 +9950,7 @@ function updateBoolean ( reset ) {
 			} else {
 				var val = this.getValue();
 				if ( val ) {
-					this.node.setAttribute( this.propertyName, typeof val === 'string' ? val : '' );
+					this.node.setAttribute( this.propertyName, isString( val ) ? val : '' );
 				} else {
 					this.node.removeAttribute( this.propertyName );
 				}
@@ -9987,11 +10007,6 @@ var div$1 = doc ? createElement( 'div' ) : null;
 
 var attributes = false;
 function inAttributes() { return attributes; }
-function doInAttributes( fn ) {
-	attributes = true;
-	fn();
-	attributes = false;
-}
 
 var ConditionalAttribute = (function (Item) {
 	function ConditionalAttribute ( options ) {
@@ -10006,6 +10021,7 @@ var ConditionalAttribute = (function (Item) {
 			owner: this,
 			template: this.template
 		});
+
 		// this fragment can't participate in node-y things
 		this.fragment.findNextNode = noop;
 
@@ -10140,10 +10156,10 @@ var Attribute = (function (Item) {
 		this.name = options.template.n;
 		this.namespace = null;
 
-		this.owner = options.owner || options.parentFragment.owner || options.element || findElement( options.parentFragment );
-		this.element = options.element || (this.owner.attributeByName ? this.owner : findElement( options.parentFragment ) );
-		this.parentFragment = options.parentFragment; // shared
-		this.ractive = this.parentFragment.ractive;
+		this.owner = options.owner || options.up.owner || options.element || findElement( options.up );
+		this.element = options.element || (this.owner.attributeByName ? this.owner : findElement( options.up ) );
+		this.up = options.up; // shared
+		this.ractive = this.up.ractive;
 
 		this.rendered = false;
 		this.updateDelegate = null;
@@ -10151,7 +10167,7 @@ var Attribute = (function (Item) {
 
 		this.element.attributeByName[ this.name ] = this;
 
-		if ( !Array.isArray( options.template.f ) ) {
+		if ( !isArray( options.template.f ) ) {
 			this.value = options.template.f;
 			if ( this.value === 0 ) {
 				this.value = '';
@@ -10185,7 +10201,7 @@ var Attribute = (function (Item) {
 
 	Attribute__proto__.bubble = function bubble () {
 		if ( !this.dirty ) {
-			this.parentFragment.bubble();
+			this.up.bubble();
 			this.element.bubble();
 			this.dirty = true;
 		}
@@ -10279,7 +10295,7 @@ var Attribute = (function (Item) {
 			return;
 		}
 
-		if ( booleanAttributes.test( this.name ) ) { return value ? ( typeof value === 'string' ? ((this.name) + "=\"" + (safeAttributeString(value)) + "\"") : this.name ) : ''; }
+		if ( booleanAttributes.test( this.name ) ) { return value ? ( isString( value ) ? ((this.name) + "=\"" + (safeAttributeString(value)) + "\"") : this.name ) : ''; }
 		if ( value == null ) { return ''; }
 
 		var str = safeAttributeString( this.getString() );
@@ -10318,12 +10334,13 @@ var BindingFlag = (function (Item) {
 	function BindingFlag ( options ) {
 		Item.call( this, options );
 
-		this.owner = options.owner || options.parentFragment.owner || findElement( options.parentFragment );
-		this.element = this.owner.attributeByName ? this.owner : findElement( options.parentFragment );
+		this.owner = options.owner || options.up.owner || findElement( options.up );
+		this.element = this.owner.attributeByName ? this.owner : findElement( options.up );
 		this.flag = options.template.v === 'l' ? 'lazy' : 'twoway';
+		this.bubbler = this.owner === this.element ? this.element : this.up;
 
 		if ( this.element.type === ELEMENT ) {
-			if ( Array.isArray( options.template.f ) ) {
+			if ( isArray( options.template.f ) ) {
 				this.fragment = new Fragment({
 					owner: this,
 					template: options.template.f
@@ -10348,7 +10365,7 @@ var BindingFlag = (function (Item) {
 
 	BindingFlag__proto__.bubble = function bubble () {
 		if ( !this.dirty ) {
-			this.element.bubble();
+			this.bubbler.bubble();
 			this.dirty = true;
 		}
 	};
@@ -10378,6 +10395,7 @@ var BindingFlag = (function (Item) {
 
 	BindingFlag__proto__.update = function update () {
 		if ( this.dirty ) {
+			this.dirty = false;
 			if ( this.fragment ) { this.fragment.update(); }
 			set$1( this, this.getValue(), true );
 		}
@@ -10405,6 +10423,44 @@ function set$1 ( flag, value, update ) {
 
 	return flag.value;
 }
+
+function Comment ( options ) {
+	Item.call( this, options );
+}
+
+var proto$2 = create( Item.prototype );
+
+assign( proto$2, {
+	bind: noop,
+	unbind: noop,
+	update: noop,
+
+	detach: function detach () {
+		return detachNode( this.node );
+	},
+
+	firstNode: function firstNode () {
+		return this.node;
+	},
+
+	render: function render ( target ) {
+		this.rendered = true;
+
+		this.node = doc.createComment( this.template.c );
+		target.appendChild( this.node );
+	},
+
+	toString: function toString () {
+		return ("<!-- " + (this.template.c) + " -->");
+	},
+
+	unrender: function unrender ( shouldDestroy ) {
+		if ( this.rendered && shouldDestroy ) { this.detach(); }
+		this.rendered = false;
+	}
+});
+
+Comment.prototype = proto$2;
 
 var teardownHook = new Hook( 'teardown' );
 var destructHook = new Hook( 'destruct' );
@@ -10472,7 +10528,7 @@ function initLink ( model, key ) {
 			this.link( value.viewmodel.getRactiveModel(), key );
 			this._link.markedAll();
 		} else {
-			this.link( Object.create( Missing ), key );
+			this.link( create( Missing ), key );
 			this._link.markedAll();
 		}
 	};
@@ -10482,8 +10538,6 @@ function initLink ( model, key ) {
 	model._link.applyValue = function (v) { return model.applyValue( v ); };
 	return model._link;
 }
-
-var hasProp$1 = Object.prototype.hasOwnProperty;
 
 var RootModel = (function (Model) {
 	function RootModel ( options ) {
@@ -10517,11 +10571,11 @@ var RootModel = (function (Model) {
 	};
 
 	RootModel__proto__.createLink = function createLink ( keypath, target, targetPath, options ) {
-		var keys = splitKeypath( keypath );
+		var keys$$1 = splitKeypath( keypath );
 
 		var model = this;
-		while ( keys.length ) {
-			var key = keys.shift();
+		while ( keys$$1.length ) {
+			var key = keys$$1.shift();
 			model = model.childByKey[ key ] || model.joinKey( key );
 		}
 
@@ -10539,10 +10593,10 @@ var RootModel = (function (Model) {
 
 		if ( !options || options.virtual !== false ) {
 			var result = this.getVirtual();
-			var keys = Object.keys( this.computations );
-			var i = keys.length;
+			var keys$$1 = keys( this.computations );
+			var i = keys$$1.length;
 			while ( i-- ) {
-				result[ keys[i] ] = this$1.computations[ keys[i] ].get();
+				result[ keys$$1[i] ] = this$1.computations[ keys$$1[i] ].get();
 			}
 
 			return result;
@@ -10585,7 +10639,7 @@ var RootModel = (function (Model) {
 
 		if ( unescapedKey === '@this' || unescapedKey === '@global' || unescapedKey === '@shared' || unescapedKey === '@style' ) { return true; }
 		if ( unescapedKey[0] === '~' && unescapedKey[1] === '/' ) { unescapedKey = unescapedKey.slice( 2 ); }
-		if ( key === '' || hasProp$1.call( value, unescapedKey ) ) { return true; }
+		if ( key === '' || hasOwn( value, unescapedKey ) ) { return true; }
 
 		// mappings/links and computations
 		if ( key in this.computations || this.childByKey[unescapedKey] && this.childByKey[unescapedKey]._link ) { return true; }
@@ -10593,7 +10647,7 @@ var RootModel = (function (Model) {
 		// We climb up the constructor chain to find if one of them contains the unescapedKey
 		var constructor = value.constructor;
 		while ( constructor !== Function && constructor !== Array && constructor !== Object ) {
-			if ( hasProp$1.call( constructor.prototype, unescapedKey ) ) { return true; }
+			if ( hasOwn( constructor.prototype, unescapedKey ) ) { return true; }
 			constructor = constructor.constructor;
 		}
 
@@ -10611,7 +10665,7 @@ var RootModel = (function (Model) {
 
 		if ( key[0] === '~' && key[1] === '/' ) { key = key.slice( 2 ); }
 
-		return this.computations.hasOwnProperty( key ) ? this.computations[ key ] :
+		return hasOwn( this.computations, key ) ? this.computations[ key ] :
 		       Model.prototype.joinKey.call( this, key, opts );
 	};
 
@@ -10690,22 +10744,22 @@ function getComputationSignature ( ractive, key, signature ) {
 	var getterUseStack;
 	var setterString;
 
-	if ( typeof signature === 'function' ) {
+	if ( isFunction( signature ) ) {
 		getter = bind$1( signature, ractive );
 		getterString = signature.toString();
 		getterUseStack = true;
 	}
 
-	if ( typeof signature === 'string' ) {
+	if ( isString( signature ) ) {
 		getter = createFunctionFromString( signature, ractive );
 		getterString = signature;
 	}
 
-	if ( typeof signature === 'object' ) {
-		if ( typeof signature.get === 'string' ) {
+	if ( isObjectType( signature ) ) {
+		if ( isString( signature.get ) ) {
 			getter = createFunctionFromString( signature.get, ractive );
 			getterString = signature.get;
-		} else if ( typeof signature.get === 'function' ) {
+		} else if ( isFunction( signature.get ) ) {
 			getter = bind$1( signature.get, ractive );
 			getterString = signature.get.toString();
 			getterUseStack = true;
@@ -10713,7 +10767,7 @@ function getComputationSignature ( ractive, key, signature ) {
 			fatal( '`%s` computation must have a `get()` method', key );
 		}
 
-		if ( typeof signature.set === 'function' ) {
+		if ( isFunction( signature.set ) ) {
 			setter = bind$1( signature.set, ractive );
 			setterString = signature.set.toString();
 		}
@@ -10728,34 +10782,6 @@ function getComputationSignature ( ractive, key, signature ) {
 	};
 }
 
-function fillGaps ( target ) {
-	var sources = [], len = arguments.length - 1;
-	while ( len-- > 0 ) sources[ len ] = arguments[ len + 1 ];
-
-	for (var i = 0; i < sources.length; i++){
-		var source = sources[i];
-		for ( var key in source ) {
-			// Source can be a prototype-less object.
-			if ( key in target || !Object.prototype.hasOwnProperty.call( source, key ) ) { continue; }
-			target[ key ] = source[ key ];
-		}
-	}
-
-	return target;
-}
-
-function toPairs ( obj ) {
-	if ( obj === void 0 ) obj = {};
-
-	var pairs = [];
-	for ( var key in obj ) {
-		// Source can be a prototype-less object.
-		if ( !Object.prototype.hasOwnProperty.call( obj, key ) ) { continue; }
-		pairs.push( [ key, obj[ key ] ] );
-	}
-	return pairs;
-}
-
 function subscribe ( instance, options, type ) {
 	var subs = ( instance.constructor[ ("_" + type) ] || [] ).concat( toPairs( options[ type ] || [] ) );
 	var single = type === 'on' ? 'once' : (type + "Once");
@@ -10764,10 +10790,10 @@ function subscribe ( instance, options, type ) {
 		var target = ref[0];
 		var config = ref[1];
 
-		if ( typeof config === 'function' ) {
+		if ( isFunction( config ) ) {
 			instance[type]( target, config );
-		} else if ( typeof config === 'object' && typeof config.handler === 'function' ) {
-			instance[ config.once ? single : type ]( target, config.handler, Object.create( config ) );
+		} else if ( isObjectType( config ) && isFunction( config.handler ) ) {
+			instance[ config.once ? single : type ]( target, config.handler, create( config ) );
 		}
 	});
 }
@@ -10797,7 +10823,7 @@ function construct ( ractive, options ) {
 	subscribe( ractive, options, 'on' );
 
 	// if there's not a delegation setting, inherit from parent if it's not default
-	if ( !options.hasOwnProperty( 'delegate' ) && ractive.parent && ractive.parent.delegate !== ractive.delegate ) {
+	if ( !hasOwn( options, 'delegate' ) && ractive.parent && ractive.parent.delegate !== ractive.delegate ) {
 		ractive.delegate = false;
 	}
 
@@ -10808,7 +10834,7 @@ function construct ( ractive, options ) {
 	var i = registryNames$1.length;
 	while ( i-- ) {
 		var name = registryNames$1[ i ];
-		ractive[ name ] = Object.assign( Object.create( ractive.constructor[ name ] || null ), options[ name ] );
+		ractive[ name ] = assign( create( ractive.constructor[ name ] || null ), options[ name ] );
 	}
 
 	if ( ractive._attributePartial ) {
@@ -10826,7 +10852,7 @@ function construct ( ractive, options ) {
 	ractive.viewmodel = viewmodel;
 
 	// Add computed properties
-	var computed = Object.assign( Object.create( ractive.constructor.prototype.computed ), options.computed );
+	var computed = assign( create( ractive.constructor.prototype.computed ), options.computed );
 
 	for ( var key in computed ) {
 		if ( key === '__proto__' ) { continue; }
@@ -10847,7 +10873,7 @@ function getAdaptors ( ractive, protoAdapt, options ) {
 	return combine.apply( null, srcs );
 
 	function lookup ( adaptor ) {
-		if ( typeof adaptor === 'string' ) {
+		if ( isString( adaptor ) ) {
 			adaptor = findInViewHierarchy( 'adaptors', ractive, adaptor );
 
 			if ( !adaptor ) {
@@ -10865,7 +10891,7 @@ function initialiseProperties ( ractive ) {
 	ractive._guid = 'r-' + uid++;
 
 	// events
-	ractive._subs = Object.create( null );
+	ractive._subs = create( null );
 	ractive._nsSubs = 0;
 
 	// storage for item configuration from instantiation to reset,
@@ -10950,7 +10976,7 @@ var Component = (function (Item) {
 			this.addChild = addChild;
 			this.removeChild = removeChild;
 		} else {
-			var instance = Object.create( ComponentConstructor.prototype );
+			var instance = create( ComponentConstructor.prototype );
 
 			this.instance = instance;
 			this.name = template.e;
@@ -10960,7 +10986,7 @@ var Component = (function (Item) {
 			}
 
 			// find container
-			var fragment = options.parentFragment;
+			var fragment = options.up;
 			var container;
 			while ( fragment ) {
 				if ( fragment.owner.type === YIELDER ) {
@@ -10972,7 +10998,7 @@ var Component = (function (Item) {
 			}
 
 			// add component-instance-specific properties
-			instance.parent = this.parentFragment.ractive;
+			instance.parent = this.up.ractive;
 			instance.container = container || null;
 			instance.root = instance.parent.root;
 			instance.component = this;
@@ -10984,9 +11010,9 @@ var Component = (function (Item) {
 			attrs = template.m;
 
 			// allow components that are so inclined to add programmatic mappings
-			if ( Array.isArray( this.mappings ) ) {
+			if ( isArray( this.mappings ) ) {
 				attrs = ( attrs || [] ).concat( this.mappings );
-			} else if ( typeof this.mappings === 'string' ) {
+			} else if ( isString( this.mappings ) ) {
 				attrs = ( attrs || [] ).concat( parser.parse( this.mappings, { attributes: true } ).t );
 			}
 
@@ -11007,7 +11033,7 @@ var Component = (function (Item) {
 					case EVENT:
 						this$1.attributes.push( createItem({
 							owner: this$1,
-							parentFragment: this$1.parentFragment,
+							up: this$1.up,
 							template: template
 						}) );
 						break;
@@ -11026,7 +11052,7 @@ var Component = (function (Item) {
 			if ( leftovers.length ) {
 				this.attributes.push( new ConditionalAttribute({
 					owner: this,
-					parentFragment: this.parentFragment,
+					up: this.up,
 					template: leftovers
 				}) );
 			}
@@ -11046,7 +11072,7 @@ var Component = (function (Item) {
 			initialise( this.instance, {
 				partials: this._partials
 			}, {
-				cssIds: this.parentFragment.cssIds
+				cssIds: this.up.cssIds
 			});
 
 			this.eventHandlers.forEach( bind );
@@ -11058,7 +11084,7 @@ var Component = (function (Item) {
 	Component__proto__.bubble = function bubble () {
 		if ( !this.dirty ) {
 			this.dirty = true;
-			this.parentFragment.bubble();
+			this.up.bubble();
 		}
 	};
 
@@ -11190,12 +11216,12 @@ function addChild ( meta ) {
 	var child = meta.instance;
 	meta.anchor = this;
 
-	meta.parentFragment = this.parentFragment;
+	meta.up = this.up;
 	meta.name = meta.nameOption || this.name;
 	this.name = meta.name;
 
 
-	if ( !child.isolated ) { child.viewmodel.attached( this.parentFragment ); }
+	if ( !child.isolated ) { child.viewmodel.attached( this.up ); }
 
 	// render as necessary
 	if ( this.rendered ) {
@@ -11215,21 +11241,21 @@ function renderItem ( anchor, meta ) {
 	if ( !anchor.rendered ) { return; }
 
 	meta.shouldDestroy = false;
-	meta.parentFragment = anchor.parentFragment;
+	meta.up = anchor.up;
 
 	anchor.item = meta;
 	anchor.instance = meta.instance;
-	var nextNode = anchor.parentFragment.findNextNode( anchor );
+	var nextNode = anchor.up.findNextNode( anchor );
 
 	if ( meta.instance.fragment.rendered ) {
 		meta.instance.unrender();
 	}
 
 	meta.partials = meta.instance.partials;
-	meta.instance.partials = Object.assign( Object.create( meta.partials ), meta.partials, anchor._partials );
+	meta.instance.partials = assign( create( meta.partials ), meta.partials, anchor._partials );
 
 	meta.instance.fragment.unbind();
-	meta.instance.fragment.componentParent = anchor.parentFragment;
+	meta.instance.fragment.componentParent = anchor.up;
 	meta.instance.fragment.bind( meta.instance.viewmodel );
 
 	anchor.attributes.forEach( bind );
@@ -11237,7 +11263,7 @@ function renderItem ( anchor, meta ) {
 	anchor.attributes.forEach( render );
 	anchor.eventHandlers.forEach( render );
 
-	var target = anchor.parentFragment.findParentNode();
+	var target = anchor.up.findParentNode();
 	render$1( meta.instance, target, target.contains( nextNode ) ? nextNode : null, anchor.occupants );
 
 	if ( meta.lastBound !== anchor ) {
@@ -11258,7 +11284,7 @@ function unrenderItem ( anchor, meta ) {
 
 	meta.instance.el = meta.instance.anchor = null;
 	meta.instance.fragment.componentParent = null;
-	meta.parentFragment = null;
+	meta.up = null;
 	meta.anchor = null;
 	anchor.item = null;
 	anchor.instance = null;
@@ -11315,9 +11341,9 @@ var missingDecorator = {
 };
 
 var Decorator = function Decorator ( options ) {
-	this.owner = options.owner || options.parentFragment.owner || findElement( options.parentFragment );
-	this.element = this.owner.attributeByName ? this.owner : findElement( options.parentFragment );
-	this.parentFragment = this.owner.parentFragment;
+	this.owner = options.owner || options.up.owner || findElement( options.up );
+	this.element = this.owner.attributeByName ? this.owner : findElement( options.up );
+	this.up = this.owner.up;
 	this.ractive = this.owner.ractive;
 	var template = this.template = options.template;
 
@@ -11331,7 +11357,7 @@ var Decorator = function Decorator ( options ) {
 var Decorator__proto__ = Decorator.prototype;
 
 Decorator__proto__.bind = function bind () {
-	setupArgsFn( this, this.template, this.parentFragment, { register: true } );
+	setupArgsFn( this, this.template, this.up, { register: true } );
 };
 
 Decorator__proto__.bubble = function bubble () {
@@ -11455,8 +11481,8 @@ var Doctype = (function (Item) {
 	return Doctype;
 }(Item));
 
-var proto$2 = Doctype.prototype;
-proto$2.bind = proto$2.render = proto$2.teardown = proto$2.unbind = proto$2.unrender = proto$2.update = noop;
+var proto$3 = Doctype.prototype;
+proto$3.bind = proto$3.render = proto$3.teardown = proto$3.unbind = proto$3.unrender = proto$3.update = noop;
 
 var Binding = function Binding ( element, name ) {
 	if ( name === void 0 ) name = 'value';
@@ -11726,7 +11752,7 @@ var CheckboxNameBinding = (function (Binding) {
 		var existingValue = this.model.get();
 		var bindingValue = this.element.getAttribute( 'value' );
 
-		if ( Array.isArray( existingValue ) ) {
+		if ( isArray( existingValue ) ) {
 			this.isChecked = this.arrayContains( existingValue, bindingValue );
 		} else {
 			this.isChecked = this.element.compare( existingValue, bindingValue );
@@ -12440,7 +12466,7 @@ var Element = (function (ContainerItem) {
 		this.name = options.template.e.toLowerCase();
 
 		// find parent element
-		this.parent = findElement( this.parentFragment, false );
+		this.parent = findElement( this.up, false );
 
 		if ( this.parent && this.parent.name === 'option' ) {
 			throw new Error( ("An <option> element cannot contain other elements (encountered <" + (this.name) + ">)") );
@@ -12467,7 +12493,7 @@ var Element = (function (ContainerItem) {
 				case TRANSITION:
 					attr = createItem({
 						owner: this$1,
-						parentFragment: this$1.parentFragment,
+						up: this$1.up,
 						template: template
 					});
 
@@ -12499,7 +12525,7 @@ var Element = (function (ContainerItem) {
 		if ( leftovers ) {
 			( attrs || ( this.attributes = [] ) ).push( new ConditionalAttribute({
 				owner: this,
-				parentFragment: this.parentFragment,
+				up: this.up,
 				template: leftovers
 			}) );
 
@@ -12553,7 +12579,7 @@ var Element = (function (ContainerItem) {
 
 		if ( this.attributes ) { this.attributes.forEach( destroyed ); }
 
-		if ( !this.parentFragment.delegate && this.listeners ) {
+		if ( !this.up.delegate && this.listeners ) {
 			var ls = this.listeners;
 			for ( var k in ls ) {
 				if ( ls[k] && ls[k].length ) { this$1.node.removeEventListener( k, handler ); }
@@ -12608,16 +12634,16 @@ var Element = (function (ContainerItem) {
 
 		if ( this.fragment ) { return (ref = this.fragment).getContext.apply( ref, assigns ); }
 
-		if ( !this.ctx ) { this.ctx = new Context( this.parentFragment, this ); }
-		assigns.unshift( Object.create( this.ctx ) );
-		return Object.assign.apply( null, assigns );
+		if ( !this.ctx ) { this.ctx = new Context( this.up, this ); }
+		assigns.unshift( create( this.ctx ) );
+		return assign.apply( null, assigns );
 		var ref;
 	};
 
 	Element__proto__.off = function off ( event, callback, capture ) {
 		if ( capture === void 0 ) capture = false;
 
-		var delegate = this.parentFragment.delegate;
+		var delegate = this.up.delegate;
 		var ref = this.listeners && this.listeners[event];
 
 		if ( !ref ) { return; }
@@ -12643,7 +12669,7 @@ var Element = (function (ContainerItem) {
 	Element__proto__.on = function on ( event, callback, capture ) {
 		if ( capture === void 0 ) capture = false;
 
-		var delegate = this.parentFragment.delegate;
+		var delegate = this.up.delegate;
 		var ref = ( this.listeners || ( this.listeners = {} ) )[event] || ( this.listeners[event] = [] );
 
 		if ( delegate ) {
@@ -12718,7 +12744,7 @@ var Element = (function (ContainerItem) {
 		}
 
 		// tie the node to this vdom element
-		Object.defineProperty( node, '_ractive', {
+		defineProperty( node, '_ractive', {
 			value: {
 				proxy: this
 			},
@@ -12759,14 +12785,14 @@ var Element = (function (ContainerItem) {
 
 		// Is this a top-level node of a component? If so, we may need to add
 		// a data-ractive-css attribute, for CSS encapsulation
-		if ( this.parentFragment.cssIds ) {
-			node.setAttribute( 'data-ractive-css', this.parentFragment.cssIds.map( function (x) { return ("{" + x + "}"); } ).join( ' ' ) );
+		if ( this.up.cssIds ) {
+			node.setAttribute( 'data-ractive-css', this.up.cssIds.map( function (x) { return ("{" + x + "}"); } ).join( ' ' ) );
 		}
 
 		if ( this.attributes ) { this.attributes.forEach( render ); }
 		if ( this.binding ) { this.binding.render(); }
 
-		if ( !this.parentFragment.delegate && this.listeners ) {
+		if ( !this.up.delegate && this.listeners ) {
 			var ls = this.listeners;
 			for ( var k in ls ) {
 				if ( ls[k] && ls[k].length ) { this$1.node.addEventListener( k, handler, !!ls[k].refs ); }
@@ -12813,8 +12839,8 @@ var Element = (function (ContainerItem) {
 		if ( style !== undefined ) { attrs = ' style' + ( style ? ("=\"" + style + "\"") : '' ) + attrs; }
 		if ( cls !== undefined ) { attrs = ' class' + (cls ? ("=\"" + cls + "\"") : '') + attrs; }
 
-		if ( this.parentFragment.cssIds ) {
-			attrs += " data-ractive-css=\"" + (this.parentFragment.cssIds.map( function (x) { return ("{" + x + "}"); } ).join( ' ' )) + "\"";
+		if ( this.up.cssIds ) {
+			attrs += " data-ractive-css=\"" + (this.up.cssIds.map( function (x) { return ("{" + x + "}"); } ).join( ' ' )) + "\"";
 		}
 
 		var str = "<" + tagName + attrs + ">";
@@ -12940,7 +12966,7 @@ function delegateHandler ( ev ) {
 	// starting with the origin node, walk up the DOM looking for ractive nodes with a matching event listener
 	while ( bubble && node && node !== end ) {
 		var proxy = node._ractive && node._ractive.proxy;
-		if ( proxy && proxy.parentFragment.delegate === endEl && shouldFire( ev, node, end ) ) {
+		if ( proxy && proxy.up.delegate === endEl && shouldFire( ev, node, end ) ) {
 			listeners = proxy.listeners && proxy.listeners[name];
 
 			if ( listeners ) {
@@ -12950,7 +12976,7 @@ function delegateHandler ( ev ) {
 			}
 		}
 
-		node = node.parentNode;
+		node = node.parentNode || node.correspondingUseElement; // SVG with a <use> element in certain environments
 	}
 
 	return bubble;
@@ -12962,7 +12988,7 @@ function shouldFire ( event, start, end ) {
 		var node = start;
 		while ( node && node !== end ) {
 			if ( node.disabled ) { return false; }
-			node = node.parentNode;
+			node = node.parentNode || node.correspondingUseElement;
 		}
 	}
 
@@ -13111,12 +13137,12 @@ var dollarArgsPattern = /^\$(\d+)(\..+)?$/;
 var EventDirective = function EventDirective ( options ) {
 	var this$1 = this;
 
-	this.owner = options.owner || options.parentFragment.owner || findElement( options.parentFragment );
-	this.element = this.owner.attributeByName ? this.owner : findElement( options.parentFragment, true );
+	this.owner = options.owner || options.up.owner || findElement( options.up );
+	this.element = this.owner.attributeByName ? this.owner : findElement( options.up, true );
 	this.template = options.template;
-	this.parentFragment = options.parentFragment;
-	this.ractive = options.parentFragment.ractive;
-	//const delegate = this.delegate = this.ractive.delegate && options.parentFragment.delegate;
+	this.up = options.up;
+	this.ractive = options.up.ractive;
+	//const delegate = this.delegate = this.ractive.delegate && options.up.delegate;
 	this.events = [];
 
 	if ( this.element.type === COMPONENT || this.element.type === ANCHOR ) {
@@ -13162,7 +13188,7 @@ EventDirective__proto__.fire = function fire ( event, args ) {
 	if ( this.fn ) {
 		var values = [];
 
-		var models = resolveArgs( this, this.template, this.parentFragment, {
+		var models = resolveArgs( this, this.template, this.up, {
 			specialRef: function specialRef ( ref ) {
 				var specialMatch = specialPattern.exec( ref );
 				if ( specialMatch ) {
@@ -13239,7 +13265,7 @@ EventDirective__proto__.fire = function fire ( event, args ) {
 		}
 
 		// watch for proxy events
-		else if ( !returned.length && Array.isArray( result ) && typeof result[0] === 'string' ) {
+		else if ( !returned.length && isArray( result ) && isString( result[0] ) ) {
 			result = fireEvent( this.ractive, result.shift(), context, result );
 		}
 
@@ -13308,9 +13334,6 @@ var Mustache = (function (Item) {
 	function Mustache ( options ) {
 		Item.call( this, options );
 
-		this.parentFragment = options.parentFragment;
-		this.template = options.template;
-		this.index = options.index;
 		if ( options.owner ) { this.parent = options.owner; }
 
 		this.isStatic = !!options.template.s;
@@ -13325,7 +13348,7 @@ var Mustache = (function (Item) {
 
 	Mustache__proto__.bind = function bind () {
 		// yield mustaches should resolve in container context
-		var start = this.containerFragment || this.parentFragment;
+		var start = this.containerFragment || this.up;
 		// try to find a model for this view
 		var model = resolve( start, this.template );
 
@@ -13347,7 +13370,7 @@ var Mustache = (function (Item) {
 	};
 
 	Mustache__proto__.rebind = function rebind ( next, previous, safe ) {
-		next = rebindMatch( this.template, next, previous, this.parentFragment );
+		next = rebindMatch( this.template, next, previous, this.up );
 		if ( next === this.model ) { return false; }
 
 		if ( this.model ) {
@@ -13369,23 +13392,13 @@ var Mustache = (function (Item) {
 	return Mustache;
 }(Item));
 
-var MustacheContainer = (function (ContainerItem) {
-	function MustacheContainer ( options ) {
-		ContainerItem.call( this, options );
-	}
+function MustacheContainer ( options ) {
+	Mustache.call( this, options );
+}
 
-	if ( ContainerItem ) MustacheContainer.__proto__ = ContainerItem;
-	var MustacheContainer__proto__ = MustacheContainer.prototype = Object.create( ContainerItem && ContainerItem.prototype );
-	MustacheContainer__proto__.constructor = MustacheContainer;
+var proto$4 = MustacheContainer.prototype = Object.create( ContainerItem.prototype );
 
-	return MustacheContainer;
-}(ContainerItem));
-var proto$3 = MustacheContainer.prototype;
-var mustache = Mustache.prototype;
-proto$3.bind = mustache.bind;
-proto$3.handleChange = mustache.handleChange;
-proto$3.rebind = mustache.rebind;
-proto$3.unbind = mustache.unbind;
+assign( proto$4, Mustache.prototype, { constructor: MustacheContainer } );
 
 var Interpolator = (function (Mustache) {
 	function Interpolator () {
@@ -13464,7 +13477,7 @@ var Input = (function (Element) {
 	Input__proto__.compare = function compare ( value, attrValue ) {
 		var comparator = this.getAttribute( 'value-comparator' );
 		if ( comparator ) {
-			if ( typeof comparator === 'function' ) {
+			if ( isFunction( comparator ) ) {
 				return comparator( value, attrValue );
 			}
 			if (value && attrValue) {
@@ -13490,7 +13503,7 @@ var specials$1 = {
 	undefined: undefined
 };
 
-var specialsPattern = new RegExp( '^(?:' + Object.keys( specials$1 ).join( '|' ) + ')' );
+var specialsPattern = new RegExp( '^(?:' + keys( specials$1 ).join( '|' ) + ')' );
 var numberPattern$1 = /^(?:[+-]?)(?:(?:(?:0|[1-9]\d*)?\.\d+)|(?:(?:0|[1-9]\d*)\.)|(?:0|[1-9]\d*))(?:[eE][+-]?\d+)?/;
 var placeholderPattern = /\$\{([^\}]+)\}/g;
 var placeholderAtStartPattern = /^\$\{([^\}]+)\}/;
@@ -13499,7 +13512,7 @@ var onlyWhitespace$1 = /^\s*$/;
 var JsonParser = Parser.extend({
 	init: function init ( str, options ) {
 		this.values = options.values;
-		this.allowWhitespace();
+		this.sp();
 	},
 
 	postProcess: function postProcess ( result ) {
@@ -13516,7 +13529,7 @@ var JsonParser = Parser.extend({
 
 			var placeholder = parser.matchPattern( placeholderAtStartPattern );
 
-			if ( placeholder && ( parser.values.hasOwnProperty( placeholder ) ) ) {
+			if ( placeholder && ( hasOwn( parser.values, placeholder ) ) ) {
 				return { v: parser.values[ placeholder ] };
 			}
 		},
@@ -13549,7 +13562,7 @@ var JsonParser = Parser.extend({
 
 			var result = {};
 
-			parser.allowWhitespace();
+			parser.sp();
 
 			if ( parser.matchString( '}' ) ) {
 				return { v: result };
@@ -13559,7 +13572,7 @@ var JsonParser = Parser.extend({
 			while ( pair = getKeyValuePair( parser ) ) {
 				result[ pair.key ] = pair.value;
 
-				parser.allowWhitespace();
+				parser.sp();
 
 				if ( parser.matchString( '}' ) ) {
 					return { v: result };
@@ -13578,7 +13591,7 @@ var JsonParser = Parser.extend({
 
 			var result = [];
 
-			parser.allowWhitespace();
+			parser.sp();
 
 			if ( parser.matchString( ']' ) ) {
 				return { v: result };
@@ -13588,7 +13601,7 @@ var JsonParser = Parser.extend({
 			while ( valueToken = parser.read() ) {
 				result.push( valueToken.v );
 
-				parser.allowWhitespace();
+				parser.sp();
 
 				if ( parser.matchString( ']' ) ) {
 					return { v: result };
@@ -13598,7 +13611,7 @@ var JsonParser = Parser.extend({
 					return null;
 				}
 
-				parser.allowWhitespace();
+				parser.sp();
 			}
 
 			return null;
@@ -13607,7 +13620,7 @@ var JsonParser = Parser.extend({
 });
 
 function getKeyValuePair ( parser ) {
-	parser.allowWhitespace();
+	parser.sp();
 
 	var key = readKey( parser );
 
@@ -13615,11 +13628,11 @@ function getKeyValuePair ( parser ) {
 
 	var pair = { key: key };
 
-	parser.allowWhitespace();
+	parser.sp();
 	if ( !parser.matchString( ':' ) ) {
 		return null;
 	}
-	parser.allowWhitespace();
+	parser.sp();
 
 	var valueToken = parser.read();
 
@@ -13640,10 +13653,10 @@ var Mapping = (function (Item) {
 
 		this.name = options.template.n;
 
-		this.owner = options.owner || options.parentFragment.owner || options.element || findElement( options.parentFragment );
-		this.element = options.element || (this.owner.attributeByName ? this.owner : findElement( options.parentFragment ) );
-		this.parentFragment = this.element.parentFragment; // shared
-		this.ractive = this.parentFragment.ractive;
+		this.owner = options.owner || options.up.owner || options.element || findElement( options.up );
+		this.element = options.element || (this.owner.attributeByName ? this.owner : findElement( options.up ) );
+		this.up = this.element.up; // shared
+		this.ractive = this.up.ractive;
 
 		this.element.attributeByName[ this.name ] = this;
 
@@ -13663,12 +13676,12 @@ var Mapping = (function (Item) {
 			viewmodel.joinKey( this.name ).set( true );
 		}
 
-		else if ( typeof template === 'string' ) {
+		else if ( isString( template ) ) {
 			var parsed = parseJSON( template );
 			viewmodel.joinKey( this.name ).set( parsed ? parsed.value : template );
 		}
 
-		else if ( Array.isArray( template ) ) {
+		else if ( isArray( template ) ) {
 			createMapping( this, true );
 		}
 	};
@@ -13702,7 +13715,7 @@ function createMapping ( item ) {
 	var childData = viewmodel.value;
 
 	if ( template.length === 1 && template[0].t === INTERPOLATOR ) {
-		var model = resolve( item.parentFragment, template[0] );
+		var model = resolve( item.up, template[0] );
 		var val = model.get( false );
 
 		// if the interpolator is not static
@@ -13717,7 +13730,7 @@ function createMapping ( item ) {
 		}
 
 		// copy non-object, non-computed vals through
-		else if ( typeof val !== 'object' || template[0].x ) {
+		else if ( !isObjectType( val ) || template[0].x ) {
 			viewmodel.joinKey( splitKeypath( item.name ) ).set( val );
 		}
 
@@ -13761,7 +13774,7 @@ var Option = (function (Element) {
 
 		Element.call( this, options );
 
-		this.select = findElement( this.parent || this.parentFragment, false, 'select' );
+		this.select = findElement( this.parent || this.up, false, 'select' );
 	}
 
 	if ( Element ) Option.__proto__ = Element;
@@ -13816,7 +13829,7 @@ var Option = (function (Element) {
 			return true;
 		}
 
-		if ( this.select.getAttribute( 'multiple' ) && Array.isArray( selectValue ) ) {
+		if ( this.select.getAttribute( 'multiple' ) && isArray( selectValue ) ) {
 			var i = selectValue.length;
 			while ( i-- ) {
 				if ( this$1.select.compare( selectValue[i], optionValue ) ) {
@@ -13845,11 +13858,9 @@ var Option = (function (Element) {
 	return Option;
 }(Element));
 
-var hasOwn = Object.prototype.hasOwnProperty;
-
-function getPartialTemplate ( ractive, name, parentFragment ) {
+function getPartialTemplate ( ractive, name, up ) {
 	// If the partial in instance or view heirarchy instances, great
-	var partial = getPartialFromRegistry( ractive, name, parentFragment || {} );
+	var partial = getPartialFromRegistry( ractive, name, up || {} );
 	if ( partial ) { return partial; }
 
 	// Does it exist on the page as a script tag?
@@ -13866,9 +13877,9 @@ function getPartialTemplate ( ractive, name, parentFragment ) {
 	}
 }
 
-function getPartialFromRegistry ( ractive, name, parentFragment ) {
+function getPartialFromRegistry ( ractive, name, up ) {
 	// if there was an instance up-hierarchy, cool
-	var partial = findParentPartial( name, parentFragment.owner );
+	var partial = findParentPartial( name, up.owner );
 	if ( partial ) { return partial; }
 
 	// find first instance in the ractive or view hierarchy that has this partial
@@ -13880,9 +13891,13 @@ function getPartialFromRegistry ( ractive, name, parentFragment ) {
 
 	// partial is a function?
 	var fn;
-	if ( typeof partial === 'function' ) {
+	if ( isFunction( partial ) ) {
+		fn = partial;
+		// super partial
+		if ( fn.styleSet ) { return fn; }
+
 		fn = partial.bind( instance );
-		fn.isOwner = instance.partials.hasOwnProperty(name);
+		fn.isOwner = hasOwn( instance.partials, name );
 		partial = fn.call( ractive, parser );
 	}
 
@@ -13918,224 +13933,390 @@ function getPartialFromRegistry ( ractive, name, parentFragment ) {
 }
 
 function findOwner ( ractive, key ) {
-	return ractive.partials.hasOwnProperty( key )
+	return hasOwn( ractive.partials, key )
 		? ractive
 		: findConstructor( ractive.constructor, key);
 }
 
 function findConstructor ( constructor, key ) {
 	if ( !constructor ) { return; }
-	return constructor.partials.hasOwnProperty( key )
+	return hasOwn( constructor.partials, key )
 		? constructor
 		: findConstructor( constructor.Parent, key );
 }
 
 function findParentPartial( name, parent ) {
 	if ( parent ) {
-		if ( parent.template && parent.template.p && !Array.isArray( parent.template.p ) && hasOwn.call( parent.template.p, name ) ) {
+		if ( parent.template && parent.template.p && !isArray( parent.template.p ) && hasOwn( parent.template.p, name ) ) {
 			return parent.template.p[name];
-		} else if ( parent.parentFragment && parent.parentFragment.owner ) {
-			return findParentPartial( name, parent.parentFragment.owner );
+		} else if ( parent.up && parent.up.owner ) {
+			return findParentPartial( name, parent.up.owner );
 		}
 	}
 }
 
-var Partial = (function (MustacheContainer) {
-	function Partial ( options ) {
-		MustacheContainer.call( this, options );
+function Partial ( options ) {
+	MustacheContainer.call( this, options );
 
-		this.options = options;
+	var tpl = options.template;
 
-		this.yielder = options.template.t === YIELDER;
+	// yielder is a special form of partial that will later require special handling
+	if ( tpl.t === YIELDER ) {
+		this.yielder = 1;
 	}
 
-	if ( MustacheContainer ) Partial.__proto__ = MustacheContainer;
-	var Partial__proto__ = Partial.prototype = Object.create( MustacheContainer && MustacheContainer.prototype );
-	Partial__proto__.constructor = Partial;
+	// this is a macro partial, complete with macro constructor
+	else if ( tpl.t === ELEMENT ) {
+		// leaving this as an element will confuse up-template searches
+		this.type = PARTIAL;
+		this.macro = options.macro;
+	}
+}
 
-	Partial__proto__.bind = function bind () {
-		var this$1 = this;
+var proto$5 = Partial.prototype = create( MustacheContainer.prototype );
 
-		var options = this.options;
+assign( proto$5, {
+	constructor: Partial,
+
+	bind: function bind () {
+		var template = this.template;
 
 		if ( this.yielder ) {
-			this.container = options.parentFragment.ractive;
+			// the container is the instance that owns this node
+			this.container = this.up.ractive;
 			this.component = this.container.component;
+			this.containerFragment = this.up;
 
+			// normal component
 			if ( this.component ) {
-				this.containerFragment = options.parentFragment;
-				this.parentFragment = this.component.parentFragment;
+				// yields skip the owning instance and go straight to the surrounding context
+				this.up = this.component.up;
 
 				// {{yield}} is equivalent to {{yield content}}
-				if ( !options.template.r && !options.template.rx && !options.template.x ) { options.template.r = 'content'; }
-			} else { // this is a plain-ish instance that may be anchored at a later date
+				if ( !template.r && !template.x && !template.tx ) { this.refName = 'content'; }
+			}
+
+			// plain-ish instance that may be attached to a parent later
+			else {
 				this.fragment = new Fragment({
-					template: [],
 					owner: this,
-					parentFragment: options.parentFragment,
-					ractive: options.parentFragment.ractive
+					template: []
 				});
-				this.containerFragment = options.parentFragment;
-				this.parentFragment = options.parentFragment;
 				this.fragment.bind();
 				return;
 			}
 		}
 
-		// keep track of the reference name for future resets
-		this.refName = this.template.r;
-
-		// name matches take priority over expressions
-		var template = this.refName ? getPartialTemplate( this.ractive, this.refName, this.parentFragment ) || null : null;
-		var templateObj;
-
-		if ( template ) {
-			this.named = true;
-			this.setTemplate( this.template.r, template );
+		// this is a macro/super partial
+		if ( this.macro ) {
+			this.fn = this.macro;
 		}
 
-		if ( !template ) {
-			MustacheContainer.prototype.bind.call(this);
-			if ( ( templateObj = this.model.get() ) && typeof templateObj === 'object' && ( typeof templateObj.template === 'string' || Array.isArray( templateObj.t ) ) ) {
-				if ( templateObj.template ) {
-					this.source = templateObj.template;
-					templateObj = parsePartial( this.template.r, templateObj.template, this.ractive );
-				} else {
-					this.source = templateObj.t;
-				}
-				this.setTemplate( this.template.r, templateObj.t );
-			} else if ( typeof this.model.get() !== 'string' && this.refName ) {
-				this.setTemplate( this.refName, template );
-			} else {
-				this.setTemplate( this.model.get() );
+		// this is a plain partial or yielder
+		else {
+			if ( !this.refName ) { this.refName = template.r; }
+
+			// if the refName exists as a partial, this is a plain old partial reference where no model binding will happen
+			if ( this.refName ) {
+				partialFromValue( this, this.refName );
+			}
+
+			// this is a dynamic/inline partial
+			if ( !this.partial && !this.fn ) {
+				MustacheContainer.prototype.bind.call( this );
+				if ( this.model ) { partialFromValue( this, this.model.get() ); }
 			}
 		}
 
-		options = {
-			owner: this,
-			template: this.partialTemplate
-		};
-
-		if ( this.template.c ) {
-			options.template = [{ t: SECTION, n: SECTION_WITH, f: options.template }];
-			for ( var k in this$1.template.c ) {
-				options.template[0][k] = this$1.template.c[k];
-			}
+		if ( !this.partial && !this.fn ) {
+			warnOnceIfDebug( ("Could not find template for partial '" + (this.name) + "'") );
 		}
 
-		if ( this.yielder ) {
-			options.ractive = this.container.parent;
-		}
+		createFragment$1( this, this.partial || [] );
 
-		this.fragment = new Fragment(options);
-		if ( this.template.z ) {
-			this.fragment.aliases = resolveAliases( this.template.z, this.yielder ? this.containerFragment : this.parentFragment );
-		}
+		// macro/super partial
+		if ( this.fn ) { initMacro( this ); }
+
 		this.fragment.bind();
-	};
+	},
 
-	Partial__proto__.bubble = function bubble () {
-		if ( this.yielder && !this.dirty ) {
-			this.containerFragment.bubble();
+	bubble: function bubble () {
+		if ( !this.dirty ) {
 			this.dirty = true;
-		} else {
-			MustacheContainer.prototype.bubble.call(this);
+
+			if ( this.yielder ) {
+				this.containerFragment.bubble();
+			} else {
+				this.up.bubble();
+			}
 		}
-	};
+	},
 
-	Partial__proto__.findNextNode = function findNextNode () {
-		return this.yielder ? this.containerFragment.findNextNode( this ) : MustacheContainer.prototype.findNextNode.call(this);
-	};
+	findNextNode: function findNextNode () {
+		return ( this.containerFragment || this.up ).findNextNode( this );
+	},
 
-	Partial__proto__.forceResetTemplate = function forceResetTemplate () {
+	handleChange: function handleChange () {
+		this.dirtyTemplate = true;
+		this.externalChange = true;
+		this.bubble();
+	},
+
+	refreshAttrs: function refreshAttrs () {
 		var this$1 = this;
 
-		this.partialTemplate = undefined;
+		keys( this._attrs ).forEach( function (k) {
+			this$1.handle.attributes[k] = this$1._attrs[k].valueOf();
+		});
+	},
 
-		// on reset, check for the reference name first
+	resetTemplate: function resetTemplate () {
+		var this$1 = this;
+
+		if ( this.fn && this.proxy ) {
+			if ( this.externalChange ) {
+				if ( isFunction( this.proxy.teardown ) ) { this.proxy.teardown(); }
+				this.fn = this.proxy = null;
+			} else {
+				this.partial = this.fnTemplate;
+				return;
+			}
+		}
+
+		this.partial = null;
+
 		if ( this.refName ) {
-			this.partialTemplate = getPartialTemplate( this.ractive, this.refName, this.parentFragment );
+			this.partial = getPartialTemplate( this.ractive, this.refName, this.up );
 		}
 
-		// then look for the resolved name
-		if ( !this.partialTemplate ) {
-			this.partialTemplate = getPartialTemplate( this.ractive, this.name, this.parentFragment );
+		if ( !this.partial && this.model ) {
+			partialFromValue( this, this.model.get() );
 		}
 
-		if ( !this.partialTemplate ) {
+		this.unbindAttrs();
+
+		if ( this.fn ) {
+			initMacro( this );
+			if ( isFunction( this.proxy.render ) ) { runloop.scheduleTask( function () { return this$1.proxy.render(); } ); }
+		} else if ( !this.partial ) {
 			warnOnceIfDebug( ("Could not find template for partial '" + (this.name) + "'") );
-			this.partialTemplate = [];
 		}
+	},
 
-		if ( this.inAttribute ) {
-			doInAttributes( function () { return this$1.fragment.resetTemplate( this$1.partialTemplate ); } );
-		} else {
-			this.fragment.resetTemplate( this.partialTemplate );
-		}
+	render: function render ( target, occupants ) {
+		if ( this.fn && this.fn._cssDef && !this.fn._cssDef.applied ) { applyCSS(); }
 
-		this.bubble();
-	};
+		this.fragment.render( target, occupants );
 
-	Partial__proto__.render = function render ( target, occupants ) {
-		return this.fragment.render( target, occupants );
-	};
+		if ( this.proxy && isFunction( this.proxy.render ) ) { this.proxy.render(); }
+	},
 
-	Partial__proto__.setTemplate = function setTemplate ( name, template ) {
-		this.name = name;
-
-		if ( !template && template !== null ) { template = getPartialTemplate( this.ractive, name, this.parentFragment ); }
-
-		if ( !template ) {
-			warnOnceIfDebug( ("Could not find template for partial '" + name + "'") );
-		}
-
-		this.partialTemplate = template || [];
-	};
-
-	Partial__proto__.unbind = function unbind () {
-		MustacheContainer.prototype.unbind.call(this);
-		this.fragment.aliases = {};
+	unbind: function unbind () {
 		this.fragment.unbind();
-	};
 
-	Partial__proto__.unrender = function unrender ( shouldDestroy ) {
+		this.fragment.aliases = null;
+
+		this.unbindAttrs();
+
+		MustacheContainer.prototype.unbind.call( this );
+	},
+
+	unbindAttrs: function unbindAttrs () {
+		var this$1 = this;
+
+		if ( this._attrs ) {
+			keys( this._attrs ).forEach( function (k) {
+				this$1._attrs[k].unbind();
+			});
+		}
+	},
+
+	unrender: function unrender ( shouldDestroy ) {
+		if ( this.proxy && isFunction( this.proxy.teardown ) ) { this.proxy.teardown(); }
+
 		this.fragment.unrender( shouldDestroy );
-	};
+	},
 
-	Partial__proto__.update = function update () {
-		var template;
+	update: function update () {
+		var proxy = this.proxy;
+		this.updating = 1;
+
+		if ( this.dirtyAttrs ) {
+			this.dirtyAttrs = false;
+			this.refreshAttrs();
+			if ( isFunction( proxy.update ) ) { proxy.update( this.handle.attributes ); }
+		}
+
+		if ( this.dirtyTemplate ) {
+			this.dirtyTemplate = false;
+			this.resetTemplate();
+
+			this.fragment.resetTemplate( this.partial || [] );
+		}
 
 		if ( this.dirty ) {
 			this.dirty = false;
-
-			if ( !this.named ) {
-				if ( this.model ) {
-					template = this.model.get();
-				}
-
-				if ( template && typeof template === 'string' && template !== this.name ) {
-					this.setTemplate( template );
-					this.fragment.resetTemplate( this.partialTemplate );
-				} else if ( template && typeof template === 'object' && ( typeof template.template === 'string' || Array.isArray( template.t ) ) ) {
-					if ( template.t !== this.source && template.template !== this.source ) {
-						if ( template.template ) {
-							this.source = template.template;
-							template = parsePartial( this.name, template.template, this.ractive );
-						} else {
-							this.source = template.t;
-						}
-						this.setTemplate( this.name, template.t );
-						this.fragment.resetTemplate( this.partialTemplate );
-					}
-				}
-			}
-
+			if ( proxy && isFunction( proxy.invalidate ) ) { proxy.invalidate(); }
 			this.fragment.update();
 		}
+
+		this.externalChange = false;
+		this.updating = 0;
+	}
+});
+
+function createFragment$1 ( self, partial ) {
+	self.partial = partial;
+	contextifyTemplate( self );
+
+	var options = {
+		owner: self,
+		template: self.partial
 	};
 
-	return Partial;
-}(MustacheContainer));
+	if ( self.yielder ) { options.ractive = self.container.parent; }
+
+	if ( self.fn ) { options.cssIds = self.fn._cssIds; }
+
+	var fragment = self.fragment = new Fragment( options );
+
+	// partials may have aliases that need to be in place before binding
+	if ( self.template.z ) {
+		fragment.aliases = resolveAliases( self.template.z, self.containerFragment || self.up );
+	}
+}
+
+function contextifyTemplate ( self ) {
+	if ( self.template.c ) {
+		self.partial = [{ t: SECTION, n: SECTION_WITH, f: self.partial }];
+		assign( self.partial[0], self.template.c );
+	}
+}
+
+function partialFromValue ( self, value, okToParse ) {
+	var tpl = value;
+
+	if ( isArray( tpl ) ) {
+		self.partial = tpl;
+	} else if ( isObjectType( tpl ) ) {
+		if ( isArray( tpl.t ) ) { self.partial = tpl.t; }
+		else if ( isString( tpl.template ) ) { self.partial = parsePartial( tpl.template, tpl.template, self.ractive ).t; }
+	} else if ( isFunction( tpl ) && tpl.styleSet ) {
+		self.fn = tpl;
+		if ( self.fragment ) { self.fragment.cssIds = tpl._cssIds; }
+	} else if ( tpl != null ) {
+		tpl = getPartialTemplate( self.ractive, '' + tpl, self.containerFragment || self.up );
+		if ( tpl ) {
+			self.name = value;
+			if ( tpl.styleSet ) {
+				self.fn = tpl;
+				if ( self.fragment ) { self.fragment.cssIds = tpl._cssIds; }
+			} else { self.partial = tpl; }
+		} else if ( okToParse ) {
+			self.partial = parsePartial( '' + value, '' + value, self.ractive ).t;
+		} else {
+			self.name = value;
+		}
+	}
+
+	return self.partial;
+}
+
+function setTemplate ( template ) {
+	partialFromValue( this, template, true );
+
+	if ( !this.initing ) {
+		this.dirtyTemplate = true;
+		this.fnTemplate = this.partial;
+
+		if ( this.updating ) {
+			this.bubble();
+			runloop.promise();
+		} else {
+			var promise = runloop.start();
+
+			this.bubble();
+			runloop.end();
+
+			return promise;
+		}
+	}
+}
+
+function aliasLocal ( ref, name ) {
+	var aliases = this.fragment.aliases || ( this.fragment.aliases = {} );
+	if ( !name ) {
+		aliases[ ref ] = this._data;
+	} else {
+		aliases[ name ] = this._data.joinAll( splitKeypath( ref ) );
+	}
+}
+
+var extras = 'extra-attributes';
+
+function initMacro ( self ) {
+	var fn = self.fn;
+	var fragment = self.fragment;
+
+	// defensively copy the template in case it changes
+	var template = self.template = assign( {}, self.template );
+	var handle = self.handle = fragment.getContext({
+		proxy: self,
+		aliasLocal: aliasLocal,
+		name: self.template.e || self.name,
+		attributes: {},
+		setTemplate: setTemplate.bind( self ),
+		template: template
+	});
+
+	if ( !template.p ) { template.p = {}; }
+	template.p = handle.partials = assign( {}, template.p );
+	if ( !hasOwn( template.p, 'content' ) ) { template.p.content = template.f || []; }
+
+	if ( isArray( fn.attributes ) ) {
+		self._attrs = {};
+
+		var invalidate = function () {
+			this.dirty = true;
+			self.dirtyAttrs = true;
+			self.bubble();
+		};
+
+		if ( isArray( template.m ) ) {
+			var attrs = template.m;
+			template.p[ extras ] = template.m = attrs.filter( function (a) { return !~fn.attributes.indexOf( a.n ); } );
+			attrs.filter( function (a) { return ~fn.attributes.indexOf( a.n ); } ).forEach( function (a) {
+				var fragment = new Fragment({
+					template: a.f,
+					owner: self
+				});
+				fragment.bubble = invalidate;
+				fragment.findFirstNode = noop;
+				self._attrs[ a.n ] = fragment;
+			});
+		} else {
+			template.p[ extras ] = [];
+		}
+	} else {
+		template.p[ extras ] = template.m;
+	}
+
+	if ( self._attrs ) {
+		keys( self._attrs ).forEach( function (k) {
+			self._attrs[k].bind();
+		});
+		self.refreshAttrs();
+	}
+
+	self.initing = 1;
+	self.proxy = fn( handle, handle.attributes ) || {};
+	if ( !self.partial ) { self.partial = []; }
+	self.fnTemplate = self.partial;
+	self.initing = 0;
+
+	contextifyTemplate( self );
+	fragment.resetTemplate( self.partial );
+}
 
 function parsePartial( name, partial, ractive ) {
 	var parsed;
@@ -14150,11 +14331,11 @@ function parsePartial( name, partial, ractive ) {
 }
 
 var RepeatedFragment = function RepeatedFragment ( options ) {
-	this.parent = options.owner.parentFragment;
+	this.parent = options.owner.up;
 
 	// bit of a hack, so reference resolution works without another
 	// layer of indirection
-	this.parentFragment = this;
+	this.up = this;
 	this.owner = options.owner;
 	this.ractive = this.parent.ractive;
 	this.delegate = this.ractive.delegate !== false && ( this.parent.delegate || findDelegate( findElement( options.owner ) ) );
@@ -14191,7 +14372,7 @@ RepeatedFragment__proto__.bind = function bind ( context ) {
 	var value = context.get();
 
 	// {{#each array}}...
-	if ( this.isArray = Array.isArray( value ) ) {
+	if ( this.isArray = isArray( value ) ) {
 		// we can't use map, because of sparse arrays
 		this.iterations = [];
 		var max = value.length;
@@ -14211,7 +14392,7 @@ RepeatedFragment__proto__.bind = function bind ( context ) {
 			this.indexRef = refs[1];
 		}
 
-		this.iterations = Object.keys( value ).map( function ( key, index ) {
+		this.iterations = keys( value ).map( function ( key, index ) {
 			return this$1.createIteration( key, index );
 		});
 	}
@@ -14397,7 +14578,7 @@ RepeatedFragment__proto__.update = function update$4 () {
 	var reset = true;
 	var i;
 
-	if ( this.isArray = Array.isArray( value ) ) {
+	if ( this.isArray = isArray( value ) ) {
 		if ( wasArray ) {
 			reset = false;
 			if ( this.iterations.length > value.length ) {
@@ -14443,10 +14624,10 @@ RepeatedFragment__proto__.update = function update$4 () {
 	}
 
 	// add new iterations
-	var newLength = Array.isArray( value ) ?
+	var newLength = isArray( value ) ?
 		value.length :
 		isObject( value ) ?
-			Object.keys( value ).length :
+			keys( value ).length :
 			0;
 
 	var docFrag;
@@ -14456,7 +14637,7 @@ RepeatedFragment__proto__.update = function update$4 () {
 		docFrag = this.rendered ? createDocumentFragment() : null;
 		i = this.iterations.length;
 
-		if ( Array.isArray( value ) ) {
+		if ( isArray( value ) ) {
 			while ( i < value.length ) {
 				fragment = this$1.createIteration( i, i );
 
@@ -14475,7 +14656,7 @@ RepeatedFragment__proto__.update = function update$4 () {
 				this.indexRef = refs[1];
 			}
 
-			Object.keys( value ).forEach( function (key) {
+			keys( value ).forEach( function (key) {
 				if ( !oldKeys || !( key in oldKeys ) ) {
 					fragment = this$1.createIteration( key, i );
 
@@ -14583,7 +14764,7 @@ RepeatedFragment__proto__.updatePostShuffle = function updatePostShuffle () {
 	}
 
 	// trigger removal on old nodes
-	Object.keys( removed ).forEach( function (k) { return removed[k].unbind().unrender( true ); } );
+	keys( removed ).forEach( function (k) { return removed[k].unbind().unrender( true ); } );
 
 	this.iterations.forEach( update );
 
@@ -14609,13 +14790,13 @@ function findDelegate ( start ) {
 
 function isEmpty ( value ) {
 	return !value ||
-	       ( Array.isArray( value ) && value.length === 0 ) ||
-		   ( isObject( value ) && Object.keys( value ).length === 0 );
+	       ( isArray( value ) && value.length === 0 ) ||
+		   ( isObject( value ) && keys( value ).length === 0 );
 }
 
 function getType ( value, hasIndexRef ) {
-	if ( hasIndexRef || Array.isArray( value ) ) { return SECTION_EACH; }
-	if ( isObject( value ) || typeof value === 'function' ) { return SECTION_IF_WITH; }
+	if ( hasIndexRef || isArray( value ) ) { return SECTION_EACH; }
+	if ( isObjectLike( value ) ) { return SECTION_IF_WITH; }
 	if ( value === undefined ) { return null; }
 	return SECTION_IF;
 }
@@ -14638,7 +14819,7 @@ var Section = (function (MustacheContainer) {
 		MustacheContainer.prototype.bind.call(this);
 
 		if ( this.subordinate ) {
-			this.sibling = this.parentFragment.items[ this.parentFragment.items.indexOf( this ) - 1 ];
+			this.sibling = this.up.items[ this.up.items.indexOf( this ) - 1 ];
 			this.sibling.nextSibling = this;
 		}
 
@@ -14792,7 +14973,7 @@ var Section = (function (MustacheContainer) {
 }(MustacheContainer));
 
 function attach ( section, fragment ) {
-	var anchor = section.parentFragment.findNextNode( section );
+	var anchor = section.up.findNextNode( section );
 
 	if ( anchor ) {
 		var docFrag = createDocumentFragment();
@@ -14800,7 +14981,7 @@ function attach ( section, fragment ) {
 
 		anchor.parentNode.insertBefore( docFrag, anchor );
 	} else {
-		fragment.render( section.parentFragment.findParentNode() );
+		fragment.render( section.up.findParentNode() );
 	}
 }
 
@@ -14859,7 +15040,7 @@ var Select = (function (Element) {
 
 		var selectValue = this.getAttribute( 'value' );
 		var isMultiple = this.getAttribute( 'multiple' );
-		var array = isMultiple && Array.isArray( selectValue );
+		var array = isMultiple && isArray( selectValue );
 
 		// If the <select> has a specified value, that should override
 		// these options
@@ -14903,7 +15084,7 @@ var Select = (function (Element) {
 	Select__proto__.compare = function compare (optionValue, selectValue) {
 		var comparator = this.getAttribute( 'value-comparator' );
 		if ( comparator ) {
-			if (typeof comparator === 'function') {
+			if ( isFunction( comparator ) ) {
 				return comparator( selectValue, optionValue );
 			}
 			if ( selectValue && optionValue ) {
@@ -14937,7 +15118,7 @@ var Textarea = (function (Input) {
 				( this.attributes || ( this.attributes = [] ) ).push( createItem( {
 					owner: this,
 					template: { t: ATTRIBUTE, f: template.f, n: 'value' },
-					parentFragment: this.parentFragment
+					up: this.up
 				} ) );
 			} else {
 				this.fragment = new Fragment({ owner: this, cssIds: null, template: template.f });
@@ -14962,7 +15143,7 @@ var Textarea = (function (Input) {
 				});
 			}
 
-			this.parentFragment.bubble(); // default behaviour
+			this.up.bubble(); // default behaviour
 		}
 	};
 
@@ -15010,8 +15191,8 @@ var Text = (function (Item) {
 	return Text;
 }(Item));
 
-var proto$4 = Text.prototype;
-proto$4.bind = proto$4.unbind = proto$4.update = noop;
+var proto$6 = Text.prototype;
+proto$6.bind = proto$6.unbind = proto$6.update = noop;
 
 var visible;
 var hidden = 'hidden';
@@ -15305,14 +15486,14 @@ if ( !isClient ) {
 				if ( propertiesToTransitionInJs.length ) {
 					var easing;
 
-					if ( typeof options.easing === 'string' ) {
+					if ( isString( options.easing ) ) {
 						easing = t.ractive.easing[ options.easing ];
 
 						if ( !easing ) {
 							warnOnceIfDebug( missingPlugin( options.easing, 'easing' ) );
 							easing = linear$1;
 						}
-					} else if ( typeof options.easing === 'function' ) {
+					} else if ( isFunction( options.easing ) ) {
 						easing = options.easing;
 					} else {
 						easing = linear$1;
@@ -15365,11 +15546,11 @@ var names = {
 };
 
 var Transition = function Transition ( options ) {
-	this.owner = options.owner || options.parentFragment.owner || findElement( options.parentFragment );
-	this.element = this.owner.attributeByName ? this.owner : findElement( options.parentFragment );
+	this.owner = options.owner || options.up.owner || findElement( options.up );
+	this.element = this.owner.attributeByName ? this.owner : findElement( options.up );
 	this.ractive = this.owner.ractive;
 	this.template = options.template;
-	this.parentFragment = options.parentFragment;
+	this.up = options.up;
 	this.options = options;
 	this.onComplete = [];
 };
@@ -15391,7 +15572,7 @@ Transition__proto__.animateStyle = function animateStyle ( style, value, options
 
 	var to;
 
-	if ( typeof style === 'string' ) {
+	if ( isString( style ) ) {
 		to = {};
 		to[ style ] = value;
 	} else {
@@ -15410,7 +15591,7 @@ Transition__proto__.animateStyle = function animateStyle ( style, value, options
 		}
 
 		// Get a list of the properties we're animating
-		var propertyNames = Object.keys( to );
+		var propertyNames = keys( to );
 		var changedProperties = [];
 
 		// Store the current styles
@@ -15471,7 +15652,7 @@ Transition__proto__.bind = function bind () {
 		this.params = options.params;
 	}
 
-	if ( typeof this.name === 'function' ) {
+	if ( isFunction( this.name ) ) {
 		this._fn = this.name;
 		this.name = this._fn.name;
 	} else {
@@ -15490,7 +15671,7 @@ Transition__proto__.getParams = function getParams () {
 
 	// get expression args if supplied
 	if ( this.fn ) {
-		var values = resolveArgs( this, this.template, this.parentFragment ).map( function (model) {
+		var values = resolveArgs( this, this.template, this.up ).map( function (model) {
 			if ( !model ) { return undefined; }
 
 			return model.get();
@@ -15502,11 +15683,11 @@ Transition__proto__.getParams = function getParams () {
 Transition__proto__.getStyle = function getStyle ( props ) {
 	var computedStyle = getComputedStyle( this.node );
 
-	if ( typeof props === 'string' ) {
+	if ( isString( props ) ) {
 		return computedStyle[ prefix$1( props ) ];
 	}
 
-	if ( !Array.isArray( props ) ) {
+	if ( !isArray( props ) ) {
 		throw new Error( 'Transition$getStyle must be passed a string, or an array of strings representing CSS properties' );
 	}
 
@@ -15525,11 +15706,11 @@ Transition__proto__.getStyle = function getStyle ( props ) {
 };
 
 Transition__proto__.processParams = function processParams ( params, defaults ) {
-	if ( typeof params === 'number' ) {
+	if ( isNumber( params ) ) {
 		params = { duration: params };
 	}
 
-	else if ( typeof params === 'string' ) {
+	else if ( isString( params ) ) {
 		if ( params === 'slow' ) {
 			params = { duration: 600 };
 		} else if ( params === 'fast' ) {
@@ -15541,7 +15722,7 @@ Transition__proto__.processParams = function processParams ( params, defaults ) 
 		params = {};
 	}
 
-	return Object.assign( {}, defaults, params );
+	return assign( {}, defaults, params );
 };
 
 Transition__proto__.registerCompleteHandler = function registerCompleteHandler ( fn ) {
@@ -15551,9 +15732,9 @@ Transition__proto__.registerCompleteHandler = function registerCompleteHandler (
 Transition__proto__.setStyle = function setStyle ( style, value ) {
 		var this$1 = this;
 
-	if ( typeof style === 'string' ) {
+	if ( isString( style ) ) {
 		var name = prefix$1(  style );
-		if ( !this.originals.hasOwnProperty( name ) ) { this.originals[ name ] = this.node.style[ name ]; }
+		if ( !hasOwn( this.originals, name ) ) { this.originals[ name ] = this.node.style[ name ]; }
 		this.node.style[ name ] = value;
 		this.targets[ name ] = this.node.style[ name ];
 	}
@@ -15561,7 +15742,7 @@ Transition__proto__.setStyle = function setStyle ( style, value ) {
 	else {
 		var prop;
 		for ( prop in style ) {
-			if ( style.hasOwnProperty( prop ) ) {
+			if ( hasOwn( style, prop ) ) {
 				this$1.setStyle( prop, style[ prop ] );
 			}
 		}
@@ -15654,13 +15835,13 @@ Transition__proto__.unregisterCompleteHandler = function unregisterCompleteHandl
 	removeFromArray( this.onComplete, fn );
 };
 
-var proto$5 = Transition.prototype;
-proto$5.destroyed = proto$5.render = proto$5.unrender = proto$5.update = noop;
+var proto$7 = Transition.prototype;
+proto$7.destroyed = proto$7.render = proto$7.unrender = proto$7.update = noop;
 
 function nearestProp ( prop, ractive, rendering ) {
 	var instance = ractive;
 	while ( instance ) {
-		if ( instance.hasOwnProperty( prop ) && ( rendering === undefined || rendering ? instance.rendering : instance.unrendering ) ) { return instance[ prop ]; }
+		if ( hasOwn( instance, prop ) && ( rendering === undefined || rendering ? instance.rendering : instance.unrendering ) ) { return instance[ prop ]; }
 		instance = instance.component && instance.component.ractive;
 	}
 
@@ -15824,18 +16005,15 @@ var Triple = (function (Mustache) {
 		return this.rendered && this.nodes[0];
 	};
 
-	Triple__proto__.render = function render ( target, occupants ) {
+	Triple__proto__.render = function render ( target, occupants, anchor ) {
 		var this$1 = this;
-
-		var parentNode = this.parentFragment.findParentNode();
 
 		if ( !this.nodes ) {
 			var html = this.model ? this.model.get() : '';
-			this.nodes = insertHtml( html, this.parentFragment.findParentNode(), target );
+			this.nodes = insertHtml( html, target );
 		}
 
 		var nodes = this.nodes;
-		var anchor = this.parentFragment.findNextNode( this );
 
 		// progressive enhancement
 		if ( occupants ) {
@@ -15873,9 +16051,9 @@ var Triple = (function (Mustache) {
 			nodes.forEach( function (n) { return frag.appendChild( n ); } );
 
 			if ( anchor ) {
-				anchor.parentNode.insertBefore( frag, anchor );
+				target.insertBefore( frag, anchor );
 			} else {
-				parentNode.appendChild( frag );
+				target.appendChild( frag );
 			}
 		}
 
@@ -15903,7 +16081,7 @@ var Triple = (function (Mustache) {
 			this.dirty = false;
 
 			this.unrender();
-			this.render();
+			this.render( this.up.findParentNode(), null, this.up.findNextNode( this ) );
 		} else {
 			// make sure to reset the dirty flag even if not rendered
 			this.dirty = false;
@@ -15921,11 +16099,11 @@ function getComponentConstructor ( ractive, name ) {
 	if ( instance ) {
 		Component = instance.components[ name ];
 
-		// best test we have for not Ractive.extend
-		if ( Component && !Component.Parent ) {
+		// if not from Ractive.extend or a Promise, it's a function that shold return a constructor
+		if ( Component && !Component.isInstance && !Component.then ) {
 			// function option, execute and store for reset
 			var fn = Component.bind( instance );
-			fn.isOwner = instance.components.hasOwnProperty( name );
+			fn.isOwner = hasOwn( instance.components, name );
 			Component = fn();
 
 			if ( !Component ) {
@@ -15933,7 +16111,7 @@ function getComponentConstructor ( ractive, name ) {
 				return;
 			}
 
-			if ( typeof Component === 'string' ) {
+			if ( isString( Component ) ) {
 				// allow string lookup
 				Component = getComponentConstructor( ractive, Component );
 			}
@@ -15946,7 +16124,36 @@ function getComponentConstructor ( ractive, name ) {
 	return Component;
 }
 
-//import Yielder from './Yielder';
+function asyncProxy ( promise, options ) {
+	var partials = options.template.p || {};
+	var name = options.template.e;
+
+	var opts = assign( {}, options, {
+		template: { t: ELEMENT, e: name },
+		macro: function macro ( handle ) {
+			handle.setTemplate( partials['async-loading'] || [] );
+			promise.then( function (cmp) {
+				options.up.ractive.components[ name ] = cmp;
+				if ( partials['async-loaded'] ) {
+					handle.partials.component = [ options.template ];
+					handle.setTemplate( partials['async-loaded'] );
+				} else {
+					handle.setTemplate( [ options.template ] );
+				}
+			}, function (err) {
+				if ( partials['async-failed'] ) {
+					handle.aliasLocal( 'error', 'error' );
+					handle.set( '@local.error', err );
+					handle.setTemplate( partials['async-failed'] );
+				} else {
+					handle.setTemplate( [] );
+				}
+			});
+		}
+	});
+	return new Partial( opts );
+}
+
 var constructors = {};
 constructors[ ALIAS ] = Alias;
 constructors[ ANCHOR ] = Component;
@@ -15962,6 +16169,7 @@ constructors[ BINDING_FLAG ] = BindingFlag;
 constructors[ DECORATOR ] = Decorator;
 constructors[ EVENT ] = EventDirective;
 constructors[ TRANSITION ] = Transition;
+constructors[ COMMENT ] = Comment;
 
 var specialElements = {
 	doctype: Doctype,
@@ -15973,39 +16181,57 @@ var specialElements = {
 };
 
 function createItem ( options ) {
-	if ( typeof options.template === 'string' ) {
+	if ( isString( options.template ) ) {
 		return new Text( options );
 	}
 
-	if ( options.template.t === ELEMENT ) {
-		// could be component or element
-		var ComponentConstructor = getComponentConstructor( options.parentFragment.ractive, options.template.e );
-		if ( ComponentConstructor ) {
-			return new Component( options, ComponentConstructor );
+	var ctor;
+	var name;
+	var type = options.template.t;
+
+	if ( type === ELEMENT ) {
+		name = options.template.e;
+
+		// could be a macro partial
+		ctor = findInstance( 'partials', options.up.ractive, name );
+		if ( ctor ) {
+			ctor = ctor.partials[ name ];
+			if ( ctor.styleSet ) {
+				options.macro = ctor;
+				return new Partial( options );
+			}
 		}
 
-		var tagName = options.template.e.toLowerCase();
+		// could be component or element
+		ctor = getComponentConstructor( options.up.ractive, name );
+		if ( ctor ) {
+			if ( isFunction( ctor.then ) ) {
+				return asyncProxy( ctor, options );
+			} else {
+				return new Component( options, ctor );
+			}
+		}
 
-		var ElementConstructor = specialElements[ tagName ] || Element;
-		return new ElementConstructor( options );
+		ctor = specialElements[ name.toLowerCase() ] || Element;
+		return new ctor( options );
 	}
 
 	var Item;
 
 	// component mappings are a special case of attribute
-	if ( options.template.t === ATTRIBUTE ) {
+	if ( type === ATTRIBUTE ) {
 		var el = options.owner;
 		if ( !el || ( el.type !== ANCHOR && el.type !== COMPONENT && el.type !== ELEMENT ) ) {
-			el = findElement( options.parentFragment );
+			el = findElement( options.up );
 		}
 		options.element = el;
 
 		Item = el.type === COMPONENT || el.type === ANCHOR ? Mapping : Attribute;
 	} else {
-		Item = constructors[ options.template.t ];
+		Item = constructors[ type ];
 	}
 
-	if ( !Item ) { throw new Error( ("Unrecognised item type " + (options.template.t)) ); }
+	if ( !Item ) { throw new Error( ("Unrecognised item type " + type) ); }
 
 	return new Item( options );
 }
@@ -16049,11 +16275,11 @@ function unrenderAndDestroy$1 ( item ) {
 var Fragment = function Fragment ( options ) {
 	this.owner = options.owner; // The item that owns this fragment - an element, section, partial, or attribute
 
-	this.isRoot = !options.owner.parentFragment;
-	this.parent = this.isRoot ? null : this.owner.parentFragment;
+	this.isRoot = !options.owner.up;
+	this.parent = this.isRoot ? null : this.owner.up;
 	this.ractive = options.ractive || ( this.isRoot ? options.owner : this.parent.ractive );
 
-	this.componentParent = ( this.isRoot && this.ractive.component ) ? this.ractive.component.parentFragment : null;
+	this.componentParent = ( this.isRoot && this.ractive.component ) ? this.ractive.component.up : null;
 	this.delegate = ( this.parent ? this.parent.delegate : ( this.componentParent && this.componentParent.delegate ) ) ||
 		( this.owner.containerFragment && this.owner.containerFragment.delegate );
 
@@ -16113,7 +16339,7 @@ Fragment__proto__.createItems = function createItems () {
 	var max = this.template.length;
 	this.items = [];
 	for ( var i = 0; i < max; i++ ) {
-		this$1.items[i] = createItem({ parentFragment: this$1, template: this$1.template[i], index: i });
+		this$1.items[i] = createItem({ up: this$1, template: this$1.template[i], index: i });
 	}
 };
 
@@ -16176,7 +16402,7 @@ Fragment__proto__.findNextNode = function findNextNode ( item ) {
 	// it means we're at the end...
 	if ( this.isRoot ) {
 		if ( this.ractive.component ) {
-			return this.ractive.component.parentFragment.findNextNode( this.ractive.component );
+			return this.ractive.component.up.findNextNode( this.ractive.component );
 		}
 
 		// TODO possible edge case with other content
@@ -16378,10 +16604,10 @@ var configHook = new Hook( 'config' );
 var initHook = new HookQueue( 'init' );
 
 function initialise ( ractive, userOptions, options ) {
-	Object.keys( ractive.viewmodel.computations ).forEach( function (key) {
+	keys( ractive.viewmodel.computations ).forEach( function (key) {
 		var computation = ractive.viewmodel.computations[ key ];
 
-		if ( ractive.viewmodel.value.hasOwnProperty( key ) ) {
+		if ( hasOwn( ractive.viewmodel.value, key ) ) {
 			computation.set( ractive.viewmodel.value[ key ] );
 		}
 	});
@@ -16523,7 +16749,7 @@ var unrenderHook = new Hook( 'unrender' );
 function Ractive$reset ( data ) {
 	data = data || {};
 
-	if ( typeof data !== 'object' ) {
+	if ( !isObjectType( data ) ) {
 		throw new Error( 'The reset method takes either no arguments, or an object containing new data' );
 	}
 
@@ -16584,7 +16810,7 @@ function collect( source, name, attr, dest ) {
 		}
 
 		// or if it is itself a fragment, process its items
-		else if ( Array.isArray( item.items ) ) {
+		else if ( isArray( item.items ) ) {
 			collect( item.items, name, attr, dest );
 		}
 
@@ -16597,15 +16823,11 @@ function collect( source, name, attr, dest ) {
 
 		// if the item is an element, process its attributes too
 		if ( item.type === ELEMENT ) {
-			if ( Array.isArray( item.attributes ) ) {
+			if ( isArray( item.attributes ) ) {
 				collect( item.attributes, name, true, dest );
 			}
 		}
 	});
-}
-
-function forceResetTemplate ( partial ) {
-	partial.forceResetTemplate();
 }
 
 var resetPartial = function ( name, partial ) {
@@ -16615,7 +16837,7 @@ var resetPartial = function ( name, partial ) {
 	var promise = runloop.start();
 
 	this.partials[ name ] = partial;
-	collection.forEach( forceResetTemplate );
+	collection.forEach( handleChange );
 
 	runloop.end();
 
@@ -16676,7 +16898,7 @@ var reverse = makeArrayMethod( 'reverse' ).path;
 function Ractive$set ( keypath, value, options ) {
 	var ractive = this;
 
-	var opts = typeof keypath === 'object' ? value : options;
+	var opts = isObjectType( keypath ) ? value : options;
 
 	return set( build( ractive, keypath, value, opts && opts.isolated ), opts );
 }
@@ -16688,13 +16910,13 @@ var sort = makeArrayMethod( 'sort' ).path;
 var splice = makeArrayMethod( 'splice' ).path;
 
 function Ractive$subtract ( keypath, d, options ) {
-	var num = typeof d === 'number' ? -d : -1;
-	var opts = typeof d === 'object' ? d : options;
+	var num = isNumber( d ) ? -d : -1;
+	var opts = isObjectType( d ) ? d : options;
 	return add( this, keypath, num, opts );
 }
 
 function Ractive$toggle ( keypath, options ) {
-	if ( typeof keypath !== 'string' ) {
+	if ( !isString( keypath ) ) {
 		throw new TypeError( badArguments );
 	}
 
@@ -16703,7 +16925,7 @@ function Ractive$toggle ( keypath, options ) {
 
 function Ractive$toCSS() {
 	var cssIds = [ this.cssId ].concat( this.findAllComponents().map( function (c) { return c.cssId; } ) );
-	var uniqueCssIds = Object.keys(cssIds.reduce( function ( ids, id ) { return (ids[id] = true, ids); }, {}));
+	var uniqueCssIds = keys(cssIds.reduce( function ( ids, id ) { return (ids[id] = true, ids); }, {}));
 	return getCSS( uniqueCssIds );
 }
 
@@ -16741,7 +16963,7 @@ function Ractive$transition ( name, node, params ) {
 
 	params = params || {};
 	var owner = node._ractive.proxy;
-	var transition = new Transition({ owner: owner, parentFragment: owner.parentFragment, name: name, params: params });
+	var transition = new Transition({ owner: owner, up: owner.up, name: name, params: params });
 	transition.bind();
 
 	var promise = runloop.start();
@@ -16853,7 +17075,7 @@ var proto = {
 	updateModel: Ractive$updateModel
 };
 
-Object.defineProperty( proto, 'target', {
+defineProperty( proto, 'target', {
 	get: function get() { return this.el; }
 });
 
@@ -16861,11 +17083,19 @@ function isInstance ( object ) {
 	return object && object instanceof this;
 }
 
+function styleGet ( keypath ) {
+	return this._cssModel.joinAll( splitKeypath( keypath ) ).get();
+}
+
 function sharedSet ( keypath, value, options ) {
-	var opts = typeof keypath === 'object' ? value : options;
+	var opts = isObjectType( keypath ) ? value : options;
 	var model = SharedModel$1;
 
 	return set( build( { viewmodel: model }, keypath, value, true ), opts );
+}
+
+function sharedGet ( keypath ) {
+	return SharedModel$1.joinAll( splitKeypath( keypath ) ).get();
 }
 
 var callsSuper = /super\s*\(|\.call\s*\(\s*this/;
@@ -16891,7 +17121,7 @@ function extendOne ( Parent, options, Target ) {
 	if ( options === void 0 ) options = {};
 
 	var proto;
-	var Child = typeof Target === 'function' && Target;
+	var Child = isFunction( Target ) && Target;
 
 	if ( options.prototype instanceof Ractive ) {
 		throw new Error( "Ractive no longer supports multiple inheritance." );
@@ -16914,14 +17144,14 @@ function extendOne ( Parent, options, Target ) {
 			initialise( this, options || {}, {} );
 		};
 
-		proto = Object.create( Parent.prototype );
+		proto = create( Parent.prototype );
 		proto.constructor = Child;
 
 		Child.prototype = proto;
 	}
 
 	// Static properties
-	Object.defineProperties( Child, {
+	defineProperties( Child, {
 		// alias prototype as defaults
 		defaults: { value: proto },
 
@@ -16934,6 +17164,7 @@ function extendOne ( Parent, options, Target ) {
 		Parent: { value: Parent },
 		Ractive: { value: Ractive },
 
+		styleGet: { value: styleGet.bind( Child ), configurable: true },
 		styleSet: { value: setCSSData.bind( Child ), configurable: true }
 	});
 
@@ -16951,15 +17182,15 @@ function extendOne ( Parent, options, Target ) {
 		var attrs;
 
 		// allow an array of optional props or an object with arrays for optional and required props
-		if ( Array.isArray( options.attributes ) ) {
+		if ( isArray( options.attributes ) ) {
 			attrs = { optional: options.attributes, required: [] };
 		} else {
 			attrs = options.attributes;
 		}
 
 		// make sure the requisite keys actually store arrays
-		if ( !Array.isArray( attrs.required ) ) { attrs.required = []; }
-		if ( !Array.isArray( attrs.optional ) ) { attrs.optional = []; }
+		if ( !isArray( attrs.required ) ) { attrs.required = []; }
+		if ( !isArray( attrs.optional ) ) { attrs.optional = []; }
 
 		Child.attributes = attrs;
 	}
@@ -16967,17 +17198,41 @@ function extendOne ( Parent, options, Target ) {
 	dataConfigurator.extend( Parent, proto, options, Child );
 
 	if ( options.computed ) {
-		proto.computed = Object.assign( Object.create( Parent.prototype.computed ), options.computed );
+		proto.computed = assign( create( Parent.prototype.computed ), options.computed );
 	}
 
 	return Child;
 }
 
-// styleSet for Ractive
-Object.defineProperty( Ractive, 'styleSet', { configurable: true, value: setCSSData.bind( Ractive ) } );
+defineProperties( Ractive, {
+	sharedGet: { value: sharedGet },
+	sharedSet: { value: sharedSet },
+	styleGet: { configurable: true, value: styleGet.bind( Ractive ) },
+	styleSet: { configurable: true, value: setCSSData.bind( Ractive ) }
+});
 
-// sharedSet for Ractive
-Object.defineProperty( Ractive, 'sharedSet', { value: sharedSet } );
+function macro ( fn, opts ) {
+	if ( !isFunction( fn ) ) { throw new Error( "The macro must be a function" ); }
+
+	assign( fn, opts );
+
+	defineProperties( fn, {
+		extensions: { value: [] },
+		_cssIds: { value: [] },
+		cssData: { value: assign( create( this.cssData ), fn.cssData || {} ) },
+
+		styleGet: { value: styleGet.bind( fn ) },
+		styleSet: { value: setCSSData.bind( fn ) }
+	});
+
+	defineProperty( fn, '_cssModel', { value: new CSSModel( fn ) } );
+
+	if ( fn.css ) { initCSS( fn, fn, fn ); }
+
+	this.extensions.push( fn );
+
+	return fn;
+}
 
 function joinKeys () {
 	var keys = [], len = arguments.length;
@@ -17010,9 +17265,11 @@ if ( win && !win.Ractive ) {
 
 	/* istanbul ignore next */
 	if ( ~opts$1.indexOf( 'ForceGlobal' ) ) { win.Ractive = Ractive; }
+} else if ( win ) {
+	warn( "Ractive already appears to be loaded while loading 0.9.8." );
 }
 
-Object.assign( Ractive.prototype, proto, defaults );
+assign( Ractive.prototype, proto, defaults );
 Ractive.prototype.constructor = Ractive;
 
 // alias prototype as `defaults`
@@ -17023,7 +17280,7 @@ shared.defaults = Ractive.defaults;
 shared.Ractive = Ractive;
 
 // static properties
-Object.defineProperties( Ractive, {
+defineProperties( Ractive, {
 
 	// debug flag
 	DEBUG:            { writable: true, value: true },
@@ -17040,6 +17297,7 @@ Object.defineProperties( Ractive, {
 	getNodeInfo:      { value: getNodeInfo$1 },
 	isInstance:       { value: isInstance },
 	joinKeys:         { value: joinKeys },
+	macro:            { value: macro },
 	normaliseKeypath: { value: normalise },
 	parse:            { value: parse },
 	splitKeypath:     { value: splitKeypath$1 },
@@ -17051,7 +17309,7 @@ Object.defineProperties( Ractive, {
 	svg:              { value: svg },
 
 	// version
-	VERSION:          { value: '0.9.4' },
+	VERSION:          { value: '0.9.8' },
 
 	// plugins
 	adaptors:         { writable: true, value: {} },
@@ -17077,7 +17335,7 @@ Object.defineProperties( Ractive, {
 	Context:          { value: extern.Context.prototype }
 });
 
-Object.defineProperty( Ractive, '_cssModel', { configurable: true, value: new CSSModel( Ractive ) } );
+defineProperty( Ractive, '_cssModel', { configurable: true, value: new CSSModel( Ractive ) } );
 
 return Ractive;
 
@@ -17098,6 +17356,10 @@ Ractive.defaults.hasEvent = function(eventName){
     return a.t === 70 && a.n.indexOf(eventName) > -1;
   };
   return this.component && this.component.template.m.find(fn);
+};
+Ractive.prototype['delete'] = function(root, key){
+  delete this.get(root)[key];
+  return this.update(root);
 };
 Ractive.events.longpress = function(node, fire){
   var timer, clearTimer, mouseDownHandler, mouseUpHandler;
