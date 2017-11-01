@@ -141,7 +141,8 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \_tmp, {}
                 curr <~ settings.on-create-view.call this, row-clone
                 @set \curr, that if curr
-                @set \origCurr, clone (@get \curr)
+                sleep 100ms, ~>
+                    @set \origCurr, clone (@get \curr)
                 @set \row, row-clone
                 opening-dimmer.dimmer \hide
                 @set \openingRow, no
@@ -248,10 +249,12 @@ Ractive.components['data-table'] = Ractive.extend do
                     # this is a new document, use exact ID or pfx + autoincrement
                     # if curr._id has numeric portion, this is an exact ID
                     # else this is a prefix
-                    curr._id = curr._id.to-upper-case!
-                    if curr._id.split /[0-9]+/ .length is 1
-                        # no numeric part, this is a prefix
-                        curr._id += '####'
+                    if settings.autoincrement is on
+                        @actor.c-log "Autoincrement is set to 'yes', autoincrementing."
+                        curr._id = curr._id.to-upper-case!
+                        if curr._id.split /[0-9]+/ .length is 1
+                            # no numeric part, this is a prefix
+                            curr._id += '####'
 
                 if @get \_tmp.new_attachments
                     curr._attachments = (curr._attachments or {}) <<< that
