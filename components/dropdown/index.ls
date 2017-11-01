@@ -45,6 +45,7 @@ Ractive.components['dropdown'] = Ractive.extend do
         keyField = @get \keyField
         nameField = @get \nameField
 
+
         set-item = (value-of-key) ~>
             if @get \data
                 data = that
@@ -69,6 +70,8 @@ Ractive.components['dropdown'] = Ractive.extend do
                     @set \item, unless empty items => items else [{}]
                     @set \selected-key, selected-keys
                     @set \selected-name, selected-names
+                    @fire \select, {}, (unless empty items => items else [{}])
+
 
                 else
                     # set a single value
@@ -78,9 +81,10 @@ Ractive.components['dropdown'] = Ractive.extend do
                             @set \selected-key, that[keyField]
                             @set \selected-name, that[nameField]
                             @actor.c-log "Found #{value-of-key} in .[#{keyField}]", that, that[keyField]
+                            @fire \select, {}, that
 
                         else
-                            # we might not be able to find that key because 
+                            # we might not be able to find that key because
                             # key might be changed outside (ie. by a input)
 
         shandler = null
