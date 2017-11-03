@@ -27,11 +27,7 @@
 	position: absolute;
 	background: white;
 	white-space: nowrap;
-
-
 }
-
-
 .rickshaw_graph .detail .x_label.left {
 	left: 0;
 }
@@ -113,7 +109,7 @@
 	position: relative;
 }
 .rickshaw_graph svg {
-	display: block;
+	display: block;	
 	overflow: hidden;
 }
 
@@ -260,7 +256,7 @@
 .rickshaw_graph .y_ticks.glow text {
 	fill: black;
 	color: black;
-	text-shadow:
+	text-shadow: 
 		-1px 1px 0 rgba(255, 255, 255, 0.1),
 		1px -1px 0 rgba(255, 255, 255, 0.1),
 		1px 1px 0 rgba(255, 255, 255, 0.1),
@@ -274,7 +270,7 @@
 .rickshaw_graph .y_ticks.inverse text {
 	fill: white;
 	color: white;
-	text-shadow:
+	text-shadow: 
 		-1px 1px 0 rgba(0, 0, 0, 0.8),
 		1px -1px 0 rgba(0, 0, 0, 0.8),
 		1px 1px 0 rgba(0, 0, 0, 0.8),
@@ -290,7 +286,7 @@
 	color: white;
 	background: #404040;
 	display: inline-block;
-	padding: 12px 5px;
+	padding: 12px 5px; 
 	border-radius: 2px;
 	position: relative;
 }
