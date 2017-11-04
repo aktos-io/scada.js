@@ -335,34 +335,13 @@ Ractive.components['data-table'] = Ractive.extend do
             else
                 no
 
-        run-handler: (params) ~>
+        run-handler: (...params) ~>
             handlers = @get \settings.handlers
-            param = null
-
-            if params.args
-                # this is from ack-button
-
-                if typeof! params.args is \Array
-                    args = clone params.args
-                    handler = args.shift!
-                    params.args = args
-                else
-                    handler = params.args
-                    params.args = null
-
-                param = [params]
-
-            else
-                # this is from normal button
-                if typeof! params is \Array
-                    # from normal button, as array
-                    [handler, ...param] = params
-                else
-                    handler = params
+            handler = params.shift!
 
             if typeof handlers[handler] is \function
                 #@logger.clog "RUNNING HANDLER: #{handler}(#{param})"
-                return handlers[handler].apply this, param
+                return handlers[handler].apply this, params
             else
                 @logger.clog "no handler found with the name: ", handler
 
