@@ -10,6 +10,13 @@ Ractive.defaults.has-event = (event-name) ->
 
 # by @evs-chris, https://gitter.im/ractivejs/ractive?at=59fa35f8d6c36fca31c4e427
 Ractive.prototype.delete = (root, key) ->
+    /***************************************************************************
+    Usage:
+
+        +each('curr.components') <--- where curr.components is an Object
+            btn.icon(on-buttonclick="@.delete('curr.components', @key)") #[i.minus.icon]
+
+    ***************************************************************************/
     delete @get(root)[key]
     @update root
 
@@ -39,7 +46,7 @@ Ractive.events.longpress = (node, fire) ->
 # Context helpers
 # ---------------------------------------------
 Ractive.Context.find-keypath-id = (postfix='') ->
-    """
+    /***************************************************************************
     Use to find a unique DOM element near the context
 
     Usage:
@@ -53,10 +60,17 @@ Ractive.Context.find-keypath-id = (postfix='') ->
             myhandler: (ctx) ->
                 the-div = ctx.find-keypath-id '-mypostfix'
 
-    """
+    ***************************************************************************/
     @ractive.find '#' + Ractive.escapeKey(@resolve!) + postfix
 
 Ractive.Context.removeMe = ->
+    /***************************************************************************
+    usage:
+
+        +each('something')
+            btn.icon(on-buttonclick="@context.removeMe()") #[i.minus.icon]
+    ***************************************************************************/
+
     @splice '..', @get('@index'), 1
 
 # Add Ractive to global window object
