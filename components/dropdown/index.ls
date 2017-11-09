@@ -61,7 +61,8 @@ Ractive.components['dropdown'] = Ractive.extend do
                                 items.push that
                                 selected-keys.push that[keyField]
                                 selected-names.push that[nameField]
-                                @actor.c-log "Found #{val} in .[#{keyField}]", that[keyField]
+                                if @get \debug
+                                    @actor.c-log "Found #{val} in .[#{keyField}]", that[keyField]
                             else
                                 # how can't we find the item?
                                 debugger
