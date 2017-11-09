@@ -89,7 +89,10 @@ export ractive-preparserify = (file) ->
 
 
             template-part = if template-id
-                $ = cheerio.load template-html, {lowerCaseAttributeNames: false}
+                $ = cheerio.load template-html, do
+                    lowerCaseAttributeNames: false
+                    lowerCaseTags: false
+                    
                 try
                     $ template-id .html!
                 catch
