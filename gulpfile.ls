@@ -9,13 +9,6 @@ else
 webapp = argv.webapp
 optimize-for-production = yes if argv.production is true
 
-console.log "------------------------------------------"
-#console.log "App\t: #{app}"
-console.log "Webapp\t: #{webapp}"
-if optimize-for-production
-    console.log "------------------------------------------"
-    console.log " Gulp will optimize the application for production."
-console.log "------------------------------------------"
 
 require! <[ watchify gulp browserify glob path fs globby touch ]>
 require! 'prelude-ls': {union, join, keys, map, unique, empty}
@@ -47,6 +40,21 @@ require! 'optimize-js'
 require! 'gulp-if-else': if-else
 require! 'gulp-rename': rename
 require! 'gulp-util': gutil
+require! 'gulp-git': git
+
+get-version = (callback) ->
+    err, stdout <- git.exec args: 'describe --tags --dirty --long'
+    throw if err
+    callback stdout
+
+console.log "------------------------------------------"
+#console.log "App\t: #{app}"
+console.log "Webapp\t: #{webapp}"
+
+if optimize-for-production
+    console.log "------------------------------------------"
+    console.log " Gulp will optimize the application for production."
+console.log "------------------------------------------"
 
 # Build Settings
 notification-enabled = yes
@@ -240,6 +248,8 @@ function bundle
         .pipe tap (file) ->
             log-info \browserify, "Browserify finished (#{webapp})"
             #console.log "browserify cache: ", pack keys browserify-cache
+            version <~ get-version
+            console.log "version: #{version}"
             console.log "------------------------------------------"
             first-browserify-done := yes
 
