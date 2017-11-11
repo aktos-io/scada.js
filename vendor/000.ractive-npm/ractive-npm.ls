@@ -17,6 +17,7 @@ Ractive.prototype.delete = (root, key) ->
             btn.icon(on-buttonclick="@.delete('curr.components', @key)") #[i.minus.icon]
 
     ***************************************************************************/
+    console.error 'keypath must be string' if typeof! root isnt \String
     delete @get(root)[key]
     @update root
 
