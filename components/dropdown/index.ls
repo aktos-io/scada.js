@@ -125,10 +125,11 @@ Ractive.components['dropdown'] = Ractive.extend do
                 <~ sleep 10ms
                 update-dropdown @get \selected-key
 
-        shandler = @observe \selected-key, (_new) ~>
-            @actor.c-log "selected key set to:", _new
-            update-dropdown _new
-            set-item _new
+        unless @get \multiple
+            shandler = @observe \selected-key, (_new) ~>
+                @actor.c-log "selected key set to:", _new
+                update-dropdown _new
+                set-item _new
 
     data: ->
         data: undefined
