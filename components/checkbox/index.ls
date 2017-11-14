@@ -71,6 +71,10 @@ Ractive.components['checkbox'] = Ractive.extend do
                     debugger if @debug
                     set-state if @get \checked => 0 else 1
 
+            if typeof! @get(\checked) is \Undefined
+                if @get \initial 
+                    set-state that
+
     data: ->
         checked: undefined
         checkState: 'undefined'
