@@ -128,7 +128,8 @@ Ractive.components['dropdown'] = Ractive.extend do
 
         unless @get \multiple
             shandler = @observe \selected-key, (_new) ~>
-                @actor.c-log "selected key set to:", _new
+                if @get \debug
+                    @actor.c-log "selected key set to:", _new
                 update-dropdown _new
                 set-item _new
 
