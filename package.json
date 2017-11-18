@@ -25,7 +25,7 @@
     "moment": "^2.19.1",
     "nouislider": "^10.0.0",
     "prelude-ls": "^1.1.2",
-    "ractive": "^0.9.9",
+    "ractive": "^0.9.10",
     "randomstring": "^1.1.5",
     "rickshaw": "^1.6.0",
     "semantic-ui-calendar": "^0.0.8",
