@@ -43,11 +43,15 @@ html(lang="en-GB")
                     block loading 
                         
 
-        //- This section is for debugging purposes 
-        //- Enable it if you want to see the console messages in the HTML
+        //- Enable (unindent) below section if you 
+        //- want to see the console messages in the 
+        //- "Loading" window 
+
             pre#debugDiv
             script
                 include:livescript ./debug-div.ls 
+                
+        //- end of debug window
 
         #dynamic-script
         block app
