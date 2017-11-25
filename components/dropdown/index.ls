@@ -44,6 +44,13 @@ Ractive.components['dropdown'] = Ractive.extend do
         dd.add-class \fluid if @get \fit-width
         keyField = @get \keyField
         nameField = @get \nameField
+        update-dropdown = (_new) ~>
+            debugger if @get \debug
+            @actor.log.log "#{@_guid}: selected is changed: ", _new if @get \debug
+            if @get \multiple
+                dd.dropdown 'set exactly', _new
+            else
+                dd.dropdown 'set selected', _new
 
 
         set-item = (value-of-key) ~>
@@ -76,29 +83,24 @@ Ractive.components['dropdown'] = Ractive.extend do
 
                 else
                     # set a single value
-                    if value-of-key
-                        if find (.[keyField] is value-of-key), data
-                            @set \item, that
-                            @set \selected-key, that[keyField]
-                            @set \selected-name, that[nameField]
-                            if @get \debug
-                                @actor.c-log "Found #{value-of-key} in .[#{keyField}]", that, that[keyField]
-                            @fire \select, {}, that
+                    if find (.[keyField] is value-of-key), data
+                        @set \item, that
+                        @set \selected-key, that[keyField]
+                        @set \selected-name, that[nameField]
+                        if @get \debug
+                            @actor.c-log "Found #{value-of-key} in .[#{keyField}]", that, that[keyField]
+                        @fire \select, {}, that
 
-                        else
-                            # we might not be able to find that key because
-                            # key might be changed outside (ie. by a input)
+                    else if @get(\selected-key)?
+                        @set \item, {}
+                        @set \selected-key, null
+                        @set \selected-name, null
+                        @fire \select, {}
+                        dd.dropdown 'restore defaults'
 
         shandler = null
 
 
-        update-dropdown = (_new) ~>
-            debugger if @get \debug
-            @actor.log.log "#{@_guid}: selected is changed: ", _new if @get \debug
-            if @get \multiple
-                dd.dropdown 'set exactly', _new
-            else
-                dd.dropdown 'set selected', _new
 
         @observe \data, (data) ~>
             @actor.log.log "data is changed: ", data if @get \debug
