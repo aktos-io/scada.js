@@ -1,12 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (global){
-/*
-	Ractive.js v0.9.10
-	Build: d7e22b37fb41c651ffc60d1e2f3770f53a2447a4
-	Date: Tue Nov 14 2017 22:41:48 GMT+0000 (UTC)
-	Website: http://ractivejs.org
-	License: MIT
-*/
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
@@ -74,17 +67,17 @@ function toPairs ( obj ) {
 	return pairs;
 }
 
-var obj$1 = Object;
+var obj = Object;
 
-var assign = obj$1.assign;
+var assign = obj.assign;
 
-var create = obj$1.create;
+var create = obj.create;
 
-var defineProperty = obj$1.defineProperty;
+var defineProperty = obj.defineProperty;
 
-var defineProperties = obj$1.defineProperties;
+var defineProperties = obj.defineProperties;
 
-var keys = obj$1.keys;
+var keys = obj.keys;
 
 var toString = Object.prototype.toString;
 
@@ -381,6 +374,7 @@ var defaults = {
 	template:               null,
 
 	// parse:
+	allowExpressions:       true,
 	delimiters:             [ '{{', '}}' ],
 	tripleDelimiters:       [ '{{{', '}}}' ],
 	staticDelimiters:       [ '[[', ']]' ],
@@ -478,13 +472,13 @@ var welcome;
 
 if ( hasConsole ) {
 	var welcomeIntro = [
-		"%cRactive.js %c0.9.10 %cin debug mode, %cmore...",
+		"%cRactive.js %c1.0.0-edge %cin debug mode, %cmore...",
 		'color: rgb(114, 157, 52); font-weight: normal;',
 		'color: rgb(85, 85, 85); font-weight: normal;',
 		'color: rgb(85, 85, 85); font-weight: normal;',
 		'color: rgb(82, 140, 224); font-weight: normal; text-decoration: underline;'
 	];
-	var welcomeMessage = "You're running Ractive 0.9.10 in debug mode - messages will be printed to the console to help you fix problems and optimise your application.\n\nTo disable debug mode, add this line at the start of your app:\n  Ractive.DEBUG = false;\n\nTo disable debug mode when your app is minified, add this snippet:\n  Ractive.DEBUG = /unminified/.test(function(){/*unminified*/});\n\nGet help and support:\n  http://ractive.js.org\n  http://stackoverflow.com/questions/tagged/ractivejs\n  http://groups.google.com/forum/#!forum/ractive-js\n  http://twitter.com/ractivejs\n\nFound a bug? Raise an issue:\n  https://github.com/ractivejs/ractive/issues\n\n";
+	var welcomeMessage = "You're running Ractive 1.0.0-edge in debug mode - messages will be printed to the console to help you fix problems and optimise your application.\n\nTo disable debug mode, add this line at the start of your app:\n  Ractive.DEBUG = false;\n\nTo disable debug mode when your app is minified, add this snippet:\n  Ractive.DEBUG = /unminified/.test(function(){/*unminified*/});\n\nGet help and support:\n  http://ractive.js.org\n  http://stackoverflow.com/questions/tagged/ractivejs\n  http://groups.google.com/forum/#!forum/ractive-js\n  http://twitter.com/ractivejs\n\nFound a bug? Raise an issue:\n  https://github.com/ractivejs/ractive/issues\n\n";
 
 	welcome = function () {
 		if ( Ractive.WELCOME_MESSAGE === false ) {
@@ -906,6 +900,8 @@ KeyModel__proto__.getKeypath = function getKeypath () {
 	return unescapeKey( this.value );
 };
 
+KeyModel__proto__.has = function has () { return false; };
+
 KeyModel__proto__.rebind = function rebind ( next, previous ) {
 		var this$1 = this;
 
@@ -992,6 +988,8 @@ KeypathModel__proto__.handleChange = function handleChange$1 () {
 
 	this.deps.forEach( handleChange );
 };
+
+KeypathModel__proto__.has = function has () { return false; };
 
 KeypathModel__proto__.rebindChildren = function rebindChildren ( next ) {
 		var this$1 = this;
@@ -2889,6 +2887,7 @@ function Ractive$animate ( keypath, to, options ) {
 
 		throw new Error( ("ractive.animate(...) no longer supports objects. Instead of ractive.animate({\n  " + (keys$$1.map( function (key) { return ("'" + key + "': " + (keypath[ key ])); } ).join( '\n  ' )) + "\n}, {...}), do\n\n" + (keys$$1.map( function (key) { return ("ractive.animate('" + key + "', " + (keypath[ key ]) + ", {...});"); } ).join( '\n' )) + "\n") );
 	}
+
 
 	return animate( this, this.viewmodel.joinAll( splitKeypath( keypath ) ), to, options );
 }
@@ -6415,6 +6414,13 @@ function getConditional ( parser ) {
 }
 
 function readExpression ( parser ) {
+	// if eval is false, no expressions
+	if ( parser.allowExpressions === false ) {
+		var ref = readReference( parser );
+		parser.sp();
+		return ref;
+	}
+
 	// The conditional operator is the lowest precedence operator (except yield,
 	// assignment operators, and commas, none of which are supported), so we
 	// start there. If it doesn't match, it 'falls through' to progressively
@@ -6886,7 +6892,7 @@ function readAttributeOrDirective ( parser ) {
 
 	if ( !attribute ) { return null; }
 
-		// lazy, twoway
+	// lazy, twoway
 	if ( directive = directives[ attribute.n ] ) {
 		attribute.t = directive.t;
 		if ( directive.v ) { attribute.v = directive.v; }
@@ -6895,14 +6901,14 @@ function readAttributeOrDirective ( parser ) {
 		if ( parser.nextChar() === '=' ) { attribute.f = readAttributeValue( parser ); }
 	}
 
-		// decorators
+	// decorators
 	else if ( match = decoratorPattern.exec( attribute.n ) ) {
 		attribute.n = match[1];
 		attribute.t = DECORATOR;
 		readArguments( parser, attribute );
 	}
 
-		// transitions
+	// transitions
 	else if ( match = transitionPattern.exec( attribute.n ) ) {
 		attribute.n = match[1];
 		attribute.t = TRANSITION;
@@ -6910,16 +6916,16 @@ function readAttributeOrDirective ( parser ) {
 		attribute.v = match[2] === 'in-out' ? 't0' : match[2] === 'in' ? 't1' : 't2';
 	}
 
-		// on-click etc
+	// on-click etc
 	else if ( match = eventPattern.exec( attribute.n ) ) {
 		attribute.n = splitEvent( match[1] );
 		attribute.t = EVENT;
 
 		parser.inEvent = true;
 
-			// check for a proxy event
+		// check for a proxy event
 		if ( !readProxyEvent( parser, attribute ) ) {
-				// otherwise, it's an expression
+			// otherwise, it's an expression
 			readArguments( parser, attribute, true );
 		} else if ( reservedEventNames.test( attribute.f ) ) {
 			parser.pos -= attribute.f.length;
@@ -6929,7 +6935,7 @@ function readAttributeOrDirective ( parser ) {
 		parser.inEvent = false;
 	}
 
-		// bound directives
+	// bound directives
 	else if ( match = boundPattern.exec( attribute.n ) ){
 		var bind = match[2] === 'bind';
 		attribute.n = bind ? match[3] : match[1];
@@ -8348,6 +8354,7 @@ var StandardParser = Parser.extend({
 		this.includeLinePositions = options.includeLinePositions;
 		this.textOnlyMode = options.textOnlyMode;
 		this.csp = options.csp;
+		this.allowExpressions = options.allowExpressions;
 
 		if ( options.attributes ) { this.inTag = true; }
 	},
@@ -8401,6 +8408,7 @@ var parseOptions = [
 	'sanitize',
 	'stripComments',
 	'contextLines',
+	'allowExpressions',
 	'attributes'
 ];
 
@@ -9200,7 +9208,9 @@ var ExpressionProxy = (function (Model) {
 		this.isReadonly = true;
 		this.dirty = true;
 
-		this.fn = getFunction( template.s, template.r.length );
+		this.fn = fragment.ractive.allowExpressions === false ?
+			noop :
+			getFunction( template.s, template.r.length );
 
 		this.models = this.template.r.map( function (ref) {
 			return resolveReference( this$1.fragment, ref );
@@ -9456,7 +9466,7 @@ var ReferenceExpressionProxy = (function (Model) {
 		if ( !this.dirty ) { this.handleChange(); }
 	};
 
-	ReferenceExpressionProxy__proto__.get = function get ( shouldCapture ) {
+	ReferenceExpressionProxy__proto__.get = function get ( shouldCapture, opts ) {
 		if ( this.dirty ) {
 			this.bubble();
 
@@ -9477,12 +9487,12 @@ var ReferenceExpressionProxy = (function (Model) {
 				if ( this.keypathModel ) { this.keypathModel.handleChange(); }
 			}
 
-			this.value = this.model.get( shouldCapture );
+			this.value = this.model.get( shouldCapture, opts );
 			this.dirty = false;
 			this.mark();
 			return this.value;
 		} else {
-			return this.model ? this.model.get( shouldCapture ) : undefined;
+			return this.model ? this.model.get( shouldCapture, opts ) : undefined;
 		}
 	};
 
@@ -9680,7 +9690,7 @@ function readStyle ( css ) {
 function readClass ( str ) {
 	var list = str.split( space );
 
-  // remove any empty entries
+	// remove any empty entries
 	var i = list.length;
 	while ( i-- ) {
 		if ( !list[i] ) { list.splice( i, 1 ); }
@@ -9879,10 +9889,6 @@ function updateCheckboxName ( reset ) {
 
 	var value = this.getValue();
 	var valueAttribute = element.getAttribute( 'value' );
-
-	if ( reset ) {
-		// TODO: WAT?
-	}
 
 	if ( !isArray( value ) ) {
 		binding.isChecked = node.checked = element.compare( value, valueAttribute );
@@ -11207,10 +11213,11 @@ var Component = (function (Item) {
 				}
 			}
 		} else {
-			render$1( this.instance, target, null, occupants );
 
 			this.attributes.forEach( render );
 			this.eventHandlers.forEach( render );
+
+			render$1( this.instance, target, null, occupants );
 
 			this.rendered = true;
 		}
@@ -17318,7 +17325,7 @@ if ( win && !win.Ractive ) {
 	/* istanbul ignore next */
 	if ( ~opts$1.indexOf( 'ForceGlobal' ) ) { win.Ractive = Ractive; }
 } else if ( win ) {
-	warn( "Ractive already appears to be loaded while loading 0.9.10." );
+	warn( "Ractive already appears to be loaded while loading 1.0.0-edge." );
 }
 
 assign( Ractive.prototype, proto, defaults );
@@ -17361,7 +17368,7 @@ defineProperties( Ractive, {
 	svg:              { value: svg },
 
 	// version
-	VERSION:          { value: '0.9.10' },
+	VERSION:          { value: '1.0.0-edge' },
 
 	// plugins
 	adaptors:         { writable: true, value: {} },
