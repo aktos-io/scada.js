@@ -108,6 +108,11 @@ include ./controls.pug
                 tr
                     th(colspan="{{ colNames.length }}")
                         include ./pagination.pug
+                +if('@.partials.footer')
+                    r-row
+                        th(colspan="{{ colNames.length }}")
+                            +apply('footer')
+
     +endif
 +else
     include ./first-loading.pug
