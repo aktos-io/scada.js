@@ -33,7 +33,7 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                 @log.log "got doc: ", err, res
                 */
                 ev.component.fire \state, \doing
-                err, res <~ db.all {startkey: "_design/", endkey: "_design0", +include_docs}
+                err, res <~ db.all-docs {startkey: "_design/", endkey: "_design0", +include_docs}
                 if err
                     ev.component.error pack err
                     console.log "this is error on list design documents: ", err
@@ -43,26 +43,24 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
 
             get-design-document: (ev, doc-id) ->
                 ev.component.fire \state, \doing
-                self = this
                 # get the _auth design document
-                err, res <- db.get doc-id
+                err, res <~ db.get doc-id
                 return ev.component.error err.message if err
 
                 console.log "Current _auth document: ", res
                 ddoc = res
                 ddoc.livescript = res.src
-                self.set \documentId, ddoc._id
-                self.set \designDocument, ddoc
+                @set \documentId, ddoc._id
+                @set \designDocument, ddoc
                 ev.component.fire \state, \done...
 
             get-all-design-documents: (ev) ->
                 # dump all design documents, useful for backup
-                __ = @
                 ev.component.fire \state, \doing
-                err, res <- db.all {startkey: "_design/", endkey: "_design0", +include_docs}
+                err, res <~ db.all-docs {startkey: "_design/", endkey: "_design0", +include_docs}
                 return ev.component.error err.message if err
 
-                __.set \allDesignDocs, ["\n\n\# ID: #{..doc._id} \n\n #{JSON.stringify(..doc, null, 2)}" for res].join('')
+                @set \allDesignDocs, ["\n\n\# ID: #{..doc._id} \n\n #{JSON.stringify(..doc, null, 2)}" for res].join('')
 
                 ev.component.fire \state, \done
 
