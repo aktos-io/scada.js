@@ -20,6 +20,7 @@ Ractive.components['data-table'] = Ractive.extend do
             name: 'data-table'
             debug: settings.debug
 
+
         # check parameters
         try
             unless typeof! settings is \Object
@@ -71,6 +72,8 @@ Ractive.components['data-table'] = Ractive.extend do
             catch
                 @logger.cerr e
 
+
+
         @set \colNames, settings.col-names
         opening-dimmer = $ @find \.table-section-of-data-table
 
@@ -120,6 +123,11 @@ Ractive.components['data-table'] = Ractive.extend do
                         return @logger.cerr "id can not be null or undefined: #{pack i}."
                 @set \tableview_visible, items
 
+        open-item-page = (id) ~>
+            index = find-index (.id is id), @get('tableview_filtered')
+            @set \currPage, index / settings.page-size
+            @refresh!
+
 
         @observe \tableview, ~>
             @logger.clog "DEBUG MODE: tableview changed, refreshing..." if @get \debug
@@ -165,6 +173,10 @@ Ractive.components['data-table'] = Ractive.extend do
             select-page: (event, page-num) ->
                 @set \currPage, page-num
                 @refresh!
+
+            go-to-opened: (ctx) ->
+                item-id = @get \lastIndex
+                open-item-page item-id
 
             close-row: ->
                 <~ :lo(op) ~>
