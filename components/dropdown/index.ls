@@ -70,19 +70,17 @@ Ractive.components['dropdown'] = Ractive.extend do
                 else
                     # set a single value
                     if find (.[keyField] is value-of-key), data
-                        @set \item, that
-                        @set \selected-key, that[keyField]
-                        @set \selected-name, that[nameField]
-                        if @get \debug
-                            @actor.c-log "Found #{value-of-key} in .[#{keyField}]", that, that[keyField]
-                        @fire \select, {}, that
+                        selected = that
+                        if @get('selected-key') isnt that[keyField]
+                            @actor.c-log "selected key is really changed to:", selected[keyField]
+                            if @get \debug
+                                @actor.c-log "Found #{value-of-key} in .[#{keyField}]", selected, selected[keyField]
 
-                    else if @get(\selected-key)?
-                        @set \item, {}
-                        @set \selected-key, null
-                        @set \selected-name, null
-                        @fire \select, {}
-                        dd.dropdown 'restore defaults'
+                            @set \item, selected
+                            @set \selected-key, selected[keyField]
+                            @set \selected-name, selected[nameField]
+                            @fire \select, {}, selected
+
 
         shandler = null
 
@@ -118,8 +116,14 @@ Ractive.components['dropdown'] = Ractive.extend do
             shandler = @observe \selected-key, (_new) ~>
                 if @get \debug
                     @actor.c-log "selected key set to:", _new
-                update-dropdown _new
-                set-item _new
+                if _new
+                    update-dropdown _new
+                    set-item _new
+                else
+                    # clear the dropdown
+                    @set \item, {}
+                    dd.dropdown 'restore defaults'
+
 
     data: ->
         data: undefined
