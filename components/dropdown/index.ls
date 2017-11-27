@@ -2,20 +2,6 @@ require! 'prelude-ls': {find, empty}
 require! 'actors': {RactiveActor}
 require! 'aea': {sleep}
 
-class RactiveVar
-    (@ractive, @name) ->
-
-    observe: ->
-        @observe-handle = @ractive.observe @name, ...arguments
-
-    set: ->
-        @ractive.set @name, ...arguments
-
-    set-silent: ->
-        @observe-handle.silence! if @observe-handle
-        @ractive.set @name, ...arguments
-        @observe-handle.resume! if @observe-handle
-
 Ractive.components['dropdown'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
