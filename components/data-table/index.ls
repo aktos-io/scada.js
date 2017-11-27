@@ -125,8 +125,9 @@ Ractive.components['data-table'] = Ractive.extend do
 
         open-item-page = (id) ~>
             index = find-index (.id is id), @get('tableview_filtered')
-            @set \currPage, index / settings.page-size
-            @refresh!
+            if index?
+                @set \currPage, index / settings.page-size
+                @refresh!
 
 
         @observe \tableview, ~>
