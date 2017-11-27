@@ -41,7 +41,10 @@ include ./controls.pug
                 
                 r-row 
                     th(colspan="{{ colNames.length }}")
-                        btn.icon.blue(on-buttonclick="goToOpened"): icon.play
+                        btn.mini.icon(
+                            on-buttonclick="goToOpened"
+                            tooltip="Go to last item"
+                            ): icon.backward
                     
                 +if('addingNew')
                     r-row(class="active")
