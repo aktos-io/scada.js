@@ -4,6 +4,7 @@ require! 'prelude-ls': {
 }
 require! 'aea': {sleep, merge, clone, unix-to-readable, pack, VLogger}
 require! 'actors': {RactiveActor}
+require! 'fuse.js': Fuse
 
 Ractive.components['data-table'] = Ractive.extend do
     template: RACTIVE_PREPARSE('data-table.pug')
@@ -96,33 +97,6 @@ Ractive.components['data-table'] = Ractive.extend do
             tableview_filtered = filter-func tableview
             @set \tableview_filtered, tableview_filtered
 
-            # calculate which items to show in tableview
-            items = do ~>
-                if settings.page-size > 0
-                    curr-page = @get \currPage
-                    min = (x, y) -> if x < y then x else y
-                    return do
-                        from: curr-page * settings.page-size
-                        to: min (((curr-page + 1) * settings.page-size) - 1), (tableview_filtered.length - 1)
-                else
-                    return do
-                        from: 0
-                        to: tableview_filtered.length - 1
-
-            # calculate visible items
-            visible-items = for index, entry of tableview_filtered
-                if items.from <= index <= items.to
-                    entry
-
-            settings.after-filter visible-items, (items) ~>
-                if items.length > 0
-                    if items.0.cols.length isnt settings.col-names.length
-                        @logger.error "Column count does not match with after-filter output!"
-                        return
-                    for i in items when i.id in [undefined, null]
-                        return @logger.cerr "id can not be null or undefined: #{pack i}."
-                @set \tableview_visible, items
-
         open-item-page = (id) ~>
             index = find-index (.id is id), @get('tableview_filtered')
             if index?
@@ -130,9 +104,46 @@ Ractive.components['data-table'] = Ractive.extend do
                 @refresh!
 
 
-        @observe \tableview, ~>
+        @observe \tableview, (_new) ~>
             @logger.clog "DEBUG MODE: tableview changed, refreshing..." if @get \debug
+
+            search-opts =
+              shouldSort: true,
+              threshold: 0.4,
+              distance: 100
+              maxPatternLength: 32,
+              minMatchCharLength: 1,
+              keys: <[ id value.description ]>
+
+            @set \fuse, new Fuse(_new, search-opts)
+
             @refresh!
+
+
+        search-rate-limit = null
+        @observe \searchText, (text) ~>
+            try clear-timeout search-rate-limit
+            search-rate-limit := sleep 200ms, ~>
+                tableview_filtered = if text
+                    @get \fuse .search that
+                else
+                    @get \tableview
+                @set \currPage, 0
+
+                @set \tableview_filtered, tableview_filtered
+                console.log "search for '#{text}' returned #{tableview_filtered.length} results"
+
+
+
+        @observe \tableview_filtered, (filtered) ~>
+            settings.after-filter filtered, (items) ~>
+                if items.length > 0
+                    if items.0.cols.length isnt settings.col-names.length
+                        @logger.error "Column count does not match with after-filter output!"
+                        return
+                    for i in items when i.id in [undefined, null]
+                        return @logger.cerr "id can not be null or undefined: #{pack i}."
+                @set \tableview_visible, items
 
         events =
             clicked: (ctx, row) ->
@@ -173,7 +184,7 @@ Ractive.components['data-table'] = Ractive.extend do
 
             select-page: (event, page-num) ->
                 @set \currPage, page-num
-                @refresh!
+                #@refresh!
 
             go-to-opened: (ctx) ->
                 item-id = @get \lastIndex
@@ -318,6 +329,8 @@ Ractive.components['data-table'] = Ractive.extend do
         opening-row: no
         opening-row-msg: ''
         _tmp: {}
+        searchText: ''
+        fuse: null
         is-editing-row: (index) ->
             return no unless @get \editable
             clicked-index = @get \clickedIndex

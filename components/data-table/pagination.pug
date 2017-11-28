@@ -6,3 +6,7 @@
                     a(
                         on-click="@.fire('selectPage', i)" 
                         class!="item {{#if currPage === i}}active{{/if}}") {{ . }}
+
+b curr page: {{currPage}}, page size: 
+.ui.input 
+    input(value="{{settings.pageSize}}")
