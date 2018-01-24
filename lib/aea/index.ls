@@ -1,6 +1,6 @@
 require! {
     './sleep': {sleep, clear-timer}
-    './packing': {pack, unpack, clone}
+    './packing': {pack, unpack, clone, diff}
     './merge': {merge}
     './logger': {Logger}
     './formatting': {unix-to-readable, readable-to-unix}
@@ -69,12 +69,13 @@ if make-tests=no
             throw
     console.log "finished tr-to-ascii tests"
 
+require! './ractive-var': {RactiveVar}
 
 module.exports = {
     sleep, clear-timer
     merge
     Logger,
-    pack, unpack, clone
+    pack, unpack, clone, diff 
     unix-to-readable, readable-to-unix
     assert
     obj-copy, dynamic-obj, attach
@@ -83,4 +84,5 @@ module.exports = {
     convert-units
     is-nodejs
     VLogger
+    RactiveVar
 }

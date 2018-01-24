@@ -4,6 +4,7 @@ require! 'prelude-ls': {
 }
 require! 'aea': {sleep, merge, clone, unix-to-readable, pack, VLogger}
 require! 'actors': {RactiveActor}
+require! 'fuse.js': Fuse
 
 Ractive.components['data-table'] = Ractive.extend do
     template: RACTIVE_PREPARSE('data-table.pug')
@@ -19,6 +20,7 @@ Ractive.components['data-table'] = Ractive.extend do
         @actor = new RactiveActor this, do
             name: 'data-table'
             debug: settings.debug
+
 
         # check parameters
         try
@@ -71,6 +73,8 @@ Ractive.components['data-table'] = Ractive.extend do
             catch
                 @logger.cerr e
 
+
+
         @set \colNames, settings.col-names
         opening-dimmer = $ @find \.table-section-of-data-table
 
@@ -93,25 +97,46 @@ Ractive.components['data-table'] = Ractive.extend do
             tableview_filtered = filter-func tableview
             @set \tableview_filtered, tableview_filtered
 
-            # calculate which items to show in tableview
-            items = do ~>
-                if settings.page-size > 0
-                    curr-page = @get \currPage
-                    min = (x, y) -> if x < y then x else y
-                    return do
-                        from: curr-page * settings.page-size
-                        to: min (((curr-page + 1) * settings.page-size) - 1), (tableview_filtered.length - 1)
+        open-item-page = (id) ~>
+            index = find-index (.id is id), @get('tableview_filtered')
+            if index?
+                @set \currPage, index / settings.page-size
+                @refresh!
+
+
+        @observe \tableview, (_new) ~>
+            @logger.clog "DEBUG MODE: tableview changed, refreshing..." if @get \debug
+
+            search-opts =
+              shouldSort: true,
+              threshold: 0.4,
+              distance: 100
+              maxPatternLength: 32,
+              minMatchCharLength: 1,
+              keys: <[ id value.description ]>
+
+            @set \fuse, new Fuse(_new, search-opts)
+
+            @refresh!
+
+
+        search-rate-limit = null
+        @observe \searchText, (text) ~>
+            try clear-timeout search-rate-limit
+            search-rate-limit := sleep 200ms, ~>
+                tableview_filtered = if text
+                    @get \fuse .search that
                 else
-                    return do
-                        from: 0
-                        to: tableview_filtered.length - 1
+                    @get \tableview
+                @set \currPage, 0
 
-            # calculate visible items
-            visible-items = for index, entry of tableview_filtered
-                if items.from <= index <= items.to
-                    entry
+                @set \tableview_filtered, tableview_filtered
+                console.log "search for '#{text}' returned #{tableview_filtered.length} results"
 
-            settings.after-filter visible-items, (items) ~>
+
+
+        @observe \tableview_filtered, (filtered) ~>
+            settings.after-filter filtered, (items) ~>
                 if items.length > 0
                     if items.0.cols.length isnt settings.col-names.length
                         @logger.error "Column count does not match with after-filter output!"
@@ -119,11 +144,6 @@ Ractive.components['data-table'] = Ractive.extend do
                     for i in items when i.id in [undefined, null]
                         return @logger.cerr "id can not be null or undefined: #{pack i}."
                 @set \tableview_visible, items
-
-
-        @observe \tableview, ~>
-            @logger.clog "DEBUG MODE: tableview changed, refreshing..." if @get \debug
-            @refresh!
 
         events =
             clicked: (ctx, row) ->
@@ -141,7 +161,8 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \_tmp, {}
                 curr <~ settings.on-create-view.call this, row-clone
                 @set \curr, that if curr
-                @set \origCurr, clone (@get \curr)
+                sleep 100ms, ~>
+                    @set \origCurr, clone (@get \curr)
                 @set \row, row-clone
                 opening-dimmer.dimmer \hide
                 @set \openingRow, no
@@ -163,7 +184,11 @@ Ractive.components['data-table'] = Ractive.extend do
 
             select-page: (event, page-num) ->
                 @set \currPage, page-num
-                @refresh!
+                #@refresh!
+
+            go-to-opened: (ctx) ->
+                item-id = @get \lastIndex
+                open-item-page item-id
 
             close-row: ->
                 <~ :lo(op) ~>
@@ -248,10 +273,12 @@ Ractive.components['data-table'] = Ractive.extend do
                     # this is a new document, use exact ID or pfx + autoincrement
                     # if curr._id has numeric portion, this is an exact ID
                     # else this is a prefix
-                    curr._id = curr._id.to-upper-case!
-                    if curr._id.split /[0-9]+/ .length is 1
-                        # no numeric part, this is a prefix
-                        curr._id += '####'
+                    if settings.autoincrement is on
+                        @actor.c-log "Autoincrement is set to 'yes', autoincrementing."
+                        curr._id = curr._id.to-upper-case!
+                        if curr._id.split /[0-9]+/ .length is 1
+                            # no numeric part, this is a prefix
+                            curr._id += '####'
 
                 if @get \_tmp.new_attachments
                     curr._attachments = (curr._attachments or {}) <<< that
@@ -302,6 +329,8 @@ Ractive.components['data-table'] = Ractive.extend do
         opening-row: no
         opening-row-msg: ''
         _tmp: {}
+        searchText: ''
+        fuse: null
         is-editing-row: (index) ->
             return no unless @get \editable
             clicked-index = @get \clickedIndex
@@ -332,34 +361,13 @@ Ractive.components['data-table'] = Ractive.extend do
             else
                 no
 
-        run-handler: (params) ~>
+        run-handler: (...params) ~>
             handlers = @get \settings.handlers
-            param = null
-
-            if params.args
-                # this is from ack-button
-
-                if typeof! params.args is \Array
-                    args = clone params.args
-                    handler = args.shift!
-                    params.args = args
-                else
-                    handler = params.args
-                    params.args = null
-
-                param = [params]
-
-            else
-                # this is from normal button
-                if typeof! params is \Array
-                    # from normal button, as array
-                    [handler, ...param] = params
-                else
-                    handler = params
+            handler = params.shift!
 
             if typeof handlers[handler] is \function
                 #@logger.clog "RUNNING HANDLER: #{handler}(#{param})"
-                return handlers[handler].apply this, param
+                return handlers[handler].apply this, params
             else
                 @logger.clog "no handler found with the name: ", handler
 

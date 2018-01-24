@@ -38,7 +38,23 @@ include ./controls.pug
                                 p.
                                     You are seeing a filtered content. 
                                     #[btn.blue.mini(on-buttonclick="setFilter" value="all") #[i.remove.icon] Clear Filter]
-
+                
+                r-row 
+                    th(colspan="{{ colNames.length }}")
+                        //- 
+                            btn.mini.icon(
+                                on-buttonclick="goToOpened"
+                                tooltip="Go to last item"
+                                ): icon.backward
+                                    
+                        .ui.left.icon.input
+                            icon.search
+                            input(value="{{searchText}}") 
+                        +if('searchText')
+                            | &nbsp; 
+                            b {{tableview_filtered.length}} results...
+                            
+                                                
                 +if('addingNew')
                     r-row(class="active")
                         th(colspan="{{ colNames.length }}")
@@ -67,6 +83,15 @@ include ./controls.pug
                                 {{/if}}                     \
                             {{/if}}                         \
                             "
+                        style!="                                                       \
+                            {{#if                                                      \
+                                settings.pageSize > 0 && (                             \
+                                    @index >= (currPage + 1) * settings.pageSize ||    \
+                                    @index <  (currPage) * settings.pageSize           \
+                                ) &&                                                   \
+                                (clickedIndex !== .id) }}                           \
+                                display: none                                          \
+                            {{/if}}"
                         )    
                         //- -----------------------------------------------
                         //- edit form
@@ -108,6 +133,11 @@ include ./controls.pug
                 tr
                     th(colspan="{{ colNames.length }}")
                         include ./pagination.pug
+                +if('@.partials.footer')
+                    r-row
+                        th(colspan="{{ colNames.length }}")
+                            +apply('footer')
+
     +endif
 +else
     include ./first-loading.pug

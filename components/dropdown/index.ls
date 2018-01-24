@@ -2,20 +2,6 @@ require! 'prelude-ls': {find, empty}
 require! 'actors': {RactiveActor}
 require! 'aea': {sleep}
 
-class RactiveVar
-    (@ractive, @name) ->
-
-    observe: ->
-        @observe-handle = @ractive.observe @name, ...arguments
-
-    set: ->
-        @ractive.set @name, ...arguments
-
-    set-silent: ->
-        @observe-handle.silence! if @observe-handle
-        @ractive.set @name, ...arguments
-        @observe-handle.resume! if @observe-handle
-
 Ractive.components['dropdown'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
@@ -44,6 +30,14 @@ Ractive.components['dropdown'] = Ractive.extend do
         dd.add-class \fluid if @get \fit-width
         keyField = @get \keyField
         nameField = @get \nameField
+        update-dropdown = (_new) ~>
+            debugger if @get \debug
+            @actor.log.log "#{@_guid}: selected is changed: ", _new if @get \debug
+            if @get \multiple
+                dd.dropdown 'set exactly', _new
+            else
+                dd.dropdown 'set selected', _new
+
 
         set-item = (value-of-key) ~>
             if @get \data
@@ -60,7 +54,8 @@ Ractive.components['dropdown'] = Ractive.extend do
                                 items.push that
                                 selected-keys.push that[keyField]
                                 selected-names.push that[nameField]
-                                @actor.c-log "Found #{val} in .[#{keyField}]", that[keyField]
+                                if @get \debug
+                                    @actor.c-log "Found #{val} in .[#{keyField}]", that[keyField]
                             else
                                 # how can't we find the item?
                                 debugger
@@ -69,30 +64,27 @@ Ractive.components['dropdown'] = Ractive.extend do
                     @set \item, unless empty items => items else [{}]
                     @set \selected-key, selected-keys
                     @set \selected-name, selected-names
+                    @fire \select, {}, (unless empty items => items else [{}])
+
 
                 else
                     # set a single value
-                    if value-of-key
-                        if find (.[keyField] is value-of-key), data
-                            @set \item, that
-                            @set \selected-key, that[keyField]
-                            @set \selected-name, that[nameField]
-                            @actor.c-log "Found #{value-of-key} in .[#{keyField}]", that, that[keyField]
+                    if find (.[keyField] is value-of-key), data
+                        selected = that
+                        if @get('selected-key') isnt that[keyField]
+                            @actor.c-log "selected key is really changed to:", selected[keyField]
+                            if @get \debug
+                                @actor.c-log "Found #{value-of-key} in .[#{keyField}]", selected, selected[keyField]
 
-                        else
-                            # why didn't we find it?
-                            debugger
+                            @set \item, selected
+                            @set \selected-key, selected[keyField]
+                            @set \selected-name, selected[nameField]
+                            @fire \select, {}, selected
+
 
         shandler = null
 
 
-        update-dropdown = (_new) ~>
-            debugger if @get \debug
-            @actor.log.log "#{@_guid}: selected is changed: ", _new if @get \debug
-            if @get \multiple
-                dd.dropdown 'set exactly', _new
-            else
-                dd.dropdown 'set selected', _new
 
         @observe \data, (data) ~>
             @actor.log.log "data is changed: ", data if @get \debug
@@ -120,10 +112,18 @@ Ractive.components['dropdown'] = Ractive.extend do
                 <~ sleep 10ms
                 update-dropdown @get \selected-key
 
-        shandler = @observe \selected-key, (_new) ~>
-            @actor.c-log "selected key set to:", _new
-            update-dropdown _new
-            set-item _new
+        unless @get \multiple
+            shandler = @observe \selected-key, (_new) ~>
+                if @get \debug
+                    @actor.c-log "selected key set to:", _new
+                if _new
+                    update-dropdown _new
+                    set-item _new
+                else
+                    # clear the dropdown
+                    @set \item, {}
+                    dd.dropdown 'restore defaults'
+
 
     data: ->
         data: undefined

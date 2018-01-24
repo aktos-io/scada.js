@@ -24,7 +24,7 @@
             +iff('heartbeat')
                 i.icon.heart
             +else
-                i.icon #[.ui.active.mini.inverted.loader]
+                i.icon(style="z-index: 99999") #[.ui.active.mini.inverted.loader]
             +endif
         +elif('state === "done"')
             i.icon.checkmark

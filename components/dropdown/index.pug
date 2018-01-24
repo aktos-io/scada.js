@@ -1,19 +1,16 @@
+//- text mode 
 +iff('~/["text-mode"]')
-    //- Show the "text-mode" partial 
-    //- ---------------------------- 
     +apply('text-mode')
 
+//- readonly 
 +elif('~/["readonly-mode"]')
-    //- Show a readonly input 
-    //- ---------------------
-    .ui.input.disabled
+    .ui.input.readonly
         input(twoway="false" value="{{ item ? item[nameField] : nothingSelected }}")
+
+//- dropdown 
 +else
-    //- Show the dropdown 
-    //- -----------------
+    //- inline 
     +iff('inline')
-        //- inline 
-        //- ------------------
         .ui.inline.dropdown(class="{{class}} {{#loading}}loading{{/}}")                
             i.dropdown.icon 
             .default.text {{ placeholder }}
@@ -25,13 +22,12 @@
                 +each('data')
                     .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
 
+    //- custom 
     +elif('custom')
-        //- custom 
-        //- ------------------
         +apply('custom')
+
+    //- default 
     +else
-        //- default 
-        //- ------------------
         div(style="display: inline-block")
             .ui.search.selection.dropdown(class="{{class}} {{#loading}}loading{{/}}")
                 input(type="hidden" name="{{_guid}}")

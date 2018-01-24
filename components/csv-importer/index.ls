@@ -1,6 +1,6 @@
 require! 'aea':{merge, sleep}
 require! 'csv-parse': parse
-require! 'prelude-ls': {unique, map}
+require! 'prelude-ls': {unique, map, split}
 
 get-csv = (string, delimiter, callback) ->
     # http://csv.adaltas.com/parse/examples/
@@ -11,11 +11,13 @@ Ractive.components['csv-importer'] = Ractive.extend do
     isolated: yes
     template: RACTIVE_PREPARSE('index.pug')
     onrender: ->
-        __ = @
         ack-button = @find-component 'ack-button'
         delimiter = @get \delimiter
         try
-            columns = @get \columns .split ',' |> map (.trim!)
+            columns = @get \columns
+                |> split ','
+                |> map (.trim!)
+
             for column in columns
                 throw {message: "duplicate column name"} if columns.length isnt unique columns .length
                 throw {message: "column name can not be null"} if column in [null, '', undefined]
@@ -26,26 +28,30 @@ Ractive.components['csv-importer'] = Ractive.extend do
             return
 
         @on do
-            get-content: (event, ev) ->
+            get-content: (ctx) ->
                 csv = @get \csv
-                err, res <- get-csv csv, delimiter
+                err, res <~ get-csv csv, delimiter
                 if err
-                    return ev.component.error "csv file isnt proper !!!"
+                    return ctx.component.error "csv file isnt proper !!!"
+
+                if res.length is 0
+                    return ctx.component.error "Empty data"
 
                 column-list = []
-                unless res.length is 0
-                    for imported in res
-                        a = {}
-                        if columns.length isnt imported.length
-                            return ev.component.error "columns can not match with given csv file's columns !!!"
+                for imported in res
+                    a = {}
+                    """
+                    if columns.length isnt imported.length
+                        return ctx.component.error "columns can not match with given csv file's columns !!!"
+                    """
+                    for index, cell of imported
+                        if columns[index]
+                            a[that] = cell
 
-                        for i, cell of imported
-                            key = columns[i]
-                            a[key] = cell
+                    column-list.push a
 
-                        column-list.push a
+                @fire \import, {button: ctx.component}, column-list
 
-                __.fire \import, {component: ack-button}, column-list
 
     data: ->
         csv: ""

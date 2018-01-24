@@ -89,7 +89,10 @@ export ractive-preparserify = (file) ->
 
 
             template-part = if template-id
-                $ = cheerio.load template-html
+                $ = cheerio.load template-html, do
+                    lowerCaseAttributeNames: false
+                    lowerCaseTags: false
+                    
                 try
                     $ template-id .html!
                 catch
@@ -97,6 +100,7 @@ export ractive-preparserify = (file) ->
                     ''
             else
                 template-html
+
 
             # Debug
             #console.log "DEBUG: ractive-preparsify: compiling template: #{path.basename path.dirname file}/#{jade-file} #{template-id or \ALL_HTML }"
