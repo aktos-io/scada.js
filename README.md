@@ -98,7 +98,11 @@ new Ractive({
 4. Create your `app.html` (or `app.pug`) as your application template
 
 ```html
-<aktos-dcs></aktos-dcs>
+<aktos-dcs/> <!-- initialize dcs -->
+<sync value="{{name}}" topic="public.name" /> 
+<sync value="{{x}}" topic="public.hello" />
+<!-- this is all you need to do to setup the realtime connection -->
+<!-- rest is the pure Ractive template you already know -->
 
 <h2>hello {{name}}!</h2>
 <input value="{{name}}" />
@@ -106,9 +110,6 @@ new Ractive({
 <h3>Slider/progress</h3>
 <slider inline value="{{x}}" />
 <progress type="circle" value="{{x}}" />
-
-<sync topic="public.name" value="{{name}}" />
-<sync topic="public.hello" value="{{x}}" />
 ```
 
 4. Create an `index.html` (or `index.pug`) here with the following contents:
@@ -150,7 +151,7 @@ http.listen 4001, -> console.log "listening on *:4001"
 new dcs.SocketIOServer http
 
 # optionally create a TCP-DCS Connector
-new TCPProxyServer port: 4002
+new dcs.TCPProxyServer port: 4002
  ```
  
 
