@@ -2,7 +2,7 @@
 
 # Description
 
-ScadaJS is a library to easily create Single Page Applications, targeted to industrial SCADA and MRP/ERP systems. Main objective of this library is to provide an integrated Distributed Control System layer which will make it possible to communicate with any type of hardware in realtime in any location (distributed), within the browser.
+ScadaJS is a library to create [Distributed](https://en.wikipedia.org/wiki/Distributed_Computing) Realtime [Webapps](https://en.wikipedia.org/wiki/Single-page_application), targeted to industrial distributed SCADA and MRP/ERP systems.
 
 # Key features
 
@@ -15,7 +15,8 @@ ScadaJS is a library to easily create Single Page Applications, targeted to indu
 * Provides build system via [Gulp](http://gulpjs.com).
   * Supports a mechanism for integrating 3rd party libraries easily.
 * Supports cross platform development (see: [supported development platforms](./doc/supported-development-platforms.md))
-* Integrated with [aktos-dcs](https://github.com/aktos-io/aktos-dcs), a message passing library for distributed control systems, which makes ScadaJS support [microservices](https://en.wikipedia.org/wiki/Microservices) architecture out of the box.
+* Integrated with [aktos-dcs-node](https://github.com/aktos-io/aktos-dcs-node), the NodeJS port of aktos-dcs. 
+   * [Microservices](https://en.wikipedia.org/wiki/Microservices) architecture is supported out of the box.
    * Supports variety of network and industrial protocol connectors, including
      * Simple JSON over TCP
      * Long Polling
@@ -26,7 +27,7 @@ ScadaJS is a library to easily create Single Page Applications, targeted to indu
 
    * Compatible with aktos.io hardwares, such as [Scada Gateway](https://aktos.io/scada/pdf).
    * Supports any number and type (SQL, NoSQL) of databases in a single application at the same time.
-     * Provides realtime layer tools for CouchDB which helps [overcoming CouchDB limitations](https://github.com/aktos-io/aktos-dcs-node/tree/master/src/couch-dcs)
+     * Provides realtime layer tools for CouchDB which helps [overcoming CouchDB limitations](https://github.com/aktos-io/aktos-dcs-node/tree/master/connectors/couch-dcs)
 
 # DEMO
 
@@ -36,13 +37,13 @@ Demo application [source is here](https://github.com/aktos-io/scadajs-showcase) 
 
 You may get up and running with ScadaJS in 2 different ways:
 
-### [OPTION: 1] Modify the template
+### *EITHER:* Download and Modify The Template
 
-Download [scadajs-template](https://github.com/aktos-io/scadajs-template) and edit according to your needs.
+Download [scadajs-template](https://github.com/aktos-io/scadajs-template), follow the instructions to setup and edit the examples according to your needs.
 
-### [OPTION: 2] Install from scratch
+### *OR:* Add To Your [Existing] Project From Scratch
 
-Follow the steps below to add ScadaJS into your existing project:
+Follow the steps below to add ScadaJS into your [existing] project:
 
 #### 1. Install Global Dependencies
 
@@ -82,6 +83,8 @@ When you first create or clone a project that depends on ScadaJS, you need to in
 3. Create an `app.js` (or `app.ls`) here with the following contents:
 
 ```js
+require('components');
+
 new Ractive({
   el: 'body',
   template: RACTIVE_PREPARSE('app.pug'),
@@ -130,12 +133,66 @@ You can simply build `your-webapp` with the following command:
 
     cd your-project/scada.js
     gulp --webapp your-webapp [--production]
+    
+    
+#### 6. Serve your webapp
 
-#### 6. See the result
+Create a webserver that supports *Socket.io* and *aktos-dcs*:
 
-You can see `your-webapp` by opening `your-project/scada.js/build/your-webapp/index.html` with any modern browser.
+```ls
+require! <[ path express dcs ]>
+app = express!
+http = require \http .Server app
+app.use "/", express.static path.resolve "./scada.js/build/your-webapp"
+http.listen 4001, -> console.log "listening on *:4001"
 
-# Projects Using ScadaJS
+# create a socket.io-DCS connector
+new dcs.SocketIOServer http
 
-* [Showcase](https://github.com/aktos-io/scadajs-showcase) : Showcase for components and authentication/authorization mechanism.
-* [Omron Tester](https://github.com/aktos-io/omron-tester) : Example app to demonstrate how to communicate with a PLC
+# optionally create a TCP-DCS Connector
+new TCPProxyServer port: 4002
+ ```
+ 
+
+#### 7. See the result
+
+You can see `your-webapp` by opening http://localhost:4001 with any modern browser.
+
+#### 8. Start adding your microservices
+
+You can add any number of microservices (in any programming language that has an implementation of [aktos-dcs](https://github.com/aktos-io/aktos-dcs)) and make them communicate with eachother over the DCS network:
+
+```ls
+require! dcs: {Actor, sleep, TCPProxyClient}
+
+class Example extends Actor
+  ->
+    super "My Example Microservice"
+    @subscribe '**'
+    @log.log "subscribed: #{@subscriptions}"
+
+    @on \data, (msg) ~>
+      @log.log "received a message: ", msg
+      # do something with the message
+            
+  action: ->
+    @log.log "#{@name} started..."
+    i = 0
+    <~ :lo(op) ~> 
+      # do something useful here  
+      @send "public.hello", {val: i++}
+      <~ sleep 2000ms
+      lo(op)
+
+new Example!
+new TCPProxyClient port: 4002 .login! 
+```
+
+# Projects and Companies Using ScadaJS
+
+| Name | Description |
+| ---- | ----- |
+| [Template](https://github.com/aktos-io/scadajs-template) | Bare minimum example to show how to get up and running with ScadaJS. |
+| [Showcase](https://github.com/aktos-io/scadajs-showcase) | Showcase for components and authentication/authorization mechanism.|
+| [Aktos Electronics](https://aktos.io) | Aktos Electronics uses ScadaJS as its company website, MRP tool and the Enterprise Online SCADA Service infrastructure. |
+| [Omron Tester](https://github.com/aktos-io/omron-tester) | Example app to demonstrate how to communicate with an Omron PLC. |
