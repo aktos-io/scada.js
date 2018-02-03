@@ -227,14 +227,17 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \editable, no
                 @set \editingDoc, null
 
-            add-new-document: (ev) ->
+            add-new-document: (ev, data) ->
                 if (@get \openedRow) and (@get('mode') isnt 'add-new')
                     return @logger.info do
                         closable: yes
                         message: "a row is opened, not adding new."
 
                 ev.component?.fire \state, \doing
-                template = @get-default-document!
+                template = if data
+                    data
+                else
+                    @get-default-document!
                 @set \prepareAddingNew, yes
                 @set \row, {}
                 @set \editable, yes
