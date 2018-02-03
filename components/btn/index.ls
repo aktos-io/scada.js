@@ -7,6 +7,9 @@ Ractive.components['btn'] = Ractive.extend do
             c.refire = yes
             @fire 'buttonclick', c, @get \value
 
+            # prevent event propogation
+            return false 
+
     data: ->
         type: 'default'
         value: ''
