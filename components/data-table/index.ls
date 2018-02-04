@@ -4,7 +4,12 @@ require! 'prelude-ls': {
 }
 require! 'aea': {sleep, merge, clone, unix-to-readable, pack, VLogger}
 require! 'actors': {RactiveActor}
-require! 'fuse.js': Fuse
+
+require! 'sifter': Sifter
+require! './sifter-workaround': {asciifold}
+
+x = asciifold("çalışöğünÇALIŞÖĞÜNİİİ")
+
 
 Ractive.components['data-table'] = Ractive.extend do
     template: RACTIVE_PREPARSE('data-table.pug')
@@ -106,17 +111,7 @@ Ractive.components['data-table'] = Ractive.extend do
 
         @observe \tableview, (_new) ~>
             @logger.clog "DEBUG MODE: tableview changed, refreshing..." if @get \debug
-
-            search-opts =
-              shouldSort: true,
-              threshold: 0.4,
-              distance: 100
-              maxPatternLength: 32,
-              minMatchCharLength: 1,
-              keys: <[ id value.description ]>
-
-            @set \fuse, new Fuse(_new, search-opts)
-
+            @set \sifter, new Sifter(_new)
             @refresh!
 
 
@@ -125,7 +120,15 @@ Ractive.components['data-table'] = Ractive.extend do
             try clear-timeout search-rate-limit
             search-rate-limit := sleep 200ms, ~>
                 tableview_filtered = if text
-                    @get \fuse .search that
+                    result = @get \sifter .search asciifold(that), do
+                        fields: ['id', 'value.description']
+                        sort: [{field: 'name', direction: 'asc'}]
+                        nesting: yes
+                        conjunction: "and"
+
+                    for result.items
+                        @get \tableview .[..id]
+
                 else
                     @get \tableview
                 @set \currPage, 0
@@ -333,7 +336,7 @@ Ractive.components['data-table'] = Ractive.extend do
         opening-row-msg: ''
         _tmp: {}
         searchText: ''
-        fuse: null
+        sifter: null
         is-editing-row: (index) ->
             return no unless @get \editable
             clicked-index = @get \clickedIndex
