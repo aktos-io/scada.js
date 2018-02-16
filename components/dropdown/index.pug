@@ -19,7 +19,7 @@
                     i.search.icon
                     input(type="text" placeholder="Search...")
 
-                +each('data')
+                +each('dataReduced')
                     .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
 
     //- custom 
@@ -34,7 +34,7 @@
                 i.dropdown.icon 
                 .default.text {{ placeholder }}
                 .menu
-                    +each('data')
+                    +each('dataReduced')
                         .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
     +endif
 +endif

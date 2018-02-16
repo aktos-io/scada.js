@@ -1,6 +1,15 @@
-require! 'prelude-ls': {find, empty}
+require! 'prelude-ls': {find, empty, take}
 require! 'actors': {RactiveActor}
 require! 'aea': {sleep}
+
+require! 'sifter': Sifter
+require! '../data-table/sifter-workaround': {asciifold}
+
+small-part-of = (data) ->
+    if data? and not empty data
+        take 100, data
+    else
+        []
 
 Ractive.components['dropdown'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
@@ -94,19 +103,40 @@ Ractive.components['dropdown'] = Ractive.extend do
                 <~ sleep 500ms
                 if data and not empty data
                     @set \loading, no
+                    @set \dataReduced, small-part-of data
+
+            @set \sifter, new Sifter(data)
 
             dd
                 .dropdown 'restore defaults'
                 .dropdown 'destroy'
                 .dropdown 'setting', do
                     forceSelection: no
-                    full-text-search: 'exact'
+                    full-text-search: (text) ~>
+                        if text
+                            result = @get \sifter .search asciifold(text), do
+                                fields: ['id', 'name', 'description']
+                                sort: [{field: 'name', direction: 'asc'}]
+                                nesting: no
+                                conjunction: "and"
+                            @set \dataReduced, [data[..id] for small-part-of result.items]
+                        else
+                            @set \dataReduced, small-part-of data
+
                     on-change: (_value, _text, selected) ~>
                         if shandler then that.silence!
                         @actor.log.log "#{@_guid}: dropdown is changed: ", _value if @get \debug
                         debugger if @get \debug
                         set-item _value
                         if shandler then that.resume!
+                        @set \dataReduced, small-part-of data
+
+                    on-search: ->
+                        debugger
+
+            @on do
+                teardown: ->
+                    dd.dropdown 'destroy'
 
             if (typeof! data is \Array) and not empty data
                 <~ sleep 10ms
@@ -127,11 +157,13 @@ Ractive.components['dropdown'] = Ractive.extend do
 
     data: ->
         data: undefined
+        dataReduced: []
         keyField: \id
         nameField: \name
         nothingSelected: '---'
         item: {}
         loading: yes
+        sifter: null
         'selected-key': null
         'selected-name': null
         selected: null  # this is very important. if you omit this, "selected"
