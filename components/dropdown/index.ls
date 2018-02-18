@@ -72,8 +72,8 @@ Ractive.components['dropdown'] = Ractive.extend do
 
                     debugger if @get \debug
                     @set \item, unless empty items => items else [{}]
-                    @set \selected-key, selected-keys
                     @set \selected-name, selected-names
+                    @set \selected-key, selected-keys
                     @fire \select, {}, (unless empty items => items else [{}])
 
 
@@ -86,10 +86,11 @@ Ractive.components['dropdown'] = Ractive.extend do
                             if @get \debug
                                 @actor.c-log "Found #{value-of-key} in .[#{keyField}]", selected, selected[keyField]
 
-                            @set \item, selected
+                            debugger
                             @set \selected-key, selected[keyField]
-                            @set \selected-name, selected[nameField]
                             @fire \select, {}, selected
+                        @set \item, selected
+                        @set \selected-name, selected[nameField]
 
 
         shandler = null
@@ -132,7 +133,9 @@ Ractive.components['dropdown'] = Ractive.extend do
 
             if (typeof! data is \Array) and not empty data
                 <~ sleep 10ms
-                update-dropdown @get \selected-key
+                if @get \selected-key
+                    update-dropdown that
+                    set-item that
 
         unless @get \multiple
             shandler = @observe \selected-key, (_new) ~>
