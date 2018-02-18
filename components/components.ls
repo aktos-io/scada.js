@@ -50,3 +50,7 @@ require! './assign-if-null'
 require! './scroll-x'
 require! './browser-storage'
 require! './formatter'
+
+# decorators
+require! './decorators/tooltip'
+require! './decorators/semantic-ui/popup'

@@ -1,0 +1,10 @@
+.ractive-tooltip {
+    display: block;
+    position: fixed;
+    max-width: 200px;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    padding: 0.5em;
+    font-size: 0.8em;
+}
