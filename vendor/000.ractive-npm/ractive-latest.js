@@ -197,6 +197,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 },{}],2:[function(require,module,exports){
 (function (global){
+/*
+	Ractive.js v1.0.0-edge
+	Build: 384f5ec34adc405758696fd4ec7a47290d3aec5a
+	Date: Sat Feb 17 2018 02:49:27 GMT+0000 (UTC)
+	Website: http://ractivejs.org
+	License: MIT
+*/
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
@@ -657,7 +664,7 @@ var svg = doc ?
 
 var vendors = [ 'o', 'ms', 'moz', 'webkit' ];
 
-var noop = function () {};
+function noop () {}
 
 /* global console */
 /* eslint no-console:"off" */
@@ -1097,6 +1104,8 @@ KeyModel__proto__.getKeypath = function getKeypath () {
 	return unescapeKey( this.value );
 };
 
+KeyModel__proto__.has = function has () { return false; };
+
 KeyModel__proto__.rebind = function rebind ( next, previous ) {
 		var this$1 = this;
 
@@ -1183,6 +1192,8 @@ KeypathModel__proto__.handleChange = function handleChange$1 () {
 
 	this.deps.forEach( handleChange );
 };
+
+KeypathModel__proto__.has = function has () { return false; };
 
 KeypathModel__proto__.rebindChildren = function rebindChildren ( next ) {
 		var this$1 = this;
@@ -1747,7 +1758,7 @@ var LinkModel = (function (ModelBase) {
 			capture( this );
 
 			// may need to tell the target to unwrap
-			opts.unwrap = true;
+			opts.unwrap = 'unwrap' in opts ? opts.unwrap : true;
 		}
 
 		var bind$$1 = 'shouldBind' in opts ? opts.shouldBind : true;
@@ -1857,7 +1868,11 @@ var LinkModel = (function (ModelBase) {
 
 		// let the real model handle firing off shuffles
 		if ( !this.target.shuffling ) {
-			this.target.shuffle( newIndices );
+			if ( this.target.shuffle ) {
+				this.target.shuffle( newIndices );
+			} else { // the target is a computation, which can't shuffle
+				this.target.mark();
+			}
 		} else {
 			shuffle( this, newIndices, true );
 		}
@@ -2059,6 +2074,8 @@ function collectAllOutros ( manager, _list ) {
 var batch;
 
 var runloop = {
+	active: function active () { return !!batch; },
+
 	start: function start () {
 		var fulfilPromise;
 		var promise = new Promise( function (f) { return ( fulfilPromise = f ); } );
@@ -2643,6 +2660,12 @@ var SharedModel$1 = new SharedModel( data, 'shared' );
 
 var GlobalModel = new SharedModel( typeof global !== 'undefined' ? global : window, 'global' );
 
+function findContext ( fragment ) {
+	var frag = fragment;
+	while ( frag && !frag.context && !frag.aliases ) { frag = frag.parent; }
+	return frag;
+}
+
 function resolveReference ( fragment, ref ) {
 	var initialFragment = fragment;
 	// current context ref
@@ -2656,19 +2679,30 @@ function resolveReference ( fragment, ref ) {
 		var frag = fragment;
 		var parts = ref.split( '/' );
 		var explicitContext = parts[0] === '^^';
-		var context$1 = explicitContext ? null : fragment.findContext();
 
-		// account for the first context hop
-		if ( explicitContext ) { parts.unshift( '^^' ); }
+		// find nearest context node
+		while ( frag && !frag.context ) {
+			frag = up( frag );
+		}
+		var context$1 = frag && frag.context;
 
 		// walk up the context chain
-		while ( parts[0] === '^^' ) {
+		while ( frag && parts[0] === '^^' ) {
 			parts.shift();
-			context$1 = null;
-			while ( frag && !context$1 ) {
-				context$1 = frag.context;
-				frag = frag.parent.component ? frag.parent.component.up : frag.parent;
+
+			// the current fragment should always be a context,
+			// and if it happens to be an iteration, jump above the each block
+			if ( frag.isIteration ) {
+				frag = frag.parent.parent;
+			} else { // otherwise jump above the current fragment
+				frag = up( frag );
 			}
+
+			// walk to the next contexted fragment
+			while ( frag && !frag.context ) {
+				frag = up( frag );
+			}
+			context$1 = frag && frag.context;
 		}
 
 		if ( !context$1 && explicitContext ) {
@@ -2755,51 +2789,64 @@ function resolveReference ( fragment, ref ) {
 		}
 	}
 
-	var context = fragment.findContext();
+	var context = findContext( fragment );
 
 	// check immediate context for a match
-	if ( context.has( base ) ) {
-		return context.joinKey( base ).joinAll( keys$$1 );
+	if ( context ) {
+		if ( context.context ) {
+			context = context.context;
+			if ( context.has( base ) ) { return context.joinKey( base ).joinAll( keys$$1 ); }
+		} else { // alias block, so get next full context for later
+			context = fragment.findContext();
+		}
+	} else {
+		context = fragment.findContext();
 	}
 
 	// walk up the fragment hierarchy looking for a matching ref, alias, or key in a context
 	var createMapping = false;
 	var shouldWarn = fragment.ractive.warnAboutAmbiguity;
+	var model;
 
 	while ( fragment ) {
 		// repeated fragments
 		if ( fragment.isIteration ) {
 			if ( base === fragment.parent.keyRef ) {
-				if ( keys$$1.length ) { badReference( base ); }
-				return fragment.context.getKeyModel( fragment.key );
+				model = fragment.context.getKeyModel( fragment.key );
 			}
 
-			if ( base === fragment.parent.indexRef ) {
-				if ( keys$$1.length ) { badReference( base ); }
-				return fragment.context.getKeyModel( fragment.index );
+			else if ( base === fragment.parent.indexRef ) {
+				model = fragment.context.getKeyModel( fragment.index );
 			}
+
+			if ( model && keys$$1.length ) { badReference( base ); }
 		}
 
 		// alias node or iteration
-		if ( fragment.aliases && hasOwn( fragment.aliases, base ) ) {
-			var model = fragment.aliases[ base ];
-
-			if ( keys$$1.length === 0 ) { return model; }
-			else if ( isFunction( model.joinAll ) ) {
-				return model.joinAll( keys$$1 );
-			}
+		if ( !model && fragment.aliases && hasOwn( fragment.aliases, base ) ) {
+			model = fragment.aliases[ base ];
 		}
 
 		// check fragment context to see if it has the key we need
-		if ( fragment.context && fragment.context.has( base ) ) {
+		if ( !model && fragment.context && fragment.context.has( base ) ) {
+			model = fragment.context.joinKey( base );
+
 			// this is an implicit mapping
 			if ( createMapping ) {
 				if ( shouldWarn ) { warnIfDebug( ("'" + ref + "' resolved but is ambiguous and will create a mapping to a parent component.") ); }
-				return context.root.createLink( base, fragment.context.joinKey( base ), base, { implicit: true }).joinAll( keys$$1 );
+			} else if ( shouldWarn ) { warnIfDebug( ("'" + ref + "' resolved but is ambiguous.") ); }
+		}
+
+		if ( model ) {
+			if ( createMapping ) {
+				model = initialFragment.ractive.viewmodel.createLink( base, model, base, { implicit: true });
 			}
 
-			if ( shouldWarn ) { warnIfDebug( ("'" + ref + "' resolved but is ambiguous.") ); }
-			return fragment.context.joinKey( base ).joinAll( keys$$1 );
+			if ( keys$$1.length > 0 && isFunction( model.joinAll ) ) {
+				model = model.joinAll( keys$$1 );
+			}
+
+			return model;
 		}
 
 		if ( ( fragment.componentParent || ( !fragment.parent && fragment.ractive.component ) ) && !fragment.ractive.isolated ) {
@@ -2823,6 +2870,10 @@ function resolveReference ( fragment, ref ) {
 
 	// didn't find anything, so go ahead and create the key on the local model
 	return context.joinKey( base ).joinAll( keys$$1 );
+}
+
+function up ( fragment ) {
+	return fragment && ( ( !fragment.ractive.isolated && fragment.componentParent ) || fragment.parent );
 }
 
 function badReference ( key ) {
@@ -2859,9 +2910,9 @@ var FakeFragment = function FakeFragment ( ractive ) {
 };
 
 FakeFragment.prototype.findContext = function findContext () { return this.ractive.viewmodel; };
-var proto$1 = FakeFragment.prototype;
-proto$1.getContext = getContext;
-proto$1.find = proto$1.findComponent = proto$1.findAll = proto$1.findAllComponents = noop;
+var proto = FakeFragment.prototype;
+proto.getContext = getContext;
+proto.find = proto.findComponent = proto.findAll = proto.findAllComponents = noop;
 
 function findParentWithContext ( fragment ) {
 	var frag = fragment;
@@ -3538,6 +3589,8 @@ var INLINE_PARTIAL    = 17;
 var DOCTYPE           = 18;
 var ALIAS             = 19;
 
+var AWAIT             = 55;
+
 var NUMBER_LITERAL    = 20;
 var STRING_LITERAL    = 21;
 var ARRAY_LITERAL     = 22;
@@ -3547,7 +3600,6 @@ var REGEXP_LITERAL    = 25;
 
 var GLOBAL            = 26;
 var KEY_VALUE_PAIR    = 27;
-
 
 var REFERENCE         = 30;
 var REFINEMENT        = 31;
@@ -3567,6 +3619,8 @@ var SECTION_IF_WITH   = 54;
 
 var ELSE              = 60;
 var ELSEIF            = 61;
+var THEN              = 62;
+var CATCH             = 63;
 
 var EVENT             = 70;
 var DECORATOR         = 71;
@@ -3704,7 +3758,7 @@ function getSpliceEquivalent ( length, methodName, args ) {
 
 var arrayProto = Array.prototype;
 
-var makeArrayMethod = function ( methodName ) {
+function makeArrayMethod ( methodName ) {
 	function path ( keypath ) {
 		var args = [], len = arguments.length - 1;
 		while ( len-- > 0 ) args[ len ] = arguments[ len + 1 ];
@@ -3735,7 +3789,11 @@ var makeArrayMethod = function ( methodName ) {
 		promise.result = result;
 
 		if ( newIndices ) {
-			mdl.shuffle( newIndices );
+			if ( mdl.shuffle ) {
+				mdl.shuffle( newIndices );
+			} else { // it's a computation, which don't have a shuffle, so just invalidate
+				mdl.mark();
+			}
 		} else {
 			mdl.set( result );
 		}
@@ -3746,7 +3804,7 @@ var makeArrayMethod = function ( methodName ) {
 	}
 
 	return { path: path, model: model };
-};
+}
 
 var updateHook = new Hook( 'update' );
 
@@ -4112,7 +4170,7 @@ function findModel ( ctx, path ) {
 }
 
 function findEvent( el, name ) {
-	return el.attributes && el.attributes.find( function (a) { return a.template.t === EVENT && ~a.template.n.indexOf( name ); } );
+	return el.events && el.events.find( function (e) { return ~e.template.n.indexOf( name ); } );
 }
 
 function Ractive$fire ( eventName ) {
@@ -4158,7 +4216,7 @@ function Ractive$get ( keypath, opts ) {
 
 var query = doc && doc.querySelector;
 
-function getContext$2 ( node ) {
+function getContext$1 ( node ) {
 	if ( isString( node ) && query ) {
 		node = query.call( document, node );
 	}
@@ -4173,25 +4231,25 @@ function getContext$2 ( node ) {
 	}
 }
 
-function getNodeInfo$1 ( node ) {
+function getNodeInfo ( node ) {
 	warnOnceIfDebug( "getNodeInfo has been renamed to getContext, and the getNodeInfo alias will be removed in a future release." );
-	return getContext$2 ( node );
+	return getContext$1 ( node );
 }
 
-function getContext$1 ( node, options ) {
+function getContext$2 ( node, options ) {
 	if ( isString( node ) ) {
 		node = this.find( node, options );
 	}
 
-	return getContext$2( node );
+	return getContext$1( node );
 }
 
-function getNodeInfo$$1 ( node, options ) {
+function getNodeInfo$1 ( node, options ) {
 	if ( isString( node ) ) {
 		node = this.find( node, options );
 	}
 
-	return getNodeInfo$1( node );
+	return getNodeInfo( node );
 }
 
 var html   = 'http://www.w3.org/1999/xhtml';
@@ -4493,6 +4551,9 @@ Observer__proto__.handleChange = function handleChange () {
 		this.dirty = true;
 
 		if ( this.options.once ) { runloop.scheduleTask( function () { return this$1.cancel(); } ); }
+	} else {
+		// make sure the newValue stays updated in case this observer gets touched multiple times in one loop
+		this.newValue = this.model.get();
 	}
 };
 
@@ -5085,7 +5146,7 @@ var value = /\0(\d+)/g;
 // Removes comments and strings from the given CSS to make it easier to parse.
 // Callback receives the cleaned CSS and a function which can be used to put
 // the removed strings back in place after parsing is done.
-var cleanCss = function ( css, callback, additionalReplaceRules ) {
+function cleanCss ( css, callback, additionalReplaceRules ) {
 	if ( additionalReplaceRules === void 0 ) additionalReplaceRules = [];
 
 	var values = [];
@@ -5097,7 +5158,7 @@ var cleanCss = function ( css, callback, additionalReplaceRules ) {
 	});
 
 	return callback( css, reconstruct );
-};
+}
 
 var selectorsPattern = /(?:^|\}|\{)\s*([^\{\}\0]+)\s*(?=\{)/g;
 var keyframesDeclarationPattern = /@keyframes\s+[^\{\}]+\s*\{(?:[^{}]+|\{[^{}]+})*}/gi;
@@ -5745,9 +5806,9 @@ function escapeRegExp ( str ) {
 
 var regExpCache = {};
 
-var getLowestIndex = function ( haystack, needles ) {
+function getLowestIndex ( haystack, needles ) {
 	return haystack.search( regExpCache[needles.join()] || ( regExpCache[needles.join()] = new RegExp( needles.map( escapeRegExp ).join( '|' ) ) ) );
-};
+}
 
 // https://github.com/kangax/html-minifier/issues/63#issuecomment-37763316
 var booleanAttributes = /^(allowFullscreen|async|autofocus|autoplay|checked|compact|controls|declare|default|defaultChecked|defaultMuted|defaultSelected|defer|disabled|enabled|formNoValidate|hidden|indeterminate|inert|isMap|itemScope|loop|multiple|muted|noHref|noResize|noShade|noValidate|noWrap|open|pauseOnExit|readOnly|required|reversed|scoped|seamless|selected|sortable|translate|trueSpeed|typeMustMatch|visible)$/i;
@@ -5901,7 +5962,7 @@ var escapeSequencePattern = /^\\(?:[`'"\\bfnrt]|0(?![0-9])|x[0-9a-fA-F]{2}|u[0-9
 var lineContinuationPattern = /^\\(?:\r\n|[\u000A\u000D\u2028\u2029])/;
 
 // Helper for defining getDoubleQuotedString and getSingleQuotedString.
-var makeQuotedStringMatcher = function ( okQuote ) {
+function makeQuotedStringMatcher ( okQuote ) {
 	return function ( parser ) {
 		var literal = '"';
 		var done = false;
@@ -5934,12 +5995,12 @@ var makeQuotedStringMatcher = function ( okQuote ) {
 		// use JSON.parse to interpret escapes
 		return JSON.parse( literal );
 	};
-};
+}
 
 var singleMatcher = makeQuotedStringMatcher( "\"" );
 var doubleMatcher = makeQuotedStringMatcher( "'" );
 
-var readStringLiteral = function ( parser ) {
+function readStringLiteral ( parser ) {
 	var start = parser.pos;
 	var quote = parser.matchString( "'" ) || parser.matchString( "\"" );
 
@@ -5958,7 +6019,7 @@ var readStringLiteral = function ( parser ) {
 	}
 
 	return null;
-};
+}
 
 // Match one or more characters until: ", ', or \
 var stringMiddlePattern$1 = /^[^`"\\\$]+?(?:(?=[`"\\\$]))/;
@@ -6166,7 +6227,7 @@ function readKeyValuePairs ( parser ) {
 	return pairs;
 }
 
-var readObjectLiteral = function ( parser ) {
+function readObjectLiteral ( parser ) {
 	var start = parser.pos;
 
 	// allow whitespace
@@ -6191,9 +6252,9 @@ var readObjectLiteral = function ( parser ) {
 		t: OBJECT_LITERAL,
 		m: keyValuePairs
 	};
-};
+}
 
-var readArrayLiteral = function ( parser ) {
+function readArrayLiteral ( parser ) {
 	var start = parser.pos;
 
 	// allow whitespace before '['
@@ -6215,7 +6276,7 @@ var readArrayLiteral = function ( parser ) {
 		t: ARRAY_LITERAL,
 		m: expressionList
 	};
-};
+}
 
 function readLiteral ( parser ) {
 	return readNumberLiteral$1( parser )         ||
@@ -6342,11 +6403,11 @@ function readBracketedExpression ( parser ) {
 	};
 }
 
-var readPrimary = function ( parser ) {
+function readPrimary ( parser ) {
 	return readLiteral( parser )
 		|| readReference( parser )
 		|| readBracketedExpression( parser );
-};
+}
 
 function readRefinement ( parser ) {
 	// some things call for strict refinement (partial names), meaning no space between reference and refinement
@@ -6389,7 +6450,7 @@ function readRefinement ( parser ) {
 	return null;
 }
 
-var readMemberOrInvocation = function ( parser ) {
+function readMemberOrInvocation ( parser ) {
 	var expression = readPrimary( parser );
 
 	if ( !expression ) { return null; }
@@ -6428,7 +6489,7 @@ var readMemberOrInvocation = function ( parser ) {
 	}
 
 	return expression;
-};
+}
 
 var readTypeOf;
 
@@ -7560,53 +7621,46 @@ function readClosing ( parser, tag ) {
 	return null;
 }
 
-var elsePattern = /^\s*else\s*/;
+var patterns = {
+	else: /^\s*else\s*/,
+	elseif: /^\s*elseif\s+/,
+	then: /^\s*then\s*/,
+	catch: /^\s*catch\s*/
+};
 
-function readElse ( parser, tag ) {
+var types = {
+	else: ELSE,
+	elseif: ELSEIF,
+	then: THEN,
+	catch: CATCH
+};
+
+function readInlineBlock ( parser, tag, type ) {
 	var start = parser.pos;
 
 	if ( !parser.matchString( tag.open ) ) {
 		return null;
 	}
 
-	if ( !parser.matchPattern( elsePattern ) ) {
+	if ( !parser.matchPattern( patterns[type] ) ) {
 		parser.pos = start;
 		return null;
+	}
+
+	var res = { t: types[type] };
+
+	if ( type === 'elseif' ) {
+		res.x = readExpression( parser );
+	} else if (type === 'catch' || type === 'then' ) {
+		var nm = parser.matchPattern( name );
+		if ( nm ) { res.n = nm; }
 	}
 
 	if ( !parser.matchString( tag.close ) ) {
 		parser.error( ("Expected closing delimiter '" + (tag.close) + "'") );
 	}
 
-	return {
-		t: ELSE
-	};
-}
-
-var elsePattern$1 = /^\s*elseif\s+/;
-
-function readElseIf ( parser, tag ) {
-	var start = parser.pos;
-
-	if ( !parser.matchString( tag.open ) ) {
-		return null;
-	}
-
-	if ( !parser.matchPattern( elsePattern$1 ) ) {
-		parser.pos = start;
-		return null;
-	}
-
-	var expression = readExpression( parser );
-
-	if ( !parser.matchString( tag.close ) ) {
-		parser.error( ("Expected closing delimiter '" + (tag.close) + "'") );
-	}
-
-	return {
-		t: ELSEIF,
-		x: expression
-	};
+	return res;
 }
 
 var handlebarsBlockCodes = {
@@ -7621,7 +7675,7 @@ var keyIndexRefPattern = /^\s*,\s*([a-zA-Z_$][a-zA-Z_$0-9]*)/;
 var handlebarsBlockPattern = new RegExp( '^(' + keys( handlebarsBlockCodes ).join( '|' ) + ')\\b' );
 
 function readSection ( parser, tag ) {
-	var expression, section, child, children, hasElse, block, unlessBlock, closed, i, expectedClose;
+	var expression, section, child, children, hasElse, block, unlessBlock, closed, i, expectedClose, hasThen, hasCatch, inlineThen;
 	var aliasOnly = false;
 
 	var start = parser.pos;
@@ -7641,7 +7695,12 @@ function readSection ( parser, tag ) {
 			parser.error( 'Partial definitions can only be at the top level of the template, or immediately inside components' );
 		}
 
-		if ( block = parser.matchPattern( handlebarsBlockPattern ) ) {
+		if ( block = parser.matchString( 'await' ) ) {
+			expectedClose = block;
+			section.t = AWAIT;
+		}
+
+		else if ( block = parser.matchPattern( handlebarsBlockPattern ) ) {
 			expectedClose = block;
 			section.n = handlebarsBlockCodes[ block ];
 		}
@@ -7674,7 +7733,7 @@ function readSection ( parser, tag ) {
 		}
 
 		// optional index and key references
-		if ( i = parser.matchPattern( indexRefPattern ) ) {
+		if ( ( block === 'each' || !block ) && ( i = parser.matchPattern( indexRefPattern ) ) ) {
 			var extra;
 
 			if ( extra = parser.matchPattern( keyIndexRefPattern ) ) {
@@ -7682,6 +7741,11 @@ function readSection ( parser, tag ) {
 			} else {
 				section.i = i;
 			}
+		} else if ( block === 'await' && parser.matchString( 'then' ) ) {
+			parser.sp();
+			hasThen = true;
+			inlineThen = parser.matchPattern( name );
+			if ( !inlineThen ) { inlineThen = true; }
 		}
 
 		if ( !block && expression.n ) {
@@ -7715,50 +7779,73 @@ function readSection ( parser, tag ) {
 			closed = true;
 		}
 
-		else if ( !aliasOnly && ( child = readElseIf( parser, tag ) ) ) {
+		else if ( !aliasOnly && (
+			( child = readInlineBlock( parser, tag, 'elseif' ) ) ||
+			( child = readInlineBlock( parser, tag, 'else' ) ) ||
+			( block === 'await' && ( ( child = readInlineBlock( parser, tag, 'then' ) ) ||
+			( child = readInlineBlock( parser, tag, 'catch' ) ) ) )
+		) ) {
 			if ( section.n === SECTION_UNLESS ) {
 				parser.error( '{{else}} not allowed in {{#unless}}' );
 			}
 
 			if ( hasElse ) {
-				parser.error( 'illegal {{elseif...}} after {{else}}' );
+				if ( child.t === ELSE ) {
+					parser.error( 'there can only be one {{else}} block, at the end of a section' );
+				} else if ( child.t === ELSEIF ) {
+					parser.error( 'illegal {{elseif...}} after {{else}}' );
+				}
 			}
 
-			if ( !unlessBlock ) {
-				unlessBlock = [];
+			if ( !unlessBlock && (inlineThen || !hasThen) && !hasCatch ) {
+				if ( block === 'await' ) {
+					var s = { f: children };
+					section.f = [s];
+					if ( inlineThen ) {
+						s.t = THEN;
+						inlineThen !== true && ( s.n = inlineThen );
+					} else {
+						s.t = SECTION;
+					}
+				} else {
+					unlessBlock = [];
+				}
 			}
 
 			var mustache = {
 				t: SECTION,
-				n: SECTION_IF,
 				f: children = []
 			};
-			refineExpression( child.x, mustache );
 
-			unlessBlock.push( mustache );
-		}
-
-		else if ( !aliasOnly && ( child = readElse( parser, tag ) ) ) {
-			if ( section.n === SECTION_UNLESS ) {
-				parser.error( '{{else}} not allowed in {{#unless}}' );
+			if ( child.t === ELSE ) {
+				if ( block === 'await' ) {
+					section.f.push( mustache );
+					mustache.t = ELSE;
+				} else {
+					mustache.n = SECTION_UNLESS;
+					unlessBlock.push( mustache );
+				}
+				hasElse = true;
+			} else if ( child.t === ELSEIF ) {
+				mustache.n = SECTION_IF;
+				refineExpression( child.x, mustache );
+				unlessBlock.push( mustache );
+			} else if ( child.t === THEN ) {
+				if ( hasElse ) { parser.error( '{{then}} block must appear before any {{else}} block' ); }
+				if ( hasCatch ) { parser.error( '{{then}} block must appear before any {{catch}} block' ); }
+				if ( hasThen ) { parser.error( 'there can only be one {{then}} block per {{#await}}' ); }
+				mustache.t = THEN;
+				hasThen = true;
+				child.n && ( mustache.n = child.n );
+				section.f.push( mustache );
+			} else if ( child.t === CATCH ) {
+				if ( hasElse ) { parser.error( '{{catch}} block must appear before any {{else}} block' ); }
+				if ( hasCatch ) { parser.error( 'there can only be one {{catch}} block per {{#await}}' ); }
+				mustache.t = CATCH;
+				hasCatch = true;
+				mustache.n = child.n;
+				section.f.push( mustache );
 			}
-
-			if ( hasElse ) {
-				parser.error( 'there can only be one {{else}} block, at the end of a section' );
-			}
-
-			hasElse = true;
-
-			// use an unless block if there's no elseif
-			if ( !unlessBlock ) {
-				unlessBlock = [];
-			}
-
-			unlessBlock.push({
-				t: SECTION,
-				n: SECTION_UNLESS,
-				f: children = []
-			});
 		}
 
 		else {
@@ -7778,6 +7865,17 @@ function readSection ( parser, tag ) {
 
 	if ( !aliasOnly ) {
 		refineExpression( expression, section );
+	}
+
+	if ( block === 'await' && ( inlineThen || !hasThen ) && !hasCatch && !hasElse ) {
+		var s$1 = { f: section.f };
+		section.f = [s$1];
+		if ( inlineThen ) {
+			s$1.t = THEN;
+			inlineThen !== true && ( s$1.n = inlineThen );
+		} else {
+			s$1.t = SECTION;
+		}
 	}
 
 	// TODO if a section is empty it should be discarded. Don't do
@@ -7826,7 +7924,7 @@ function readHtmlComment ( parser ) {
 var leadingLinebreak = /^[ \t\f\r\n]*\r?\n/;
 var trailingLinebreak = /\r?\n[ \t\f\r\n]*$/;
 
-var stripStandalones = function ( items ) {
+function stripStandalones ( items ) {
 	var i, current, backOne, backTwo, lastSectionItem;
 
 	for ( i=1; i<items.length; i+=1 ) {
@@ -7870,7 +7968,7 @@ var stripStandalones = function ( items ) {
 	}
 
 	return items;
-};
+}
 
 function isComment ( item ) {
 	return item.t === COMMENT || item.t === DELIMCHANGE;
@@ -7880,7 +7978,7 @@ function isSection ( item ) {
 	return ( item.t === SECTION || item.t === INVERTED ) && item.f;
 }
 
-var trimWhitespace = function ( items, leadingPattern, trailingPattern ) {
+function trimWhitespace ( items, leadingPattern, trailingPattern ) {
 	var item;
 
 	if ( leadingPattern ) {
@@ -7908,7 +8006,7 @@ var trimWhitespace = function ( items, leadingPattern, trailingPattern ) {
 			}
 		}
 	}
-};
+}
 
 var contiguousWhitespace = /[ \t\f\r\n]+/g;
 var preserveWhitespaceElements = /^(?:pre|script|style|textarea)$/i;
@@ -8225,8 +8323,7 @@ function readElement$1 ( parser ) {
 			else {
 				// implicit close by closing section tag. TODO clean this up
 				var tag = { open: parser.standardDelimiters[0], close: parser.standardDelimiters[1] };
-				var implicitCloseCase = [ readClosing, readElseIf, readElse ];
-				if (  implicitCloseCase.some( function (r) { return r( parser, tag ); } ) ) {
+				if ( readClosing( parser, tag ) || readInline( parser, tag ) ) {
 					closed = true;
 					parser.pos = pos;
 				}
@@ -8306,6 +8403,17 @@ function readAnchorClose ( parser, name ) {
 	}
 
 	return true;
+}
+
+var inlines = /^\s*(elseif|else|then|catch)\s*/;
+function readInline ( parser, tag ) {
+	var pos = parser.pos;
+	if ( !parser.matchString( tag.open ) ) { return; }
+	if ( parser.matchPattern( inlines ) ) {
+		return true;
+	} else {
+		parser.pos = pos;
+	}
 }
 
 function readText ( parser ) {
@@ -8996,7 +9104,7 @@ var order = [].concat(
 );
 
 var config = {
-	extend: function ( Parent, proto$$1, options, Child ) { return configure( 'extend', Parent, proto$$1, options, Child ); },
+	extend: function ( Parent, proto, options, Child ) { return configure( 'extend', Parent, proto, options, Child ); },
 	init: function ( Parent, ractive, options ) { return configure( 'init', Parent, ractive, options ); },
 	reset: function (ractive) { return order.filter( function (c) { return c.reset && c.reset( ractive ); } ).map( function (c) { return c.name; } ); }
 };
@@ -9047,7 +9155,7 @@ function extendOtherMethods ( parent, target, options ) {
 
 			// if this is a method that overwrites a method, wrap it:
 			if ( isFunction( member ) ) {
-				if ( key in proto && !_super.test( member.toString() ) ) {
+				if ( key in proto$7 && !_super.test( member.toString() ) ) {
 					warnIfDebug( ("Overriding Ractive prototype function '" + key + "' without calling the '" + _super + "' method can be very dangerous.") );
 				}
 				member = wrap( parent, key, member );
@@ -9205,7 +9313,7 @@ var ComputationChild = (function (Model) {
 			this.adapt();
 		}
 
-		return shouldCapture && this.wrapper && !(opts && opts.unwrap === false) ? this.wrapperValue : this.value;
+		return ( ( opts && 'unwrap' in opts ) ? opts.unwrap !== false : shouldCapture ) && this.wrapper ? this.wrapperValue : this.value;
 	};
 
 	ComputationChild__proto__.handleChange = function handleChange$3 () {
@@ -9282,13 +9390,25 @@ var Computation = (function (Model) {
 			this.dirty = false;
 			var old = this.value;
 			this.value = this.getValue();
-			if ( !isEqual( old, this.value ) ) { this.notifyUpstream(); }
+			// this may cause a view somewhere to update, so it must be in a runloop
+			if ( !runloop.active() ) {
+				runloop.start();
+				if ( !isEqual( old, this.value ) ) { this.notifyUpstream(); }
+				runloop.end();
+			} else {
+				if ( !isEqual( old, this.value ) ) { this.notifyUpstream(); }
+			}
 			if ( this.wrapper ) { this.newWrapperValue = this.value; }
 			this.adapt();
 		}
 
 		// if capturing, this value needs to be unwrapped because it's for external use
-		return maybeBind( this, shouldCapture && this.wrapper && !(opts && opts.unwrap === false) ? this.wrapperValue : this.value );
+		return maybeBind(
+			this,
+			// if unwrap is supplied, it overrides capture
+			this.wrapper && ( ( opts && 'unwrap' in opts ) ? opts.unwrap !== false : shouldCapture ) ? this.wrapperValue : this.value,
+			!opts || opts.shouldBind !== false
+		);
 	};
 
 	Computation__proto__.getValue = function getValue () {
@@ -9371,10 +9491,10 @@ var Computation = (function (Model) {
 	return Computation;
 }(Model));
 
-var prototype$1 = Computation.prototype;
+var prototype = Computation.prototype;
 var child = ComputationChild.prototype;
-prototype$1.handleChange = child.handleChange;
-prototype$1.joinKey = child.joinKey;
+prototype.handleChange = child.handleChange;
+prototype.joinKey = child.joinKey;
 
 var ExpressionProxy = (function (Model) {
 	function ExpressionProxy ( fragment, template ) {
@@ -9502,13 +9622,13 @@ var ExpressionProxy = (function (Model) {
 	return ExpressionProxy;
 }(Model));
 
-var prototype = ExpressionProxy.prototype;
+var prototype$1 = ExpressionProxy.prototype;
 var computation = Computation.prototype;
-prototype.get = computation.get;
-prototype.handleChange = computation.handleChange;
-prototype.joinKey = computation.joinKey;
-prototype.mark = computation.mark;
-prototype.unbind = noop;
+prototype$1.get = computation.get;
+prototype$1.handleChange = computation.handleChange;
+prototype$1.joinKey = computation.joinKey;
+prototype$1.mark = computation.mark;
+prototype$1.unbind = noop;
 
 var ReferenceExpressionChild = (function (Model) {
 	function ReferenceExpressionChild ( parent, key ) {
@@ -9646,7 +9766,8 @@ var ReferenceExpressionProxy = (function (Model) {
 		if ( !this.dirty ) { this.handleChange(); }
 	};
 
-	ReferenceExpressionProxy__proto__.get = function get ( shouldCapture ) {
+	ReferenceExpressionProxy__proto__.get = function get ( shouldCapture, opts ) {
+		if ( shouldCapture ) { capture( this ); }
 		if ( this.dirty ) {
 			this.bubble();
 
@@ -9667,12 +9788,12 @@ var ReferenceExpressionProxy = (function (Model) {
 				if ( this.keypathModel ) { this.keypathModel.handleChange(); }
 			}
 
-			this.value = this.model.get( shouldCapture );
+			this.value = this.model.get( shouldCapture, opts );
 			this.dirty = false;
 			this.mark();
 			return this.value;
 		} else {
-			return this.model ? this.model.get( shouldCapture ) : undefined;
+			return this.model ? this.model.get( shouldCapture, opts ) : undefined;
 		}
 	};
 
@@ -9843,11 +9964,11 @@ var Alias = (function (ContainerItem) {
 	return Alias;
 }(ContainerItem));
 
-var hyphenateCamel = function ( camelCaseStr ) {
+function hyphenateCamel ( camelCaseStr ) {
 	return camelCaseStr.replace( /([A-Z])/g, function ( match, $1 ) {
 		return '-' + $1.toLowerCase();
 	});
-};
+}
 
 var space = /\s+/;
 
@@ -10663,9 +10784,9 @@ function Comment ( options ) {
 	Item.call( this, options );
 }
 
-var proto$2 = create( Item.prototype );
+var proto$1 = create( Item.prototype );
 
-assign( proto$2, {
+assign( proto$1, {
 	bind: noop,
 	unbind: noop,
 	update: noop,
@@ -10695,7 +10816,7 @@ assign( proto$2, {
 	}
 });
 
-Comment.prototype = proto$2;
+Comment.prototype = proto$1;
 
 var teardownHook = new Hook( 'teardown' );
 var destructHook = new Hook( 'destruct' );
@@ -10939,6 +11060,7 @@ var RootModel = (function (Model) {
 		for ( var k in this$1.computations ) {
 			this$1.computations[ k ].teardown();
 		}
+		this.ractiveModel && this.ractiveModel.teardown();
 	};
 
 	return RootModel;
@@ -11087,6 +11209,9 @@ function construct ( ractive, options ) {
 		ractive: ractive
 	});
 
+	// once resolved, share the adaptors array between the root model and instance
+	ractive.adapt = viewmodel.adaptors;
+
 	ractive.viewmodel = viewmodel;
 
 	// Add computed properties
@@ -11186,6 +11311,8 @@ function handleAttributes ( ractive ) {
 					// transfer the attribute to the extra attributes partal
 					partial.unshift( attrs.splice( i, 1 )[0] );
 				}
+			} else if ( !attributes.mapAll && ( a.t === DECORATOR || a.t === TRANSITION || a.t === BINDING_FLAG ) ) {
+				partial.unshift( attrs.splice( i, 1 )[0] );
 			}
 		}
 
@@ -11306,14 +11433,13 @@ var Component = (function (Item) {
 	Component__proto__.bind = function bind$2 () {
 		if ( !this.isAnchor ) {
 			this.attributes.forEach( bind );
+			this.eventHandlers.forEach( bind );
 
 			initialise( this.instance, {
 				partials: this._partials
 			}, {
 				cssIds: this.up.cssIds
 			});
-
-			this.eventHandlers.forEach( bind );
 
 			this.bound = true;
 		}
@@ -11393,10 +11519,11 @@ var Component = (function (Item) {
 				}
 			}
 		} else {
-			render$1( this.instance, target, null, occupants );
 
 			this.attributes.forEach( render );
 			this.eventHandlers.forEach( render );
+
+			render$1( this.instance, target, null, occupants );
 
 			this.rendered = true;
 		}
@@ -11581,7 +11708,7 @@ var missingDecorator = {
 var Decorator = function Decorator ( options ) {
 	this.owner = options.owner || options.up.owner || findElement( options.up );
 	this.element = this.owner.attributeByName ? this.owner : findElement( options.up );
-	this.up = this.owner.up;
+	this.up = options.up || this.owner.up;
 	this.ractive = this.owner.ractive;
 	var template = this.template = options.template;
 
@@ -11601,7 +11728,9 @@ Decorator__proto__.bind = function bind () {
 Decorator__proto__.bubble = function bubble () {
 	if ( !this.dirty ) {
 		this.dirty = true;
+		// decorators may be owned directly by an element or by a fragment if conditional
 		this.owner.bubble();
+		this.up.bubble();
 	}
 };
 
@@ -11719,8 +11848,8 @@ var Doctype = (function (Item) {
 	return Doctype;
 }(Item));
 
-var proto$3 = Doctype.prototype;
-proto$3.bind = proto$3.render = proto$3.teardown = proto$3.unbind = proto$3.unrender = proto$3.update = noop;
+var proto$2 = Doctype.prototype;
+proto$2.bind = proto$2.render = proto$2.teardown = proto$2.unbind = proto$2.unrender = proto$2.update = noop;
 
 var Binding = function Binding ( element, name ) {
 	if ( name === void 0 ) name = 'value';
@@ -13276,6 +13405,17 @@ function updateModel ( binding ) {
 	binding.model.set( binding.resetValue );
 }
 
+// because IE
+var whitelist = {
+	animationend: 1,
+	animationiteration: 1,
+	animationstart: 1,
+	transitioncancel: 1,
+	transitionend: 1,
+	transitionstart: 1,
+	transitionrun: 1
+};
+
 var DOMEvent = function DOMEvent ( name, owner ) {
 	if ( name.indexOf( '*' ) !== -1 ) {
 		fatal( ("Only component proxy-events may contain \"*\" wildcards, <" + (owner.name) + " on-" + name + "=\"...\"/> is not valid") );
@@ -13287,24 +13427,34 @@ var DOMEvent = function DOMEvent ( name, owner ) {
 };
 var DOMEvent__proto__ = DOMEvent.prototype;
 
-DOMEvent__proto__.listen = function listen ( directive ) {
-	var node = this.owner.node;
-	var name = this.name;
+DOMEvent__proto__.bind = function bind () {};
 
-	// this is probably a custom event fired from a decorator or manually
-	if ( !( ("on" + name) in node ) ) { return; }
+DOMEvent__proto__.render = function render ( directive ) {
+		var this$1 = this;
 
-	this.owner.on( name, this.handler = function ( event ) {
-		return directive.fire({
-			node: node,
-			original: event,
-			event: event,
-			name: name
+	// schedule events so that they take place after twoway binding
+	runloop.scheduleTask( function () {
+		var node = this$1.owner.node;
+		var name = this$1.name;
+		var on = "on" + name;
+
+		// this is probably a custom event fired from a decorator or manually
+		if ( !( on in node ) && !( on in win ) && !whitelist[name] ) { return; }
+
+		this$1.owner.on( name, this$1.handler = function ( event ) {
+			return directive.fire({
+				node: node,
+				original: event,
+				event: event,
+				name: name
+			});
 		});
-	});
+	}, true);
 };
 
-DOMEvent__proto__.unlisten = function unlisten () {
+DOMEvent__proto__.unbind = function unbind () {};
+
+DOMEvent__proto__.unrender = function unrender () {
 	if ( this.handler ) { this.owner.off( this.name, this.handler ); }
 };
 
@@ -13316,24 +13466,30 @@ var CustomEvent = function CustomEvent ( eventPlugin, owner, name ) {
 };
 var CustomEvent__proto__ = CustomEvent.prototype;
 
-CustomEvent__proto__.listen = function listen ( directive ) {
+CustomEvent__proto__.bind = function bind () {};
+
+CustomEvent__proto__.render = function render ( directive ) {
 		var this$1 = this;
 
-	var node = this.owner.node;
+	runloop.scheduleTask( function () {
+		var node = this$1.owner.node;
 
-	this.handler = this.eventPlugin( node, function ( event ) {
-			if ( event === void 0 ) event = {};
+		this$1.handler = this$1.eventPlugin.call( this$1.owner.ractive, node, function ( event ) {
+				if ( event === void 0 ) event = {};
 
-		if ( event.original ) { event.event = event.original; }
-		else { event.original = event.event; }
+			if ( event.original ) { event.event = event.original; }
+			else { event.original = event.event; }
 
-		event.name = this$1.name;
-		event.node = event.node || node;
-		return directive.fire( event );
+			event.name = this$1.name;
+			event.node = event.node || node;
+			return directive.fire( event );
+		});
 	});
 };
 
-CustomEvent__proto__.unlisten = function unlisten () {
+CustomEvent__proto__.unbind = function unbind () {};
+
+CustomEvent__proto__.unrender = function unrender () {
 	this.handler.teardown();
 };
 
@@ -13344,7 +13500,7 @@ var RactiveEvent = function RactiveEvent ( component, name ) {
 };
 var RactiveEvent__proto__ = RactiveEvent.prototype;
 
-RactiveEvent__proto__.listen = function listen ( directive ) {
+RactiveEvent__proto__.bind = function bind ( directive ) {
 	var ractive = this.component.instance;
 
 	this.handler = ractive.on( this.name, function () {
@@ -13365,9 +13521,13 @@ RactiveEvent__proto__.listen = function listen ( directive ) {
 	});
 };
 
-RactiveEvent__proto__.unlisten = function unlisten () {
+RactiveEvent__proto__.render = function render () {};
+
+RactiveEvent__proto__.unbind = function unbind () {
 	this.handler.cancel();
 };
+
+RactiveEvent__proto__.unrender = function unrender () {};
 
 var specialPattern = /^(event|arguments|@node|@event|@context)(\..+)?$/;
 var dollarArgsPattern = /^\$(\d+)(\..+)?$/;
@@ -13407,14 +13567,18 @@ var EventDirective = function EventDirective ( options ) {
 var EventDirective__proto__ = EventDirective.prototype;
 
 EventDirective__proto__.bind = function bind () {
+		var this$1 = this;
+
 	addToArray( ( this.element.events || ( this.element.events = [] ) ), this );
 
 	setupArgsFn( this, this.template );
 	if ( !this.fn ) { this.action = this.template.f; }
+
+	this.events.forEach( function (e) { return e.bind( this$1 ); } );
 };
 
 EventDirective__proto__.destroyed = function destroyed () {
-	this.events.forEach( function (e) { return e.unlisten(); } );
+	this.events.forEach( function (e) { return e.unrender(); } );
 };
 
 EventDirective__proto__.fire = function fire ( event, args ) {
@@ -13522,18 +13686,18 @@ EventDirective__proto__.handleChange = function handleChange () {};
 EventDirective__proto__.render = function render () {
 		var this$1 = this;
 
-	// render events after everything else, so they fire after bindings
-	runloop.scheduleTask( function () { return this$1.events.forEach( function (e) { return e.listen( this$1 ); } ); }, true );
+	this.events.forEach( function (e) { return e.render( this$1 ); } );
 };
 
 EventDirective__proto__.toString = function toString () { return ''; };
 
 EventDirective__proto__.unbind = function unbind () {
 	removeFromArray( this.element.events, this );
+	this.events.forEach( function (e) { return e.unbind(); } );
 };
 
 EventDirective__proto__.unrender = function unrender () {
-	this.events.forEach( function (e) { return e.unlisten(); } );
+	this.events.forEach( function (e) { return e.unrender(); } );
 };
 
 EventDirective.prototype.update = noop;
@@ -13595,6 +13759,7 @@ var Mustache = (function (Item) {
 
 			if ( this.isStatic ) {
 				this.model = { get: function () { return value; } };
+				model.unreference();
 				return;
 			}
 
@@ -13634,9 +13799,9 @@ function MustacheContainer ( options ) {
 	Mustache.call( this, options );
 }
 
-var proto$4 = MustacheContainer.prototype = Object.create( ContainerItem.prototype );
+var proto$3 = MustacheContainer.prototype = Object.create( ContainerItem.prototype );
 
-assign( proto$4, Mustache.prototype, { constructor: MustacheContainer } );
+assign( proto$3, Mustache.prototype, { constructor: MustacheContainer } );
 
 var Interpolator = (function (Mustache) {
 	function Interpolator () {
@@ -13880,10 +14045,10 @@ function getKeyValuePair ( parser ) {
 	return pair;
 }
 
-var parseJSON = function ( str, values ) {
+function parseJSON ( str, values ) {
 	var parser = new JsonParser( str, { values: values });
 	return parser.result;
-};
+}
 
 var Mapping = (function (Item) {
 	function Mapping ( options ) {
@@ -14211,9 +14376,9 @@ function Partial ( options ) {
 	}
 }
 
-var proto$5 = Partial.prototype = create( MustacheContainer.prototype );
+var proto$4 = Partial.prototype = create( MustacheContainer.prototype );
 
-assign( proto$5, {
+assign( proto$4, {
 	constructor: Partial,
 
 	bind: function bind () {
@@ -14270,7 +14435,7 @@ assign( proto$5, {
 			warnOnceIfDebug( ("Could not find template for partial '" + (this.name) + "'") );
 		}
 
-		createFragment$1( this, this.partial || [] );
+		createFragment( this, this.partial || [] );
 
 		// macro/super partial
 		if ( this.fn ) { initMacro( this ); }
@@ -14317,10 +14482,11 @@ assign( proto$5, {
 				this.fn = this.proxy = null;
 			} else {
 				this.partial = this.fnTemplate;
-				return;
+				return true;
 			}
 		}
 
+		var partial = this.partial;
 		this.partial = null;
 
 		if ( this.refName ) {
@@ -14331,6 +14497,8 @@ assign( proto$5, {
 			partialFromValue( this, this.model.get() );
 		}
 
+		if ( !this.fn && partial === this.partial ) { return false; }
+
 		this.unbindAttrs();
 
 		if ( this.fn ) {
@@ -14339,6 +14507,8 @@ assign( proto$5, {
 		} else if ( !this.partial ) {
 			warnOnceIfDebug( ("Could not find template for partial '" + (this.name) + "'") );
 		}
+
+		return true;
 	},
 
 	render: function render ( target, occupants ) {
@@ -14376,20 +14546,21 @@ assign( proto$5, {
 	},
 
 	update: function update () {
+		var this$1 = this;
+
 		var proxy = this.proxy;
 		this.updating = 1;
 
 		if ( this.dirtyAttrs ) {
 			this.dirtyAttrs = false;
+			keys( this._attrs ).forEach( function (k) { return this$1._attrs[k].update(); } );
 			this.refreshAttrs();
 			if ( isFunction( proxy.update ) ) { proxy.update( this.handle.attributes ); }
 		}
 
 		if ( this.dirtyTemplate ) {
 			this.dirtyTemplate = false;
-			this.resetTemplate();
-
-			this.fragment.resetTemplate( this.partial || [] );
+			this.resetTemplate() && this.fragment.resetTemplate( this.partial || [] );
 		}
 
 		if ( this.dirty ) {
@@ -14403,7 +14574,7 @@ assign( proto$5, {
 	}
 });
 
-function createFragment$1 ( self, partial ) {
+function createFragment ( self, partial ) {
 	self.partial = partial;
 	contextifyTemplate( self );
 
@@ -14436,7 +14607,7 @@ function partialFromValue ( self, value, okToParse ) {
 
 	if ( isArray( tpl ) ) {
 		self.partial = tpl;
-	} else if ( isObjectType( tpl ) ) {
+	} else if ( tpl && isObjectType( tpl ) ) {
 		if ( isArray( tpl.t ) ) { self.partial = tpl.t; }
 		else if ( isString( tpl.template ) ) { self.partial = parsePartial( tpl.template, tpl.template, self.ractive ).t; }
 	} else if ( isFunction( tpl ) && tpl.styleSet ) {
@@ -15307,7 +15478,7 @@ var Select = (function (Element) {
 
 		// Otherwise the value should be initialised according to which
 		// <option> element is selected, if twoway binding is in effect
-		else if ( this.binding ) {
+		else if ( this.binding && this.binding.forceUpdate ) {
 			this.binding.forceUpdate();
 		}
 	};
@@ -15429,8 +15600,8 @@ var Text = (function (Item) {
 	return Text;
 }(Item));
 
-var proto$6 = Text.prototype;
-proto$6.bind = proto$6.unbind = proto$6.update = noop;
+var proto$5 = Text.prototype;
+proto$5.bind = proto$5.unbind = proto$5.update = noop;
 
 var visible;
 var hidden = 'hidden';
@@ -15531,7 +15702,7 @@ var prefix$1 = prefix;
 
 var vendorPattern = new RegExp( '^(?:' + vendors.join( '|' ) + ')([A-Z])' );
 
-var hyphenate = function ( str ) {
+function hyphenate ( str ) {
 	/* istanbul ignore next */
 	if ( !str ) { return ''; } // edge case
 
@@ -15539,7 +15710,7 @@ var hyphenate = function ( str ) {
 	if ( vendorPattern.test( str ) ) { str = '-' + str; }
 
 	return str.replace( /[A-Z]/g, function (match) { return '-' + match.toLowerCase(); } );
-};
+}
 
 var createTransitions;
 
@@ -16073,8 +16244,8 @@ Transition__proto__.unregisterCompleteHandler = function unregisterCompleteHandl
 	removeFromArray( this.onComplete, fn );
 };
 
-var proto$7 = Transition.prototype;
-proto$7.destroyed = proto$7.render = proto$7.unrender = proto$7.update = noop;
+var proto$6 = Transition.prototype;
+proto$6.destroyed = proto$6.render = proto$6.unrender = proto$6.update = noop;
 
 function nearestProp ( prop, ractive, rendering ) {
 	var instance = ractive;
@@ -16105,7 +16276,7 @@ try {
 	};
 }
 
-var insertHtml = function ( html$$1, node ) {
+function insertHtml ( html$$1, node ) {
 	var nodes = [];
 
 	// render 0 and false
@@ -16173,7 +16344,7 @@ var insertHtml = function ( html$$1, node ) {
 	}
 
 	return nodes;
-};
+}
 
 function element ( tagName ) {
 	return elementCache[ tagName ] || ( elementCache[ tagName ] = createElement( tagName ) );
@@ -16392,9 +16563,63 @@ function asyncProxy ( promise, options ) {
 	return new Partial( opts );
 }
 
+function extract ( tpl, type, name ) {
+	var p = tpl.f.find( function (s) { return s.t === type; } );
+	if ( p ) {
+		if ( p.n ) { return [{ t: 19, n: 54, f: p.f || [], z: [{ n: p.n, x: { r: ("__await." + name) } }] }]; }
+		else { return p.f || []; }
+	} else { return []; }
+}
+
+function Await ( options ) {
+	var tpl = options.template;
+
+	var success = extract( tpl, THEN, 'value' );
+	var error = extract( tpl, CATCH, 'error' );
+	var pending = extract( tpl, SECTION );
+	var undef = extract( tpl, ELSE );
+
+	var opts = assign( {}, options, {
+		template: { t: ELEMENT, m: [{ t: ATTRIBUTE, n: 'for', f: [{ t: INTERPOLATOR, r: tpl.r, rx: tpl.rx, x: tpl.x }] }] },
+		macro: function macro ( handle, attrs ) {
+			handle.aliasLocal( '__await' );
+
+			function update ( attrs ) {
+				if ( attrs.for && isFunction( attrs.for.then ) ) {
+					handle.setTemplate( pending );
+
+					attrs.for.then( function (v) {
+						handle.set( '@local.value', v );
+						handle.setTemplate( success );
+					}, function (e) {
+						handle.set( '@local.error', e );
+						handle.setTemplate( error );
+					});
+				} else if ( attrs.for === undefined ) {
+					handle.setTemplate( undef );
+				} else {
+					handle.set( '@local.value', attrs.for );
+					handle.setTemplate( success );
+				}
+			}
+
+			update( attrs );
+
+			return {
+				update: update
+			};
+		}
+	});
+
+	opts.macro.attributes = [ 'for' ];
+
+	return new Partial( opts );
+}
+
 var constructors = {};
 constructors[ ALIAS ] = Alias;
 constructors[ ANCHOR ] = Component;
+constructors[ AWAIT ] = Await;
 constructors[ DOCTYPE ] = Doctype;
 constructors[ INTERPOLATOR ] = Interpolator;
 constructors[ PARTIAL ] = Partial;
@@ -16857,7 +17082,7 @@ function initialise ( ractive, userOptions, options ) {
 
 	initHook.begin( ractive );
 
-	var fragment = ractive.fragment = createFragment( ractive, options );
+	var fragment = ractive.fragment = createFragment$1( ractive, options );
 	if ( fragment ) { fragment.bind( ractive.viewmodel ); }
 
 	initHook.end( ractive );
@@ -16884,7 +17109,7 @@ function initialise ( ractive, userOptions, options ) {
 	}
 }
 
-function createFragment ( ractive, options ) {
+function createFragment$1 ( ractive, options ) {
 	if ( options === void 0 ) options = {};
 
 	if ( ractive.template ) {
@@ -16914,7 +17139,7 @@ function render$1 ( ractive, target, anchor, occupants ) {
 
 	if ( ractive.destroyed ) {
 		ractive.destroyed = false;
-		ractive.fragment = createFragment( ractive ).bind( ractive.viewmodel );
+		ractive.fragment = createFragment$1( ractive ).bind( ractive.viewmodel );
 	}
 
 	anchor = getElement( anchor ) || ractive.anchor;
@@ -17068,7 +17293,7 @@ function collect( source, name, attr, dest ) {
 	});
 }
 
-var resetPartial = function ( name, partial ) {
+function resetPartial ( name, partial ) {
 	var collection = [];
 	collect( this.fragment.items, name, false, collection );
 
@@ -17080,7 +17305,7 @@ var resetPartial = function ( name, partial ) {
 	runloop.end();
 
 	return promise;
-};
+}
 
 // TODO should resetTemplate be asynchronous? i.e. should it be a case
 // of outro, update template, intro? I reckon probably not, since that
@@ -17262,7 +17487,22 @@ function Ractive$updateModel ( keypath, cascade ) {
 	return promise;
 }
 
-var proto = {
+function use () {
+	var this$1 = this;
+	var plugins = [], len = arguments.length;
+	while ( len-- ) plugins[ len ] = arguments[ len ];
+
+	plugins.forEach( function (p) {
+		p({
+			proto: this$1,
+			Ractive: this$1.constructor.Ractive,
+			instance: this$1
+		});
+	});
+	return this;
+}
+
+var proto$7 = {
 	add: Ractive$add,
 	animate: Ractive$animate,
 	attachChild: attachChild,
@@ -17276,8 +17516,8 @@ var proto = {
 	findParent: Ractive$findParent,
 	fire: Ractive$fire,
 	get: Ractive$get,
-	getContext: getContext$1,
-	getNodeInfo: getNodeInfo$$1,
+	getContext: getContext$2,
+	getNodeInfo: getNodeInfo$1,
 	insert: Ractive$insert,
 	link: link,
 	observe: observe,
@@ -17310,10 +17550,11 @@ var proto = {
 	unrender: Ractive$unrender,
 	unshift: unshift,
 	update: Ractive$update,
-	updateModel: Ractive$updateModel
+	updateModel: Ractive$updateModel,
+	use: use
 };
 
-defineProperty( proto, 'target', {
+defineProperty( proto$7, 'target', {
 	get: function get() { return this.el; }
 });
 
@@ -17334,6 +17575,21 @@ function sharedSet ( keypath, value, options ) {
 
 function sharedGet ( keypath ) {
 	return SharedModel$1.joinAll( splitKeypath( keypath ) ).get();
+}
+
+function use$1 () {
+	var this$1 = this;
+	var plugins = [], len = arguments.length;
+	while ( len-- ) plugins[ len ] = arguments[ len ];
+
+	plugins.forEach( function (p) {
+		p({
+			proto: this$1.prototype,
+			Ractive: this$1.Ractive,
+			instance: this$1
+		});
+	});
+	return this;
 }
 
 var callsSuper = /super\s*\(|\.call\s*\(\s*this/;
@@ -17396,6 +17652,7 @@ function extendOne ( Parent, options, Target ) {
 		extend: { value: extend, writable: true, configurable: true },
 		extendWith: { value: extendWith, writable: true, configurable: true },
 		extensions: { value: [] },
+		use: { value: use$1 },
 
 		isInstance: { value: isInstance },
 
@@ -17507,7 +17764,7 @@ if ( win && !win.Ractive ) {
 	warn( "Ractive already appears to be loaded while loading 1.0.0-edge." );
 }
 
-assign( Ractive.prototype, proto, defaults );
+assign( Ractive.prototype, proto$7, defaults );
 Ractive.prototype.constructor = Ractive;
 
 // alias prototype as `defaults`
@@ -17530,9 +17787,9 @@ defineProperties( Ractive, {
 	escapeKey:        { value: escapeKey },
 	evalObjectString: { value: parseJSON },
 	findPlugin:       { value: findPlugin },
-	getContext:       { value: getContext$2 },
+	getContext:       { value: getContext$1 },
 	getCSS:           { value: getCSS },
-	getNodeInfo:      { value: getNodeInfo$1 },
+	getNodeInfo:      { value: getNodeInfo },
 	isInstance:       { value: isInstance },
 	joinKeys:         { value: joinKeys },
 	macro:            { value: macro },
@@ -17541,6 +17798,7 @@ defineProperties( Ractive, {
 	splitKeypath:     { value: splitKeypath$1 },
 	// sharedSet and styleSet are in _extend because circular refs
 	unescapeKey:      { value: unescapeKey },
+	use:              { value: use$1 },
 
 	// support
 	enhance:          { writable: true, value: false },
