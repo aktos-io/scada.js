@@ -28,7 +28,7 @@ Ractive.components['dropdown'] = Ractive.extend do
         if @get \disabled-mode
             @set \class, "#{@get 'class'} disabled"
 
-        @link \selected-key, \selected
+        #@link \selected-key, \selected
 
     onrender: ->
         dd = $ @find '.ui.dropdown'
@@ -42,6 +42,7 @@ Ractive.components['dropdown'] = Ractive.extend do
         update-dropdown = (_new) ~>
             debugger if @get \debug
             @actor.log.log "#{@_guid}: selected is changed: ", _new if @get \debug
+            # TODO: add selected items to the `dataReduced`
             if @get \multiple
                 dd.dropdown 'set exactly', _new
             else
@@ -93,8 +94,6 @@ Ractive.components['dropdown'] = Ractive.extend do
 
         shandler = null
 
-
-
         @observe \data, (data) ~>
             @actor.log.log "data is changed: ", data if @get \debug
 
@@ -131,13 +130,6 @@ Ractive.components['dropdown'] = Ractive.extend do
                         if shandler then that.resume!
                         @set \dataReduced, small-part-of data
 
-                    on-search: ->
-                        debugger
-
-            @on do
-                teardown: ->
-                    dd.dropdown 'destroy'
-
             if (typeof! data is \Array) and not empty data
                 <~ sleep 10ms
                 update-dropdown @get \selected-key
@@ -147,6 +139,8 @@ Ractive.components['dropdown'] = Ractive.extend do
                 if @get \debug
                     @actor.c-log "selected key set to:", _new
                 if _new
+                    unless find (.[keyField] is _new), @get \dataReduced
+                        @push \dataReduced, find (.[keyField] is _new), @get \data
                     update-dropdown _new
                     set-item _new
                 else
@@ -154,6 +148,9 @@ Ractive.components['dropdown'] = Ractive.extend do
                     @set \item, {}
                     dd.dropdown 'restore defaults'
 
+        @on do
+            teardown: ->
+                dd.dropdown 'destroy'
 
     data: ->
         data: undefined
@@ -164,8 +161,9 @@ Ractive.components['dropdown'] = Ractive.extend do
         item: {}
         loading: yes
         sifter: null
+
+        # this is very important. if you omit this, "selected"
+        # variable will be bound to class prototype (thus shared
+        # across the instances)
         'selected-key': null
         'selected-name': null
-        selected: null  # this is very important. if you omit this, "selected"
-                        # variable will be bound to class prototype (thus shared
-                        # across the instances)
