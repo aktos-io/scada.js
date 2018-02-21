@@ -48,6 +48,8 @@ Ractive.components['dropdown'] = Ractive.extend do
             else
                 dd.dropdown 'set selected', _new
 
+        const c = @getContext @target .getParent yes
+        c.refire = yes
 
         set-item = (value-of-key) ~>
             if @get \data
@@ -87,7 +89,8 @@ Ractive.components['dropdown'] = Ractive.extend do
                                 @actor.c-log "Found #{value-of-key} in .[#{keyField}]", selected, selected[keyField]
 
                             @set \selected-key, selected[keyField]
-                            @fire \select, {}, selected
+
+                            @fire \select, c, selected
                         @set \item, selected
                         @set \selected-name, selected[nameField]
 
