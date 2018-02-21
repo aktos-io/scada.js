@@ -1,12 +1,6 @@
 require! 'aea/formatting': {displayFormat, parse-format}
 
-Ractive.defaults.data.displayFormat = displayFormat
-Ractive.defaults.data.parseFormat = parseFormat
-
-Ractive.defaults.data.formatter = (format, value) ->
-    displayFormat (parseFormat format), value .fullText
-
-Ractive.components['io-label'] = Ractive.extend do
+Ractive.components['formatter'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->

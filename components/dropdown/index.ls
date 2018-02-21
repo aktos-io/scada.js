@@ -1,6 +1,15 @@
-require! 'prelude-ls': {find, empty}
+require! 'prelude-ls': {find, empty, take}
 require! 'actors': {RactiveActor}
 require! 'aea': {sleep}
+
+require! 'sifter': Sifter
+require! '../data-table/sifter-workaround': {asciifold}
+
+small-part-of = (data) ->
+    if data? and not empty data
+        take 100, data
+    else
+        []
 
 Ractive.components['dropdown'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
@@ -19,7 +28,7 @@ Ractive.components['dropdown'] = Ractive.extend do
         if @get \disabled-mode
             @set \class, "#{@get 'class'} disabled"
 
-        @link \selected-key, \selected
+        #@link \selected-key, \selected
 
     onrender: ->
         dd = $ @find '.ui.dropdown'
@@ -33,11 +42,14 @@ Ractive.components['dropdown'] = Ractive.extend do
         update-dropdown = (_new) ~>
             debugger if @get \debug
             @actor.log.log "#{@_guid}: selected is changed: ", _new if @get \debug
+            # TODO: add selected items to the `dataReduced`
             if @get \multiple
                 dd.dropdown 'set exactly', _new
             else
                 dd.dropdown 'set selected', _new
 
+        const c = @getContext @target .getParent yes
+        c.refire = yes
 
         set-item = (value-of-key) ~>
             if @get \data
@@ -62,8 +74,8 @@ Ractive.components['dropdown'] = Ractive.extend do
 
                     debugger if @get \debug
                     @set \item, unless empty items => items else [{}]
-                    @set \selected-key, selected-keys
                     @set \selected-name, selected-names
+                    @set \selected-key, selected-keys
                     @fire \select, {}, (unless empty items => items else [{}])
 
 
@@ -76,15 +88,14 @@ Ractive.components['dropdown'] = Ractive.extend do
                             if @get \debug
                                 @actor.c-log "Found #{value-of-key} in .[#{keyField}]", selected, selected[keyField]
 
-                            @set \item, selected
                             @set \selected-key, selected[keyField]
-                            @set \selected-name, selected[nameField]
-                            @fire \select, {}, selected
+
+                            @fire \select, c, selected
+                        @set \item, selected
+                        @set \selected-name, selected[nameField]
 
 
         shandler = null
-
-
 
         @observe \data, (data) ~>
             @actor.log.log "data is changed: ", data if @get \debug
@@ -94,29 +105,47 @@ Ractive.components['dropdown'] = Ractive.extend do
                 <~ sleep 500ms
                 if data and not empty data
                     @set \loading, no
+                    @set \dataReduced, small-part-of data
+
+            @set \sifter, new Sifter(data)
 
             dd
                 .dropdown 'restore defaults'
                 .dropdown 'destroy'
                 .dropdown 'setting', do
                     forceSelection: no
-                    full-text-search: 'exact'
+                    full-text-search: (text) ~>
+                        if text
+                            result = @get \sifter .search asciifold(text), do
+                                fields: ['id', 'name', 'description']
+                                sort: [{field: 'name', direction: 'asc'}]
+                                nesting: no
+                                conjunction: "and"
+                            @set \dataReduced, [data[..id] for small-part-of result.items]
+                        else
+                            @set \dataReduced, small-part-of data
+
                     on-change: (_value, _text, selected) ~>
                         if shandler then that.silence!
                         @actor.log.log "#{@_guid}: dropdown is changed: ", _value if @get \debug
                         debugger if @get \debug
                         set-item _value
                         if shandler then that.resume!
+                        @set \dataReduced, small-part-of data
 
             if (typeof! data is \Array) and not empty data
                 <~ sleep 10ms
-                update-dropdown @get \selected-key
+                if @get \selected-key
+                    update-dropdown that
+                    set-item that
 
         unless @get \multiple
             shandler = @observe \selected-key, (_new) ~>
                 if @get \debug
                     @actor.c-log "selected key set to:", _new
                 if _new
+                    unless find (.[keyField] is _new), @get \dataReduced
+                        @push \dataReduced, find (.[keyField] is _new), @get \data
                     update-dropdown _new
                     set-item _new
                 else
@@ -124,16 +153,22 @@ Ractive.components['dropdown'] = Ractive.extend do
                     @set \item, {}
                     dd.dropdown 'restore defaults'
 
+        @on do
+            teardown: ->
+                dd.dropdown 'destroy'
 
     data: ->
         data: undefined
+        dataReduced: []
         keyField: \id
         nameField: \name
         nothingSelected: '---'
         item: {}
         loading: yes
+        sifter: null
+
+        # this is very important. if you omit this, "selected"
+        # variable will be bound to class prototype (thus shared
+        # across the instances)
         'selected-key': null
         'selected-name': null
-        selected: null  # this is very important. if you omit this, "selected"
-                        # variable will be bound to class prototype (thus shared
-                        # across the instances)

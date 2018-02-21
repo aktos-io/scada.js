@@ -9,6 +9,7 @@ Ractive.components['date-picker'] = Ractive.extend do
 
         j.calendar do
             ampm: false
+            minDate: new Date(@get \min-date)
             text:
                 days: <[ Pz Pt Sa Ça Pe Cu Cts ]>
                 first-day-of-week: 1
@@ -40,3 +41,4 @@ Ractive.components['date-picker'] = Ractive.extend do
 
     data: ->
         buttonText: "Select Date"
+        'min-date': null

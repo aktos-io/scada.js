@@ -51,6 +51,9 @@ Ractive.components['ack-button'] = Ractive.extend do
 
                 @fire \buttonclick, c, val
 
+                # stop the event propogation 
+                return false
+
             state: (_event, s, msg, callback) ->
                 switch s
                     when \done =>

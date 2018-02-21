@@ -71,64 +71,71 @@ include ./controls.pug
             //- -----------------------------------------------
             r-body
                 +each('tableview_visible:i')
-                    tr(
-                        data-anchor="{{.id}}"
-                        on-click!="['clicked', this]"
-                        class!="                            \
-                            {{#if isDisabled(.id)}}         \
-                                disabled                    \
-                            {{else}}                        \
-                                {{#if ! isEditingRow(.id) && ! isViewingRow(.id)}} \
-                                    data-table-clickable-row    \
-                                {{/if}}                     \
-                            {{/if}}                         \
-                            "
-                        style!="                                                       \
-                            {{#if                                                      \
+                    +unless('                                                      \
                                 settings.pageSize > 0 && (                             \
                                     @index >= (currPage + 1) * settings.pageSize ||    \
                                     @index <  (currPage) * settings.pageSize           \
                                 ) &&                                                   \
-                                (clickedIndex !== .id) }}                           \
-                                display: none                                          \
-                            {{/if}}"
-                        )    
-                        //- -----------------------------------------------
-                        //- edit form
-                        //- -----------------------------------------------
-                        +iff('isEditingRow(.id)')
-                            td(colspan="{{ colNames.length }}")
-                                .data-table-opened-row
-                                    +apply('editForm')
+                                (clickedIndex !== .id)')
 
-                        //- -----------------------------------------------
-                        //- view form
-                        //- -----------------------------------------------
-                        +elif('isViewingRow(.id)')
-                            td(colspan="{{ colNames.length }}")    
-                                .data-table-opened-row
-                                    +apply('viewForm')
-                            
-                        //- -----------------------------------------------
-                        //- normal rows 
-                        //- -----------------------------------------------
-                        +else
-                            +each(".cols:colindex")
-                                td(data-th="{{colNames[colindex]}}")
-                                    +iff('colindex === 0 && isLastClicked(tableview_visible[i].id)')
-                                        +iff('isOpeningNow(tableview_visible[i].id)')
-                                            //- if row is opening, mark first column with teal ribbon label 
-                                            .ui.teal.ribbon.label
-                                                +apply('renderMarkup')
+                        tr(
+                            data-anchor="{{.id}}"
+                            on-click!="['clicked', this]"
+                            class!="                            \
+                                {{#if isDisabled(.id)}}         \
+                                    disabled                    \
+                                {{else}}                        \
+                                    {{#if ! isEditingRow(.id) && ! isViewingRow(.id)}} \
+                                        data-table-clickable-row    \
+                                    {{/if}}                     \
+                                {{/if}}                         \
+                                "
+                            style!="                                                       \
+                                {{#if                                                      \
+                                    settings.pageSize > 0 && (                             \
+                                        @index >= (currPage + 1) * settings.pageSize ||    \
+                                        @index <  (currPage) * settings.pageSize           \
+                                    ) &&                                                   \
+                                    (clickedIndex !== .id) }}                           \
+                                    display: none                                          \
+                                {{/if}}"
+                            )    
+                            //- -----------------------------------------------
+                            //- edit form
+                            //- -----------------------------------------------
+                            +iff('isEditingRow(.id)')
+                                td(colspan="{{ colNames.length }}")
+                                    .data-table-opened-row
+                                        +apply('editForm')
+
+                            //- -----------------------------------------------
+                            //- view form
+                            //- -----------------------------------------------
+                            +elif('isViewingRow(.id)')
+                                td(colspan="{{ colNames.length }}")    
+                                    .data-table-opened-row
+                                        +apply('viewForm')
+                                
+                            //- -----------------------------------------------
+                            //- normal rows 
+                            //- -----------------------------------------------
+                            +else
+                                +each(".cols:colindex")
+                                    td(data-th="{{colNames[colindex]}}")
+                                        +iff('colindex === 0 && isLastClicked(tableview_visible[i].id)')
+                                            +iff('isOpeningNow(tableview_visible[i].id)')
+                                                //- if row is opening, mark first column with teal ribbon label 
+                                                .ui.teal.ribbon.label
+                                                    +apply('renderMarkup')
+                                            +else
+                                                //- if row is opening, mark first column with orange ribbon label 
+                                                .ui.orange.ribbon.label
+                                                    +apply('renderMarkup')
+                                            +endif
                                         +else
-                                            //- if row is opening, mark first column with orange ribbon label 
-                                            .ui.orange.ribbon.label
-                                                +apply('renderMarkup')
+                                            +apply('renderMarkup')
                                         +endif
-                                    +else
-                                        +apply('renderMarkup')
-                                    +endif
-                        +endif
+                            +endif
             r-foot
                 tr
                     th(colspan="{{ colNames.length }}")
