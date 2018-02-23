@@ -198,9 +198,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 },{}],2:[function(require,module,exports){
 (function (global){
 /*
-	Ractive.js v1.0.0-edge
-	Build: 384f5ec34adc405758696fd4ec7a47290d3aec5a
-	Date: Sat Feb 17 2018 02:49:27 GMT+0000 (UTC)
+	Ractive.js v0.9.13
+	Build: 9a1b712956fa00394c3ec71b4316f113f99994a2
+	Date: Fri Feb 23 2018 03:04:56 GMT+0000 (UTC)
 	Website: http://ractivejs.org
 	License: MIT
 */
@@ -271,17 +271,17 @@ function toPairs ( obj ) {
 	return pairs;
 }
 
-var obj = Object;
+var obj$1 = Object;
 
-var assign = obj.assign;
+var assign = obj$1.assign;
 
-var create = obj.create;
+var create = obj$1.create;
 
-var defineProperty = obj.defineProperty;
+var defineProperty = obj$1.defineProperty;
 
-var defineProperties = obj.defineProperties;
+var defineProperties = obj$1.defineProperties;
 
-var keys = obj.keys;
+var keys = obj$1.keys;
 
 var toString = Object.prototype.toString;
 
@@ -578,7 +578,6 @@ var defaults = {
 	template:               null,
 
 	// parse:
-	allowExpressions:       true,
 	delimiters:             [ '{{', '}}' ],
 	tripleDelimiters:       [ '{{{', '}}}' ],
 	staticDelimiters:       [ '[[', ']]' ],
@@ -664,7 +663,7 @@ var svg = doc ?
 
 var vendors = [ 'o', 'ms', 'moz', 'webkit' ];
 
-function noop () {}
+var noop = function () {};
 
 /* global console */
 /* eslint no-console:"off" */
@@ -676,13 +675,13 @@ var welcome;
 
 if ( hasConsole ) {
 	var welcomeIntro = [
-		"%cRactive.js %c1.0.0-edge %cin debug mode, %cmore...",
+		"%cRactive.js %c0.9.13 %cin debug mode, %cmore...",
 		'color: rgb(114, 157, 52); font-weight: normal;',
 		'color: rgb(85, 85, 85); font-weight: normal;',
 		'color: rgb(85, 85, 85); font-weight: normal;',
 		'color: rgb(82, 140, 224); font-weight: normal; text-decoration: underline;'
 	];
-	var welcomeMessage = "You're running Ractive 1.0.0-edge in debug mode - messages will be printed to the console to help you fix problems and optimise your application.\n\nTo disable debug mode, add this line at the start of your app:\n  Ractive.DEBUG = false;\n\nTo disable debug mode when your app is minified, add this snippet:\n  Ractive.DEBUG = /unminified/.test(function(){/*unminified*/});\n\nGet help and support:\n  http://ractive.js.org\n  http://stackoverflow.com/questions/tagged/ractivejs\n  http://groups.google.com/forum/#!forum/ractive-js\n  http://twitter.com/ractivejs\n\nFound a bug? Raise an issue:\n  https://github.com/ractivejs/ractive/issues\n\n";
+	var welcomeMessage = "You're running Ractive 0.9.13 in debug mode - messages will be printed to the console to help you fix problems and optimise your application.\n\nTo disable debug mode, add this line at the start of your app:\n  Ractive.DEBUG = false;\n\nTo disable debug mode when your app is minified, add this snippet:\n  Ractive.DEBUG = /unminified/.test(function(){/*unminified*/});\n\nGet help and support:\n  http://ractive.js.org\n  http://stackoverflow.com/questions/tagged/ractivejs\n  http://groups.google.com/forum/#!forum/ractive-js\n  http://twitter.com/ractivejs\n\nFound a bug? Raise an issue:\n  https://github.com/ractivejs/ractive/issues\n\n";
 
 	welcome = function () {
 		if ( Ractive.WELCOME_MESSAGE === false ) {
@@ -2660,12 +2659,6 @@ var SharedModel$1 = new SharedModel( data, 'shared' );
 
 var GlobalModel = new SharedModel( typeof global !== 'undefined' ? global : window, 'global' );
 
-function findContext ( fragment ) {
-	var frag = fragment;
-	while ( frag && !frag.context && !frag.aliases ) { frag = frag.parent; }
-	return frag;
-}
-
 function resolveReference ( fragment, ref ) {
 	var initialFragment = fragment;
 	// current context ref
@@ -2679,30 +2672,19 @@ function resolveReference ( fragment, ref ) {
 		var frag = fragment;
 		var parts = ref.split( '/' );
 		var explicitContext = parts[0] === '^^';
+		var context$1 = explicitContext ? null : fragment.findContext();
 
-		// find nearest context node
-		while ( frag && !frag.context ) {
-			frag = up( frag );
-		}
-		var context$1 = frag && frag.context;
+		// account for the first context hop
+		if ( explicitContext ) { parts.unshift( '^^' ); }
 
 		// walk up the context chain
-		while ( frag && parts[0] === '^^' ) {
+		while ( parts[0] === '^^' ) {
 			parts.shift();
-
-			// the current fragment should always be a context,
-			// and if it happens to be an iteration, jump above the each block
-			if ( frag.isIteration ) {
-				frag = frag.parent.parent;
-			} else { // otherwise jump above the current fragment
-				frag = up( frag );
+			context$1 = null;
+			while ( frag && !context$1 ) {
+				context$1 = frag.context;
+				frag = frag.parent.component ? frag.parent.component.up : frag.parent;
 			}
-
-			// walk to the next contexted fragment
-			while ( frag && !frag.context ) {
-				frag = up( frag );
-			}
-			context$1 = frag && frag.context;
 		}
 
 		if ( !context$1 && explicitContext ) {
@@ -2789,18 +2771,11 @@ function resolveReference ( fragment, ref ) {
 		}
 	}
 
-	var context = findContext( fragment );
+	var context = fragment.findContext();
 
 	// check immediate context for a match
-	if ( context ) {
-		if ( context.context ) {
-			context = context.context;
-			if ( context.has( base ) ) { return context.joinKey( base ).joinAll( keys$$1 ); }
-		} else { // alias block, so get next full context for later
-			context = fragment.findContext();
-		}
-	} else {
-		context = fragment.findContext();
+	if ( context.has( base ) ) {
+		return context.joinKey( base ).joinAll( keys$$1 );
 	}
 
 	// walk up the fragment hierarchy looking for a matching ref, alias, or key in a context
@@ -2872,10 +2847,6 @@ function resolveReference ( fragment, ref ) {
 	return context.joinKey( base ).joinAll( keys$$1 );
 }
 
-function up ( fragment ) {
-	return fragment && ( ( !fragment.ractive.isolated && fragment.componentParent ) || fragment.parent );
-}
-
 function badReference ( key ) {
 	throw new Error( ("An index or key reference (" + key + ") cannot have child properties") );
 }
@@ -2910,9 +2881,9 @@ var FakeFragment = function FakeFragment ( ractive ) {
 };
 
 FakeFragment.prototype.findContext = function findContext () { return this.ractive.viewmodel; };
-var proto = FakeFragment.prototype;
-proto.getContext = getContext;
-proto.find = proto.findComponent = proto.findAll = proto.findAllComponents = noop;
+var proto$1 = FakeFragment.prototype;
+proto$1.getContext = getContext;
+proto$1.find = proto$1.findComponent = proto$1.findAll = proto$1.findAllComponents = noop;
 
 function findParentWithContext ( fragment ) {
 	var frag = fragment;
@@ -3127,7 +3098,6 @@ function Ractive$animate ( keypath, to, options ) {
 
 		throw new Error( ("ractive.animate(...) no longer supports objects. Instead of ractive.animate({\n  " + (keys$$1.map( function (key) { return ("'" + key + "': " + (keypath[ key ])); } ).join( '\n  ' )) + "\n}, {...}), do\n\n" + (keys$$1.map( function (key) { return ("ractive.animate('" + key + "', " + (keypath[ key ]) + ", {...});"); } ).join( '\n' )) + "\n") );
 	}
-
 
 	return animate( this, this.viewmodel.joinAll( splitKeypath( keypath ) ), to, options );
 }
@@ -3589,8 +3559,6 @@ var INLINE_PARTIAL    = 17;
 var DOCTYPE           = 18;
 var ALIAS             = 19;
 
-var AWAIT             = 55;
-
 var NUMBER_LITERAL    = 20;
 var STRING_LITERAL    = 21;
 var ARRAY_LITERAL     = 22;
@@ -3600,6 +3568,7 @@ var REGEXP_LITERAL    = 25;
 
 var GLOBAL            = 26;
 var KEY_VALUE_PAIR    = 27;
+
 
 var REFERENCE         = 30;
 var REFINEMENT        = 31;
@@ -3619,8 +3588,6 @@ var SECTION_IF_WITH   = 54;
 
 var ELSE              = 60;
 var ELSEIF            = 61;
-var THEN              = 62;
-var CATCH             = 63;
 
 var EVENT             = 70;
 var DECORATOR         = 71;
@@ -3758,7 +3725,7 @@ function getSpliceEquivalent ( length, methodName, args ) {
 
 var arrayProto = Array.prototype;
 
-function makeArrayMethod ( methodName ) {
+var makeArrayMethod = function ( methodName ) {
 	function path ( keypath ) {
 		var args = [], len = arguments.length - 1;
 		while ( len-- > 0 ) args[ len ] = arguments[ len + 1 ];
@@ -3804,7 +3771,7 @@ function makeArrayMethod ( methodName ) {
 	}
 
 	return { path: path, model: model };
-}
+};
 
 var updateHook = new Hook( 'update' );
 
@@ -4170,7 +4137,7 @@ function findModel ( ctx, path ) {
 }
 
 function findEvent( el, name ) {
-	return el.events && el.events.find( function (e) { return ~e.template.n.indexOf( name ); } );
+	return el.attributes && el.attributes.find( function (a) { return a.template.t === EVENT && ~a.template.n.indexOf( name ); } );
 }
 
 function Ractive$fire ( eventName ) {
@@ -4216,7 +4183,7 @@ function Ractive$get ( keypath, opts ) {
 
 var query = doc && doc.querySelector;
 
-function getContext$1 ( node ) {
+function getContext$2 ( node ) {
 	if ( isString( node ) && query ) {
 		node = query.call( document, node );
 	}
@@ -4231,25 +4198,25 @@ function getContext$1 ( node ) {
 	}
 }
 
-function getNodeInfo ( node ) {
+function getNodeInfo$1 ( node ) {
 	warnOnceIfDebug( "getNodeInfo has been renamed to getContext, and the getNodeInfo alias will be removed in a future release." );
-	return getContext$1 ( node );
+	return getContext$2 ( node );
 }
 
-function getContext$2 ( node, options ) {
+function getContext$1 ( node, options ) {
 	if ( isString( node ) ) {
 		node = this.find( node, options );
 	}
 
-	return getContext$1( node );
+	return getContext$2( node );
 }
 
-function getNodeInfo$1 ( node, options ) {
+function getNodeInfo$$1 ( node, options ) {
 	if ( isString( node ) ) {
 		node = this.find( node, options );
 	}
 
-	return getNodeInfo( node );
+	return getNodeInfo$1( node );
 }
 
 var html   = 'http://www.w3.org/1999/xhtml';
@@ -5146,7 +5113,7 @@ var value = /\0(\d+)/g;
 // Removes comments and strings from the given CSS to make it easier to parse.
 // Callback receives the cleaned CSS and a function which can be used to put
 // the removed strings back in place after parsing is done.
-function cleanCss ( css, callback, additionalReplaceRules ) {
+var cleanCss = function ( css, callback, additionalReplaceRules ) {
 	if ( additionalReplaceRules === void 0 ) additionalReplaceRules = [];
 
 	var values = [];
@@ -5158,7 +5125,7 @@ function cleanCss ( css, callback, additionalReplaceRules ) {
 	});
 
 	return callback( css, reconstruct );
-}
+};
 
 var selectorsPattern = /(?:^|\}|\{)\s*([^\{\}\0]+)\s*(?=\{)/g;
 var keyframesDeclarationPattern = /@keyframes\s+[^\{\}]+\s*\{(?:[^{}]+|\{[^{}]+})*}/gi;
@@ -5806,9 +5773,9 @@ function escapeRegExp ( str ) {
 
 var regExpCache = {};
 
-function getLowestIndex ( haystack, needles ) {
+var getLowestIndex = function ( haystack, needles ) {
 	return haystack.search( regExpCache[needles.join()] || ( regExpCache[needles.join()] = new RegExp( needles.map( escapeRegExp ).join( '|' ) ) ) );
-}
+};
 
 // https://github.com/kangax/html-minifier/issues/63#issuecomment-37763316
 var booleanAttributes = /^(allowFullscreen|async|autofocus|autoplay|checked|compact|controls|declare|default|defaultChecked|defaultMuted|defaultSelected|defer|disabled|enabled|formNoValidate|hidden|indeterminate|inert|isMap|itemScope|loop|multiple|muted|noHref|noResize|noShade|noValidate|noWrap|open|pauseOnExit|readOnly|required|reversed|scoped|seamless|selected|sortable|translate|trueSpeed|typeMustMatch|visible)$/i;
@@ -5962,7 +5929,7 @@ var escapeSequencePattern = /^\\(?:[`'"\\bfnrt]|0(?![0-9])|x[0-9a-fA-F]{2}|u[0-9
 var lineContinuationPattern = /^\\(?:\r\n|[\u000A\u000D\u2028\u2029])/;
 
 // Helper for defining getDoubleQuotedString and getSingleQuotedString.
-function makeQuotedStringMatcher ( okQuote ) {
+var makeQuotedStringMatcher = function ( okQuote ) {
 	return function ( parser ) {
 		var literal = '"';
 		var done = false;
@@ -5995,12 +5962,12 @@ function makeQuotedStringMatcher ( okQuote ) {
 		// use JSON.parse to interpret escapes
 		return JSON.parse( literal );
 	};
-}
+};
 
 var singleMatcher = makeQuotedStringMatcher( "\"" );
 var doubleMatcher = makeQuotedStringMatcher( "'" );
 
-function readStringLiteral ( parser ) {
+var readStringLiteral = function ( parser ) {
 	var start = parser.pos;
 	var quote = parser.matchString( "'" ) || parser.matchString( "\"" );
 
@@ -6019,7 +5986,7 @@ function readStringLiteral ( parser ) {
 	}
 
 	return null;
-}
+};
 
 // Match one or more characters until: ", ', or \
 var stringMiddlePattern$1 = /^[^`"\\\$]+?(?:(?=[`"\\\$]))/;
@@ -6227,7 +6194,7 @@ function readKeyValuePairs ( parser ) {
 	return pairs;
 }
 
-function readObjectLiteral ( parser ) {
+var readObjectLiteral = function ( parser ) {
 	var start = parser.pos;
 
 	// allow whitespace
@@ -6252,9 +6219,9 @@ function readObjectLiteral ( parser ) {
 		t: OBJECT_LITERAL,
 		m: keyValuePairs
 	};
-}
+};
 
-function readArrayLiteral ( parser ) {
+var readArrayLiteral = function ( parser ) {
 	var start = parser.pos;
 
 	// allow whitespace before '['
@@ -6276,7 +6243,7 @@ function readArrayLiteral ( parser ) {
 		t: ARRAY_LITERAL,
 		m: expressionList
 	};
-}
+};
 
 function readLiteral ( parser ) {
 	return readNumberLiteral$1( parser )         ||
@@ -6403,11 +6370,11 @@ function readBracketedExpression ( parser ) {
 	};
 }
 
-function readPrimary ( parser ) {
+var readPrimary = function ( parser ) {
 	return readLiteral( parser )
 		|| readReference( parser )
 		|| readBracketedExpression( parser );
-}
+};
 
 function readRefinement ( parser ) {
 	// some things call for strict refinement (partial names), meaning no space between reference and refinement
@@ -6450,7 +6417,7 @@ function readRefinement ( parser ) {
 	return null;
 }
 
-function readMemberOrInvocation ( parser ) {
+var readMemberOrInvocation = function ( parser ) {
 	var expression = readPrimary( parser );
 
 	if ( !expression ) { return null; }
@@ -6489,7 +6456,7 @@ function readMemberOrInvocation ( parser ) {
 	}
 
 	return expression;
-}
+};
 
 var readTypeOf;
 
@@ -6660,13 +6627,6 @@ function getConditional ( parser ) {
 }
 
 function readExpression ( parser ) {
-	// if eval is false, no expressions
-	if ( parser.allowExpressions === false ) {
-		var ref = readReference( parser );
-		parser.sp();
-		return ref;
-	}
-
 	// The conditional operator is the lowest precedence operator (except yield,
 	// assignment operators, and commas, none of which are supported), so we
 	// start there. If it doesn't match, it 'falls through' to progressively
@@ -7138,7 +7098,7 @@ function readAttributeOrDirective ( parser ) {
 
 	if ( !attribute ) { return null; }
 
-	// lazy, twoway
+		// lazy, twoway
 	if ( directive = directives[ attribute.n ] ) {
 		attribute.t = directive.t;
 		if ( directive.v ) { attribute.v = directive.v; }
@@ -7147,14 +7107,14 @@ function readAttributeOrDirective ( parser ) {
 		if ( parser.nextChar() === '=' ) { attribute.f = readAttributeValue( parser ); }
 	}
 
-	// decorators
+		// decorators
 	else if ( match = decoratorPattern.exec( attribute.n ) ) {
 		attribute.n = match[1];
 		attribute.t = DECORATOR;
 		readArguments( parser, attribute );
 	}
 
-	// transitions
+		// transitions
 	else if ( match = transitionPattern.exec( attribute.n ) ) {
 		attribute.n = match[1];
 		attribute.t = TRANSITION;
@@ -7162,16 +7122,16 @@ function readAttributeOrDirective ( parser ) {
 		attribute.v = match[2] === 'in-out' ? 't0' : match[2] === 'in' ? 't1' : 't2';
 	}
 
-	// on-click etc
+		// on-click etc
 	else if ( match = eventPattern.exec( attribute.n ) ) {
 		attribute.n = splitEvent( match[1] );
 		attribute.t = EVENT;
 
 		parser.inEvent = true;
 
-		// check for a proxy event
+			// check for a proxy event
 		if ( !readProxyEvent( parser, attribute ) ) {
-			// otherwise, it's an expression
+				// otherwise, it's an expression
 			readArguments( parser, attribute, true );
 		} else if ( reservedEventNames.test( attribute.f ) ) {
 			parser.pos -= attribute.f.length;
@@ -7181,7 +7141,7 @@ function readAttributeOrDirective ( parser ) {
 		parser.inEvent = false;
 	}
 
-	// bound directives
+		// bound directives
 	else if ( match = boundPattern.exec( attribute.n ) ){
 		var bind = match[2] === 'bind';
 		attribute.n = bind ? match[3] : match[1];
@@ -7621,46 +7581,53 @@ function readClosing ( parser, tag ) {
 	return null;
 }
 
-var patterns = {
-	else: /^\s*else\s*/,
-	elseif: /^\s*elseif\s+/,
-	then: /^\s*then\s*/,
-	catch: /^\s*catch\s*/
-};
+var elsePattern = /^\s*else\s*/;
 
-var types = {
-	else: ELSE,
-	elseif: ELSEIF,
-	then: THEN,
-	catch: CATCH
-};
-
-function readInlineBlock ( parser, tag, type ) {
+function readElse ( parser, tag ) {
 	var start = parser.pos;
 
 	if ( !parser.matchString( tag.open ) ) {
 		return null;
 	}
 
-	if ( !parser.matchPattern( patterns[type] ) ) {
+	if ( !parser.matchPattern( elsePattern ) ) {
 		parser.pos = start;
 		return null;
-	}
-
-	var res = { t: types[type] };
-
-	if ( type === 'elseif' ) {
-		res.x = readExpression( parser );
-	} else if (type === 'catch' || type === 'then' ) {
-		var nm = parser.matchPattern( name );
-		if ( nm ) { res.n = nm; }
 	}
 
 	if ( !parser.matchString( tag.close ) ) {
 		parser.error( ("Expected closing delimiter '" + (tag.close) + "'") );
 	}
 
-	return res;
+	return {
+		t: ELSE
+	};
+}
+
+var elsePattern$1 = /^\s*elseif\s+/;
+
+function readElseIf ( parser, tag ) {
+	var start = parser.pos;
+
+	if ( !parser.matchString( tag.open ) ) {
+		return null;
+	}
+
+	if ( !parser.matchPattern( elsePattern$1 ) ) {
+		parser.pos = start;
+		return null;
+	}
+
+	var expression = readExpression( parser );
+
+	if ( !parser.matchString( tag.close ) ) {
+		parser.error( ("Expected closing delimiter '" + (tag.close) + "'") );
+	}
+
+	return {
+		t: ELSEIF,
+		x: expression
+	};
 }
 
 var handlebarsBlockCodes = {
@@ -7675,7 +7642,7 @@ var keyIndexRefPattern = /^\s*,\s*([a-zA-Z_$][a-zA-Z_$0-9]*)/;
 var handlebarsBlockPattern = new RegExp( '^(' + keys( handlebarsBlockCodes ).join( '|' ) + ')\\b' );
 
 function readSection ( parser, tag ) {
-	var expression, section, child, children, hasElse, block, unlessBlock, closed, i, expectedClose, hasThen, hasCatch, inlineThen;
+	var expression, section, child, children, hasElse, block, unlessBlock, closed, i, expectedClose;
 	var aliasOnly = false;
 
 	var start = parser.pos;
@@ -7695,12 +7662,7 @@ function readSection ( parser, tag ) {
 			parser.error( 'Partial definitions can only be at the top level of the template, or immediately inside components' );
 		}
 
-		if ( block = parser.matchString( 'await' ) ) {
-			expectedClose = block;
-			section.t = AWAIT;
-		}
-
-		else if ( block = parser.matchPattern( handlebarsBlockPattern ) ) {
+		if ( block = parser.matchPattern( handlebarsBlockPattern ) ) {
 			expectedClose = block;
 			section.n = handlebarsBlockCodes[ block ];
 		}
@@ -7733,7 +7695,7 @@ function readSection ( parser, tag ) {
 		}
 
 		// optional index and key references
-		if ( ( block === 'each' || !block ) && ( i = parser.matchPattern( indexRefPattern ) ) ) {
+		if ( i = parser.matchPattern( indexRefPattern ) ) {
 			var extra;
 
 			if ( extra = parser.matchPattern( keyIndexRefPattern ) ) {
@@ -7741,11 +7703,6 @@ function readSection ( parser, tag ) {
 			} else {
 				section.i = i;
 			}
-		} else if ( block === 'await' && parser.matchString( 'then' ) ) {
-			parser.sp();
-			hasThen = true;
-			inlineThen = parser.matchPattern( name );
-			if ( !inlineThen ) { inlineThen = true; }
 		}
 
 		if ( !block && expression.n ) {
@@ -7779,73 +7736,50 @@ function readSection ( parser, tag ) {
 			closed = true;
 		}
 
-		else if ( !aliasOnly && (
-			( child = readInlineBlock( parser, tag, 'elseif' ) ) ||
-			( child = readInlineBlock( parser, tag, 'else' ) ) ||
-			( block === 'await' && ( ( child = readInlineBlock( parser, tag, 'then' ) ) ||
-			( child = readInlineBlock( parser, tag, 'catch' ) ) ) )
-		) ) {
+		else if ( !aliasOnly && ( child = readElseIf( parser, tag ) ) ) {
 			if ( section.n === SECTION_UNLESS ) {
 				parser.error( '{{else}} not allowed in {{#unless}}' );
 			}
 
 			if ( hasElse ) {
-				if ( child.t === ELSE ) {
-					parser.error( 'there can only be one {{else}} block, at the end of a section' );
-				} else if ( child.t === ELSEIF ) {
-					parser.error( 'illegal {{elseif...}} after {{else}}' );
-				}
+				parser.error( 'illegal {{elseif...}} after {{else}}' );
 			}
 
-			if ( !unlessBlock && (inlineThen || !hasThen) && !hasCatch ) {
-				if ( block === 'await' ) {
-					var s = { f: children };
-					section.f = [s];
-					if ( inlineThen ) {
-						s.t = THEN;
-						inlineThen !== true && ( s.n = inlineThen );
-					} else {
-						s.t = SECTION;
-					}
-				} else {
-					unlessBlock = [];
-				}
+			if ( !unlessBlock ) {
+				unlessBlock = [];
 			}
 
 			var mustache = {
 				t: SECTION,
+				n: SECTION_IF,
 				f: children = []
 			};
+			refineExpression( child.x, mustache );
 
-			if ( child.t === ELSE ) {
-				if ( block === 'await' ) {
-					section.f.push( mustache );
-					mustache.t = ELSE;
-				} else {
-					mustache.n = SECTION_UNLESS;
-					unlessBlock.push( mustache );
-				}
-				hasElse = true;
-			} else if ( child.t === ELSEIF ) {
-				mustache.n = SECTION_IF;
-				refineExpression( child.x, mustache );
-				unlessBlock.push( mustache );
-			} else if ( child.t === THEN ) {
-				if ( hasElse ) { parser.error( '{{then}} block must appear before any {{else}} block' ); }
-				if ( hasCatch ) { parser.error( '{{then}} block must appear before any {{catch}} block' ); }
-				if ( hasThen ) { parser.error( 'there can only be one {{then}} block per {{#await}}' ); }
-				mustache.t = THEN;
-				hasThen = true;
-				child.n && ( mustache.n = child.n );
-				section.f.push( mustache );
-			} else if ( child.t === CATCH ) {
-				if ( hasElse ) { parser.error( '{{catch}} block must appear before any {{else}} block' ); }
-				if ( hasCatch ) { parser.error( 'there can only be one {{catch}} block per {{#await}}' ); }
-				mustache.t = CATCH;
-				hasCatch = true;
-				mustache.n = child.n;
-				section.f.push( mustache );
+			unlessBlock.push( mustache );
+		}
+
+		else if ( !aliasOnly && ( child = readElse( parser, tag ) ) ) {
+			if ( section.n === SECTION_UNLESS ) {
+				parser.error( '{{else}} not allowed in {{#unless}}' );
 			}
+
+			if ( hasElse ) {
+				parser.error( 'there can only be one {{else}} block, at the end of a section' );
+			}
+
+			hasElse = true;
+
+			// use an unless block if there's no elseif
+			if ( !unlessBlock ) {
+				unlessBlock = [];
+			}
+
+			unlessBlock.push({
+				t: SECTION,
+				n: SECTION_UNLESS,
+				f: children = []
+			});
 		}
 
 		else {
@@ -7865,17 +7799,6 @@ function readSection ( parser, tag ) {
 
 	if ( !aliasOnly ) {
 		refineExpression( expression, section );
-	}
-
-	if ( block === 'await' && ( inlineThen || !hasThen ) && !hasCatch && !hasElse ) {
-		var s$1 = { f: section.f };
-		section.f = [s$1];
-		if ( inlineThen ) {
-			s$1.t = THEN;
-			inlineThen !== true && ( s$1.n = inlineThen );
-		} else {
-			s$1.t = SECTION;
-		}
 	}
 
 	// TODO if a section is empty it should be discarded. Don't do
@@ -7924,7 +7847,7 @@ function readHtmlComment ( parser ) {
 var leadingLinebreak = /^[ \t\f\r\n]*\r?\n/;
 var trailingLinebreak = /\r?\n[ \t\f\r\n]*$/;
 
-function stripStandalones ( items ) {
+var stripStandalones = function ( items ) {
 	var i, current, backOne, backTwo, lastSectionItem;
 
 	for ( i=1; i<items.length; i+=1 ) {
@@ -7968,7 +7891,7 @@ function stripStandalones ( items ) {
 	}
 
 	return items;
-}
+};
 
 function isComment ( item ) {
 	return item.t === COMMENT || item.t === DELIMCHANGE;
@@ -7978,7 +7901,7 @@ function isSection ( item ) {
 	return ( item.t === SECTION || item.t === INVERTED ) && item.f;
 }
 
-function trimWhitespace ( items, leadingPattern, trailingPattern ) {
+var trimWhitespace = function ( items, leadingPattern, trailingPattern ) {
 	var item;
 
 	if ( leadingPattern ) {
@@ -8006,7 +7929,7 @@ function trimWhitespace ( items, leadingPattern, trailingPattern ) {
 			}
 		}
 	}
-}
+};
 
 var contiguousWhitespace = /[ \t\f\r\n]+/g;
 var preserveWhitespaceElements = /^(?:pre|script|style|textarea)$/i;
@@ -8323,7 +8246,8 @@ function readElement$1 ( parser ) {
 			else {
 				// implicit close by closing section tag. TODO clean this up
 				var tag = { open: parser.standardDelimiters[0], close: parser.standardDelimiters[1] };
-				if ( readClosing( parser, tag ) || readInline( parser, tag ) ) {
+				var implicitCloseCase = [ readClosing, readElseIf, readElse ];
+				if (  implicitCloseCase.some( function (r) { return r( parser, tag ); } ) ) {
 					closed = true;
 					parser.pos = pos;
 				}
@@ -8403,17 +8327,6 @@ function readAnchorClose ( parser, name ) {
 	}
 
 	return true;
-}
-
-var inlines = /^\s*(elseif|else|then|catch)\s*/;
-function readInline ( parser, tag ) {
-	var pos = parser.pos;
-	if ( !parser.matchString( tag.open ) ) { return; }
-	if ( parser.matchPattern( inlines ) ) {
-		return true;
-	} else {
-		parser.pos = pos;
-	}
 }
 
 function readText ( parser ) {
@@ -8647,7 +8560,6 @@ var StandardParser = Parser.extend({
 		this.includeLinePositions = options.includeLinePositions;
 		this.textOnlyMode = options.textOnlyMode;
 		this.csp = options.csp;
-		this.allowExpressions = options.allowExpressions;
 
 		if ( options.attributes ) { this.inTag = true; }
 	},
@@ -8701,7 +8613,6 @@ var parseOptions = [
 	'sanitize',
 	'stripComments',
 	'contextLines',
-	'allowExpressions',
 	'attributes'
 ];
 
@@ -9104,7 +9015,7 @@ var order = [].concat(
 );
 
 var config = {
-	extend: function ( Parent, proto, options, Child ) { return configure( 'extend', Parent, proto, options, Child ); },
+	extend: function ( Parent, proto$$1, options, Child ) { return configure( 'extend', Parent, proto$$1, options, Child ); },
 	init: function ( Parent, ractive, options ) { return configure( 'init', Parent, ractive, options ); },
 	reset: function (ractive) { return order.filter( function (c) { return c.reset && c.reset( ractive ); } ).map( function (c) { return c.name; } ); }
 };
@@ -9155,7 +9066,7 @@ function extendOtherMethods ( parent, target, options ) {
 
 			// if this is a method that overwrites a method, wrap it:
 			if ( isFunction( member ) ) {
-				if ( key in proto$7 && !_super.test( member.toString() ) ) {
+				if ( key in proto && !_super.test( member.toString() ) ) {
 					warnIfDebug( ("Overriding Ractive prototype function '" + key + "' without calling the '" + _super + "' method can be very dangerous.") );
 				}
 				member = wrap( parent, key, member );
@@ -9491,10 +9402,10 @@ var Computation = (function (Model) {
 	return Computation;
 }(Model));
 
-var prototype = Computation.prototype;
+var prototype$1 = Computation.prototype;
 var child = ComputationChild.prototype;
-prototype.handleChange = child.handleChange;
-prototype.joinKey = child.joinKey;
+prototype$1.handleChange = child.handleChange;
+prototype$1.joinKey = child.joinKey;
 
 var ExpressionProxy = (function (Model) {
 	function ExpressionProxy ( fragment, template ) {
@@ -9508,9 +9419,7 @@ var ExpressionProxy = (function (Model) {
 		this.isReadonly = true;
 		this.dirty = true;
 
-		this.fn = fragment.ractive.allowExpressions === false ?
-			noop :
-			getFunction( template.s, template.r.length );
+		this.fn = getFunction( template.s, template.r.length );
 
 		this.models = this.template.r.map( function (ref) {
 			return resolveReference( this$1.fragment, ref );
@@ -9622,13 +9531,13 @@ var ExpressionProxy = (function (Model) {
 	return ExpressionProxy;
 }(Model));
 
-var prototype$1 = ExpressionProxy.prototype;
+var prototype = ExpressionProxy.prototype;
 var computation = Computation.prototype;
-prototype$1.get = computation.get;
-prototype$1.handleChange = computation.handleChange;
-prototype$1.joinKey = computation.joinKey;
-prototype$1.mark = computation.mark;
-prototype$1.unbind = noop;
+prototype.get = computation.get;
+prototype.handleChange = computation.handleChange;
+prototype.joinKey = computation.joinKey;
+prototype.mark = computation.mark;
+prototype.unbind = noop;
 
 var ReferenceExpressionChild = (function (Model) {
 	function ReferenceExpressionChild ( parent, key ) {
@@ -9964,11 +9873,11 @@ var Alias = (function (ContainerItem) {
 	return Alias;
 }(ContainerItem));
 
-function hyphenateCamel ( camelCaseStr ) {
+var hyphenateCamel = function ( camelCaseStr ) {
 	return camelCaseStr.replace( /([A-Z])/g, function ( match, $1 ) {
 		return '-' + $1.toLowerCase();
 	});
-}
+};
 
 var space = /\s+/;
 
@@ -9991,7 +9900,7 @@ function readStyle ( css ) {
 function readClass ( str ) {
 	var list = str.split( space );
 
-	// remove any empty entries
+  // remove any empty entries
 	var i = list.length;
 	while ( i-- ) {
 		if ( !list[i] ) { list.splice( i, 1 ); }
@@ -10190,6 +10099,10 @@ function updateCheckboxName ( reset ) {
 
 	var value = this.getValue();
 	var valueAttribute = element.getAttribute( 'value' );
+
+	if ( reset ) {
+		// TODO: WAT?
+	}
 
 	if ( !isArray( value ) ) {
 		binding.isChecked = node.checked = element.compare( value, valueAttribute );
@@ -10784,9 +10697,9 @@ function Comment ( options ) {
 	Item.call( this, options );
 }
 
-var proto$1 = create( Item.prototype );
+var proto$2 = create( Item.prototype );
 
-assign( proto$1, {
+assign( proto$2, {
 	bind: noop,
 	unbind: noop,
 	update: noop,
@@ -10816,7 +10729,7 @@ assign( proto$1, {
 	}
 });
 
-Comment.prototype = proto$1;
+Comment.prototype = proto$2;
 
 var teardownHook = new Hook( 'teardown' );
 var destructHook = new Hook( 'destruct' );
@@ -11311,8 +11224,6 @@ function handleAttributes ( ractive ) {
 					// transfer the attribute to the extra attributes partal
 					partial.unshift( attrs.splice( i, 1 )[0] );
 				}
-			} else if ( !attributes.mapAll && ( a.t === DECORATOR || a.t === TRANSITION || a.t === BINDING_FLAG ) ) {
-				partial.unshift( attrs.splice( i, 1 )[0] );
 			}
 		}
 
@@ -11848,8 +11759,8 @@ var Doctype = (function (Item) {
 	return Doctype;
 }(Item));
 
-var proto$2 = Doctype.prototype;
-proto$2.bind = proto$2.render = proto$2.teardown = proto$2.unbind = proto$2.unrender = proto$2.update = noop;
+var proto$3 = Doctype.prototype;
+proto$3.bind = proto$3.render = proto$3.teardown = proto$3.unbind = proto$3.unrender = proto$3.update = noop;
 
 var Binding = function Binding ( element, name ) {
 	if ( name === void 0 ) name = 'value';
@@ -13474,7 +13385,7 @@ CustomEvent__proto__.render = function render ( directive ) {
 	runloop.scheduleTask( function () {
 		var node = this$1.owner.node;
 
-		this$1.handler = this$1.eventPlugin.call( this$1.owner.ractive, node, function ( event ) {
+		this$1.handler = this$1.eventPlugin( node, function ( event ) {
 				if ( event === void 0 ) event = {};
 
 			if ( event.original ) { event.event = event.original; }
@@ -13799,9 +13710,9 @@ function MustacheContainer ( options ) {
 	Mustache.call( this, options );
 }
 
-var proto$3 = MustacheContainer.prototype = Object.create( ContainerItem.prototype );
+var proto$4 = MustacheContainer.prototype = Object.create( ContainerItem.prototype );
 
-assign( proto$3, Mustache.prototype, { constructor: MustacheContainer } );
+assign( proto$4, Mustache.prototype, { constructor: MustacheContainer } );
 
 var Interpolator = (function (Mustache) {
 	function Interpolator () {
@@ -14045,10 +13956,10 @@ function getKeyValuePair ( parser ) {
 	return pair;
 }
 
-function parseJSON ( str, values ) {
+var parseJSON = function ( str, values ) {
 	var parser = new JsonParser( str, { values: values });
 	return parser.result;
-}
+};
 
 var Mapping = (function (Item) {
 	function Mapping ( options ) {
@@ -14376,9 +14287,9 @@ function Partial ( options ) {
 	}
 }
 
-var proto$4 = Partial.prototype = create( MustacheContainer.prototype );
+var proto$5 = Partial.prototype = create( MustacheContainer.prototype );
 
-assign( proto$4, {
+assign( proto$5, {
 	constructor: Partial,
 
 	bind: function bind () {
@@ -14435,7 +14346,7 @@ assign( proto$4, {
 			warnOnceIfDebug( ("Could not find template for partial '" + (this.name) + "'") );
 		}
 
-		createFragment( this, this.partial || [] );
+		createFragment$1( this, this.partial || [] );
 
 		// macro/super partial
 		if ( this.fn ) { initMacro( this ); }
@@ -14546,14 +14457,11 @@ assign( proto$4, {
 	},
 
 	update: function update () {
-		var this$1 = this;
-
 		var proxy = this.proxy;
 		this.updating = 1;
 
 		if ( this.dirtyAttrs ) {
 			this.dirtyAttrs = false;
-			keys( this._attrs ).forEach( function (k) { return this$1._attrs[k].update(); } );
 			this.refreshAttrs();
 			if ( isFunction( proxy.update ) ) { proxy.update( this.handle.attributes ); }
 		}
@@ -14574,7 +14482,7 @@ assign( proto$4, {
 	}
 });
 
-function createFragment ( self, partial ) {
+function createFragment$1 ( self, partial ) {
 	self.partial = partial;
 	contextifyTemplate( self );
 
@@ -15600,8 +15508,8 @@ var Text = (function (Item) {
 	return Text;
 }(Item));
 
-var proto$5 = Text.prototype;
-proto$5.bind = proto$5.unbind = proto$5.update = noop;
+var proto$6 = Text.prototype;
+proto$6.bind = proto$6.unbind = proto$6.update = noop;
 
 var visible;
 var hidden = 'hidden';
@@ -15702,7 +15610,7 @@ var prefix$1 = prefix;
 
 var vendorPattern = new RegExp( '^(?:' + vendors.join( '|' ) + ')([A-Z])' );
 
-function hyphenate ( str ) {
+var hyphenate = function ( str ) {
 	/* istanbul ignore next */
 	if ( !str ) { return ''; } // edge case
 
@@ -15710,7 +15618,7 @@ function hyphenate ( str ) {
 	if ( vendorPattern.test( str ) ) { str = '-' + str; }
 
 	return str.replace( /[A-Z]/g, function (match) { return '-' + match.toLowerCase(); } );
-}
+};
 
 var createTransitions;
 
@@ -16244,8 +16152,8 @@ Transition__proto__.unregisterCompleteHandler = function unregisterCompleteHandl
 	removeFromArray( this.onComplete, fn );
 };
 
-var proto$6 = Transition.prototype;
-proto$6.destroyed = proto$6.render = proto$6.unrender = proto$6.update = noop;
+var proto$7 = Transition.prototype;
+proto$7.destroyed = proto$7.render = proto$7.unrender = proto$7.update = noop;
 
 function nearestProp ( prop, ractive, rendering ) {
 	var instance = ractive;
@@ -16276,7 +16184,7 @@ try {
 	};
 }
 
-function insertHtml ( html$$1, node ) {
+var insertHtml = function ( html$$1, node ) {
 	var nodes = [];
 
 	// render 0 and false
@@ -16344,7 +16252,7 @@ function insertHtml ( html$$1, node ) {
 	}
 
 	return nodes;
-}
+};
 
 function element ( tagName ) {
 	return elementCache[ tagName ] || ( elementCache[ tagName ] = createElement( tagName ) );
@@ -16563,63 +16471,9 @@ function asyncProxy ( promise, options ) {
 	return new Partial( opts );
 }
 
-function extract ( tpl, type, name ) {
-	var p = tpl.f.find( function (s) { return s.t === type; } );
-	if ( p ) {
-		if ( p.n ) { return [{ t: 19, n: 54, f: p.f || [], z: [{ n: p.n, x: { r: ("__await." + name) } }] }]; }
-		else { return p.f || []; }
-	} else { return []; }
-}
-
-function Await ( options ) {
-	var tpl = options.template;
-
-	var success = extract( tpl, THEN, 'value' );
-	var error = extract( tpl, CATCH, 'error' );
-	var pending = extract( tpl, SECTION );
-	var undef = extract( tpl, ELSE );
-
-	var opts = assign( {}, options, {
-		template: { t: ELEMENT, m: [{ t: ATTRIBUTE, n: 'for', f: [{ t: INTERPOLATOR, r: tpl.r, rx: tpl.rx, x: tpl.x }] }] },
-		macro: function macro ( handle, attrs ) {
-			handle.aliasLocal( '__await' );
-
-			function update ( attrs ) {
-				if ( attrs.for && isFunction( attrs.for.then ) ) {
-					handle.setTemplate( pending );
-
-					attrs.for.then( function (v) {
-						handle.set( '@local.value', v );
-						handle.setTemplate( success );
-					}, function (e) {
-						handle.set( '@local.error', e );
-						handle.setTemplate( error );
-					});
-				} else if ( attrs.for === undefined ) {
-					handle.setTemplate( undef );
-				} else {
-					handle.set( '@local.value', attrs.for );
-					handle.setTemplate( success );
-				}
-			}
-
-			update( attrs );
-
-			return {
-				update: update
-			};
-		}
-	});
-
-	opts.macro.attributes = [ 'for' ];
-
-	return new Partial( opts );
-}
-
 var constructors = {};
 constructors[ ALIAS ] = Alias;
 constructors[ ANCHOR ] = Component;
-constructors[ AWAIT ] = Await;
 constructors[ DOCTYPE ] = Doctype;
 constructors[ INTERPOLATOR ] = Interpolator;
 constructors[ PARTIAL ] = Partial;
@@ -17082,7 +16936,7 @@ function initialise ( ractive, userOptions, options ) {
 
 	initHook.begin( ractive );
 
-	var fragment = ractive.fragment = createFragment$1( ractive, options );
+	var fragment = ractive.fragment = createFragment( ractive, options );
 	if ( fragment ) { fragment.bind( ractive.viewmodel ); }
 
 	initHook.end( ractive );
@@ -17109,7 +16963,7 @@ function initialise ( ractive, userOptions, options ) {
 	}
 }
 
-function createFragment$1 ( ractive, options ) {
+function createFragment ( ractive, options ) {
 	if ( options === void 0 ) options = {};
 
 	if ( ractive.template ) {
@@ -17139,7 +16993,7 @@ function render$1 ( ractive, target, anchor, occupants ) {
 
 	if ( ractive.destroyed ) {
 		ractive.destroyed = false;
-		ractive.fragment = createFragment$1( ractive ).bind( ractive.viewmodel );
+		ractive.fragment = createFragment( ractive ).bind( ractive.viewmodel );
 	}
 
 	anchor = getElement( anchor ) || ractive.anchor;
@@ -17293,7 +17147,7 @@ function collect( source, name, attr, dest ) {
 	});
 }
 
-function resetPartial ( name, partial ) {
+var resetPartial = function ( name, partial ) {
 	var collection = [];
 	collect( this.fragment.items, name, false, collection );
 
@@ -17305,7 +17159,7 @@ function resetPartial ( name, partial ) {
 	runloop.end();
 
 	return promise;
-}
+};
 
 // TODO should resetTemplate be asynchronous? i.e. should it be a case
 // of outro, update template, intro? I reckon probably not, since that
@@ -17487,22 +17341,7 @@ function Ractive$updateModel ( keypath, cascade ) {
 	return promise;
 }
 
-function use () {
-	var this$1 = this;
-	var plugins = [], len = arguments.length;
-	while ( len-- ) plugins[ len ] = arguments[ len ];
-
-	plugins.forEach( function (p) {
-		p({
-			proto: this$1,
-			Ractive: this$1.constructor.Ractive,
-			instance: this$1
-		});
-	});
-	return this;
-}
-
-var proto$7 = {
+var proto = {
 	add: Ractive$add,
 	animate: Ractive$animate,
 	attachChild: attachChild,
@@ -17516,8 +17355,8 @@ var proto$7 = {
 	findParent: Ractive$findParent,
 	fire: Ractive$fire,
 	get: Ractive$get,
-	getContext: getContext$2,
-	getNodeInfo: getNodeInfo$1,
+	getContext: getContext$1,
+	getNodeInfo: getNodeInfo$$1,
 	insert: Ractive$insert,
 	link: link,
 	observe: observe,
@@ -17550,11 +17389,10 @@ var proto$7 = {
 	unrender: Ractive$unrender,
 	unshift: unshift,
 	update: Ractive$update,
-	updateModel: Ractive$updateModel,
-	use: use
+	updateModel: Ractive$updateModel
 };
 
-defineProperty( proto$7, 'target', {
+defineProperty( proto, 'target', {
 	get: function get() { return this.el; }
 });
 
@@ -17575,21 +17413,6 @@ function sharedSet ( keypath, value, options ) {
 
 function sharedGet ( keypath ) {
 	return SharedModel$1.joinAll( splitKeypath( keypath ) ).get();
-}
-
-function use$1 () {
-	var this$1 = this;
-	var plugins = [], len = arguments.length;
-	while ( len-- ) plugins[ len ] = arguments[ len ];
-
-	plugins.forEach( function (p) {
-		p({
-			proto: this$1.prototype,
-			Ractive: this$1.Ractive,
-			instance: this$1
-		});
-	});
-	return this;
 }
 
 var callsSuper = /super\s*\(|\.call\s*\(\s*this/;
@@ -17652,7 +17475,6 @@ function extendOne ( Parent, options, Target ) {
 		extend: { value: extend, writable: true, configurable: true },
 		extendWith: { value: extendWith, writable: true, configurable: true },
 		extensions: { value: [] },
-		use: { value: use$1 },
 
 		isInstance: { value: isInstance },
 
@@ -17761,10 +17583,10 @@ if ( win && !win.Ractive ) {
 	/* istanbul ignore next */
 	if ( ~opts$1.indexOf( 'ForceGlobal' ) ) { win.Ractive = Ractive; }
 } else if ( win ) {
-	warn( "Ractive already appears to be loaded while loading 1.0.0-edge." );
+	warn( "Ractive already appears to be loaded while loading 0.9.13." );
 }
 
-assign( Ractive.prototype, proto$7, defaults );
+assign( Ractive.prototype, proto, defaults );
 Ractive.prototype.constructor = Ractive;
 
 // alias prototype as `defaults`
@@ -17787,9 +17609,9 @@ defineProperties( Ractive, {
 	escapeKey:        { value: escapeKey },
 	evalObjectString: { value: parseJSON },
 	findPlugin:       { value: findPlugin },
-	getContext:       { value: getContext$1 },
+	getContext:       { value: getContext$2 },
 	getCSS:           { value: getCSS },
-	getNodeInfo:      { value: getNodeInfo },
+	getNodeInfo:      { value: getNodeInfo$1 },
 	isInstance:       { value: isInstance },
 	joinKeys:         { value: joinKeys },
 	macro:            { value: macro },
@@ -17798,14 +17620,13 @@ defineProperties( Ractive, {
 	splitKeypath:     { value: splitKeypath$1 },
 	// sharedSet and styleSet are in _extend because circular refs
 	unescapeKey:      { value: unescapeKey },
-	use:              { value: use$1 },
 
 	// support
 	enhance:          { writable: true, value: false },
 	svg:              { value: svg },
 
 	// version
-	VERSION:          { value: '1.0.0-edge' },
+	VERSION:          { value: '0.9.13' },
 
 	// plugins
 	adaptors:         { writable: true, value: {} },
