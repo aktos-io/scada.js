@@ -88,11 +88,17 @@ Ractive.components['dropdown'] = Ractive.extend do
                             if @get \debug
                                 @actor.c-log "Found #{value-of-key} in .[#{keyField}]", selected, selected[keyField]
 
-                            @set \selected-key, selected[keyField]
 
-                            @fire \select, c, selected
-                        @set \item, selected
-                        @set \selected-name, selected[nameField]
+                            if @has-event \select
+                                @fire \select, c, selected, (err) ~>
+                                    # if there is an error, just rollback
+                                    debugger
+                            else
+                                @set \selected-key, selected[keyField]
+
+                        unless @has-event \select
+                            @set \item, selected
+                            @set \selected-name, selected[nameField]
 
 
         shandler = null
@@ -146,7 +152,8 @@ Ractive.components['dropdown'] = Ractive.extend do
                 if _new
                     unless find (.[keyField] is _new), @get \dataReduced
                         @push \dataReduced, find (.[keyField] is _new), @get \data
-                    update-dropdown _new
+                    sleep 10ms ~>
+                        update-dropdown _new
                     set-item _new
                 else
                     # clear the dropdown
