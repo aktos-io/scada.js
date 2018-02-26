@@ -87,13 +87,9 @@ Ractive.components['dropdown'] = Ractive.extend do
                             @actor.c-log "selected key is really changed to:", selected[keyField]
                             if @get \debug
                                 @actor.c-log "Found #{value-of-key} in .[#{keyField}]", selected, selected[keyField]
-
-
                             if @get \async
-                                debugger
                                 @fire \select, c, selected
                             else
-                                debugger
                                 @set \selected-key, selected[keyField]
 
                         unless @get \async
