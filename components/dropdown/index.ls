@@ -89,14 +89,14 @@ Ractive.components['dropdown'] = Ractive.extend do
                                 @actor.c-log "Found #{value-of-key} in .[#{keyField}]", selected, selected[keyField]
 
 
-                            if @has-event \select
-                                @fire \select, c, selected, (err) ~>
-                                    # if there is an error, just rollback
-                                    debugger
+                            if @get \async
+                                debugger
+                                @fire \select, c, selected
                             else
+                                debugger
                                 @set \selected-key, selected[keyField]
 
-                        unless @has-event \select
+                        unless @get \async
                             @set \item, selected
                             @set \selected-name, selected[nameField]
 
