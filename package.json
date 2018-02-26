@@ -23,7 +23,7 @@
     "jquery": "^3.2.1",
     "livescript": "~1.4.0",
     "marked": "^0.3.12",
-    "mathjs": "^3.20.2",
+    "mathjs": "^4.0.0",
     "moment": "^2.19.1",
     "nouislider": "^10.0.0",
     "prelude-ls": "^1.1.2",
