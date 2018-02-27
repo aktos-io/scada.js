@@ -88,7 +88,11 @@ Ractive.components['dropdown'] = Ractive.extend do
                             if @get \debug
                                 @actor.c-log "Found #{value-of-key} in .[#{keyField}]", selected, selected[keyField]
                             if @get \async
-                                @fire \select, c, selected
+                                @fire \select, c, selected, (err) ~>
+                                    unless err
+                                        @set \item, selected
+                                    else
+                                        @actor.c-err "Error reported for dropdown callback: ", err
                             else
                                 @set \selected-key, selected[keyField]
 
@@ -146,11 +150,14 @@ Ractive.components['dropdown'] = Ractive.extend do
                 if @get \debug
                     @actor.c-log "selected key set to:", _new
                 if _new
-                    unless find (.[keyField] is _new), @get \dataReduced
-                        @push \dataReduced, find (.[keyField] is _new), @get \data
+                    item = find (.[keyField] is _new), @get \dataReduced
+                    unless item
+                        item = find (.[keyField] is _new), @get \data
+                        @push \dataReduced, item
+                    @set \item, item
                     sleep 10ms ~>
+                        # Workaround for dropdown update bug
                         update-dropdown _new
-                    set-item _new
                 else
                     # clear the dropdown
                     @set \item, {}
