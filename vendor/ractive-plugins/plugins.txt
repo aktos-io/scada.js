@@ -1,3 +1,4 @@
 https://cdn.jsdelivr.net/npm/ractive-transitions-fade
 https://cdn.jsdelivr.net/npm/ractive-transitions-slide
 https://cdn.jsdelivr.net/npm/ractive-transitions-fly
+https://cdn.jsdelivr.net/npm/ractive-events-keys@0.2.1/dist/ractive-events-keys.min.js
