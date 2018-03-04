@@ -50,7 +50,7 @@ Ractive.components['ack-button'] = Ractive.extend do
                 @actor.send-wid {ctx: c}
 
                 @fire \buttonclick, c, val
-
+                @fire \click, c
                 # stop the event propogation
                 return false
 
