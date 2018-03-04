@@ -11,7 +11,7 @@
     |    class='ui button {{#if disabled}}disabled{{/if}} {{#if active}}active{{/if}} {{ class }}'
     |    {{#if ! disabled}}on-click="_click" {{/if}}
     |    style='{{style}}'
-    |    as-popup="tooltip" >
+    |    title="{{tooltip}}" >
     |    {{yield}}
     | </div>
 +endif

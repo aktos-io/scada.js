@@ -59,7 +59,7 @@ Ractive.components["a"] = Ractive.extend do
                 "
             on-click="_click"
             data-id="{{~/['data-id']}}"
-            as-popup="tooltip"
+            title="{{tooltip}}"
             >
             {{yield}}
         </a>
