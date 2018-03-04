@@ -5,6 +5,12 @@ Design considerations (TO BE COMPLETED)
 
     1. If data is not available but `selected-key` is set, dropdown should display
     a loading icon
+
+
+# Testing procedure:
+
+1. Place 2 dropdown side by side (exact copy of each other)
+2. Change one, expect the other to be exactly the same of the one
 """
 require! 'prelude-ls': {find, empty, take}
 require! 'actors': {RactiveActor}
@@ -27,30 +33,19 @@ Ractive.components['dropdown'] = Ractive.extend do
             name: "dropdown.#{@_guid}"
             debug: yes
 
-        if @get \key
-            @set \keyField, that
+        # map attributes to classes
+        for attr, cls of {\multiple, \inline, \disabled, 'fit-width': \fluid}
+            if @get attr then @set \class, "#{@get 'class'} #{cls}"
 
-        if @get \name
-            @set \nameField, that
-
-        if @get \disabled-mode
-            @set \class, "#{@get 'class'} disabled"
-
-        #@link \selected-key, \selected
+        if @get \key => @set \keyField, that
+        if @get \name => @set \nameField, that
 
     onrender: ->
         dd = $ @find '.ui.dropdown'
-        if @get \multiple
-            dd.add-class \multiple
-
-        dd.add-class \inline if @get \inline
-        dd.add-class \fluid if @get \fit-width
         keyField = @get \keyField
         nameField = @get \nameField
-
         external-change = no
         update-dropdown = (_new) ~>
-            debugger if @get \debug
             @actor.log.log "#{@_guid}: selected is changed: ", _new if @get \debug
             external-change := yes
             if @get \multiple
@@ -115,6 +110,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                     @set \loading, no
                     @set \dataReduced, small-part-of data
                     @set \sifter, new Sifter(data)
+                    dd.dropdown 'refresh'
 
                     # Update dropdown visually when data is updated
                     if selected = @get \selected-key
@@ -128,17 +124,22 @@ Ractive.components['dropdown'] = Ractive.extend do
             .dropdown 'restore defaults'
             .dropdown 'setting', do
                 forceSelection: no
+                allow-additions: @get \allow-additions
                 full-text-search: (text) ~>
                     data = @get \data
-                    if text
-                        result = @get \sifter .search asciifold(text), do
-                            fields: ['id', 'name', 'description']
-                            sort: [{field: 'name', direction: 'asc'}]
-                            nesting: no
-                            conjunction: "and"
-                        @set \dataReduced, [data[..id] for small-part-of result.items]
+                    if @get \multiple
+                        # FIXME: Handle search term
+                        null
                     else
-                        @set \dataReduced, small-part-of data
+                        if text
+                            result = @get \sifter .search asciifold(text), do
+                                fields: ['id', 'name', 'description']
+                                sort: [{field: 'name', direction: 'asc'}]
+                                nesting: no
+                                conjunction: "and"
+                            @set \dataReduced, [data[..id] for small-part-of result.items]
+                        else
+                            @set \dataReduced, small-part-of data
 
                 on-change: (value, text, selected) ~>
                     return if external-change
@@ -154,7 +155,6 @@ Ractive.components['dropdown'] = Ractive.extend do
 
         if @get \multiple
             shandler = @observe \selected-key, (_new, old) ~>
-                debugger
                 if typeof! _new is \Array
                     if JSON.stringify(_new or []) isnt JSON.stringify(old or [])
                         if not empty _new
@@ -186,6 +186,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                 dd.dropdown 'destroy'
 
     data: ->
+        'allow-additions': no
         data: undefined
         dataReduced: []
         keyField: \id
