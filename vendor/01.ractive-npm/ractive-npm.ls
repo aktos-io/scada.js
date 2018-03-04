@@ -6,13 +6,16 @@ window.Ractive = Ractive
 
 sleep = (ms, f) -> set-timeout f, ms
 
-# Add modal support by default 
+# Add modal support by default
 require! 'ractive-modal': RactiveModal
 Ractive.components.modal = RactiveModal
 
 # Helper methods
 # ---------------------------------------------
+
+# DEPRECATED
 Ractive.defaults.has-event = (event-name) ->
+    console.warn "Deprecated: Use ractive.hasListener"
     fn = (a) ->
         a.t is 70 and a.n.indexOf(event-name) > -1
     return @component and @component.template.m.find fn
