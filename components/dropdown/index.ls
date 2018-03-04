@@ -41,21 +41,22 @@ Ractive.components['dropdown'] = Ractive.extend do
         if @get \name => @set \nameField, that
 
     onrender: ->
+        const c = @getContext @target .getParent yes
+        c.refire = yes
         dd = $ @find '.ui.dropdown'
         keyField = @get \keyField
         nameField = @get \nameField
         external-change = no
+        shandler = null
+
         update-dropdown = (_new) ~>
-            @actor.log.log "#{@_guid}: selected is changed: ", _new if @get \debug
+            if @get \debug => @actor.log.log "#{@_guid}: selected is changed: ", _new
             external-change := yes
             if @get \multiple
                 dd.dropdown 'set exactly', _new
             else
                 dd.dropdown 'set selected', _new
             external-change := no
-
-        const c = @getContext @target .getParent yes
-        c.refire = yes
 
         set-item = (value-of-key) ~>
             if @get \data
@@ -69,12 +70,11 @@ Ractive.components['dropdown'] = Ractive.extend do
                             items.push that
                             selected-keys.push that[keyField]
                             selected-names.push that[nameField]
-                            if @get \debug
-                                @actor.c-log "Found #{val} in .[#{keyField}]", that[keyField]
+                            if @get \debug => @actor.c-log "Found #{val} in .[#{keyField}]", that[keyField]
                         else
                             # how can't we find the item?
                             debugger
-                    debugger if @get \debug
+                    if @get \debug => debugger
                     @set \item, unless empty items => items else [{}]
                     @set \selected-name, selected-names
                     @set \selected-key, selected-keys
@@ -84,9 +84,8 @@ Ractive.components['dropdown'] = Ractive.extend do
                     if find (.[keyField] is value-of-key), data
                         selected = that
                         if @get('selected-key') isnt that[keyField]
-                            @actor.c-log "selected key is really changed to:", selected[keyField]
-                            if @get \debug
-                                @actor.c-log "Found #{value-of-key} in .[#{keyField}]", selected, selected[keyField]
+                            if @get \debug => @actor.c-log "selected key is changed to:", selected[keyField]
+                            if @get \debug => @actor.c-log "Found #{value-of-key} in .[#{keyField}]", selected, selected[keyField]
                             if @get \async
                                 @fire \select, c, selected, (err) ~>
                                     unless err
@@ -99,10 +98,40 @@ Ractive.components['dropdown'] = Ractive.extend do
                         unless @get \async
                             @set \item, selected
                             @set \selected-name, selected[nameField]
-        shandler = null
-        @observe \data, (data) ~>
-            @actor.log.log "data is changed: ", data if @get \debug
+        dd
+            .dropdown 'destroy'
+            .dropdown 'restore defaults'
+            .dropdown 'setting', do
+                forceSelection: no
+                #allow-additions: @get \allow-additions ## DO NOT SET THIS; SEMANTICS' NOT UX FRIENDLY
+                full-text-search: (text) ~>
+                    @set \search-term, text 
+                    data = @get \data
+                    if text
+                        #@actor.c-log "Dropdown (#{@_guid}) : searching for #{text}..."
+                        result = @get \sifter .search asciifold(text), do
+                            fields: @get \search-fields
+                            sort: [{field: nameField, direction: 'asc'}]
+                            nesting: no
+                            conjunction: "and"
+                        @set \dataReduced, [data[..id] for small-part-of(result.items)]
+                        #@actor.c-log "Dropdown (#{@_guid}) : data reduced: ", [..id for @get \dataReduced]
+                    else
+                        #@actor.c-log "Dropdown (#{@_guid}) : searchTerm is empty"
+                        @set \dataReduced, small-part-of data
+                on-change: (value, text, selected) ~>
+                    return if external-change
+                    shandler?.silence!
+                    if @get \debug => @actor.c-log "Dropdown: #{@_guid}: dropdown is changed: ", value
+                    if @get \multiple
+                        set-item unless value? => [] else value.split ','
+                    else
+                        set-item value
+                    shandler?.resume!
+                    @set \dataReduced, small-part-of @get \data
 
+        @observe \data, (data) ~>
+            if @get \debug => @actor.c-log "Dropdown (#{@_guid}): data is changed: ", data
             do  # show loading icon while data is being fetched
                 @set \loading, yes
                 <~ sleep 300ms
@@ -110,8 +139,6 @@ Ractive.components['dropdown'] = Ractive.extend do
                     @set \loading, no
                     @set \dataReduced, small-part-of data
                     @set \sifter, new Sifter(data)
-                    dd.dropdown 'refresh'
-
                     # Update dropdown visually when data is updated
                     if selected = @get \selected-key
                         if @get \multiple
@@ -120,38 +147,6 @@ Ractive.components['dropdown'] = Ractive.extend do
                         else
                             update-dropdown selected
                             set-item selected
-        dd
-            .dropdown 'restore defaults'
-            .dropdown 'setting', do
-                forceSelection: no
-                allow-additions: @get \allow-additions
-                full-text-search: (text) ~>
-                    data = @get \data
-                    if @get \multiple
-                        # FIXME: Handle search term
-                        null
-                    else
-                        if text
-                            result = @get \sifter .search asciifold(text), do
-                                fields: ['id', 'name', 'description']
-                                sort: [{field: 'name', direction: 'asc'}]
-                                nesting: no
-                                conjunction: "and"
-                            @set \dataReduced, [data[..id] for small-part-of result.items]
-                        else
-                            @set \dataReduced, small-part-of data
-
-                on-change: (value, text, selected) ~>
-                    return if external-change
-                    shandler?.silence!
-                    @actor.log.log "#{@_guid}: dropdown is changed: ", value if @get \debug
-                    if @get \multiple
-                        @actor.c-log "#{@_guid}: multiple: value: ", value
-                        set-item unless value? => [] else value.split ','
-                    else
-                        set-item value
-                    shandler?.resume!
-                    @set \dataReduced, small-part-of @get \data
 
         if @get \multiple
             shandler = @observe \selected-key, (_new, old) ~>
@@ -165,8 +160,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                             dd.dropdown 'restore defaults'
         else
             shandler = @observe \selected-key, (_new) ~>
-                if @get \debug
-                    @actor.c-log "selected key set to:", _new
+                if @get \debug => @actor.c-log "selected key set to:", _new
                 if _new
                     item = find (.[keyField] is _new), @get \dataReduced
                     unless item
@@ -186,7 +180,9 @@ Ractive.components['dropdown'] = Ractive.extend do
                 dd.dropdown 'destroy'
 
     data: ->
-        'allow-additions': no
+        'allow-additions': no  # TODO
+        'search-fields': <[ id name description ]>
+        'search-term': ''
         data: undefined
         dataReduced: []
         keyField: \id
