@@ -782,9 +782,11 @@ $.fn.dropdown = function(parameters) {
             beginsWithRegExp = new RegExp('^' + escapedTerm, 'igm')
           ;
           // avoid loop if we're matching nothing
+          // Start of custom search function patch
           if (typeof settings.fullTextSearch === 'function') {
             settings.fullTextSearch(searchTerm);
           }
+          // End of custom search function patch
            else if( module.has.query() ) {
             results = [];
 
