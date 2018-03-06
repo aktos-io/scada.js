@@ -99,13 +99,12 @@ Ractive.components['dropdown'] = Ractive.extend do
                             @set \item, selected
                             @set \selected-name, selected[nameField]
         dd
-            .dropdown 'destroy'
             .dropdown 'restore defaults'
             .dropdown 'setting', do
                 forceSelection: no
                 #allow-additions: @get \allow-additions ## DO NOT SET THIS; SEMANTICS' NOT UX FRIENDLY
                 full-text-search: (text) ~>
-                    @set \search-term, text 
+                    @set \search-term, text
                     data = @get \data
                     if text
                         #@actor.c-log "Dropdown (#{@_guid}) : searching for #{text}..."
@@ -121,13 +120,11 @@ Ractive.components['dropdown'] = Ractive.extend do
                         @set \dataReduced, small-part-of data
                 on-change: (value, text, selected) ~>
                     return if external-change
-                    shandler?.silence!
                     if @get \debug => @actor.c-log "Dropdown: #{@_guid}: dropdown is changed: ", value
                     if @get \multiple
                         set-item unless value? => [] else value.split ','
                     else
                         set-item value
-                    shandler?.resume!
                     @set \dataReduced, small-part-of @get \data
 
         @observe \data, (data) ~>
@@ -161,6 +158,8 @@ Ractive.components['dropdown'] = Ractive.extend do
         else
             shandler = @observe \selected-key, (_new) ~>
                 if @get \debug => @actor.c-log "selected key set to:", _new
+
+                @actor.c-log "DROPDOWN: selected key set to:", _new
                 if _new
                     item = find (.[keyField] is _new), @get \dataReduced
                     unless item
