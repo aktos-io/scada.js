@@ -139,6 +139,9 @@ for-browserify =
     "#{paths.lib-src}/**/*.ls"
     "#{paths.lib-src}/**/*.js"
 
+    # files in project_root/lib
+    "#{paths.client-root}/lib/**/*.ls"
+    "#{paths.client-root}/lib/**/*.js"
 
 
 # Organize Tasks
@@ -209,6 +212,7 @@ bundler = browserify do
         paths.lib-src
         paths.client-webapps
         "#{__dirname}/node_modules"
+        "#{__dirname}/.."
     extensions: <[ .ls ]>
     cache: browserify-cache
     package-cache: {}
