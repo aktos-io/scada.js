@@ -33,3 +33,9 @@ for f in $(find dist -name '*.js' -or -name '*.css'); do
     fi
     rm $f
 done
+
+echo "removing bundled js and css files"
+rm dist/semantic.min.*
+
+echo "removing dropdown.min.js regarding to the patched version"
+rm dist/components/dropdown.min.js
