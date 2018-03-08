@@ -8,9 +8,6 @@ require! 'actors': {RactiveActor}
 require! 'sifter': Sifter
 require! './sifter-workaround': {asciifold}
 
-x = asciifold("çalışöğünÇALIŞÖĞÜNİİİ")
-
-
 Ractive.components['data-table'] = Ractive.extend do
     template: RACTIVE_PREPARSE('data-table.pug')
     isolated: yes
@@ -126,9 +123,12 @@ Ractive.components['data-table'] = Ractive.extend do
                         nesting: yes
                         conjunction: "and"
 
+                    x = []
                     for result.items
-                        @get \tableview .[..id]
-
+                        x.push (@get \tableview .[..id])
+                    if @get \clickedIndex
+                        x.push (find (.id is that), @get \tableview)
+                    x
                 else
                     @get \tableview
                 @set \currPage, 0
