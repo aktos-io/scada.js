@@ -3,7 +3,7 @@
 DIR=$(dirname "$(readlink -f "$0")")
 
 cd "$DIR/../.."
-npm i ractive@latest
+npm i --save ractive@edge
 npm i
 cd $DIR
 
