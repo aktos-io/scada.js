@@ -7,9 +7,7 @@
                 |
                 | {{#if title}}{{title}}{{else}}Debugging Object{{/if}}
 
-            textarea(style="white-space: pre-wrap") {{ objFormatted }}
-
-
+            json-edit(value="{{obj}}")
 +else 
     .ui.mini.button.basic.circular.icon(on-click="@.toggle('show')" title="{{title}}") 
         i.info.icon 
