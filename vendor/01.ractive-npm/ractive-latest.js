@@ -199,8 +199,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 (function (global){
 /*
 	Ractive.js v1.0.0-edge
-	Build: 3f974c00f0fb0ff549094c283b3f880442119058
-	Date: Wed Mar 07 2018 01:55:51 GMT+0000 (UTC)
+	Build: 33d74b4c0713fdcbdba6e8b6202c2726e00410e0
+	Date: Tue Mar 13 2018 15:45:13 GMT+0000 (UTC)
 	Website: http://ractivejs.org
 	License: MIT
 */
@@ -9183,7 +9183,7 @@ function applyChanges(component, apply) {
 }
 
 function recomputeCSS(component) {
-  var css = component._css;
+  var css = component.css;
 
   if (!isFunction(css)) { return; }
 
@@ -9269,6 +9269,8 @@ function gatherIds(start) {
 }
 
 function evalCSS(component, css) {
+  if (isString(css)) { return css; }
+
   var cssData = component.cssData;
   var model = component._cssModel;
   var data = function data(path) {
@@ -9285,17 +9287,30 @@ function initCSS(options, target, proto) {
     isString(options.css) && !hasCurly.test(options.css)
       ? getElement(options.css) || options.css
       : options.css;
+  var cssProp = css;
 
   var id = options.cssId || uuid();
 
   if (isObjectType(css)) {
     css = 'textContent' in css ? css.textContent : css.innerHTML;
+    cssProp = css;
   } else if (isFunction(css)) {
-    target._css = options.css;
+    cssProp = css;
     css = evalCSS(target, css);
   }
 
   var def = (target._cssDef = { transform: !options.noCssTransform });
+
+  defineProperty(target, 'css', {
+    get: function get() {
+      return cssProp;
+    },
+    set: function set(next) {
+      cssProp = next;
+      var css = evalCSS(target, cssProp);
+      def.styles = def.transform ? transformCss(css, id) : css;
+    }
+  });
 
   def.styles = def.transform ? transformCss(css, id) : css;
   def.id = proto.cssId = id;
@@ -9613,9 +9628,7 @@ Registry__proto__.configure = function configure (Parent, target, options) {
 
   var registry = create(Parent[name]);
 
-  for (var key in option) {
-    registry[key] = option[key];
-  }
+  assign(registry, option);
 
   target[name] = registry;
 };
@@ -11844,6 +11857,11 @@ function construct(ractive, options) {
     ractive.parent.delegate !== ractive.delegate
   ) {
     ractive.delegate = false;
+  }
+
+  // plugins that need to run at construct
+  if (isArray(options.use)) {
+    ractive.use.apply(ractive, options.use.filter(function (p) { return p.construct; }));
   }
 
   // TODO don't allow `onconstruct` with `new Ractive()`, there's no need for it
@@ -17646,11 +17664,15 @@ var Fragment = function Fragment(options) {
   this.ractive = options.ractive || (this.isRoot ? options.owner : this.parent.ractive);
 
   this.componentParent = this.isRoot && this.ractive.component ? this.ractive.component.up : null;
-  this.delegate =
-    (this.parent
-      ? this.parent.delegate
-      : this.componentParent && this.componentParent.delegate) ||
-    (this.owner.containerFragment && this.owner.containerFragment.delegate);
+  if (!this.isRoot || this.ractive.delegate) {
+    this.delegate =
+      (this.parent
+        ? this.parent.delegate
+        : this.componentParent && this.componentParent.delegate) ||
+      (this.owner.containerFragment && this.owner.containerFragment.delegate);
+  } else {
+    this.delegate = false;
+  }
 
   this.context = null;
   this.rendered = false;
@@ -18013,7 +18035,8 @@ function initialise(ractive, userOptions, options) {
   subscribe(ractive, userOptions, 'observe');
 
   // call any passed in plugins
-  if (isArray(userOptions.use)) { ractive.use.apply(ractive, userOptions.use); }
+  if (isArray(userOptions.use))
+    { ractive.use.apply(ractive, userOptions.use.filter(function (p) { return !p.construct; })); }
 
   if (fragment) {
     // render automatically ( if `el` is specified )
@@ -18499,6 +18522,44 @@ function styleGet(keypath) {
   return this._cssModel.joinAll(splitKeypath(keypath)).get();
 }
 
+var styles = [];
+
+function addStyle(id, css) {
+  if (styles.find(function (s) { return s.id === id; }))
+    { throw new Error(("Extra styles with the id '" + id + "' have already been added.")); }
+  styles.push({ id: id, css: css });
+
+  if (!this.css) {
+    Object.defineProperty(this, 'css', { configurable: false, writable: false, value: buildCSS });
+  }
+
+  if (!this._cssDef) {
+    Object.defineProperty(this, '_cssDef', {
+      configurable: false,
+      writable: false,
+      value: {
+        transform: false,
+        id: 'Ractive.addStyle'
+      }
+    });
+
+    addCSS(this._cssDef);
+  }
+
+  recomputeCSS(this);
+  applyCSS(true);
+}
+
+function buildCSS(data) {
+  return styles
+    .map(function (s) { return "\n/* ---- extra style " + (s.id) + " */\n" + (isFunction(s.css) ? s.css(data) : s.css); })
+    .join('');
+}
+
+function hasStyle(id) {
+  return !!styles.find(function (s) { return s.id === id; });
+}
+
 function sharedSet(keypath, value, options) {
   var opts = isObjectType(keypath) ? value : options;
   var model = SharedModel$1;
@@ -18628,8 +18689,7 @@ function extendOne(Parent, options, Target) {
 
   dataConfigurator.extend(Parent, proto, options, Child);
 
-  proto.computed = assign(create(Parent.prototype.computed), options.computed);
-  proto.helpers = assign(create(Parent.prototype.helpers), options.helpers);
+  defineProperty(Child, 'helpers', { writable: true, value: proto.helpers });
 
   if (isArray(options.use)) { Child.use.apply(Child, options.use); }
 
@@ -18640,7 +18700,9 @@ defineProperties(Ractive, {
   sharedGet: { value: sharedGet },
   sharedSet: { value: sharedSet },
   styleGet: { configurable: true, value: styleGet.bind(Ractive) },
-  styleSet: { configurable: true, value: setCSSData.bind(Ractive) }
+  styleSet: { configurable: true, value: setCSSData.bind(Ractive) },
+  addCSS: { configurable: false, value: addStyle.bind(Ractive) },
+  hasCSS: { configurable: false, value: hasStyle.bind(Ractive) }
 });
 
 function macro(fn, opts) {
@@ -18752,6 +18814,7 @@ defineProperties(Ractive, {
   easing: { writable: true, value: easing },
   events: { writable: true, value: {} },
   extensions: { value: [] },
+  helpers: { writable: true, value: defaults.helpers },
   interpolators: { writable: true, value: interpolators },
   partials: { writable: true, value: {} },
   transitions: { writable: true, value: {} },
@@ -18769,6 +18832,7 @@ defineProperties(Ractive, {
   Context: { value: extern.Context.prototype }
 });
 
+// cssData must already be in place
 defineProperty(Ractive, '_cssModel', {
   configurable: true,
   value: new CSSModel(Ractive)
@@ -18798,6 +18862,7 @@ Ractive.defaults.hasEvent = function(eventName){
   };
   return this.component && this.component.template.m.find(fn);
 };
+/* requires ractive edge for now */
 
 function hasAttribute({ proto }) {
 	proto.hasAttribute = function hasAttribute(name) {
@@ -18807,6 +18872,7 @@ function hasAttribute({ proto }) {
 
 Ractive.use(hasAttribute);
 
+/**/
 Ractive.prototype['delete'] = function(root, key){
   /***************************************************************************
   Usage:
