@@ -25,7 +25,7 @@ ScadaJS is a library to create [Distributed](https://en.wikipedia.org/wiki/Distr
      * CouchDB
      * RaspberryPi IO
      * and many others...
-   * Supports variety of [transports](https://github.com/aktos-io/aktos-dcs-node/tree/master/transports], including:
+   * Supports variety of [transports](https://github.com/aktos-io/aktos-dcs-node/tree/master/transports), including:
      * Serial port 
      * Websockets
      * Ethernet (TCP/UDP)
