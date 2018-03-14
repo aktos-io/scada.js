@@ -19,11 +19,10 @@ Ractive.components['checkbox'] = Ractive.extend do
             if typeof! state in <[ Undefined Null ]>
                 @set \checkState, 'undefined'
             else
+                if state is \false
+                    state = false
                 @set \checked, state
-                @set \checkState, if state
-                    \checked
-                else
-                    \unchecked
+                @set \checkState, if state then \checked else \unchecked
                 ack-button.fire \state, \done
 
         if @get \topic
@@ -34,8 +33,11 @@ Ractive.components['checkbox'] = Ractive.extend do
 
             ack-button.actor.request-update that
 
-        @observe \checked, (checked) ~>
-            set-state checked
+        @observe \checked, set-state
+
+        if typeof! @get(\checked) is \Undefined
+            if @get \initial
+                set-state that
 
         @on do
             _statechange: (ctx) ->
@@ -71,11 +73,8 @@ Ractive.components['checkbox'] = Ractive.extend do
                     debugger if @debug
                     set-state if @get \checked => 0 else 1
 
-            if typeof! @get(\checked) is \Undefined
-                if @get \initial 
-                    set-state that
-
     data: ->
         checked: undefined
         checkState: 'undefined'
         transparent: no
+        initial: null
