@@ -57,7 +57,7 @@ Ractive.components['login-button'] = Ractive.extend do
 
         @on do
             click: ->
-                @find-component 'ack-button' .fire \buttonclick
+                @find-component 'ack-button' .fire \click
 
             do-login: (ev) ->
                 ev.component?.fire \state, \doing
