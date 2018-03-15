@@ -17,13 +17,22 @@ ScadaJS is a library to create [Distributed](https://en.wikipedia.org/wiki/Distr
 * Supports cross platform development (see: [supported development platforms](./doc/supported-development-platforms.md))
 * Integrated with [aktos-dcs-node](https://github.com/aktos-io/aktos-dcs-node), the NodeJS port of aktos-dcs. 
    * [Microservices](https://en.wikipedia.org/wiki/Microservices) architecture is supported out of the box.
-   * Supports variety of network and industrial protocol connectors, including
-     * Simple JSON over TCP
-     * Long Polling
-     * Modbus (TCP, RTU, ...)
-     * Siemens Comm
+   * Supports variety of [connectors](https://github.com/aktos-io/aktos-dcs-node/tree/master/connectors), including:
+     * Modbus
      * Omron FINS, Hostlink, etc...
+     * Beckhoff ADS
+     * Siemens Comm
+     * CouchDB
+     * RaspberryPi IO
      * and many others...
+   * Supports variety of [transports](https://github.com/aktos-io/aktos-dcs-node/tree/master/transports), including:
+     * Serial port 
+     * Websockets
+     * Ethernet (TCP/UDP)
+     * EtherCAT (*planned)
+     * E-mail
+     * Webservice 
+     * SMS
 
    * Compatible with aktos.io hardwares, such as [Scada Gateway](https://aktos.io/scada/pdf).
    * Supports any number and type (SQL, NoSQL) of databases in a single application at the same time.
