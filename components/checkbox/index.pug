@@ -1,5 +1,5 @@
 ack-button.aea-checkbox(
-    on-buttonclick="_statechange"
+    on-click="_statechange"
     class!="                        \
         {{^transparent}}basic{{/}}  \
         gray {{ class }}            \
@@ -11,6 +11,7 @@ ack-button.aea-checkbox(
     style="{{ style }} {{#transparent}}background-color: transparent;{{/}} text-align: left; "
     type="{{type}}"
     custom
+    disabled="{{disabled}}"
     )
     +iff("checkState === 'checked'")
         i.icon.checkmark.box

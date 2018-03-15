@@ -37,13 +37,13 @@ include ./controls.pug
                                     | Filtered Content 
                                 p.
                                     You are seeing a filtered content. 
-                                    #[btn.blue.mini(on-buttonclick="setFilter" value="all") #[i.remove.icon] Clear Filter]
+                                    #[btn.blue.mini(on-click="setFilter" value="all") #[i.remove.icon] Clear Filter]
                 
                 r-row 
                     th(colspan="{{ colNames.length }}")
                         //- 
                             btn.mini.icon(
-                                on-buttonclick="goToOpened"
+                                on-click="goToOpened"
                                 tooltip="Go to last item"
                                 ): icon.backward
                                     

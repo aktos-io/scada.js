@@ -58,16 +58,17 @@ Ractive.components["a"] = Ractive.extend do
                 {{style}}
                 "
             on-click="_click"
-            data-id="{{~['data-id']}}"
-            title="{{href}}"
-            {{yield extra-attributes}}
+            data-id="{{~/['data-id']}}"
+            title="{{tooltip}}"
             >
             {{yield}}
         </a>
         '''
     isolated: no
     components: {a: false}
-    attributes: []
+    data: ->
+        tooltip: null
+        href: null
     onrender: ->
         onclick = @get \onclick
         newtab = @get \newtab

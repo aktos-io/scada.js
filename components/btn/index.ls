@@ -6,10 +6,9 @@ Ractive.components['btn'] = Ractive.extend do
             const c = ctx.getParent yes
             c.refire = yes
             @fire 'buttonclick', c, @get \value
-
+            @fire \click, c
             # prevent event propogation
-            return false 
-
+            return false
     data: ->
         type: 'default'
         value: ''

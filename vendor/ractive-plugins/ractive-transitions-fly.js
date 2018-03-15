@@ -1,5 +1,5 @@
 /**
- * Minified by jsDelivr using UglifyJS v3.0.24.
+ * Minified by jsDelivr using UglifyJS v3.1.10.
  * Original file: /npm/ractive-transitions-fly@0.3.0/dist/ractive-transitions-fly.umd.js
  * 
  * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files

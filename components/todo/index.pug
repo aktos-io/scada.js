@@ -22,9 +22,9 @@
                             .fields
                                 .field
                                     .ui.buttons.right.floated
-                                        ack-button.green(on-buttonclick="saveChanges") Save
+                                        ack-button.green(on-click="saveChanges") Save
                                         .or
-                                        ack-button.red(on-buttonclick="cancelEdit") Cancel
+                                        ack-button.red(on-click="cancelEdit") Cancel
 
                     +else
                         checkbox.transparent(
@@ -37,7 +37,7 @@
 
                         +if('isEditable')
                             ack-button.basic.right.floated(
-                                on-buttonclick="startEditing"
+                                on-click="startEditing"
                                 disabled="{{ isEditing(.id) || .isDone }}"
                                 ) Edit
                     +endif 
@@ -51,4 +51,4 @@
             .field 
                 date-picker(unix="{{ newItem.dueTimestamp }}")
             .field
-                ack-button(on-buttonclick="addNewItem" value="{{ newItem }}") Add New Item
+                ack-button(on-click="addNewItem" value="{{ newItem }}") Add New Item

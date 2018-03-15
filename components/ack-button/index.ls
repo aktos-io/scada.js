@@ -11,9 +11,9 @@ Ractive.components['ack-button'] = Ractive.extend do
                 @set \transparent, yes
 
         @actor = new RactiveActor this, 'ack-button'
+        @doing-watchdog = new Signal!
 
     onrender: ->
-        @doing-watchdog = new Signal!
         logger = new VLogger this, \ack-button
 
         @button-timeout = if @get \timeout
@@ -50,8 +50,8 @@ Ractive.components['ack-button'] = Ractive.extend do
                 @actor.send-wid {ctx: c}
 
                 @fire \buttonclick, c, val
-
-                # stop the event propogation 
+                @fire \click, c
+                # stop the event propogation
                 return false
 
             state: (_event, s, msg, callback) ->

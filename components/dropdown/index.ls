@@ -1,3 +1,17 @@
+"""
+Design considerations (TO BE COMPLETED)
+
+* Multiple:
+
+    1. If data is not available but `selected-key` is set, dropdown should display
+    a loading icon
+
+
+# Testing procedure:
+
+1. Place 2 dropdown side by side (exact copy of each other)
+2. Change one, expect the other to be exactly the same of the one
+"""
 require! 'prelude-ls': {find, empty, take}
 require! 'actors': {RactiveActor}
 require! 'aea': {sleep}
@@ -19,37 +33,30 @@ Ractive.components['dropdown'] = Ractive.extend do
             name: "dropdown.#{@_guid}"
             debug: yes
 
-        if @get \key
-            @set \keyField, that
+        # map attributes to classes
+        for attr, cls of {\multiple, \inline, \disabled, 'fit-width': \fluid}
+            if @get attr then @set \class, "#{@get 'class'} #{cls}"
 
-        if @get \name
-            @set \nameField, that
-
-        if @get \disabled-mode
-            @set \class, "#{@get 'class'} disabled"
-
-        #@link \selected-key, \selected
+        if @get \key => @set \keyField, that
+        if @get \name => @set \nameField, that
 
     onrender: ->
+        const c = @getContext @target .getParent yes
+        c.refire = yes
         dd = $ @find '.ui.dropdown'
-        if @get \multiple
-            dd.add-class \multiple
-
-        dd.add-class \inline if @get \inline
-        dd.add-class \fluid if @get \fit-width
         keyField = @get \keyField
         nameField = @get \nameField
+        external-change = no
+        shandler = null
+
         update-dropdown = (_new) ~>
-            debugger if @get \debug
-            @actor.log.log "#{@_guid}: selected is changed: ", _new if @get \debug
-            # TODO: add selected items to the `dataReduced`
+            if @get \debug => @actor.log.log "#{@_guid}: selected is changed: ", _new
+            external-change := yes
             if @get \multiple
                 dd.dropdown 'set exactly', _new
             else
                 dd.dropdown 'set selected', _new
-
-        const c = @getContext @target .getParent yes
-        c.refire = yes
+            external-change := no
 
         set-item = (value-of-key) ~>
             if @get \data
@@ -58,96 +65,110 @@ Ractive.components['dropdown'] = Ractive.extend do
                     items = []
                     selected-keys = []
                     selected-names = []
-                    if value-of-key
-                        _values = that.split ','
-
-                        for val in _values
-                            if find (.[keyField] is val), data
-                                items.push that
-                                selected-keys.push that[keyField]
-                                selected-names.push that[nameField]
-                                if @get \debug
-                                    @actor.c-log "Found #{val} in .[#{keyField}]", that[keyField]
-                            else
-                                # how can't we find the item?
-                                debugger
-
-                    debugger if @get \debug
+                    for val in value-of-key when val
+                        if find (.[keyField] is val), data
+                            items.push that
+                            selected-keys.push that[keyField]
+                            selected-names.push that[nameField]
+                            if @get \debug => @actor.c-log "Found #{val} in .[#{keyField}]", that[keyField]
+                        else
+                            # how can't we find the item?
+                            debugger
+                    if @get \debug => debugger
                     @set \item, unless empty items => items else [{}]
                     @set \selected-name, selected-names
                     @set \selected-key, selected-keys
                     @fire \select, {}, (unless empty items => items else [{}])
-
-
                 else
                     # set a single value
                     if find (.[keyField] is value-of-key), data
                         selected = that
                         if @get('selected-key') isnt that[keyField]
-                            @actor.c-log "selected key is really changed to:", selected[keyField]
-                            if @get \debug
-                                @actor.c-log "Found #{value-of-key} in .[#{keyField}]", selected, selected[keyField]
+                            if @get \debug => @actor.c-log "selected key is changed to:", selected[keyField]
+                            if @get \debug => @actor.c-log "Found #{value-of-key} in .[#{keyField}]", selected, selected[keyField]
+                            if @get \async
+                                @fire \select, c, selected, (err) ~>
+                                    unless err
+                                        @set \item, selected
+                                    else
+                                        @actor.c-err "Error reported for dropdown callback: ", err
+                            else
+                                @set \selected-key, selected[keyField]
 
-                            @set \selected-key, selected[keyField]
-
-                            @fire \select, c, selected
-                        @set \item, selected
-                        @set \selected-name, selected[nameField]
-
-
-        shandler = null
+                        unless @get \async
+                            @set \item, selected
+                            @set \selected-name, selected[nameField]
+        dd
+            .dropdown 'restore defaults'
+            .dropdown 'setting', do
+                forceSelection: no
+                #allow-additions: @get \allow-additions ## DO NOT SET THIS; SEMANTICS' NOT UX FRIENDLY
+                full-text-search: (text) ~>
+                    @set \search-term, text
+                    data = @get \data
+                    if text
+                        #@actor.c-log "Dropdown (#{@_guid}) : searching for #{text}..."
+                        result = @get \sifter .search asciifold(text), do
+                            fields: @get \search-fields
+                            sort: [{field: nameField, direction: 'asc'}]
+                            nesting: no
+                            conjunction: "and"
+                        @set \dataReduced, [data[..id] for small-part-of(result.items)]
+                        #@actor.c-log "Dropdown (#{@_guid}) : data reduced: ", [..id for @get \dataReduced]
+                    else
+                        #@actor.c-log "Dropdown (#{@_guid}) : searchTerm is empty"
+                        @set \dataReduced, small-part-of data
+                on-change: (value, text, selected) ~>
+                    return if external-change
+                    if @get \debug => @actor.c-log "Dropdown: #{@_guid}: dropdown is changed: ", value
+                    if @get \multiple
+                        set-item unless value? => [] else value.split ','
+                    else
+                        set-item value
+                    @set \dataReduced, small-part-of @get \data
 
         @observe \data, (data) ~>
-            @actor.log.log "data is changed: ", data if @get \debug
-
-            do  # show loading icon
+            if @get \debug => @actor.c-log "Dropdown (#{@_guid}): data is changed: ", data
+            do  # show loading icon while data is being fetched
                 @set \loading, yes
-                <~ sleep 500ms
+                <~ sleep 300ms
                 if data and not empty data
                     @set \loading, no
                     @set \dataReduced, small-part-of data
-
-            @set \sifter, new Sifter(data)
-
-            dd
-                .dropdown 'restore defaults'
-                .dropdown 'destroy'
-                .dropdown 'setting', do
-                    forceSelection: no
-                    full-text-search: (text) ~>
-                        if text
-                            result = @get \sifter .search asciifold(text), do
-                                fields: ['id', 'name', 'description']
-                                sort: [{field: 'name', direction: 'asc'}]
-                                nesting: no
-                                conjunction: "and"
-                            @set \dataReduced, [data[..id] for small-part-of result.items]
+                    @set \sifter, new Sifter(data)
+                    # Update dropdown visually when data is updated
+                    if selected = @get \selected-key
+                        if @get \multiple
+                            <~ sleep 10ms
+                            update-dropdown selected
                         else
-                            @set \dataReduced, small-part-of data
+                            update-dropdown selected
+                            set-item selected
 
-                    on-change: (_value, _text, selected) ~>
-                        if shandler then that.silence!
-                        @actor.log.log "#{@_guid}: dropdown is changed: ", _value if @get \debug
-                        debugger if @get \debug
-                        set-item _value
-                        if shandler then that.resume!
-                        @set \dataReduced, small-part-of data
-
-            if (typeof! data is \Array) and not empty data
-                <~ sleep 10ms
-                if @get \selected-key
-                    update-dropdown that
-                    set-item that
-
-        unless @get \multiple
+        if @get \multiple
+            shandler = @observe \selected-key, (_new, old) ~>
+                if typeof! _new is \Array
+                    if JSON.stringify(_new or []) isnt JSON.stringify(old or [])
+                        if not empty _new
+                            <~ sleep 10ms
+                            update-dropdown _new
+                        else
+                            # clear the dropdown
+                            dd.dropdown 'restore defaults'
+        else
             shandler = @observe \selected-key, (_new) ~>
-                if @get \debug
-                    @actor.c-log "selected key set to:", _new
+                if @get \debug => @actor.c-log "selected key set to:", _new
+
+                @actor.c-log "DROPDOWN: selected key set to:", _new
                 if _new
-                    unless find (.[keyField] is _new), @get \dataReduced
-                        @push \dataReduced, find (.[keyField] is _new), @get \data
-                    update-dropdown _new
-                    set-item _new
+                    item = find (.[keyField] is _new), @get \dataReduced
+                    unless item
+                        item = find (.[keyField] is _new), @get \data
+                        @push \dataReduced, item
+                    @set \item, item
+                    sleep 10ms ~>
+                        # Workaround for dropdown update bug
+                        update-dropdown _new
                 else
                     # clear the dropdown
                     @set \item, {}
@@ -158,6 +179,9 @@ Ractive.components['dropdown'] = Ractive.extend do
                 dd.dropdown 'destroy'
 
     data: ->
+        'allow-additions': no  # TODO
+        'search-fields': <[ id name description ]>
+        'search-term': ''
         data: undefined
         dataReduced: []
         keyField: \id

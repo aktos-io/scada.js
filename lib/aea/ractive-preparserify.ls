@@ -64,12 +64,14 @@ export ractive-preparserify = (file) ->
                 try
                     # include templates/mixins.pug file
                     mixin-relative = path.relative dirname, process.cwd!
-                    mixin-include = "include #{mixin-relative}/templates/mixins.pug\n"
-                    template-contents = mixin-include + template-contents
+                    template-contents = """
+                        include #{mixin-relative}/templates/mixins.pug
+                        #{template-contents}
+                        """
 
                     # FIXME: We should get dependencies and rendered content in one function call
-                    deps = pug.compileClientWithDependenciesTracked template-contents, {filename: file, filters: pug-filters} .dependencies
-                    fn = pug.compile template-contents, {filename: file, filters: pug-filters}
+                    deps = pug.compileClientWithDependenciesTracked template-contents, {filename: file, filters: pug-filters, doctype: \htm} .dependencies
+                    fn = pug.compile template-contents, {filename: file, filters: pug-filters, doctype: \html}
                     # End of FIXME
 
                     all-deps = deps ++ template-full-path
@@ -92,7 +94,7 @@ export ractive-preparserify = (file) ->
                 $ = cheerio.load template-html, do
                     lowerCaseAttributeNames: false
                     lowerCaseTags: false
-                    
+
                 try
                     $ template-id .html!
                 catch

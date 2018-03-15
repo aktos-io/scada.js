@@ -1,7 +1,7 @@
 .ui.segment 
-    ack-button.green(on-buttonclick="listDesignDocuments") Get List
+    ack-button.green(on-click="listDesignDocuments") Get List
     +each('designDocuments')
-        ack-button(on-buttonclick="getDesignDocument" value="{{ . }}")
+        ack-button(on-click="getDesignDocument" value="{{ . }}")
             code {{ . }}
 
     .ui.form 
@@ -10,14 +10,14 @@
         .field 
             checkbox(checked="{{autoCompile}}") Autocompile
             +unless('autoCompile')
-                ack-button.teal(on-buttonclick="compileDesignDocument") Compile
+                ack-button.teal(on-click="compileDesignDocument") Compile
         +unless('autoCompile')
             .field 
                 ace-editor(code="{{ designDocument.javascript }}" mode="javascript" theme="xcode")
         .field
             .ui.action.input 
                 input(value="{{ documentId }}" placeholder="_design/myDesignDocument")
-                ack-button.red(on-buttonclick="putDesignDocument") Put Auth Document!
+                ack-button.red(on-click="putDesignDocument") Put Auth Document!
 
         .field
             checkbox(checked="{{dumpAllSection}}") Dump All
@@ -26,6 +26,6 @@
     .ui.segment 
         .ui.form 
             .field 
-                ack-button.green(on-buttonclick="getAllDesignDocuments") Get All Documents
+                ack-button.green(on-click="getAllDesignDocuments") Get All Documents
             .field 
                 ace-editor(code="{{ allDesignDocs }}")

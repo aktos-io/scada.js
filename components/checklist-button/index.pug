@@ -55,14 +55,14 @@
       
 checklist(items="{{ items }}" completed="{{ completed }}")
 ack-button(
-    on-buttonclick="success" 
+    on-click="success" 
     state="{{ @this.successState }}"
     type="{{#if @this.successState === 'error'}}warning{{else}}success{{/if}}" 
     value="{{ @this.get('success-value') }}"
     disabled="{{ !completed || disabled }}"
     ) {{ @this.get('success-text') }}
 ack-button(
-    on-buttonclick="fail" 
+    on-click="fail" 
     state="{{ @this.failState }}"
     type="danger" 
     value="{{ @this.get('fail-value') }}"

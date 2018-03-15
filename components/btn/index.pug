@@ -2,15 +2,16 @@
     | <a class='ui button {{# disabled}}disabled{{/}} {{# active}}active{{/}} {{ class }}'
     |    {{#if newtab}}onclick="window.open('{{href}}')" {{else}}href='{{href}}'{{/if}}
     |    style='{{style}}'
-    |    title='{{title}}' >
+    |    as-popup='tooltip' >
     |    {{yield}}
+    |    {{extra-attributes}}
     | </a>
 +else
     | <div
     |    class='ui button {{#if disabled}}disabled{{/if}} {{#if active}}active{{/if}} {{ class }}'
     |    {{#if ! disabled}}on-click="_click" {{/if}}
     |    style='{{style}}'
-    |    title="{{title}}{{tooltip}}" >
+    |    title="{{tooltip}}" >
     |    {{yield}}
     | </div>
 +endif
