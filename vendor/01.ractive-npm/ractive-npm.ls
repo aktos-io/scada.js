@@ -22,7 +22,6 @@ Ractive.defaults.has-event = (event-name) ->
 
 # hasAttribute by @evs-chris
 # see the example: https://ractive.js.org/playground/?env=docs#N4IgFiBcoE5SBTAJgcwSAvgGhAZ3gGYCuAdgMYAuAlgPYkAEYAhrgIIUUxUBGRFCACmD0ADjBoUa9DAEp6wADokFFMRJoA6Zmw5de-egF56xctTqMW7Tjz6CSTALYI5i5RRUwEFIjAYUwKlwNMhpHEToEEgp6ADJY+gEBAKCQsIiSKIoNfnCAGyZ+DSY4hIdneip-QODQ8MjonIR8woRiuQAfDsSU2vSG7NyRAqLHUvoAQgnetPrMxqGRtscNAiqkARLDAD56Jg0GQyP6cpcZGQBuJRUMJVvlEgAlJkoqADc2olxBbWs9O0u1yeL2oH1mGSywQINCkxmerzBCAAHvwSBs3CpFq1IPQAAbXDwUAA8Im2wGA21C0SyGAwRmOBJUKnJAGIqAR6AABLRWXS2fgCADkSMFMlpjMJKgAEqwAMr0AAa9FYABUVY8AJIAIQAqiqAKL0XUq+gAOQA8ibZfqVRLmcAEHlvuL3EzCVKWCcpEi9nz9AhfXs8nk7RRyQB6dm0onh0kS3FYAlIQpMHGmV50AQyDGErw+PzyUNInEkIjBiX3G53GRKTIAd3o8NBghzjpxgu4NCQAE9BYn3Fj+Dj8a7idDvYYFCBydwmDBxSB6NsZfKlar1dq9YbjWbLfRrSqY+PthKicePbgvfQfYUbP7A0xg0eYSf3AmkymcTmVLOYDjSEgCBrJkSAEvcsiYEAA
-/* requires ractive edge for now */
 ``
 function hasAttribute({ proto }) {
 	proto.hasAttribute = function hasAttribute(name) {
@@ -32,17 +31,19 @@ function hasAttribute({ proto }) {
 
 Ractive.use(hasAttribute);
 ``
-/**/
 
-# by @evs-chris, https://gitter.im/ractivejs/ractive?at=59fa35f8d6c36fca31c4e427
+
+/***************************************************************************
+by @evs-chris, https://gitter.im/ractivejs/ractive?at=59fa35f8d6c36fca31c4e427
+
+Usage:
+
+    +each('foo') <--- where curr.components is an Object
+        btn.icon(on-click="@.delete('curr.components', @key)") #[i.minus.icon]
+
+***************************************************************************/
+
 Ractive.prototype.delete = (root, key) ->
-    /***************************************************************************
-    Usage:
-
-        +each('curr.components') <--- where curr.components is an Object
-            btn.icon(on-buttonclick="@.delete('curr.components', @key)") #[i.minus.icon]
-
-    ***************************************************************************/
     console.error 'keypath must be string' if typeof! root isnt \String
     delete @get(root)[key]
     @update root
