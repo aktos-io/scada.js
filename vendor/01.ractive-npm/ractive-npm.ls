@@ -2,13 +2,7 @@ require! 'ractive': Ractive
 # Add Ractive to global window object
 # ---------------------------------------------
 window.Ractive = Ractive
-
-
 sleep = (ms, f) -> set-timeout f, ms
-
-# Add modal support by default
-require! 'ractive-modal': RactiveModal
-Ractive.components.modal = RactiveModal
 
 # Helper methods
 # ---------------------------------------------

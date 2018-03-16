@@ -1,206 +1,9 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-(function webpackUniversalModuleDefinition(root, factory) {
-	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
-	else if(typeof define === 'function' && define.amd)
-		define([], factory);
-	else if(typeof exports === 'object')
-		exports["RactiveModal"] = factory();
-	else
-		root["RactiveModal"] = factory();
-})(this, function() {
-return /******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId]) {
-/******/ 			return installedModules[moduleId].exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			i: moduleId,
-/******/ 			l: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.l = true;
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
-/******/ 		}
-/******/ 	};
-/******/
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
-/******/
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
-/******/ })
-/************************************************************************/
-/******/ ([
-/* 0 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony default export */ __webpack_exports__["default"] = (Ractive.extend({
-    template: {v:4,t:[{t:4,f:[{t:7,e:"div",m:[{n:"role",f:"dialog",t:13},{n:"aria-label",f:[{t:2,r:"title"}],t:13},{n:"tabindex",f:"0",t:13},{n:"class",f:["popup-wrapper ",{t:2,r:"popup_id"}],t:13},{n:"style",f:["opacity: ",{t:2,r:"opacity"},"; display: ",{t:2,r:"display"},"; z-index: ",{t:2,r:"zindex"},"; cursor: ",{t:2,x:{r:["enableclose"],s:"_0?\"pointer\":\"default\""}}],t:13},{n:["click"],t:70,f:"close"},{n:["keydown"],t:70,f:"keydown"}],f:[{t:7,e:"div",m:[{n:"class",f:["popup ",{t:2,r:"class"}],t:13},{n:"style",f:[{t:2,r:"style"}],t:13},{n:["click"],t:70,f:{r:["@event"],s:"[_0.stopPropagation()]"}}],f:[{t:7,e:"div",m:[{n:"class",f:"popup-titlebar",t:13}],f:[{t:7,e:"h3",m:[{n:"class",f:"popup-title",t:13}],f:[{t:2,r:"title"}]}," ",{t:4,f:[{t:7,e:"button",m:[{n:"type",f:"button",t:13},{n:"class",f:"popup-btn-close",t:13},{n:["click"],t:70,f:"close"}],f:["×"]}],n:50,r:"enableclose"}]}," ",{t:7,e:"div",m:[{n:"class",f:"popup-content",t:13}],f:[{t:16}]}]}]}],n:50,r:"showpopup"}],e:{"_0?\"pointer\":\"default\"":function (_0){return(_0?"pointer":"default");},"[_0.stopPropagation()]":function (_0){return([_0.stopPropagation()]);}}},
-    css: ".popup-wrapper {position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 1050; overflow: auto; display: none; background-color: rgba(0, 0, 0, 0.5);} .popup {position: relative; color: #333333; float: left; background-color: #fff; top:30px; left: 50%; transform: translate(-50%,0); cursor: default; min-width: 110px; max-width: 500px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);} .popup-titlebar {padding:15px; color: #333; overflow: auto; border-bottom: 1px solid #e5e5e5;} .popup-title {margin-top:2px; margin-bottom: 0px; display: inline-block; font-size:1.25rem;} .popup-btn-close {padding: 0px 4px 0px 4px; cursor: pointer; background: 0 0; border: 0; font-weight:700; float: right; font-size: 1.5rem; line-height: 1; margin-right: -5px; color:#ccc;} .popup-btn-close:hover, .popup-btn-close:focus:hover{color:#6f6f6f; border-color: transparent; background-color: transparent;} .popup-btn-close:focus {color:#939393; border-color: transparent; background-color: transparent;} .popup-content {padding:15px 15px 15px 15px;} .popup-content .full-hr {width: auto; border: 0; border-top: 1px solid #e0e0e0; margin-top:15px; margin-bottom:15px; margin-left:-14px; margin-right:-14px;}",
-    data: function(){
-        return {showpopup: false, basedon: false, live: false, appendto: '', class: '', style:'', title: '', popup_id: this._guid+'_popup', enableclose: true, base_zindex: 1050, opacity: 0, display: 'none', zindex: 0}
-    },
-    on: {
-        close: function(ctx){
-            ctx.original.preventDefault();
-            if(this.get('enableclose')){
-                this.set('basedon', false);
-            }
-        },
-        keydown: function(ctx){
-            var e = ctx.original;
-            if(e.which === 27){
-                this.fire('close', ctx);
-            }
-            if(e.which === 9){
-                // Get only visible elements
-                var all = this.findAll('input, select, textarea, button, a').filter(function(el){
-                    return !!( el.offsetWidth || el.offsetHeight || el.getClientRects().length );
-                });
-                if(e.shiftKey){
-                    if(e.target === all[0] || e.target === this.find('.popup-wrapper')){
-                        e.preventDefault();
-                        all[all.length-1].focus();
-                    }
-                }else{
-                    if(e.target === all[all.length-1]){
-                        e.preventDefault();
-                        all[0].focus();
-                    }
-                }
-            }
-        }
-    },
-    onconfig: function(){
-        if(this.get('live')){
-            this.set('showpopup', true);
-        }
-    },
-    onrender: function(){
-        var popup_id = this.get('popup_id');
-        this.observe_basedon = this.observe('basedon', function(newValue, oldValue, keypath){
-            var live = this.get('live');
-            if(newValue === true){
-                if(document.querySelector('.'+popup_id) && document.querySelector('.'+popup_id).style.display === 'block'){
-                    return;
-                }
-                this.elToFocus = document.activeElement;
-                this.fire('beforeOpen');
-                var lastZindex = this.getTopZindex();
-                var zindex = (lastZindex == 0) ? this.get('base_zindex') : lastZindex+1;
-                if(!live){
-                    this.set('showpopup', true);
-                }
-                this.insert(this.get('appendto') ? document.querySelector(this.get('appendto')) : this.root.el);
-                this.set({'display': 'block', 'zindex': zindex});
-                this.animate('opacity', 1, {duration: 250}).then(function(){
-                    this.find('[autofocus]') ? this.find('[autofocus]').focus() : this.find('.popup-wrapper').focus();
-                    this.fire('afterOpen');
-                }.bind(this));
-            }else{
-                if(!document.querySelector('.'+popup_id) || document.querySelector('.'+popup_id).style.display !== 'block'){
-                    return;
-                }
-                this.fire('beforeClose');
-                this.animate('opacity', 0, {duration: 250}).then(function(){
-                    this.set({'display': 'none', 'zindex': 0});
-                    if(!live){
-                        this.set('showpopup', false);
-                    }
-                    this.fire('afterClose');
-                    var lastZindex = this.getTopZindex();
-                    if(lastZindex > 0){
-                        var all = document.querySelectorAll('.popup-wrapper');
-                        for (var i = 0; i < all.length; i++) {
-                            if(all[i].style.zIndex == lastZindex){
-                                var r = Ractive.getContext(all[i]).ractive;
-                                if(r.find('div').contains(this.elToFocus)){
-                                    this.elToFocus.focus();
-                                }else{
-                                    r.find('[autofocus]') ? r.find('[autofocus]').focus() : r.find('.popup-wrapper').focus();
-                                }
-                                break;
-                            }
-                        };
-                    }else{
-                        if(document.body.contains(this.elToFocus)){
-                            this.elToFocus.focus();
-                        }
-                    }
-                }.bind(this));
-            }
-        }, {
-            defer: true
-        });
-    },
-    onunrender: function(){
-        this.observe_basedon.cancel();
-    },
-    getTopZindex: function(){
-        var toret = 0;
-        var all = document.querySelectorAll('.popup-wrapper');
-        for (var i = 0; i < all.length; i++) {
-            toret = parseInt(all[i].style.zIndex) > toret ? parseInt(all[i].style.zIndex) : toret;
-        };
-        return toret;
-    }
-}));
-
-/***/ })
-/******/ ])["default"];
-});
-},{}],2:[function(require,module,exports){
 (function (global){
 /*
 	Ractive.js v1.0.0-edge
-	Build: 33d74b4c0713fdcbdba6e8b6202c2726e00410e0
-	Date: Tue Mar 13 2018 15:45:13 GMT+0000 (UTC)
+	Build: 2fca2a0d7d75f3bee7e36b921e1eba27ca028fb2
+	Date: Wed Mar 14 2018 21:20:06 GMT+0000 (UTC)
 	Website: http://ractivejs.org
 	License: MIT
 */
@@ -10615,9 +10418,9 @@ var Alias = (function (ContainerItem) {
     this.fragment.bind();
   };
 
-  Alias__proto__.render = function render (target) {
+  Alias__proto__.render = function render (target, occupants) {
     this.rendered = true;
-    if (this.fragment) { this.fragment.render(target); }
+    if (this.fragment) { this.fragment.render(target, occupants); }
   };
 
   Alias__proto__.unbind = function unbind () {
@@ -15592,8 +15395,7 @@ var RepeatedFragment = function RepeatedFragment(options) {
   this.owner = options.owner;
   this.ractive = this.parent.ractive;
   this.delegate =
-    this.ractive.delegate !== false &&
-    (this.parent.delegate || findDelegate(findElement(options.owner)));
+    this.ractive.delegate !== false && (this.parent.delegate || findDelegate(this.parent));
   // delegation disabled by directive
   if (this.delegate && this.delegate.delegate === false) { this.delegate = false; }
   // let the element know it's a delegate handler
@@ -16022,12 +15824,27 @@ RepeatedFragment.prototype.getContext = getContext;
 
 // find the topmost delegate
 function findDelegate(start) {
-  var el = start;
-  var delegate = start;
+  var frag = start;
+  var delegate, el;
 
-  while (el) {
-    if (el.delegate) { delegate = el; }
-    el = el.parent;
+  out: while (frag) {
+    // find next element
+    el = 0;
+    while (!el && frag) {
+      if (frag.owner.type === ELEMENT) { el = frag.owner; }
+      if (frag.owner.ractive && frag.owner.ractive.delegate === false) { break out; }
+      frag = frag.parent || frag.componentParent;
+    }
+
+    if (el.delegate === false) { break out; }
+    delegate = el.delegate || el;
+
+    // find next repeated fragment
+    while (frag) {
+      if (frag.iterations) { break; }
+      if (frag.owner.ractive && frag.owner.ractive.delegate === false) { break out; }
+      frag = frag.parent || frag.componentParent;
+    }
   }
 
   return delegate;
@@ -17665,11 +17482,10 @@ var Fragment = function Fragment(options) {
 
   this.componentParent = this.isRoot && this.ractive.component ? this.ractive.component.up : null;
   if (!this.isRoot || this.ractive.delegate) {
-    this.delegate =
-      (this.parent
-        ? this.parent.delegate
-        : this.componentParent && this.componentParent.delegate) ||
-      (this.owner.containerFragment && this.owner.containerFragment.delegate);
+    this.delegate = this.owner.containerFragment
+      ? this.owner.containerFragment && this.owner.containerFragment.delegate
+      : (this.componentParent && this.componentParent.delegate) ||
+        (this.parent && this.parent.delegate);
   } else {
     this.delegate = false;
   }
@@ -18844,16 +18660,14 @@ return Ractive;
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],3:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 // Generated by LiveScript 1.4.0
-var Ractive, sleep, RactiveModal, toString$ = {}.toString;
+var Ractive, sleep, toString$ = {}.toString;
 Ractive = require('ractive');
 window.Ractive = Ractive;
 sleep = function(ms, f){
   return setTimeout(f, ms);
 };
-RactiveModal = require('ractive-modal');
-Ractive.components.modal = RactiveModal;
 Ractive.defaults.hasEvent = function(eventName){
   var fn;
   console.warn("Deprecated: Use ractive.hasListener");
@@ -18862,7 +18676,6 @@ Ractive.defaults.hasEvent = function(eventName){
   };
   return this.component && this.component.template.m.find(fn);
 };
-/* requires ractive edge for now */
 
 function hasAttribute({ proto }) {
 	proto.hasAttribute = function hasAttribute(name) {
@@ -18872,15 +18685,16 @@ function hasAttribute({ proto }) {
 
 Ractive.use(hasAttribute);
 
-/**/
+/***************************************************************************
+by @evs-chris, https://gitter.im/ractivejs/ractive?at=59fa35f8d6c36fca31c4e427
+
+Usage:
+
+    +each('foo') <--- where curr.components is an Object
+        btn.icon(on-click="@.delete('curr.components', @key)") #[i.minus.icon]
+
+***************************************************************************/
 Ractive.prototype['delete'] = function(root, key){
-  /***************************************************************************
-  Usage:
-  
-      +each('curr.components') <--- where curr.components is an Object
-          btn.icon(on-buttonclick="@.delete('curr.components', @key)") #[i.minus.icon]
-  
-  ***************************************************************************/
   if (toString$.call(root).slice(8, -1) !== 'String') {
     console.error('keypath must be string');
   }
@@ -18949,4 +18763,4 @@ Ractive.Context.removeMe = function(){
 
 
 
-},{"ractive":2,"ractive-modal":1}]},{},[3]);
+},{"ractive":1}]},{},[2]);
