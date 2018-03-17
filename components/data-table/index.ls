@@ -286,7 +286,7 @@ Ractive.components['data-table'] = Ractive.extend do
                             # no numeric part, this is a prefix
                             curr._id += '####'
 
-                if @get \_tmp.new_attachments
+                if @get \new_attachments
                     curr._attachments = (curr._attachments or {}) <<< that
 
                 err, res <~ @get \db .put curr, {timeout}
@@ -294,12 +294,8 @@ Ractive.components['data-table'] = Ractive.extend do
                     @logger.clog "err is: ", err
                 else
                     #@logger.clog "res is: ", res
-                    curr <<< {_id: res.id, _rev: res.rev}
-                    # use preview url's as downloaded url's
-                    tmp-att = (@get "_tmp._attachments") or {}
-                    tmp-att <<< @get "_tmp.previews"
-                    @set "_tmp._attachments", tmp-att
-                    @set \curr, curr
+                    @set \curr._id, res.id     # if `_id` is assigned automatically
+                    @set \curr._rev, res.rev   # rev will be updated on save
                 next err
 
 
@@ -335,6 +331,7 @@ Ractive.components['data-table'] = Ractive.extend do
         opening-row: no
         opening-row-msg: ''
         _tmp: {}
+        new_attachments: {}
         searchText: ''
         sifter: null
         is-editing-row: (index) ->
