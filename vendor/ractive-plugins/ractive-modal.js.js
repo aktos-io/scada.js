@@ -80,10 +80,13 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony default export */ __webpack_exports__["default"] = (Ractive.extend({
-    template: {v:4,t:[{t:4,f:[{t:7,e:"div",m:[{n:"role",f:"dialog",t:13},{n:"aria-label",f:[{t:2,r:"title"}],t:13},{n:"tabindex",f:"0",t:13},{n:"class",f:["popup-wrapper ",{t:2,r:"popup_id"}],t:13},{n:"style",f:["opacity: ",{t:2,r:"opacity"},"; display: ",{t:2,r:"display"},"; z-index: ",{t:2,r:"zindex"},"; cursor: ",{t:2,x:{r:["enableclose"],s:"_0?\"pointer\":\"default\""}}],t:13},{n:["click"],t:70,f:"clickoutside"},{n:["keydown"],t:70,f:"keydown"}],f:[{t:7,e:"div",m:[{n:"class",f:["popup ",{t:2,r:"class"}],t:13},{n:"style",f:[{t:2,r:"style"}],t:13}],f:[{t:7,e:"div",m:[{n:"class",f:"popup-titlebar",t:13}],f:[{t:7,e:"h3",m:[{n:"class",f:"popup-title",t:13}],f:[{t:2,r:"title"}]}," ",{t:4,f:[{t:7,e:"button",m:[{n:"type",f:"button",t:13},{n:"class",f:"popup-btn-close",t:13},{n:["click"],t:70,f:"close"}],f:["×"]}],n:50,r:"enableclose"}]}," ",{t:7,e:"div",m:[{n:"class",f:"popup-content",t:13}],f:[{t:16}]}]}]}],n:50,r:"showpopup"}],e:{"_0?\"pointer\":\"default\"":function (_0){return(_0?"pointer":"default");}}},
-    css: ".popup-wrapper {position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 1050; overflow: auto; display: none; background-color: rgba(0, 0, 0, 0.5);} .popup {position: relative; color: #333333; float: left; background-color: #fff; top:30px; left: 50%; transform: translate(-50%,0); cursor: default; min-width: 110px; max-width: 500px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);} .popup-titlebar {padding:15px; color: #333; overflow: auto; border-bottom: 1px solid #e5e5e5;} .popup-title {margin-top:2px; margin-bottom: 0px; display: inline-block; font-size:1.25rem;} .popup-btn-close {padding: 0px 4px 0px 4px; cursor: pointer; background: 0 0; border: 0; font-weight:700; float: right; font-size: 1.5rem; line-height: 1; margin-right: -5px; color:#ccc;} .popup-btn-close:hover, .popup-btn-close:focus:hover{color:#6f6f6f; border-color: transparent; background-color: transparent;} .popup-btn-close:focus {color:#939393; border-color: transparent; background-color: transparent;} .popup-content {padding:15px 15px 15px 15px;} .popup-content .full-hr {width: auto; border: 0; border-top: 1px solid #e0e0e0; margin-top:15px; margin-bottom:15px; margin-left:-14px; margin-right:-14px;}",
+    template: {v:4,t:[{t:4,f:[{t:7,e:"div",m:[{n:"role",f:"dialog",t:13},{n:"aria-label",f:[{t:2,r:"title"}],t:13},{n:"tabindex",f:"0",t:13},{n:"class",f:["popup-wrapper ",{t:2,r:"popup_id"}],t:13},{n:"style",f:["opacity: ",{t:2,r:"opacity"},"; display: ",{t:2,r:"display"},"; z-index: ",{t:2,r:"zindex"},"; cursor: ",{t:2,x:{r:["enableclose"],s:"_0?\"pointer\":\"default\""}}],t:13},{n:["click"],t:70,f:"clickoutside"},{n:["keydown"],t:70,f:"keydown"}],f:[{t:7,e:"div",m:[{n:"class",f:["popup ",{t:2,r:"class"}],t:13},{n:"style",f:[{t:2,r:"style"}],t:13}],f:[{t:4,f:[{t:7,e:"div",m:[{n:"class",f:"popup-titlebar",t:13}],f:[{t:4,f:[{t:7,e:"h3",m:[{n:"class",f:"popup-title",t:13}],f:[{t:2,r:"title"}]}],n:50,r:"title"}," ",{t:4,f:[{t:7,e:"button",m:[{n:"type",f:"button",t:13},{n:"class",f:"popup-btn-close",t:13},{n:["click"],t:70,f:"close"}],f:["×"]}],n:50,r:"enableclose"}]}],n:50,x:{r:["title","enableclose"],s:"_0||_1"}}," ",{t:7,e:"div",m:[{n:"class",f:"popup-content",t:13}],f:[{t:16}]}]}]}],n:50,r:"showpopup"}],e:{"_0?\"pointer\":\"default\"":function (_0){return(_0?"pointer":"default");},"_0||_1":function (_0,_1){return(_0||_1);}}},
+    css: ".popup-wrapper {position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 1050; overflow: auto; display: none; background-color: rgba(0, 0, 0, 0.5);} .popup {margin-bottom: 4em; display: inline-table; position: relative; color: #333333; float: left; background-color: #fff; top:30px; left: 50%; transform: translate(-50%,0); cursor: default; min-width: 110px; max-width: 500px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);} .popup-titlebar {padding:15px; color: #333; overflow: auto; border-bottom: 1px solid #e5e5e5;} .popup-title {margin-top:2px; margin-bottom: 0px; display: inline-block; font-size:1.25rem;} .popup-btn-close {padding: 0px 4px 0px 4px; cursor: pointer; background: 0 0; border: 0; font-weight:700; float: right; font-size: 1.5rem; line-height: 1; margin-right: -5px; color:#ccc;} .popup-btn-close:hover, .popup-btn-close:focus:hover{color:#6f6f6f; border-color: transparent; background-color: transparent;} .popup-btn-close:focus {color:#939393; border-color: transparent; background-color: transparent;} .popup-content {padding:15px 15px 15px 15px;} .popup-content .full-hr {width: auto; border: 0; border-top: 1px solid #e0e0e0; margin-top:15px; margin-bottom:15px; margin-left:-14px; margin-right:-14px;}",
     data: function(){
-        return {showpopup: false, basedon: false, live: false, appendto: '', class: '', style:'', title: '', popup_id: this._guid+'_popup', enableclose: true, base_zindex: 1050, opacity: 0, display: 'none', zindex: 0}
+        return {
+            showpopup: false, basedon: false, live: false, appendto: '', class: '', style:'', title: '', popup_id: this._guid+'_popup', enableclose: true, base_zindex: 1050, opacity: 0, display: 'none', zindex: 0,
+            'prevent-bg-scroll': false
+        }
     },
     on: {
         close: function(ctx){
@@ -100,6 +103,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         keydown: function(ctx){
             var e = ctx.original;
             if(e.which === 27){
+                // ESC key
                 this.fire('close', ctx);
             }
             if(e.which === 9){
@@ -134,6 +138,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 if(document.querySelector('.'+popup_id) && document.querySelector('.'+popup_id).style.display === 'block'){
                     return;
                 }
+                if (this.get('prevent-bg-scroll')){
+                    //$('body').css('overflow', 'hidden');
+                    document.body.style.overflow = "hidden"
+
+                }
                 this.elToFocus = document.activeElement;
                 this.fire('beforeOpen');
                 var lastZindex = this.getTopZindex();
@@ -150,6 +159,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }else{
                 if(!document.querySelector('.'+popup_id) || document.querySelector('.'+popup_id).style.display !== 'block'){
                     return;
+                }
+                if(this.get('prevent-bg-scroll')){
+                    //$('body').css('overflow', 'auto');
+                    document.body.style.overflow = "auto"
                 }
                 this.fire('beforeClose');
                 this.animate('opacity', 0, {duration: 250}).then(function(){
