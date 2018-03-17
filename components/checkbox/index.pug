@@ -1,14 +1,11 @@
 ack-button.aea-checkbox(
     on-click="_statechange"
-    class!="                        \
-        {{^transparent}}basic{{/}}  \
-        gray {{ class }}            \
-        {{#if checkState === 'doing'}}  \
-        labeled                         \
-        {{/if}}                         \
-        icon                        \
+    class="{{ class }}                                  \
+        {{#if transparent}}basic{{/if}}                 \
+        {{#if checkState === 'doing'}}labeled{{/if}}    \
+        icon                                            \
         "
-    style="{{ style }} {{#transparent}}background-color: transparent;{{/}} text-align: left; "
+    style="{{ style }} {{#if transparent}}background-color: transparent;{{/if}} text-align: left; "
     type="{{type}}"
     custom
     disabled="{{disabled}}"
