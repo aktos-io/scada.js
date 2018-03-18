@@ -19,38 +19,49 @@ prompt_yes_no () {
 }
 
 DIR=$(dirname "$(readlink -f "$0")")
+PREFERENCES="module-preferences.txt"
 
+if [ ! -f "$DIR/$PREFERENCES" ]; then
+    echo
+    echo "Select Modules to Install"
+    echo "-----------------------------------"
 
-echo
-echo "Select Modules to Install"
-echo "-----------------------------------"
-
-modules=
-while IFS= read -r module; do
-    module_dir=$(realpath $(dirname $module))
-    module_path_name="${module_dir#"$DIR/"}"
-    if [[ "$module_path_name" == "$DIR" ]]; then
-        modules="$modules:$module_dir"
-        echo "scada.js dependencies: [REQUIRED]"
-    elif [[ "$module_path_name" == "lib/dcs" ]]; then
-        modules="$modules:$module_dir"
-        echo "aktos-dcs dependencies: [REQUIRED]"
-    else
-        if prompt_yes_no " -> $module_path_name dependencies? "; then
-            #echo "+++ $module_path_name"
-            modules="$modules:$module_dir"
+    modules="./\n./lib/dcs"
+    while IFS= read -r module; do
+        module_dir="$(realpath $(dirname $module))/"
+        module_path_name=".${module_dir#$DIR}"
+        if [[ "$module_path_name" == "./" ]]; then
+            #modules="$modules\n$module_dir"
+            echo "scada.js dependencies: [REQUIRED]"
+        elif [[ "$module_path_name" == "./lib/dcs/" ]]; then
+            #modules="$modules\n$module_path_name"
+            echo "aktos-dcs dependencies: [REQUIRED]"
+        else
+            if prompt_yes_no " -> $module_path_name dependencies? "; then
+                #echo "+++ $module_path_name"
+                modules="$modules\n$module_path_name"
+            fi
         fi
-    fi
-done < <(find . -name "node_modules" -prune -a ! -name "node_modules" -o -name "package.json" | tac )
+    done < <(find . -name "node_modules" -prune -a ! -name "node_modules" -o -name "package.json" | tac )
+
+    echo
+    echo "Saving Preferences to ./module-preferences.txt"
+    echo "----------------------------------------------"
+    echo -e $modules > "$DIR/$PREFERENCES"
+else
+    echo
+    echo "Using $PREFERENCES file..."
+    echo "-----------------------------------"
+    cat "$DIR/$PREFERENCES"
+fi
 
 echo
 echo "Installing Modules"
 echo "-----------------------------------"
 
-for module in `echo "$modules" | grep -o -e "[^:]*"`; do
-    echo
+while IFS='' read -r module || [[ -n "$module" ]]; do
     echo " *** Installing dependencies for: \"$module\"";
     echo
-    cd $module
+    cd "$DIR/$module"
     npm install
-done
+done < "$DIR/$PREFERENCES"
