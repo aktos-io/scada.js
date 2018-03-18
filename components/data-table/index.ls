@@ -263,7 +263,6 @@ Ractive.components['data-table'] = Ractive.extend do
                 if err
                     console.error "data-table error:", err
                     return
-                debugger 
                 ...args <~ @fire 'onSave', ev, @get(\curr)
                 if args.length isnt 1
                     ev.component.error """
