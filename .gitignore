@@ -7,6 +7,9 @@ __public__
 # general purpose tarballs
 *.zip
 
+# dependency preferences 
+module-preferences.txt
+
 # tmp files and folders
 __tmp__
 tmp-*
