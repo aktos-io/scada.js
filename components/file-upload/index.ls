@@ -30,7 +30,6 @@ Ractive.components['file-upload'] = Ractive.extend do
                     name: file.name
                     type: file.type
                     preview-url: window.URL.createObjectURL file
-                    value: @get \value
 
                 unless err
                     @set \file-name, file.name
@@ -41,3 +40,4 @@ Ractive.components['file-upload'] = Ractive.extend do
                 @toggle \show
     data: ->
         show: yes
+        tooltip: null
