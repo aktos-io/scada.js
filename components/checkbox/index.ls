@@ -7,7 +7,6 @@ Ractive.components['checkbox'] = Ractive.extend do
         if @get \class
             if that.index-of(\transparent)  > -1
                 @set \transparent, yes
-
         @debug = @get \debug
 
     onrender: ->

@@ -50,6 +50,7 @@ require! './assign-if-null'
 require! './scroll-x'
 require! './browser-storage'
 require! './formatter'
+require! './vertical-divider'
 
 # decorators
 require! './decorators/tooltip'

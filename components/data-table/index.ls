@@ -46,6 +46,9 @@ Ractive.components['data-table'] = Ractive.extend do
             if typeof! settings.on-save is \Function
                 settings.on-save = settings.on-save.bind this
 
+            if typeof! settings.before-save is \Function
+                settings.before-save = settings.before-save.bind this
+
             if typeof! settings.data is \Function
                 settings.data = settings.data.bind this
 
@@ -254,6 +257,12 @@ Ractive.components['data-table'] = Ractive.extend do
 
             save: (ev, val) ->
                 ev.component.fire \state, \doing
+                if typeof! settings.before-save isnt \Function
+                    settings.before-save = (ctx, curr, next) -> next!
+                err <~ @fire 'beforeSave', ev, @get('curr')
+                if err
+                    console.error "data-table error:", err
+                    return
                 ...args <~ @fire 'onSave', ev, @get(\curr)
                 if args.length isnt 1
                     ev.component.error """
@@ -286,7 +295,7 @@ Ractive.components['data-table'] = Ractive.extend do
                             # no numeric part, this is a prefix
                             curr._id += '####'
 
-                if @get \_tmp.new_attachments
+                if @get \new_attachments
                     curr._attachments = (curr._attachments or {}) <<< that
 
                 err, res <~ @get \db .put curr, {timeout}
@@ -294,17 +303,19 @@ Ractive.components['data-table'] = Ractive.extend do
                     @logger.clog "err is: ", err
                 else
                     #@logger.clog "res is: ", res
-                    curr <<< {_id: res.id, _rev: res.rev}
-                    # use preview url's as downloaded url's
-                    tmp-att = (@get "_tmp._attachments") or {}
-                    tmp-att <<< @get "_tmp.previews"
-                    @set "_tmp._attachments", tmp-att
-                    @set \curr, curr
+                    @set \curr._id, res.id     # if `_id` is assigned automatically
+                    @set \curr._rev, res.rev   # rev will be updated on save
                 next err
 
 
         # register events
-        @on events <<< settings.handlers
+        all-events = events <<< settings.handlers
+        if settings.on-save
+            all-events.on-save = that
+        if settings.before-save
+            all-events.before-save = that
+
+        @on all-events
 
         for data, value of settings.data
             @set data, value
@@ -335,6 +346,7 @@ Ractive.components['data-table'] = Ractive.extend do
         opening-row: no
         opening-row-msg: ''
         _tmp: {}
+        new_attachments: {}
         searchText: ''
         sifter: null
         is-editing-row: (index) ->

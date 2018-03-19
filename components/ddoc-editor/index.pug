@@ -1,7 +1,7 @@
 .ui.segment 
     ack-button.green(on-click="listDesignDocuments") Get List
     +each('designDocuments')
-        ack-button(on-click="getDesignDocument" value="{{ . }}")
+        ack-button(on-click="getDesignDocument")
             code {{ . }}
 
     .ui.form 
