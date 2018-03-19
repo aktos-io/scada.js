@@ -13,7 +13,9 @@ function fixJSON(badJSON){
     })
 
     // Add double-quotes around any tokens before the remaining ":"
-    .replace(/(['"])?([a-z0-9A-Z_]+)(['"])?\s*:/g, '"$2": ')
+    //.replace(/([^'"])([A-zÀ-ÿ0-9_]+)(['"])\s*:/g, '"$2": ')
+    //https://regexr.com/3mgc3
+    .replace(/\s*([^'",])([A-zÀ-úçışöğüÇİŞÖĞÜ0-9_\s]*[A-zÀ-úçışöğüÇİŞÖĞÜ0-9_]*)([^'"\s])\s*:/g, '"$1$2$3": ')
 
     // Turn "@colon@" back into ":"
     .replace(/@colon@/g, ':')
@@ -21,8 +23,15 @@ function fixJSON(badJSON){
 }
 
 Ractive.components['json-edit'] = Ractive.extend({
-  template: `<textarea style="white-space: pre-wrap">{{ objFormatted }}</textarea>`,
+  template: `<textarea style="white-space: pre-wrap; border: 1px {{#if err}}dashed red{{else}}solid green{{/if}}" title="{{err}}">{{ objFormatted }}</textarea>`,
   isolated: true,
+  data: function(){
+    return {
+        objTmp: undefined,
+        value: undefined,
+        err: null
+    }
+  },
   computed: {
     objFormatted: {
       get: function(){
@@ -39,9 +48,12 @@ Ractive.components['json-edit'] = Ractive.extend({
           obj = JSON.parse(fixJSON(objStr));
           this.set('value', obj);
           this.set('objTmp', null);
+          this.set('err', null);
           return
         } catch (e$) {
           e = e$;
+          console.log("error was: ", e, fixJSON(objStr));
+          this.set('err', e);
           return this.set('objTmp', objStr);
         }
       }
@@ -54,7 +66,7 @@ new Ractive({
 	template: `
 		<h2>Input</h2>
 		<p>Type a JSON here: </p>
-		<json-edit value="{{foo}}" /> 
+		<json-edit value="{{foo}}" />
 		<h2>Output:</h2>
 		<pre>{{JSON.stringify(foo)}}</pre>
 	`,
@@ -62,6 +74,6 @@ new Ractive({
 		this.observe('foo', function(value){
 			console.log("foo is changed", value)
 		})
-	}	
+	}
 })
 */
