@@ -41,7 +41,8 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                 @set \designDocuments, [..key for res]
                 ev.component.fire \state, \done...
 
-            get-design-document: (ev, doc-id) ->
+            get-design-document: (ev) ->
+                doc-id = ev.get '.'
                 ev.component.fire \state, \doing
                 # get the _auth design document
                 err, res <~ db.get doc-id
