@@ -19,7 +19,7 @@ Ractive.components['ack-button'] = Ractive.extend do
         @button-timeout = if @get \timeout
             that
         else
-            13_200ms
+            6_000ms
 
         set-button = (mode, message) ~>
             @set \state, mode
@@ -74,7 +74,7 @@ Ractive.components['ack-button'] = Ractive.extend do
                         @set \selfDisabled, no
                         if timeout
                             msg = "Button is timed out."
-                            logger.error msg
+                            #logger.error msg
                             set-button \error, msg
 
         @error = (msg, callback) ~>
