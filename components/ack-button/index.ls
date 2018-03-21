@@ -19,7 +19,7 @@ Ractive.components['ack-button'] = Ractive.extend do
         @button-timeout = if @get \timeout
             that
         else
-            3_200ms
+            13_200ms
 
         set-button = (mode, message) ~>
             @set \state, mode
