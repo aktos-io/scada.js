@@ -121,6 +121,22 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                 self.set \designDocument, ddoc
                 ev.component.fire \state, \done...
 
+            getView: (ctx) ->
+                ctx.component.fire \state, \doing
+                view = @get \getView_view
+                params = @get \getView_params
+                unless view => return ctx.component.error message: "View name is required."
+                err, res <~ db.view view, params
+                if err => return ctx.component.error err
+                ctx.component.fire \state, \done...
+                console.info "#{view} (#{JSON.stringify(params)}) results:", res
+
+                @set \getView_result, """
+                    {
+                    #{["\t" + JSON.stringify(..) for res].join(',\n')}
+                    }
+                    """
+
     data: ->
         design-document:
             _id: '_design/my-test-document'
@@ -131,3 +147,4 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
         designDocuments: []
         documentId: ''
         autoCompile: yes
+        getView_params: {}

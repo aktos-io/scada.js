@@ -38096,13 +38096,17 @@ fixJSON = function(x){
 }
 
 Ractive.components['json-edit'] = Ractive.extend({
-  template: `<textarea lazy="true" style="white-space: pre-wrap; border: {{#if err}}2px dashed red{{else}}1px solid green{{/if}}" title="{{err}}">{{ objFormatted }}</textarea>`,
+  template: `<textarea lazy="true" 
+    style="{{style}}; white-space: pre-wrap; border: {{#if err}}2px dashed red{{else}}1px solid green{{/if}}" 
+    title="{{err}}"
+    class="{{class}}"
+    >{{ objFormatted }}</textarea>`,
   isolated: true,
   data: function(){
     return {
         objTmp: undefined,
         value: undefined,
-        err: null
+        err: null,
     }
   },
   computed: {

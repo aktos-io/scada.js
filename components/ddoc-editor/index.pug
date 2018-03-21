@@ -21,6 +21,22 @@
 
         .field
             checkbox(checked="{{dumpAllSection}}") Dump All
+            
+        .fields
+            .field 
+                label View 
+                input(value="{{getView_view}}" placeholder="mydesigndoc/myview")
+            .field 
+                label Params 
+                json-edit(value="{{getView_params}}" style="height: 100px")
+            .field 
+                label Get
+                ack-button(on-click="getView") Get View
+        
+        .field
+            label Result (also in the console)
+            pre(style="overflow-x: scroll") {{getView_result}}
+            
 +if('dumpAllSection')
     h3.ui.attached.header Dump All Design Documents
     .ui.segment 
