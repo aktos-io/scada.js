@@ -43,8 +43,15 @@
             checkbox.blue(checked="{{dumpAllSection}}") Show
             | Dump All Design Documents  
 
-        +if('dumpAllSection')            
-            ack-button.green(on-click="getAllDesignDocuments") Get All Documents
-            br 
-            ace-editor(code="{{ allDesignDocs }}")
-            
+        +if('dumpAllSection')  
+            .ui.buttons
+                ack-button.green(on-click="downloadBlueprints") Get All Documents
+                file-upload.red(on-choose="restoreDesignDocs" type="text") Restore 
+            h3 Notes for Creating a New Database From Scratch
+            ol
+                li Use Fauxton to create a new database 
+                li Create a user different from #[code admin]
+                li.
+                    Create appropriate #[code _security] file in the new database
+                    and add the user as #[code admin]
+                li Upload your #[code _design/*] files
