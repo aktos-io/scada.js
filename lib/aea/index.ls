@@ -7,6 +7,7 @@ require! {
     './vlogger': {VLogger}
 }
 require! './copy-to-clipboard': {copyToClipboard}
+require! './file-download': {createDownload}
 
 is-nodejs = ->
     if typeof! process is \process
@@ -17,6 +18,7 @@ is-nodejs = ->
 
 module.exports = {
     sleep, clear-timer
+    createDownload
     merge
     Logger,
     pack, unpack, clone, diff
