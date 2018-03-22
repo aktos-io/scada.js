@@ -45,9 +45,17 @@ Ractive.components['checkbox'] = Ractive.extend do
             ack-button.actor.request-update that
 
         # set the default value on init
-        if typeof! @get(\checked) in <[ Null Undefined ]>
-            if typeof! (@get \initial) isnt \Null
-                set-state @get \initial
+        unless @get \tristate
+            # IMPORTANT: initial value CANNOT be applied to tristate elements.
+            # ----------------------------------------------------------------
+            # because "undefined" value is considered as "indeterminate", thus
+            # specifying an initial value WILL cause an instable behaviour
+            # because when user WANTS to set the state as "indeterminate" explicitly, 
+            # checkbox WOULD automatically CHANGE it to the initial value on next
+            # render.
+            if typeof! @get(\checked) in <[ Null Undefined ]>
+                if typeof! (@get \initial) isnt \Null
+                    set-state @get \initial
 
         # observe `checked`
         @observe \checked, ((val) ~>
