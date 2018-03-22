@@ -1,47 +1,50 @@
-.ui.segment 
-    ack-button.green(on-click="listDesignDocuments") Get List
-    +each('designDocuments')
-        ack-button(on-click="getDesignDocument")
-            code {{ . }}
-
-    .ui.form 
-        .field
-            ace-editor(code="{{ designDocument.livescript }}" mode="livescript" theme="xcode")
-        .field 
-            checkbox(checked="{{autoCompile}}") Autocompile
-            +unless('autoCompile')
-                ack-button.teal(on-click="compileDesignDocument") Compile
-        +unless('autoCompile')
-            .field 
-                ace-editor(code="{{ designDocument.javascript }}" mode="javascript" theme="xcode")
-        .field
-            .ui.action.input 
-                input(value="{{ documentId }}" placeholder="_design/myDesignDocument")
-                ack-button.red(on-click="putDesignDocument") Put Auth Document!
-
-        .field
-            checkbox(checked="{{dumpAllSection}}") Dump All
-            
-        .fields
-            .field 
-                label View 
-                input(value="{{getView_view}}" placeholder="mydesigndoc/myview")
-            .field 
-                label Params 
-                json-edit(value="{{getView_params}}" style="height: 100px")
-            .field 
-                label Get
-                ack-button(on-click="getView") Get View
-        
-        .field
-            label Result (also in the console)
-            pre(style="overflow-x: scroll") {{getView_result}}
-            
-+if('dumpAllSection')
-    h3.ui.attached.header Dump All Design Documents
+.ui.segments
     .ui.segment 
+        ack-button.green(on-click="listDesignDocuments") Get List
+        +each('designDocuments')
+            ack-button(on-click="getDesignDocument")
+                code {{ . }}
+
         .ui.form 
+            .field
+                ace-editor(code="{{ designDocument.livescript }}" mode="livescript" theme="xcode")
             .field 
-                ack-button.green(on-click="getAllDesignDocuments") Get All Documents
-            .field 
-                ace-editor(code="{{ allDesignDocs }}")
+                checkbox(checked="{{autoCompile}}") Autocompile
+                +unless('autoCompile')
+                    ack-button.teal(on-click="compileDesignDocument") Compile
+            +unless('autoCompile')
+                .field 
+                    ace-editor(code="{{ designDocument.javascript }}" mode="javascript" theme="xcode")
+            .field
+                .ui.action.input 
+                    input(value="{{ documentId }}" placeholder="_design/myDesignDocument")
+                    ack-button.red(on-click="putDesignDocument") Put Auth Document!
+    .ui.segment
+        h2.ui.header Get View
+        .ui.form
+            .fields
+                .field 
+                    label View 
+                    input(value="{{getView_view}}" placeholder="mydesigndoc/myview")
+                .field 
+                    label Params 
+                    json-edit(value="{{getView_params}}" style="height: 100px")
+                .field 
+                    label Get
+                    ack-button(on-click="getView") Get View
+            
+            .field
+                label Result (also in the console)
+                pre(style="overflow-x: scroll") {{getView_result}}
+                
+    .ui.segment   
+        h3.ui.top.attached.header 
+            //- Dump all design documents 
+            checkbox.blue(checked="{{dumpAllSection}}") Show
+            | Dump All Design Documents  
+
+        +if('dumpAllSection')            
+            ack-button.green(on-click="getAllDesignDocuments") Get All Documents
+            br 
+            ace-editor(code="{{ allDesignDocs }}")
+            
