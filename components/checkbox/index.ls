@@ -5,7 +5,10 @@ usage:
     attributes:
         tristate="true": display a "CLEAR" button
 
-checked="{{value}}" : where the value is one of true/false/null
+checked="{{value}}" : where the value is one of
+    * true
+    * false
+    * null or undefined (for high impedance)
 """
 
 Ractive.components['checkbox'] = Ractive.extend do
@@ -22,29 +25,37 @@ Ractive.components['checkbox'] = Ractive.extend do
 
         ack-button = @find-component \ack-button
 
-        set-state = (state) ~>
-            if typeof! state in <[ Undefined Null ]>
+        set-visual = (state) ~>
+            # update initial state visually
+            if @get('tristate') and typeof! state in <[ Null Undefined ]>
                 @set \check-state, 'indetermined'
-                @set \checked, null
             else
-                if state is \false
-                    state = false
-                @set \checked, state
                 @set \check-state, if state then \checked else \unchecked
-                ack-button.fire \state, \done
+
+        set-state = (state) ~>
+            @set \checked, state
+            set-visual state
+            ack-button.fire \state, \done
 
         if @get \topic
             ack-button.actor.subscribe that
             ack-button.actor.on \data, (msg) ~>
                 if that is msg.topic
                     set-state msg.payload.curr
-
             ack-button.actor.request-update that
 
-        @observe \checked, set-state
+        # set the default value on init
+        if typeof! @get(\checked) in <[ Null Undefined ]>
+            if typeof! (@get \initial) isnt \Null
+                set-state @get \initial
 
-        if typeof! @get(\checked) is \Undefined
-            set-state @get \initial
+        # observe `checked`
+        @observe \checked, ((val) ~>
+            set-state val
+            ), {init: false}
+
+        # visually update on init
+        set-visual @get \checked
 
         @on do
             _statechange: (ctx) ->
@@ -76,24 +87,10 @@ Ractive.components['checkbox'] = Ractive.extend do
                 else
                     debugger if @debug
                     curr-state = @get \checked
-                    unless @get \tristate
-                        set-state not curr-state
-                    else
-                        if curr-state is true
-                            # change the state-vector direction
-                            @set \state-vector, \down
-                            set-state null
-                        else
-                            if typeof! curr-state in <[ Null Undefined ]>
-                                set-state (@get \state-vector) is \up
-                            else
-                                @set \state-vector, \up
-                                set-state null
-
+                    set-state not curr-state
 
     data: ->
         checked: undefined
         'check-state': 'unchecked'
         transparent: no
-        initial: false
-        'state-vector': \up  # up/down
+        initial: null
