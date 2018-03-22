@@ -56,6 +56,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                 dd.dropdown 'set exactly', _new
             else
                 dd.dropdown 'set selected', _new
+            dd.dropdown 'refresh'
             external-change := no
 
         set-item = (value-of-key) ~>
@@ -159,16 +160,16 @@ Ractive.components['dropdown'] = Ractive.extend do
             shandler = @observe \selected-key, (_new) ~>
                 if @get \debug => @actor.c-log "selected key set to:", _new
 
-                @actor.c-log "DROPDOWN: selected key set to:", _new
+                #@actor.c-log "DROPDOWN: selected key set to:", _new
                 if _new
                     item = find (.[keyField] is _new), @get \dataReduced
                     unless item
                         item = find (.[keyField] is _new), @get \data
                         @push \dataReduced, item
                     @set \item, item
-                    sleep 10ms ~>
-                        # Workaround for dropdown update bug
-                        update-dropdown _new
+                    <~ sleep 10ms
+                    # Workaround for dropdown update bug
+                    update-dropdown _new
                 else
                     # clear the dropdown
                     @set \item, {}
