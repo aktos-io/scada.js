@@ -1,10 +1,37 @@
-.fileUpload.ui.button(class="{{class}}")
+.fileUpload.ui.button(
+    class="                                                         \
+        {{ class }}                                                 \
+        ack-button                                                  \
+        {{#if state === 'doing' || state === 'done' || state === 'error' }}    \
+            {{^custom}}                                             \
+                labeled icon                                        \
+            {{/}}                                                   \
+        {{/if}}                                                     \
+        {{#disabled}}disabled{{/}}                                  \
+        {{#if state === 'doing'}}disabled{{/if}}                    \
+        {{#active}}active{{/}}                                      \
+        "
+    disabled="{{ (disabled || selfDisabled) || !(enabled) }}"
+    style="{{ style }} {{#if transparen}}background-color: transparent;{{/if}}"
+    )
+    +unless('custom')
+        +iff('state === "doing"')
+            +iff('heartbeat')
+                i.icon.heart
+            +else
+                i.icon(style="z-index: 99999") #[.ui.active.mini.inverted.loader]
+            +endif
+        +elif('state === "done"')
+            i.icon.checkmark
+        +elif('state === "error"')
+            i.warning.sign.icon
+        +endif
     | {{yield}}
     +if('show')
         +iff('camera')
-            input.upload(type="file" title="{{tooltip}}"
+            input.upload(type="file" title="{{#if state === 'error'}}{{errMessage}}{{else}}{{tooltip}}{{/if}}"
                 on-change="fileSelect" capture="camera" accept="image/*")
         +else
-            input.upload(type="file" title="{{tooltip}}"
+            input.upload(type="file" title="{{#if state === 'error'}}{{errMessage}}{{else}}{{tooltip}}{{/if}}"
                 on-change="fileSelect")
         +endif
