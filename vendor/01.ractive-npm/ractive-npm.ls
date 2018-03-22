@@ -2,7 +2,7 @@ require! 'ractive': Ractive
 # Add Ractive to global window object
 # ---------------------------------------------
 window.Ractive = Ractive
-sleep = (ms, f) -> set-timeout f, ms
+window.sleep = sleep = (ms, f) -> set-timeout f, ms
 
 # Helper methods
 # ---------------------------------------------

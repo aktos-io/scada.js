@@ -4,10 +4,9 @@ DIR=$(dirname "$(readlink -f "$0")")
 
 cd "$DIR/../.."
 npm i --save ractive@edge
-npm i
-cd $DIR
 
-NODE_MODULES=$(realpath "$DIR/../../node_modules")
+cd $DIR
+export NODE_MODULES=$(realpath "$DIR/../../node_modules")
 echo "updating ractive from this node modules"
 
 # Create bundle

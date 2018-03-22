@@ -2,8 +2,8 @@
 (function (global){
 /*
 	Ractive.js v1.0.0-edge
-	Build: 2fca2a0d7d75f3bee7e36b921e1eba27ca028fb2
-	Date: Wed Mar 14 2018 21:20:06 GMT+0000 (UTC)
+	Build: f728853e4e11051bfed30e8d81bd407c5864de87
+	Date: Tue Mar 20 2018 01:23:33 GMT+0000 (UTC)
 	Website: http://ractivejs.org
 	License: MIT
 */
@@ -383,6 +383,7 @@ var defaults = {
   el: void 0,
   append: false,
   delegate: true,
+  enhance: false,
 
   // template:
   template: null,
@@ -9087,9 +9088,11 @@ function evalCSS(component, css) {
 
 function initCSS(options, target, proto) {
   var css =
-    isString(options.css) && !hasCurly.test(options.css)
-      ? getElement(options.css) || options.css
-      : options.css;
+    options.css === true
+      ? ''
+      : isString(options.css) && !hasCurly.test(options.css)
+        ? getElement(options.css) || options.css
+        : options.css;
   var cssProp = css;
 
   var id = options.cssId || uuid();
@@ -9102,7 +9105,9 @@ function initCSS(options, target, proto) {
     css = evalCSS(target, css);
   }
 
-  var def = (target._cssDef = { transform: !options.noCssTransform });
+  var def = { transform: !options.noCssTransform };
+
+  defineProperty(target, '_cssDef', { configurable: true, value: def });
 
   defineProperty(target, 'css', {
     get: function get() {
@@ -9111,7 +9116,9 @@ function initCSS(options, target, proto) {
     set: function set(next) {
       cssProp = next;
       var css = evalCSS(target, cssProp);
+      var styles = def.styles;
       def.styles = def.transform ? transformCss(css, id) : css;
+      if (def.applied && styles !== def.styles) { applyCSS(true); }
     }
   });
 
@@ -9586,7 +9593,7 @@ function configure(method, Parent, target, options, Child) {
   }
 
   // disallow combination of `append` and `enhance`
-  if (options.append && options.enhance) {
+  if (target.append && target.enhance) {
     throw new Error('Cannot use append and enhance at the same time');
   }
 
@@ -18351,7 +18358,7 @@ function addStyle(id, css) {
 
   if (!this._cssDef) {
     Object.defineProperty(this, '_cssDef', {
-      configurable: false,
+      configurable: true,
       writable: false,
       value: {
         transform: false,
@@ -18665,7 +18672,7 @@ return Ractive;
 var Ractive, sleep, toString$ = {}.toString;
 Ractive = require('ractive');
 window.Ractive = Ractive;
-sleep = function(ms, f){
+window.sleep = sleep = function(ms, f){
   return setTimeout(f, ms);
 };
 Ractive.defaults.hasEvent = function(eventName){
