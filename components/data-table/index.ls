@@ -48,6 +48,8 @@ Ractive.components['data-table'] = Ractive.extend do
 
             if typeof! settings.before-save is \Function
                 settings.before-save = settings.before-save.bind this
+            else
+                settings.before-save = ((ctx, curr, next) -> next!).bind this
 
             if typeof! settings.data is \Function
                 settings.data = settings.data.bind this
@@ -257,8 +259,6 @@ Ractive.components['data-table'] = Ractive.extend do
 
             save: (ev, val) ->
                 ev.component.fire \state, \doing
-                if typeof! settings.before-save isnt \Function
-                    settings.before-save = (ctx, curr, next) -> next!
                 err <~ @fire 'beforeSave', ev, @get('curr')
                 if err
                     console.error "data-table error:", err
