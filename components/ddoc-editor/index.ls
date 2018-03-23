@@ -103,7 +103,6 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                 ddoc = make-design-doc ddoc
                 console.log "Full document to upload: ", ddoc
                 err, res <~ db.put ddoc
-                debugger
                 if err
                     ev.component.error err.message
                     console.error "Error uploading ddoc-src document: ", err
