@@ -61,10 +61,11 @@ Ractive.components['file-upload'] = Ractive.extend do
                 const c = ctx.getParent yes
                 c.refire = yes
                 c.logger = logger
-                c.heartbeat = (_timeout)->
+                c.heartbeat = (_timeout) ~>
                     secs = _timeout / 1000
                     console.log "Upload button has heartbeat for #{secs} seconds."
                     try clear-timeout timeout
+                    @set \state, \doing
                     timeout := sleep _timeout, ~>
                         show-err message: "Timeout for #{secs} seconds."
 
