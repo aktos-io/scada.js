@@ -291,9 +291,11 @@ Ractive.components['data-table'] = Ractive.extend do
                     if settings.autoincrement is on
                         @actor.c-log "Autoincrement is set to 'yes', autoincrementing."
                         curr._id = curr._id.to-upper-case!
-                        if curr._id.split /[0-9]+/ .length is 1
+                        if curr._id.split /#{4,}/ .length is 1
                             # no numeric part, this is a prefix
-                            curr._id += '####'
+                            return next err='
+                                No autoincrement postfix found, please
+                                append "####" to your doc._id'
 
                 if @get \new_attachments
                     curr._attachments = (curr._attachments or {}) <<< that
