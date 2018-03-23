@@ -16,7 +16,7 @@ Event Signature: (ctx, file, next) ->
 Text file reading example:
 
     ```pug
-        file-upload(on-choose="restoreDesignDocs" type="text") Upload!
+        file-button(on-read="restoreDesignDocs" type="text") Upload!
 
     ```ls
         restoreDesignDocs: (ctx, file, next) ->
@@ -29,7 +29,7 @@ Text file reading example:
 
 '''
 
-Ractive.components['file-upload'] = Ractive.extend do
+Ractive.components['file-button'] = Ractive.extend do
     isolated: yes
     template: RACTIVE_PREPARSE('index.pug')
     onrender: ->
@@ -107,7 +107,7 @@ Ractive.components['file-upload'] = Ractive.extend do
                         data: csv.column-list
                         columns: csv.columns
 
-                err <~ @fire \choose, c, value
+                err <~ @fire \read, c, value
                 try clear-timeout timeout
                 unless err
                     @set \file-name, file.name
