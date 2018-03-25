@@ -46,7 +46,7 @@ if [[ -d $SCADA_DIR ]]; then
     while IFS= read -r module; do
         #echo "++++++++++ adding path: $module"
         FOUND_MODULES="${FOUND_MODULES}:$module"
-    done < <(find $PROJECT_PATH -type d -name "node_modules" | grep -v "node_modules\/" )
+    done < <(find $PROJECT_PATH -type d -name "node_modules" 2> /dev/null | grep -v "node_modules\/" )
 fi
 
 export NODE_PATH="${SCADA_MODULES}:${FOUND_MODULES}:${NODE_PATH}"
