@@ -90,7 +90,7 @@ Ractive.Context.removeMe = ->
     usage:
 
         +each('something')
-            btn.icon(on-buttonclick="@context.removeMe()") #[i.minus.icon]
+            btn.icon(on-click="@context.removeMe()") #[i.minus.icon]
     ***************************************************************************/
 
     @splice '..', @get('@index'), 1

@@ -46,10 +46,8 @@ Ractive.components['ack-button'] = Ractive.extend do
                 @doing-watchdog.reset!
                 @set \tooltip, ""
 
-                #@actor.c-log "firing on-buttonclick, default topic:", @actor.default-topic
+                #@actor.c-log "firing on-click, default topic:", @actor.default-topic
                 @actor.send-wid {ctx: c}
-
-                @fire \buttonclick, c, val
                 @fire \click, c
                 # stop the event propogation
                 return false
