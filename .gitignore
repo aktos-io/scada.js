@@ -7,11 +7,11 @@ __public__
 # general purpose tarballs
 *.zip
 
-# dependency preferences 
-module-preferences.txt
+# dependency preferences
+modules.txt
 
 # tmp files and folders
-__tmp__
+__tmp__*
 tmp-*
 
 # sensitive files
