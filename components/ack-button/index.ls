@@ -79,6 +79,13 @@ Ractive.components['ack-button'] = Ractive.extend do
             logger.error msg, callback
             set-button \error, (msg.message or msg)
 
+        @warn = (msg, callback) ~>
+            try
+                console.warn msg.message
+                set-button \error, msg.message
+            catch
+                console.error e 
+
         @info = (msg, callback) ~>
             logger.info msg, callback
             set-button \normal
