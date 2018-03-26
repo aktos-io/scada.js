@@ -153,7 +153,7 @@ Ractive.components['scene'] = Ractive.extend do
                 border: 0;
                 "
             >
-            {{#if ~/["login-required"] && !loggedIn}}
+            {{#if ! loggedin}}
                 <div class="ui red message fluid" style="
                         position: fixed; top: 100px; left: 0; z-index: 999999999;
                         width: 100%; height: 200px">
@@ -195,3 +195,4 @@ Ractive.components['scene'] = Ractive.extend do
 
     data: ->
         rendered-before: no
+        loggedin: yes
