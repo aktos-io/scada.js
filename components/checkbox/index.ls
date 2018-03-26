@@ -50,7 +50,7 @@ Ractive.components['checkbox'] = Ractive.extend do
             # ----------------------------------------------------------------
             # because "undefined" value is considered as "indeterminate", thus
             # specifying an initial value WILL cause an instable behaviour
-            # because when user WANTS to set the state as "indeterminate" explicitly, 
+            # because when user WANTS to set the state as "indeterminate" explicitly,
             # checkbox WOULD automatically CHANGE it to the initial value on next
             # render.
             if typeof! @get(\checked) in <[ Null Undefined ]>
@@ -88,7 +88,12 @@ Ractive.components['checkbox'] = Ractive.extend do
                         return
 
                     if err
-                        logger.error err, callback
+                        if err is \timeout
+                            ctx.component.warn message: "Async checkbox is timed out."
+                            @set \check-state, \error
+                            return 
+                        else
+                            logger.error err, callback
                     else
                         #logger.clog "no error returned, setting checkbox to ", checked
                         set-state checked

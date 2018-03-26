@@ -21,6 +21,8 @@
             +elif("state === 'doing'")
                 i.icon 
                     .ui.active.mini.inverted.loader
+            +elif("state === 'error'")
+                i.icon.warning.sign
             +endif
         | {{yield}}
             
