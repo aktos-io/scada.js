@@ -70,18 +70,15 @@ Ractive.components["a"] = Ractive.extend do
         tooltip: null
         href: null
     onrender: ->
-        onclick = @get \onclick
-        newtab = @get \newtab
-
         @on do
             _click: (ctx) ->
                 href = @get \href
-                if newtab
+                if @get \newtab
                     return window.open href
 
-                if onclick
-                    #console.log "evaluating onclick: #{onclick}"
-                    return eval onclick
+                if @get \onclick
+                    console.log "evaluating onclick: #{that}"
+                    return eval that
 
                 if href?
                     link = parse-link href
