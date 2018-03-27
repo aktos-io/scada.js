@@ -9,7 +9,8 @@ window.sleep = sleep = (ms, f) -> set-timeout f, ms
 
 # DEPRECATED
 Ractive.defaults.has-event = (event-name) ->
-    console.warn "Deprecated: Use ractive.hasListener"
+    #console.warn "Deprecated: Use ractive.hasListener"
+    # not deprecated for now, see https://github.com/ractivejs/ractive/issues/3219
     fn = (a) ->
         a.t is 70 and a.n.indexOf(event-name) > -1
     return @component and @component.template.m.find fn
