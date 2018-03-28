@@ -1,29 +1,28 @@
-.ui.buttons 
-    ack-button.aea-checkbox(
-        on-click="_statechange"
-        class="{{ class }}                                  \
-            {{#if transparent}}basic{{/if}}                 \
-            {{#if ~/['check-state'] === 'doing'}}labeled{{/if}}    \
-            icon                                            \
-            "
-        style="{{ style }} {{#if transparent}}background-color: transparent;{{/if}} text-align: left; "
-        type="{{type}}"
-        custom
-        disabled="{{disabled}}"
-        )
-        +with('~/["check-state"] as state')
-            +iff("state === 'checked'")
-                i.icon.checkmark.box
-            +elif("state === 'unchecked'")
-                i.icon.square.outline
-            +elif("state === 'indetermined'")
-                i.icon.minus.square.outline
-            +elif("state === 'doing'")
-                i.icon 
-                    .ui.active.mini.inverted.loader
-            +endif
-        | {{yield}}
-            
-    +if('tristate')
-        .ui.button.icon(class="{{class}}" on-click="@.set('checked', null)")
-            icon.eraser
+ack-button.aea-checkbox(
+    on-click="_statechange"
+    class="{{ class }}                                  \
+        {{#if transparent}}basic{{/if}}                 \
+        {{#if ~/['check-state'] === 'doing'}}labeled{{/if}}    \
+        icon                                            \
+        "
+    style="{{ style }} {{#if transparent}}background-color: transparent;{{/if}} text-align: left; "
+    type="{{type}}"
+    custom
+    disabled="{{disabled}}"
+    )
+    +with('~/["check-state"] as state')
+        +iff("state === 'checked'")
+            i.icon.checkmark.box
+        +elif("state === 'unchecked'")
+            i.icon.square.outline
+        +elif("state === 'indetermined'")
+            i.icon.minus.square.outline
+        +elif("state === 'doing'")
+            i.icon 
+                .ui.active.mini.inverted.loader
+        +endif
+    | {{yield}}
+        
++if('tristate')
+    .ui.button.icon(class="{{class}}" on-click="@.set('checked', null)")
+        icon.eraser
