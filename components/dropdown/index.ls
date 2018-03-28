@@ -19,12 +19,6 @@ require! 'aea': {sleep}
 require! 'sifter': Sifter
 require! '../data-table/sifter-workaround': {asciifold}
 
-small-part-of = (data) ->
-    if data? and not empty data
-        take 100, data
-    else
-        []
-
 Ractive.components['dropdown'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
@@ -48,6 +42,14 @@ Ractive.components['dropdown'] = Ractive.extend do
         nameField = @get \nameField
         external-change = no
         shandler = null
+
+        small-part-of = (data) ~>
+            if data? and not empty data
+                take @get('load-first'), data
+            else
+                []
+
+
 
         update-dropdown = (_new) ~>
             if @get \debug => @actor.log.log "#{@_guid}: selected is changed: ", _new
@@ -197,3 +199,4 @@ Ractive.components['dropdown'] = Ractive.extend do
         # across the instances)
         'selected-key': null
         'selected-name': null
+        'load-first': 100
