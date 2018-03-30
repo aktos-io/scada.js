@@ -18554,7 +18554,6 @@ window.sleep = sleep = function(ms, f){
 };
 Ractive.defaults.hasEvent = function(eventName){
   var fn;
-  console.warn("Deprecated: Use ractive.hasListener");
   fn = function(a){
     return a.t === 70 && a.n.indexOf(eventName) > -1;
   };
@@ -18640,7 +18639,7 @@ Ractive.Context.removeMe = function(){
   usage:
   
       +each('something')
-          btn.icon(on-buttonclick="@context.removeMe()") #[i.minus.icon]
+          btn.icon(on-click="@context.removeMe()") #[i.minus.icon]
   ***************************************************************************/
   return this.splice('..', this.get('@index'), 1);
 };

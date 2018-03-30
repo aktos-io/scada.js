@@ -20,8 +20,11 @@ ack-button.aea-checkbox(
         +elif("state === 'doing'")
             i.icon 
                 .ui.active.mini.inverted.loader
+        +elif("state === 'error'")
+            i.icon.warning.sign
         +endif
     | {{yield}}
+
         
 +if('tristate')
     .ui.button.icon(class="{{class}}" on-click="@.set('checked', null)")
