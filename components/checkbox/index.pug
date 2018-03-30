@@ -25,6 +25,7 @@
                 i.icon.warning.sign
             +endif
         | {{yield}}
+
             
     +if('tristate')
         .ui.button.icon(class="{{class}}" on-click="@.set('checked', null)")

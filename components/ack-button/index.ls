@@ -47,7 +47,6 @@ Ractive.components['ack-button'] = Ractive.extend do
                 @set \tooltip, ""
 
                 #@actor.c-log "firing on-click, default topic:", @actor.default-topic
-                @actor.send-wid {ctx: c}
                 @fire \click, c
                 # stop the event propogation
                 return false
@@ -84,7 +83,7 @@ Ractive.components['ack-button'] = Ractive.extend do
                 console.warn msg.message
                 set-button \error, msg.message
             catch
-                console.error e 
+                console.error e
 
         @info = (msg, callback) ~>
             logger.info msg, callback

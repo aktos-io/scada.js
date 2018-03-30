@@ -115,11 +115,14 @@ Ractive.components['router'] = Ractive.extend do
     template: ''
     isolated: yes
     oncomplete: ->
+        change = {}
         actor = new RactiveActor this, 'router'
+            ..subscribe 'app.router.**'
+            ..on \request-update, (topic, respond) ~>
+                console.log "router received request update: ", topic
+                respond change
 
-        prev =
-            scene: undefined
-            anchor: undefined
+        prev = {}
 
         do handle-hash = ~>
             curr = parse-link get-window-hash!
@@ -129,12 +132,12 @@ Ractive.components['router'] = Ractive.extend do
                 sleep 50ms, -> scroll-to curr.anchor
                 #console.log """hash changed: scene: #{curr.scene}, anchor: #{curr.anchor}"""
 
-                change = {}
                 if curr.scene isnt prev.scene
                     change.scene = curr.scene
                 if curr.anchor isnt prev.anchor
                     change.anchor = curr.anchor
-                actor.send 'app.router.changes', change
+
+                actor.send 'app.router.changes', {change}
                 prev <<< curr
 
         $ window .on \hashchange, ->

@@ -1,3 +1,16 @@
+'''
+
+# Realtime Status:
+-------------------
+
+    waiting-init      : Waiting for first update
+    normal            : Everything normal
+    write-failed      : Write failed
+    read-failed       : Read failed (when requested read on demand)
+    heartbeat-failed  : Heartbeat failed
+
+
+'''
 require! 'actors': {IoActor}
 
 Ractive.components['sync'] = Ractive.extend do
