@@ -15,7 +15,7 @@ checked="{{value}}" : where the value is one of
 '''
 
 require! 'aea': {sleep, VLogger}
-require! 'dcs/browser'
+require! 'dcs/browser': {Signal}
 require! 'actors': {RactiveActor}
 
 
@@ -79,6 +79,8 @@ Ractive.components['checkbox'] = Ractive.extend do
             # set initial state
             @set 'check-state', \doing
 
+            @reply-signal = new Signal \reply-signal
+
             # handle realtime events
             @actor = new RactiveActor this, name=topic
                 ..subscribe topic
@@ -87,14 +89,25 @@ Ractive.components['checkbox'] = Ractive.extend do
                     @actor.c-err msg
 
                 ..on-topic "#{topic}.read", (msg) ~>
-                    if msg.payload.err
-                        ack-button.component.warn message: that.message
-                        console.error "Checkbox says: ", that
-                        @set \check-state, \error
-                        @set \checked, null
+                    @actor.c-log "#{topic}.read received: ", msg
+                    if @reply-signal.waiting
+                        @actor.c-log "...is redirected to reply-signal..."
+                        @reply-signal.go msg.payload
                     else
-                        try
-                            set-state msg.payload.res.curr
+                        if msg.payload?
+                            # if has no payload, then it probably comes from
+                            # another actor's request-update!
+                            # FIXME: this shouldn't receive the other actors'
+                            # update messages in the first place.
+                            @actor.c-log "...is used directly to set visual"
+                            if msg.payload.err
+                                ack-button.warn message: that.message
+                                console.error "Checkbox says: ", that
+                                @set \check-state, \error
+                                @set \checked, null
+                            else
+                                try
+                                    set-state msg.payload.res.curr
 
                 ..on-topic "app.logged-in", ~>
                     @actor.c-log "DEBUG: Application is logged in into the server."
@@ -105,15 +118,12 @@ Ractive.components['checkbox'] = Ractive.extend do
             _statechange: (ctx) ->
                 if @get \sync-topic
                     next-state = not @get \checked
-                    x = sleep 100ms, ~>
-                        @set 'check-state', \doing
+                    x = sleep 100ms, ~> @set 'check-state', \doing
                     topic = "#{that}.write"
-                    @actor.c-log "sending: ", topic
-                    timeout = 2000ms
-                    _err, _res <~ @actor.send-request {topic, timeout}, next-state
-                    console.log "_err, _res: ", _err, _res
-                    err = _err or _res?.payload.err
-                    res = (try _res.payload.res) or null
+                    #@actor.c-log "sending: ", topic
+                    @actor.send topic, next-state
+                    _err, data <~ @reply-signal.wait 2000ms
+                    err = _err or data?.err
                     unless err
                         try clear-timeout x
                         set-state next-state
