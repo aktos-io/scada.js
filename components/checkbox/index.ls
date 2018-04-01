@@ -80,6 +80,7 @@ Ractive.components['checkbox'] = Ractive.extend do
             @set 'check-state', \doing
 
             @reply-signal = new Signal \reply-signal
+            timeout = 1000ms
 
             # handle realtime events
             @actor = new RactiveActor this, name=topic
@@ -87,17 +88,19 @@ Ractive.components['checkbox'] = Ractive.extend do
                     @actor.c-err msg
 
                 ..on-topic "#{topic}.read", (msg) ~>
-                    @actor.c-log "#{topic}.read received: ", msg
+                    #@actor.c-log "#{topic}.read received: ", msg
                     if @reply-signal.waiting
-                        @actor.c-log "...is redirected to reply-signal..."
+                        #@actor.c-log "...is redirected to reply-signal..."
                         @reply-signal.go msg.payload
                     else
                         if msg.payload?
+                            '''
                             # if has no payload, then it probably comes from
                             # another actor's request-update!
                             # FIXME: this shouldn't receive the other actors'
                             # update messages in the first place.
-                            @actor.c-log "...is used directly to set visual"
+                            '''
+                            #@actor.c-log "...is used directly to set visual"
                             if msg.payload.err
                                 ack-button.warn message: that.message
                                 console.error "Checkbox says: ", that
@@ -108,9 +111,25 @@ Ractive.components['checkbox'] = Ractive.extend do
                                     set-state msg.payload.res.curr
 
                 ..on-topic "app.logged-in", ~>
-                    @actor.request-update!
+                    #@actor.request-update!
+                    @actor.send-request "#{topic}.update", (err, msg) ~>
+                        if err
+                            console.error "error while update: ", err
+                        else
+                            #console.warn "received update topic: ", msg
+                            @actor.trigger-topic "#{topic}.read", msg
 
-                ..request-update!
+
+                ..send-request {topic: "#{topic}.update", timeout}, (err, msg) ~>
+                    if err
+                        console.error "error while update: ", err
+                        ack-button.warn message: err
+                        @set \check-state, \error
+                        @set \checked, null
+                    else
+                        #console.warn "received update topic: ", msg
+                        @actor.trigger-topic "#{topic}.read", msg
+
 
         @on do
             _statechange: (ctx) ->
@@ -122,8 +141,8 @@ Ractive.components['checkbox'] = Ractive.extend do
                     x = sleep acceptable-delay, ~> @set 'check-state', \doing
                     topic = "#{that}.write"
                     #@actor.c-log "sending: ", topic
-                    @actor.send topic, next-state
-                    _err, data <~ @reply-signal.wait 2000ms
+                    @actor.send topic, {val: next-state}
+                    _err, data <~ @reply-signal.wait timeout
                     err = _err or data?.err
                     unless err
                         try clear-timeout x
