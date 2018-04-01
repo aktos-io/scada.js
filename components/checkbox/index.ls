@@ -108,7 +108,7 @@ Ractive.components['checkbox'] = Ractive.extend do
                                     set-state msg.payload.res.curr
 
                 ..on-topic "app.logged-in", ~>
-                    @actor.c-log "DEBUG: Application is logged in into the server."
+                    @actor.request-update!
 
                 ..request-update!
 
