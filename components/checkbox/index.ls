@@ -16,8 +16,7 @@ checked="{{value}}" : where the value is one of
 
 require! 'aea': {sleep, VLogger}
 require! 'dcs/browser': {Signal}
-require! 'actors': {RactiveActor}
-
+require! 'actors': {RactiveIoProxyClient}
 
 Ractive.components['checkbox'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
@@ -75,61 +74,21 @@ Ractive.components['checkbox'] = Ractive.extend do
             set-visual @get \checked
         else
             # if it has a "sync-topic", then it should watch this topic
-            topic = @get \sync-topic
             # set initial state
             @set 'check-state', \doing
-
-            @reply-signal = new Signal \reply-signal
-            timeout = 1000ms
-
-            # handle realtime events
-            @actor = new RactiveActor this, name=topic
+            io-client = new RactiveIoProxyClient this, {
+                timeout: 1000ms
+                topic: @get \sync-topic
+                }
                 ..on \error, (err) ~>
-                    @actor.c-err msg
+                    ack-button.warn err
+                    console.error "Checkbox says: ", err
+                    @set \check-state, \error
+                    @set \checked, null
 
-                ..on-topic "#{topic}.read", (msg) ~>
-                    #@actor.c-log "#{topic}.read received: ", msg
-                    if @reply-signal.waiting
-                        #@actor.c-log "...is redirected to reply-signal..."
-                        @reply-signal.go msg.payload
-                    else
-                        if msg.payload?
-                            '''
-                            # if has no payload, then it probably comes from
-                            # another actor's request-update!
-                            # FIXME: this shouldn't receive the other actors'
-                            # update messages in the first place.
-                            '''
-                            #@actor.c-log "...is used directly to set visual"
-                            if msg.payload.err
-                                ack-button.warn message: that.message
-                                console.error "Checkbox says: ", that
-                                @set \check-state, \error
-                                @set \checked, null
-                            else
-                                try
-                                    set-state msg.payload.res.curr
-
-                ..on-topic "app.logged-in", ~>
-                    #@actor.request-update!
-                    @actor.send-request "#{topic}.update", (err, msg) ~>
-                        if err
-                            console.error "error while update: ", err
-                        else
-                            #console.warn "received update topic: ", msg
-                            @actor.trigger-topic "#{topic}.read", msg
-
-
-                ..send-request {topic: "#{topic}.update", timeout}, (err, msg) ~>
-                    if err
-                        console.error "error while update: ", err
-                        ack-button.warn message: err
-                        @set \check-state, \error
-                        @set \checked, null
-                    else
-                        #console.warn "received update topic: ", msg
-                        @actor.trigger-topic "#{topic}.read", msg
-
+                ..on \read, (res) ~>
+                    console.log "we read something: ", res
+                    set-state res.curr
 
         @on do
             _statechange: (ctx) ->
@@ -139,19 +98,8 @@ Ractive.components['checkbox'] = Ractive.extend do
                     # do not show "doing" state for if all request-response
                     # finishes within the acceptable delay
                     x = sleep acceptable-delay, ~> @set 'check-state', \doing
-                    topic = "#{that}.write"
-                    #@actor.c-log "sending: ", topic
-                    @actor.send topic, {val: next-state}
-                    _err, data <~ @reply-signal.wait timeout
-                    err = _err or data?.err
-                    unless err
-                        try clear-timeout x
-                        set-state next-state
-                    else
-                        ctx.component.warn message: err
-                        @set \check-state, \error
-                        @set \checked, null
-
+                    err <~ io-client.write next-state
+                    unless err => try clear-timeout x
 
                 if (@has-event 'statechange') or @get \async
                     @set \check-state, \doing
