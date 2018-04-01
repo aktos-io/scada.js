@@ -118,7 +118,10 @@ Ractive.components['checkbox'] = Ractive.extend do
             _statechange: (ctx) ->
                 if @get \sync-topic
                     next-state = not @get \checked
-                    x = sleep 100ms, ~> @set 'check-state', \doing
+                    acceptable-delay = 100ms
+                    # do not show "doing" state for if all request-response
+                    # finishes within the acceptable delay
+                    x = sleep acceptable-delay, ~> @set 'check-state', \doing
                     topic = "#{that}.write"
                     #@actor.c-log "sending: ", topic
                     @actor.send topic, next-state
