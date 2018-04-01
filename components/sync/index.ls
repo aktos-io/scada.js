@@ -22,7 +22,7 @@ Ractive.components['sync'] = Ractive.extend do
         @actor.on \receive, (msg) ~>
             @fire \receive, msg
 
-        @actor.request-update!
+        @actor.log.todo "ADD UPDATE REQUEST"
 
     data: ->
         value: null

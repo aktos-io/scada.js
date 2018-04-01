@@ -56,7 +56,7 @@ Ractive.components['pushbutton'] = Ractive.extend do
 
         if @get \topic
             @actor.subscribe that
-            @actor.request-update that
+            #@actor.request-update that
 
 
     data: ->
