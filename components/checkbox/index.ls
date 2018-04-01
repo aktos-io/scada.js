@@ -83,8 +83,6 @@ Ractive.components['checkbox'] = Ractive.extend do
 
             # handle realtime events
             @actor = new RactiveActor this, name=topic
-                ..subscribe topic
-
                 ..on \error, (err) ~>
                     @actor.c-err msg
 
