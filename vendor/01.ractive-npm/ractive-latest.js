@@ -2,8 +2,8 @@
 (function (global){
 /*
 	Ractive.js v1.0.0-edge
-	Build: f728853e4e11051bfed30e8d81bd407c5864de87
-	Date: Tue Mar 20 2018 01:23:33 GMT+0000 (UTC)
+	Build: ac57150c6476d6e9dce90e8cdabfc6aaf5551419
+	Date: Thu Mar 29 2018 21:52:57 GMT+0000 (UTC)
 	Website: http://ractivejs.org
 	License: MIT
 */
@@ -1153,7 +1153,7 @@ ModelBase__proto__.rebind = function rebind (next, previous, safe) {
   while (i--) {
     var link = this$1.links[i];
     // only relink the root of the link tree
-    if (link.owner._link) { link.relinking(next, safe); }
+    if (link.owner && link.owner._link) { link.relinking(next, safe); }
   }
 
   i = this.children.length;
@@ -1488,9 +1488,9 @@ var LinkModel = (function (ModelBase) {
     this.owner = owner;
     this.target = target;
     this.key = key === undefined ? owner.key : key;
-    if (owner.isLink) { this.sourcePath = (owner.sourcePath) + "." + (this.key); }
+    if (owner && owner.isLink) { this.sourcePath = (owner.sourcePath) + "." + (this.key); }
 
-    target.registerLink(this);
+    if (target) { target.registerLink(this); }
 
     if (parent) { this.isReadonly = parent.isReadonly; }
 
@@ -1610,7 +1610,7 @@ var LinkModel = (function (ModelBase) {
       { target = rebindMatch(this.sourcePath, target, this.target); }
     if (!target || this.target === target) { return; }
 
-    this.target.unregisterLink(this);
+    this.target && this.target.unregisterLink(this);
 
     this.target = target;
     this.children.forEach(function (c) {
@@ -4596,7 +4596,6 @@ function trimWhitespace(items, leadingPattern, trailingPattern) {
 }
 
 var contiguousWhitespace = /[ \t\f\r\n]+/g;
-var preserveWhitespaceElements = /^(?:pre|script|style|textarea)$/i;
 var leadingWhitespace$1 = /^[ \t\f\r\n]+/;
 var trailingWhitespace = /[ \t\f\r\n]+$/;
 var leadingNewLine = /^(?:\r\n|\r|\n)/;
@@ -4607,7 +4606,8 @@ function cleanup(
   stripComments,
   preserveWhitespace,
   removeLeadingWhitespace,
-  removeTrailingWhitespace
+  removeTrailingWhitespace,
+  whiteSpaceElements
 ) {
   if (isString(items)) { return; }
 
@@ -4649,7 +4649,8 @@ function cleanup(
     // Recurse
     if (item.f) {
       var isPreserveWhitespaceElement =
-        item.t === ELEMENT && preserveWhitespaceElements.test(item.e);
+        item.t === ELEMENT &&
+        (whiteSpaceElements[item.e.toLowerCase()] || whiteSpaceElements[item.e]);
       preserveWhitespaceInsideFragment = preserveWhitespace || isPreserveWhitespaceElement;
 
       if (!preserveWhitespace && isPreserveWhitespaceElement) {
@@ -4677,7 +4678,8 @@ function cleanup(
         stripComments,
         preserveWhitespaceInsideFragment,
         removeLeadingWhitespaceInsideFragment,
-        removeTrailingWhitespaceInsideFragment
+        removeTrailingWhitespaceInsideFragment,
+        whiteSpaceElements
       );
     }
 
@@ -4688,7 +4690,8 @@ function cleanup(
         stripComments,
         preserveWhitespace,
         removeLeadingWhitespaceInsideFragment,
-        removeTrailingWhitespaceInsideFragment
+        removeTrailingWhitespaceInsideFragment,
+        whiteSpaceElements
       );
 
       item.l.forEach(function (s) { return (s.l = 1); });
@@ -4704,7 +4707,8 @@ function cleanup(
         stripComments,
         preserveWhitespace,
         removeLeadingWhitespaceInsideFragment,
-        removeTrailingWhitespaceInsideFragment
+        removeTrailingWhitespaceInsideFragment,
+        whiteSpaceElements
       );
       if (item.m.length < 1) { delete item.m; }
     }
@@ -4963,7 +4967,8 @@ function readElement$1(parser) {
             parser.stripComments,
             preserveWhitespace,
             !preserveWhitespace,
-            !preserveWhitespace
+            !preserveWhitespace,
+            parser.whiteSpaceElements
           );
 
           partials[child.n] = child.f;
@@ -5176,7 +5181,8 @@ function readTemplate(parser) {
         parser.stripComments,
         preserveWhitespace,
         !preserveWhitespace,
-        !preserveWhitespace
+        !preserveWhitespace,
+        parser.whiteSpaceElements
       );
 
       partials[partial.n] = partial.f;
@@ -5240,12 +5246,12 @@ var TRIPLE_READERS = [readTriple];
 var READERS = [readMustache, readHtmlComment, readElement$1, readText];
 var PARTIAL_READERS = [readPartialDefinitionSection];
 
-var defaultInterpolate = ['script', 'style', 'template'];
+var preserveWhitespaceElements = { pre: 1, script: 1, style: 1, textarea: 1 };
+
+var defaultInterpolate = { textarea: true, script: true, style: true, template: true };
 
 var StandardParser = Parser.extend({
   init: function init(str, options) {
-    var this$1 = this;
-
     var tripleDelimiters = options.tripleDelimiters || shared.defaults.tripleDelimiters;
     var staticDelimiters = options.staticDelimiters || shared.defaults.staticDelimiters;
     var staticTripleDelimiters =
@@ -5291,10 +5297,11 @@ var StandardParser = Parser.extend({
     this.sectionDepth = 0;
     this.elementStack = [];
 
-    this.interpolate = create(options.interpolate || shared.defaults.interpolate || {});
-    this.interpolate.textarea = true;
-    defaultInterpolate.forEach(
-      function (t) { return (this$1.interpolate[t] = !options.interpolate || options.interpolate[t] !== false); }
+    this.interpolate = assign(
+      {},
+      defaultInterpolate,
+      shared.defaults.interpolate,
+      options.interpolate
     );
 
     if (options.sanitize === true) {
@@ -5308,7 +5315,9 @@ var StandardParser = Parser.extend({
     }
 
     this.stripComments = options.stripComments !== false;
-    this.preserveWhitespace = options.preserveWhitespace;
+    this.preserveWhitespace = isObjectType(options.preserveWhitespace)
+      ? false
+      : options.preserveWhitespace;
     this.sanitizeElements = options.sanitize && options.sanitize.elements;
     this.sanitizeEventAttributes = options.sanitize && options.sanitize.eventAttributes;
     this.includeLinePositions = options.includeLinePositions;
@@ -5319,6 +5328,9 @@ var StandardParser = Parser.extend({
     if (options.expression) { this.converters = [readExpression]; }
 
     if (options.attributes) { this.inTag = true; }
+
+    // special whitespace handling requested for certain elements
+    this.whiteSpaceElements = assign({}, options.preserveWhitespace, preserveWhitespaceElements);
   },
 
   postProcess: function postProcess(result, options) {
@@ -5341,7 +5353,8 @@ var StandardParser = Parser.extend({
         this.stripComments,
         this.preserveWhitespace,
         !this.preserveWhitespace,
-        !this.preserveWhitespace
+        !this.preserveWhitespace,
+        this.whiteSpaceElements
       );
 
       if (this.csp !== false) {
@@ -6520,9 +6533,14 @@ function badReference(key) {
 var ContextModel = function ContextModel(context) {
   this.context = context;
 };
+var ContextModel__proto__ = ContextModel.prototype;
 
-ContextModel.prototype.get = function get () {
+ContextModel__proto__.get = function get () {
   return this.context;
+};
+
+ContextModel__proto__.getKeypath = function getKeypath () {
+  return '@context';
 };
 
 var extern = {};
@@ -9616,7 +9634,7 @@ function extendOtherMethods(parent, target, options) {
 
       // if this is a method that overwrites a method, wrap it:
       if (isFunction(member)) {
-        if (key in proto$7 && !_super.test(member.toString())) {
+        if (key in proto$8 && !_super.test(member.toString())) {
           warnIfDebug(
             ("Overriding Ractive prototype function '" + key + "' without calling the '" + _super + "' method can be very dangerous.")
           );
@@ -10089,12 +10107,17 @@ var ExpressionProxy = (function (Model) {
 
   ExpressionProxy__proto__.unreference = function unreference () {
     Model.prototype.unreference.call(this);
-    if (!this.deps.length && !this.refs) { this.teardown(); }
+    collect(this);
   };
 
   ExpressionProxy__proto__.unregister = function unregister (dep) {
     Model.prototype.unregister.call(this, dep);
-    if (!this.deps.length && !this.refs) { this.teardown(); }
+    collect(this);
+  };
+
+  ExpressionProxy__proto__.unregisterLink = function unregisterLink (link) {
+    Model.prototype.unregisterLink.call(this, link);
+    collect(this);
   };
 
   return ExpressionProxy;
@@ -10108,263 +10131,110 @@ prototype$1.joinKey = computation.joinKey;
 prototype$1.mark = computation.mark;
 prototype$1.unbind = noop;
 
-var ReferenceExpressionChild = (function (Model) {
-  function ReferenceExpressionChild(parent, key) {
-    Model.call(this, parent, key);
-    this.dirty = true;
-  }
+function collect(model) {
+  if (!model.deps.length && !model.refs && !model.links.length) { model.teardown(); }
+}
 
-  if ( Model ) ReferenceExpressionChild.__proto__ = Model;
-  var ReferenceExpressionChild__proto__ = ReferenceExpressionChild.prototype = Object.create( Model && Model.prototype );
-  ReferenceExpressionChild__proto__.constructor = ReferenceExpressionChild;
-
-  ReferenceExpressionChild__proto__.applyValue = function applyValue (value) {
-    if (isEqual(value, this.value)) { return; }
-
-    var parent = this.parent;
-    var keys$$1 = [this.key];
-    while (parent) {
-      if (parent.base) {
-        var target = parent.model.joinAll(keys$$1);
-        target.applyValue(value);
-        break;
-      }
-
-      keys$$1.unshift(parent.key);
-
-      parent = parent.parent;
-    }
-  };
-
-  ReferenceExpressionChild__proto__.get = function get (shouldCapture, opts) {
-    this.retrieve();
-    return Model.prototype.get.call(this, shouldCapture, opts);
-  };
-
-  ReferenceExpressionChild__proto__.joinKey = function joinKey (key) {
-    if (key === undefined || key === '') { return this; }
-
-    if (!hasOwn(this.childByKey, key)) {
-      var child = new ReferenceExpressionChild(this, key);
-      this.children.push(child);
-      this.childByKey[key] = child;
-    }
-
-    return this.childByKey[key];
-  };
-
-  ReferenceExpressionChild__proto__.mark = function mark () {
-    this.dirty = true;
-    Model.prototype.mark.call(this);
-  };
-
-  ReferenceExpressionChild__proto__.retrieve = function retrieve () {
-    if (this.dirty) {
-      this.dirty = false;
-      var parent = this.parent.get();
-      this.value = parent && parent[this.key];
-    }
-
-    return this.value;
-  };
-
-  return ReferenceExpressionChild;
-}(Model));
-
-var missing = { get: function get() {} };
-
-var ReferenceExpressionProxy = (function (Model) {
+var ReferenceExpressionProxy = (function (LinkModel) {
   function ReferenceExpressionProxy(fragment, template) {
     var this$1 = this;
 
-    Model.call(this, null, null);
-    this.dirty = true;
+    LinkModel.call(this, null, null, null, '@undefined');
     this.root = fragment.ractive.viewmodel;
     this.template = template;
+    this.rootLink = true;
 
-    this.base = resolve(fragment, template);
+    var base = (this.base = resolve(fragment, template));
+    var idx;
 
-    var intermediary = (this.intermediary = {
-      handleChange: function () { return this$1.handleChange(); },
+    var proxy = (this.proxy = {
       rebind: function (next, previous) {
-        if (previous === this$1.base) {
+        if (previous === base) {
           next = rebindMatch(template, next, previous);
-          if (next !== this$1.base) {
-            this$1.base.unregister(intermediary);
-            this$1.base = next;
+          if (next !== base) {
+            this$1.base = base = next;
           }
-        } else {
-          var idx = this$1.members.indexOf(previous);
-          if (~idx) {
-            // only direct references will rebind... expressions handle themselves
-            next = rebindMatch(template.m[idx].n, next, previous);
-            if (next !== this$1.members[idx]) {
-              this$1.members.splice(idx, 1, next || missing);
-            }
+        } else if (~(idx = members.indexOf(previous))) {
+          next = rebindMatch(template.m[idx].n, next, previous);
+          if (next !== members[idx]) {
+            members.splice(idx, 1, next || Missing);
           }
         }
 
-        if (next !== previous) { previous.unregister(intermediary); }
-        if (next) { next.addShuffleTask(function () { return next.register(intermediary); }); }
-
-        this$1.bubble();
+        if (next !== previous) { previous.unregister(proxy); }
+        if (next) { next.addShuffleTask(function () { return next.register(proxy); }); }
+      },
+      handleChange: function () {
+        pathChanged();
       }
     });
 
-    this.members = template.m.map(function (template) {
-      if (isString(template)) {
-        return { get: function () { return template; } };
+    base.register(proxy);
+
+    var members = (this.members = template.m.map(function (tpl) {
+      if (isString(tpl)) {
+        return { get: function () { return tpl; } };
       }
 
       var model;
 
-      if (template.t === REFERENCE) {
-        model = resolveReference(fragment, template.n);
-        model.register(intermediary);
+      if (tpl.t === REFERENCE) {
+        model = resolveReference(fragment, tpl.n);
+        model.register(proxy);
 
         return model;
       }
 
-      model = new ExpressionProxy(fragment, template);
-      model.register(intermediary);
+      model = new ExpressionProxy(fragment, tpl);
+      model.register(proxy);
       return model;
-    });
+    }));
 
-    this.base.register(intermediary);
+    var pathChanged = function () {
+      var model = base.joinAll(
+        members.reduce(function (list, m) {
+          var k = m.get();
+          if (isArray(k)) { return list.concat(k); }
+          else { list.push(escapeKey(String(k))); }
+          return list;
+        }, [])
+      );
 
-    this.bubble();
+      if (model !== this$1.model) {
+        this$1.model = model;
+        this$1.relinking(model);
+        fireShuffleTasks();
+        refreshPathDeps(this$1);
+      }
+    };
+
+    pathChanged();
   }
 
-  if ( Model ) ReferenceExpressionProxy.__proto__ = Model;
-  var ReferenceExpressionProxy__proto__ = ReferenceExpressionProxy.prototype = Object.create( Model && Model.prototype );
+  if ( LinkModel ) ReferenceExpressionProxy.__proto__ = LinkModel;
+  var ReferenceExpressionProxy__proto__ = ReferenceExpressionProxy.prototype = Object.create( LinkModel && LinkModel.prototype );
   ReferenceExpressionProxy__proto__.constructor = ReferenceExpressionProxy;
-
-  ReferenceExpressionProxy__proto__.bubble = function bubble () {
-    if (!this.base) { return; }
-    if (!this.dirty) { this.handleChange(); }
-  };
-
-  ReferenceExpressionProxy__proto__.get = function get (shouldCapture, opts) {
-    if (shouldCapture) { capture(this); }
-    if (this.dirty) {
-      this.bubble();
-
-      var keys$$1 = this.members.map(function (m) { return escapeKey(String(m.get())); });
-      var model = this.base.joinAll(keys$$1);
-
-      if (model !== this.model) {
-        if (this.model) {
-          this.model.unregister(this);
-          this.model.unregisterTwowayBinding(this);
-        }
-
-        this.model = model;
-        this.parent = model.parent;
-        this.model.register(this);
-        this.model.registerTwowayBinding(this);
-
-        pathChanged(this);
-      }
-
-      this.value = this.model.get(shouldCapture, opts);
-      this.dirty = false;
-      this.mark();
-      return this.value;
-    } else {
-      return this.model ? this.model.get(shouldCapture, opts) : undefined;
-    }
-  };
-
-  // indirect two-way bindings
-  ReferenceExpressionProxy__proto__.getValue = function getValue () {
-    var this$1 = this;
-
-    this.value = this.model ? this.model.get() : undefined;
-
-    var i = this.bindings.length;
-    while (i--) {
-      var value = this$1.bindings[i].getValue();
-      if (value !== this$1.value) { return value; }
-    }
-
-    // check one-way bindings
-    var oneway = findBoundValue(this.deps);
-    if (oneway) { return oneway.value; }
-
-    return this.value;
-  };
 
   ReferenceExpressionProxy__proto__.getKeypath = function getKeypath () {
     return this.model ? this.model.getKeypath() : '@undefined';
   };
 
-  ReferenceExpressionProxy__proto__.handleChange = function handleChange () {
-    this.dirty = true;
-    this.mark();
-  };
-
-  ReferenceExpressionProxy__proto__.joinKey = function joinKey (key) {
-    if (key === undefined || key === '') { return this; }
-
-    if (!hasOwn(this.childByKey, key)) {
-      var child = new ReferenceExpressionChild(this, key);
-      this.children.push(child);
-      this.childByKey[key] = child;
-    }
-
-    return this.childByKey[key];
-  };
-
-  ReferenceExpressionProxy__proto__.mark = function mark$2 () {
-    if (this.dirty) {
-      this.deps.forEach(handleChange);
-    }
-
-    this.links.forEach(marked);
-    this.children.forEach(mark);
-  };
-
-  ReferenceExpressionProxy__proto__.rebind = function rebind () {
-    this.handleChange();
-  };
-
-  ReferenceExpressionProxy__proto__.retrieve = function retrieve () {
-    return this.value;
-  };
-
-  ReferenceExpressionProxy__proto__.set = function set (value) {
-    this.model.set(value);
-  };
-
   ReferenceExpressionProxy__proto__.teardown = function teardown () {
     var this$1 = this;
 
-    if (this.base) {
-      this.base.unregister(this.intermediary);
+    if (this.base) { this.base.unregister(this.proxy); }
+    if (this.models) {
+      this.models.forEach(function (m) {
+        if (m.unregister) { m.unregister(this$1); }
+      });
     }
-    if (this.model) {
-      this.model.unregister(this);
-      this.model.unregisterTwowayBinding(this);
-    }
-    if (this.members) {
-      this.members.forEach(function (m) { return m && m.unregister && m.unregister(this$1.intermediary); });
-    }
-  };
-
-  ReferenceExpressionProxy__proto__.unreference = function unreference () {
-    Model.prototype.unreference.call(this);
-    if (!this.deps.length && !this.refs) { this.teardown(); }
-  };
-
-  ReferenceExpressionProxy__proto__.unregister = function unregister (dep) {
-    Model.prototype.unregister.call(this, dep);
-    if (!this.deps.length && !this.refs) { this.teardown(); }
+    LinkModel.prototype.teardown.call(this);
   };
 
   return ReferenceExpressionProxy;
-}(Model));
+}(LinkModel));
 
-function pathChanged(proxy) {
+function refreshPathDeps(proxy) {
   var len = proxy.deps.length;
   var i, v;
 
@@ -10376,9 +10246,16 @@ function pathChanged(proxy) {
 
   len = proxy.children.length;
   for (i = 0; i < len; i++) {
-    pathChanged(proxy.children[i]);
+    refreshPathDeps(proxy.children[i]);
   }
 }
+
+var eproto = ExpressionProxy.prototype;
+var proto$1 = ReferenceExpressionProxy.prototype;
+
+proto$1.unreference = eproto.unreference;
+proto$1.unregister = eproto.unregister;
+proto$1.unregisterLink = eproto.unregisterLink;
 
 function resolve(fragment, template) {
   if (template.r) {
@@ -11324,9 +11201,9 @@ function Comment(options) {
   Item.call(this, options);
 }
 
-var proto$1 = create(Item.prototype);
+var proto$2 = create(Item.prototype);
 
-assign(proto$1, {
+assign(proto$2, {
   bind: noop,
   unbind: noop,
   update: noop,
@@ -11356,7 +11233,7 @@ assign(proto$1, {
   }
 });
 
-Comment.prototype = proto$1;
+Comment.prototype = proto$2;
 
 var teardownHook = new Hook('teardown');
 var destructHook = new Hook('destruct');
@@ -12373,8 +12250,8 @@ var Doctype = (function (Item) {
   return Doctype;
 }(Item));
 
-var proto$2 = Doctype.prototype;
-proto$2.bind = proto$2.render = proto$2.teardown = proto$2.unbind = proto$2.unrender = proto$2.update = noop;
+var proto$3 = Doctype.prototype;
+proto$3.bind = proto$3.render = proto$3.teardown = proto$3.unbind = proto$3.unrender = proto$3.update = noop;
 
 var Binding = function Binding(element, name) {
   if ( name === void 0 ) name = 'value';
@@ -14391,9 +14268,9 @@ function MustacheContainer(options) {
   Mustache.call(this, options);
 }
 
-var proto$3 = (MustacheContainer.prototype = Object.create(ContainerItem.prototype));
+var proto$4 = (MustacheContainer.prototype = Object.create(ContainerItem.prototype));
 
-assign(proto$3, Mustache.prototype, { constructor: MustacheContainer });
+assign(proto$4, Mustache.prototype, { constructor: MustacheContainer });
 
 var Interpolator = (function (Mustache) {
   function Interpolator () {
@@ -14975,9 +14852,9 @@ function Partial(options) {
   }
 }
 
-var proto$4 = (Partial.prototype = create(MustacheContainer.prototype));
+var proto$5 = (Partial.prototype = create(MustacheContainer.prototype));
 
-assign(proto$4, {
+assign(proto$5, {
   constructor: Partial,
 
   bind: function bind() {
@@ -16304,8 +16181,8 @@ var Text = (function (Item) {
   return Text;
 }(Item));
 
-var proto$5 = Text.prototype;
-proto$5.bind = proto$5.unbind = proto$5.update = noop;
+var proto$6 = Text.prototype;
+proto$6.bind = proto$6.unbind = proto$6.update = noop;
 
 var visible;
 var hidden = 'hidden';
@@ -16954,8 +16831,8 @@ Transition__proto__.unregisterCompleteHandler = function unregisterCompleteHandl
   removeFromArray(this.onComplete, fn);
 };
 
-var proto$6 = Transition.prototype;
-proto$6.destroyed = proto$6.render = proto$6.unrender = proto$6.update = noop;
+var proto$7 = Transition.prototype;
+proto$7.destroyed = proto$7.render = proto$7.unrender = proto$7.update = noop;
 
 function nearestProp(prop, ractive, rendering) {
   var instance = ractive;
@@ -18033,7 +17910,7 @@ function Ractive$reset(data) {
   return promise;
 }
 
-function collect(source, name, attr, dest) {
+function collect$1(source, name, attr, dest) {
   source.forEach(function (item) {
     // queue to rerender if the item is a partial and the current name matches
     if (item.type === PARTIAL && (item.refName === name || item.name === name)) {
@@ -18044,21 +17921,21 @@ function collect(source, name, attr, dest) {
 
     // if it has a fragment, process its items
     if (item.fragment) {
-      collect(item.fragment.iterations || item.fragment.items, name, attr, dest);
+      collect$1(item.fragment.iterations || item.fragment.items, name, attr, dest);
     } else if (isArray(item.items)) {
       // or if it is itself a fragment, process its items
-      collect(item.items, name, attr, dest);
+      collect$1(item.items, name, attr, dest);
     } else if (item.type === COMPONENT && item.instance) {
       // or if it is a component, step in and process its items
       // ...unless the partial is shadowed
       if (item.instance.partials[name]) { return; }
-      collect(item.instance.fragment.items, name, attr, dest);
+      collect$1(item.instance.fragment.items, name, attr, dest);
     }
 
     // if the item is an element, process its attributes too
     if (item.type === ELEMENT) {
       if (isArray(item.attributes)) {
-        collect(item.attributes, name, true, dest);
+        collect$1(item.attributes, name, true, dest);
       }
     }
   });
@@ -18066,7 +17943,7 @@ function collect(source, name, attr, dest) {
 
 function resetPartial(name, partial) {
   var collection = [];
-  collect(this.fragment.items, name, false, collection);
+  collect$1(this.fragment.items, name, false, collection);
 
   var promise = runloop.start();
 
@@ -18278,7 +18155,7 @@ function use() {
   return this;
 }
 
-var proto$7 = {
+var proto$8 = {
   add: Ractive$add,
   animate: Ractive$animate,
   attachChild: attachChild,
@@ -18331,7 +18208,7 @@ var proto$7 = {
   use: use
 };
 
-defineProperty(proto$7, 'target', {
+defineProperty(proto$8, 'target', {
   get: function get() {
     return this.el;
   }
@@ -18588,7 +18465,7 @@ if (win && !win.Ractive) {
   warn("Ractive already appears to be loaded while loading 1.0.0-edge.");
 }
 
-assign(Ractive.prototype, proto$7, defaults);
+assign(Ractive.prototype, proto$8, defaults);
 Ractive.prototype.constructor = Ractive;
 
 // alias prototype as `defaults`
@@ -18677,7 +18554,6 @@ window.sleep = sleep = function(ms, f){
 };
 Ractive.defaults.hasEvent = function(eventName){
   var fn;
-  console.warn("Deprecated: Use ractive.hasListener");
   fn = function(a){
     return a.t === 70 && a.n.indexOf(eventName) > -1;
   };
@@ -18763,7 +18639,7 @@ Ractive.Context.removeMe = function(){
   usage:
   
       +each('something')
-          btn.icon(on-buttonclick="@context.removeMe()") #[i.minus.icon]
+          btn.icon(on-click="@context.removeMe()") #[i.minus.icon]
   ***************************************************************************/
   return this.splice('..', this.get('@index'), 1);
 };

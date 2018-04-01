@@ -4,8 +4,6 @@ require! 'aea': {sleep}
 export class BrowserStorage extends Actor
     (@prefix) ->
         super "BrowserStorage-#{@prefix}"
-
-    action: ->
         @s = local-storage
 
     set: (key, value) ->

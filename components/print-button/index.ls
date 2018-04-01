@@ -12,6 +12,7 @@ Ractive.components['print-button'] = Ractive.extend do
                 const c = ctx.getParent yes
                 c.refire = yes
                 c.button = ctx.component
+                c.proxy = ctx  # FIXME: This is a workaround to make `ctx.get('my-attribute')` work
 
                 # important: open printWindow before doing anything async.
                 printWindow = window.open('', '', 'scrollbars=yes, resizable=yes, width=800, height=500')

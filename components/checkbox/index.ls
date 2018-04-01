@@ -1,15 +1,23 @@
-require! 'aea': {sleep, VLogger}
+'''
 
-"""
-usage:
-    attributes:
-        tristate="true": display a "CLEAR" button
+# Usage:
+---------
+
+attributes:
+    tristate="true": display a "CLEAR" button, allow "checked" to be undefined/null
+    sync-topic="mytopic" sync with "mytopic" in realtime
 
 checked="{{value}}" : where the value is one of
     * true
     * false
     * null or undefined (for high impedance)
-"""
+
+'''
+
+require! 'aea': {sleep, VLogger}
+require! 'dcs/browser': {Signal}
+require! 'actors': {RactiveActor}
+
 
 Ractive.components['checkbox'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
@@ -50,27 +58,82 @@ Ractive.components['checkbox'] = Ractive.extend do
             # ----------------------------------------------------------------
             # because "undefined" value is considered as "indeterminate", thus
             # specifying an initial value WILL cause an instable behaviour
-            # because when user WANTS to set the state as "indeterminate" explicitly, 
+            # because when user WANTS to set the state as "indeterminate" explicitly,
             # checkbox WOULD automatically CHANGE it to the initial value on next
             # render.
             if typeof! @get(\checked) in <[ Null Undefined ]>
                 if typeof! (@get \initial) isnt \Null
                     set-state @get \initial
 
-        # observe `checked`
-        @observe \checked, ((val) ~>
-            set-state val
-            ), {init: false}
+        unless @get \sync-topic
+            # observe `checked`
+            @observe \checked, ((val) ~>
+                set-state val
+                ), {init: false}
 
-        # visually update on init
-        set-visual @get \checked
+            # visually update on init
+            set-visual @get \checked
+        else
+            # if it has a "sync-topic", then it should watch this topic
+            topic = @get \sync-topic
+            # set initial state
+            @set 'check-state', \doing
+
+            @reply-signal = new Signal \reply-signal
+
+            # handle realtime events
+            @actor = new RactiveActor this, name=topic
+                ..subscribe topic
+
+                ..on \error, (err) ~>
+                    @actor.c-err msg
+
+                ..on-topic "#{topic}.read", (msg) ~>
+                    @actor.c-log "#{topic}.read received: ", msg
+                    if @reply-signal.waiting
+                        @actor.c-log "...is redirected to reply-signal..."
+                        @reply-signal.go msg.payload
+                    else
+                        if msg.payload?
+                            # if has no payload, then it probably comes from
+                            # another actor's request-update!
+                            # FIXME: this shouldn't receive the other actors'
+                            # update messages in the first place.
+                            @actor.c-log "...is used directly to set visual"
+                            if msg.payload.err
+                                ack-button.warn message: that.message
+                                console.error "Checkbox says: ", that
+                                @set \check-state, \error
+                                @set \checked, null
+                            else
+                                try
+                                    set-state msg.payload.res.curr
+
+                ..on-topic "app.logged-in", ~>
+                    @actor.c-log "DEBUG: Application is logged in into the server."
+
+                ..request-update!
 
         @on do
             _statechange: (ctx) ->
-                if (@has-event 'statechange') or @get \async
-                    ctx.component.fire \state, \doing
-                    ctx.component.heartbeat 9999999999ms
+                if @get \sync-topic
+                    next-state = not @get \checked
+                    x = sleep 100ms, ~> @set 'check-state', \doing
+                    topic = "#{that}.write"
+                    #@actor.c-log "sending: ", topic
+                    @actor.send topic, next-state
+                    _err, data <~ @reply-signal.wait 2000ms
+                    err = _err or data?.err
+                    unless err
+                        try clear-timeout x
+                        set-state next-state
+                    else
+                        ctx.component.warn message: err
+                        @set \check-state, \error
+                        @set \checked, null
 
+
+                if (@has-event 'statechange') or @get \async
                     @set \check-state, \doing
                     checked = @get \checked
 
@@ -88,12 +151,18 @@ Ractive.components['checkbox'] = Ractive.extend do
                         return
 
                     if err
-                        logger.error err, callback
+                        if err is \timeout
+                            ctx.component.warn message: "Async checkbox is timed out."
+                            @set \check-state, \error
+                            return
+                        else
+                            logger.error err, callback
                     else
                         #logger.clog "no error returned, setting checkbox to ", checked
                         set-state checked
-                else
-                    debugger if @debug
+
+                unless (@get \sync-topic or @has-event \statechange or @get \async)
+                    # if not realtime or not async, then consider this as a simple checkbox
                     curr-state = @get \checked
                     set-state not curr-state
 
@@ -102,3 +171,4 @@ Ractive.components['checkbox'] = Ractive.extend do
         'check-state': 'unchecked'
         transparent: no
         initial: null
+        fps: 20Hz  # maximum refresh rate on realtime connections
