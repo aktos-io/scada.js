@@ -23,7 +23,6 @@ Ractive.components['sync'] = Ractive.extend do
                 fps: @get \fps
 
             handle = @observe \curr, ((_new) ~>
-                console.error "initial run? _new is: ", _new
                 @io-client.write _new
                 ), {init: off}
 
@@ -32,11 +31,11 @@ Ractive.components['sync'] = Ractive.extend do
                 @fire \error, {}, err
 
             @io-client.on \read, (res) ~>
-                    #console.log "we read something: ", res
-                    @fire \read, {}, res
-                    handle.silence!
-                    @set \curr, res.curr
-                    handle.resume!
+                #console.log "we read something: ", res
+                @fire \read, {}, res
+                handle.silence!
+                @set \curr, res.curr
+                handle.resume!
 
         catch
             console.error "Error on sync component init: ", e
