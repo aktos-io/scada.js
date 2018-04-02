@@ -1,6 +1,6 @@
 '''
 
-# Realtime Status:
+## TODO: # Realtime Status:
 -------------------
 
     waiting-init      : Waiting for first update
@@ -9,20 +9,36 @@
     read-failed       : Read failed (when requested read on demand)
     heartbeat-failed  : Heartbeat failed
 
-
 '''
-require! 'actors': {IoActor}
+
+require! 'actors': {RactiveIoProxyClient}
 
 Ractive.components['sync'] = Ractive.extend do
     isolated: yes
     onrender: ->
-        @actor = new IoActor this, (@get \topic)
-        @actor.sync \value, (@get \topic), (@get \fps)
+        try
+            @io-client = new RactiveIoProxyClient this, do
+                timeout: 1000ms
+                topic: @get \sync-topic
+                fps: @get \fps
 
-        @actor.on \receive, (msg) ~>
-            @fire \receive, msg
+            handle = @observe \curr, ((_new) ~>
+                console.error "initial run? _new is: ", _new
+                @io-client.write _new
+                ), {init: off}
 
-        @actor.log.todo "ADD UPDATE REQUEST"
+            @io-client.on \error, (err) ~>
+                console.warn "Proxy client received error: ", err
+                @fire \error, {}, err
 
+            @io-client.on \read, (res) ~>
+                    #console.log "we read something: ", res
+                    @fire \read, {}, res
+                    handle.silence!
+                    @set \curr, res.curr
+                    handle.resume!
+
+        catch
+            console.error "Error on sync component init: ", e
     data: ->
-        value: null
+        curr: null
