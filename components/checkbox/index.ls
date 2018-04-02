@@ -79,6 +79,7 @@ Ractive.components['checkbox'] = Ractive.extend do
             io-client = new RactiveIoProxyClient this, {
                 timeout: 1000ms
                 topic: @get \sync-topic
+                fps: @get \fps
                 }
                 ..on \error, (err) ~>
                     ack-button.warn err
@@ -87,7 +88,7 @@ Ractive.components['checkbox'] = Ractive.extend do
                     @set \checked, null
 
                 ..on \read, (res) ~>
-                    console.log "we read something: ", res
+                    #console.log "we read something: ", res
                     set-state res.curr
 
         @on do
