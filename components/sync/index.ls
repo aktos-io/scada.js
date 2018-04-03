@@ -37,8 +37,8 @@ Ractive.components['sync'] = Ractive.extend do
                 handle?.silence!
                 @set \curr, res.curr
                 handle?.resume!
-
         catch
-            console.error "Error on sync component init: ", e
+            """WARNING: DO NOT REMOVE THIS TRY CATCH!!!"""
+            console.warn "FIXME: CODING ERROR"
     data: ->
         curr: null
