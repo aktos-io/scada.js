@@ -22,9 +22,10 @@ Ractive.components['sync'] = Ractive.extend do
                 topic: @get \sync-topic
                 fps: @get \fps
 
-            handle = @observe \curr, ((_new) ~>
-                @io-client.write _new
-                ), {init: off}
+            unless @get \readonly
+                handle = @observe \curr, ((_new) ~>
+                    @io-client.write _new
+                    ), {init: off}
 
             @io-client.on \error, (err) ~>
                 console.warn "Proxy client received error: ", err
@@ -33,9 +34,9 @@ Ractive.components['sync'] = Ractive.extend do
             @io-client.on \read, (res) ~>
                 #console.log "we read something: ", res
                 @fire \read, {}, res
-                handle.silence!
+                handle?.silence!
                 @set \curr, res.curr
-                handle.resume!
+                handle?.resume!
 
         catch
             console.error "Error on sync component init: ", e
