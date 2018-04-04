@@ -70,18 +70,15 @@ Ractive.components["a"] = Ractive.extend do
         tooltip: null
         href: null
     onrender: ->
-        onclick = @get \onclick
-        newtab = @get \newtab
-
         @on do
             _click: (ctx) ->
                 href = @get \href
-                if newtab
+                if @get \newtab
                     return window.open href
 
-                if onclick
-                    #console.log "evaluating onclick: #{onclick}"
-                    return eval onclick
+                if @get \onclick
+                    #console.log "evaluating onclick: #{that}"
+                    return eval that
 
                 if href?
                     link = parse-link href
@@ -118,11 +115,14 @@ Ractive.components['router'] = Ractive.extend do
     template: ''
     isolated: yes
     oncomplete: ->
+        change = {}
         actor = new RactiveActor this, 'router'
+            ..subscribe 'app.router.**'
+            ..on \request-update, (topic, respond) ~>
+                console.log "router received request update: ", topic
+                respond change
 
-        prev =
-            scene: undefined
-            anchor: undefined
+        prev = {}
 
         do handle-hash = ~>
             curr = parse-link get-window-hash!
@@ -132,12 +132,12 @@ Ractive.components['router'] = Ractive.extend do
                 sleep 50ms, -> scroll-to curr.anchor
                 #console.log """hash changed: scene: #{curr.scene}, anchor: #{curr.anchor}"""
 
-                change = {}
                 if curr.scene isnt prev.scene
                     change.scene = curr.scene
                 if curr.anchor isnt prev.anchor
                     change.anchor = curr.anchor
-                actor.send 'app.router.changes', change
+
+                actor.send 'app.router.changes', {change}
                 prev <<< curr
 
         $ window .on \hashchange, ->
@@ -155,7 +155,17 @@ Ractive.components['scene'] = Ractive.extend do
                 padding: 0;
                 border: 0;
                 "
-            > {{#if renderedBefore}}{{>content}}{{/if}}
+            >
+            {{#if ! loggedin}}
+                <div class="ui red message fluid" style="
+                        position: fixed; top: 100px; left: 0; z-index: 999999999;
+                        width: 100%; height: 200px">
+                    Login required
+                </div>
+            {{/if}}
+            {{#if renderedBefore}}
+                {{>content}}
+            {{/if}}
         </div>'
 
     isolated: no
@@ -188,3 +198,4 @@ Ractive.components['scene'] = Ractive.extend do
 
     data: ->
         rendered-before: no
+        loggedin: yes

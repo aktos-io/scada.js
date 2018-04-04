@@ -1,4 +1,22 @@
+'''
+
+# Usage:
+---------
+
+attributes:
+    tristate="true": display a "CLEAR" button, allow "checked" to be undefined/null
+    sync-topic="mytopic" sync with "mytopic" in realtime
+
+checked="{{value}}" : where the value is one of
+    * true
+    * false
+    * null or undefined (for high impedance)
+
+'''
+
 require! 'aea': {sleep, VLogger}
+require! 'dcs/browser': {Signal}
+require! 'actors': {RactiveIoProxyClient}
 
 Ractive.components['checkbox'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
@@ -14,37 +32,78 @@ Ractive.components['checkbox'] = Ractive.extend do
 
         ack-button = @find-component \ack-button
 
-        set-state = (state) ~>
-            if typeof! state in <[ Undefined Null ]>
-                @set \checkState, 'undefined'
+        set-visual = (state) ~>
+            # update initial state visually
+            if @get('tristate') and typeof! state in <[ Null Undefined ]>
+                @set \check-state, 'indetermined'
             else
-                if state is \false
-                    state = false
-                @set \checked, state
-                @set \checkState, if state then \checked else \unchecked
-                ack-button.fire \state, \done
+                @set \check-state, if state then \checked else \unchecked
+
+        set-state = (state) ~>
+            @set \checked, state
+            set-visual state
+            ack-button.fire \state, \done
 
         if @get \topic
             ack-button.actor.subscribe that
             ack-button.actor.on \data, (msg) ~>
                 if that is msg.topic
                     set-state msg.payload.curr
-
             ack-button.actor.request-update that
 
-        @observe \checked, set-state
+        # set the default value on init
+        unless @get \tristate
+            # IMPORTANT: initial value CANNOT be applied to tristate elements.
+            # ----------------------------------------------------------------
+            # because "undefined" value is considered as "indeterminate", thus
+            # specifying an initial value WILL cause an instable behaviour
+            # because when user WANTS to set the state as "indeterminate" explicitly,
+            # checkbox WOULD automatically CHANGE it to the initial value on next
+            # render.
+            if typeof! @get(\checked) in <[ Null Undefined ]>
+                if typeof! (@get \initial) isnt \Null
+                    set-state @get \initial
 
-        if typeof! @get(\checked) is \Undefined
-            if @get \initial
-                set-state that
+        unless @get \sync-topic
+            # observe `checked`
+            @observe \checked, ((val) ~>
+                set-state val
+                ), {init: false}
+
+            # visually update on init
+            set-visual @get \checked
+        else
+            # if it has a "sync-topic", then it should watch this topic
+            # set initial state
+            @set 'check-state', \doing
+            io-client = new RactiveIoProxyClient this, {
+                timeout: 1000ms
+                topic: @get \sync-topic
+                fps: @get \fps
+                }
+                ..on \error, (err) ~>
+                    ack-button.warn err
+                    console.error "Checkbox says: ", err
+                    @set \check-state, \error
+                    @set \checked, null
+
+                ..on \read, (res) ~>
+                    #console.log "we read something: ", res
+                    set-state res.curr
 
         @on do
             _statechange: (ctx) ->
-                if @has-event 'statechange'
-                    ctx.component.fire \state, \doing
-                    ctx.component.heartbeat 9999999999ms
+                if @get \sync-topic
+                    next-state = not @get \checked
+                    acceptable-delay = 100ms
+                    # do not show "doing" state for if all request-response
+                    # finishes within the acceptable delay
+                    x = sleep acceptable-delay, ~> @set 'check-state', \doing
+                    err <~ io-client.write next-state
+                    unless err => try clear-timeout x
 
-                    @set \checkState, \doing
+                if (@has-event 'statechange') or @get \async
+                    @set \check-state, \doing
                     checked = @get \checked
 
                     #logger.clog "sending handler the next check state: from", checked, "to", (not checked)
@@ -53,9 +112,6 @@ Ractive.components['checkbox'] = Ractive.extend do
                     const c = ctx.getParent yes
                     c.refire = yes
                     c.actor = ack-button.actor
-                    c.logger = ->
-                        console.warn "This is deprecated, use actor.send 'app.log.err' instead"
-
                     err, callback <~ @fire \statechange, c, checked
 
                     if arguments.length isnt 1
@@ -64,16 +120,24 @@ Ractive.components['checkbox'] = Ractive.extend do
                         return
 
                     if err
-                        logger.error err, callback
+                        if err is \timeout
+                            ctx.component.warn message: "Async checkbox is timed out."
+                            @set \check-state, \error
+                            return
+                        else
+                            logger.error err, callback
                     else
                         #logger.clog "no error returned, setting checkbox to ", checked
                         set-state checked
-                else
-                    debugger if @debug
-                    set-state if @get \checked => 0 else 1
+
+                unless (@get \sync-topic or @has-event \statechange or @get \async)
+                    # if not realtime or not async, then consider this as a simple checkbox
+                    curr-state = @get \checked
+                    set-state not curr-state
 
     data: ->
         checked: undefined
-        checkState: 'undefined'
+        'check-state': 'unchecked'
         transparent: no
         initial: null
+        fps: 20Hz  # maximum refresh rate on realtime connections

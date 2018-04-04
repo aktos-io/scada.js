@@ -9,8 +9,6 @@ Ractive.components['pushbutton'] = Ractive.extend do
 
     onrender: ->
         button = $ @find \.ui.button
-
-
         name-state = (state) ~>
             @set \state, if state
                 \pressed
@@ -51,14 +49,14 @@ Ractive.components['pushbutton'] = Ractive.extend do
             turn off
 
         @actor.on \data, (msg) ~>
-            curr = msg.payload.curr
+            curr = msg.payload?.curr
             if curr?
                 name-state curr
                 @set \pressed, curr
 
         if @get \topic
             @actor.subscribe that
-            @actor.request-update that
+            #@actor.request-update that
 
 
     data: ->

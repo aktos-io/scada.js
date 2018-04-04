@@ -1,4 +1,4 @@
-require! 'dcs/browser': {SocketIOBrowser}
+require! 'dcs/browser': {DcsSocketIOBrowser}
 
 require! 'prelude-ls': {initial, drop, join, split}
 curr-url = ->
@@ -29,7 +29,7 @@ Ractive.components['aktos-dcs'] = Ractive.extend do
             url.host-url = "http://localhost:4008"
             url.path = "/"
 
-        @transport = new SocketIOBrowser do
+        @transport = new DcsSocketIOBrowser do
             address: url.host-url
             path: url.path
 

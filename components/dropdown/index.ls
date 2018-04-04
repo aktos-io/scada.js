@@ -19,12 +19,6 @@ require! 'aea': {sleep}
 require! 'sifter': Sifter
 require! '../data-table/sifter-workaround': {asciifold}
 
-small-part-of = (data) ->
-    if data? and not empty data
-        take 100, data
-    else
-        []
-
 Ractive.components['dropdown'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
@@ -49,6 +43,14 @@ Ractive.components['dropdown'] = Ractive.extend do
         external-change = no
         shandler = null
 
+        small-part-of = (data) ~>
+            if data? and not empty data
+                take @get('load-first'), data
+            else
+                []
+
+
+
         update-dropdown = (_new) ~>
             if @get \debug => @actor.log.log "#{@_guid}: selected is changed: ", _new
             external-change := yes
@@ -56,6 +58,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                 dd.dropdown 'set exactly', _new
             else
                 dd.dropdown 'set selected', _new
+            dd.dropdown 'refresh'
             external-change := no
 
         set-item = (value-of-key) ~>
@@ -159,16 +162,16 @@ Ractive.components['dropdown'] = Ractive.extend do
             shandler = @observe \selected-key, (_new) ~>
                 if @get \debug => @actor.c-log "selected key set to:", _new
 
-                @actor.c-log "DROPDOWN: selected key set to:", _new
+                #@actor.c-log "DROPDOWN: selected key set to:", _new
                 if _new
                     item = find (.[keyField] is _new), @get \dataReduced
                     unless item
                         item = find (.[keyField] is _new), @get \data
                         @push \dataReduced, item
                     @set \item, item
-                    sleep 10ms ~>
-                        # Workaround for dropdown update bug
-                        update-dropdown _new
+                    <~ sleep 10ms
+                    # Workaround for dropdown update bug
+                    update-dropdown _new
                 else
                     # clear the dropdown
                     @set \item, {}
@@ -196,3 +199,4 @@ Ractive.components['dropdown'] = Ractive.extend do
         # across the instances)
         'selected-key': null
         'selected-name': null
+        'load-first': 100

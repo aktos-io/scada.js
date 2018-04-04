@@ -48,6 +48,8 @@ Ractive.components['data-table'] = Ractive.extend do
 
             if typeof! settings.before-save is \Function
                 settings.before-save = settings.before-save.bind this
+            else
+                settings.before-save = ((ctx, curr, next) -> next!).bind this
 
             if typeof! settings.data is \Function
                 settings.data = settings.data.bind this
@@ -257,8 +259,6 @@ Ractive.components['data-table'] = Ractive.extend do
 
             save: (ev, val) ->
                 ev.component.fire \state, \doing
-                if typeof! settings.before-save isnt \Function
-                    settings.before-save = (ctx, curr, next) -> next!
                 err <~ @fire 'beforeSave', ev, @get('curr')
                 if err
                     console.error "data-table error:", err
@@ -291,9 +291,11 @@ Ractive.components['data-table'] = Ractive.extend do
                     if settings.autoincrement is on
                         @actor.c-log "Autoincrement is set to 'yes', autoincrementing."
                         curr._id = curr._id.to-upper-case!
-                        if curr._id.split /[0-9]+/ .length is 1
+                        if curr._id.split /#{4,}/ .length is 1
                             # no numeric part, this is a prefix
-                            curr._id += '####'
+                            return next err='
+                                No autoincrement postfix found, please
+                                append "####" to your doc._id'
 
                 if @get \new_attachments
                     curr._attachments = (curr._attachments or {}) <<< that
