@@ -23,7 +23,7 @@ Ractive.components['sync'] = Ractive.extend do
                 fps: @get \fps
 
             unless @get \readonly
-                handle = @observe \curr, ((_new) ~>
+                handle = @observe \value, ((_new) ~>
                     @io-client.write _new
                     ), {init: off}
 
@@ -34,11 +34,16 @@ Ractive.components['sync'] = Ractive.extend do
             @io-client.on \read, (res) ~>
                 #console.log "we read something: ", res
                 @fire \read, {}, res
-                handle?.silence!
-                @set \curr, res.curr
-                handle?.resume!
+                if @get \debug
+                    console.log "Value read by #{@get 'sync-topic'} is: ", res.curr
+                if res.curr isnt res.prev
+                    handle?.silence!
+                    @set \value, res.curr
+                    handle?.resume!
+                else
+                    console.warn "same data arrived: ", res
         catch
             """WARNING: DO NOT REMOVE THIS TRY CATCH!!!"""
             console.warn "FIXME: CODING ERROR"
     data: ->
-        curr: null
+        value: null
