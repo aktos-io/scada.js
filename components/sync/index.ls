@@ -36,12 +36,11 @@ Ractive.components['sync'] = Ractive.extend do
                 @fire \read, {}, res
                 if @get \debug
                     console.log "Value read by #{@get 'sync-topic'} is: ", res.curr
-                if res.curr isnt res.prev
-                    handle?.silence!
-                    @set \value, res.curr
-                    handle?.resume!
-                else
-                    console.warn "same data arrived: ", res
+                handle?.silence!
+                @set \value, res.curr
+                handle?.resume!
+                if res.curr is res.prev
+                    console.warn "same data arrived????: ", res
         catch
             """WARNING: DO NOT REMOVE THIS TRY CATCH!!!"""
             console.warn "FIXME: CODING ERROR"
