@@ -122,8 +122,10 @@ Ractive.components['data-table'] = Ractive.extend do
             try clear-timeout search-rate-limit
             search-rate-limit := sleep 200ms, ~>
                 tableview_filtered = if text
+                    search-fields = <[ id ]> ++ (settings.search-fields or <[ value.description ]>)
                     result = @get \sifter .search asciifold(that), do
-                        fields: ['id', 'value.description']
+                        #fields: ['id', 'value.description']
+                        fields: search-fields
                         sort: [{field: 'name', direction: 'asc'}]
                         nesting: yes
                         conjunction: "and"
