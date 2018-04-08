@@ -53,3 +53,4 @@ require! './vertical-divider'
 # decorators
 require! './decorators/tooltip'
 require! './decorators/semantic-ui/popup'
+require! './decorators/semantic-ui/inline-popup'
