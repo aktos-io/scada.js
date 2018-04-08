@@ -8,6 +8,7 @@ require! {
 }
 require! './copy-to-clipboard': {copyToClipboard}
 require! './file-download': {createDownload}
+require! './download'
 
 is-nodejs = ->
     if typeof! process is \process
@@ -26,4 +27,5 @@ module.exports = {
     copyToClipboard
     is-nodejs
     VLogger
+    download
 }
