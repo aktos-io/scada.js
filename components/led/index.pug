@@ -4,7 +4,10 @@ img.ui.image.led(src="{{type}}/on.svg" class="{{class}}"
 img.ui.image.led(src="{{type}}/off.svg" class="{{class}}" 
     style="{{style}}; display: {{#if innerState === 'off'}}inline{{else}}none{{/if}}")
 
-img.ui.image.led(src="{{type}}/unknown.gif" class="{{class}}" 
+img.ui.image.led(src="{{type}}/init.gif" class="{{class}}" 
+    style="{{style}}; display: {{#if innerState === 'init'}}inline{{else}}none{{/if}}")
+
+img.ui.image.led(src="{{type}}/unknown.svg" class="{{class}}" 
     style="{{style}}; display: {{#if innerState === 'unknown'}}inline{{else}}none{{/if}}")
 
     
