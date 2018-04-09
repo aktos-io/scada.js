@@ -98,8 +98,12 @@ Ractive.components['checkbox'] = Ractive.extend do
                     acceptable-delay = 200ms
                     # do not show "doing" state for if all request-response
                     # finishes within the acceptable delay
-                    x = sleep acceptable-delay, ~> @set 'check-state', \doing
+                    done-writing = no
+                    x = sleep acceptable-delay, ~>
+                        unless done-writing
+                            @set 'check-state', \doing
                     err <~ io-client.write next-state
+                    done-writing := yes 
                     unless err => try clear-timeout x
 
                 if (@has-event 'statechange') or @get \async
