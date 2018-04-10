@@ -1,9 +1,9 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (global){
 /*
-	Ractive.js v1.0.0-edge
-	Build: 4a209b1f54df6f6fc1427195a4fce5d8b3f3a7f8
-	Date: Wed Apr 04 2018 03:49:45 GMT+0000 (UTC)
+	Ractive.js v0.10.0
+	Build: 43dfa54bbd8291d2a544814ac1d9b8c4a7b8abfb
+	Date: Thu Apr 05 2018 22:36:27 GMT+0000 (UTC)
 	Website: http://ractivejs.org
 	License: MIT
 */
@@ -406,7 +406,7 @@ var defaults = {
   helpers: create(null),
   computed: create(null),
   syncComputedChildren: false,
-  resolveInstanceMembers: true,
+  resolveInstanceMembers: false,
   warnAboutAmbiguity: false,
   adapt: [],
   isolated: true,
@@ -494,13 +494,13 @@ var welcome;
 
 if (hasConsole) {
   var welcomeIntro = [
-    "%cRactive.js %c1.0.0-edge %cin debug mode, %cmore...",
+    "%cRactive.js %c0.10.0 %cin debug mode, %cmore...",
     'color: rgb(114, 157, 52); font-weight: normal;',
     'color: rgb(85, 85, 85); font-weight: normal;',
     'color: rgb(85, 85, 85); font-weight: normal;',
     'color: rgb(82, 140, 224); font-weight: normal; text-decoration: underline;'
   ];
-  var welcomeMessage = "You're running Ractive 1.0.0-edge in debug mode - messages will be printed to the console to help you fix problems and optimise your application.\n\nTo disable debug mode, add this line at the start of your app:\n  Ractive.DEBUG = false;\n\nTo disable debug mode when your app is minified, add this snippet:\n  Ractive.DEBUG = /unminified/.test(function(){/*unminified*/});\n\nGet help and support:\n  http://ractive.js.org\n  http://stackoverflow.com/questions/tagged/ractivejs\n  http://groups.google.com/forum/#!forum/ractive-js\n  http://twitter.com/ractivejs\n\nFound a bug? Raise an issue:\n  https://github.com/ractivejs/ractive/issues\n\n";
+  var welcomeMessage = "You're running Ractive 0.10.0 in debug mode - messages will be printed to the console to help you fix problems and optimise your application.\n\nTo disable debug mode, add this line at the start of your app:\n  Ractive.DEBUG = false;\n\nTo disable debug mode when your app is minified, add this snippet:\n  Ractive.DEBUG = /unminified/.test(function(){/*unminified*/});\n\nGet help and support:\n  http://ractive.js.org\n  http://stackoverflow.com/questions/tagged/ractivejs\n  http://groups.google.com/forum/#!forum/ractive-js\n  http://twitter.com/ractivejs\n\nFound a bug? Raise an issue:\n  https://github.com/ractivejs/ractive/issues\n\n";
 
   welcome = function () {
     if (Ractive.WELCOME_MESSAGE === false) {
@@ -3914,7 +3914,7 @@ function readMustacheOfType(parser, tag) {
       }
 
       if (parser.includeLinePositions) {
-        mustache.p = parser.getLinePos(start);
+        mustache.q = parser.getLinePos(start);
       }
 
       return mustache;
@@ -4063,7 +4063,7 @@ function readPartial(parser, tag) {
     aliases = readAliases(parser);
     if (aliases && aliases.length) {
       partial.z = aliases;
-    } else if (type === '>') {
+    } else {
       // otherwise check for literal context e.g. `{{>foo bar}}` then
       // turn it into `{{#with bar}}{{>foo}}{{/with}}`
       var context = readExpression(parser);
@@ -4071,9 +4071,11 @@ function readPartial(parser, tag) {
         partial.c = {};
         refineExpression(context, partial.c);
       }
-    } else {
+    }
+
+    if (type !== '>' && (!partial.c && !partial.z)) {
       // {{yield with}} requires some aliases
-      parser.error("Expected one or more aliases");
+      parser.error("Expected a context or one or more aliases");
     }
   }
 
@@ -4496,7 +4498,7 @@ function readHtmlComment(parser) {
   };
 
   if (parser.includeLinePositions) {
-    comment.p = parser.getLinePos(start);
+    comment.q = parser.getLinePos(start);
   }
 
   return comment;
@@ -4818,7 +4820,7 @@ function readElement$1(parser) {
 
   var element = {};
   if (parser.includeLinePositions) {
-    element.p = parser.getLinePos(start);
+    element.q = parser.getLinePos(start);
   }
 
   // check for doctype decl
@@ -14294,8 +14296,10 @@ var Mustache = (function (Item) {
   Mustache__proto__.constructor = Mustache;
 
   Mustache__proto__.bind = function bind () {
-    // yield mustaches should resolve in container context
-    var start = this.containerFragment || this.up;
+    // yield mustaches and inner contexts should resolve in container context
+    var start = this.template.y
+      ? this.template.y.containerFragment
+      : this.containerFragment || this.up;
     // try to find a model for this view
     var model = resolve(start, this.template);
 
@@ -15193,6 +15197,7 @@ function contextifyTemplate(self) {
   if (self.template.c) {
     self.partial = [{ t: SECTION, n: SECTION_WITH, f: self.partial }];
     assign(self.partial[0], self.template.c);
+    if (self.yielder) { self.partial[0].y = self; }
   }
 }
 
@@ -18702,7 +18707,7 @@ if (win && !win.Ractive) {
   /* istanbul ignore next */
   if (~opts$1.indexOf('ForceGlobal')) { win.Ractive = Ractive; }
 } else if (win) {
-  warn("Ractive already appears to be loaded while loading 1.0.0-edge.");
+  warn("Ractive already appears to be loaded while loading 0.10.0.");
 }
 
 assign(Ractive.prototype, proto$8, defaults);
@@ -18745,7 +18750,7 @@ defineProperties(Ractive, {
   svg: { value: svg },
 
   // version
-  VERSION: { value: '1.0.0-edge' },
+  VERSION: { value: '0.10.0' },
 
   // plugins
   adaptors: { writable: true, value: {} },
@@ -18788,6 +18793,7 @@ return Ractive;
 // Generated by LiveScript 1.4.0
 var Ractive, sleep, toString$ = {}.toString;
 Ractive = require('ractive');
+Ractive.defaults.resolveInstanceMembers = true;
 window.Ractive = Ractive;
 window.sleep = sleep = function(ms, f){
   return setTimeout(f, ms);
