@@ -4,7 +4,8 @@ DIR=$(dirname "$(readlink -f "$0")")
 
 cd "$DIR/../.."
 #npm i --save ractive@latest
-npm i --save ractive@1.0.0-build-150
+#npm i --save ractive@1.0.0-build-155
+npm i --save ractive@1.0.0-build-155
 
 cd $DIR
 export NODE_MODULES=$(realpath "$DIR/../../node_modules")

@@ -2,8 +2,8 @@
 (function (global){
 /*
 	Ractive.js v1.0.0-edge
-	Build: f728853e4e11051bfed30e8d81bd407c5864de87
-	Date: Tue Mar 20 2018 01:23:33 GMT+0000 (UTC)
+	Build: 4a209b1f54df6f6fc1427195a4fce5d8b3f3a7f8
+	Date: Wed Apr 04 2018 03:49:45 GMT+0000 (UTC)
 	Website: http://ractivejs.org
 	License: MIT
 */
@@ -1153,7 +1153,7 @@ ModelBase__proto__.rebind = function rebind (next, previous, safe) {
   while (i--) {
     var link = this$1.links[i];
     // only relink the root of the link tree
-    if (link.owner._link) { link.relinking(next, safe); }
+    if (link.owner && link.owner._link) { link.relinking(next, safe); }
   }
 
   i = this.children.length;
@@ -1488,9 +1488,9 @@ var LinkModel = (function (ModelBase) {
     this.owner = owner;
     this.target = target;
     this.key = key === undefined ? owner.key : key;
-    if (owner.isLink) { this.sourcePath = (owner.sourcePath) + "." + (this.key); }
+    if (owner && owner.isLink) { this.sourcePath = (owner.sourcePath) + "." + (this.key); }
 
-    target.registerLink(this);
+    if (target) { target.registerLink(this); }
 
     if (parent) { this.isReadonly = parent.isReadonly; }
 
@@ -1610,7 +1610,7 @@ var LinkModel = (function (ModelBase) {
       { target = rebindMatch(this.sourcePath, target, this.target); }
     if (!target || this.target === target) { return; }
 
-    this.target.unregisterLink(this);
+    this.target && this.target.unregisterLink(this);
 
     this.target = target;
     this.children.forEach(function (c) {
@@ -1654,7 +1654,7 @@ var LinkModel = (function (ModelBase) {
     else { return this.target; }
   };
 
-  LinkModel__proto__.teardown = function teardown$2 () {
+  LinkModel__proto__.teardown = function teardown$3 () {
     if (this._link) { this._link.teardown(); }
     this.target.unregisterLink(this);
     this.children.forEach(teardown);
@@ -4596,7 +4596,6 @@ function trimWhitespace(items, leadingPattern, trailingPattern) {
 }
 
 var contiguousWhitespace = /[ \t\f\r\n]+/g;
-var preserveWhitespaceElements = /^(?:pre|script|style|textarea)$/i;
 var leadingWhitespace$1 = /^[ \t\f\r\n]+/;
 var trailingWhitespace = /[ \t\f\r\n]+$/;
 var leadingNewLine = /^(?:\r\n|\r|\n)/;
@@ -4607,7 +4606,8 @@ function cleanup(
   stripComments,
   preserveWhitespace,
   removeLeadingWhitespace,
-  removeTrailingWhitespace
+  removeTrailingWhitespace,
+  whiteSpaceElements
 ) {
   if (isString(items)) { return; }
 
@@ -4649,7 +4649,8 @@ function cleanup(
     // Recurse
     if (item.f) {
       var isPreserveWhitespaceElement =
-        item.t === ELEMENT && preserveWhitespaceElements.test(item.e);
+        item.t === ELEMENT &&
+        (whiteSpaceElements[item.e.toLowerCase()] || whiteSpaceElements[item.e]);
       preserveWhitespaceInsideFragment = preserveWhitespace || isPreserveWhitespaceElement;
 
       if (!preserveWhitespace && isPreserveWhitespaceElement) {
@@ -4677,7 +4678,8 @@ function cleanup(
         stripComments,
         preserveWhitespaceInsideFragment,
         removeLeadingWhitespaceInsideFragment,
-        removeTrailingWhitespaceInsideFragment
+        removeTrailingWhitespaceInsideFragment,
+        whiteSpaceElements
       );
     }
 
@@ -4688,7 +4690,8 @@ function cleanup(
         stripComments,
         preserveWhitespace,
         removeLeadingWhitespaceInsideFragment,
-        removeTrailingWhitespaceInsideFragment
+        removeTrailingWhitespaceInsideFragment,
+        whiteSpaceElements
       );
 
       item.l.forEach(function (s) { return (s.l = 1); });
@@ -4704,7 +4707,8 @@ function cleanup(
         stripComments,
         preserveWhitespace,
         removeLeadingWhitespaceInsideFragment,
-        removeTrailingWhitespaceInsideFragment
+        removeTrailingWhitespaceInsideFragment,
+        whiteSpaceElements
       );
       if (item.m.length < 1) { delete item.m; }
     }
@@ -4963,7 +4967,8 @@ function readElement$1(parser) {
             parser.stripComments,
             preserveWhitespace,
             !preserveWhitespace,
-            !preserveWhitespace
+            !preserveWhitespace,
+            parser.whiteSpaceElements
           );
 
           partials[child.n] = child.f;
@@ -5176,7 +5181,8 @@ function readTemplate(parser) {
         parser.stripComments,
         preserveWhitespace,
         !preserveWhitespace,
-        !preserveWhitespace
+        !preserveWhitespace,
+        parser.whiteSpaceElements
       );
 
       partials[partial.n] = partial.f;
@@ -5240,12 +5246,12 @@ var TRIPLE_READERS = [readTriple];
 var READERS = [readMustache, readHtmlComment, readElement$1, readText];
 var PARTIAL_READERS = [readPartialDefinitionSection];
 
-var defaultInterpolate = ['script', 'style', 'template'];
+var preserveWhitespaceElements = { pre: 1, script: 1, style: 1, textarea: 1 };
+
+var defaultInterpolate = { textarea: true, script: true, style: true, template: true };
 
 var StandardParser = Parser.extend({
   init: function init(str, options) {
-    var this$1 = this;
-
     var tripleDelimiters = options.tripleDelimiters || shared.defaults.tripleDelimiters;
     var staticDelimiters = options.staticDelimiters || shared.defaults.staticDelimiters;
     var staticTripleDelimiters =
@@ -5291,10 +5297,11 @@ var StandardParser = Parser.extend({
     this.sectionDepth = 0;
     this.elementStack = [];
 
-    this.interpolate = create(options.interpolate || shared.defaults.interpolate || {});
-    this.interpolate.textarea = true;
-    defaultInterpolate.forEach(
-      function (t) { return (this$1.interpolate[t] = !options.interpolate || options.interpolate[t] !== false); }
+    this.interpolate = assign(
+      {},
+      defaultInterpolate,
+      shared.defaults.interpolate,
+      options.interpolate
     );
 
     if (options.sanitize === true) {
@@ -5308,7 +5315,9 @@ var StandardParser = Parser.extend({
     }
 
     this.stripComments = options.stripComments !== false;
-    this.preserveWhitespace = options.preserveWhitespace;
+    this.preserveWhitespace = isObjectType(options.preserveWhitespace)
+      ? false
+      : options.preserveWhitespace;
     this.sanitizeElements = options.sanitize && options.sanitize.elements;
     this.sanitizeEventAttributes = options.sanitize && options.sanitize.eventAttributes;
     this.includeLinePositions = options.includeLinePositions;
@@ -5319,6 +5328,9 @@ var StandardParser = Parser.extend({
     if (options.expression) { this.converters = [readExpression]; }
 
     if (options.attributes) { this.inTag = true; }
+
+    // special whitespace handling requested for certain elements
+    this.whiteSpaceElements = assign({}, options.preserveWhitespace, preserveWhitespaceElements);
   },
 
   postProcess: function postProcess(result, options) {
@@ -5341,7 +5353,8 @@ var StandardParser = Parser.extend({
         this.stripComments,
         this.preserveWhitespace,
         !this.preserveWhitespace,
-        !this.preserveWhitespace
+        !this.preserveWhitespace,
+        this.whiteSpaceElements
       );
 
       if (this.csp !== false) {
@@ -6223,7 +6236,7 @@ var Model = (function (ModelBase) {
     return this;
   };
 
-  Model__proto__.teardown = function teardown$3 () {
+  Model__proto__.teardown = function teardown$4 () {
     var this$1 = this;
 
     if (this._link) {
@@ -6380,7 +6393,10 @@ function resolveReference(fragment, ref) {
       var root = ref[1] === 'r' ? fragment.ractive.root : null;
       var f = fragment;
 
-      while (f && (!f.context || (f.isRoot && f.ractive.component))) {
+      while (
+        f &&
+        (!f.context || (f.isRoot && f.ractive.component && (root || !f.ractive.isolated)))
+      ) {
         f = f.isRoot ? f.componentParent : f.parent;
       }
 
@@ -6520,9 +6536,14 @@ function badReference(key) {
 var ContextModel = function ContextModel(context) {
   this.context = context;
 };
+var ContextModel__proto__ = ContextModel.prototype;
 
-ContextModel.prototype.get = function get () {
+ContextModel__proto__.get = function get () {
   return this.context;
+};
+
+ContextModel__proto__.getKeypath = function getKeypath () {
+  return '@context';
 };
 
 var extern = {};
@@ -7530,6 +7551,8 @@ var ContextData = (function (Model) {
   ContextData__proto__.getKeypath = function getKeypath () {
     return '@context.data';
   };
+
+  ContextData__proto__.rebound = function rebound () {};
 
   return ContextData;
 }(Model));
@@ -9616,7 +9639,7 @@ function extendOtherMethods(parent, target, options) {
 
       // if this is a method that overwrites a method, wrap it:
       if (isFunction(member)) {
-        if (key in proto$7 && !_super.test(member.toString())) {
+        if (key in proto$8 && !_super.test(member.toString())) {
           warnIfDebug(
             ("Overriding Ractive prototype function '" + key + "' without calling the '" + _super + "' method can be very dangerous.")
           );
@@ -9668,6 +9691,10 @@ Item__proto__.findComponent = function findComponent () {
 
 Item__proto__.findNextNode = function findNextNode () {
   return this.up.findNextNode(this);
+};
+
+Item__proto__.rebound = function rebound (update) {
+  if (this.fragment) { this.fragment.rebound(update); }
 };
 
 Item__proto__.shuffled = function shuffled () {
@@ -9735,6 +9762,7 @@ var ComputationChild = (function (Model) {
 
     this.isReadonly = !this.root.ractive.syncComputedChildren;
     this.dirty = true;
+    this.isComputed = true;
   }
 
   if ( Model ) ComputationChild.__proto__ = Model;
@@ -9820,6 +9848,7 @@ var Computation = (function (Model) {
     this.signature = signature;
 
     this.isReadonly = !this.signature.setter;
+    this.isComputed = true;
 
     this.dependencies = [];
 
@@ -9981,6 +10010,7 @@ var ExpressionProxy = (function (Model) {
     this.template = template;
 
     this.isReadonly = true;
+    this.isComputed = true;
     this.dirty = true;
 
     this.fn =
@@ -10075,6 +10105,13 @@ var ExpressionProxy = (function (Model) {
     this.bubble(!safe);
   };
 
+  ExpressionProxy__proto__.rebound = function rebound (update) {
+    var this$1 = this;
+
+    this.models = this.template.r.map(function (ref) { return resolveReference(this$1.fragment, ref); });
+    if (update) { this.bubble(true); }
+  };
+
   ExpressionProxy__proto__.retrieve = function retrieve () {
     return this.get();
   };
@@ -10089,12 +10126,17 @@ var ExpressionProxy = (function (Model) {
 
   ExpressionProxy__proto__.unreference = function unreference () {
     Model.prototype.unreference.call(this);
-    if (!this.deps.length && !this.refs) { this.teardown(); }
+    collect(this);
   };
 
   ExpressionProxy__proto__.unregister = function unregister (dep) {
     Model.prototype.unregister.call(this, dep);
-    if (!this.deps.length && !this.refs) { this.teardown(); }
+    collect(this);
+  };
+
+  ExpressionProxy__proto__.unregisterLink = function unregisterLink (link) {
+    Model.prototype.unregisterLink.call(this, link);
+    collect(this);
   };
 
   return ExpressionProxy;
@@ -10108,263 +10150,125 @@ prototype$1.joinKey = computation.joinKey;
 prototype$1.mark = computation.mark;
 prototype$1.unbind = noop;
 
-var ReferenceExpressionChild = (function (Model) {
-  function ReferenceExpressionChild(parent, key) {
-    Model.call(this, parent, key);
-    this.dirty = true;
-  }
+function collect(model) {
+  if (!model.deps.length && !model.refs && !model.links.length) { model.teardown(); }
+}
 
-  if ( Model ) ReferenceExpressionChild.__proto__ = Model;
-  var ReferenceExpressionChild__proto__ = ReferenceExpressionChild.prototype = Object.create( Model && Model.prototype );
-  ReferenceExpressionChild__proto__.constructor = ReferenceExpressionChild;
-
-  ReferenceExpressionChild__proto__.applyValue = function applyValue (value) {
-    if (isEqual(value, this.value)) { return; }
-
-    var parent = this.parent;
-    var keys$$1 = [this.key];
-    while (parent) {
-      if (parent.base) {
-        var target = parent.model.joinAll(keys$$1);
-        target.applyValue(value);
-        break;
-      }
-
-      keys$$1.unshift(parent.key);
-
-      parent = parent.parent;
-    }
-  };
-
-  ReferenceExpressionChild__proto__.get = function get (shouldCapture, opts) {
-    this.retrieve();
-    return Model.prototype.get.call(this, shouldCapture, opts);
-  };
-
-  ReferenceExpressionChild__proto__.joinKey = function joinKey (key) {
-    if (key === undefined || key === '') { return this; }
-
-    if (!hasOwn(this.childByKey, key)) {
-      var child = new ReferenceExpressionChild(this, key);
-      this.children.push(child);
-      this.childByKey[key] = child;
-    }
-
-    return this.childByKey[key];
-  };
-
-  ReferenceExpressionChild__proto__.mark = function mark () {
-    this.dirty = true;
-    Model.prototype.mark.call(this);
-  };
-
-  ReferenceExpressionChild__proto__.retrieve = function retrieve () {
-    if (this.dirty) {
-      this.dirty = false;
-      var parent = this.parent.get();
-      this.value = parent && parent[this.key];
-    }
-
-    return this.value;
-  };
-
-  return ReferenceExpressionChild;
-}(Model));
-
-var missing = { get: function get() {} };
-
-var ReferenceExpressionProxy = (function (Model) {
+var ReferenceExpressionProxy = (function (LinkModel) {
   function ReferenceExpressionProxy(fragment, template) {
-    var this$1 = this;
-
-    Model.call(this, null, null);
-    this.dirty = true;
+    LinkModel.call(this, null, null, null, '@undefined');
     this.root = fragment.ractive.viewmodel;
     this.template = template;
+    this.rootLink = true;
+    this.template = template;
+    this.fragment = fragment;
 
-    this.base = resolve(fragment, template);
-
-    var intermediary = (this.intermediary = {
-      handleChange: function () { return this$1.handleChange(); },
-      rebind: function (next, previous) {
-        if (previous === this$1.base) {
-          next = rebindMatch(template, next, previous);
-          if (next !== this$1.base) {
-            this$1.base.unregister(intermediary);
-            this$1.base = next;
-          }
-        } else {
-          var idx = this$1.members.indexOf(previous);
-          if (~idx) {
-            // only direct references will rebind... expressions handle themselves
-            next = rebindMatch(template.m[idx].n, next, previous);
-            if (next !== this$1.members[idx]) {
-              this$1.members.splice(idx, 1, next || missing);
-            }
-          }
-        }
-
-        if (next !== previous) { previous.unregister(intermediary); }
-        if (next) { next.addShuffleTask(function () { return next.register(intermediary); }); }
-
-        this$1.bubble();
-      }
-    });
-
-    this.members = template.m.map(function (template) {
-      if (isString(template)) {
-        return { get: function () { return template; } };
-      }
-
-      var model;
-
-      if (template.t === REFERENCE) {
-        model = resolveReference(fragment, template.n);
-        model.register(intermediary);
-
-        return model;
-      }
-
-      model = new ExpressionProxy(fragment, template);
-      model.register(intermediary);
-      return model;
-    });
-
-    this.base.register(intermediary);
-
-    this.bubble();
+    this.rebound();
   }
 
-  if ( Model ) ReferenceExpressionProxy.__proto__ = Model;
-  var ReferenceExpressionProxy__proto__ = ReferenceExpressionProxy.prototype = Object.create( Model && Model.prototype );
+  if ( LinkModel ) ReferenceExpressionProxy.__proto__ = LinkModel;
+  var ReferenceExpressionProxy__proto__ = ReferenceExpressionProxy.prototype = Object.create( LinkModel && LinkModel.prototype );
   ReferenceExpressionProxy__proto__.constructor = ReferenceExpressionProxy;
-
-  ReferenceExpressionProxy__proto__.bubble = function bubble () {
-    if (!this.base) { return; }
-    if (!this.dirty) { this.handleChange(); }
-  };
-
-  ReferenceExpressionProxy__proto__.get = function get (shouldCapture, opts) {
-    if (shouldCapture) { capture(this); }
-    if (this.dirty) {
-      this.bubble();
-
-      var keys$$1 = this.members.map(function (m) { return escapeKey(String(m.get())); });
-      var model = this.base.joinAll(keys$$1);
-
-      if (model !== this.model) {
-        if (this.model) {
-          this.model.unregister(this);
-          this.model.unregisterTwowayBinding(this);
-        }
-
-        this.model = model;
-        this.parent = model.parent;
-        this.model.register(this);
-        this.model.registerTwowayBinding(this);
-
-        pathChanged(this);
-      }
-
-      this.value = this.model.get(shouldCapture, opts);
-      this.dirty = false;
-      this.mark();
-      return this.value;
-    } else {
-      return this.model ? this.model.get(shouldCapture, opts) : undefined;
-    }
-  };
-
-  // indirect two-way bindings
-  ReferenceExpressionProxy__proto__.getValue = function getValue () {
-    var this$1 = this;
-
-    this.value = this.model ? this.model.get() : undefined;
-
-    var i = this.bindings.length;
-    while (i--) {
-      var value = this$1.bindings[i].getValue();
-      if (value !== this$1.value) { return value; }
-    }
-
-    // check one-way bindings
-    var oneway = findBoundValue(this.deps);
-    if (oneway) { return oneway.value; }
-
-    return this.value;
-  };
 
   ReferenceExpressionProxy__proto__.getKeypath = function getKeypath () {
     return this.model ? this.model.getKeypath() : '@undefined';
   };
 
-  ReferenceExpressionProxy__proto__.handleChange = function handleChange () {
-    this.dirty = true;
-    this.mark();
-  };
+  ReferenceExpressionProxy__proto__.rebound = function rebound () {
+    var this$1 = this;
 
-  ReferenceExpressionProxy__proto__.joinKey = function joinKey (key) {
-    if (key === undefined || key === '') { return this; }
+    var fragment = this.fragment;
+    var template = this.template;
 
-    if (!hasOwn(this.childByKey, key)) {
-      var child = new ReferenceExpressionChild(this, key);
-      this.children.push(child);
-      this.childByKey[key] = child;
+    var base = (this.base = resolve(fragment, template));
+    var idx;
+
+    if (this.proxy) {
+      teardown$1(this);
     }
 
-    return this.childByKey[key];
-  };
+    var proxy = (this.proxy = {
+      rebind: function (next, previous) {
+        if (previous === base) {
+          next = rebindMatch(template, next, previous);
+          if (next !== base) {
+            this$1.base = base = next;
+          }
+        } else if (~(idx = members.indexOf(previous))) {
+          next = rebindMatch(template.m[idx].n, next, previous);
+          if (next !== members[idx]) {
+            members.splice(idx, 1, next || Missing);
+          }
+        }
 
-  ReferenceExpressionProxy__proto__.mark = function mark$2 () {
-    if (this.dirty) {
-      this.deps.forEach(handleChange);
-    }
+        if (next !== previous) { previous.unregister(proxy); }
+        if (next) { next.addShuffleTask(function () { return next.register(proxy); }); }
+      },
+      handleChange: function () {
+        pathChanged();
+      }
+    });
 
-    this.links.forEach(marked);
-    this.children.forEach(mark);
-  };
+    base.register(proxy);
 
-  ReferenceExpressionProxy__proto__.rebind = function rebind () {
-    this.handleChange();
-  };
+    var members = (this.members = template.m.map(function (tpl) {
+      if (isString(tpl)) {
+        return { get: function () { return tpl; } };
+      }
 
-  ReferenceExpressionProxy__proto__.retrieve = function retrieve () {
-    return this.value;
-  };
+      var model;
 
-  ReferenceExpressionProxy__proto__.set = function set (value) {
-    this.model.set(value);
+      if (tpl.t === REFERENCE) {
+        model = resolveReference(fragment, tpl.n);
+        model.register(proxy);
+
+        return model;
+      }
+
+      model = new ExpressionProxy(fragment, tpl);
+      model.register(proxy);
+      return model;
+    }));
+
+    var pathChanged = function () {
+      var model = base.joinAll(
+        members.reduce(function (list, m) {
+          var k = m.get();
+          if (isArray(k)) { return list.concat(k); }
+          else { list.push(escapeKey(String(k))); }
+          return list;
+        }, [])
+      );
+
+      if (model !== this$1.model) {
+        this$1.model = model;
+        this$1.relinking(model);
+        fireShuffleTasks();
+        refreshPathDeps(this$1);
+      }
+    };
+
+    pathChanged();
   };
 
   ReferenceExpressionProxy__proto__.teardown = function teardown () {
-    var this$1 = this;
-
-    if (this.base) {
-      this.base.unregister(this.intermediary);
-    }
-    if (this.model) {
-      this.model.unregister(this);
-      this.model.unregisterTwowayBinding(this);
-    }
-    if (this.members) {
-      this.members.forEach(function (m) { return m && m.unregister && m.unregister(this$1.intermediary); });
-    }
-  };
-
-  ReferenceExpressionProxy__proto__.unreference = function unreference () {
-    Model.prototype.unreference.call(this);
-    if (!this.deps.length && !this.refs) { this.teardown(); }
-  };
-
-  ReferenceExpressionProxy__proto__.unregister = function unregister (dep) {
-    Model.prototype.unregister.call(this, dep);
-    if (!this.deps.length && !this.refs) { this.teardown(); }
+    teardown$1(this);
+    LinkModel.prototype.teardown.call(this);
   };
 
   return ReferenceExpressionProxy;
-}(Model));
+}(LinkModel));
 
-function pathChanged(proxy) {
+function teardown$1(proxy) {
+  if (proxy.base) { proxy.base.unregister(proxy.proxy); }
+  if (proxy.models) {
+    proxy.models.forEach(function (m) {
+      if (m.unregister) { m.unregister(proxy); }
+    });
+  }
+}
+
+function refreshPathDeps(proxy) {
   var len = proxy.deps.length;
   var i, v;
 
@@ -10376,9 +10280,16 @@ function pathChanged(proxy) {
 
   len = proxy.children.length;
   for (i = 0; i < len; i++) {
-    pathChanged(proxy.children[i]);
+    refreshPathDeps(proxy.children[i]);
   }
 }
+
+var eproto = ExpressionProxy.prototype;
+var proto$1 = ReferenceExpressionProxy.prototype;
+
+proto$1.unreference = eproto.unreference;
+proto$1.unregister = eproto.unregister;
+proto$1.unregisterLink = eproto.unregisterLink;
 
 function resolve(fragment, template) {
   if (template.r) {
@@ -10390,18 +10301,18 @@ function resolve(fragment, template) {
   }
 }
 
-function resolveAliases(aliases, fragment) {
-  var resolved = {};
+function resolveAliases(aliases, fragment, dest) {
+  if ( dest === void 0 ) dest = {};
 
   for (var i = 0; i < aliases.length; i++) {
-    resolved[aliases[i].n] = resolve(fragment, aliases[i].x);
+    if (!dest[aliases[i].n]) {
+      var m = resolve(fragment, aliases[i].x);
+      dest[aliases[i].n] = m;
+      m.reference();
+    }
   }
 
-  for (var k in resolved) {
-    resolved[k].reference();
-  }
-
-  return resolved;
+  return dest;
 }
 
 var Alias = (function (ContainerItem) {
@@ -10423,6 +10334,21 @@ var Alias = (function (ContainerItem) {
 
     this.fragment.aliases = resolveAliases(this.template.z, this.up);
     this.fragment.bind();
+  };
+
+  Alias__proto__.rebound = function rebound (update) {
+    var aliases = this.fragment.aliases;
+    for (var k in aliases) {
+      if (aliases[k].rebound) { aliases[k].rebound(update); }
+      else {
+        aliases[k].unreference();
+        aliases[k] = 0;
+      }
+    }
+
+    resolveAliases(this.template.z, this.up, aliases);
+
+    if (this.fragment) { this.fragment.rebound(update); }
   };
 
   Alias__proto__.render = function render (target, occupants) {
@@ -11324,9 +11250,9 @@ function Comment(options) {
   Item.call(this, options);
 }
 
-var proto$1 = create(Item.prototype);
+var proto$2 = create(Item.prototype);
 
-assign(proto$1, {
+assign(proto$2, {
   bind: noop,
   unbind: noop,
   update: noop,
@@ -11356,7 +11282,7 @@ assign(proto$1, {
   }
 });
 
-Comment.prototype = proto$1;
+Comment.prototype = proto$2;
 
 var teardownHook = new Hook('teardown');
 var destructHook = new Hook('destruct');
@@ -11373,10 +11299,10 @@ function Ractive$teardown() {
   }
 
   this.shouldDestroy = true;
-  return teardown$1(this, function () { return (this$1.fragment.rendered ? this$1.unrender() : Promise.resolve()); });
+  return teardown$2(this, function () { return (this$1.fragment.rendered ? this$1.unrender() : Promise.resolve()); });
 }
 
-function teardown$1(instance, getPromise) {
+function teardown$2(instance, getPromise) {
   instance.torndown = true;
   instance.fragment.unbind();
   instance._observers.slice().forEach(cancel);
@@ -12011,6 +11937,10 @@ var Component = (function (Item) {
     return getRactiveContext.apply(null, assigns);
   };
 
+  Component__proto__.rebound = function rebound (update$$1) {
+    this.attributes.forEach(function (x) { return x.rebound(update$$1); });
+  };
+
   Component__proto__.render = function render$2 (target, occupants) {
     if (this.isAnchor) {
       this.rendered = true;
@@ -12059,7 +11989,7 @@ var Component = (function (Item) {
 
       this.attributes.forEach(unbind);
 
-      teardown$1(this.instance, function () { return runloop.promise(); });
+      teardown$2(this.instance, function () { return runloop.promise(); });
     }
   };
 
@@ -12280,6 +12210,12 @@ Decorator__proto__.rebind = function rebind (next, previous, safe) {
   if (!safe) { this.bubble(); }
 };
 
+Decorator__proto__.rebound = function rebound (update) {
+  teardownArgsFn(this, this.template);
+  setupArgsFn(this, this.template, this.up, { register: true });
+  if (update) { this.bubble(); }
+};
+
 Decorator__proto__.render = function render () {
     var this$1 = this;
 
@@ -12373,8 +12309,8 @@ var Doctype = (function (Item) {
   return Doctype;
 }(Item));
 
-var proto$2 = Doctype.prototype;
-proto$2.bind = proto$2.render = proto$2.teardown = proto$2.unbind = proto$2.unrender = proto$2.update = noop;
+var proto$3 = Doctype.prototype;
+proto$3.bind = proto$3.render = proto$3.teardown = proto$3.unbind = proto$3.unrender = proto$3.update = noop;
 
 var Binding = function Binding(element, name) {
   if ( name === void 0 ) name = 'value';
@@ -12453,6 +12389,12 @@ Binding__proto__.rebind = function rebind (next, previous) {
     this.model = next;
     runloop.scheduleTask(function () { return next.registerTwowayBinding(this$1); });
   }
+};
+
+Binding__proto__.rebound = function rebound () {
+  if (this.model) { this.model.unregisterTwowayBinding(this); }
+  this.model = this.attribute.interpolator.model;
+  this.model.registerTwowayBinding(this);
 };
 
 Binding__proto__.render = function render () {
@@ -13122,6 +13064,11 @@ var RadioNameBinding = (function (Binding) {
     this.updateName();
   };
 
+  RadioNameBinding__proto__.rebound = function rebound (update) {
+    Binding.prototype.rebound.call(this, update);
+    this.updateName();
+  };
+
   RadioNameBinding__proto__.render = function render () {
     Binding.prototype.render.call(this);
 
@@ -13625,6 +13572,12 @@ var Element = (function (ContainerItem) {
       this.binding.bind();
       if (this.rendered) { this.binding.render(); }
     }
+  };
+
+  Element__proto__.rebound = function rebound (update$$1) {
+    ContainerItem.prototype.rebound.call(this, update$$1);
+    if (this.attributes) { this.attributes.forEach(function (x) { return x.rebound(update$$1); }); }
+    if (this.binding) { this.binding.rebound(update$$1); }
   };
 
   Element__proto__.render = function render$3 (target, occupants) {
@@ -14365,6 +14318,8 @@ var Mustache = (function (Item) {
   };
 
   Mustache__proto__.rebind = function rebind (next, previous, safe) {
+    if (this.isStatic) { return; }
+
     next = rebindMatch(this.template, next, previous, this.up);
     if (next === this.model) { return false; }
 
@@ -14375,6 +14330,19 @@ var Mustache = (function (Item) {
     this.model = next;
     if (!safe) { this.handleChange(); }
     return true;
+  };
+
+  Mustache__proto__.rebound = function rebound (update) {
+    if (this.model) {
+      if (this.model.rebound) { this.model.rebound(update); }
+      else {
+        this.model.unregister(this);
+        this.bind();
+      }
+
+      if (update) { this.bubble(); }
+    }
+    if (this.fragment) { this.fragment.rebound(update); }
   };
 
   Mustache__proto__.unbind = function unbind () {
@@ -14391,9 +14359,9 @@ function MustacheContainer(options) {
   Mustache.call(this, options);
 }
 
-var proto$3 = (MustacheContainer.prototype = Object.create(ContainerItem.prototype));
+var proto$4 = (MustacheContainer.prototype = Object.create(ContainerItem.prototype));
 
-assign(proto$3, Mustache.prototype, { constructor: MustacheContainer });
+assign(proto$4, Mustache.prototype, { constructor: MustacheContainer });
 
 var Interpolator = (function (Mustache) {
   function Interpolator () {
@@ -14679,6 +14647,15 @@ var Mapping = (function (Item) {
       viewmodel.joinKey(this.name).set(parsed ? parsed.value : template);
     } else if (isArray(template)) {
       createMapping(this, true);
+    }
+  };
+
+  Mapping__proto__.rebound = function rebound (update) {
+    if (this.boundFragment) { this.boundFragment.rebound(update); }
+    if (this.link) {
+      this.model = resolve(this.up, this.template.f[0]);
+      var model = this.element.instance.viewmodel.joinAll(splitKeypath(this.name));
+      model.link(this.model, this.name, { mapping: true });
     }
   };
 
@@ -14975,9 +14952,9 @@ function Partial(options) {
   }
 }
 
-var proto$4 = (Partial.prototype = create(MustacheContainer.prototype));
+var proto$5 = (Partial.prototype = create(MustacheContainer.prototype));
 
-assign(proto$4, {
+assign(proto$5, {
   constructor: Partial,
 
   bind: function bind() {
@@ -15058,6 +15035,28 @@ assign(proto$4, {
     this.dirtyTemplate = true;
     this.externalChange = true;
     this.bubble();
+  },
+
+  rebound: function rebound(update) {
+    var this$1 = this;
+
+    var aliases = this.fragment && this.fragment.aliases;
+    if (aliases) {
+      for (var k in aliases) {
+        if (aliases[k].rebound) { aliases[k].rebound(update); }
+        else {
+          aliases[k].unreference();
+          aliases[k] = 0;
+        }
+      }
+      if (this.template.z) {
+        resolveAliases(this.template.z, this.containerFragment || this.up, aliases);
+      }
+    }
+    if (this._attrs) {
+      keys(this._attrs).forEach(function (k) { return this$1._attrs[k].rebound(update); });
+    }
+    MustacheContainer.prototype.rebound.call(this, update);
   },
 
   refreshAttrs: function refreshAttrs() {
@@ -15393,6 +15392,8 @@ KeyModel__proto__.unregisterLink = function unregisterLink (link) {
 KeyModel.prototype.reference = noop;
 KeyModel.prototype.unreference = noop;
 
+var keypathString = /^"(\\"|[^"])+"$/;
+
 var RepeatedFragment = function RepeatedFragment(options) {
   this.parent = options.owner.up;
 
@@ -15435,7 +15436,32 @@ RepeatedFragment__proto__.bind = function bind (context) {
   this.bound = true;
   var value = context.get();
 
-  this.aliases = this.owner.template.z && this.owner.template.z.slice();
+  var aliases = (this.aliases = this.owner.template.z && this.owner.template.z.slice());
+
+  var shuffler = aliases && aliases.find(function (a) { return a.n === 'shuffle'; });
+  if (shuffler && shuffler.x && shuffler.x.x) {
+    if (shuffler.x.x.s === 'true') { this.shuffler = true; }
+    else if (keypathString.test(shuffler.x.x.s))
+      { this.shuffler = splitKeypath(shuffler.x.x.s.slice(1, -1)); }
+  }
+
+  if (this.shuffler) { this.values = shuffleValues(this, this.shuffler); }
+
+  if (this.source) { this.source.model.unbind(this.source); }
+  var source = context.isComputed && aliases && aliases.find(function (a) { return a.n === 'source'; });
+  if (source && source.x && source.x.r) {
+    var model = resolve(this, source.x);
+    this.source = {
+      handleChange: function handleChange() {},
+      rebind: function rebind(next) {
+        this.model.unregister(this);
+        this.model = next;
+        next.register(this);
+      }
+    };
+    this.source.model = model;
+    model.register(this.source);
+  }
 
   // {{#each array}}...
   if ((this.isArray = isArray(value))) {
@@ -15471,7 +15497,7 @@ RepeatedFragment__proto__.bubble = function bubble (index) {
   if (!this.bubbled) { this.bubbled = []; }
   this.bubbled.push(index);
 
-  this.owner.bubble();
+  if (!this.rebounding) { this.owner.bubble(); }
 };
 
 RepeatedFragment__proto__.createIteration = function createIteration (key, index) {
@@ -15544,8 +15570,19 @@ RepeatedFragment__proto__.rebind = function rebind (next) {
     var this$1 = this;
 
   this.context = next;
+  if (this.source) { return; }
   this.iterations.forEach(function (fragment) {
     swizzleFragment(this$1, fragment, fragment.key, fragment.index);
+  });
+};
+
+RepeatedFragment__proto__.rebound = function rebound (update$$1) {
+    var this$1 = this;
+
+  this.context = this.owner.model;
+  this.iterations.forEach(function (f, i) {
+    f.context = contextFor(this$1, f, i);
+    f.rebound(update$$1);
   });
 };
 
@@ -15578,14 +15615,16 @@ RepeatedFragment__proto__.shuffle = function shuffle (newIndices, merge) {
     var fragment = this$1.iterations[oldIndex];
     iterations[newIndex] = fragment;
 
-    if (merge) { fragment.shouldRebind = 1; }
-
-    if (newIndex !== oldIndex && fragment) { fragment.dirty = true; }
+    if (newIndex !== oldIndex && fragment) {
+      fragment.dirty = true;
+      if (merge) { fragment.shouldRebind = 1; }
+    }
   });
 
   this.iterations = iterations;
 
-  this.bubble();
+  // if merging, we're in the midst of an update already
+  if (!merge) { this.bubble(); }
 };
 
 RepeatedFragment__proto__.shuffled = function shuffled$1 () {
@@ -15598,6 +15637,7 @@ RepeatedFragment__proto__.toString = function toString (escape) {
 
 RepeatedFragment__proto__.unbind = function unbind$3 () {
   this.bound = false;
+  if (this.source) { this.source.model.unregister(this.source); }
   this.iterations.forEach(unbind);
   return this;
 };
@@ -15624,107 +15664,126 @@ RepeatedFragment__proto__.update = function update$4 () {
   if (this.updating) { return; }
   this.updating = true;
 
-  this.iterations.forEach(function (f, i) { return f && f.idxModel && f.idxModel.applyValue(i); });
-
-  var value = this.context.get();
-  var wasArray = this.isArray;
-
-  var toRemove;
-  var oldKeys;
-  var reset = true;
-  var i;
-
-  if ((this.isArray = isArray(value))) {
-    if (wasArray) {
-      reset = false;
-      if (this.iterations.length > value.length) {
-        toRemove = this.iterations.splice(value.length);
-      }
-    }
-  } else if (isObject(value) && !wasArray) {
-    reset = false;
-    toRemove = [];
-    oldKeys = {};
-    i = this.iterations.length;
-
-    while (i--) {
-      var fragment$1 = this$1.iterations[i];
-      if (fragment$1.key in value) {
-        oldKeys[fragment$1.key] = true;
-      } else {
-        this$1.iterations.splice(i, 1);
-        toRemove.push(fragment$1);
-      }
-    }
-  }
-
-  var newLength = isArray(value) ? value.length : isObject(value) ? keys(value).length : 0;
-  this.length = newLength;
-  this.updateLast();
-
-  if (reset) {
-    toRemove = this.iterations;
-    this.iterations = [];
-  }
-
-  if (toRemove) {
-    toRemove.forEach(function (fragment) {
-      fragment.unbind();
-      fragment.unrender(true);
-    });
-  }
-
-  // update the remaining ones
-  if (!reset && this.isArray && this.bubbled && this.bubbled.length) {
-    var bubbled = this.bubbled;
-    this.bubbled = [];
-    bubbled.forEach(function (i) { return this$1.iterations[i] && this$1.iterations[i].update(); });
+  if (this.shuffler) {
+    var values = shuffleValues(this, this.shuffler);
+    this.shuffle(buildNewIndices(this.values, values), true);
+    this.updatePostShuffle();
   } else {
-    this.iterations.forEach(update);
-  }
+    this.iterations.forEach(function (f, i) { return f && f.idxModel && f.idxModel.applyValue(i); });
 
-  // add new iterations
-  var docFrag;
-  var fragment;
+    var value = this.context.get();
+    var wasArray = this.isArray;
 
-  if (newLength > this.iterations.length) {
-    docFrag = this.rendered ? createDocumentFragment() : null;
-    i = this.iterations.length;
+    var toRemove;
+    var oldKeys;
+    var reset = true;
+    var i;
 
-    if (isArray(value)) {
-      while (i < value.length) {
-        fragment = this$1.createIteration(i, i);
-
-        this$1.iterations.push(fragment);
-        if (this$1.rendered) { fragment.render(docFrag); }
-
-        i += 1;
-      }
-    } else if (isObject(value)) {
-      // TODO this is a dreadful hack. There must be a neater way
-      if (this.indexRef && !this.keyRef) {
-        var refs = this.indexRef.split(',');
-        this.keyRef = refs[0];
-        this.indexRef = refs[1];
+    if ((this.isArray = isArray(value))) {
+      // if there's a source to map back to, make sure everything stays bound correctly
+      if (this.source) {
+        this.rebounding = 1;
+        var source = this.source.model.get();
+        this.iterations.forEach(function (f, c) {
+          if (c < value.length && f.lastValue !== value[c] && ~(i = source.indexOf(value[c]))) {
+            swizzleFragment(this$1, f, c, c);
+            f.rebound(true);
+          }
+        });
+        this.rebounding = 0;
       }
 
-      keys(value).forEach(function (key) {
-        if (!oldKeys || !(key in oldKeys)) {
-          fragment = this$1.createIteration(key, i);
-
-          this$1.iterations.push(fragment);
-          if (this$1.rendered) { fragment.render(docFrag); }
-
-          i += 1;
+      if (wasArray) {
+        reset = false;
+        if (this.iterations.length > value.length) {
+          toRemove = this.iterations.splice(value.length);
         }
+      }
+    } else if (isObject(value) && !wasArray) {
+      reset = false;
+      toRemove = [];
+      oldKeys = {};
+      i = this.iterations.length;
+
+      while (i--) {
+        var fragment = this$1.iterations[i];
+        if (fragment.key in value) {
+          oldKeys[fragment.key] = true;
+        } else {
+          this$1.iterations.splice(i, 1);
+          toRemove.push(fragment);
+        }
+      }
+    }
+
+    var newLength = isArray(value) ? value.length : isObject(value) ? keys(value).length : 0;
+    this.length = newLength;
+    this.updateLast();
+
+    if (reset) {
+      toRemove = this.iterations;
+      this.iterations = [];
+    }
+
+    if (toRemove) {
+      toRemove.forEach(function (fragment) {
+        fragment.unbind();
+        fragment.unrender(true);
       });
     }
 
-    if (this.rendered) {
-      var parentNode = this.parent.findParentNode();
-      var anchor = this.parent.findNextNode(this.owner);
+    // update the remaining ones
+    if (!reset && this.isArray && this.bubbled && this.bubbled.length) {
+      var bubbled = this.bubbled;
+      this.bubbled = [];
+      bubbled.forEach(function (i) { return this$1.iterations[i] && this$1.iterations[i].update(); });
+    } else {
+      this.iterations.forEach(update);
+    }
 
-      parentNode.insertBefore(docFrag, anchor);
+    // add new iterations
+    var docFrag;
+    var fragment$1;
+
+    if (newLength > this.iterations.length) {
+      docFrag = this.rendered ? createDocumentFragment() : null;
+      i = this.iterations.length;
+
+      if (isArray(value)) {
+        while (i < value.length) {
+          fragment$1 = this$1.createIteration(i, i);
+
+          this$1.iterations.push(fragment$1);
+          if (this$1.rendered) { fragment$1.render(docFrag); }
+
+          i += 1;
+        }
+      } else if (isObject(value)) {
+        // TODO this is a dreadful hack. There must be a neater way
+        if (this.indexRef && !this.keyRef) {
+          var refs = this.indexRef.split(',');
+          this.keyRef = refs[0];
+          this.indexRef = refs[1];
+        }
+
+        keys(value).forEach(function (key) {
+          if (!oldKeys || !(key in oldKeys)) {
+            fragment$1 = this$1.createIteration(key, i);
+
+            this$1.iterations.push(fragment$1);
+            if (this$1.rendered) { fragment$1.render(docFrag); }
+
+            i += 1;
+          }
+        });
+      }
+
+      if (this.rendered) {
+        var parentNode = this.parent.findParentNode();
+        var anchor = this.parent.findNextNode(this.owner);
+
+        parentNode.insertBefore(docFrag, anchor);
+      }
     }
   }
 
@@ -15753,8 +15812,9 @@ RepeatedFragment__proto__.updatePostShuffle = function updatePostShuffle () {
   var len = (this.length = this.context.get().length);
   var prev = this.previousIterations;
   var iters = this.iterations;
+  var value = this.context.get();
   var stash = {};
-  var idx, dest, pos, next, anchor;
+  var idx, dest, pos, next, anchor, rebound;
 
   var map = new Array(newIndices.length);
   newIndices.forEach(function (e, i) { return (map[e] = i); });
@@ -15765,6 +15825,7 @@ RepeatedFragment__proto__.updatePostShuffle = function updatePostShuffle () {
   while (idx < len) {
     dest = newIndices[pos];
     next = null;
+    rebound = false;
 
     if (dest === -1) {
       // drop it like it's hot
@@ -15782,6 +15843,7 @@ RepeatedFragment__proto__.updatePostShuffle = function updatePostShuffle () {
         anchor = (anchor && parentNode && anchor.firstNode()) || nextNode;
 
         if (next) {
+          rebound = this$1.source && next.lastValue !== value[idx];
           swizzleFragment(this$1, next, idx, idx);
           if (parentNode) { parentNode.insertBefore(next.detach(), anchor); }
         } else {
@@ -15806,6 +15868,7 @@ RepeatedFragment__proto__.updatePostShuffle = function updatePostShuffle () {
           parentNode.insertBefore(docFrag, anchor);
         }
       } else if (pos !== idx || stash[idx]) {
+        rebound = this$1.source && next.lastValue !== value[idx];
         swizzleFragment(this$1, next, idx, idx);
         if (stash[idx] && parentNode) { parentNode.insertBefore(next.detach(), anchor); }
       }
@@ -15815,12 +15878,18 @@ RepeatedFragment__proto__.updatePostShuffle = function updatePostShuffle () {
     }
 
     if (next && isObjectType(next)) {
+      if (next.shouldRebind || rebound) {
+        next.rebound(rebound);
+        next.shouldRebind = 0;
+      }
       next.update();
     }
   }
 
   // clean up any stragglers
   prev.forEach(function (f) { return f && f.unbind().unrender(true); });
+
+  if (this.shuffler) { this.values = shuffleValues(this, this.shuffler); }
 
   this.pendingNewIndices = null;
 
@@ -15865,11 +15934,12 @@ function nextRendered(start, newIndices, frags) {
 }
 
 function swizzleFragment(section, fragment, key, idx) {
-  var model = section.context ? section.context.joinKey(key) : undefined;
+  var model = section.context ? contextFor(section, fragment, key) : undefined;
 
   fragment.key = key;
   fragment.index = idx;
   fragment.context = model;
+  if (section.source) { fragment.lastValue = model && model.get(); }
 
   if (fragment.idxModel) { fragment.idxModel.applyValue(idx); }
   if (fragment.keyModel) { fragment.keyModel.applyValue(key); }
@@ -15884,6 +15954,25 @@ function swizzleFragment(section, fragment, key, idx) {
       else if (a.x.r === '@keypath') { aliases[a.n] = fragment.getKeypath(); }
       else if (a.x.r === '@rootpath') { aliases[a.n] = fragment.getKeypath(true); }
     });
+}
+
+function shuffleValues(section, shuffler) {
+  if (shuffler === true) {
+    return section.context.get().slice();
+  } else {
+    return section.context.get().map(function (v) { return shuffler.reduce(function (a, c) { return a && a[c]; }, v); });
+  }
+}
+
+function contextFor(section, fragment, key) {
+  if (section.source) {
+    var idx;
+    var source = section.source.model.get();
+    if (source.indexOf && ~(idx = source.indexOf(section.context.joinKey(key).get())))
+      { return section.source.model.joinKey(idx); }
+  }
+
+  return section.context.joinKey(key);
 }
 
 function isEmpty(value) {
@@ -15956,6 +16045,26 @@ var Section = (function (MustacheContainer) {
         this.fragment.rebind(next);
       }
     }
+  };
+
+  Section__proto__.rebound = function rebound (update) {
+    if (this.model) {
+      if (this.model.rebound) { this.model.rebound(update); }
+      else {
+        MustacheContainer.prototype.unbind.call(this);
+        MustacheContainer.prototype.bind.call(this);
+        if (
+          this.sectionType === SECTION_WITH ||
+          this.sectionType === SECTION_IF_WITH ||
+          this.sectionType === SECTION_EACH
+        ) {
+          if (this.fragment) { this.fragment.rebind(this.model); }
+        }
+
+        if (update) { this.bubble(); }
+      }
+    }
+    if (this.fragment) { this.fragment.rebound(update); }
   };
 
   Section__proto__.render = function render (target, occupants) {
@@ -16304,8 +16413,8 @@ var Text = (function (Item) {
   return Text;
 }(Item));
 
-var proto$5 = Text.prototype;
-proto$5.bind = proto$5.unbind = proto$5.update = noop;
+var proto$6 = Text.prototype;
+proto$6.bind = proto$6.unbind = proto$6.update = noop;
 
 var visible;
 var hidden = 'hidden';
@@ -16954,8 +17063,8 @@ Transition__proto__.unregisterCompleteHandler = function unregisterCompleteHandl
   removeFromArray(this.onComplete, fn);
 };
 
-var proto$6 = Transition.prototype;
-proto$6.destroyed = proto$6.render = proto$6.unrender = proto$6.update = noop;
+var proto$7 = Transition.prototype;
+proto$7.destroyed = proto$7.render = proto$7.unrender = proto$7.update = noop;
 
 function nearestProp(prop, ractive, rendering) {
   var instance = ractive;
@@ -17686,6 +17795,14 @@ Fragment__proto__.rebind = function rebind (next) {
   this.context = next;
 };
 
+Fragment__proto__.rebound = function rebound (update$$1) {
+  this.items.forEach(function (x) { return x.rebound(update$$1); });
+  if (update$$1) {
+    if (this.rootModel) { this.rootModel.applyValue(this.context.getKeypath(this.ractive.root)); }
+    if (this.pathModel) { this.pathModel.applyValue(this.context.getKeypath()); }
+  }
+};
+
 Fragment__proto__.render = function render (target, occupants) {
   if (this.rendered) { throw new Error('Fragment is already rendered!'); }
   this.rendered = true;
@@ -18033,7 +18150,7 @@ function Ractive$reset(data) {
   return promise;
 }
 
-function collect(source, name, attr, dest) {
+function collect$1(source, name, attr, dest) {
   source.forEach(function (item) {
     // queue to rerender if the item is a partial and the current name matches
     if (item.type === PARTIAL && (item.refName === name || item.name === name)) {
@@ -18044,21 +18161,21 @@ function collect(source, name, attr, dest) {
 
     // if it has a fragment, process its items
     if (item.fragment) {
-      collect(item.fragment.iterations || item.fragment.items, name, attr, dest);
+      collect$1(item.fragment.iterations || item.fragment.items, name, attr, dest);
     } else if (isArray(item.items)) {
       // or if it is itself a fragment, process its items
-      collect(item.items, name, attr, dest);
+      collect$1(item.items, name, attr, dest);
     } else if (item.type === COMPONENT && item.instance) {
       // or if it is a component, step in and process its items
       // ...unless the partial is shadowed
       if (item.instance.partials[name]) { return; }
-      collect(item.instance.fragment.items, name, attr, dest);
+      collect$1(item.instance.fragment.items, name, attr, dest);
     }
 
     // if the item is an element, process its attributes too
     if (item.type === ELEMENT) {
       if (isArray(item.attributes)) {
-        collect(item.attributes, name, true, dest);
+        collect$1(item.attributes, name, true, dest);
       }
     }
   });
@@ -18066,7 +18183,7 @@ function collect(source, name, attr, dest) {
 
 function resetPartial(name, partial) {
   var collection = [];
-  collect(this.fragment.items, name, false, collection);
+  collect$1(this.fragment.items, name, false, collection);
 
   var promise = runloop.start();
 
@@ -18278,7 +18395,7 @@ function use() {
   return this;
 }
 
-var proto$7 = {
+var proto$8 = {
   add: Ractive$add,
   animate: Ractive$animate,
   attachChild: attachChild,
@@ -18331,7 +18448,7 @@ var proto$7 = {
   use: use
 };
 
-defineProperty(proto$7, 'target', {
+defineProperty(proto$8, 'target', {
   get: function get() {
     return this.el;
   }
@@ -18588,7 +18705,7 @@ if (win && !win.Ractive) {
   warn("Ractive already appears to be loaded while loading 1.0.0-edge.");
 }
 
-assign(Ractive.prototype, proto$7, defaults);
+assign(Ractive.prototype, proto$8, defaults);
 Ractive.prototype.constructor = Ractive;
 
 // alias prototype as `defaults`
