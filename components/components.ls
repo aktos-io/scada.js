@@ -48,6 +48,7 @@ require! './scroll-x'
 require! './browser-storage'
 require! './formatter'
 require! './vertical-divider'
+require! './radio-buttons'
 
 # decorators
 require! './decorators/tooltip'
