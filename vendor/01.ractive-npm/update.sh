@@ -3,7 +3,7 @@
 DIR=$(dirname "$(readlink -f "$0")")
 
 cd "$DIR/../.."
-npm i --save ractive@edge
+npm i --save ractive@latest
 
 cd $DIR
 export NODE_MODULES=$(realpath "$DIR/../../node_modules")

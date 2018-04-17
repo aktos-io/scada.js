@@ -25,6 +25,7 @@ Ractive.components['time-series'] = Ractive.extend do
 
         graph = new Rickshaw.Graph do
             element: @find ".chart"
+            interpolation: \step-after
             series:
                 * color: 'steelblue',
                   data: []

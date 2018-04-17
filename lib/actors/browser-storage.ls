@@ -3,7 +3,8 @@ require! 'aea': {sleep}
 
 export class BrowserStorage extends Actor
     (@prefix) ->
-        super "BrowserStorage-#{@prefix}"
+        super "B.S.#{@prefix}"
+        @log.info "Initialized with prefix: #{@name}"
         @s = local-storage
 
     set: (key, value) ->

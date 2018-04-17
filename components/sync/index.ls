@@ -30,6 +30,7 @@ Ractive.components['sync'] = Ractive.extend do
             @io-client.on \error, (err) ~>
                 console.warn "Proxy client received error: ", err
                 @fire \error, {}, err
+                @set \value, undefined
 
             @io-client.on \read, (res) ~>
                 #console.log "we read something: ", res

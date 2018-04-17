@@ -1,4 +1,7 @@
 require! 'ractive': Ractive
+# Considered as a footgun, but enabling anyways:
+Ractive.defaults.resolveInstanceMembers = true
+
 # Add Ractive to global window object
 # ---------------------------------------------
 window.Ractive = Ractive

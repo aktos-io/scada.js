@@ -49,7 +49,7 @@ include ./controls.pug
                                     
                         .ui.left.icon.input
                             icon.search
-                            input(value="{{searchText}}") 
+                            input(on-escape="@.set('searchText', '')" value="{{searchText}}") 
                         +if('searchText')
                             | &nbsp; 
                             b {{tableview_filtered.length}} results...
