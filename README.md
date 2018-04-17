@@ -15,7 +15,7 @@ ScadaJS is a library to create [Distributed](https://en.wikipedia.org/wiki/Distr
 * Provides build system via [Gulp](http://gulpjs.com).
   * Supports a mechanism for integrating 3rd party libraries easily.
 * Supports cross platform development (see: [supported development platforms](./doc/supported-development-platforms.md))
-* Integrated with [aktos-dcs-node](https://github.com/aktos-io/aktos-dcs-node), the NodeJS port of aktos-dcs. 
+* Integrated with [aktos-dcs-node](https://github.com/aktos-io/aktos-dcs-node), the NodeJS port of aktos-dcs.
    * [Microservices](https://en.wikipedia.org/wiki/Microservices) architecture is supported out of the box.
    * Supports variety of [connectors](https://github.com/aktos-io/aktos-dcs-node/tree/master/connectors), including:
      * Modbus
@@ -26,12 +26,12 @@ ScadaJS is a library to create [Distributed](https://en.wikipedia.org/wiki/Distr
      * RaspberryPi IO
      * and many others...
    * Supports variety of [transports](https://github.com/aktos-io/aktos-dcs-node/tree/master/transports), including:
-     * Serial port 
+     * Serial port
      * Websockets
      * Ethernet (TCP/UDP)
      * EtherCAT (*planned)
      * E-mail
-     * Webservice 
+     * Webservice
      * SMS
 
    * Compatible with aktos.io hardwares, such as [Scada Gateway](https://aktos.io/scada/pdf).
@@ -108,8 +108,8 @@ new Ractive({
 
 ```html
 <aktos-dcs/> <!-- initialize dcs -->
-<sync value="{{name}}" topic="public.name" /> 
-<sync value="{{x}}" topic="public.hello" />
+<sync value="{{name}}" sync-topic="public.name" />
+<sync value="{{x}}" sync-topic="public.hello" />
 <!-- this is all you need to do to setup the realtime connection -->
 <!-- rest is the pure Ractive template you already know -->
 
@@ -129,6 +129,7 @@ new Ractive({
     <meta charset="utf-8">
     <script src="js/vendor.js"></script>
     <link rel="stylesheet" href="css/vendor.css">
+    <title>ScadaJS</title>
   </head>
   <body>
     <h1>Loading...</h1>
@@ -143,59 +144,77 @@ You can simply build `your-webapp` with the following command:
 
     cd your-project/scada.js
     gulp --webapp your-webapp [--production]
-    
-    
+
+
 #### 6. Serve your webapp
 
 Create a webserver that supports *Socket.io* and *aktos-dcs*:
 
 ```ls
-require! <[ path express dcs ]>
+require! <[ path express dcs dcs/browser ]>
+
+# configuration
+webserver-port = 4001
+dcs-port = 4002
+
+# Create an in-memory authentication database
+users = dcs.as-docs do
+    'public':
+        # hash algorithm is: sha512 =>
+        #   `echo -n "public" | sha512sum`
+        passwd-hash: "
+            d32997e9747b65a3ecf65b82533a4c843c4e16dd30cf371e8c81ab60a341de00051
+            da422d41ff29c55695f233a1e06fac8b79aeb0a4d91ae5d3d18c8e09b8c73"
+        roles:
+          \guest-permissions
+
+permissions = dcs.as-docs do
+    'guest-permissions':
+        rw:
+            \hello.**
+
+db = new dcs.AuthDB users, permissions
+
+# Create a webserver and a SocketIO bridge
 app = express!
 http = require \http .Server app
-app.use "/", express.static path.resolve "./scada.js/build/your-webapp"
-http.listen 4001, -> console.log "listening on *:4001"
+app.use "/", express.static path.resolve "../scada.js/build/main"
+http.listen webserver-port, ->
+    console.log "webserver is listening on *:#{webserver-port}"
 
-# create a socket.io-DCS connector
-new dcs.SocketIOServer http
+new browser.DcsSocketIOServer http, {db}
 
-# optionally create a TCP-DCS Connector
-new dcs.TCPProxyServer port: 4002
- ```
- 
+# create a TCP DCS Service
+new dcs.DcsTcpServer {port: dcs-port, db}
+```
+
 
 #### 7. See the result
 
 You can see `your-webapp` by opening http://localhost:4001 with any modern browser.
 
+By default, the slider's output will be lost in the DCS space because there is
+nothing that handles these messages. See the next step:
+
 #### 8. Start adding your microservices
 
-You can add any number of microservices (in any programming language that has an implementation of [aktos-dcs](https://github.com/aktos-io/aktos-dcs)) and make them communicate with eachother over the DCS network:
+You can add any number of microservices (in any programming language that has an implementation of [aktos-dcs](https://github.com/aktos-io/aktos-dcs)) and make them communicate with each other over the DCS network:
 
 ```ls
-require! dcs: {Actor, sleep, TCPProxyClient}
+# Create the test io handlers
+require! 'dcs': {DcsTcpClient}
+require! 'dcs/proxy-actors': {create-io-proxies}
+require! 'dcs/drivers/simulator': {IoSimulatorDriver}
+create-io-proxies do
+    drivers: {IoSimulatorDriver}
+    devices:
+        hello:
+            driver: 'IoSimulatorDriver'
+            handles:
+                there: {}
 
-class Example extends Actor
-  ->
-    super "My Example Microservice"
-    @subscribe '**'
-    @log.log "subscribed: #{@subscriptions}"
+new DcsTcpClient port: 4002 .login {user: "public", password: "public"}
 
-    @on \data, (msg) ~>
-      @log.log "received a message: ", msg
-      # do something with the message
-            
-  action: ->
-    @log.log "#{@name} started..."
-    i = 0
-    <~ :lo(op) ~> 
-      # do something useful here  
-      @send "public.hello", {val: i++}
-      <~ sleep 2000ms
-      lo(op)
-
-new Example!
-new TCPProxyClient port: 4002 .login! 
 ```
 
 # Projects and Companies Using ScadaJS
