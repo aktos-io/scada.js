@@ -15,7 +15,7 @@ ScadaJS is a library to create [Distributed](https://en.wikipedia.org/wiki/Distr
 * Provides build system via [Gulp](http://gulpjs.com).
   * Supports a mechanism for integrating 3rd party libraries easily.
 * Supports cross platform development (see: [supported development platforms](./doc/supported-development-platforms.md))
-* Integrated with [aktos-dcs-node](https://github.com/aktos-io/aktos-dcs-node), the NodeJS port of aktos-dcs. 
+* Integrated with [aktos-dcs-node](https://github.com/aktos-io/aktos-dcs-node), the NodeJS port of aktos-dcs.
    * [Microservices](https://en.wikipedia.org/wiki/Microservices) architecture is supported out of the box.
    * Supports variety of [connectors](https://github.com/aktos-io/aktos-dcs-node/tree/master/connectors), including:
      * Modbus
@@ -26,12 +26,12 @@ ScadaJS is a library to create [Distributed](https://en.wikipedia.org/wiki/Distr
      * RaspberryPi IO
      * and many others...
    * Supports variety of [transports](https://github.com/aktos-io/aktos-dcs-node/tree/master/transports), including:
-     * Serial port 
+     * Serial port
      * Websockets
      * Ethernet (TCP/UDP)
      * EtherCAT (*planned)
      * E-mail
-     * Webservice 
+     * Webservice
      * SMS
 
    * Compatible with aktos.io hardwares, such as [Scada Gateway](https://aktos.io/scada/pdf).
@@ -50,9 +50,9 @@ You may get up and running with ScadaJS in 2 different ways:
 
 Download [scadajs-template](https://github.com/aktos-io/scadajs-template), follow the instructions to setup and edit the examples according to your needs.
 
-### *OR:* Add To Your [Existing] Project From Scratch
+### *OR:* Add To Your Existing Project From Scratch
 
-Follow the steps below to add ScadaJS into your [existing] project:
+Follow the steps below to add ScadaJS into your existing project:
 
 #### 1. Install Global Dependencies
 
@@ -72,9 +72,9 @@ You can add ScadaJS to any of your existing projects:
 
 When you first create or clone a project that depends on ScadaJS, you need to install the ScadaJS dependencies:
 
-    cd your-project
-    git submodule update --init --recursive
-    ./scada.js/install-modules.sh
+    cd your-project/scada.js
+    ./update.sh
+    ./install-modules.sh
 
 #### 4. Create a webapp
 
@@ -89,53 +89,12 @@ When you first create or clone a project that depends on ScadaJS, you need to in
        mkdir your-webapp
        cd your-webapp
 
-3. Create an `app.js` (or `app.ls`) here with the following contents:
+3. Create an `app.js` (or `app.ls`) [like this](https://github.com/aktos-io/scadajs-template/blob/master/webapps/main/app.ls)
 
-```js
-require('components');
+4. Create your `app.html` (or `app.pug`) with [the following contents](https://github.com/aktos-io/scadajs-template/blob/master/webapps/main/app.html).
+This is container of your single page application.
 
-new Ractive({
-  el: 'body',
-  template: RACTIVE_PREPARSE('app.pug'),
-  data: {
-    name: "world",
-    x: 35
-  }
-});
-```
-
-4. Create your `app.html` (or `app.pug`) as your application template
-
-```html
-<aktos-dcs/> <!-- initialize dcs -->
-<sync value="{{name}}" topic="public.name" /> 
-<sync value="{{x}}" topic="public.hello" />
-<!-- this is all you need to do to setup the realtime connection -->
-<!-- rest is the pure Ractive template you already know -->
-
-<h2>hello {{name}}!</h2>
-<input value="{{name}}" />
-
-<h3>Slider/progress</h3>
-<slider inline value="{{x}}" />
-<progress type="circle" value="{{x}}" />
-```
-
-4. Create an `index.html` (or `index.pug`) here with the following contents:
-
-```html
-<html>
-  <head>
-    <meta charset="utf-8">
-    <script src="js/vendor.js"></script>
-    <link rel="stylesheet" href="css/vendor.css">
-  </head>
-  <body>
-    <h1>Loading...</h1>
-    <script src="app.js"></script>
-  </body>
-</html>
-```
+5. Create an `index.html` (or `index.pug`) here with [the following contents](https://github.com/aktos-io/scadajs-template/blob/master/webapps/main/index.html). This is your index.html file where the user fetches in the first place.
 
 #### 5. Build your webapp
 
@@ -143,60 +102,24 @@ You can simply build `your-webapp` with the following command:
 
     cd your-project/scada.js
     gulp --webapp your-webapp [--production]
-    
-    
+
+
 #### 6. Serve your webapp
 
-Create a webserver that supports *Socket.io* and *aktos-dcs*:
+Create a webserver that supports *Socket.io* and *aktos-dcs*, like [this](https://github.com/aktos-io/scadajs-template/blob/master/servers/webserver.ls)
 
-```ls
-require! <[ path express dcs ]>
-app = express!
-http = require \http .Server app
-app.use "/", express.static path.resolve "./scada.js/build/your-webapp"
-http.listen 4001, -> console.log "listening on *:4001"
-
-# create a socket.io-DCS connector
-new dcs.SocketIOServer http
-
-# optionally create a TCP-DCS Connector
-new dcs.TCPProxyServer port: 4002
- ```
- 
 
 #### 7. See the result
 
-You can see `your-webapp` by opening http://localhost:4001 with any modern browser.
+You can see `your-webapp` by opening [http://localhost:XXXX](https://github.com/aktos-io/scadajs-template/blob/master/config.ls#L1) with any modern browser.
+
+By default, the slider's output will be lost in the DCS space because there is
+nothing that handles these messages. See the next step:
 
 #### 8. Start adding your microservices
 
-You can add any number of microservices (in any programming language that has an implementation of [aktos-dcs](https://github.com/aktos-io/aktos-dcs)) and make them communicate with eachother over the DCS network:
+You can add any number of microservices in any programming language that has an implementation of [aktos-dcs](https://github.com/aktos-io/aktos-dcs) and make them communicate with each other over the DCS network, [eg. io-server.ls](https://github.com/aktos-io/scadajs-template/blob/master/servers/io-server.ls)
 
-```ls
-require! dcs: {Actor, sleep, TCPProxyClient}
-
-class Example extends Actor
-  ->
-    super "My Example Microservice"
-    @subscribe '**'
-    @log.log "subscribed: #{@subscriptions}"
-
-    @on \data, (msg) ~>
-      @log.log "received a message: ", msg
-      # do something with the message
-            
-  action: ->
-    @log.log "#{@name} started..."
-    i = 0
-    <~ :lo(op) ~> 
-      # do something useful here  
-      @send "public.hello", {val: i++}
-      <~ sleep 2000ms
-      lo(op)
-
-new Example!
-new TCPProxyClient port: 4002 .login! 
-```
 
 # Projects and Companies Using ScadaJS
 

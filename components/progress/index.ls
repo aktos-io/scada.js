@@ -66,9 +66,14 @@ Ractive.components['progress'] = Ractive.extend do
         padding-bottom = @get \padding-bottom
         padding-top = @get \padding-top
         @observe \value, (_new) ->
-            bar-percent = (_new * (100 - padding-bottom - padding-top) / (max - min)) + (padding-bottom)
-            @set \percent, (_new * 100 / (max - min))
-            bar.set bar-percent, animate=no
+            if _new?
+                bar-percent = (_new * (100 - padding-bottom - padding-top) / (max - min)) + (padding-bottom)
+                @set \percent, (_new * 100 / (max - min))
+                bar.set bar-percent, animate=no
+            else
+                console.warn "TODO: this should indicate an error"
+                @set \percent, undefined
+                bar.set undefined, animate=no
 
     data: ->
         max: 100
