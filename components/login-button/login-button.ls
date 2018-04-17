@@ -135,10 +135,6 @@ Ractive.components['login-button'] = Ractive.extend do
 
         @observe \transport-id, (transport-id) ->
             connector := @actor.mgr.find-actor transport-id
-                ..on \logged-in, ~>
-                    <~ sleep 200ms
-                    @actor.c-log "triggering app.login"
-                    @actor.send 'app.login', {loggedin: yes}
 
             if @get \auto
                 log.log "Performing automatic login."
