@@ -13,7 +13,10 @@ Ractive.components['browser-storage'] = Ractive.extend do
             @log.err "db parameter is required!"
             return
 
-        storage = new BrowserStorage db
+        [full-addr, hash] = String window.location .split '#'
+        app-id = full-addr
+
+        storage = new BrowserStorage "#{app-id}.#{db}"
 
         key = @get \key
         @set \value, try
