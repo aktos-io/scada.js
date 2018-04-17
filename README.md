@@ -29,7 +29,7 @@ ScadaJS is a library to create [Distributed](https://en.wikipedia.org/wiki/Distr
      * Serial port
      * Websockets
      * Ethernet (TCP/UDP)
-     * EtherCAT (*planned)
+     * EtherCAT (*planned*)
      * E-mail
      * Webservice
      * SMS
