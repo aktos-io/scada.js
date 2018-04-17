@@ -101,9 +101,15 @@ Ractive.components["a"] = Ractive.extend do
                     @fire \click, c
 
             click: (ctx) ->
-                const c = ctx.getParent yes
-                c.refire = yes
+                c = ctx.getParent yes
+                try
+                    c.refire = yes
+                catch
+                    # how come the parent context is undefined?
+                    console.warn "TODO: this is interesting. debug this sometime later."
+                    c = ctx
                 c.from-my-click = yes
+
                 @fire \_click, c
 
 
