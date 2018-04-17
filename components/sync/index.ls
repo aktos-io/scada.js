@@ -24,13 +24,16 @@ Ractive.components['sync'] = Ractive.extend do
 
             unless @get \readonly
                 handle = @observe \value, ((_new) ~>
+                    #@io-client.log.log "Value is: ", _new
                     @io-client.write _new
                     ), {init: off}
 
             @io-client.on \error, (err) ~>
-                console.warn "Proxy client received error: ", err
+                console.warn "Proxy client received error: ", err, "(thus setting value to undefined.)"
                 @fire \error, {}, err
+                handle?.silence!
                 @set \value, undefined
+                handle?.resume!
 
             @io-client.on \read, (res) ~>
                 #console.log "we read something: ", res
