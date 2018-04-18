@@ -44,7 +44,8 @@ Ractive.components['sync'] = Ractive.extend do
                 @set \value, res.curr
                 handle?.resume!
                 if res.curr is res.prev
-                    console.warn "same data arrived????: ", res
+                    #console.warn "same data arrived????: ", res
+                    null
         catch
             """WARNING: DO NOT REMOVE THIS TRY CATCH!!!"""
             console.warn "FIXME: CODING ERROR"
