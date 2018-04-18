@@ -18,12 +18,23 @@ math.config do
     precision: 6digits
 """
 
+# doMath()
 window.do-math = Ractive.defaults.do-math = (expression) ->
     exact = math.eval expression
     display = math.format exact, 6_digits
     float = parse-float display
     return {display, float, exact}
 
+'''
+Usage of `doMath()` in Ractive:
+
+    .ui.message
+        .ui.input: input(value="{{x}}")
+        | {{doMath(x).display}}
+
+'''
+
+# hasUnit()
 window.has-unit = Ractive.defaults.has-unit = (expression, unit) ->
     try
         math.eval "#{expression} to #{unit}"
