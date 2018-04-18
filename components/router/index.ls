@@ -2,11 +2,13 @@ require! 'aea': {sleep}
 require! 'prelude-ls': {take, drop, split}
 require! 'actors':  {RactiveActor}
 
+top-offset = 55px
+
 scroll-to = (anchor) ->
     offset = $ "span[data-id='#{anchor}']" .offset!
     if offset
         $ 'html, body' .animate do
-            scroll-top: offset.top - 55px
+            scroll-top: offset.top - top-offset
             , 500ms
 
 make-link = (scene, anchor) ->
@@ -164,9 +166,9 @@ Ractive.components['scene'] = Ractive.extend do
             >
             {{#if ! loggedin}}
                 <div class="ui red message fluid" style="
-                        position: fixed; top: 100px; left: 0; z-index: 999999999;
-                        width: 100%; height: 200px">
-                    Login required
+                        position: fixed; top: '+"#{top-offset}px"+'; left: 0; z-index: 999999999;
+                        width: 100%; height: 100%; padding-left: 2em; padding-right: 2em">
+                    <h2 class="ui header block red">Login required</h2>
                 </div>
             {{/if}}
             {{#if renderedBefore}}
