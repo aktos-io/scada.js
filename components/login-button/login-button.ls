@@ -60,7 +60,8 @@ Ractive.components['login-button'] = Ractive.extend do
                 @find-component 'ack-button' .fire \click
 
             do-login: (ev) ->
-                ev.component?.fire \state, \doing
+                btn = ev.component
+                btn?.fire \state, \doing
 
                 unless connector
                     console.error "There is no connector actor found: ", connector
@@ -84,30 +85,30 @@ Ractive.components['login-button'] = Ractive.extend do
                 err, res <~ connector.login credentials
 
                 if err
-                    <~ ev.component?.error "something went wrong with login: #{pack err}"
-                else
                     if res.auth.error
                         ev.component?.error pack that
-                    else if res.auth.session.token
-                        ev.component?.fire \state, \done...
-                        # calculate context
-                        context = res.auth.session <<< do
-                            loggedin: yes
-
-                        # set context
-                        @set \context, context
-
-                        # set 'token' explicitly to save in the persistent browser storage
-                        @set \token, context.token
-
-                        @fire \success
-
                     else if res.auth.session.logout is \yes
                         log.log "Will log out..."
                         set-logout-variables!
-
                     else
                         <~ ev.component?.error "unexpected response on login: #{pack res}"
+                else if res.auth.session.token
+                    ev.component?.fire \state, \done...
+                    # calculate context
+                    context = res.auth.session <<< do
+                        loggedin: yes
+
+                    # set context
+                    @set \context, context
+
+                    # set 'token' explicitly to save in the persistent browser storage
+                    @set \token, context.token
+
+                    @fire \success
+                else
+                    <~ ev.component?.error "unexpected response on login: #{pack res}"
+
+
 
             do-logout: (ev) ->
                 log.log "Logging out."
