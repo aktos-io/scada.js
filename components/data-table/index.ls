@@ -280,6 +280,8 @@ Ractive.components['data-table'] = Ractive.extend do
                     @refresh!
 
             on-save: (ev, curr, next) ->
+                # This function will be overwritten if it is present in
+                # settings.on-save
                 timeout = 15_000ms
                 ev.component.heartbeat timeout
 
