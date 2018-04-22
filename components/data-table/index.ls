@@ -104,6 +104,12 @@ Ractive.components['data-table'] = Ractive.extend do
             tableview_filtered = filter-func tableview
             @set \tableview_filtered, tableview_filtered
 
+            if @get \clickedIndex
+                unless find (.id is that), @get \tableview
+                    console.warn "I think that row (#{@get 'clickedIndex'}) is
+                        deleted, closing."
+                    @fire \closeRow
+
         open-item-page = (id) ~>
             index = find-index (.id is id), @get('tableview_filtered')
             if index?
@@ -202,7 +208,7 @@ Ractive.components['data-table'] = Ractive.extend do
 
             close-row: ->
                 <~ :lo(op) ~>
-                    if pack(@get \origCurr) isnt pack(@get \curr)
+                    if (@get \curr) and pack(@get \origCurr) isnt pack(@get \curr)
                         @logger.cwarn "Not closing row because there are unsaved changes."
                         @logger.clog "orig: ", @get \origCurr
                         @logger.clog "curr: ", @get \curr
