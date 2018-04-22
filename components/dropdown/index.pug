@@ -13,14 +13,18 @@
     +iff('inline')
         .ui.inline.dropdown(class="{{class}} {{#loading}}loading{{/}}")                
             i.dropdown.icon 
-            .default.text {{ placeholder }}
+            //-.default.text {{ placeholder | '----' }}
+            span.text -------
             .menu
                 .ui.icon.search.input
                     i.search.icon
                     input(type="text" placeholder="Search...")
 
-                +each('dataReduced')
-                    .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
+                +each('dataReduced as item')
+                    .item(
+                        data-value!="{{item[keyField]}}" 
+                        class-disabled="blacklist == item[keyField]"
+                        ) {{item[nameField]}}
 
     //- custom 
     +elif('custom')
