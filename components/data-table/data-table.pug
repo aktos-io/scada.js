@@ -22,12 +22,20 @@ include ./controls.pug
                 selectable      \
             {{/if}}             \
             ")
-            r-head
-                
-                +if('@.partials.header')
-                    r-row
-                        th(colspan="{{ colNames.length }}")
-                            +apply('header')
+            r-head                                
+                r-row 
+                    th(colspan="{{ colNames.length }}")
+                        //- +if('@.partials.header')
+                        +apply('header')
+                        div(style="float: right")
+                            +if('searchText')
+                                .ui.large.label.orange {{tableview_filtered.length}}
+
+                            .ui.left.icon.input.large.action
+                                icon.search
+                                input(on-escape="@.set('searchText', '')" value="{{searchText}}") 
+                                .ui.button.icon(on-click="@.set('searchText', '')"): icon.remove
+                            
                 +if('selectedFilter !== "all"')
                     r-row
                         th(colspan="{{ colNames.length }}")
@@ -38,22 +46,6 @@ include ./controls.pug
                                 p.
                                     You are seeing a filtered content. 
                                     #[btn.blue.mini(on-click="setFilter" value="all") #[i.remove.icon] Clear Filter]
-                
-                r-row 
-                    th(colspan="{{ colNames.length }}")
-                        //- 
-                            btn.mini.icon(
-                                on-click="goToOpened"
-                                tooltip="Go to last item"
-                                ): icon.backward
-                                    
-                        .ui.left.icon.input
-                            icon.search
-                            input(on-escape="@.set('searchText', '')" value="{{searchText}}") 
-                        +if('searchText')
-                            | &nbsp; 
-                            b {{tableview_filtered.length}} results...
-                            
                                                 
                 +if('addingNew')
                     r-row(class="active")

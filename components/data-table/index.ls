@@ -126,7 +126,7 @@ Ractive.components['data-table'] = Ractive.extend do
         search-rate-limit = null
         @observe \searchText, (text) ~>
             try clear-timeout search-rate-limit
-            search-rate-limit := sleep 200ms, ~>
+            search-rate-limit := sleep 800ms, ~>
                 tableview_filtered = if text
                     search-fields = <[ id ]> ++ (settings.search-fields or <[ value.description ]>)
                     result = @get \sifter .search asciifold(that), do

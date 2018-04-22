@@ -1,12 +1,15 @@
 +if('settings.pageSize > 0')
     +if('(tableview_filtered.length / settings.pageSize) > 1')
         scroll-x
+            .ui.label.circular.teal(
+                on-click="@.toggle('showPageSize')"
+                style="margin-right: 2em"
+                ): b {{currPage + 1}}
+            +if('showPageSize')
+                | 
+                .ui.input.small: input(value="{{settings.pageSize}}" type="number")
             .ui.pagination.menu
                 +each('range(1, Math.ceil(tableview_filtered.length / settings.pageSize)):i')
                     a(
                         on-click="@.fire('selectPage', i)" 
                         class!="item {{#if currPage === i}}active{{/if}}") {{ . }}
-
-b curr page: {{currPage}}, page size: 
-.ui.input 
-    input(value="{{settings.pageSize}}")
