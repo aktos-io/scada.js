@@ -34,6 +34,8 @@ Ractive.components['dropdown'] = Ractive.extend do
         if @get \key => @set \keyField, that
         if @get \name => @set \nameField, that
 
+        #@link \selected-item, \item
+
     onrender: ->
         const c = @getContext @target .getParent yes
         c.refire = yes
