@@ -166,7 +166,7 @@ Ractive.components['dropdown'] = Ractive.extend do
 
                 #@actor.c-log "DROPDOWN: selected key set to:", _new
                 unless @get \data
-                    @actor.c-warn "...but returning as there is no data yet."
+                    return @actor.c-warn "...but returning as there is no data yet."
                 if _new
                     item = find (.[keyField] is _new), @get \dataReduced
                     unless item
