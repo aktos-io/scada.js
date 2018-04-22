@@ -1,7 +1,7 @@
 prelude = require \prelude-ls
 Ractive.defaults._ = prelude
 require! './formatting': {unix-to-readable}
-Ractive.defaults.unix-to-readable = unix-to-readable
+window.unix-to-readable = Ractive.defaults.unix-to-readable = unix-to-readable
 
 window.find = prelude.find
 window.PNotify = require 'pnotify/dist/umd/index.js' .default
