@@ -259,24 +259,24 @@ Ractive.components['data-table'] = Ractive.extend do
                 ev.component?.fire \state, \normal
 
 
-            save: (ev, val) ->
-                ev.component.fire \state, \doing
-                err <~ @fire 'beforeSave', ev, @get('curr')
+            save: (ctx) ->
+                ctx.component.fire \state, \doing
+                err <~ @fire 'beforeSave', ctx, @get('curr')
                 if err
                     console.error "data-table error:", err
                     return
-                ...args <~ @fire 'onSave', ev, @get(\curr)
+                ...args <~ @fire 'onSave', ctx, @get('curr')
                 if args.length isnt 1
-                    ev.component.error """
+                    ctx.component.error """
                         Coding error: Save function requires error argument upon
                         calling the callback."""
                     return
                 err = args.0
                 if err
-                    ev.component.error pack err
+                    ctx.component.error pack err
                 else
-                    @set \origCurr, (@get \curr)
-                    ev.component.fire \state \done...
+                    @set \origCurr, @get('curr')
+                    ctx.component.fire \state \done...
                     @refresh!
 
             on-save: (ev, curr, next) ->
@@ -308,9 +308,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 if err
                     @logger.clog "err is: ", err
                 else
-                    #@logger.clog "res is: ", res
-                    @set \curr._id, res.id     # if `_id` is assigned automatically
-                    @set \curr._rev, res.rev   # rev will be updated on save
+                    @set \curr, {_id: res.id, _rev: res.rev}, {+deep} # update document id
                 next err
 
 
