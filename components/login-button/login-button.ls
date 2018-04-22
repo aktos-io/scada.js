@@ -85,7 +85,7 @@ Ractive.components['login-button'] = Ractive.extend do
                 err, res <~ connector.login credentials
 
                 if err
-                    if res.auth.error
+                    if res?.auth?.error
                         ev.component?.error pack that
                     else if res.auth.session.logout is \yes
                         log.log "Will log out..."
