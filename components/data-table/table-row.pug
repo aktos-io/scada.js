@@ -8,7 +8,8 @@
                 .ui.active.large.text.loader
                     p {{ openingRowMsg }}
                     btn.small.inverted.red.icon(on-click="closeRow" tooltip="Kapat") #[i.remove.icon] Cancel
-            .data-table-opened-row(style="height: 200px" slide-in="true")
+            .data-table-opened-row(slide-in="true")
+                +apply('viewForm')
 //- -----------------------------------------------
 //- edit form
 //- -----------------------------------------------
