@@ -43,7 +43,7 @@ Usage:
 
 Ractive.prototype.delete = (root, key) ->
     console.error 'keypath must be string' if typeof! root isnt \String
-    delete @get(root)[key]
+    delete @get(root)?[key]
     @update root
 
 # Events
