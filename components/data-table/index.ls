@@ -104,6 +104,12 @@ Ractive.components['data-table'] = Ractive.extend do
             tableview_filtered = filter-func tableview
             @set \tableview_filtered, tableview_filtered
 
+            if @get \clickedIndex
+                unless find (.id is that), @get \tableview
+                    console.warn "I think that row (#{@get 'clickedIndex'}) is
+                        deleted, closing."
+                    @fire \closeRow
+
         open-item-page = (id) ~>
             index = find-index (.id is id), @get('tableview_filtered')
             if index?
@@ -120,7 +126,7 @@ Ractive.components['data-table'] = Ractive.extend do
         search-rate-limit = null
         @observe \searchText, (text) ~>
             try clear-timeout search-rate-limit
-            search-rate-limit := sleep 200ms, ~>
+            search-rate-limit := sleep 800ms, ~>
                 tableview_filtered = if text
                     search-fields = <[ id ]> ++ (settings.search-fields or <[ value.description ]>)
                     result = @get \sifter .search asciifold(that), do
@@ -202,7 +208,7 @@ Ractive.components['data-table'] = Ractive.extend do
 
             close-row: ->
                 <~ :lo(op) ~>
-                    if pack(@get \origCurr) isnt pack(@get \curr)
+                    if (@get \curr) and pack(@get \origCurr) isnt pack(@get \curr)
                         @logger.cwarn "Not closing row because there are unsaved changes."
                         @logger.clog "orig: ", @get \origCurr
                         @logger.clog "curr: ", @get \curr
@@ -259,27 +265,29 @@ Ractive.components['data-table'] = Ractive.extend do
                 ev.component?.fire \state, \normal
 
 
-            save: (ev, val) ->
-                ev.component.fire \state, \doing
-                err <~ @fire 'beforeSave', ev, @get('curr')
+            save: (ctx) ->
+                ctx.component.fire \state, \doing
+                err <~ @fire 'beforeSave', ctx, @get('curr')
                 if err
                     console.error "data-table error:", err
                     return
-                ...args <~ @fire 'onSave', ev, @get(\curr)
+                ...args <~ @fire 'onSave', ctx, @get('curr')
                 if args.length isnt 1
-                    ev.component.error """
+                    ctx.component.error """
                         Coding error: Save function requires error argument upon
                         calling the callback."""
                     return
                 err = args.0
                 if err
-                    ev.component.error pack err
+                    ctx.component.error pack err
                 else
-                    @set \origCurr, (@get \curr)
-                    ev.component.fire \state \done...
+                    @set \origCurr, @get('curr')
+                    ctx.component.fire \state \done...
                     @refresh!
 
             on-save: (ev, curr, next) ->
+                # This function will be overwritten if it is present in
+                # settings.on-save
                 timeout = 15_000ms
                 ev.component.heartbeat timeout
 
@@ -306,9 +314,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 if err
                     @logger.clog "err is: ", err
                 else
-                    #@logger.clog "res is: ", res
-                    @set \curr._id, res.id     # if `_id` is assigned automatically
-                    @set \curr._rev, res.rev   # rev will be updated on save
+                    @set \curr, {_id: res.id, _rev: res.rev}, {+deep} # update document id
                 next err
 
 

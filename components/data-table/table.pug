@@ -1,0 +1,86 @@
+r-table(class!="        \
+    {{#if openedRow}}   \
+                        \
+    {{else}}            \
+        selectable      \
+    {{/if}}             \
+    ")
+    r-head                                
+        r-row 
+            th(colspan="{{ colNames.length }}")
+                //- +if('@.partials.header')
+                +apply('header')
+                div(style="float: right")
+                    +if('searchText')
+                        .ui.large.label.orange {{tableview_filtered.length}}
+
+                    .ui.left.icon.input.large.action
+                        icon.search
+                        input(on-escape="@.set('searchText', '')" value="{{searchText}}") 
+                        .ui.button.icon(on-click="@.set('searchText', '')"): icon.remove
+                    
+        +if('selectedFilter !== "all"')
+            r-row
+                th(colspan="{{ colNames.length }}")
+                    .ui.attached.warning.message.segment
+                        .header 
+                            i.warning.icon 
+                            | Filtered Content 
+                        p.
+                            You are seeing a filtered content. 
+                            #[btn.blue.mini(on-click="setFilter" value="all") #[i.remove.icon] Clear Filter]
+                                        
+        +if('addingNew')
+            r-row(class="active")
+                th(colspan="{{ colNames.length }}")
+                    .data-table-opened-row(slide-in="true" slide-out="true")
+                        +apply('editForm')
+
+        r-row                    
+            +each('colNames')
+                r-head-col 
+                    +apply('renderMarkup')
+
+    //- -----------------------------------------------
+    //- body of table 
+    //- -----------------------------------------------
+    r-body
+        +each('tableview_visible:i')
+            +unless('                                                      \
+                        settings.pageSize > 0 && (                             \
+                            @index >= (currPage + 1) * settings.pageSize ||    \
+                            @index <  (currPage) * settings.pageSize           \
+                        ) &&                                                   \
+                        (clickedIndex !== .id)')
+
+                tr(
+                    data-anchor="{{.id}}"
+                    on-click!="['clicked', this]"
+                    class!="                            \
+                        {{#if isDisabled(.id)}}         \
+                            disabled                    \
+                        {{else}}                        \
+                            {{#if ! isEditingRow(.id) && ! isViewingRow(.id)}} \
+                                data-table-clickable-row    \
+                            {{/if}}                     \
+                        {{/if}}                         \
+                        "
+                    style!="                                                       \
+                        {{#if                                                      \
+                            settings.pageSize > 0 && (                             \
+                                @index >= (currPage + 1) * settings.pageSize ||    \
+                                @index <  (currPage) * settings.pageSize           \
+                            ) &&                                                   \
+                            (clickedIndex !== .id) }}                           \
+                            display: none                                          \
+                        {{/if}}"
+                    )   
+                    include ./table-row.pug
+    r-foot
+        tr
+            th(colspan="{{ colNames.length }}")
+                include ./pagination.pug
+        +if('@.partials.footer')
+            r-row
+                th(colspan="{{ colNames.length }}")
+                    +apply('footer')

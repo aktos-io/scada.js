@@ -162,6 +162,7 @@ Ractive.components['scene'] = Ractive.extend do
                 margin: 0;
                 padding: 0;
                 border: 0;
+                padding-bottom: 5em;
                 "
             >
             {{#if ! loggedin}}

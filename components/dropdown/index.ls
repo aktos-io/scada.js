@@ -34,6 +34,8 @@ Ractive.components['dropdown'] = Ractive.extend do
         if @get \key => @set \keyField, that
         if @get \name => @set \nameField, that
 
+        #@link \selected-item, \item
+
     onrender: ->
         const c = @getContext @target .getParent yes
         c.refire = yes
@@ -163,6 +165,8 @@ Ractive.components['dropdown'] = Ractive.extend do
                 if @get \debug => @actor.c-log "selected key set to:", _new
 
                 #@actor.c-log "DROPDOWN: selected key set to:", _new
+                unless @get \data
+                    return @actor.c-warn "...but returning as there is no data yet."
                 if _new
                     item = find (.[keyField] is _new), @get \dataReduced
                     unless item

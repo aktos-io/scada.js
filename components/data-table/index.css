@@ -1,8 +1,8 @@
 .data-table-opened-row {
     color: black !important;
-    -webkit-box-shadow: 0px 0px 5px 1px DodgerBlue;
-    -moz-box-shadow:    0px 0px 5px 1px DodgerBlue;
-    box-shadow:         0px 0px 5px 1px DodgerBlue;
+    -webkit-box-shadow: 0px 0px 5px 1px teal;
+    -moz-box-shadow:    0px 0px 5px 1px teal;
+    box-shadow:         0px 0px 5px 1px teal;
     border-radius: 3px;
     margin: -10px;
 
