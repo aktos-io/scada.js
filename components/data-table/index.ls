@@ -147,7 +147,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \currPage, 0
 
                 @set \tableview_filtered, tableview_filtered
-                console.log "search for '#{text}' returned #{tableview_filtered.length} results"
+                #console.log "search for '#{text}' returned #{tableview_filtered.length} results"
 
 
 
