@@ -19051,6 +19051,15 @@ Ractive.prototype['delete'] = function(root, key){
   }
   return this.update(root);
 };
+Ractive.defaults.findWid = function(wid){
+  var i$, ref$, len$, x;
+  for (i$ = 0, len$ = (ref$ = this.findAllComponents()).length; i$ < len$; ++i$) {
+    x = ref$[i$];
+    if (x.get('wid') === wid) {
+      return x;
+    }
+  }
+};
 Ractive.events.longpress = function(node, fire){
   var timer, clearTimer, mouseDownHandler, mouseUpHandler;
   timer = null;
