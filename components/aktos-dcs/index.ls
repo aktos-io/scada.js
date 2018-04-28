@@ -86,3 +86,7 @@ Ractive.components['aktos-dcs'] = Ractive.extend do
         proxy.on \logged-out, ~>
             proxy.log.log "seems logged out."
             @set \@global.session, empty-session
+
+        proxy.on \kicked-out, ~>
+            proxy.log.log "seems kicked out."
+            @set \@global.session, empty-session
