@@ -23,10 +23,10 @@ Ractive.defaults.canWrite = (topic) ->
     return no
 
 Ractive.defaults.cannotSee = (...args) ->
-    not helpers.canSee.apply this, args
+    not Ractive.defaults.canSee.apply this, args
 
 Ractive.defaults.cannotWrite = (...args) ->
-    not helpers.canWrite.apply this, args
+    not Ractive.defaults.canWrite.apply this, args
 
 
 curr-url = ->
@@ -54,7 +54,7 @@ Ractive.components['aktos-dcs'] = Ractive.extend do
     Responsible for creating a realtime server connection and
     keeping global `window.session` variable in sync
     */
-    template: RACTIVE_PREPARSE('index.pug')
+    template: ''
     isolated: yes
     oninit: ->
         url = curr-url!
