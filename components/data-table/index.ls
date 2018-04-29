@@ -1,6 +1,6 @@
 require! 'prelude-ls': {
     split, take, join, lists-to-obj, sum, filter
-    camelize, find, reject, find-index
+    camelize, find, reject, find-index, compact
 }
 require! 'aea': {sleep, merge, clone, unix-to-readable, pack, VLogger}
 require! 'actors': {RactiveActor}
@@ -23,7 +23,7 @@ Ractive.components['data-table'] = Ractive.extend do
             name: 'data-table'
             debug: settings.debug
 
-
+        set-col-names = null
         # check parameters
         try
             unless typeof! settings is \Object
@@ -31,9 +31,6 @@ Ractive.components['data-table'] = Ractive.extend do
 
             unless settings.name
                 throw 'data-table name is required'
-
-            unless typeof! settings.col-names is \Array
-                throw 'Column names are missing'
 
             unless settings.default
                 throw 'Default document is required'
@@ -53,6 +50,17 @@ Ractive.components['data-table'] = Ractive.extend do
 
             if typeof! settings.data is \Function
                 settings.data = settings.data.bind this
+
+            if typeof! settings.col-names isnt \Function
+                settings.col-names = -> settings.col-names
+
+            do set-col-names = ~>
+                x = settings.col-names.call this
+                @set \colNames, x
+
+            unless typeof! (@get \colNames) is \Array
+                throw 'Column names are missing'
+
 
             unless settings.on-init
                 throw "on-init is required"
@@ -80,9 +88,6 @@ Ractive.components['data-table'] = Ractive.extend do
             catch
                 @logger.cerr e
 
-
-
-        @set \colNames, settings.col-names
         opening-dimmer = $ @find \.table-section-of-data-table
 
         # assign filters
@@ -122,6 +127,9 @@ Ractive.components['data-table'] = Ractive.extend do
             @set \sifter, new Sifter(_new)
             @refresh!
 
+        @observe \@global.session.token, ~>
+            @set \tableview, []
+            @refresh!
 
         search-rate-limit = null
         @observe \searchText, (text) ~>
@@ -153,9 +161,11 @@ Ractive.components['data-table'] = Ractive.extend do
 
         @observe \tableview_filtered, (filtered) ~>
             settings.after-filter filtered, (items) ~>
+                set-col-names!
                 if items.length > 0
-                    if items.0.cols.length isnt settings.col-names.length
+                    if items.0.cols.length isnt (@get \colNames .length)
                         @logger.error "Column count does not match with after-filter output!"
+                        debugger
                         return
                     for i in items when i.id in [undefined, null]
                         return @logger.cerr "id can not be null or undefined: #{pack i}."

@@ -31,19 +31,20 @@
 //- -----------------------------------------------
 +else
     +each(".cols:colindex")
-        td(data-th="{{colNames[colindex]}}")
-            +iff('colindex === 0 && isLastClicked(tableview_visible[i].id)')
-                +if('! openingRow')
-                    +iff('isOpeningNow(tableview_visible[i].id)')
-                        //- if row is opening, mark first column with teal ribbon label 
-                        .ui.teal.ribbon.label
-                            +apply('renderMarkup')
-                    +else
-                        //- if row is opening, mark first column with orange ribbon label 
-                        .ui.orange.ribbon.label
-                            +apply('renderMarkup')
-                    +endif
-            +else
-                +apply('renderMarkup')
-            +endif
+        +if('colNames[colindex]')
+            td(data-th="{{colNames[colindex]}}")
+                +iff('colindex === 0 && isLastClicked(tableview_visible[i].id)')
+                    +if('! openingRow')
+                        +iff('isOpeningNow(tableview_visible[i].id)')
+                            //- if row is opening, mark first column with teal ribbon label 
+                            .ui.teal.ribbon.label
+                                +apply('renderMarkup')
+                        +else
+                            //- if row is opening, mark first column with orange ribbon label 
+                            .ui.orange.ribbon.label
+                                +apply('renderMarkup')
+                        +endif
+                +else
+                    +apply('renderMarkup')
+                +endif
 +endif

@@ -38,8 +38,9 @@ r-table(class!="        \
 
         r-row                    
             +each('colNames')
-                r-head-col 
-                    +apply('renderMarkup')
+                +if('.')
+                    r-head-col 
+                        +apply('renderMarkup')
 
     //- -----------------------------------------------
     //- body of table 
