@@ -5,8 +5,11 @@ require! 'dcs/browser': {topic-match}
 
 # Permission calculation mechanism
 Ractive.defaults.canSee = (topic) ->
-    permissions = @get \@global.session.permissions
-    console.log "Cansee: known permissions: ", permissions
+    permissions = try
+        @get \@global.session.permissions
+    catch
+        null
+    #console.log "Cansee: known permissions: ", permissions
     if permissions
         for perm in (permissions.ro or []) ++ (permissions.rw or [])
             if topic `topic-match` perm
@@ -14,8 +17,11 @@ Ractive.defaults.canSee = (topic) ->
     return no
 
 Ractive.defaults.canWrite = (topic) ->
-    permissions = @get \@global.session.permissions
-    console.log "Canwrite: known permissions: ", permissions
+    permissions = try
+        @get \@global.session.permissions
+    catch
+        null
+    #console.log "Canwrite: known permissions: ", permissions
     if permissions
         for perm in (permissions.rw or [])
             if topic `topic-match` perm
