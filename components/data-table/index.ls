@@ -54,7 +54,7 @@ Ractive.components['data-table'] = Ractive.extend do
             if typeof! settings.col-names isnt \Function
                 cn = settings.col-names
                 settings.col-names = ->
-                    return cn 
+                    return cn
 
             do set-col-names = ~>
                 x = settings.col-names.call this
@@ -187,6 +187,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 opening-dimmer.dimmer \show
                 row-clone = clone row
                 @set \_tmp, {}
+                @set \curr, {}
                 curr <~ settings.on-create-view.call this, row-clone
                 @set \curr, that if curr
                 sleep 100ms, ~>
