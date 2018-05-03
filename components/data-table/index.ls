@@ -52,7 +52,9 @@ Ractive.components['data-table'] = Ractive.extend do
                 settings.data = settings.data.bind this
 
             if typeof! settings.col-names isnt \Function
-                settings.col-names = -> settings.col-names
+                cn = settings.col-names
+                settings.col-names = ->
+                    return cn 
 
             do set-col-names = ~>
                 x = settings.col-names.call this
