@@ -13,8 +13,7 @@ Ractive.components['login-button'] = Ractive.extend do
                     return ctx.component.error {message: "User name is required."}
                 ctx.component.fire \state, \doing
                 password = @get \password
-                err, msg <~ actor.send-request {to: \app.dcs.do-login, +debug}, {user, password}
-                debugger
+                err, msg <~ actor.send-request {to: \app.dcs.do-login}, {user, password}
                 error = err or msg.data.err
                 if error
                     ctx.component.error {message: error}
