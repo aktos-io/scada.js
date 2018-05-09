@@ -46,7 +46,7 @@ export settings =
 
     # when data table first renders, this function is run:
     on-init: (next) ->
-        db = new CouchDcsClient topic: "db.#{doc-type}"
+        db = new CouchDcsClient route: "@db-proxy"
             ..on-topic 'db.*.changes.view.issues/getIssues', (msg) ~>
                 @fire \kickChanges
 

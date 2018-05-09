@@ -12,7 +12,7 @@ Ractive.components["terminal"] = Ractive.extend do
             @set \rx, (@get(\rx) + data + '\n')
 
         actor.on \data, (msg) ~>
-            rx-append msg.payload
+            rx-append msg.data
 
         rx-area = $ @find \.rx-area
 

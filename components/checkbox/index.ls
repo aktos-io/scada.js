@@ -48,7 +48,7 @@ Ractive.components['checkbox'] = Ractive.extend do
             ack-button.actor.subscribe that
             ack-button.actor.on \data, (msg) ~>
                 if that is msg.topic
-                    set-state msg.payload.curr
+                    set-state msg.data.curr
             ack-button.actor.request-update that
 
         # set the default value on init
