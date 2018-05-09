@@ -47,7 +47,7 @@ Ractive.components['checkbox'] = Ractive.extend do
         if @get \topic
             ack-button.actor.subscribe that
             ack-button.actor.on \data, (msg) ~>
-                if that is msg.topic
+                if that is msg.to
                     set-state msg.data.curr
             ack-button.actor.request-update that
 
