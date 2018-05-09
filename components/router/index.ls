@@ -165,13 +165,16 @@ Ractive.components['scene'] = Ractive.extend do
                 padding-bottom: 5em;
                 "
             >
-            {{#if ! loggedin}}
-                <div class="ui red message fluid" style="
-                        position: fixed; top: '+"#{top-offset}px"+'; left: 0; z-index: 999999999;
-                        width: 100%; height: 100%; padding-left: 2em; padding-right: 2em">
-                    <h2 class="ui header block red">Login required</h2>
-                </div>
-            {{/if}}
+            {{#unless public}}
+                {{#if @global.session.user === "public" || @global.session.user === "" }}
+                    <div class="ui red message fluid" style="
+                            position: fixed; top: 0; left: 0; z-index: 999999999;
+                            width: 100%; height: 100%; padding-left: 2em; padding-right: 2em">
+                        <h2 class="ui header block red">Login required</h2>
+                        <login />
+                    </div>
+                {{/if}}
+            {{/unless}}
             {{#if renderedBefore}}
                 {{>content}}
             {{/if}}

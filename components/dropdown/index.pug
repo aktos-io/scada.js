@@ -25,21 +25,20 @@
                         data-value!="{{item[keyField]}}" 
                         class-disabled="blacklist == item[keyField]"
                         ) {{item[nameField]}}
-
     //- custom 
     +elif('custom')
         +apply('custom')
 
     //- default 
     +else
-        div(style="display: inline-block")
-            .ui.search.selection.dropdown(class="{{class}} {{#loading}}loading{{/}}")
-                input(type="hidden" name="{{_guid}}")
-                i.dropdown.icon 
-                .default.text {{ placeholder }}
-                .menu
-                    +each('dataReduced')
-                        .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
+        //-div(style="display: inline-block")
+        .ui.search.selection.dropdown(class="{{class}} {{#loading}}loading{{/}}")
+            input(type="hidden" name="{{_guid}}")
+            i.dropdown.icon 
+            .default.text {{ placeholder }}
+            .menu
+                +each('dataReduced')
+                    .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
     +endif
 +endif
 
