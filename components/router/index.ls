@@ -146,6 +146,7 @@ Ractive.components['router'] = Ractive.extend do
                     change.anchor = curr.anchor
 
                 actor.send 'app.router.changes', {change}
+                @set \@shared.router, change
                 prev <<< curr
 
         $ window .on \hashchange, ->
@@ -185,7 +186,7 @@ Ractive.components['scene'] = Ractive.extend do
         if @get \render
             @set \renderedBefore, yes
 
-        @observe \curr, (curr) ->
+        @observe \@shared.router.scene, (curr) ->
             #console.log "scene says: current is: ", curr
             this-page = @get \name
             default-page = @get 'default'
