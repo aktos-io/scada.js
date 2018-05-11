@@ -24,7 +24,7 @@ Ractive.components['sync'] = Ractive.extend do
 
             unless @get \readonly
                 handle = @observe \value, ((_new) ~>
-                    #@io-client.log.log "Value is: ", _new
+                    @io-client.log.log "Value is: ", _new
                     @io-client.write _new
                     ), {init: off}
 
@@ -38,14 +38,10 @@ Ractive.components['sync'] = Ractive.extend do
             @io-client.on \read, (res) ~>
                 #console.log "we read something: ", res
                 @fire \read, {}, res
-                if @get \debug
-                    console.log "Value read by #{@get 'sync-route'} is: ", res.curr
+                if @get \debug => console.log "Value read by #{@get 'sync-route'} is: ", res
                 handle?.silence!
-                @set \value, res.curr
+                @set \value, res
                 handle?.resume!
-                if res.curr is res.prev
-                    #console.warn "same data arrived????: ", res
-                    null
         catch
             """WARNING: DO NOT REMOVE THIS TRY CATCH!!!"""
             console.warn "FIXME: CODING ERROR: ", e
