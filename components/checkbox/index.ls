@@ -5,7 +5,7 @@
 
 attributes:
     tristate="true": display a "CLEAR" button, allow "checked" to be undefined/null
-    sync-topic="mytopic" sync with "mytopic" in realtime
+    sync-route="mytopic" sync with "mytopic" in realtime
 
 checked="{{value}}" : where the value is one of
     * true
@@ -64,7 +64,7 @@ Ractive.components['checkbox'] = Ractive.extend do
                 if typeof! (@get \initial) isnt \Null
                     set-state @get \initial
 
-        unless @get \sync-topic
+        unless @get \sync-route
             # observe `checked`
             @observe \checked, ((val) ~>
                 set-state val
@@ -73,12 +73,12 @@ Ractive.components['checkbox'] = Ractive.extend do
             # visually update on init
             set-visual @get \checked
         else
-            # if it has a "sync-topic", then it should watch this topic
+            # if it has a "sync-route", then it should watch this topic
             # set initial state
             @set 'check-state', \doing
             io-client = new RactiveIoProxyClient this, {
                 timeout: 1000ms
-                topic: @get \sync-topic
+                route: @get \sync-route
                 fps: @get \fps
                 }
                 ..on \error, (err) ~>
@@ -93,7 +93,7 @@ Ractive.components['checkbox'] = Ractive.extend do
 
         @on do
             _statechange: (ctx) ->
-                if @get \sync-topic
+                if @get \sync-route
                     next-state = not @get \checked
                     acceptable-delay = 200ms
                     # do not show "doing" state for if all request-response
@@ -103,7 +103,7 @@ Ractive.components['checkbox'] = Ractive.extend do
                         unless done-writing
                             @set 'check-state', \doing
                     err <~ io-client.write next-state
-                    done-writing := yes 
+                    done-writing := yes
                     unless err => try clear-timeout x
 
                 if (@has-event 'statechange') or @get \async
@@ -134,7 +134,7 @@ Ractive.components['checkbox'] = Ractive.extend do
                         #logger.clog "no error returned, setting checkbox to ", checked
                         set-state checked
 
-                unless (@get \sync-topic or @has-event \statechange or @get \async)
+                unless (@get \sync-route or @has-event \statechange or @get \async)
                     # if not realtime or not async, then consider this as a simple checkbox
                     curr-state = @get \checked
                     set-state not curr-state

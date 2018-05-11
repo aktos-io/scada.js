@@ -19,7 +19,7 @@ Ractive.components['sync'] = Ractive.extend do
         try
             @io-client = new RactiveIoProxyClient this, do
                 timeout: 1000ms
-                topic: @get \sync-topic
+                route: @get \sync-route
                 fps: @get \fps
 
             unless @get \readonly
@@ -39,7 +39,7 @@ Ractive.components['sync'] = Ractive.extend do
                 #console.log "we read something: ", res
                 @fire \read, {}, res
                 if @get \debug
-                    console.log "Value read by #{@get 'sync-topic'} is: ", res.curr
+                    console.log "Value read by #{@get 'sync-route'} is: ", res.curr
                 handle?.silence!
                 @set \value, res.curr
                 handle?.resume!
@@ -48,6 +48,6 @@ Ractive.components['sync'] = Ractive.extend do
                     null
         catch
             """WARNING: DO NOT REMOVE THIS TRY CATCH!!!"""
-            console.warn "FIXME: CODING ERROR"
+            console.warn "FIXME: CODING ERROR: ", e
     data: ->
         value: null
