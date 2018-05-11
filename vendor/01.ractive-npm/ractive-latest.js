@@ -1,9 +1,9 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (global){
 /*
-	Ractive.js v0.10.2
-	Build: b3e92ba954ea5678f324710aea60a55dc0c6d6cd
-	Date: Tue Apr 24 2018 20:33:51 GMT+0000 (UTC)
+	Ractive.js v0.10.3
+	Build: edb1bcd1cb977de60d7bd68102c32a24a731e29a
+	Date: Thu May 03 2018 18:04:22 GMT+0000 (UTC)
 	Website: http://ractivejs.org
 	License: MIT
 */
@@ -494,13 +494,13 @@ var welcome;
 
 if (hasConsole) {
   var welcomeIntro = [
-    "%cRactive.js %c0.10.2 %cin debug mode, %cmore...",
+    "%cRactive.js %c0.10.3 %cin debug mode, %cmore...",
     'color: rgb(114, 157, 52); font-weight: normal;',
     'color: rgb(85, 85, 85); font-weight: normal;',
     'color: rgb(85, 85, 85); font-weight: normal;',
     'color: rgb(82, 140, 224); font-weight: normal; text-decoration: underline;'
   ];
-  var welcomeMessage = "You're running Ractive 0.10.2 in debug mode - messages will be printed to the console to help you fix problems and optimise your application.\n\nTo disable debug mode, add this line at the start of your app:\n  Ractive.DEBUG = false;\n\nTo disable debug mode when your app is minified, add this snippet:\n  Ractive.DEBUG = /unminified/.test(function(){/*unminified*/});\n\nGet help and support:\n  http://ractive.js.org\n  http://stackoverflow.com/questions/tagged/ractivejs\n  http://groups.google.com/forum/#!forum/ractive-js\n  http://twitter.com/ractivejs\n\nFound a bug? Raise an issue:\n  https://github.com/ractivejs/ractive/issues\n\n";
+  var welcomeMessage = "You're running Ractive 0.10.3 in debug mode - messages will be printed to the console to help you fix problems and optimise your application.\n\nTo disable debug mode, add this line at the start of your app:\n  Ractive.DEBUG = false;\n\nTo disable debug mode when your app is minified, add this snippet:\n  Ractive.DEBUG = /unminified/.test(function(){/*unminified*/});\n\nGet help and support:\n  http://ractive.js.org\n  http://stackoverflow.com/questions/tagged/ractivejs\n  http://groups.google.com/forum/#!forum/ractive-js\n  http://twitter.com/ractivejs\n\nFound a bug? Raise an issue:\n  https://github.com/ractivejs/ractive/issues\n\n";
 
   welcome = function () {
     if (Ractive.WELCOME_MESSAGE === false) {
@@ -6111,7 +6111,9 @@ var Model = (function (ModelBase) {
     if (len === 0) { return; }
 
     var value = this.wrapper
-      ? 'newWrapperValue' in this ? this.newWrapperValue : this.wrapperValue
+      ? 'newWrapperValue' in this
+        ? this.newWrapperValue
+        : this.wrapperValue
       : this.value;
 
     // TODO remove this legacy nonsense
@@ -8463,7 +8465,9 @@ Observer__proto__.resolved = function resolved (model) {
 
 function updateOld(observer, fresh) {
   var next = fresh
-    ? observer.model ? observer.model.get() : observer.newValue
+    ? observer.model
+      ? observer.model.get()
+      : observer.newValue
     : observer.newValue;
   observer.oldValue = observer.oldFn
     ? observer.oldFn.call(observer.oldContext, undefined, next, observer.keypath)
@@ -10388,8 +10392,10 @@ var ReferenceExpressionProxy = (function (LinkModel) {
           }
         }
 
-        if (next !== previous) { previous.unregister(proxy); }
-        if (next) { next.addShuffleTask(function () { return next.register(proxy); }); }
+        if (next !== previous) {
+          previous.unregister(proxy);
+          if (next) { next.addShuffleTask(function () { return next.register(proxy); }); }
+        }
       },
       handleChange: function () {
         pathChanged();
@@ -10441,6 +10447,16 @@ var ReferenceExpressionProxy = (function (LinkModel) {
   ReferenceExpressionProxy__proto__.teardown = function teardown () {
     teardown$1(this);
     LinkModel.prototype.teardown.call(this);
+  };
+
+  ReferenceExpressionProxy__proto__.unreference = function unreference () {
+    LinkModel.prototype.unreference.call(this);
+    if (!this.deps.length && !this.refs) { this.teardown(); }
+  };
+
+  ReferenceExpressionProxy__proto__.unregister = function unregister (dep) {
+    LinkModel.prototype.unregister.call(this, dep);
+    if (!this.deps.length && !this.refs) { this.teardown(); }
   };
 
   return ReferenceExpressionProxy;
@@ -11188,7 +11204,9 @@ var Attribute = (function (Item) {
     attribute = true;
     var value = this.fragment
       ? this.fragment.toString()
-      : this.value != null ? '' + this.value : '';
+      : this.value != null
+        ? '' + this.value
+        : '';
     attribute = false;
     return value;
   };
@@ -11199,7 +11217,9 @@ var Attribute = (function (Item) {
     attribute = true;
     var value = this.fragment
       ? this.fragment.valueOf()
-      : booleanAttributes[this.name.toLowerCase()] ? true : this.value;
+      : booleanAttributes[this.name.toLowerCase()]
+        ? true
+        : this.value;
     attribute = false;
     return value;
   };
@@ -11290,7 +11310,9 @@ var Attribute = (function (Item) {
 
     if (booleanAttributes[this.name.toLowerCase()])
       { return value
-        ? isString(value) ? ((this.name) + "=\"" + (safeAttributeString(value)) + "\"") : this.name
+        ? isString(value)
+          ? ((this.name) + "=\"" + (safeAttributeString(value)) + "\"")
+          : this.name
         : ''; }
     if (value == null) { return ''; }
 
@@ -13012,7 +13034,9 @@ function getSelectedOptions(select) {
   /* istanbul ignore next */
   return select.selectedOptions
     ? toArray(select.selectedOptions)
-    : select.options ? toArray(select.options).filter(function (option) { return option.selected; }) : [];
+    : select.options
+      ? toArray(select.options).filter(function (option) { return option.selected; })
+      : [];
 }
 
 var MultipleSelectBinding = (function (Binding) {
@@ -14151,10 +14175,10 @@ DOMEvent__proto__.bind = function bind () {};
 DOMEvent__proto__.render = function render (directive) {
     var this$1 = this;
 
-  // schedule events so that they take place after twoway binding
-  runloop.scheduleTask(function () {
+  var name = this.name;
+
+  var register = function () {
     var node = this$1.owner.node;
-    var name = this$1.name;
     var on = "on" + name;
 
     // this is probably a custom event fired from a decorator or manually
@@ -14171,7 +14195,15 @@ DOMEvent__proto__.render = function render (directive) {
         });
       })
     );
-  }, true);
+  };
+
+  if (name !== 'load') {
+    // schedule events so that they take place after twoway binding
+    runloop.scheduleTask(register, true);
+  } else {
+    // unless its a load event
+    register();
+  }
 };
 
 DOMEvent__proto__.unbind = function unbind () {};
@@ -14990,7 +15022,9 @@ var Option = (function (Element) {
     var attribute = this.attributeByName[name];
     return attribute
       ? attribute.getValue()
-      : name === 'value' && this.fragment ? this.fragment.valueOf() : undefined;
+      : name === 'value' && this.fragment
+        ? this.fragment.valueOf()
+        : undefined;
   };
 
   Option__proto__.isSelected = function isSelected () {
@@ -17828,7 +17862,9 @@ function processItems(items, values, guid, counter) {
       var model = item.model || item.newModel;
 
       values[placeholderId] = model
-        ? model.wrapper ? model.wrapperValue : model.get()
+        ? model.wrapper
+          ? model.wrapperValue
+          : model.get()
         : undefined;
 
       return '${' + placeholderId + '}';
@@ -18920,7 +18956,7 @@ if (win && !win.Ractive) {
   /* istanbul ignore next */
   if (~opts$1.indexOf('ForceGlobal')) { win.Ractive = Ractive; }
 } else if (win) {
-  warn("Ractive already appears to be loaded while loading 0.10.2.");
+  warn("Ractive already appears to be loaded while loading 0.10.3.");
 }
 
 assign(Ractive.prototype, proto$8, defaults);
@@ -18962,7 +18998,7 @@ defineProperties(Ractive, {
   svg: { value: svg },
 
   // version
-  VERSION: { value: '0.10.2' },
+  VERSION: { value: '0.10.3' },
 
   // plugins
   adaptors: { writable: true, value: {} },
