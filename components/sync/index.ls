@@ -19,7 +19,7 @@ Ractive.components['sync'] = Ractive.extend do
         try
             @io-client = new RactiveIoProxyClient this, do
                 timeout: 1000ms
-                route: @get \sync-route
+                route: @get \route
                 fps: @get \fps
 
             unless @get \readonly
@@ -38,7 +38,7 @@ Ractive.components['sync'] = Ractive.extend do
             @io-client.on \read, (res) ~>
                 #console.log "we read something: ", res
                 @fire \read, {}, res
-                if @get \debug => console.log "Value read by #{@get 'sync-route'} is: ", res
+                if @get \debug => console.log "Value read by #{@get 'route'} is: ", res
                 handle?.silence!
                 @set \value, res
                 handle?.resume!
