@@ -12,7 +12,7 @@ Ractive.defaults.able = (permission) ->
     #console.log "able: known permissions: ", permissions
     permission `topic-match` permissions
 
-Ractive.defaults.cannotDo = (...args) ->
+Ractive.defaults.unable = (...args) ->
     not Ractive.defaults.able.apply this, args
 
 
