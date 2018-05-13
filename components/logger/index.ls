@@ -12,8 +12,8 @@ Ractive.components['logger'] = Ractive.extend do
             ..subscribe 'app.log.**'
 
         @actor.on \data, (msg) ~>
-            if msg.topic `topic-match` 'app.log.**'
-                action <~ @fire \showDimmed, {}, msg.payload
+            if msg.to `topic-match` 'app.log.**'
+                action <~ @fire \showDimmed, {}, msg.data
                 @actor.send-response msg, {action}
 
         if @get \debug

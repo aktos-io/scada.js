@@ -28,7 +28,7 @@ Ractive.components['ack-button'] = Ractive.extend do
                 @doing-watchdog.go!
 
         if @actor.default-topic
-            @actor.c-log "here is default topic: ", @actor.default-topic
+            @actor.c-log "here is default route: ", @actor.default-route
 
         @on do
             _click: (ctx) ->
@@ -46,33 +46,36 @@ Ractive.components['ack-button'] = Ractive.extend do
                 @doing-watchdog.reset!
                 @set \tooltip, ""
 
-                #@actor.c-log "firing on-click, default topic:", @actor.default-topic
+                #@actor.c-log "firing on-click, default route:", @actor.default-route
                 @fire \click, c
                 # stop the event propogation
                 return false
 
-            state: (_event, s, msg, callback) ->
-                switch s
-                    when \done =>
-                        set-button \done
+            state: (ctx, state) ->
+                @state state
 
-                    when \done... =>
-                        set-button \done
-                        <~ sleep 3000ms
-                        set-button \normal
+        @state = (state) ~>
+            switch state
+                when \done =>
+                    set-button \done
 
-                    when \normal =>
-                        set-button \normal
+                when \done... =>
+                    set-button \done
+                    <~ sleep 3000ms
+                    set-button \normal
 
-                    when \doing =>
-                        set-button \doing
-                        @set \selfDisabled, yes
-                        timeout <~ @doing-watchdog.wait @button-timeout
-                        @set \selfDisabled, no
-                        if timeout
-                            msg = "Button is timed out."
-                            #logger.error msg
-                            set-button \error, msg
+                when \normal =>
+                    set-button \normal
+
+                when \doing =>
+                    set-button \doing
+                    @set \selfDisabled, yes
+                    timeout <~ @doing-watchdog.wait @button-timeout
+                    @set \selfDisabled, no
+                    if timeout
+                        msg = "Button is timed out."
+                        #logger.error msg
+                        set-button \error, msg
 
         @error = (msg, callback) ~>
             logger.error msg, callback

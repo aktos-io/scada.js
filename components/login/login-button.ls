@@ -9,15 +9,14 @@ Ractive.components['login-button'] = Ractive.extend do
             doLogin: (ctx) ->
                 actor = ctx.component.actor
                 user = @get \user
-                unless user
-                    return ctx.component.error {message: "User name is required."}
-                ctx.component.fire \state, \doing
                 password = @get \password
-                err, msg <~ actor.send-request \app.dcs.do-login, {user, password}
-                error = err or msg.payload.err
+                unless user => return ctx.component.error {message: "User name is required."}
+                ctx.component.fire \state, \doing
+                err, msg <~ actor.send-request {to: \app.dcs.do-login}, {user, password}
+                error = err or msg.data.err
                 if error
                     ctx.component.error {message: error}
-                else if (try msg.payload.res.auth.session.token)
+                else if (try msg.data?.res.auth.session.token)
                     # logged in succesfully, clear the password and username,
                     # go to opening scene
                     @set \user, ''

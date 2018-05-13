@@ -71,7 +71,7 @@ Ractive.components['progress'] = Ractive.extend do
                 @set \percent, (_new * 100 / (max - min))
                 bar.set bar-percent, animate=no
             else
-                console.warn "TODO: this should indicate an error"
+                console.warn "TODO: this should indicate an error: ", _new
                 @set \percent, undefined
                 bar.set undefined, animate=no
 

@@ -4,35 +4,16 @@ require! 'prelude-ls': {initial, drop, join, split}
 require! 'dcs/browser': {topic-match}
 
 # Permission calculation mechanism
-Ractive.defaults.canSee = (topic) ->
+Ractive.defaults.able = (permission) ->
     permissions = try
         @get \@global.session.permissions
     catch
         null
-    #console.log "Cansee: known permissions: ", permissions
-    if permissions
-        for perm in (permissions.ro or []) ++ (permissions.rw or [])
-            if topic `topic-match` perm
-                return yes
-    return no
+    #console.log "able: known permissions: ", permissions
+    permission `topic-match` permissions
 
-Ractive.defaults.canWrite = (topic) ->
-    permissions = try
-        @get \@global.session.permissions
-    catch
-        null
-    #console.log "Canwrite: known permissions: ", permissions
-    if permissions
-        for perm in (permissions.rw or [])
-            if topic `topic-match` perm
-                return yes
-    return no
-
-Ractive.defaults.cannotSee = (...args) ->
-    not Ractive.defaults.canSee.apply this, args
-
-Ractive.defaults.cannotWrite = (...args) ->
-    not Ractive.defaults.canWrite.apply this, args
+Ractive.defaults.cannotDo = (...args) ->
+    not Ractive.defaults.able.apply this, args
 
 
 curr-url = ->
