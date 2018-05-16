@@ -176,8 +176,12 @@ Ractive.components['scene'] = Ractive.extend do
                     </div>
                 {{/if}}
             {{/unless}}
-            {{#if renderedBefore}}
-                {{>content}}
+            {{#if able(permissions)}}
+                {{#if renderedBefore}}
+                    {{>content}}
+                {{/if}}
+            {{else}}
+                <h1>Unauthorized.</h1>
             {{/if}}
         </div>'
 
@@ -212,3 +216,4 @@ Ractive.components['scene'] = Ractive.extend do
     data: ->
         rendered-before: no
         loggedin: yes
+        permissions: "**"
