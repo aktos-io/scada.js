@@ -1,15 +1,8 @@
 +if('able("scene.admin.debug") || public')
-    +iff('show')
-        .ui.form.red(fade-in="true")
+    .ui.label.circular.red(as-inline-popup) 
+        icon.info(tooltip="{{tooltip}}") 
+    .ui.popup.transition.hidden(style="min-width: 300px")
+        .ui.form
             .field
-                label 
-                    .ui.mini.button.blue.circular.icon(on-click="@.toggle('show')" title="{{title}}") 
-                        i.info.icon 
-                    |
-                    | {{#if title}}{{title}}{{else}}Debugging Object{{/if}}
-
+                label {{title}}
                 json-edit(value="{{obj}}")
-    +else 
-        .ui.mini.button.basic.circular.icon(on-click="@.toggle('show')" title="{{title}}") 
-            i.info.icon 
-    +endif
