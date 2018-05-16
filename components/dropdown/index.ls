@@ -43,15 +43,12 @@ Ractive.components['dropdown'] = Ractive.extend do
         keyField = @get \keyField
         nameField = @get \nameField
         external-change = no
-        shandler = null
 
         small-part-of = (data) ~>
             if data? and not empty data
                 take @get('load-first'), data
             else
                 []
-
-
 
         update-dropdown = (_new) ~>
             if @get \debug => @actor.log.log "#{@_guid}: selected is changed: ", _new
@@ -118,7 +115,12 @@ Ractive.components['dropdown'] = Ractive.extend do
                             sort: [{field: nameField, direction: 'asc'}]
                             nesting: no
                             conjunction: "and"
-                        @set \dataReduced, [data[..id] for small-part-of(result.items)]
+                        reduced = [data[..id] for small-part-of(result.items)]
+                        @set \dataReduced, reduced
+                        if empty reduced
+                            @actor.log.err "No such item found: #{text}"
+                        @set \emptyReduced, empty reduced
+
                         #@actor.c-log "Dropdown (#{@_guid}) : data reduced: ", [..id for @get \dataReduced]
                     else
                         #@actor.c-log "Dropdown (#{@_guid}) : searchTerm is empty"
@@ -134,24 +136,17 @@ Ractive.components['dropdown'] = Ractive.extend do
 
         @observe \data, (data) ~>
             if @get \debug => @actor.c-log "Dropdown (#{@_guid}): data is changed: ", data
-            do  # show loading icon while data is being fetched
-                @set \loading, yes
-                <~ sleep 300ms
-                if data and not empty data
-                    @set \loading, no
-                    @set \dataReduced, small-part-of data
-                    @set \sifter, new Sifter(data)
-                    # Update dropdown visually when data is updated
-                    if selected = @get \selected-key
-                        if @get \multiple
-                            <~ sleep 10ms
-                            update-dropdown selected
-                        else
-                            update-dropdown selected
-                            set-item selected
+            @set \loading, yes # show loading icon while data is being fetched
+            <~ sleep 300ms
+            if data and not empty data
+                @set \loading, no
+                @set \dataReduced, small-part-of data
+                @set \sifter, new Sifter(data)
+                # Update dropdown visually when data is updated
+                selected-handler @get \selected-key
 
-        if @get \multiple
-            shandler = @observe \selected-key, (_new, old) ~>
+        selected-handler = (_new, old) ~>
+            if @get \multiple
                 if typeof! _new is \Array
                     if JSON.stringify(_new or []) isnt JSON.stringify(old or [])
                         if not empty _new
@@ -160,9 +155,8 @@ Ractive.components['dropdown'] = Ractive.extend do
                         else
                             # clear the dropdown
                             dd.dropdown 'restore defaults'
-        else
-            shandler = @observe \selected-key, (_new) ~>
-                if @get \debug => @actor.c-log "selected key set to:", _new
+            else
+                if @get \debug => @actor.c-log "Observe: selected key set to:", _new
 
                 #@actor.c-log "DROPDOWN: selected key set to:", _new
                 unless @get \data
@@ -180,6 +174,8 @@ Ractive.components['dropdown'] = Ractive.extend do
                     # clear the dropdown
                     @set \item, {}
                     dd.dropdown 'restore defaults'
+
+        @observe \selected-key, selected-handler
 
         @on do
             teardown: ->
