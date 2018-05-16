@@ -1,14 +1,15 @@
-+iff('show')
-    .ui.form.red(fade-in="true")
-        .field
-            label 
-                .ui.mini.button.blue.circular.icon(on-click="@.toggle('show')" title="{{title}}") 
-                    i.info.icon 
-                |
-                | {{#if title}}{{title}}{{else}}Debugging Object{{/if}}
++if('able("scene.admin.debug") || public')
+    +iff('show')
+        .ui.form.red(fade-in="true")
+            .field
+                label 
+                    .ui.mini.button.blue.circular.icon(on-click="@.toggle('show')" title="{{title}}") 
+                        i.info.icon 
+                    |
+                    | {{#if title}}{{title}}{{else}}Debugging Object{{/if}}
 
-            json-edit(value="{{obj}}")
-+else 
-    .ui.mini.button.basic.circular.icon(on-click="@.toggle('show')" title="{{title}}") 
-        i.info.icon 
-+endif
+                json-edit(value="{{obj}}")
+    +else 
+        .ui.mini.button.basic.circular.icon(on-click="@.toggle('show')" title="{{title}}") 
+            i.info.icon 
+    +endif

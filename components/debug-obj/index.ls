@@ -3,3 +3,4 @@ Ractive.components['debug-obj'] = Ractive.extend do
     data: ->
         obj: undefined
         title: null
+        public: false
