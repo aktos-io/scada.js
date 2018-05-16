@@ -11,7 +11,7 @@
 +else
     //- inline 
     +iff('inline')
-        .ui.inline.dropdown(class="{{class}} {{#loading}}loading{{/}}")                
+        .ui.inline.dropdown(class="{{class}} {{#loading}}loading{{/}} {{#emptyReduced}}error{{/}}")                
             i.dropdown.icon 
             //-.default.text {{ placeholder | '----' }}
             span.text -------
@@ -32,7 +32,7 @@
     //- default 
     +else
         //-div(style="display: inline-block")
-        .ui.search.selection.dropdown(class="{{class}} {{#loading}}loading{{/}}")
+        .ui.search.selection.dropdown(class="{{class}} {{#loading}}loading{{/}} {{#emptyReduced}}error{{/}}")
             input(type="hidden" name="{{_guid}}")
             i.dropdown.icon 
             .default.text {{ placeholder }}
