@@ -18,6 +18,8 @@ dropdown(
 
 ## Custom Template
 
+Use `custom` attribute and `custom` partial to define a custom template to dropdown.
+
 ```
 dropdown(
     custom
