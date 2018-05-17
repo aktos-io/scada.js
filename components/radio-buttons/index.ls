@@ -25,7 +25,7 @@ Ractive.components['radio-buttons'] = Ractive.extend do
                         btn.set \colorclass, true-color
                     else if not new-val? and btn.get \default
                         # set the default value if specified
-                        @set \value, btn.get \default
+                        @set \value, btn-val
                         btn.set \colorclass, true-color
                     else
                         btn.set \colorclass, false-color
