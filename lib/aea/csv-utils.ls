@@ -33,7 +33,7 @@ export parse-csv = (content, opts={}, callback) ->
     if err => return callback err={message: "csv file isnt proper!", error: err}
     if res.length is 0 => return callback err={message: "Empty data"}
 
-    column-list = []
+    rows = []
     for imported in res
         a = {}
         """
@@ -44,6 +44,6 @@ export parse-csv = (content, opts={}, callback) ->
             if columns[index]
                 a[that] = cell
 
-        column-list.push a
+        rows.push a
 
-    return callback err=null, {column-list, columns}
+    return callback err=null, {rows, columns}

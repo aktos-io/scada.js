@@ -104,7 +104,7 @@ Ractive.components['file-button'] = Ractive.extend do
 
                 if csv
                     value.csv =
-                        data: csv.column-list
+                        data: csv.rows
                         columns: csv.columns
 
                 err <~ @fire \read, c, value
