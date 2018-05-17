@@ -1,6 +1,6 @@
 /* Usage:
 ---------------
-    radio-buttons(value="{{transfer.state}}" true-color="orange")
+    radio-buttons(value="{{transfer.state}}" gtrue-color="orange")
         .ui.buttons
             radio-button(value="accepted") Kabul
             radio-button(value="pending" default) Beklemede
@@ -10,13 +10,15 @@ Ractive.components['radio-buttons'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     on:
         "*.init": (ctx, instance) ->
-            true-color = @get \true-color
-            false-color = @get \false-color
+            gtrue-color = @get \true-color
+            gfalse-color = @get \false-color
             @push \buttons, instance
 
             set-selected-color = (new-val) ~>
                 buttons = @get \buttons
                 for btn in buttons
+                    true-color = (btn.get \true-color) or gtrue-color
+                    false-color = (btn.get \false-color) or gfalse-color
                     btn-val = if btn.get \value => that else btn.partials.content.to-string!
                     if btn-val is new-val
                         @set \value, new-val
