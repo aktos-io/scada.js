@@ -1,4 +1,3 @@
-require! 'aea':{sleep}
 require! 'csv-parse': parse
 require! 'prelude-ls': {unique, map, split, empty}
 

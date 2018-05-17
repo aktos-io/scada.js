@@ -1,6 +1,6 @@
 require! 'dcs/browser':{Signal}
 require! 'aea': {VLogger}
-require! './csv-utils': {parse-csv}
+require! 'aea/csv-utils': {parse-csv}
 
 '''
 # Context API
