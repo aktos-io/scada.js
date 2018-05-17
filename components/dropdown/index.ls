@@ -12,7 +12,7 @@ Design considerations (TO BE COMPLETED)
 1. Place 2 dropdown side by side (exact copy of each other)
 2. Change one, expect the other to be exactly the same of the one
 """
-require! 'prelude-ls': {find, empty, take}
+require! 'prelude-ls': {find, empty, take, compact}
 require! 'actors': {RactiveActor}
 require! 'aea': {sleep}
 
@@ -162,7 +162,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                 unless @get \data
                     return @actor.c-warn "...but returning as there is no data yet."
                 if _new
-                    item = find (.[keyField] is _new), @get \dataReduced
+                    item = find (.[keyField] is _new), compact @get \dataReduced
                     unless item
                         item = find (.[keyField] is _new), @get \data
                         @push \dataReduced, item
