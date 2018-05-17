@@ -1494,7 +1494,7 @@
     Object.defineProperty(package$internal, 'CharCompanionObject', {get: CharCompanionObject_getInstance});
     package$kotlin.Comparable = Comparable;
     Kotlin.defineModule('kotlin', _);
-    
+
   }());
   (function() {
     'use strict';
@@ -37879,7 +37879,7 @@
     State_Failed = 5;
     COROUTINE_SUSPENDED = new Any();
     Kotlin.defineModule('kotlin', _);
-    
+
   }());
 }));
 
@@ -38096,8 +38096,8 @@ fixJSON = function(x){
 }
 
 Ractive.components['json-edit'] = Ractive.extend({
-  template: `<textarea lazy="true" 
-    style="{{style}}; white-space: pre-wrap; border: {{#if err}}2px dashed red{{else}}1px solid green{{/if}}" 
+  template: `<textarea lazy="true"
+    style="{{style}}; white-space: pre-wrap; border: {{#if err}}2px dashed red{{else}}1px solid green{{/if}}"
     title="{{err}}"
     class="{{class}}"
     >{{ objFormatted }}</textarea>`,
@@ -38129,7 +38129,7 @@ Ractive.components['json-edit'] = Ractive.extend({
           return
         } catch (e$) {
           e = e$;
-          console.warn("error was: ", e);
+          console.warn("json-edit: error was: ", e);
           this.set('err', e.message);
           return this.set('objTmp', objStr);
         }
