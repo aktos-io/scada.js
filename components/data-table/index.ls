@@ -201,6 +201,9 @@ Ractive.components['data-table'] = Ractive.extend do
                 # scroll to the row
                 # TODO
 
+            delete: ->
+                @set 'curr._deleted', yes
+
             toggle-editing: ->
                 editable = @get \editable
                 @set \editable, not editable
@@ -324,10 +327,8 @@ Ractive.components['data-table'] = Ractive.extend do
                     curr._attachments = (curr._attachments or {}) <<< that
 
                 err, res <~ @get \db .put curr, {timeout}
-                if err
-                    @logger.clog "err is: ", err
-                else
-                    @set \curr, {_id: res.id, _rev: res.rev}, {+deep} # update document id
+                if err => @logger.clog "err is: ", err
+                @set \curr, curr
                 next err
 
 
