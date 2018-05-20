@@ -176,12 +176,13 @@ Ractive.components['scene'] = Ractive.extend do
                     </div>
                 {{/if}}
             {{/unless}}
-            {{#if able(permissions)}}
+            {{#if able(permissions) || public}}
                 {{#if renderedBefore}}
                     {{>content}}
                 {{/if}}
             {{else}}
                 <h1>Unauthorized.</h1>
+                {{JSON.stringify(@global.session.permissions)}}
             {{/if}}
         </div>'
 
