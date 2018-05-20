@@ -23,7 +23,7 @@
     "jquery": "^3.2.1",
     "livescript": "~1.4.0",
     "marked": "^0.3.12",
-    "mathjs": "^4.0.0",
+    "mathjs": "^4.2.2",
     "moment": "^2.21.0",
     "nouislider": "^10.0.0",
     "pnotify": "^4.0.0-alpha.2",

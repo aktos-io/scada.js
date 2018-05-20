@@ -12,6 +12,16 @@ window.math = Ractive.defaults.math = math = require 'mathjs'
 for <[ adet TL USD EURO ]>
     math.create-unit ..
 
+/*
+math.create-unit 'footpound', do
+    definition: '1 ft lbf',
+    base: 'TORQUE',
+    aliases: ['knots', 'kts', 'kt']
+*/
+math.create-unit \adam, {aliases: <[ man ]>}
+math.create-unit \adamsaat, do
+    definition: '1 adam * h'
+
 """
 math.config do
     number: \BigNumber
