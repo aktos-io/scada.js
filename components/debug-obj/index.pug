@@ -1,8 +1,7 @@
 +if('able("scene.admin.debug") || public')
-    .ui.label.circular.red(as-inline-popup) 
-        icon.info(tooltip="{{tooltip}}") 
-    .ui.popup.transition.hidden(style="min-width: 300px")
-        .ui.form
-            .field
-                label {{title}}
-                json-edit(value="{{obj}}")
+    .ui.label.circular.red.button(on-click="@.toggle('mymodal1')" title="{{title}}") 
+        icon.info 
+
+    modal(title="{{title}}" basedon="{{mymodal1}}")
+        .ui.segment(style="width: 800px")
+            json-edit(value="{{obj}}" style="width: 100%; height: 100em;")
