@@ -21,6 +21,8 @@ math.create-unit 'footpound', do
 math.create-unit \adam, {aliases: <[ man ]>}
 math.create-unit \adamsaat, do
     definition: '1 adam * h'
+math.create-unit \adamdakika, do
+    definition: '1 adam * minute'
 
 """
 math.config do
