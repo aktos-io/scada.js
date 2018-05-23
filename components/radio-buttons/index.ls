@@ -8,6 +8,11 @@
 
 Ractive.components['radio-buttons'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
+    onrender: ->
+        @observe \disabled, (val) ~>
+            for @get \buttons
+                ..set \disabled val
+
     on:
         "*.init": (ctx, instance) ->
             gtrue-color = @get \true-color
