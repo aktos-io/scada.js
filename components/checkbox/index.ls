@@ -107,6 +107,9 @@ Ractive.components['checkbox'] = Ractive.extend do
                     unless err => try clear-timeout x
 
                 if (@has-event 'statechange') or @get \async
+                    curr-check-state = @get \check-state
+                    curr-checked = @get \checked
+
                     @set \check-state, \doing
                     checked = @get \checked
 
@@ -118,18 +121,20 @@ Ractive.components['checkbox'] = Ractive.extend do
                     c.actor = ack-button.actor
                     err, callback <~ @fire \statechange, c, checked
 
-                    if arguments.length isnt 1
-                        logger.cerr "statechange callback should have exactly
-                            1 argument, #{arguments.length} is given."
-                        return
+                    if callback
+                        console.warn "DEPRECATED: callback won't be supported anymore."
+                        debugger
 
                     if err
+                        # restore previous state
+                        @set \check-state, curr-check-state
+                        @set \checked, curr-checked
                         if err is \timeout
                             ctx.component.warn message: "Async checkbox is timed out."
                             @set \check-state, \error
                             return
                         else
-                            logger.error err, callback
+                            logger.error err
                     else
                         #logger.clog "no error returned, setting checkbox to ", checked
                         set-state checked
