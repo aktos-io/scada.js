@@ -1,6 +1,6 @@
 +if('able("scene.admin.debug") || public')
-    .ui.label.circular.red.button(on-click="@.toggle('mymodal1')" title="{{title}}") 
-        icon.info 
+    button.ui.button.circular.icon.pink.mini(on-click="@.toggle('mymodal1')" title="{{title}}") 
+        icon.bug
 
     modal(title="{{title}}" basedon="{{mymodal1}}")
         .ui.segment(style="width: 800px")
