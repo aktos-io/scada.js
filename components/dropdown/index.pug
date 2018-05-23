@@ -3,9 +3,12 @@
     +apply('text-mode')
 
 //- readonly 
-+elif('~/["readonly-mode"]')
-    .ui.input.readonly
-        input(twoway="false" value="{{ item ? item[nameField] : nothingSelected }}")
++elif('readonly')
+    .ui.input
+        input(
+            twoway="false" 
+            value="{{ item ? item[nameField] : nothingSelected }}"
+            readonly)
 
 //- dropdown 
 +else
