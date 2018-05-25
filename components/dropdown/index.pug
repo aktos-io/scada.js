@@ -1,17 +1,9 @@
 //- text mode 
-+iff('~/["text-mode"]')
-    +apply('text-mode')
-
-//- readonly 
-+elif('readonly')
-    .ui.input
-        input(
-            twoway="false" 
-            value="{{ item ? item[nameField] : nothingSelected }}"
-            readonly)
++showif('readonly')
+    .ui.label(class="{{#emptyReduced}}red{{/}}") {{ item ? item[nameField] : nothingSelected }}
 
 //- dropdown 
-+else
++hideif('readonly')
     //- inline 
     +iff('inline')
         .ui.inline.dropdown(class="{{class}} {{#loading}}loading{{/}} {{#emptyReduced}}error{{/}}")                
@@ -43,7 +35,7 @@
                 +each('dataReduced')
                     .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
     +endif
-+endif
+
 
 //- ----------------------------------------------------------------------------
 //- Debug output

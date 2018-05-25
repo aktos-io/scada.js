@@ -47,11 +47,11 @@ mixin component(name)
     != '</script>'
 
 mixin hideif(condition)
-    != '<div style="{{#if (' + condition + ') }}display: none{{/if}}">'
+    != '<div style="{{#if (' + condition + ') }}display: none;{{else}}display: inline{{/if}}">'
     block 
     != '</div>'
 
 mixin showif(condition)
-    != '<div style="{{#if ! (' + condition + ') }}display: none{{/if}}">'
+    != '<div style="{{#if ! (' + condition + ') }}display: none;{{else}}display: inline{{/if}}">'
     block 
     != '</div>'
