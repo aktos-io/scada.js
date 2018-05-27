@@ -123,18 +123,10 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \currPage, index / settings.page-size
                 @refresh!
 
-
-        @observe \tableview, (_new) ~>
-            @logger.clog "DEBUG MODE: tableview changed, refreshing..." if @get \debug
-            @set \sifter, new Sifter(_new)
-            @refresh!
-
-        @observe \@global.session.token, ~>
-            @set \tableview, []
-            @refresh!
-
         search-rate-limit = null
-        @observe \searchText, (text) ~>
+        search-text-global = null
+        do-search-text = ~>
+            text = search-text-global
             try clear-timeout search-rate-limit
             search-rate-limit := sleep 800ms, ~>
                 tableview_filtered = if text
@@ -159,6 +151,20 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \tableview_filtered, tableview_filtered
                 #console.log "search for '#{text}' returned #{tableview_filtered.length} results"
 
+
+        @observe \tableview, (_new) ~>
+            @logger.clog "DEBUG MODE: tableview changed, refreshing..." if @get \debug
+            @set \sifter, new Sifter(_new)
+            do-search-text!
+            @refresh!
+
+        @observe \@global.session.token, ~>
+            @set \tableview, []
+            @refresh!
+
+        @observe \searchText, (text) ~>
+            search-text-global := text
+            do-search-text!
 
 
         @observe \tableview_filtered, (filtered) ~>
