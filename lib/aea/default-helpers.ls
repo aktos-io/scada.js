@@ -32,9 +32,10 @@ math.config do
 
 # doMath()
 window.do-math = Ractive.defaults.do-math = (expression) ->
-    exact = math.eval expression
-    display = math.format exact, 6_digits
-    float = parse-float display
+    try
+        exact = math.eval expression
+        display = math.format exact, 6_digits
+        float = parse-float display
     return {display, float, exact}
 
 '''
