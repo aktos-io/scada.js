@@ -1,6 +1,6 @@
 //- text mode 
 +showif('readonly')
-    .ui.label(class="{{#emptyReduced}}red{{/}}") {{ item ? item[nameField] : nothingSelected }}
+    .ui.basic.label(class="{{#emptyReduced}}red{{/}}") {{ item ? item[nameField] : nothingSelected }}
 
 //- dropdown 
 +hideif('readonly')
