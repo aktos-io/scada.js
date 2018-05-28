@@ -4,7 +4,6 @@ require! 'prelude-ls': {
 }
 require! 'aea': {sleep, merge, clone, unix-to-readable, pack, VLogger}
 require! 'actors': {RactiveActor}
-
 require! 'sifter': Sifter
 require! './sifter-workaround': {asciifold}
 
@@ -99,6 +98,7 @@ Ractive.components['data-table'] = Ractive.extend do
         data-filters['all'] = (x) ~> x
         @set \dataFilters, data-filters
 
+
         @refresh = ~>
             filter-func = @get(\dataFilters)[@get(\selectedFilter)]
             if typeof! filter-func isnt \Function
@@ -116,6 +116,8 @@ Ractive.components['data-table'] = Ractive.extend do
                     console.warn "I think that row (#{@get 'clickedIndex'}) is
                         deleted, closing."
                     @fire \closeRow
+            else
+                @fire \doSearchText
 
         open-item-page = (id) ~>
             index = find-index (.id is id), @get('tableview_filtered')
@@ -123,48 +125,20 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \currPage, index / settings.page-size
                 @refresh!
 
-        search-rate-limit = null
-        search-text-global = null
-        do-search-text = ~>
-            text = search-text-global
-            try clear-timeout search-rate-limit
-            search-rate-limit := sleep 800ms, ~>
-                tableview_filtered = if text
-                    search-fields = <[ id ]> ++ (settings.search-fields or <[ value.description ]>)
-                    result = @get \sifter .search asciifold(that), do
-                        #fields: ['id', 'value.description']
-                        fields: search-fields
-                        sort: [{field: 'name', direction: 'asc'}]
-                        nesting: yes
-                        conjunction: "and"
-
-                    x = []
-                    for result.items
-                        x.push (@get \tableview .[..id])
-                    if @get \clickedIndex
-                        x.push (find (.id is that), @get \tableview)
-                    x
-                else
-                    @get \tableview
-                @set \currPage, 0
-
-                @set \tableview_filtered, tableview_filtered
-                #console.log "search for '#{text}' returned #{tableview_filtered.length} results"
-
-
         @observe \tableview, (_new) ~>
             @logger.clog "DEBUG MODE: tableview changed, refreshing..." if @get \debug
             @set \sifter, new Sifter(_new)
-            do-search-text!
             @refresh!
 
         @observe \@global.session.token, ~>
             @set \tableview, []
             @refresh!
 
+        search-rate-limit = null
+        search-text-global = null
         @observe \searchText, (text) ~>
             search-text-global := text
-            do-search-text!
+            @fire \doSearchText
 
 
         @observe \tableview_filtered, (filtered) ~>
@@ -331,11 +305,38 @@ Ractive.components['data-table'] = Ractive.extend do
 
                 if @get \new_attachments
                     curr._attachments = (curr._attachments or {}) <<< that
-
                 err, res <~ @get \db .put curr, {timeout}
                 if err => @logger.clog "err is: ", err
                 @set \curr, curr
                 next err
+
+            do-search-text: (ctx) ->
+                text = search-text-global
+                return unless text
+                try clear-timeout search-rate-limit
+                @set \searching, yes
+                search-rate-limit := sleep 500ms, ~>
+                    tableview_filtered = if text
+                        search-fields = <[ id ]> ++ (settings.search-fields or <[ value.description ]>)
+                        result = @get \sifter .search asciifold(that), do
+                            #fields: ['id', 'value.description']
+                            fields: search-fields
+                            sort: [{field: 'name', direction: 'asc'}]
+                            nesting: yes
+                            conjunction: "and"
+
+                        x = []
+                        for result.items
+                            x.push (@get \tableview .[..id])
+                        if @get \clickedIndex
+                            x.push (find (.id is that), @get \tableview)
+                        x
+                    else
+                        @get \tableview
+                    @set \currPage, 0
+                    @set \tableview_filtered, tableview_filtered
+                    #console.log "search for '#{text}' returned #{tableview_filtered.length} results"
+                    @set \searching, no
 
 
         # register events
@@ -379,6 +380,7 @@ Ractive.components['data-table'] = Ractive.extend do
         new_attachments: {}
         searchText: ''
         sifter: null
+        searching: no
         is-editing-row: (index) ->
             return no unless @get \editable
             clicked-index = @get \clickedIndex

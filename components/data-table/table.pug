@@ -14,10 +14,11 @@ r-table(class!="        \
                     +if('searchText')
                         .ui.large.label.orange {{tableview_filtered.length}}
 
-                    .ui.left.icon.input.large.action
+                    .ui.left.icon.input.large.action(class="{{#searching}}loading{{/}}")
                         icon.search
                         input(on-escape="@.set('searchText', '')" value="{{searchText}}") 
                         .ui.button.icon(on-click="@.set('searchText', '')"): icon.remove
+                        .ui.button.icon(on-click="doSearchText"): icon.search
                     
         +if('selectedFilter !== "all"')
             r-row
