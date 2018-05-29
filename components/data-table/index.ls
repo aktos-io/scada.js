@@ -312,8 +312,11 @@ Ractive.components['data-table'] = Ractive.extend do
 
             do-search-text: (ctx) ->
                 text = search-text-global
-                return unless text
                 try clear-timeout search-rate-limit
+                if not text
+                    @set \tableview_filtered, @get \tableview
+                    return
+                    
                 @set \searching, yes
                 search-rate-limit := sleep 500ms, ~>
                     tableview_filtered = if text
