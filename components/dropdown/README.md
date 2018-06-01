@@ -81,3 +81,13 @@ Use `blacklist=` attribute to disable any option dynamically.
 ## Visual Options
 
 For inline or fluid instances, use `inline` or `block` attributes respectively.
+
+## Multiple Selection
+
+```pug
+dropdown(
+    multiple
+    selected-key="{{someProperty}}"  <- array
+    ...
+)
+```
