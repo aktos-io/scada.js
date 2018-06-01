@@ -1,9 +1,14 @@
 .ui.segments
     .ui.segment 
         ack-button.green(on-click="listDesignDocuments") Get List
-        +each('designDocuments')
-            ack-button(on-click="getDesignDocument")
-                code {{ . }}
+        radio-buttons(
+            async on-select="getDesignDocument"
+            true-color="orange")
+            +each('designDocuments as ddoc')
+                radio-button(value="{{ddoc}}") {{ddoc.split('/')[1]}}
+                //-
+                    ack-button(on-click="getDesignDocument")
+                        code {{ ddoc.split('/')[1] }}
 
         .ui.form 
             .field
