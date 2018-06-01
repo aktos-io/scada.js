@@ -1,13 +1,24 @@
 //- text mode 
 +showif('readonly')
-    .ui.basic.label(class="{{#emptyReduced}}red{{/}}") {{ item ? item[nameField] : nothingSelected }}
+    .ui.basic.label(
+        class="{{#emptyReduced}}red{{/}}"
+        ) 
+        +iff('~/["selected-key"]')
+            +iff('item[nameField]')
+                | {{item[nameField]}}
+            +else 
+                span.text.red(style="font-style: italic") {{~/['selected-key']}}
+            +endif
+        +else 
+            | {{nothingSelected}}
+        +endif
 
 //- dropdown 
 +hideif('readonly')
     //- inline 
     +iff('inline')
         .ui.inline.dropdown(class="{{class}} {{#loading}}loading{{/}} {{#emptyReduced}}error{{/}}")                
-            i.dropdown.icon 
+            i.dropdown.icon(style="display: inline")
             //-.default.text {{ placeholder | '----' }}
             span.text -------
             .menu
