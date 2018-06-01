@@ -8,6 +8,7 @@
 
 Ractive.components['radio-buttons'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
+    isolated: no
     oninit: ->
         @set-selected-color = (new-val, opts={}) ~>
             gtrue-color = @get \true-color
@@ -18,8 +19,16 @@ Ractive.components['radio-buttons'] = Ractive.extend do
                 if opts.outside
                     return op!
                 else if @get \async
-                    err <~! @fire \select, {}, new-val
-                    return op! unless err
+                    const c = @getContext @target .getParent yes
+                    c.refire = yes
+                    c.button = opts.ctx.component
+                    c.button.state \doing
+                    err <~! @fire \select, c, new-val
+                    unless err
+                        c.button.state \done...
+                        return op!
+                    else
+                        c.button.error err 
                 else
                     return op!
 
@@ -46,7 +55,7 @@ Ractive.components['radio-buttons'] = Ractive.extend do
                         # FIXME: why do we get a null value?
                         return
                     #console.log "setting value to ", new-val
-                    @set-selected-color new-val
+                    @set-selected-color new-val, {ctx: ctx2}
 
     onrender: ->
         @observe \disabled, (val) ~>
