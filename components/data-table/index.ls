@@ -316,7 +316,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 if not text
                     @set \tableview_filtered, @get \tableview
                     return
-                    
+
                 @set \searching, yes
                 search-rate-limit := sleep 500ms, ~>
                     tableview_filtered = if text
@@ -336,6 +336,7 @@ Ractive.components['data-table'] = Ractive.extend do
                         x
                     else
                         @get \tableview
+                    <~ set-immediate
                     @set \currPage, 0
                     @set \tableview_filtered, tableview_filtered
                     #console.log "search for '#{text}' returned #{tableview_filtered.length} results"
