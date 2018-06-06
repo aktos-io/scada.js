@@ -53,11 +53,18 @@ Ractive.components['dropdown'] = Ractive.extend do
         update-dropdown = (_new) ~>
             if @get \debug => @actor.log.log "#{@_guid}: selected is changed: ", _new
             external-change := yes
-            if @get \multiple
-                dd.dropdown 'set exactly', _new
+            if _new
+                if @get \multiple
+                    dd.dropdown 'set exactly', _new
+                else
+                    item = find (.[keyField] is _new), compact @get \dataReduced
+                    unless item
+                        item = find (.[keyField] is _new), @get \data
+                        @push \dataReduced, item
+                    dd.dropdown 'set selected', _new
+                dd.dropdown 'refresh'
             else
-                dd.dropdown 'set selected', _new
-            dd.dropdown 'refresh'
+                dd.dropdown 'restore defaults'
             external-change := no
 
         set-item = (value-of-key) ~>
@@ -91,9 +98,16 @@ Ractive.components['dropdown'] = Ractive.extend do
                             if @get \async
                                 @fire \select, c, selected, (err) ~>
                                     unless err
+                                        @set \emptyReduced, no
                                         @set \item, selected
                                     else
-                                        @actor.c-err "Error reported for dropdown callback: ", err
+                                        curr = @get \selected-key
+                                        @actor.c-err "Error reported for dropdown callback: ", err,
+                                            "falling back to #{curr}"
+                                        @set \emptyReduced, yes
+                                        sleep 500ms, ~>
+                                            @actor.c-warn "FIXME: update-dropdown should set current value to #{curr}"
+                                            update-dropdown curr
                             else
                                 @set \selected-key, selected[keyField]
 
