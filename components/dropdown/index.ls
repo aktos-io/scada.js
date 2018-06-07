@@ -52,19 +52,27 @@ Ractive.components['dropdown'] = Ractive.extend do
 
         update-dropdown = (_new) ~>
             if @get \debug => @actor.log.log "#{@_guid}: selected is changed: ", _new
+            <~ sleep 0
             external-change := yes
-            if _new
-                if @get \multiple
-                    dd.dropdown 'set exactly', _new
+            <~ :lo(op) ~>
+                if _new
+                    if @get \multiple
+                        dd.dropdown 'set exactly', _new
+                        dd.dropdown 'refresh'
+                        return op!
+                    else
+                        @actor.log.debug "Setting new visual to #{_new}"
+                        item = find (.[keyField] is _new), compact @get \dataReduced
+                        unless item
+                            item = find (.[keyField] is _new), @get \data
+                            @push \dataReduced, item
+                        <~ sleep 10ms
+                        dd.dropdown 'set selected', _new
+                        dd.dropdown 'refresh'
+                        return op!
                 else
-                    item = find (.[keyField] is _new), compact @get \dataReduced
-                    unless item
-                        item = find (.[keyField] is _new), @get \data
-                        @push \dataReduced, item
-                    dd.dropdown 'set selected', _new
-                dd.dropdown 'refresh'
-            else
-                dd.dropdown 'restore defaults'
+                    dd.dropdown 'restore defaults'
+                    return op!
             external-change := no
 
         set-item = (value-of-key) ~>
@@ -105,9 +113,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                                         @actor.c-err "Error reported for dropdown callback: ", err,
                                             "falling back to #{curr}"
                                         @set \emptyReduced, yes
-                                        sleep 500ms, ~>
-                                            @actor.c-warn "FIXME: update-dropdown should set current value to #{curr}"
-                                            update-dropdown curr
+                                        update-dropdown curr
                             else
                                 @set \selected-key, selected[keyField]
 
@@ -168,7 +174,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                             update-dropdown _new
                         else
                             # clear the dropdown
-                            dd.dropdown 'restore defaults'
+                            update-dropdown null
             else
                 if @get \debug => @actor.c-log "Observe: selected key set to:", _new
 
@@ -177,18 +183,11 @@ Ractive.components['dropdown'] = Ractive.extend do
                     #@actor.c-warn "...but returning as there is no data yet."
                     return
                 if _new
-                    item = find (.[keyField] is _new), compact @get \dataReduced
-                    unless item
-                        item = find (.[keyField] is _new), @get \data
-                        @push \dataReduced, item
-                    @set \item, item
-                    <~ sleep 10ms
-                    # Workaround for dropdown update bug
                     update-dropdown _new
                 else
                     # clear the dropdown
                     @set \item, {}
-                    dd.dropdown 'restore defaults'
+                    update-dropdown null
 
         @observe \selected-key, selected-handler
 
