@@ -24,3 +24,32 @@ unless err
         console.log row.material, row.amount, row.reason
 
 ```
+
+# Visual Logger
+
+## Initialization
+
+logger = new VLogger this, "My Source"
+
+## Yes/No Question 
+
+```ls
+answer <~ logger.yesno do
+    title: "Discard changes?"
+    message: "If you select 'Drop Changes' all changes will be lost."
+    buttons:
+        drop:
+            color: \red
+            text: 'Drop Changes'
+            icon: \trash
+
+        cancel:
+            color: \green
+            text: 'Cancel'
+            icon: \undo
+
+if answer is \drop
+    # do something
+else
+    logger.cwarn "Cancelled discarding changes."
+```
