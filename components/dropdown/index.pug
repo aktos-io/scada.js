@@ -31,6 +31,11 @@
                         data-value!="{{item[keyField]}}" 
                         class-disabled="blacklist == item[keyField]"
                         ) {{item[nameField]}}
+
+                +if('emptyReduced && ~/["allow-addition"]')
+                    ack-button.green.fluid.bottom.attached(on-click="_add")
+                        icon.plus "{{~/['search-term']}}"
+
     //- custom 
     +elif('custom')
         +apply('custom')
@@ -45,6 +50,12 @@
             .menu
                 +each('dataReduced')
                     .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
+
+                +if('emptyReduced && ~/["allow-addition"]')
+                    ack-button.green.fluid.bottom.attached(on-click="_add")
+                        icon.plus "{{~/['search-term']}}"
+                        
+                +apply('addNew')
     +endif
 
 

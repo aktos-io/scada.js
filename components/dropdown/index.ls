@@ -195,6 +195,15 @@ Ractive.components['dropdown'] = Ractive.extend do
             teardown: ->
                 dd.dropdown 'destroy'
 
+            '_add': (ctx) ->
+                c.button = ctx.component
+                @fire \add, c, @get \search-term
+                @set \emptyReduced, false
+                @set \search-term, ''
+
+                # fixme: clear the dropdown text
+                #dd.dropdown 'set text', 'aaa'
+
     data: ->
         'allow-additions': no  # TODO
         'search-fields': <[ id name description ]>
