@@ -66,12 +66,14 @@ Ractive.components['dropdown'] = Ractive.extend do
                         unless item
                             item = find (.[keyField] is _new), @get \data
                             @push \dataReduced, item
+                        @set \item, item
                         <~ sleep 10ms
                         dd.dropdown 'set selected', _new
                         dd.dropdown 'refresh'
                         return op!
                 else
                     dd.dropdown 'restore defaults'
+                    @set \item, {}
                     return op!
             external-change := no
 
@@ -177,18 +179,12 @@ Ractive.components['dropdown'] = Ractive.extend do
                             update-dropdown null
             else
                 if @get \debug => @actor.c-log "Observe: selected key set to:", _new
-
                 #@actor.c-log "DROPDOWN: selected key set to:", _new
                 unless @get \data
                     #@actor.c-warn "...but returning as there is no data yet."
                     return
-                if _new
-                    update-dropdown _new
-                    @set \item, (find (.[keyField] is _new), @get \data)
-                else
-                    # clear the dropdown
-                    @set \item, {}
-                    update-dropdown null
+
+                update-dropdown _new
 
         @observe \selected-key, selected-handler
 
@@ -201,7 +197,6 @@ Ractive.components['dropdown'] = Ractive.extend do
                 @fire \add, c, @get \search-term
                 @set \emptyReduced, false
                 @set \search-term, ''
-
                 # fixme: clear the dropdown text
                 #dd.dropdown 'set text', 'aaa'
 
