@@ -184,6 +184,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                     return
                 if _new
                     update-dropdown _new
+                    @set \item, (find (.[keyField] is _new), @get \data)
                 else
                     # clear the dropdown
                     @set \item, {}
