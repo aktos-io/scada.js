@@ -101,6 +101,8 @@ dropdown(
 ```
 
 ```ls
-someHandler: (ctx, newKey) ->
+someHandler: (ctx, newKey, proceed) ->
+    btn = ctx.button  # ack-button instance
     ...
+    proceed err=yes/no
 ```

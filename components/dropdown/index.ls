@@ -61,7 +61,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                         dd.dropdown 'refresh'
                         return op!
                     else
-                        @actor.log.debug "Setting new visual to #{_new}"
+                        if @get \debug => @actor.log.debug "Setting new visual to #{_new}"
                         item = find (.[keyField] is _new), compact @get \dataReduced
                         unless item
                             item = find (.[keyField] is _new), @get \data
@@ -194,11 +194,16 @@ Ractive.components['dropdown'] = Ractive.extend do
 
             '_add': (ctx) ->
                 c.button = ctx.component
-                @fire \add, c, @get \search-term
-                @set \emptyReduced, false
-                @set \search-term, ''
-                # fixme: clear the dropdown text
-                #dd.dropdown 'set text', 'aaa'
+                sleep 10, -> dd.dropdown 'show'
+                err <~ @fire \add, c, @get \search-term
+                # dropdown should only be closed if there is
+                # no error returned
+                unless err
+                    dd.dropdown 'hide'
+                    @set \emptyReduced, false
+                    @set \search-term, ''
+                    # fixme: clear the dropdown text
+                    #dd.dropdown 'set text', 'aaa'
 
     data: ->
         'allow-addition': no
