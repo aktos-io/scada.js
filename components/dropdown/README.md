@@ -91,3 +91,16 @@ dropdown(
     ...
 )
 ```
+
+## Allow Addition
+
+```pug
+dropdown(
+    allow-addition on-add="someHandler"
+)
+```
+
+```ls
+someHandler: (ctx, newKey) ->
+    ...
+```
