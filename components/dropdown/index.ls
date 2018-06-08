@@ -201,7 +201,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                 #dd.dropdown 'set text', 'aaa'
 
     data: ->
-        'allow-additions': no  # TODO
+        'allow-addition': no
         'search-fields': <[ id name description ]>
         'search-term': ''
         data: undefined
