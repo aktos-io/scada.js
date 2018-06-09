@@ -36,7 +36,10 @@ window.do-math = Ractive.defaults.do-math = (expression) ->
         exact = math.eval expression
         display = math.format exact, 6_digits
         float = parse-float display
-    return {display, float, exact}
+        error = no
+    catch
+        error = e
+    return {display, float, exact, error}
 
 '''
 Usage of `doMath()` in Ractive:
