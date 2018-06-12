@@ -160,6 +160,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 if @get \addingNew
                     return @logger.cwarn "adding new, not opening any rows"
 
+                @logger.clog "Clicked to open #{index}"
                 @set \clickedIndex, index
                 @set \openingRow, yes
                 @set \openedRow, no
@@ -386,14 +387,21 @@ Ractive.components['data-table'] = Ractive.extend do
         sifter: null
         searching: no
         is-editing-row: (index) ->
-            return no unless @get \editable
-            clicked-index = @get \clickedIndex
-            index is clicked-index
+            state = no
+            if @get \editable
+                clicked-index = @get \clickedIndex
+                state = index is clicked-index
+            #if state => @logger.clog "Now editing #{index}"
+            return state
 
         is-viewing-row: (index) ->
-            return no if not @get \openedRow
-            clicked-index = @get \clickedIndex
-            index is clicked-index
+            state = no
+            if @get \openedRow
+                clicked-index = @get \clickedIndex
+                state = index is clicked-index
+            #if state => @logger.clog "Now viewing #{index}"
+            return state
+
 
         is-opening-now: (row-index) ->
             opening = @get \openingRow
