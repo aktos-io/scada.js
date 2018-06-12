@@ -54,8 +54,8 @@
                 +if('emptyReduced && ~/["allow-addition"]')
                     ack-button.green.fluid.bottom.attached(on-click="_add")
                         icon.plus "{{~/['search-term']}}"
-                        
-                +apply('addNew')
+                +if('@this.partials.addNew ')
+                    +apply('addNew')
     +endif
 
 

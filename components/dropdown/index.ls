@@ -52,7 +52,7 @@ Ractive.components['dropdown'] = Ractive.extend do
 
         update-dropdown = (_new) ~>
             if @get \debug => @actor.log.log "#{@_guid}: selected is changed: ", _new
-            <~ sleep 0
+            <~ set-immediate
             external-change := yes
             <~ :lo(op) ~>
                 if _new
@@ -63,14 +63,14 @@ Ractive.components['dropdown'] = Ractive.extend do
                     else
                         if @get \debug => @actor.log.debug "Setting new visual to #{_new}"
                         if empty ((@get \data) or [])
-                            @actor.log.debug "No data yet, not updating dropdown."
+                            if @get \debug => @actor.log.debug "No data yet, not updating dropdown."
                             return
                         item = find (.[keyField] is _new), compact @get \dataReduced
                         unless item
                             item = find (.[keyField] is _new), @get \data
                             @push \dataReduced, item
                         @set \item, item
-                        <~ sleep 10ms
+                        <~ set-immediate
                         dd.dropdown 'set selected', _new
                         dd.dropdown 'refresh'
                         return op!
@@ -162,7 +162,7 @@ Ractive.components['dropdown'] = Ractive.extend do
         @observe \data, (data) ~>
             if @get \debug => @actor.c-log "Dropdown (#{@_guid}): data is changed: ", data
             @set \loading, yes # show loading icon while data is being fetched
-            <~ sleep 300ms
+            <~ set-immediate
             if data and not empty data
                 @set \loading, no
                 @set \dataReduced, small-part-of data
@@ -174,19 +174,13 @@ Ractive.components['dropdown'] = Ractive.extend do
             if @get \multiple
                 if typeof! _new is \Array
                     if JSON.stringify(_new or []) isnt JSON.stringify(old or [])
-                        if not empty _new
-                            <~ sleep 10ms
-                            update-dropdown _new
-                        else
-                            # clear the dropdown
-                            update-dropdown null
+                        update-dropdown _new
             else
                 if @get \debug => @actor.c-log "Observe: selected key set to:", _new
                 #@actor.c-log "DROPDOWN: selected key set to:", _new
                 unless @get \data
                     #@actor.c-warn "...but returning as there is no data yet."
                     return
-
                 update-dropdown _new
 
         @observe \selected-key, selected-handler
