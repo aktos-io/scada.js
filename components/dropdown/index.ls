@@ -62,6 +62,9 @@ Ractive.components['dropdown'] = Ractive.extend do
                         return op!
                     else
                         if @get \debug => @actor.log.debug "Setting new visual to #{_new}"
+                        if empty ((@get \data) or [])
+                            @actor.log.debug "No data yet, not updating dropdown."
+                            return
                         item = find (.[keyField] is _new), compact @get \dataReduced
                         unless item
                             item = find (.[keyField] is _new), @get \data
