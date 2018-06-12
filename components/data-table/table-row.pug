@@ -9,7 +9,13 @@
                     p {{ openingRowMsg }}
                     btn.small.inverted.red.icon(on-click="closeRow" tooltip="Kapat") #[i.remove.icon] Cancel
             .data-table-opened-row(slide-in="true")
-                +apply('viewForm')
+                p TODO: Add "viewForm" template here.
+                //- FIXME: Below viewForm partial should not be added here as is
+                //- because it might trigger lots of database operations, create 
+                //- class instances etc. So it is causing performance issues. 
+                //- Find a way to overcome this problem.
+                //-+apply('viewForm')
+
 //- -----------------------------------------------
 //- edit form
 //- -----------------------------------------------
