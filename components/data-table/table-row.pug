@@ -1,7 +1,7 @@
 //- -----------------------------------------------
 //- opening dialog
 //- -----------------------------------------------
-+iff('isOpeningNow(tableview_visible[i].id)')
++iff('isOpeningOrViewingRow(.id)')
     td(colspan="{{ colNames.length }}")
         .dimmable 
             .ui.inverted.dimmer(class-active="openingRow" slide-in="true")
@@ -9,12 +9,10 @@
                     p {{ openingRowMsg }}
                     btn.small.inverted.red.icon(on-click="closeRow" tooltip="Kapat") #[i.remove.icon] Cancel
             .data-table-opened-row(slide-in="true")
-                p TODO: Add "viewForm" template here.
-                //- FIXME: Below viewForm partial should not be added here as is
-                //- because it might trigger lots of database operations, create 
-                //- class instances etc. So it is causing performance issues. 
-                //- Find a way to overcome this problem.
-                //-+apply('viewForm')
+                //- -----------------------------------------------
+                //- view form
+                //- -----------------------------------------------
+                +apply('viewForm')
 
 //- -----------------------------------------------
 //- edit form
@@ -24,14 +22,6 @@
         .data-table-opened-row
             +apply('editForm')
 
-//- -----------------------------------------------
-//- view form
-//- -----------------------------------------------
-+elif('isViewingRow(.id)')
-    td(colspan="{{ colNames.length }}")    
-        .data-table-opened-row
-            +apply('viewForm')
-    
 //- -----------------------------------------------
 //- normal rows 
 //- -----------------------------------------------

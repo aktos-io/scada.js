@@ -402,6 +402,11 @@ Ractive.components['data-table'] = Ractive.extend do
             #if state => @logger.clog "Now viewing #{index}"
             return state
 
+        isOpeningOrViewingRow: (index) ->
+            clicked-index = @get \clickedIndex
+            state = index is clicked-index and not @get \editable
+            #if state => @logger.clog "Now viewing #{index}"
+            return state
 
         is-opening-now: (row-index) ->
             opening = @get \openingRow
