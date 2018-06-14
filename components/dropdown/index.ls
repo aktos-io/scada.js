@@ -51,7 +51,8 @@ Ractive.components['dropdown'] = Ractive.extend do
                 []
 
         update-dropdown = (_new) ~>
-            if @get \debug => @actor.log.log "#{@_guid}: selected is changed: ", _new
+            if @get \debug
+                @actor.log.log "#{@_guid}: selected key is changed to: ", _new
             <~ set-immediate
             external-change := yes
             <~ :lo(op) ~>
@@ -70,6 +71,10 @@ Ractive.components['dropdown'] = Ractive.extend do
                             item = find (.[keyField] is _new), @get \data
                             @push \dataReduced, item
                         @set \item, item
+                        unless (@get \selected-key) is _new
+                            # a new selected-key is set by the async handler,
+                            # so set selected-key explicitly
+                            @set \selected-key, _new
                         <~ set-immediate
                         dd.dropdown 'set selected', _new
                         dd.dropdown 'refresh'
