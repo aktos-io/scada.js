@@ -67,13 +67,12 @@ dropdown(
 ```ls
 itemSelected: (ctx, item, progress) ->
     # item format: original data format
-    # ...
    ...do your async job here
 
-    # if `progress` function is called without error, `item=` and 
-    # `selected-key=` attributes are set accordingly. if `progress` is 
-    # called with a truthy value, selection is restored to the previous 
-    # state. 
+    # if `progress` function is called without error, `item=` and
+    # `selected-key=` attributes are set accordingly. if `progress` is
+    # called with a truthy value, selection is restored to the previous
+    # state.
     progress!
 ```
 
