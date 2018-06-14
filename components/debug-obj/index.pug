@@ -1,14 +1,7 @@
-+iff('show')
-    .ui.form.red(fade-in="true")
-        .field
-            label 
-                .ui.mini.button.blue.circular.icon(on-click="@.toggle('show')" title="{{title}}") 
-                    i.info.icon 
-                |
-                | {{#if title}}{{title}}{{else}}Debugging Object{{/if}}
++if('able("scene.admin.debug") || public')
+    button.ui.button.circular.icon.pink.mini(on-click="@.toggle('mymodal1')" title="{{title}}") 
+        icon.bug
 
-            json-edit(value="{{obj}}")
-+else 
-    .ui.mini.button.basic.circular.icon(on-click="@.toggle('show')" title="{{title}}") 
-        i.info.icon 
-+endif
+    modal(title="{{title}}" basedon="{{mymodal1}}")
+        .ui.segment(style="width: 800px")
+            json-edit(value="{{obj}}" style="width: 100%; height: 100em;")

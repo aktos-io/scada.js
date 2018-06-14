@@ -1,26 +1,40 @@
 //- text mode 
-+iff('~/["text-mode"]')
-    +apply('text-mode')
-
-//- readonly 
-+elif('~/["readonly-mode"]')
-    .ui.input.readonly
-        input(twoway="false" value="{{ item ? item[nameField] : nothingSelected }}")
++showif('readonly')
+    .ui.basic.label(
+        class="{{#emptyReduced}}red{{/}}"
+        ) 
+        +iff('~/["selected-key"]')
+            +iff('item[nameField]')
+                | {{item[nameField]}}
+            +else 
+                span.text.red(style="font-style: italic") {{~/['selected-key']}}
+            +endif
+        +else 
+            | {{nothingSelected}}
+        +endif
 
 //- dropdown 
-+else
++hideif('readonly')
     //- inline 
     +iff('inline')
-        .ui.inline.dropdown(class="{{class}} {{#loading}}loading{{/}}")                
-            i.dropdown.icon 
-            .default.text {{ placeholder }}
+        .ui.inline.dropdown(class="{{class}} {{#loading}}loading{{/}} {{#emptyReduced}}error{{/}}")                
+            i.dropdown.icon(style="display: inline")
+            //-.default.text {{ placeholder | '----' }}
+            span.text -------
             .menu
                 .ui.icon.search.input
                     i.search.icon
                     input(type="text" placeholder="Search...")
 
-                +each('dataReduced')
-                    .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
+                +each('dataReduced as item')
+                    .item(
+                        data-value!="{{item[keyField]}}" 
+                        class-disabled="blacklist == item[keyField]"
+                        ) {{item[nameField]}}
+
+                +if('emptyReduced && ~/["allow-addition"]')
+                    ack-button.green.fluid.bottom.attached(on-click="_add")
+                        icon.plus "{{~/['search-term']}}"
 
     //- custom 
     +elif('custom')
@@ -28,16 +42,22 @@
 
     //- default 
     +else
-        div(style="display: inline-block")
-            .ui.search.selection.dropdown(class="{{class}} {{#loading}}loading{{/}}")
-                input(type="hidden" name="{{_guid}}")
-                i.dropdown.icon 
-                .default.text {{ placeholder }}
-                .menu
-                    +each('dataReduced')
-                        .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
+        //-div(style="display: inline-block")
+        .ui.search.selection.dropdown(class="{{class}} {{#loading}}loading{{/}} {{#emptyReduced}}error{{/}}")
+            input(type="hidden" name="{{_guid}}")
+            i.dropdown.icon 
+            .default.text {{ placeholder }}
+            .menu
+                +each('dataReduced')
+                    .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
+
+                +if('emptyReduced && ~/["allow-addition"]')
+                    ack-button.green.fluid.bottom.attached(on-click="_add")
+                        icon.plus "{{~/['search-term']}}"
+                +if('@this.partials.addNew ')
+                    +apply('addNew')
     +endif
-+endif
+
 
 //- ----------------------------------------------------------------------------
 //- Debug output

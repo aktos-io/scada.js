@@ -8,13 +8,12 @@ Ractive.components['logger'] = Ractive.extend do
     onrender: ->
         modal = $ @find '.ui.basic.modal'
         @logger = new Logger "Global Modal"
-        @actor = new RactiveActor this, do
-            name: "Global Modal"
-            subscribe: 'app.log.**'
+        @actor = new RactiveActor this, {name: "Global Modal"}
+            ..subscribe 'app.log.**'
 
         @actor.on \data, (msg) ~>
-            if msg.topic `topic-match` 'app.log.**'
-                action <~ @fire \showDimmed, {}, msg.payload
+            if msg.to `topic-match` 'app.log.**'
+                action <~ @fire \showDimmed, {}, msg.data
                 @actor.send-response msg, {action}
 
         if @get \debug

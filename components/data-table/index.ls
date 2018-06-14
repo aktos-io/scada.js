@@ -1,10 +1,9 @@
 require! 'prelude-ls': {
     split, take, join, lists-to-obj, sum, filter
-    camelize, find, reject, find-index
+    camelize, find, reject, find-index, compact
 }
 require! 'aea': {sleep, merge, clone, unix-to-readable, pack, VLogger}
 require! 'actors': {RactiveActor}
-
 require! 'sifter': Sifter
 require! './sifter-workaround': {asciifold}
 
@@ -23,7 +22,7 @@ Ractive.components['data-table'] = Ractive.extend do
             name: 'data-table'
             debug: settings.debug
 
-
+        set-col-names = null
         # check parameters
         try
             unless typeof! settings is \Object
@@ -31,9 +30,6 @@ Ractive.components['data-table'] = Ractive.extend do
 
             unless settings.name
                 throw 'data-table name is required'
-
-            unless typeof! settings.col-names is \Array
-                throw 'Column names are missing'
 
             unless settings.default
                 throw 'Default document is required'
@@ -53,6 +49,19 @@ Ractive.components['data-table'] = Ractive.extend do
 
             if typeof! settings.data is \Function
                 settings.data = settings.data.bind this
+
+            if typeof! settings.col-names isnt \Function
+                cn = settings.col-names
+                settings.col-names = ->
+                    return cn
+
+            do set-col-names = ~>
+                x = settings.col-names.call this
+                @set \colNames, x
+
+            unless typeof! (@get \colNames) is \Array
+                throw 'Column names are missing'
+
 
             unless settings.on-init
                 throw "on-init is required"
@@ -80,9 +89,6 @@ Ractive.components['data-table'] = Ractive.extend do
             catch
                 @logger.cerr e
 
-
-
-        @set \colNames, settings.col-names
         opening-dimmer = $ @find \.table-section-of-data-table
 
         # assign filters
@@ -91,6 +97,7 @@ Ractive.components['data-table'] = Ractive.extend do
             data-filters[name] = func.bind this
         data-filters['all'] = (x) ~> x
         @set \dataFilters, data-filters
+
 
         @refresh = ~>
             filter-func = @get(\dataFilters)[@get(\selectedFilter)]
@@ -104,52 +111,43 @@ Ractive.components['data-table'] = Ractive.extend do
             tableview_filtered = filter-func tableview
             @set \tableview_filtered, tableview_filtered
 
+            if @get \clickedIndex
+                unless find (.id is that), @get \tableview
+                    console.warn "I think that row (#{@get 'clickedIndex'}) is
+                        deleted, closing."
+                    @fire \closeRow
+            else
+                @fire \doSearchText
+
         open-item-page = (id) ~>
             index = find-index (.id is id), @get('tableview_filtered')
             if index?
                 @set \currPage, index / settings.page-size
                 @refresh!
 
-
         @observe \tableview, (_new) ~>
             @logger.clog "DEBUG MODE: tableview changed, refreshing..." if @get \debug
             @set \sifter, new Sifter(_new)
             @refresh!
 
+        @observe \@global.session.token, ~>
+            @set \tableview, []
+            @refresh!
 
         search-rate-limit = null
+        search-text-global = null
         @observe \searchText, (text) ~>
-            try clear-timeout search-rate-limit
-            search-rate-limit := sleep 200ms, ~>
-                tableview_filtered = if text
-                    search-fields = <[ id ]> ++ (settings.search-fields or <[ value.description ]>)
-                    result = @get \sifter .search asciifold(that), do
-                        #fields: ['id', 'value.description']
-                        fields: search-fields
-                        sort: [{field: 'name', direction: 'asc'}]
-                        nesting: yes
-                        conjunction: "and"
-
-                    x = []
-                    for result.items
-                        x.push (@get \tableview .[..id])
-                    if @get \clickedIndex
-                        x.push (find (.id is that), @get \tableview)
-                    x
-                else
-                    @get \tableview
-                @set \currPage, 0
-
-                @set \tableview_filtered, tableview_filtered
-                console.log "search for '#{text}' returned #{tableview_filtered.length} results"
-
+            search-text-global := text
+            @fire \doSearchText
 
 
         @observe \tableview_filtered, (filtered) ~>
             settings.after-filter filtered, (items) ~>
+                set-col-names!
                 if items.length > 0
-                    if items.0.cols.length isnt settings.col-names.length
+                    if items.0.cols.length isnt (@get \colNames .length)
                         @logger.error "Column count does not match with after-filter output!"
+                        debugger
                         return
                     for i in items when i.id in [undefined, null]
                         return @logger.cerr "id can not be null or undefined: #{pack i}."
@@ -162,6 +160,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 if @get \addingNew
                     return @logger.cwarn "adding new, not opening any rows"
 
+                @logger.clog "Clicked to open #{index}"
                 @set \clickedIndex, index
                 @set \openingRow, yes
                 @set \openedRow, no
@@ -169,6 +168,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 opening-dimmer.dimmer \show
                 row-clone = clone row
                 @set \_tmp, {}
+                @set \curr, {}
                 curr <~ settings.on-create-view.call this, row-clone
                 @set \curr, that if curr
                 sleep 100ms, ~>
@@ -181,6 +181,9 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \lastIndex, index
                 # scroll to the row
                 # TODO
+
+            delete: ->
+                @set 'curr._deleted', yes
 
             toggle-editing: ->
                 editable = @get \editable
@@ -202,7 +205,7 @@ Ractive.components['data-table'] = Ractive.extend do
 
             close-row: ->
                 <~ :lo(op) ~>
-                    if pack(@get \origCurr) isnt pack(@get \curr)
+                    if (@get \curr) and pack(@get \origCurr) isnt pack(@get \curr)
                         @logger.cwarn "Not closing row because there are unsaved changes."
                         @logger.clog "orig: ", @get \origCurr
                         @logger.clog "curr: ", @get \curr
@@ -259,27 +262,29 @@ Ractive.components['data-table'] = Ractive.extend do
                 ev.component?.fire \state, \normal
 
 
-            save: (ev, val) ->
-                ev.component.fire \state, \doing
-                err <~ @fire 'beforeSave', ev, @get('curr')
+            save: (ctx) ->
+                ctx.component.fire \state, \doing
+                err <~ @fire 'beforeSave', ctx, @get('curr')
                 if err
                     console.error "data-table error:", err
                     return
-                ...args <~ @fire 'onSave', ev, @get(\curr)
+                ...args <~ @fire 'onSave', ctx, @get('curr')
                 if args.length isnt 1
-                    ev.component.error """
+                    ctx.component.error """
                         Coding error: Save function requires error argument upon
                         calling the callback."""
                     return
                 err = args.0
                 if err
-                    ev.component.error pack err
+                    ctx.component.error pack err
                 else
-                    @set \origCurr, (@get \curr)
-                    ev.component.fire \state \done...
+                    @set \origCurr, @get('curr')
+                    ctx.component.fire \state \done...
                     @refresh!
 
             on-save: (ev, curr, next) ->
+                # This function will be overwritten if it is present in
+                # settings.on-save
                 timeout = 15_000ms
                 ev.component.heartbeat timeout
 
@@ -301,15 +306,42 @@ Ractive.components['data-table'] = Ractive.extend do
 
                 if @get \new_attachments
                     curr._attachments = (curr._attachments or {}) <<< that
-
                 err, res <~ @get \db .put curr, {timeout}
-                if err
-                    @logger.clog "err is: ", err
-                else
-                    #@logger.clog "res is: ", res
-                    @set \curr._id, res.id     # if `_id` is assigned automatically
-                    @set \curr._rev, res.rev   # rev will be updated on save
+                if err => @logger.clog "err is: ", err
+                @set \curr, curr
                 next err
+
+            do-search-text: (ctx) ->
+                text = search-text-global
+                try clear-timeout search-rate-limit
+                if not text
+                    @set \tableview_filtered, @get \tableview
+                    return
+
+                @set \searching, yes
+                search-rate-limit := sleep 500ms, ~>
+                    tableview_filtered = if text
+                        search-fields = <[ id ]> ++ (settings.search-fields or <[ value.description ]>)
+                        result = @get \sifter .search asciifold(that), do
+                            #fields: ['id', 'value.description']
+                            fields: search-fields
+                            sort: [{field: 'name', direction: 'asc'}]
+                            nesting: yes
+                            conjunction: "and"
+
+                        x = []
+                        for result.items
+                            x.push (@get \tableview .[..id])
+                        if @get \clickedIndex
+                            x.push (find (.id is that), @get \tableview)
+                        x
+                    else
+                        @get \tableview
+                    <~ set-immediate
+                    @set \currPage, 0
+                    @set \tableview_filtered, tableview_filtered
+                    #console.log "search for '#{text}' returned #{tableview_filtered.length} results"
+                    @set \searching, no
 
 
         # register events
@@ -353,15 +385,28 @@ Ractive.components['data-table'] = Ractive.extend do
         new_attachments: {}
         searchText: ''
         sifter: null
+        searching: no
         is-editing-row: (index) ->
-            return no unless @get \editable
-            clicked-index = @get \clickedIndex
-            index is clicked-index
+            state = no
+            if @get \editable
+                clicked-index = @get \clickedIndex
+                state = index is clicked-index
+            #if state => @logger.clog "Now editing #{index}"
+            return state
 
         is-viewing-row: (index) ->
-            return no if not @get \openedRow
+            state = no
+            if @get \openedRow
+                clicked-index = @get \clickedIndex
+                state = index is clicked-index
+            #if state => @logger.clog "Now viewing #{index}"
+            return state
+
+        isOpeningOrViewingRow: (index) ->
             clicked-index = @get \clickedIndex
-            index is clicked-index
+            state = index is clicked-index and not @get \editable
+            #if state => @logger.clog "Now viewing #{index}"
+            return state
 
         is-opening-now: (row-index) ->
             opening = @get \openingRow

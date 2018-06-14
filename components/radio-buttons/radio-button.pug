@@ -1,1 +1,4 @@
-.ui.button(class="{{class}} {{colorclass}}" on-click="click") {{yield}}
+ack-button(
+    class="{{class}} {{colorclass}} {{#disabled}}disabled{{/}}" 
+    style="{{style}}"
+    on-click="click") {{yield}}

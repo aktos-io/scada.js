@@ -24,16 +24,16 @@ export class RactiveActor extends Actor
             teleport-signal = new Signal
 
             @on-topic that, (msg) ~>
-                if typeof! msg.payload is \Object
-                    if \get of msg.payload
-                        keypath = msg.payload.get
+                if typeof! msg.data is \Object
+                    if \get of msg.data
+                        keypath = msg.data.get
                         #@log.log "received request for keypath: '#{keypath}'"
                         #@log.log "responding for #{keypath}:", val
                         val = @ractive.get keypath
                         @send-response msg, {res: val}
 
-                    else if \cmd of msg.payload
-                        switch msg.payload.cmd
+                    else if \cmd of msg.data
+                        switch msg.data.cmd
                         | \ctx      => @send-response msg, {res: @ractive.get-context! }
                         | \target   => @send-response msg, {res: @ractive.target}
                         | \ractive  => @send-response msg, {res: @ractive}
@@ -44,15 +44,15 @@ export class RactiveActor extends Actor
                             timeout <~ teleport-signal.wait
                             @ractive.insert orig-location
                         | \teleport-restore => teleport-signal.go!
-                        |_ => @log.err "Not a known command:", msg.payload.cmd
+                        |_ => @log.err "Not a known command:", msg.data.cmd
                 else
                     debugger
 
             @on-topic 'app.router.changes', (msg) ~>
-                if msg.payload?.scene
+                if msg.data?.scene
                     # put the node back only on scene changes
                     teleport-signal.go!
-                    @log.log "Ractive actor says: scene changed to:", msg.payload.scene
+                    @log.log "Ractive actor says: scene changed to:", msg.data.scene
 
 
 

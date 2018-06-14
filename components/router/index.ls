@@ -2,11 +2,13 @@ require! 'aea': {sleep}
 require! 'prelude-ls': {take, drop, split}
 require! 'actors':  {RactiveActor}
 
+top-offset = 55px
+
 scroll-to = (anchor) ->
     offset = $ "span[data-id='#{anchor}']" .offset!
     if offset
         $ 'html, body' .animate do
-            scroll-top: offset.top - 55px
+            scroll-top: offset.top - top-offset
             , 500ms
 
 make-link = (scene, anchor) ->
@@ -144,6 +146,7 @@ Ractive.components['router'] = Ractive.extend do
                     change.anchor = curr.anchor
 
                 actor.send 'app.router.changes', {change}
+                @set \@shared.router, change
                 prev <<< curr
 
         $ window .on \hashchange, ->
@@ -160,17 +163,26 @@ Ractive.components['scene'] = Ractive.extend do
                 margin: 0;
                 padding: 0;
                 border: 0;
+                padding-bottom: 5em;
                 "
             >
-            {{#if ! loggedin}}
-                <div class="ui red message fluid" style="
-                        position: fixed; top: 100px; left: 0; z-index: 999999999;
-                        width: 100%; height: 200px">
-                    Login required
-                </div>
-            {{/if}}
-            {{#if renderedBefore}}
-                {{>content}}
+            {{#unless public}}
+                {{#if @global.session.user === "public" || @global.session.user === "" }}
+                    <div class="ui red message fluid" style="
+                            position: fixed; top: 0; left: 0; z-index: 999999999;
+                            width: 100%; height: 100%; padding-left: 2em; padding-right: 2em">
+                        <h2 class="ui header block red">Login required</h2>
+                        <login />
+                    </div>
+                {{/if}}
+            {{/unless}}
+            {{#if able(permissions) || public}}
+                {{#if renderedBefore}}
+                    {{>content}}
+                {{/if}}
+            {{else}}
+                <h1>Unauthorized.</h1>
+                {{JSON.stringify(@global.session.permissions)}}
             {{/if}}
         </div>'
 
@@ -179,7 +191,7 @@ Ractive.components['scene'] = Ractive.extend do
         if @get \render
             @set \renderedBefore, yes
 
-        @observe \curr, (curr) ->
+        @observe \@shared.router.scene, (curr) ->
             #console.log "scene says: current is: ", curr
             this-page = @get \name
             default-page = @get 'default'
@@ -205,3 +217,4 @@ Ractive.components['scene'] = Ractive.extend do
     data: ->
         rendered-before: no
         loggedin: yes
+        permissions: "**"

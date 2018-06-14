@@ -49,7 +49,7 @@ Ractive.components['pushbutton'] = Ractive.extend do
             turn off
 
         @actor.on \data, (msg) ~>
-            curr = msg.payload?.curr
+            curr = msg.data?.curr
             if curr?
                 name-state curr
                 @set \pressed, curr

@@ -1,6 +1,6 @@
 require! 'dcs/browser':{Signal}
 require! 'aea': {VLogger}
-require! './csv-utils': {parse-csv}
+require! 'aea/csv-utils': {parse-csv}
 
 '''
 # Context API
@@ -104,7 +104,7 @@ Ractive.components['file-button'] = Ractive.extend do
 
                 if csv
                     value.csv =
-                        data: csv.column-list
+                        data: csv.rows
                         columns: csv.columns
 
                 err <~ @fire \read, c, value

@@ -33,22 +33,25 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                     ev.component.error pack err
                     console.log "this is error on list design documents: ", err
                     return
-                @set \designDocuments, [..key for res]
+                docs = [..key for res]
+                @set \designDocuments, docs
+                console.log "got design docs: ", docs
                 ev.component.fire \state, \done...
 
-            get-design-document: (ev) ->
-                doc-id = ev.get '.'
-                ev.component.fire \state, \doing
+            get-design-document: (ctx, value, proceed) ->
+                doc-id = value
                 # get the _auth design document
                 err, res <~ db.get doc-id
-                return ev.component.error err.message if err
+                if err
+                    return proceed err
 
                 console.log "Current _auth document: ", res
                 ddoc = res
                 ddoc.livescript = res.src
                 @set \documentId, ddoc._id
                 @set \designDocument, ddoc
-                ev.component.fire \state, \done...
+                @set \getView_view, "#{ddoc._id.split '/' .1}/"
+                proceed!
 
             dump-all-design-documents: (ev) ->
                 # dump all design documents, useful for backup

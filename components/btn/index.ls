@@ -5,8 +5,8 @@ Ractive.components['btn'] = Ractive.extend do
         _click: (ctx) ->
             const c = ctx.getParent yes
             c.refire = yes
-            @fire 'buttonclick', c, @get \value
             @fire \click, c
+
             # prevent event propogation
             return false
     data: ->

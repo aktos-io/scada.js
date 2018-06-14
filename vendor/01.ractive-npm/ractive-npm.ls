@@ -43,8 +43,14 @@ Usage:
 
 Ractive.prototype.delete = (root, key) ->
     console.error 'keypath must be string' if typeof! root isnt \String
-    delete @get(root)[key]
+    delete @get(root)?[key]
     @update root
+
+
+Ractive.defaults.find-wid = (wid) ->
+    for x in @find-all-components!
+        if (x.get \wid) is wid
+            return x
 
 # Events
 # ---------------------------------------------
@@ -88,6 +94,7 @@ Ractive.Context.find-keypath-id = (postfix='') ->
 
     ***************************************************************************/
     @ractive.find '#' + Ractive.escapeKey(@resolve!) + postfix
+
 
 Ractive.Context.removeMe = ->
     /***************************************************************************

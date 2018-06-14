@@ -12,7 +12,7 @@ Design considerations (TO BE COMPLETED)
 1. Place 2 dropdown side by side (exact copy of each other)
 2. Change one, expect the other to be exactly the same of the one
 """
-require! 'prelude-ls': {find, empty, take}
+require! 'prelude-ls': {find, empty, take, compact}
 require! 'actors': {RactiveActor}
 require! 'aea': {sleep}
 
@@ -34,6 +34,8 @@ Ractive.components['dropdown'] = Ractive.extend do
         if @get \key => @set \keyField, that
         if @get \name => @set \nameField, that
 
+        #@link \selected-item, \item
+
     onrender: ->
         const c = @getContext @target .getParent yes
         c.refire = yes
@@ -41,7 +43,6 @@ Ractive.components['dropdown'] = Ractive.extend do
         keyField = @get \keyField
         nameField = @get \nameField
         external-change = no
-        shandler = null
 
         small-part-of = (data) ~>
             if data? and not empty data
@@ -49,16 +50,39 @@ Ractive.components['dropdown'] = Ractive.extend do
             else
                 []
 
-
-
         update-dropdown = (_new) ~>
-            if @get \debug => @actor.log.log "#{@_guid}: selected is changed: ", _new
+            if @get \debug
+                @actor.log.log "#{@_guid}: selected key is changed to: ", _new
+            <~ set-immediate
             external-change := yes
-            if @get \multiple
-                dd.dropdown 'set exactly', _new
-            else
-                dd.dropdown 'set selected', _new
-            dd.dropdown 'refresh'
+            <~ :lo(op) ~>
+                if _new
+                    if @get \multiple
+                        dd.dropdown 'set exactly', _new
+                        dd.dropdown 'refresh'
+                        return op!
+                    else
+                        if @get \debug => @actor.log.debug "Setting new visual to #{_new}"
+                        if empty ((@get \data) or [])
+                            if @get \debug => @actor.log.debug "No data yet, not updating dropdown."
+                            return
+                        item = find (.[keyField] is _new), compact @get \dataReduced
+                        unless item
+                            item = find (.[keyField] is _new), @get \data
+                            @push \dataReduced, item
+                        @set \item, item
+                        unless (@get \selected-key) is _new
+                            # a new selected-key is set by the async handler,
+                            # so set selected-key explicitly
+                            @set \selected-key, _new
+                        <~ set-immediate
+                        dd.dropdown 'set selected', _new
+                        dd.dropdown 'refresh'
+                        return op!
+                else
+                    dd.dropdown 'restore defaults'
+                    @set \item, {}
+                    return op!
             external-change := no
 
         set-item = (value-of-key) ~>
@@ -92,9 +116,14 @@ Ractive.components['dropdown'] = Ractive.extend do
                             if @get \async
                                 @fire \select, c, selected, (err) ~>
                                     unless err
-                                        @set \item, selected
+                                        @set \emptyReduced, no
+                                        update-dropdown selected[keyField]
                                     else
-                                        @actor.c-err "Error reported for dropdown callback: ", err
+                                        curr = @get \selected-key
+                                        @actor.c-err "Error reported for dropdown callback: ", err,
+                                            "falling back to #{curr}"
+                                        @set \emptyReduced, yes
+                                        update-dropdown curr
                             else
                                 @set \selected-key, selected[keyField]
 
@@ -116,7 +145,12 @@ Ractive.components['dropdown'] = Ractive.extend do
                             sort: [{field: nameField, direction: 'asc'}]
                             nesting: no
                             conjunction: "and"
-                        @set \dataReduced, [data[..id] for small-part-of(result.items)]
+                        reduced = [data[..id] for small-part-of(result.items)]
+                        @set \dataReduced, reduced
+                        if empty reduced
+                            @actor.log.err "No such item found: #{text}"
+                        @set \emptyReduced, empty reduced
+
                         #@actor.c-log "Dropdown (#{@_guid}) : data reduced: ", [..id for @get \dataReduced]
                     else
                         #@actor.c-log "Dropdown (#{@_guid}) : searchTerm is empty"
@@ -132,57 +166,49 @@ Ractive.components['dropdown'] = Ractive.extend do
 
         @observe \data, (data) ~>
             if @get \debug => @actor.c-log "Dropdown (#{@_guid}): data is changed: ", data
-            do  # show loading icon while data is being fetched
-                @set \loading, yes
-                <~ sleep 300ms
-                if data and not empty data
-                    @set \loading, no
-                    @set \dataReduced, small-part-of data
-                    @set \sifter, new Sifter(data)
-                    # Update dropdown visually when data is updated
-                    if selected = @get \selected-key
-                        if @get \multiple
-                            <~ sleep 10ms
-                            update-dropdown selected
-                        else
-                            update-dropdown selected
-                            set-item selected
+            @set \loading, yes # show loading icon while data is being fetched
+            <~ set-immediate
+            if data and not empty data
+                @set \loading, no
+                @set \dataReduced, small-part-of data
+                @set \sifter, new Sifter(data)
+                # Update dropdown visually when data is updated
+                selected-handler @get \selected-key
 
-        if @get \multiple
-            shandler = @observe \selected-key, (_new, old) ~>
+        selected-handler = (_new, old) ~>
+            if @get \multiple
                 if typeof! _new is \Array
                     if JSON.stringify(_new or []) isnt JSON.stringify(old or [])
-                        if not empty _new
-                            <~ sleep 10ms
-                            update-dropdown _new
-                        else
-                            # clear the dropdown
-                            dd.dropdown 'restore defaults'
-        else
-            shandler = @observe \selected-key, (_new) ~>
-                if @get \debug => @actor.c-log "selected key set to:", _new
-
+                        update-dropdown _new
+            else
+                if @get \debug => @actor.c-log "Observe: selected key set to:", _new
                 #@actor.c-log "DROPDOWN: selected key set to:", _new
-                if _new
-                    item = find (.[keyField] is _new), @get \dataReduced
-                    unless item
-                        item = find (.[keyField] is _new), @get \data
-                        @push \dataReduced, item
-                    @set \item, item
-                    <~ sleep 10ms
-                    # Workaround for dropdown update bug
-                    update-dropdown _new
-                else
-                    # clear the dropdown
-                    @set \item, {}
-                    dd.dropdown 'restore defaults'
+                unless @get \data
+                    #@actor.c-warn "...but returning as there is no data yet."
+                    return
+                update-dropdown _new
+
+        @observe \selected-key, selected-handler
 
         @on do
             teardown: ->
                 dd.dropdown 'destroy'
 
+            '_add': (ctx) ->
+                c.button = ctx.component
+                sleep 10, -> dd.dropdown 'show'
+                err <~ @fire \add, c, @get \search-term
+                # dropdown should only be closed if there is
+                # no error returned
+                unless err
+                    dd.dropdown 'hide'
+                    @set \emptyReduced, false
+                    @set \search-term, ''
+                    # fixme: clear the dropdown text
+                    #dd.dropdown 'set text', 'aaa'
+
     data: ->
-        'allow-additions': no  # TODO
+        'allow-addition': no
         'search-fields': <[ id name description ]>
         'search-term': ''
         data: undefined

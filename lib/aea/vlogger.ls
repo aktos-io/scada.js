@@ -33,7 +33,7 @@ export class VLogger
         default-opts =
             title: 'Error'
             icon: 'warning sign'
-            closable: no
+            closable: yes
         @modal.fire \showDimmed, {}, (default-opts <<< msg), callback
 
     yesno: (msg, callback) ->
