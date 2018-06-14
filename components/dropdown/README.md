@@ -1,15 +1,18 @@
 # Data format
 
-```
-{id, name}
+```ls
+[
+    {id: "foo", name: "The Foo", some: "other", keys:"are", also:"possible"},
+    ...
+]
 ```
 
-If your format is different, pass these names with `key=` and `name=` attributes
+If your format is different from `id` and `name`, pass these names with `key=` and `name=` attributes
 respectively.
 
 ## Basic Usage
 
-```
+```pug
 dropdown(
     data="{{data}}"
     selected-key="{{mydata}}"
@@ -20,7 +23,7 @@ dropdown(
 
 Use `custom` attribute and `custom` partial to define a custom template to dropdown.
 
-```
+```pug
 dropdown(
     custom
     data="{{data}}"
@@ -62,16 +65,16 @@ dropdown(
 ```
 
 ```ls
-itemSelected: (ctx, item[, progress]) ->
+itemSelected: (ctx, item, progress) ->
     # item format: original data format
     # ...
-    # do your async job
-    if not err
-        @set mySelected, item.id  # or any attribute available in `item`
+   ...do your async job here
 
-    # if `progress` function is called without error, `item=` attribute is set
-    # accordingly
-    #progress!
+    # if `progress` function is called without error, `item=` and 
+    # `selected-key=` attributes are set accordingly. if `progress` is 
+    # called with a truthy value, selection is restored to the previous 
+    # state. 
+    progress!
 ```
 
 ## Blacklisting
@@ -87,7 +90,7 @@ For inline or fluid instances, use `inline` or `block` attributes respectively.
 ```pug
 dropdown(
     multiple
-    selected-key="{{someProperty}}"  <- array
+    selected-key="{{someProperty}}"  <- "someProperty" is treated as an array
     ...
 )
 ```
@@ -96,12 +99,13 @@ dropdown(
 
 ```pug
 dropdown(
-    allow-addition on-add="someHandler"
+    allow-addition="true" on-add="someHandler"
 )
 ```
 
 ```ls
 someHandler: (ctx, newKey, proceed) ->
+    # newKey is the search term
     btn = ctx.button  # ack-button instance
     ...
     proceed err=yes/no
