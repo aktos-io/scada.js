@@ -4,18 +4,27 @@ This is the documentation of available methods and classes by default in ScadaJS
 
 # Methods/functions
 
-### able(permission)
+### `able()`
 
 Available in: template, code.
 
 Description: Checks if current user has this permission.
 
 Types:
-    `permission`: Topic type.
 
-# parseCsv
+* `permission`: Topic type.
+    
+Usage: 
 
-```
+    {{#if able('some.permission')}}
+        has this permission 
+    {{else}}
+        don't have this permission
+    {{/if}}
+
+# `parseCsv()`
+
+```ls
 require! 'aea/csv-utils': {parse-csv}
 
 err, csv <~ parse-csv content, {columns: "material,amount,reason"}
@@ -53,3 +62,8 @@ if answer is \drop
 else
     logger.cwarn "Cancelled discarding changes."
 ```
+
+## Request Library 
+
+SuperAgent is bundled with ScadaJS by default: https://github.com/visionmedia/superagent
+
