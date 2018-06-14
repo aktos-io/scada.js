@@ -1,6 +1,6 @@
 # Data format
 
-```
+```json
 {id, name, some, other, keys, are, also, possible}
 ```
 
