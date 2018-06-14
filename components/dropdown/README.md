@@ -106,3 +106,13 @@ someHandler: (ctx, newKey, proceed) ->
     ...
     proceed err=yes/no
 ```
+
+## Debugging
+
+When you need to debug anything, just pass the `debug` attribute:
+
+```pug
+dropdown(
+    ...
+    debug)
+```

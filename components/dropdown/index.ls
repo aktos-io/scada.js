@@ -112,7 +112,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                                 @fire \select, c, selected, (err) ~>
                                     unless err
                                         @set \emptyReduced, no
-                                        @set \item, selected
+                                        update-dropdown selected[keyField]
                                     else
                                         curr = @get \selected-key
                                         @actor.c-err "Error reported for dropdown callback: ", err,
