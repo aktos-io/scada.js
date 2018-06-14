@@ -1,7 +1,10 @@
 # Data format
 
 ```json
-{id, name, some, other, keys, are, also, possible}
+[
+    {id: "foo", name: "The Foo", some: "other", keys:"are", also:"possible"},
+    ...
+]
 ```
 
 If your format is different from `id` and `name`, pass these names with `key=` and `name=` attributes
