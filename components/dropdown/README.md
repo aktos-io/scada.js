@@ -1,6 +1,6 @@
 # Data format
 
-```json
+```ls
 [
     {id: "foo", name: "The Foo", some: "other", keys:"are", also:"possible"},
     ...
