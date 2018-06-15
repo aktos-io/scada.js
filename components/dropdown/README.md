@@ -120,10 +120,14 @@ dropdown(
     debug)
 ```
 
-## Don't show loading icon at the beginning
+## "Loading" state
 
 ```pug
 dropdown(
-    loading="false"
+    loading="{{loadingState}}"
     ...
 )
+```
+
+Note: `loadingState` is set to `false` by the `dropdown` when `dropdown`'s data
+is changed.

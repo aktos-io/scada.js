@@ -231,7 +231,7 @@ Ractive.components['dropdown'] = Ractive.extend do
         nameField: \name
         nothingSelected: '---'
         item: {}
-        loading: yes
+        loading: no
         sifter: null
         nomatch: false
 
