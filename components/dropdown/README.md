@@ -130,4 +130,4 @@ dropdown(
 ```
 
 Note: `loadingState` is set to `false` by the `dropdown` when `dropdown`'s data
-is changed.
+is changed and not empty.
