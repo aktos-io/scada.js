@@ -122,12 +122,22 @@ dropdown(
 
 ## "Loading" state
 
+To control the `loading` state:
+
 ```pug
 dropdown(
     loading="{{loadingState}}"
     ...
 )
 ```
+
+If you only start with loading state:
+
+```pug
+dropdown(
+    start-with-loading="true"
+    ...
+)
 
 Note: `loadingState` is set to `false` by the `dropdown` when `dropdown`'s data
 is changed and not empty.

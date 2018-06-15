@@ -34,6 +34,9 @@ Ractive.components['dropdown'] = Ractive.extend do
         if @get \key => @set \keyField, that
         if @get \name => @set \nameField, that
 
+        if @get \start-with-loading
+            @set \loading, yes
+
         #@link \selected-item, \item
 
     onrender: ->
@@ -232,6 +235,7 @@ Ractive.components['dropdown'] = Ractive.extend do
         nothingSelected: '---'
         item: {}
         loading: no
+        'start-with-loading': no
         sifter: null
         nomatch: false
 
