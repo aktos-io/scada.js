@@ -17,10 +17,16 @@
 +hideif('readonly')
     //- inline 
     +iff('inline')
-        .ui.inline.dropdown(class="{{class}} {{#loading}}loading{{/}} {{#emptyReduced}}error{{/}}")                
+        .ui.inline.dropdown(class="{{class}} {{#loading}}loading{{/}} \
+            {{#emptyReduced}}error{{/}} {{#nomatch}}warn{{/}}")                
             i.dropdown.icon(style="display: inline")
             //-.default.text {{ placeholder | '----' }}
-            span.text -------
+            +iff('nomatch')
+                icon.exclamation.triangle 
+                    span.text.red(style="font-style: italic") {{~/['selected-key']}}
+            +else 
+                span.text -------
+            +endif
             .menu
                 .ui.icon.search.input
                     i.search.icon
@@ -43,9 +49,14 @@
     //- default 
     +else
         //-div(style="display: inline-block")
-        .ui.search.selection.dropdown(class="{{class}} {{#loading}}loading{{/}} {{#emptyReduced}}error{{/}}")
+        .ui.search.selection.dropdown(class="{{class}} {{#loading}}loading{{/}} \
+            {{#emptyReduced}}error{{/}}")
             input(type="hidden" name="{{_guid}}")
-            i.dropdown.icon 
+            i.dropdown.icon
+            +iff('nomatch')
+                icon.exclamation.triangle 
+                    span.text.red(style="font-style: italic") {{~/['selected-key']}}
+            +endif
             .default.text {{ placeholder }}
             .menu
                 +each('dataReduced')

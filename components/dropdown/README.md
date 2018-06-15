@@ -119,3 +119,11 @@ dropdown(
     ...
     debug)
 ```
+
+## Don't show loading icon at the beginning
+
+```pug
+dropdown(
+    loading="false"
+    ...
+)
