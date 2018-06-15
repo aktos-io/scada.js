@@ -36,6 +36,7 @@
     "sha.js": "^2.4.9",
     "sifter": "^0.5.3",
     "superagent": "^3.8.0",
+    "superagent-jsonp": "^0.2.1",
     "utf-8-validate": "^3.0.3",
     "uuid4": "^1.0.0"
   },

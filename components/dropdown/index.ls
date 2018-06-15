@@ -56,7 +56,8 @@ Ractive.components['dropdown'] = Ractive.extend do
             <~ set-immediate
             external-change := yes
             <~ :lo(op) ~>
-                if _new
+                try
+                    throw {code: 'keyempty'} unless _new
                     if @get \multiple
                         dd.dropdown 'set exactly', _new
                         dd.dropdown 'refresh'
@@ -69,7 +70,15 @@ Ractive.components['dropdown'] = Ractive.extend do
                         item = find (.[keyField] is _new), compact @get \dataReduced
                         unless item
                             item = find (.[keyField] is _new), @get \data
-                            @push \dataReduced, item
+                            unless item
+                                # no such key can be found
+                                @set \nomatch, true
+                                throw {code: \nomatch}
+                            else
+                                @push \dataReduced, item
+                        if item
+                            @set \nomatch, false
+
                         @set \item, item
                         unless (@get \selected-key) is _new
                             # a new selected-key is set by the async handler,
@@ -79,10 +88,13 @@ Ractive.components['dropdown'] = Ractive.extend do
                         dd.dropdown 'set selected', _new
                         dd.dropdown 'refresh'
                         return op!
-                else
-                    dd.dropdown 'restore defaults'
-                    @set \item, {}
-                    return op!
+                catch
+                    if e.code in <[ nomatch keyempty ]>
+                        dd.dropdown 'restore defaults'
+                        @set \item, {}
+                        return op!
+                    else
+                        throw e
             external-change := no
 
         set-item = (value-of-key) ~>
@@ -166,7 +178,6 @@ Ractive.components['dropdown'] = Ractive.extend do
 
         @observe \data, (data) ~>
             if @get \debug => @actor.c-log "Dropdown (#{@_guid}): data is changed: ", data
-            @set \loading, yes # show loading icon while data is being fetched
             <~ set-immediate
             if data and not empty data
                 @set \loading, no
@@ -174,6 +185,9 @@ Ractive.components['dropdown'] = Ractive.extend do
                 @set \sifter, new Sifter(data)
                 # Update dropdown visually when data is updated
                 selected-handler @get \selected-key
+                @set \emptyReduced, false
+            else
+                @set \emptyReduced, true
 
         selected-handler = (_new, old) ~>
             if @get \multiple
@@ -219,6 +233,7 @@ Ractive.components['dropdown'] = Ractive.extend do
         item: {}
         loading: yes
         sifter: null
+        nomatch: false
 
         # this is very important. if you omit this, "selected"
         # variable will be bound to class prototype (thus shared
