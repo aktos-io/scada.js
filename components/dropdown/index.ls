@@ -22,7 +22,7 @@ require! '../data-table/sifter-workaround': {asciifold}
 Ractive.components['dropdown'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
-    oninit: ->
+    oninit: (ctx) ->
         @actor = new RactiveActor this, do
             name: "dropdown.#{@_guid}"
             debug: yes
@@ -37,15 +37,22 @@ Ractive.components['dropdown'] = Ractive.extend do
         if @get \start-with-loading
             @set \loading, yes
 
+        if @getContext!.has-listener \select, yes
+            @set \async, yes
+
+        if @get \debug
+            @actor.log.debug "Has select listener: ", (@get \async)
+
         #@link \selected-item, \item
 
-    onrender: ->
-        const c = @getContext @target .getParent yes
+    onrender: (ctx) ->
+        const c = @getContext! # @target .getParent yes
         c.refire = yes
         dd = $ @find '.ui.dropdown'
         keyField = @get \keyField
         nameField = @get \nameField
         external-change = no
+
 
         small-part-of = (data) ~>
             if data? and not empty data
@@ -70,9 +77,9 @@ Ractive.components['dropdown'] = Ractive.extend do
                         if empty ((@get \data) or [])
                             if @get \debug => @actor.log.debug "No data yet, not updating dropdown."
                             return
-                        item = find (.[keyField] is _new), compact @get \dataReduced
+                        item = find (.[keyField].to-string! is _new), compact @get \dataReduced
                         unless item
-                            item = find (.[keyField] is _new), @get \data
+                            item = find (.[keyField].to-string! is _new), @get \data
                             unless item
                                 # no such key can be found
                                 @set \nomatch, true
@@ -108,7 +115,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                     selected-keys = []
                     selected-names = []
                     for val in value-of-key when val
-                        if find (.[keyField] is val), data
+                        if find (.[keyField].to-string! is val), data
                             items.push that
                             selected-keys.push that[keyField]
                             selected-names.push that[nameField]
@@ -123,7 +130,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                     @fire \select, {}, (unless empty items => items else [{}])
                 else
                     # set a single value
-                    if find (.[keyField] is value-of-key), data
+                    if find (.[keyField].to-string! is value-of-key), data
                         selected = that
                         if @get('selected-key') isnt that[keyField]
                             if @get \debug => @actor.c-log "selected key is changed to:", selected[keyField]
@@ -228,8 +235,10 @@ Ractive.components['dropdown'] = Ractive.extend do
         'allow-addition': no
         'search-fields': <[ id name description ]>
         'search-term': ''
+        'async': no ## FIXME: we actually don't need this variable.
         data: undefined
         dataReduced: []
+        debug: no
         keyField: \id
         nameField: \name
         nothingSelected: '---'
