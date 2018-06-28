@@ -1,6 +1,5 @@
 .ui.button(
     on-click="_click"
-    value="{{value}}"
     title="{{tooltip}}"
     class="                                                         \
         {{ class }}                                                 \
@@ -10,13 +9,11 @@
                 labeled icon                                        \
             {{/}}                                                   \
         {{/if}}                                                     \
-        {{#disabled}}disabled{{/}}                                  \
+        {{#if disabled || selfDisabled || !enabled}}disabled{{/if}} \
         {{#if state === 'doing'}}disabled{{/if}}                    \
         {{#active}}active{{/}}                                      \
         "
     type="{{ type }}"
-    
-    disabled="{{ (disabled || selfDisabled) || !(enabled) }}"
     style="{{ style }} {{#if transparen}}background-color: transparent;{{/if}}"
     )
     +unless('custom')
