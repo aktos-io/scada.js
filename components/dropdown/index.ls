@@ -46,7 +46,8 @@ Ractive.components['dropdown'] = Ractive.extend do
         #@link \selected-item, \item
 
     onrender: (ctx) ->
-        const c = @getContext! # @target .getParent yes
+        # important: the "@target .getParent ..." part is important for `ctx.set` to work
+        const c = @getContext @target .getParent yes
         c.refire = yes
         dd = $ @find '.ui.dropdown'
         keyField = @get \keyField
