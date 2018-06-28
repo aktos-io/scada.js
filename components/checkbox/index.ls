@@ -27,6 +27,9 @@ Ractive.components['checkbox'] = Ractive.extend do
                 @set \transparent, yes
         @debug = @get \debug
 
+        if @getContext!.has-listener \select, yes
+            @set \async, yes
+
     onrender: ->
         logger = new VLogger this, \checkbox
 

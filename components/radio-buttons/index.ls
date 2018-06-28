@@ -10,6 +10,9 @@ Ractive.components['radio-buttons'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: no
     oninit: ->
+        if @getContext!.has-listener \select, yes
+            @set \async, yes
+
         @set-selected-color = (new-val, opts={}) ~>
             gtrue-color = @get \true-color
             gfalse-color = @get \false-color
@@ -77,6 +80,7 @@ Ractive.components['radio-buttons'] = Ractive.extend do
     data: ->
         buttons: []
         'true-color': 'green'
+        async: no 
 
 
 Ractive.components['radio-button'] = Ractive.extend do

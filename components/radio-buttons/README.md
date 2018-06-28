@@ -22,12 +22,12 @@ radio-buttons(value="{{transfer.state}}")
             icon.check.square
 ```
 
-# Async setting
+# Async mode
 
 ```pug
 radio-buttons(
     value="{{myvariable}}"
-    async on-select="myHandler")
+    on-select="myHandler")
     radio-button(default) Hello
     radio-button World
 ```
@@ -42,3 +42,15 @@ myHandler: (ctx, new-val, proceed) ->
         return proceed "some error occured"
     proceed!
 ```
+
+# Enabled/disabled state
+
+Use `value` variable to decide the `radio-buttons`' state.
+
+```pug
+radio-buttons(
+    value="{{myvariable}}")
+    radio-button(
+        enabled="{{value === 'foo'}}"
+        ) Hello
+    radio-button World
