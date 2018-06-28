@@ -58,8 +58,8 @@ dropdown(
 ```pug
 dropdown(
     data="{{data}}"
-    selected-key="{{mySelected}}"  # <-- this is read-only
-    async on-select="itemSelected"
+    selected-key="{{mySelected}}"  # <-- this is read-only in this mode
+    on-select="itemSelected"
     )
 
 ```
@@ -96,9 +96,11 @@ dropdown(
 
 ## Allow Addition
 
+In this mode, a `+ the search term` button is shown when no match is found.
+
 ```pug
 dropdown(
-    allow-addition="true" on-add="someHandler"
+    on-add="someHandler"
 )
 ```
 
