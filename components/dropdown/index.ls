@@ -38,9 +38,13 @@ Ractive.components['dropdown'] = Ractive.extend do
             @set \loading, yes
 
         if @getContext!.has-listener \select, yes
+            if @get \debug
+                @actor.log.debug "Found 'select' listener."
             @set \async, yes
 
         if @getContext!.has-listener \add, yes
+            if @get \debug
+                @actor.log.debug "Found 'add' listener."
             @set \allow-addition, yes
 
         #@link \selected-item, \item
