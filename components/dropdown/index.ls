@@ -58,6 +58,9 @@ Ractive.components['dropdown'] = Ractive.extend do
         nameField = @get \nameField
         external-change = no
 
+        @push \search-fields, keyField
+        @push \search-fields, nameField
+
 
         small-part-of = (data) ~>
             if data? and not empty data
@@ -172,6 +175,10 @@ Ractive.components['dropdown'] = Ractive.extend do
                             sort: [{field: nameField, direction: 'asc'}]
                             nesting: no
                             conjunction: "and"
+
+                        if @get \debug
+                            @actor.log.debug "Search fields: ", @get \search-fields
+                            @actor.log.debug "reduced: ", small-part-of(result.items)
                         reduced = [data[..id] for small-part-of(result.items)]
                         @set \dataReduced, reduced
                         if empty reduced
@@ -238,7 +245,7 @@ Ractive.components['dropdown'] = Ractive.extend do
 
     data: ->
         'allow-addition': no
-        'search-fields': <[ id name description ]>
+        'search-fields': <[ description ]>
         'search-term': ''
         'async': no ## FIXME: we actually don't need this variable.
         data: undefined
