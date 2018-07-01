@@ -2,14 +2,11 @@ require! 'aea': {sleep}
 require! 'prelude-ls': {take, drop, split}
 require! 'actors':  {RactiveActor}
 
-top-offset = 55px
-
 scroll-to = (anchor) ->
     offset = $ "span[data-id='#{anchor}']" .offset!
-    if offset
-        $ 'html, body' .animate do
-            scroll-top: offset.top - top-offset
-            , 500ms
+    $ 'html, body' .animate do
+        scroll-top: (offset?.top or 0) - (window.top-offset or 0)
+        , 500ms
 
 make-link = (scene, anchor) ->
     curr = parse-link get-window-hash!
@@ -40,6 +37,9 @@ set-window-hash = (hash) ->
     window.location.hash = hash
 
 parse-link = (link) ->
+    if link.match /http[s]?:\/\//
+        return {other-domain: yes}
+
     [scene, anchor] = ['/', '']
     switch take 2, link
     | '#/' => [scene, anchor] = drop 2, link .split '#'
@@ -52,7 +52,7 @@ parse-link = (link) ->
         anchor: anchor
 
 
-Ractive.components["a"] = Ractive.extend do
+Ractive.components.a = Ractive.extend do
     template: '''
         <a class="{{class}}"
             style="
@@ -84,7 +84,9 @@ Ractive.components["a"] = Ractive.extend do
 
                 if href?
                     link = parse-link href
-                    if link
+                    if link.other-domain
+                        return window.open href, "_self"
+                    else if link
                         generated-link = make-link link.scene, link.anchor
                         #console.log "<a href=", link, "generated link: #{generated-link}"
                         set-window-hash generated-link
@@ -123,6 +125,9 @@ Ractive.components['router'] = Ractive.extend do
     template: ''
     isolated: yes
     oncomplete: ->
+        if @get \offset
+            @set \@global.topOffset, that
+
         change = {}
         actor = new RactiveActor this, 'router'
             ..subscribe 'app.router.**'
