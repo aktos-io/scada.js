@@ -4,7 +4,13 @@ require! './formatting': {unix-to-readable}
 window.unix-to-readable = Ractive.defaults.unix-to-readable = unix-to-readable
 
 window.find = prelude.find
-window.PNotify = require 'pnotify/dist/umd/index.js' .default
+
+# Pnotify
+# -------------------------------------------
+# see doc/available-libraries.md for examples
+window.PNotify = require 'pnotify/dist/umd/PNotify'
+window.PNotifyButtons = require 'pnotify/dist/umd/PNotifyButtons'
+
 
 # math.js settings
 # ----------------------------------------------------------

@@ -13,11 +13,11 @@ Description: Checks if current user has this permission.
 Types:
 
 * `permission`: Topic type.
-    
-Usage: 
+
+Usage:
 
     {{#if able('some.permission')}}
-        has this permission 
+        has this permission
     {{else}}
         don't have this permission
     {{/if}}
@@ -40,7 +40,7 @@ unless err
 
 logger = new VLogger this, "My Source"
 
-## Yes/No Question 
+## Yes/No Question
 
 ```ls
 answer <~ logger.yesno do
@@ -63,7 +63,23 @@ else
     logger.cwarn "Cancelled discarding changes."
 ```
 
-## Request Library 
+## Pnotify
+
+Example:
+
+```ls
+PNotify.alert do
+    type: \error
+    title: "Foo is Updated"
+    text: """
+        Something happened ... bla bla
+        """
+    hide: no
+    modules:
+        Buttons:
+            closer: yes
+```
+
+## Request Library
 
 SuperAgent is bundled with ScadaJS by default: https://github.com/visionmedia/superagent
-
