@@ -38,7 +38,7 @@ set-window-hash = (hash) ->
 
 parse-link = (link) ->
     if link.match /http[s]?:\/\//
-        return {other-domain: yes}
+        return {external: yes}
 
     [scene, anchor] = ['/', '']
     switch take 2, link
@@ -84,7 +84,7 @@ Ractive.components.a = Ractive.extend do
 
                 if href?
                     link = parse-link href
-                    if link.other-domain
+                    if link.external
                         return window.open href, "_self"
                     else if link
                         generated-link = make-link link.scene, link.anchor
