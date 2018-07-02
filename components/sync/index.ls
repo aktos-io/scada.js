@@ -21,6 +21,7 @@ Ractive.components['sync'] = Ractive.extend do
                 timeout: 1000ms
                 route: @get \route
                 fps: @get \fps
+                debug: @get \debug 
 
             unless @get \readonly
                 handle = @observe \value, ((_new) ~>
