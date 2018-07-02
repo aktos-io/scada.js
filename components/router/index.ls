@@ -85,7 +85,12 @@ Ractive.components.a = Ractive.extend do
                 if href?
                     link = parse-link href
                     if link.external
-                        return window.open href, "_self"
+                        if @get \curr-window
+                            window.open href, "_self"
+                        else
+                            # external links are opened in a new tab by default
+                            window.open href
+                        return
                     else if link
                         generated-link = make-link link.scene, link.anchor
                         #console.log "<a href=", link, "generated link: #{generated-link}"

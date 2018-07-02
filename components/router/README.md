@@ -6,7 +6,7 @@ Add `router` component in your webapp:
 
 ### Attributes
 
-`offset="50"`: Offset for top menu (in pixels) (if exists) 
+`offset="50"`: Offset for top menu (in pixels) (if exists)
 
 # Anchors
 
@@ -20,13 +20,15 @@ There are 3 types of anchors:
 
         a(href="#/other-page") Go to the "other-page"
 
+        a(newtab href="#/other-page") Go to the "other-page" in new tab
+
         a(href="#/other-page#some-anchor") Go to the "other-page" and scroll to "some-anchor"
 
 3. Open external link:
 
-        a(href="http://example.com" newtab) Go to example.com (in new tab)
+        a(href="http://example.com") Go to example.com (in new tab, by default)
 
-        a(href="http://example.com") Go to example.com (in current window)
+        a(href="http://example.com" curr-window) Go to example.com (in current window)
 
 # Creating in-app anchor target
 
