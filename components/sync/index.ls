@@ -21,11 +21,12 @@ Ractive.components['sync'] = Ractive.extend do
                 timeout: 1000ms
                 route: @get \route
                 fps: @get \fps
-                debug: @get \debug 
+                debug: @get \debug
 
             unless @get \readonly
                 handle = @observe \value, ((_new) ~>
-                    @io-client.log.log "Value is: ", _new
+                    if @get \debug
+                        @io-client.log.debug "Value is: ", _new
                     @io-client.write _new
                     ), {init: off}
 
@@ -39,7 +40,8 @@ Ractive.components['sync'] = Ractive.extend do
             @io-client.on \read, (res) ~>
                 #console.log "we read something: ", res
                 @fire \read, {}, res
-                if @get \debug => console.log "Value read by #{@get 'route'} is: ", res
+                if @get \debug
+                    console.log "Value read by #{@get 'route'} is: ", res
                 handle?.silence!
                 @set \value, res
                 handle?.resume!
