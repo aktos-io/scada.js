@@ -1,5 +1,6 @@
 require! 'dcs/proxy-actors/io-proxy/io-proxy-client': {IoProxyClient}
 
+# see components/sync as an example 
 export class RactiveIoProxyClient extends IoProxyClient
     (@ractive, opts) ->
         super opts
