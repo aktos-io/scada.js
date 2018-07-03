@@ -1,0 +1,45 @@
+th.rotate {
+  /* Something you can count on */
+  white-space: nowrap;
+}
+
+
+th.rotate > div {
+  transform:
+    translate(3px, 145px)
+    /* 45 is really 360 - 45 */
+    rotate(315deg);
+    transform-origin: left top;
+    width: 30px;
+    height: 140px;
+}
+th.rotate > div > span {
+  border-top: 1px solid #ccc;
+  padding: 7px 30px;
+}
+
+.compact-table {
+    border-collapse: collapse;
+    width:100%;
+    display: block;
+    overflow: scroll
+}
+.compact-table td
+/*, #rotated th*/
+{
+    border: 1px solid #ccc;
+}
+.compact-table tr:first-child th {
+    border-top: 0;
+}
+.compact-table tr:last-child td {
+    border-bottom: 0;
+}
+.compact-table tr td:first-child,
+.compact-table tr th:first-child {
+    border-right: 0;
+}
+.compact-table tr td:last-child,
+.compact-table tr th:last-child {
+    border-left: 0;
+}

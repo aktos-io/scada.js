@@ -1,0 +1,6 @@
+tr.strikeout {
+    /* http://www.patternify.com/ */
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAABHNCSVQICAgIfAhkiAAAABdJREFUCFtjZMACGPEJ/keSZMSrEsUUADiYAQYtSGpXAAAAAElFTkSuQmCC');
+    background-repeat: repeat-x;
+    background-position: 50% 50%;
+}
