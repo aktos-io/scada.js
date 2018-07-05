@@ -13,6 +13,7 @@ Ractive.components['radio-buttons'] = Ractive.extend do
         if @getContext!.has-listener \select, yes
             @set \async, yes
 
+        first-run = yes
         @set-selected-color = (new-val, opts={}) ~>
             gtrue-color = @get \true-color
             gfalse-color = @get \false-color
@@ -44,8 +45,12 @@ Ractive.components['radio-buttons'] = Ractive.extend do
                     btn.set \colorclass, true-color
                 else if not new-val? and btn.get \default
                     # set the default value if specified
-                    @set \value, btn-val
-                    btn.set \colorclass, true-color
+                    if first-run
+                        @set \value, btn-val
+                        btn.set \colorclass, true-color
+                        first-run := no
+                    else
+                        console.warn "prevent setting the default value"
                 else
                     btn.set \colorclass, false-color
 
@@ -69,6 +74,9 @@ Ractive.components['radio-buttons'] = Ractive.extend do
                     console.log "setting value to ", new-val
                     @set-selected-color new-val, {ctx: ctx2}
 
+            "teardown": ->
+                console.log "radio-buttons is torn down"
+
     onrender: ->
         @observe \disabled, (val) ~>
             for @get \buttons
@@ -80,7 +88,7 @@ Ractive.components['radio-buttons'] = Ractive.extend do
     data: ->
         buttons: []
         'true-color': 'green'
-        async: no 
+        async: no
 
 
 Ractive.components['radio-button'] = Ractive.extend do
