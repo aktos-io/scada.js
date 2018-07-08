@@ -112,10 +112,14 @@ Ractive.components['data-table'] = Ractive.extend do
             @set \tableview_filtered, tableview_filtered
 
             if @get \clickedIndex
-                unless find (.id is that), @get \tableview
-                    console.warn "I think that row (#{@get 'clickedIndex'}) is
-                        deleted, closing."
+                index = that
+                unless find (.id is index), @get \tableview
+                    console.warn "I think that row '#{index}' is deleted, closing."
                     @fire \closeRow
+                else if not @get \openedRow
+                    # open if we have a clicked index
+                    @logger.clog "Open previously clicked index"
+                    @fire \clicked, {}, index
             else
                 @fire \doSearchText
 
@@ -153,15 +157,33 @@ Ractive.components['data-table'] = Ractive.extend do
                         return @logger.cerr "id can not be null or undefined: #{pack i}."
                 @set \tableview_visible, items
 
+        sleep 100ms, ~>
+            @observe \opened-row, (index) ~>
+                if index
+                    @fire \clicked, {}, that
+
         events =
-            clicked: (ctx, row) ->
-                index = row.id
-                return if @get(\clickedIndex) is index # do not allow multiple clicks
+            clicked: (ctx, index) ->
+                if @get \openingRow
+                    @logger.cwarn "do not allow multiple clicks"
+                    return
+                if @get \openedRow
+                    @fire \closeRow
+                <~ sleep 0 
+
+                @logger.clog "Setting index to ", index
+                @set \clickedIndex, index
+
+                if find (.id is index), @get \tableview
+                    row = that
+                else
+                    @logger.clog "No such index can be found: #{index}"
+                    return
+
                 if @get \addingNew
                     return @logger.cwarn "adding new, not opening any rows"
 
                 @logger.clog "Clicked to open #{index}"
-                @set \clickedIndex, index
                 @set \openingRow, yes
                 @set \openedRow, no
                 @set \openingRowMsg, "Opening #{index}..."
@@ -179,8 +201,14 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \openedRow, yes
                 @set \openingRowMsg, ""
                 @set \lastIndex, index
-                # scroll to the row
-                # TODO
+
+                # scroll to the newly opened row
+                <~ sleep 100
+                offset = $ "tr[data-anchor='#{index}']" .offset!
+                $ 'html, body' .animate do
+                    scroll-top: (offset?.top or 0) - (window.top-offset or 0)
+                    , 200ms
+
 
             delete: ->
                 @set 'curr._deleted', yes
