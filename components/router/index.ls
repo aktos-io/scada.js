@@ -4,9 +4,10 @@ require! 'actors':  {RactiveActor}
 
 scroll-to = (anchor) ->
     offset = $ "span[data-id='#{anchor}']" .offset!
-    $ 'html, body' .animate do
-        scroll-top: (offset?.top or 0) - (window.top-offset or 0)
-        , 200ms
+    if offset
+        $ 'html, body' .animate do
+            scroll-top: (offset?.top or 0) - (window.top-offset or 0)
+            , 200ms
 
 make-link = (scene, anchor) ->
     curr = parse-link get-window-hash!
