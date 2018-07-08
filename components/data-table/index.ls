@@ -161,15 +161,15 @@ Ractive.components['data-table'] = Ractive.extend do
             @observe \opened-row, (index) ~>
                 if index
                     @fire \clicked, {}, that
+                else
+                    @fire \closeRow
 
         events =
             clicked: (ctx, index) ->
-                if @get \openingRow
+                if (@get \openingRow) or (@get \openedRow)
                     @logger.cwarn "do not allow multiple clicks"
                     return
-                if @get \openedRow
-                    @fire \closeRow
-                <~ sleep 0 
+                <~ sleep 0
 
                 @logger.clog "Setting index to ", index
                 @set \clickedIndex, index
