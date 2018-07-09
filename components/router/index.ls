@@ -204,26 +204,25 @@ Ractive.components['scene'] = Ractive.extend do
 
         @observe \@shared.router.scene, (curr) ->
             #console.log "scene says: current is: ", curr
+            scene-prop = "@shared.router.sceneProp['#{this-page}']"
             this-page = @get \name
             default-page = @get 'default'
-            if default-page
-                #console.log "#{@get 'name'} is the default scene. curr is: #{curr}"
-                if curr is ''
-                    @set \visible, yes
-                    sleep 5ms, ~>
-                        @set \renderedBefore, yes
-                        #console.log "rendering content of #{this-page} (because this is default)"
-                    return
+            if (curr is '' and default-page) or (curr is this-page)
+                unless @get \visible
+                    if @get "#{scene-prop}.top"
+                        # scroll to last position 
+                        $ 'html, body' .animate {scroll-top: that}, 0ms
 
-            if curr is this-page
-                #console.log "#{@get 'name'} scene is selected"
                 @set \visible, yes
                 sleep 5ms, ~>
                     @set \renderedBefore, yes
-                    #console.log "rendering content of #{this-page} (because this is selected)"
+                    #console.log "rendering content of #{this-page} (because this is default)"
                 return
-
-            @set \visible, no
+            else
+                if @get \visible
+                    screenTop = $(document).scrollTop()
+                    @set "#{scene-prop}.top", screenTop
+                @set \visible, no
 
     data: ->
         rendered-before: no
