@@ -170,7 +170,6 @@ Ractive.components['data-table'] = Ractive.extend do
                     @logger.cwarn "do not allow multiple clicks"
                     return
                 <~ sleep 0
-
                 @logger.clog "Setting index to ", index
                 @set \clickedIndex, index
 
@@ -191,6 +190,14 @@ Ractive.components['data-table'] = Ractive.extend do
                 row-clone = clone row
                 @set \_tmp, {}
                 @set \curr, {}
+
+                # scroll to the newly opened row
+                <~ sleep 100
+                offset = $ "tr[data-anchor='#{index}']" .offset!
+                $ 'html, body' .animate do
+                    scroll-top: (offset?.top or 0) - (window.top-offset or 0)
+                    , 200ms
+
                 curr <~ settings.on-create-view.call this, row-clone
                 @set \curr, that if curr
                 sleep 100ms, ~>
@@ -201,14 +208,6 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \openedRow, yes
                 @set \openingRowMsg, ""
                 @set \lastIndex, index
-
-                # scroll to the newly opened row
-                <~ sleep 100
-                offset = $ "tr[data-anchor='#{index}']" .offset!
-                $ 'html, body' .animate do
-                    scroll-top: (offset?.top or 0) - (window.top-offset or 0)
-                    , 200ms
-
 
             delete: ->
                 @set 'curr._deleted', yes
