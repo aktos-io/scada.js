@@ -2,14 +2,12 @@ require! 'aea': {sleep}
 require! 'prelude-ls': {take, drop, split}
 require! 'actors':  {RactiveActor}
 
-top-offset = 55px
-
 scroll-to = (anchor) ->
     offset = $ "span[data-id='#{anchor}']" .offset!
     if offset
         $ 'html, body' .animate do
-            scroll-top: offset.top - top-offset
-            , 500ms
+            scroll-top: (offset?.top or 0) - (window.top-offset or 0)
+            , 200ms
 
 make-link = (scene, anchor) ->
     curr = parse-link get-window-hash!
@@ -40,6 +38,9 @@ set-window-hash = (hash) ->
     window.location.hash = hash
 
 parse-link = (link) ->
+    if link.match /http[s]?:\/\//
+        return {external: yes}
+
     [scene, anchor] = ['/', '']
     switch take 2, link
     | '#/' => [scene, anchor] = drop 2, link .split '#'
@@ -52,7 +53,7 @@ parse-link = (link) ->
         anchor: anchor
 
 
-Ractive.components["a"] = Ractive.extend do
+Ractive.components.a = Ractive.extend do
     template: '''
         <a class="{{class}}"
             style="
@@ -84,7 +85,14 @@ Ractive.components["a"] = Ractive.extend do
 
                 if href?
                     link = parse-link href
-                    if link
+                    if link.external
+                        if @get \curr-window
+                            window.open href, "_self"
+                        else
+                            # external links are opened in a new tab by default
+                            window.open href
+                        return
+                    else if link
                         generated-link = make-link link.scene, link.anchor
                         #console.log "<a href=", link, "generated link: #{generated-link}"
                         set-window-hash generated-link
@@ -123,6 +131,9 @@ Ractive.components['router'] = Ractive.extend do
     template: ''
     isolated: yes
     oncomplete: ->
+        if @get \offset
+            @set \@global.topOffset, that
+
         change = {}
         actor = new RactiveActor this, 'router'
             ..subscribe 'app.router.**'
@@ -162,6 +173,7 @@ Ractive.components['scene'] = Ractive.extend do
                 {{#unless visible}} display: none; {{/unless}}
                 margin: 0;
                 padding: 0;
+                padding-top: {{@global.topOffset}}px;
                 border: 0;
                 padding-bottom: 5em;
                 "
@@ -191,28 +203,31 @@ Ractive.components['scene'] = Ractive.extend do
         if @get \render
             @set \renderedBefore, yes
 
-        @observe \@shared.router.scene, (curr) ->
+        @observe \@shared.router.scene, (curr) !->
             #console.log "scene says: current is: ", curr
             this-page = @get \name
             default-page = @get 'default'
-            if default-page
-                #console.log "#{@get 'name'} is the default scene. curr is: #{curr}"
-                if curr is ''
-                    @set \visible, yes
-                    sleep 5ms, ~>
-                        @set \renderedBefore, yes
-                        #console.log "rendering content of #{this-page} (because this is default)"
-                    return
-
-            if curr is this-page
-                #console.log "#{@get 'name'} scene is selected"
+            scene-prop = "@shared.router.sceneProp['#{this-page}']"
+            if (curr is '' and default-page) or (curr is this-page)
+                visible-before = @get \visible
                 @set \visible, yes
-                sleep 5ms, ~>
-                    @set \renderedBefore, yes
-                    #console.log "rendering content of #{this-page} (because this is selected)"
-                return
 
-            @set \visible, no
+                <~ sleep 0ms
+                @set \renderedBefore, yes
+                #console.log "rendering content of #{this-page} (because this is default)"
+
+                unless visible-before
+                    if @get "#{scene-prop}.top"
+                        # scroll to last position
+                        <~ sleep 0ms
+                        $ 'html, body' .animate {scroll-top: that}, 0ms
+
+            else
+                if @get \visible
+                    screenTop = $(document).scrollTop()
+                    #console.log "Saving current position as #{screenTop} for page #{this-page}"
+                    @set "#{scene-prop}.top", screenTop
+                @set \visible, no
 
     data: ->
         rendered-before: no

@@ -58,8 +58,8 @@ dropdown(
 ```pug
 dropdown(
     data="{{data}}"
-    selected-key="{{mySelected}}"  # <-- this is read-only
-    async on-select="itemSelected"
+    selected-key="{{mySelected}}"  # <-- this is read-only in this mode
+    on-select="itemSelected"
     )
 
 ```
@@ -96,9 +96,11 @@ dropdown(
 
 ## Allow Addition
 
+In this mode, a `+ the search term` button is shown when no match is found.
+
 ```pug
 dropdown(
-    allow-addition="true" on-add="someHandler"
+    on-add="someHandler"
 )
 ```
 
@@ -120,10 +122,24 @@ dropdown(
     debug)
 ```
 
-## Don't show loading icon at the beginning
+## "Loading" state
+
+To control the `loading` state:
 
 ```pug
 dropdown(
-    loading="false"
+    loading="{{loadingState}}"
     ...
 )
+```
+
+If you only start with loading state:
+
+```pug
+dropdown(
+    start-with-loading="true"
+    ...
+)
+
+Note: `loadingState` is set to `false` by the `dropdown` when `dropdown`'s data
+is changed and not empty.

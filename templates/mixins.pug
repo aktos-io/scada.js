@@ -55,3 +55,6 @@ mixin showif(condition)
     != '<div style="{{#if ! (' + condition + ') }}display: none;{{else}}display: inline{{/if}}">'
     block 
     != '</div>'
+    
+mixin space
+    != '&nbsp;'

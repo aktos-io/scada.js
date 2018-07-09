@@ -22,7 +22,7 @@ require! '../data-table/sifter-workaround': {asciifold}
 Ractive.components['dropdown'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
-    oninit: ->
+    oninit: (ctx) ->
         @actor = new RactiveActor this, do
             name: "dropdown.#{@_guid}"
             debug: yes
@@ -34,15 +34,33 @@ Ractive.components['dropdown'] = Ractive.extend do
         if @get \key => @set \keyField, that
         if @get \name => @set \nameField, that
 
+        if @get \start-with-loading
+            @set \loading, yes
+
+        if @getContext!.has-listener \select, yes
+            if @get \debug
+                @actor.log.debug "Found 'select' listener."
+            @set \async, yes
+
+        if @getContext!.has-listener \add, yes
+            if @get \debug
+                @actor.log.debug "Found 'add' listener."
+            @set \allow-addition, yes
+
         #@link \selected-item, \item
 
-    onrender: ->
+    onrender: (ctx) ->
+        # important: the "@target .getParent ..." part is important for `ctx.set` to work
         const c = @getContext @target .getParent yes
         c.refire = yes
         dd = $ @find '.ui.dropdown'
         keyField = @get \keyField
         nameField = @get \nameField
         external-change = no
+
+        @push \search-fields, keyField
+        @push \search-fields, nameField
+
 
         small-part-of = (data) ~>
             if data? and not empty data
@@ -67,9 +85,9 @@ Ractive.components['dropdown'] = Ractive.extend do
                         if empty ((@get \data) or [])
                             if @get \debug => @actor.log.debug "No data yet, not updating dropdown."
                             return
-                        item = find (.[keyField] is _new), compact @get \dataReduced
+                        item = find (.[keyField].to-string! is _new), compact @get \dataReduced
                         unless item
-                            item = find (.[keyField] is _new), @get \data
+                            item = find (.[keyField].to-string! is _new), @get \data
                             unless item
                                 # no such key can be found
                                 @set \nomatch, true
@@ -105,7 +123,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                     selected-keys = []
                     selected-names = []
                     for val in value-of-key when val
-                        if find (.[keyField] is val), data
+                        if find (.[keyField].to-string! is val), data
                             items.push that
                             selected-keys.push that[keyField]
                             selected-names.push that[nameField]
@@ -120,7 +138,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                     @fire \select, {}, (unless empty items => items else [{}])
                 else
                     # set a single value
-                    if find (.[keyField] is value-of-key), data
+                    if find (.[keyField].to-string! is value-of-key), data
                         selected = that
                         if @get('selected-key') isnt that[keyField]
                             if @get \debug => @actor.c-log "selected key is changed to:", selected[keyField]
@@ -132,7 +150,8 @@ Ractive.components['dropdown'] = Ractive.extend do
                                         update-dropdown selected[keyField]
                                     else
                                         curr = @get \selected-key
-                                        @actor.c-err "Error reported for dropdown callback: ", err,
+                                        @actor.v-err err
+                                        @actor.c-warn "Error reported for dropdown callback: ", err,
                                             "falling back to #{curr}"
                                         @set \emptyReduced, yes
                                         update-dropdown curr
@@ -157,6 +176,10 @@ Ractive.components['dropdown'] = Ractive.extend do
                             sort: [{field: nameField, direction: 'asc'}]
                             nesting: no
                             conjunction: "and"
+
+                        if @get \debug
+                            @actor.log.debug "Search fields: ", @get \search-fields
+                            @actor.log.debug "reduced: ", small-part-of(result.items)
                         reduced = [data[..id] for small-part-of(result.items)]
                         @set \dataReduced, reduced
                         if empty reduced
@@ -223,15 +246,18 @@ Ractive.components['dropdown'] = Ractive.extend do
 
     data: ->
         'allow-addition': no
-        'search-fields': <[ id name description ]>
+        'search-fields': <[ description ]>
         'search-term': ''
+        'async': no ## FIXME: we actually don't need this variable.
         data: undefined
         dataReduced: []
+        debug: no
         keyField: \id
         nameField: \name
         nothingSelected: '---'
         item: {}
-        loading: yes
+        loading: no
+        'start-with-loading': no
         sifter: null
         nomatch: false
 

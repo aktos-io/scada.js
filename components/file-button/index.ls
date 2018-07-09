@@ -2,32 +2,6 @@ require! 'dcs/browser':{Signal}
 require! 'aea': {VLogger}
 require! 'aea/csv-utils': {parse-csv}
 
-'''
-# Context API
--------------
-
-Event Signature: (ctx, file, next) ->
-    ctx.heartbeat(milliseconds): postpone the timeout error
-    file: the uploaded file
-        file.csv if file is csv type
-
-# Usage:
-----------
-Text file reading example:
-
-    ```pug
-        file-button(on-read="restoreDesignDocs" type="text") Upload!
-
-    ```ls
-        restoreDesignDocs: (ctx, file, next) ->
-            docs = JSON.parse file.raw
-            for ddoc in docs
-                delete ddoc._rev
-                console.log "Design Doc: #{ddoc._id}"
-            err, res <~ db.put docs
-            next err
-
-'''
 
 Ractive.components['file-button'] = Ractive.extend do
     isolated: yes

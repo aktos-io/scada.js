@@ -89,7 +89,11 @@ Ractive.components['ack-button'] = Ractive.extend do
                 console.error e
 
         @info = (msg, callback) ~>
-            logger.info msg, callback
+            #logger.info msg, callback
+            PNotify.info do
+                title: msg.title or "Info"
+                text: (msg.message or msg)
+
             set-button \normal
 
         @yesno = (msg, callback) ~>

@@ -1,9 +1,9 @@
 # Description
 
-Synchronizes `curr` with `sync-topic`. Attributes:
+Synchronizes `value` with `route`. Attributes:
 
-* sync-topic: topic to keep in sync
-* curr: value of `sync-topic`
+* route: topic to keep in sync
+* value: value of `sync-topic`
 * readonly: do not send changes
 * on-error: callback(ctx, error)
 * on-read: callback(ctx, value)

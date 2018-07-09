@@ -43,6 +43,7 @@ export parse-format = (format) ->
 
 
     [integer-part, decimal-part] = number-part.split '.'
+    decimal-part = '' unless decimal-part
     max-digits = integer-part.length + decimal-part.length
 
     parsed =

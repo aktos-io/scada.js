@@ -57,7 +57,7 @@ r-table(class!="        \
 
                 tr(
                     data-anchor="{{.id}}"
-                    on-click!="['clicked', this]"
+                    on-click!="['clicked', .id]"
                     class!="                            \
                         {{#if isDisabled(.id)}}         \
                             disabled                    \

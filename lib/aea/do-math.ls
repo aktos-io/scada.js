@@ -1,14 +1,8 @@
-prelude = require \prelude-ls
-Ractive.defaults._ = prelude
-require! './formatting': {unix-to-readable}
-window.unix-to-readable = Ractive.defaults.unix-to-readable = unix-to-readable
-
-window.find = prelude.find
-window.PNotify = require 'pnotify/dist/umd/index.js' .default
-
 # math.js settings
 # ----------------------------------------------------------
-window.math = Ractive.defaults.math = math = require 'mathjs'
+math = require 'mathjs'
+export math
+
 for <[ adet TL USD EURO ]>
     math.create-unit ..
 
@@ -30,8 +24,7 @@ math.config do
     precision: 6digits
 """
 
-# doMath()
-window.do-math = Ractive.defaults.do-math = (expression) ->
+export do-math = (expression) ->
     try
         exact = math.eval expression
         display = math.format exact, 6_digits
@@ -51,7 +44,7 @@ Usage of `doMath()` in Ractive:
 '''
 
 # hasUnit()
-window.has-unit = Ractive.defaults.has-unit = (expression, unit) ->
+export has-unit = (expression, unit) ->
     try
         math.eval "#{expression} to #{unit}"
         return yes

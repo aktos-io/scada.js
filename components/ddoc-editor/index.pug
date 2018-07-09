@@ -2,7 +2,7 @@
     .ui.segment 
         ack-button.green(on-click="listDesignDocuments") Get List
         radio-buttons(
-            async on-select="getDesignDocument"
+            on-select="getDesignDocument"
             true-color="orange")
             +each('designDocuments as ddoc')
                 radio-button(value="{{ddoc}}") {{ddoc.split('/')[1]}}

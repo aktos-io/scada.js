@@ -21,10 +21,12 @@ Ractive.components['sync'] = Ractive.extend do
                 timeout: 1000ms
                 route: @get \route
                 fps: @get \fps
+                debug: @get \debug
 
             unless @get \readonly
                 handle = @observe \value, ((_new) ~>
-                    @io-client.log.log "Value is: ", _new
+                    if @get \debug
+                        @io-client.log.debug "Value is: ", _new
                     @io-client.write _new
                     ), {init: off}
 
@@ -35,15 +37,18 @@ Ractive.components['sync'] = Ractive.extend do
                 @set \value, undefined
                 handle?.resume!
 
-            @io-client.on \read, (res) ~>
+            @io-client.on \read, (res, msg) ~>
                 #console.log "we read something: ", res
                 @fire \read, {}, res
-                if @get \debug => console.log "Value read by #{@get 'route'} is: ", res
+                if @get \debug
+                    console.log "Value read by #{@get 'route'} is: ", res
                 handle?.silence!
                 @set \value, res
+                @set \date, msg.timestamp
                 handle?.resume!
         catch
             """WARNING: DO NOT REMOVE THIS TRY CATCH!!!"""
             console.warn "FIXME: CODING ERROR: ", e
     data: ->
         value: null
+        date: null

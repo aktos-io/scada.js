@@ -16,8 +16,9 @@ Ractive.defaults.unable = (...args) ->
     not Ractive.defaults.able.apply this, args
 
 
-curr-url = ->
-    [full-addr, hash] = split '#', String window.location
+curr-url = (_url)->
+    if _url => _url = "#{_url}/" 
+    [full-addr, hash] = split '#', (_url or String window.location)
     [protocol, addr-with-path] = split '://', full-addr
     [host, ...path-arr] = split '/', addr-with-path
     path = join '/', path-arr
@@ -44,7 +45,7 @@ Ractive.components['aktos-dcs'] = Ractive.extend do
     template: ''
     isolated: yes
     oninit: ->
-        url = curr-url!
+        url = curr-url @get \url
         if url.protocol is \file
             url.host-url = "http://localhost:4008"
             url.path = "/"

@@ -19,12 +19,12 @@ is-nodejs = ->
 
 module.exports = {
     sleep, clear-timer
-    createDownload
+    create-download
     merge
     Logger,
     pack, unpack, clone, diff
     unix-to-readable, readable-to-unix
-    copyToClipboard
+    copy-to-clipboard
     is-nodejs
     VLogger
     download

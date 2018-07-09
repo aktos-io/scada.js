@@ -70,8 +70,9 @@ export ractive-preparserify = (file) ->
                         """
 
                     # FIXME: We should get dependencies and rendered content in one function call
-                    deps = pug.compileClientWithDependenciesTracked template-contents, {filename: file, filters: pug-filters, doctype: \htm} .dependencies
-                    fn = pug.compile template-contents, {filename: file, filters: pug-filters, doctype: \html}
+                    opts = {filename: file, filters: pug-filters, doctype: 'html'}
+                    fn = pug.compile template-contents, opts
+                    deps = pug.compileClientWithDependenciesTracked template-contents, opts .dependencies
                     # End of FIXME
 
                     all-deps = deps ++ template-full-path
