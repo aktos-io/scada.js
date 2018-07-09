@@ -224,7 +224,7 @@ Ractive.components['scene'] = Ractive.extend do
             else
                 if @get \visible
                     screenTop = $(document).scrollTop()
-                    console.log "Saving current position as #{screenTop} for page #{this-page}"
+                    #console.log "Saving current position as #{screenTop} for page #{this-page}"
                     @set "#{scene-prop}.top", screenTop
                 @set \visible, no
 
