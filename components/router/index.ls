@@ -173,6 +173,7 @@ Ractive.components['scene'] = Ractive.extend do
                 {{#unless visible}} display: none; {{/unless}}
                 margin: 0;
                 padding: 0;
+                padding-top: {{@global.topOffset}}px;
                 border: 0;
                 padding-bottom: 5em;
                 "
