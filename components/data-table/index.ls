@@ -198,8 +198,14 @@ Ractive.components['data-table'] = Ractive.extend do
                     scroll-top: (offset?.top or 0) - (window.top-offset or 0)
                     , 200ms
 
-                curr <~ settings.on-create-view.call this, row-clone
-                @set \curr, that if curr
+                err, curr <~ settings.on-create-view.call this, row-clone
+                if err
+                    console.error "error while creating view: ", err
+                    <~ @logger.error "Error while opening row: " + pack(err)
+                    @fire \closeRow
+                    return
+                if curr
+                    @set \curr, that
                 sleep 100ms, ~>
                     @set \origCurr, clone (@get \curr)
                 @set \row, row-clone
