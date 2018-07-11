@@ -266,6 +266,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \addingNew, false
                 @fire \endEditing
                 @set \openedRow, no
+                @set \openingRow, no
                 opening-dimmer.dimmer \hide
 
             end-editing: ->
