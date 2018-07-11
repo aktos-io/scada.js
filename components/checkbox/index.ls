@@ -132,7 +132,7 @@ Ractive.components['checkbox'] = Ractive.extend do
                         # restore previous state
                         @set \check-state, curr-check-state
                         @set \checked, curr-checked
-                        if err is \timeout
+                        if err is \TIMEOUT
                             ctx.component.warn message: "Async checkbox is timed out."
                             @set \check-state, \error
                             return
