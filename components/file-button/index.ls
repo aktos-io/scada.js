@@ -46,7 +46,7 @@ Ractive.components['file-button'] = Ractive.extend do
 
                 reader = new FileReader!
                 reader.onload = (e) ~>
-                    data-url-signal.go e.target.result
+                    data-url-signal.go null, e.target.result
 
                 file_type = @get \type
                 switch file_type
