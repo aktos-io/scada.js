@@ -62,7 +62,7 @@ Ractive.components['radio-buttons'] = Ractive.extend do
                         that
                     else
                         x = instance.partials.content
-                        console.log "content is: ", x
+                        #console.log "content is: ", x
                         y = try x.0
                         if typeof! y is \String
                             y
@@ -71,11 +71,11 @@ Ractive.components['radio-buttons'] = Ractive.extend do
                     unless new-val
                         # FIXME: why do we get a null value?
                         return
-                    console.log "setting value to ", new-val
+                    #console.log "setting value to ", new-val
                     @set-selected-color new-val, {ctx: ctx2}
 
             "teardown": ->
-                console.log "radio-buttons is torn down"
+                #console.log "radio-buttons is torn down"
 
     onrender: ->
         @observe \disabled, (val) ~>
