@@ -171,6 +171,7 @@ Ractive.components['scene'] = Ractive.extend do
             class="{{class}}"
             style="
                 {{#unless visible}} display: none; {{/unless}}
+                {{#if hidden}}visibility: hidden; {{/if}}
                 margin: 0;
                 padding: 0;
                 padding-top: {{@global.topOffset}}px;
@@ -210,18 +211,15 @@ Ractive.components['scene'] = Ractive.extend do
             scene-prop = "@shared.router.sceneProp['#{this-page}']"
             if (curr is '' and default-page) or (curr is this-page)
                 visible-before = @get \visible
+                @set \hidden, yes
                 @set \visible, yes
-
-                <~ sleep 0ms
                 @set \renderedBefore, yes
-                #console.log "rendering content of #{this-page} (because this is default)"
-
                 unless visible-before
                     if @get "#{scene-prop}.top"
                         # scroll to last position
-                        <~ sleep 0ms
-                        $ 'html, body' .animate {scroll-top: that}, 0ms
-
+                        $ 'html, body' .scrollTop that
+                <~ sleep 10ms
+                @set \hidden, no
             else
                 if @get \visible
                     screenTop = $(document).scrollTop()
@@ -230,6 +228,7 @@ Ractive.components['scene'] = Ractive.extend do
                 @set \visible, no
 
     data: ->
+        hidden: no
         rendered-before: no
         loggedin: yes
         permissions: "**"
