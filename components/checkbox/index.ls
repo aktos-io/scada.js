@@ -109,7 +109,7 @@ Ractive.components['checkbox'] = Ractive.extend do
                     done-writing := yes
                     unless err => try clear-timeout x
 
-                if (@has-event 'statechange') or @get \async
+                if (ctx.hasListener 'statechange') or @get \async
                     curr-check-state = @get \check-state
                     curr-checked = @get \checked
 
@@ -142,7 +142,7 @@ Ractive.components['checkbox'] = Ractive.extend do
                         #logger.clog "no error returned, setting checkbox to ", checked
                         set-state checked
 
-                unless (@get \route or @has-event \statechange or @get \async)
+                unless (@get \route or ctx.has-listener \statechange or @get \async)
                     # if not realtime or not async, then consider this as a simple checkbox
                     curr-state = @get \checked
                     set-state not curr-state
