@@ -41,6 +41,7 @@ get-window-hash = ->
 
 hash-listener = ->
 
+_scroll-top = null
 set-window-hash = (hash, silent) ->
     #console.log "setting window hash to: #{hash}, curr is: #{window.location.hash}"
     if history.pushState
@@ -108,7 +109,12 @@ Ractive.components.a = Ractive.extend do
                         return
                     else if link
                         generated-link = make-link link.scene, link.anchor
-                        #console.log "setting window hash by '<a>' to ", generated-link
+                        console.log "setting window hash by '<a>' to ", generated-link
+
+                        # WORKAROUND: jquery.scrollTop! is somehow
+                        # set to 0 when `set-window-hash` is called.
+                        _scroll-top := $ document .scrollTop!
+                        console.log "...scroll top: ", _scroll-top
                         set-window-hash generated-link
                     else
                         console.error "there seems a no valid link:", link
@@ -142,7 +148,9 @@ Ractive.components['router'] = Ractive.extend do
                     # note the current scroll position
                     page = prev?.scene or \default
                     change.scene = curr.scene
-                    screen-top = get-offset!
+                    screen-top = _scroll-top or get-offset!
+                    _scroll-top := null
+                    
                     #console.log "Saving current position as #{screen-top} for page #{page}"
                     if active-scene
                         console.log "setting active scene's (#{that.get 'name' or 'default'}) offset to: #{screen-top}"
