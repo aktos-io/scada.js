@@ -135,10 +135,10 @@ Ractive.components['router'] = Ractive.extend do
         prev = {}
         active-scene = null
 
-        do handle-hash = ~>
+        do handle-hash = (force) ~>
             curr = parse-link get-window-hash!
             if curr
-                if curr.scene isnt prev.scene
+                if (curr.scene isnt prev.scene) or force
                     # note the current scroll position
                     page = prev?.scene or \default
                     change.scene = curr.scene
@@ -154,27 +154,32 @@ Ractive.components['router'] = Ractive.extend do
                     for @get \@shared.scenes
                         this-page = (..get \name) or \default
                         is-default = ..get 'default'
+
                         if (curr.scene is '' and is-default) or (curr.scene is this-page)
-                            console.log "Setting #{this-page} as visible for request #{curr.scene}"
-                            ..set \hidden, yes
-                            ..set \visible, yes
-                            active-scene := ..
-                            ..set \renderedBefore, yes
-                            #console.log  "scroll to last position: #{..get 'lastScroll'}"
-                            $ document .scrollTop ..get \lastScroll
-                            ..set \hidden, no
+                            # check the permissions
+                            if @able(..get 'permissions') or ..get \public
+                                console.log "Setting #{this-page} as visible for request #{curr.scene}"
+                                active-scene := ..
+                            else
+                                console.warn "We don't have permissions to see the scene, displaying an UNAUTHORIZED scene"
+                                active-scene := find ((p) -> (p.get 'name') is 'UNAUTHORIZED'), @get \@shared.scenes
+                            break
 
                     unless active-scene
                         # display a 404 scene
-                        if that = find ((p) -> (p.get 'name') is 'NOTFOUND'), @get \@shared.scenes
-                            console.log "Found 404 page, displaying it..."
+                        if find ((p) -> (p.get 'name') is 'NOTFOUND'), @get \@shared.scenes
                             active-scene := that
-                                ..set \hidden, yes
-                                ..set \visible, yes
-                                ..set \renderedBefore, yes
-                                ..set \hidden, no
+                            console.log "Found 404 page, displaying it..."
                         else
                             console.error "Neither requested page, nor a 404 scene is found."
+
+                    if active-scene
+                        that
+                            ..set \hidden, yes
+                            ..set \visible, yes
+                            ..set \renderedBefore, yes
+                            $ document .scrollTop ..get \lastScroll
+                            ..set \hidden, no
 
                 if curr.anchor isnt prev.anchor
                     change.anchor = curr.anchor
@@ -187,6 +192,9 @@ Ractive.components['router'] = Ractive.extend do
 
                 # save curr scene as previous
                 prev <<< curr
+
+        @observe \@global.session.permissions, ->
+            handle-hash force=yes
 
         hash-listener := (hash) ->
             #console.log "fired hash listener! hash is: #{hash}"
