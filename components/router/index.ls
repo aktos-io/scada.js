@@ -135,7 +135,7 @@ Ractive.components['router'] = Ractive.extend do
         prev = {}
         active-scene = null
 
-        do handle-hash = (force) ~>
+        handle-hash = (force) ~>
             curr = parse-link get-window-hash!
             if curr
                 if (curr.scene isnt prev.scene) or force
@@ -216,25 +216,9 @@ Ractive.components['scene'] = Ractive.extend do
                 padding: 0;
                 padding-top: {{@global.topOffset}}px;
                 border: 0;
-                "
-            >
-            {{#unless public}}
-                {{#if @global.session.user === "public" || @global.session.user === "" }}
-                    <div class="ui red message fluid" style="
-                            position: fixed; top: 0; left: 0; z-index: 999999999;
-                            width: 100%; height: 100%; padding-left: 2em; padding-right: 2em">
-                        <h2 class="ui header block red">Login required</h2>
-                        <login />
-                    </div>
-                {{/if}}
-            {{/unless}}
-            {{#if able(permissions) || public}}
-                {{#if renderedBefore}}
-                    {{>content}}
-                {{/if}}
-            {{else}}
-                <h1>Unauthorized.</h1>
-                {{JSON.stringify(@global.session.permissions)}}
+                ">
+            {{#if renderedBefore}}
+                {{>content}}
             {{/if}}
         </div>'
 
@@ -242,10 +226,6 @@ Ractive.components['scene'] = Ractive.extend do
     oninit: ->
         if @get \render
             @set \renderedBefore, yes
-
-        if @get \default
-            #@set \visible, yes
-            null
 
         if (@get \name) in <[ NOTFOUND UNAUTHORIZED ]>
             @set \public, yes
