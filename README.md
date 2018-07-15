@@ -38,11 +38,7 @@ ScadaJS is a library to create [Distributed](https://en.wikipedia.org/wiki/Distr
    * Supports any number and type (SQL, NoSQL) of databases in a single application at the same time.
      * Provides realtime layer tools for CouchDB which helps [overcoming CouchDB limitations](https://github.com/aktos-io/aktos-dcs-node/tree/master/connectors/couch-dcs)
 
-# Live Demo
-
-A showcase application can be seen in action at https://aktos.io/showcase where its source code is [here](https://github.com/aktos-io/scadajs-showcase).
-
-# Usage
+# Usage & Live Demo
 
 Explanation by example: See [scadajs-template](https://github.com/aktos-io/scadajs-template/blob/master/usage-recipe.md).
 
