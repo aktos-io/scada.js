@@ -1,6 +1,10 @@
 require! 'aea': {sleep}
-require! 'prelude-ls': {take, drop, split}
+require! 'prelude-ls': {take, drop, split, find}
 require! 'actors':  {RactiveActor}
+
+
+get-offset = ->
+    $ 'body' .scrollTop!
 
 scroll-to = (anchor) ->
     offset = $ "span[data-id='#{anchor}']" .offset!
@@ -29,13 +33,24 @@ make-link = (scene, anchor) ->
 
 get-window-hash = ->
     hash = window.location.hash
-        .replace '%23', '#'
-    set-window-hash hash
+    _hash = hash.replace '%23', '#'
+    if hash isnt _hash
+        hash = _hash
+        set-window-hash hash, silent=yes
     hash or '#/'
 
-set-window-hash = (hash) ->
+hash-listener = ->
+
+_scroll-top = null
+set-window-hash = (hash, silent) ->
     #console.log "setting window hash to: #{hash}, curr is: #{window.location.hash}"
-    window.location.hash = hash
+    if history.pushState
+        history.pushState(null, null, hash)
+    else
+        window.location.hash = hash
+
+    unless silent
+        hash-listener hash
 
 parse-link = (link) ->
     if link.match /http[s]?:\/\//
@@ -53,16 +68,16 @@ parse-link = (link) ->
         anchor: anchor
 
 
-Ractive.components.a = Ractive.extend do
+Ractive.components['a'] = Ractive.extend do
     template: '''
-        <a class="{{class}}"
+        <a class="{{class}} {{#if '#/' + @shared.router.scene === href}}active{{/if}}"
             style="
                 {{#href}}cursor: pointer;{{/}}
                 {{style}}
                 "
-            on-click="_click"
-            data-id="{{~/['data-id']}}"
-            title="{{tooltip}}"
+            on-click="click"
+            bind-data-id
+            {{#if tooltip}}title="{{tooltip}}"{{/if}}
             >
             {{yield}}
         </a>
@@ -74,7 +89,7 @@ Ractive.components.a = Ractive.extend do
         href: null
     onrender: ->
         @on do
-            _click: (ctx) ->
+            click: (ctx) ->
                 href = @get \href
                 if @get \newtab
                     return window.open href
@@ -94,33 +109,17 @@ Ractive.components.a = Ractive.extend do
                         return
                     else if link
                         generated-link = make-link link.scene, link.anchor
-                        #console.log "<a href=", link, "generated link: #{generated-link}"
+                        #console.log "setting window hash by '<a>' to ", generated-link
+
+                        # WORKAROUND: jquery.scrollTop! is somehow
+                        # set to 0 when `set-window-hash` is called.
+                        _scroll-top := $ document .scrollTop!
+                        #console.log "...scroll top: ", _scroll-top
                         set-window-hash generated-link
-                        # scrolling will be performed by hash observer (in the router)
-                        # but, if hash is not changed but user clicked again, we should
-                        # scroll to link anyway
-                        scroll-to link.anchor
                     else
                         console.error "there seems a no valid link:", link
                         debugger
 
-                if not ctx.from-my-click
-                    const c = ctx.getParent yes
-                    c.refire = yes
-                    c.a-has-fired = yes
-                    @fire \click, c
-
-            click: (ctx) ->
-                c = ctx.getParent yes
-                try
-                    c.refire = yes
-                catch
-                    # how come the parent context is undefined?
-                    console.warn "TODO: this is interesting. debug this sometime later."
-                    c = ctx
-                c.from-my-click = yes
-
-                @fire \_click, c
 
 
 Ractive.components['anchor'] = Ractive.extend do
@@ -131,34 +130,83 @@ Ractive.components['router'] = Ractive.extend do
     template: ''
     isolated: yes
     oncomplete: ->
-        if @get \offset
-            @set \@global.topOffset, that
-
+        offset = (@get \offset) or 0
+        @set \@global.topOffset, offset
         change = {}
         actor = new RactiveActor this, 'router'
             ..subscribe 'app.router.**'
             ..on \request-update, (topic, respond) ~>
                 console.log "router received request update: ", topic
                 respond change
-
         prev = {}
+        active-scene = null
 
-        do handle-hash = ~>
+        handle-hash = (force) ~>
             curr = parse-link get-window-hash!
             if curr
-                @set \curr, curr.scene
-                @set \anchor, curr.anchor
-                sleep 50ms, -> scroll-to curr.anchor
-                #console.log """hash changed: scene: #{curr.scene}, anchor: #{curr.anchor}"""
-
-                if curr.scene isnt prev.scene
+                if (curr.scene isnt prev.scene) or force
+                    # note the current scroll position
+                    page = prev?.scene or \default
                     change.scene = curr.scene
+                    screen-top = _scroll-top or get-offset!
+                    _scroll-top := null
+
+                    #console.log "Saving current position as #{screen-top} for page #{page}"
+                    if active-scene
+                        #console.log "setting active scene's (#{that.get 'name' or 'default'}) offset to: #{screen-top}"
+                        that.set \lastScroll, screen-top
+                        that.set \visible, no
+
+                    #console.log "curr scene is: ", curr.scene
+                    active-scene := null
+                    for @get \@shared.scenes
+                        this-page = (..get \name) or \default
+                        is-default = ..get 'default'
+
+                        if (curr.scene is '' and is-default) or (curr.scene is this-page)
+                            # check the permissions
+                            if @able(..get 'permissions') or ..get \public
+                                #console.log "Setting #{this-page} as visible for request #{curr.scene}"
+                                active-scene := ..
+                            else
+                                console.warn "We don't have permissions to see the scene, displaying an UNAUTHORIZED scene"
+                                active-scene := find ((p) -> (p.get 'name') is 'UNAUTHORIZED'), @get \@shared.scenes
+                            break
+
+                    unless active-scene
+                        # display a 404 scene
+                        if find ((p) -> (p.get 'name') is 'NOTFOUND'), @get \@shared.scenes
+                            active-scene := that
+                            console.log "Found 404 page, displaying it..."
+                        else
+                            console.error "Neither requested page, nor a 404 scene is found."
+
+                    if active-scene
+                        that
+                            ..set \hidden, yes
+                            ..set \visible, yes
+                            ..set \renderedBefore, yes
+                            $ document .scrollTop ..get \lastScroll
+                            ..set \hidden, no
+
                 if curr.anchor isnt prev.anchor
                     change.anchor = curr.anchor
 
+
+                sleep 50ms, -> scroll-to curr.anchor
+
                 actor.send 'app.router.changes', {change}
                 @set \@shared.router, change
+
+                # save curr scene as previous
                 prev <<< curr
+
+        @observe \@global.session.permissions, ->
+            handle-hash force=yes
+
+        hash-listener := (hash) ->
+            #console.log "fired hash listener! hash is: #{hash}"
+            handle-hash!
 
         $ window .on \hashchange, ->
             #console.log "this is hashchange run: #{window.location.hash}"
@@ -167,34 +215,18 @@ Ractive.components['router'] = Ractive.extend do
 
 Ractive.components['scene'] = Ractive.extend do
     template: '
-        <div name="{{name}}"
-            class="{{class}}"
+        <div data-name="{{name}}"
+            class="{{class}} {{name}} scene"
             style="
                 {{#unless visible}} display: none; {{/unless}}
+                {{#if hidden}}visibility: hidden; {{/if}}
                 margin: 0;
                 padding: 0;
-                padding-top: {{@global.topOffset}}px;
+                padding-top: {{offset !== null ? offset : @global.topOffset}}px;
                 border: 0;
-                padding-bottom: 5em;
-                "
-            >
-            {{#unless public}}
-                {{#if @global.session.user === "public" || @global.session.user === "" }}
-                    <div class="ui red message fluid" style="
-                            position: fixed; top: 0; left: 0; z-index: 999999999;
-                            width: 100%; height: 100%; padding-left: 2em; padding-right: 2em">
-                        <h2 class="ui header block red">Login required</h2>
-                        <login />
-                    </div>
-                {{/if}}
-            {{/unless}}
-            {{#if able(permissions) || public}}
-                {{#if renderedBefore}}
-                    {{>content}}
-                {{/if}}
-            {{else}}
-                <h1>Unauthorized.</h1>
-                {{JSON.stringify(@global.session.permissions)}}
+                ">
+            {{#if renderedBefore}}
+                {{>content}}
             {{/if}}
         </div>'
 
@@ -203,33 +235,25 @@ Ractive.components['scene'] = Ractive.extend do
         if @get \render
             @set \renderedBefore, yes
 
-        @observe \@shared.router.scene, (curr) !->
-            #console.log "scene says: current is: ", curr
-            this-page = @get \name
-            default-page = @get 'default'
-            scene-prop = "@shared.router.sceneProp['#{this-page}']"
-            if (curr is '' and default-page) or (curr is this-page)
-                visible-before = @get \visible
-                @set \visible, yes
+        if (@get \name) in <[ NOTFOUND UNAUTHORIZED ]>
+            @set \public, yes
 
-                <~ sleep 0ms
-                @set \renderedBefore, yes
-                #console.log "rendering content of #{this-page} (because this is default)"
+        @observe \visible, (curr, prev) ->
+            if not prev and curr
+                @fire \enter
+            else if prev and not curr
+                @fire \exit
 
-                unless visible-before
-                    if @get "#{scene-prop}.top"
-                        # scroll to last position
-                        <~ sleep 0ms
-                        $ 'html, body' .animate {scroll-top: that}, 0ms
-
-            else
-                if @get \visible
-                    screenTop = $(document).scrollTop()
-                    #console.log "Saving current position as #{screenTop} for page #{this-page}"
-                    @set "#{scene-prop}.top", screenTop
-                @set \visible, no
+        @push \@shared.scenes, this
 
     data: ->
-        rendered-before: no
+        offset: null
+        name: ''
+        hidden: no
+        visible: no
+        renderedBefore: no
         loggedin: yes
         permissions: "**"
+        lastScroll: 0
+        public: no
+        code: 200

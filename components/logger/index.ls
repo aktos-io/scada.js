@@ -77,7 +77,7 @@ Ractive.components['logger'] = Ractive.extend do
                 modal.modal do
                     closable: msg.closable
                     on-hide: ~>
-                        selection-signal.go \hidden
+                        selection-signal.go null, \hidden
                         # this function must return `true`
                         # in order to let the modal to disappear
                         yes
@@ -91,7 +91,7 @@ Ractive.components['logger'] = Ractive.extend do
                 callback action
 
             selectionMade: (ctx, action) ->
-                selection-signal.go action
+                selection-signal.go null, action
 
     data: ->
         debugErrorMessages: []

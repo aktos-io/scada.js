@@ -202,10 +202,10 @@ Ractive.components['dropdown'] = Ractive.extend do
         @observe \data, (data) ~>
             if @get \debug => @actor.c-log "Dropdown (#{@_guid}): data is changed: ", data
             <~ set-immediate
+            @set \sifter, new Sifter(data or [])
             if data and not empty data
                 @set \loading, no
                 @set \dataReduced, small-part-of data
-                @set \sifter, new Sifter(data)
                 # Update dropdown visually when data is updated
                 selected-handler @get \selected-key
                 @set \emptyReduced, false
@@ -241,9 +241,8 @@ Ractive.components['dropdown'] = Ractive.extend do
                     dd.dropdown 'hide'
                     @set \emptyReduced, false
                     @set \search-term, ''
-                    # fixme: clear the dropdown text
-                    #dd.dropdown 'set text', 'aaa'
-
+                    # clear the dropdown search field 
+                    $('.ui.dropdown').find(".search").val("")
     data: ->
         'allow-addition': no
         'search-fields': <[ description ]>
