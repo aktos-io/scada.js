@@ -40,7 +40,7 @@ ScadaJS is a library to create [Distributed](https://en.wikipedia.org/wiki/Distr
 
 # Usage & Live Demo
 
-Explanation by example: See [scadajs-template](https://github.com/aktos-io/scadajs-template/blob/master/usage-recipe.md).
+Explanation by example: See [scadajs-template](https://github.com/aktos-io/scadajs-template).
 
 # Projects and Companies Using ScadaJS
 
