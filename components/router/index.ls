@@ -68,9 +68,9 @@ parse-link = (link) ->
         anchor: anchor
 
 
-Ractive.components.a = Ractive.extend do
+Ractive.components['a'] = Ractive.extend do
     template: '''
-        <a class="{{class}}"
+        <a class="{{class}} {{#if '#/' + @shared.router.scene === href}}active{{/if}}"
             style="
                 {{#href}}cursor: pointer;{{/}}
                 {{style}}
