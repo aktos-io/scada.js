@@ -222,7 +222,7 @@ Ractive.components['scene'] = Ractive.extend do
                 {{#if hidden}}visibility: hidden; {{/if}}
                 margin: 0;
                 padding: 0;
-                padding-top: {{@global.topOffset}}px;
+                padding-top: {{offset !== null ? offset : @global.topOffset}}px;
                 border: 0;
                 ">
             {{#if renderedBefore}}
@@ -238,9 +238,16 @@ Ractive.components['scene'] = Ractive.extend do
         if (@get \name) in <[ NOTFOUND UNAUTHORIZED ]>
             @set \public, yes
 
+        @observe \visible, (curr, prev) ->
+            if not prev and curr
+                @fire \enter
+            else if prev and not curr
+                @fire \exit
+
         @push \@shared.scenes, this
 
     data: ->
+        offset: null
         name: ''
         hidden: no
         visible: no
