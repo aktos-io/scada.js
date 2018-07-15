@@ -109,12 +109,12 @@ Ractive.components.a = Ractive.extend do
                         return
                     else if link
                         generated-link = make-link link.scene, link.anchor
-                        console.log "setting window hash by '<a>' to ", generated-link
+                        #console.log "setting window hash by '<a>' to ", generated-link
 
                         # WORKAROUND: jquery.scrollTop! is somehow
                         # set to 0 when `set-window-hash` is called.
                         _scroll-top := $ document .scrollTop!
-                        console.log "...scroll top: ", _scroll-top
+                        #console.log "...scroll top: ", _scroll-top
                         set-window-hash generated-link
                     else
                         console.error "there seems a no valid link:", link
@@ -150,14 +150,14 @@ Ractive.components['router'] = Ractive.extend do
                     change.scene = curr.scene
                     screen-top = _scroll-top or get-offset!
                     _scroll-top := null
-                    
+
                     #console.log "Saving current position as #{screen-top} for page #{page}"
                     if active-scene
-                        console.log "setting active scene's (#{that.get 'name' or 'default'}) offset to: #{screen-top}"
+                        #console.log "setting active scene's (#{that.get 'name' or 'default'}) offset to: #{screen-top}"
                         that.set \lastScroll, screen-top
                         that.set \visible, no
 
-                    console.log "curr scene is: ", curr.scene
+                    #console.log "curr scene is: ", curr.scene
                     active-scene := null
                     for @get \@shared.scenes
                         this-page = (..get \name) or \default
@@ -166,7 +166,7 @@ Ractive.components['router'] = Ractive.extend do
                         if (curr.scene is '' and is-default) or (curr.scene is this-page)
                             # check the permissions
                             if @able(..get 'permissions') or ..get \public
-                                console.log "Setting #{this-page} as visible for request #{curr.scene}"
+                                #console.log "Setting #{this-page} as visible for request #{curr.scene}"
                                 active-scene := ..
                             else
                                 console.warn "We don't have permissions to see the scene, displaying an UNAUTHORIZED scene"
@@ -215,8 +215,8 @@ Ractive.components['router'] = Ractive.extend do
 
 Ractive.components['scene'] = Ractive.extend do
     template: '
-        <div name="{{name}}"
-            class="{{class}}"
+        <div data-name="{{name}}"
+            class="{{class}} {{name}} scene"
             style="
                 {{#unless visible}} display: none; {{/unless}}
                 {{#if hidden}}visibility: hidden; {{/if}}
