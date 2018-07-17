@@ -17,7 +17,7 @@ require! 'actors': {RactiveActor}
 require! 'aea': {sleep}
 
 require! 'sifter': Sifter
-require! '../data-table/sifter-workaround': {asciifold}
+require! 'dcs/lib/asciifold': asciifold
 
 Ractive.components['dropdown'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
@@ -241,7 +241,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                     dd.dropdown 'hide'
                     @set \emptyReduced, false
                     @set \search-term, ''
-                    # clear the dropdown search field 
+                    # clear the dropdown search field
                     $('.ui.dropdown').find(".search").val("")
     data: ->
         'allow-addition': no
