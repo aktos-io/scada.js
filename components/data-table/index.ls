@@ -5,7 +5,7 @@ require! 'prelude-ls': {
 require! 'aea': {sleep, merge, clone, unix-to-readable, pack, VLogger}
 require! 'actors': {RactiveActor}
 require! 'sifter': Sifter
-require! './sifter-workaround': {asciifold}
+require! 'dcs/lib/asciifold': asciifold
 
 Ractive.components['data-table'] = Ractive.extend do
     template: RACTIVE_PREPARSE('data-table.pug')
@@ -350,6 +350,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 try clear-timeout search-rate-limit
                 if not text
                     @set \tableview_filtered, @get \tableview
+                    @set \searching, no
                     return
 
                 @set \searching, yes

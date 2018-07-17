@@ -79,9 +79,7 @@ r-table(class!="        \
                     )   
                     include ./table-row.pug
     r-foot
-        tr
-            th(colspan="{{ colNames.length }}")
-                include ./pagination.pug
+        include ./pagination.pug
         +if('@.partials.footer')
             r-row
                 th(colspan="{{ colNames.length }}")
