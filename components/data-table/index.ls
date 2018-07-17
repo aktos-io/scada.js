@@ -107,8 +107,8 @@ Ractive.components['data-table'] = Ractive.extend do
 
             # filter documents
             tableview_filtered = filter-func tableview
-            console.log "filtered view: ", tableview_filtered
-            @set \tableview_visible, tableview_filtered
+            @set \tableview_filtered, tableview_filtered
+            @set \sifter, new Sifter(tableview_filtered)
 
             if @get \clickedIndex
                 index = that
@@ -130,7 +130,6 @@ Ractive.components['data-table'] = Ractive.extend do
 
         @observe \tableview, (_new) ~>
             @logger.clog "DEBUG MODE: tableview changed, refreshing..." if @get \debug
-            @set \sifter, new Sifter(_new)
             @refresh!
 
         @observe \@global.session.token, ~>
@@ -142,6 +141,23 @@ Ractive.components['data-table'] = Ractive.extend do
         @observe \searchText, (text) ~>
             search-text-global := text
             @fire \doSearchText
+
+
+        @observe \tableview_filtered, (filtered) ~>
+            if settings.after-filter
+                that filtered, (items) ~>
+                    set-col-names!
+                    if items.length > 0
+                        if items.0.cols.length isnt (@get \colNames .length)
+                            @logger.error "Column count does not match with after-filter output!"
+                            debugger
+                            return
+                        for i in items when i.id in [undefined, null]
+                            return @logger.cerr "id can not be null or undefined: #{pack i}."
+                    @set \tableview_visible, items
+            else
+                @set \tableview_visible, filtered
+
 
         sleep 100ms, ~>
             @observe \opened-row, (index) ~>
@@ -335,11 +351,6 @@ Ractive.components['data-table'] = Ractive.extend do
             do-search-text: (ctx) ->
                 text = search-text-global
                 try clear-timeout search-rate-limit
-                if not text
-                    @set \tableview_filtered, @get \tableview
-                    @set \searching, no
-                    return
-
                 @set \searching, yes
                 search-rate-limit := sleep 500ms, ~>
                     tableview_filtered = if text
@@ -353,12 +364,14 @@ Ractive.components['data-table'] = Ractive.extend do
 
                         x = []
                         for result.items
-                            x.push (@get \tableview .[..id])
+                            x.push (@get \tableview_filtered .[..id])
                         if @get \clickedIndex
                             x.push (find (.id is that), @get \tableview)
                         x
                     else
-                        @get \tableview
+                        # restore the last filtered content
+                        _filter = @get(\selectedFilter)
+                        @get(\dataFilters)[_filter] @get \tableview
                     <~ set-immediate
                     @set \currPage, 0
                     @set \tableview_filtered, tableview_filtered
