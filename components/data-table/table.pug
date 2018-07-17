@@ -31,7 +31,7 @@ r-table(class!="        \
                             | Filtered Content 
                         p.
                             You are seeing a filtered content. 
-                            #[btn.blue.mini(on-click="setFilter" value="all") #[i.remove.icon] Clear Filter]
+                            #[btn.blue.mini(on-click="['setFilter', 'all']") #[i.remove.icon] Clear Filter]
                                         
         +if('addingNew')
             r-row(class="active")
@@ -59,12 +59,12 @@ r-table(class!="        \
 
                 tr(
                     data-anchor="{{.id}}"
-                    on-click!="['clicked', .id]"
+                    "{{#unless @this.partials.row}}on-click='clicked' {{/unless}}"
                     class!="                            \
                         {{#if isDisabled(.id)}}         \
                             disabled                    \
                         {{else}}                        \
-                            {{#if ! isEditingRow(.id) && ! isViewingRow(.id)}} \
+                            {{#if ! isEditingRow(.id) && ! isViewingRow(.id) && ! @this.partials.row}} \
                                 data-table-clickable-row    \
                             {{/if}}                     \
                         {{/if}}                         \
@@ -76,8 +76,9 @@ r-table(class!="        \
                                 @index <  (currPage) * settings.pageSize           \
                             ) &&                                                   \
                             (clickedIndex !== .id) }}                           \
-                            display: none                                          \
-                        {{/if}}"
+                            display: none;                                          \
+                        {{/if}}                                                     \
+                        {{#if .bgcolor}}background-color: {{.bgcolor}};{{/if}}"
                     )   
                     include ./table-row.pug
     r-foot

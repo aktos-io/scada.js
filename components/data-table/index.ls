@@ -107,7 +107,8 @@ Ractive.components['data-table'] = Ractive.extend do
 
             # filter documents
             tableview_filtered = filter-func tableview
-            @set \tableview_filtered, tableview_filtered
+            console.log "filtered view: ", tableview_filtered
+            @set \tableview_visible, tableview_filtered
 
             if @get \clickedIndex
                 index = that
@@ -142,23 +143,6 @@ Ractive.components['data-table'] = Ractive.extend do
             search-text-global := text
             @fire \doSearchText
 
-
-        @observe \tableview_filtered, (filtered) ~>
-            if settings.after-filter
-                that filtered, (items) ~>
-                    set-col-names!
-                    if items.length > 0
-                        if items.0.cols.length isnt (@get \colNames .length)
-                            @logger.error "Column count does not match with after-filter output!"
-                            debugger
-                            return
-                        for i in items when i.id in [undefined, null]
-                            return @logger.cerr "id can not be null or undefined: #{pack i}."
-                    @set \tableview_visible, items
-            else
-                @set \tableview_visible, filtered
-
-
         sleep 100ms, ~>
             @observe \opened-row, (index) ~>
                 if index
@@ -167,11 +151,12 @@ Ractive.components['data-table'] = Ractive.extend do
                     @fire \closeRow
 
         events =
-            clicked: (ctx, index) ->
+            clicked: (ctx) ->
                 if (@get \openingRow) or (@get \openedRow)
                     @logger.cwarn "do not allow multiple clicks"
                     return
                 <~ sleep 0
+                index = ctx.get \.id
                 @logger.clog "Setting index to ", index
                 @set \clickedIndex, index
 
