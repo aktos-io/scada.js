@@ -1,4 +1,5 @@
 r-table(class!="        \
+    data-table          \
     {{#if openedRow}}   \
                         \
     {{else}}            \
@@ -8,18 +9,19 @@ r-table(class!="        \
     r-head                                
         r-row 
             th(colspan="{{ colNames.length }}")
-                //- +if('@.partials.header')
-                +apply('header')
-                div(style="float: right")
-                    +if('searchText')
-                        .ui.large.label.orange {{tableview_filtered.length}}
+                .ui.stackable.two.column.grid
+                    .column 
+                        +apply('header')
+                    .right.floated.right.aligned.column 
+                        +if('searchText')
+                            .ui.large.label.orange {{tableview_filtered.length}}
 
-                    .ui.left.icon.input.large.action(class="{{#searching}}loading{{/}}")
-                        icon.search
-                        input(on-escape="@.set('searchText', '')" value="{{searchText}}") 
-                        .ui.button.icon(on-click="@.set('searchText', '')"): icon.remove
-                        .ui.button.icon(on-click="doSearchText"): icon.search
-                    
+                        .ui.left.icon.input.large.action(class="{{#searching}}loading{{/}}")
+                            icon.search
+                            input(on-escape="@.set('searchText', '')" value="{{searchText}}") 
+                            .ui.button.icon(on-click="@.set('searchText', '')"): icon.remove
+                            .ui.button.icon(on-click="doSearchText"): icon.search
+                
         +if('selectedFilter !== "all"')
             r-row
                 th(colspan="{{ colNames.length }}")

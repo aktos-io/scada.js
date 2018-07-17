@@ -34,9 +34,7 @@ Ractive.components['data-table'] = Ractive.extend do
             unless settings.default
                 throw 'Default document is required'
 
-            unless settings.after-filter
-                throw "after-filter is required"
-            else
+            if settings.after-filter
                 settings.after-filter = settings.after-filter.bind this
 
             if typeof! settings.on-save is \Function
@@ -146,16 +144,20 @@ Ractive.components['data-table'] = Ractive.extend do
 
 
         @observe \tableview_filtered, (filtered) ~>
-            settings.after-filter filtered, (items) ~>
-                set-col-names!
-                if items.length > 0
-                    if items.0.cols.length isnt (@get \colNames .length)
-                        @logger.error "Column count does not match with after-filter output!"
-                        debugger
-                        return
-                    for i in items when i.id in [undefined, null]
-                        return @logger.cerr "id can not be null or undefined: #{pack i}."
-                @set \tableview_visible, items
+            if settings.after-filter
+                that filtered, (items) ~>
+                    set-col-names!
+                    if items.length > 0
+                        if items.0.cols.length isnt (@get \colNames .length)
+                            @logger.error "Column count does not match with after-filter output!"
+                            debugger
+                            return
+                        for i in items when i.id in [undefined, null]
+                            return @logger.cerr "id can not be null or undefined: #{pack i}."
+                    @set \tableview_visible, items
+            else
+                @set \tableview_visible, filtered
+
 
         sleep 100ms, ~>
             @observe \opened-row, (index) ~>
