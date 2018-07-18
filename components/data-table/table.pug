@@ -14,8 +14,7 @@ r-table(class!="        \
                         +apply('header')
                     .right.floated.right.aligned.column 
                         +if('searchText')
-                            .ui.large.label.orange {{tableview_visible.length}}
-
+                            .ui.large.label.orange.circular {{tableview_visible.length}}
                         .ui.left.icon.input.large.action(class="{{#searching}}loading{{/}}")
                             icon.search
                             input(on-escape="@.set('searchText', '')" value="{{searchText}}") 
