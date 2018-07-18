@@ -108,6 +108,7 @@ Ractive.components['data-table'] = Ractive.extend do
             # filter documents
             tableview_filtered = filter-func tableview
             @set \tableview_filtered, tableview_filtered
+            #console.log "Sifter now has: ", tableview_filtered
             @set \sifter, new Sifter(tableview_filtered)
 
             if @get \clickedIndex
@@ -348,7 +349,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \curr, curr
                 next err
 
-            do-search-text: (ctx) ->
+            do-search-text: (ctx) !->
                 text = search-text-global
                 try clear-timeout search-rate-limit
                 @set \searching, yes
@@ -367,6 +368,9 @@ Ractive.components['data-table'] = Ractive.extend do
                             x.push (@get \tableview_filtered .[..id])
                         if @get \clickedIndex
                             x.push (find (.id is that), @get \tableview)
+
+                        #console.log "result of search '#{text}': ", result.items
+                        #console.log "tableview_filtered: ", @get \tableview_filtered
                         x
                     else
                         # restore the last filtered content
@@ -374,7 +378,7 @@ Ractive.components['data-table'] = Ractive.extend do
                         @get(\dataFilters)[_filter] @get \tableview
                     <~ set-immediate
                     @set \currPage, 0
-                    @set \tableview_filtered, tableview_filtered
+                    @set \tableview_visible, tableview_filtered
                     #console.log "search for '#{text}' returned #{tableview_filtered.length} results"
                     @set \searching, no
 
