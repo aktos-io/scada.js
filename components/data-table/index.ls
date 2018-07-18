@@ -11,19 +11,10 @@ Ractive.components['data-table'] = Ractive.extend do
     template: RACTIVE_PREPARSE('data-table.pug')
     isolated: yes
     onrender: ->
-        readonly = if @partials.editForm then no else yes
-        title-provided = if @partials.addnewTitle then yes else no
-        @set \readonly, readonly
+        @set \readonly, if @partials.editForm then no else yes
 
-        settings = @get \settings
-        @logger = new VLogger this, (settings.name or \my)
-
-        @actor = new RactiveActor this, do
-            name: 'data-table'
-            debug: settings.debug
-
-        set-col-names = null
         # check parameters
+        settings = @get \settings
         try
             unless typeof! settings is \Object
                 throw "No settings found!"
@@ -31,31 +22,18 @@ Ractive.components['data-table'] = Ractive.extend do
             unless settings.name
                 throw 'data-table name is required'
 
-            unless settings.default
-                throw 'Default document is required'
+            if typeof! settings.save is \Function
+                settings.save = settings.save.bind this
 
-            if settings.after-filter
-                settings.after-filter = settings.after-filter.bind this
+            if typeof! settings.on-create-view is \Function
+                    settings.on-create-view = settings.on-create-view.bind this
 
-            if typeof! settings.on-save is \Function
-                settings.on-save = settings.on-save.bind this
-
-            if typeof! settings.before-save is \Function
-                settings.before-save = settings.before-save.bind this
-            else
-                settings.before-save = ((ctx, curr, next) -> next!).bind this
-
-            if typeof! settings.data is \Function
+            if settings.data?
+                unless typeof! settings.data is \Function
+                    throw "data must be a function."
                 settings.data = settings.data.bind this
 
-            if typeof! settings.col-names isnt \Function
-                cn = settings.col-names
-                settings.col-names = ->
-                    return cn
-
-            do set-col-names = ~>
-                x = settings.col-names.call this
-                @set \colNames, x
+            @set \colNames, settings.col-names
 
             unless typeof! (@get \colNames) is \Array
                 throw 'Column names are missing'
@@ -71,23 +49,42 @@ Ractive.components['data-table'] = Ractive.extend do
                 message: e
             return
 
-        # function to use adding on new document
-        unless typeof! settings.on-new-document is \Function
-            settings.on-new-document = (template, next) ->
-                @set \curr, template
-                next!
-        settings.on-new-document = settings.on-new-document.bind this
+        @logger = new VLogger this, settings.name
 
-        @get-default-document = ~>
-            try
-                if typeof settings.default is \function
-                    return settings.default.call this
-                else
-                    clone settings.default
-            catch
-                @logger.cerr e
+        @actor = new RactiveActor this, do
+            name: 'data-table'
+            debug: settings.debug
 
         opening-dimmer = $ @find \.table-section-of-data-table
+
+        # define a default save function (will be removed in the future)
+        unless settings.save
+            settings.save =  (ctx, curr, proceed) ~>
+                btn = ctx.component
+                btn.heartbeat 15_000ms
+
+                unless curr._id
+                    return proceed "ID is required!"
+
+                unless curr._rev
+                    # this is a new document, use exact ID or pfx + autoincrement
+                    # if curr._id has numeric portion, this is an exact ID
+                    # else this is a prefix
+                    if settings.autoincrement is on
+                        @actor.c-log "Autoincrement is set to 'yes', autoincrementing."
+                        curr._id = curr._id.to-upper-case!
+                        if curr._id.split /#{4,}/ .length is 1
+                            # no numeric part, this is a prefix
+                            return proceed err='
+                                No autoincrement postfix found, please
+                                append "####" to your doc._id'
+
+                if @get \new_attachments
+                    curr._attachments = (curr._attachments or {}) <<< that
+                err, res <~ @get \db .put curr
+                if err => @logger.clog "err is: ", err
+                @set \curr, curr
+                proceed err
 
         # assign filters
         data-filters = {}
@@ -95,7 +92,6 @@ Ractive.components['data-table'] = Ractive.extend do
             data-filters[name] = func.bind this
         data-filters['all'] = (x) ~> x
         @set \dataFilters, data-filters
-
 
         @refresh = ~>
             filter-func = @get(\dataFilters)[@get(\selectedFilter)]
@@ -119,7 +115,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 else if not @get \openedRow
                     # open if we have a clicked index
                     @logger.clog "Open previously clicked index"
-                    @fire \clicked, {}, index
+                    @fire \openRow, {}, index
             else
                 @fire \doSearchText
 
@@ -143,32 +139,15 @@ Ractive.components['data-table'] = Ractive.extend do
             search-text-global := text
             @fire \doSearchText
 
-
-        @observe \tableview_filtered, (filtered) ~>
-            if settings.after-filter
-                that filtered, (items) ~>
-                    set-col-names!
-                    if items.length > 0
-                        if items.0.cols.length isnt (@get \colNames .length)
-                            @logger.error "Column count does not match with after-filter output!"
-                            debugger
-                            return
-                        for i in items when i.id in [undefined, null]
-                            return @logger.cerr "id can not be null or undefined: #{pack i}."
-                    @set \tableview_visible, items
-            else
-                @set \tableview_visible, filtered
-
-
         sleep 100ms, ~>
             @observe \opened-row, (index) ~>
                 if index
-                    @fire \clicked, {}, that
+                    @fire \openRow, {}, that
                 else
                     @fire \closeRow
 
         events =
-            clicked: (ctx) ->
+            openRow: (ctx) ->
                 if (@get \openingRow) or (@get \openedRow)
                     @logger.cwarn "do not allow multiple clicks"
                     return
@@ -202,7 +181,7 @@ Ractive.components['data-table'] = Ractive.extend do
                     scroll-top: (offset?.top or 0) - (window.top-offset or 0)
                     , 200ms
 
-                err, curr <~ settings.on-create-view.call this, row-clone
+                err, curr <~ settings.on-create-view row-clone
                 if err
                     console.error "error while creating view: ", err
                     <~ @logger.error "Error while opening row: " + pack(err)
@@ -278,76 +257,36 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \editable, no
                 @set \editingDoc, null
 
-            add-new-document: (ev, data) ->
-                if (@get \openedRow) and (@get('mode') isnt 'add-new')
+            addNew: (ctx) ->
+                if @get \openedRow
                     return @logger.info do
                         closable: yes
                         message: "a row is opened, not adding new."
 
-                ev.component?.fire \state, \doing
-                template = if data
-                    data
-                else
-                    @get-default-document!
                 @set \prepareAddingNew, yes
                 @set \row, {}
                 @set \editable, yes
-                @set \origCurr, clone template
-                <~ settings.on-create-view.call this, null
-                <~ settings.on-new-document template
-                @set \prepareAddingNew, no
-                @set \addingNew, yes
-                ev.component?.fire \state, \normal
-
+                err, template <~ settings.on-create-view null
+                unless err
+                    @set \curr, template
+                    sleep 100ms, ~>
+                        @set \origCurr, clone (@get \curr)
+                    @set \prepareAddingNew, no
+                    @set \addingNew, yes
+                else
+                    return @logger.error do
+                        closable: yes
+                        message: err
 
             save: (ctx) ->
-                ctx.component.fire \state, \doing
-                err <~ @fire 'beforeSave', ctx, @get('curr')
+                btn = ctx.component
+                try btn.state \doing
+                err <~ settings.save ctx, @get('curr')
                 if err
-                    console.error "data-table error:", err
-                    return
-                ...args <~ @fire 'onSave', ctx, @get('curr')
-                if args.length isnt 1
-                    ctx.component.error """
-                        Coding error: Save function requires error argument upon
-                        calling the callback."""
-                    return
-                err = args.0
-                if err
-                    ctx.component.error pack err
+                    try btn.error pack err
                 else
                     @set \origCurr, @get('curr')
-                    ctx.component.fire \state \done...
-                    @refresh!
-
-            on-save: (ev, curr, next) ->
-                # This function will be overwritten if it is present in
-                # settings.on-save
-                timeout = 15_000ms
-                ev.component.heartbeat timeout
-
-                unless curr._id
-                    return next "ID is required!"
-
-                unless curr._rev
-                    # this is a new document, use exact ID or pfx + autoincrement
-                    # if curr._id has numeric portion, this is an exact ID
-                    # else this is a prefix
-                    if settings.autoincrement is on
-                        @actor.c-log "Autoincrement is set to 'yes', autoincrementing."
-                        curr._id = curr._id.to-upper-case!
-                        if curr._id.split /#{4,}/ .length is 1
-                            # no numeric part, this is a prefix
-                            return next err='
-                                No autoincrement postfix found, please
-                                append "####" to your doc._id'
-
-                if @get \new_attachments
-                    curr._attachments = (curr._attachments or {}) <<< that
-                err, res <~ @get \db .put curr, {timeout}
-                if err => @logger.clog "err is: ", err
-                @set \curr, curr
-                next err
+                    try btn.state \done...
 
             do-search-text: (ctx) !->
                 text = search-text-global
@@ -382,25 +321,15 @@ Ractive.components['data-table'] = Ractive.extend do
                     #console.log "search for '#{text}' returned #{tableview_filtered.length} results"
                     @set \searching, no
 
-
         # register events
-        all-events = events <<< settings.handlers
-        if settings.on-save
-            all-events.on-save = that
-        if settings.before-save
-            all-events.before-save = that
+        @on (events <<< settings.handlers)
 
-        @on all-events
-
-        for data, value of settings.data
+        for data, value of settings.data!
             @set data, value
 
         # run init function
         <~ settings.on-init
         @set \firstRunDone, yes
-
-        switch @get \mode
-        | 'add-new' => @fire \addNewDocument
 
     data: ->
         firstRunDone: no
@@ -425,6 +354,7 @@ Ractive.components['data-table'] = Ractive.extend do
         searchText: ''
         sifter: null
         searching: no
+        
         is-editing-row: (index) ->
             state = no
             if @get \editable
