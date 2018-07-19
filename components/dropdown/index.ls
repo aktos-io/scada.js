@@ -42,11 +42,6 @@ Ractive.components['dropdown'] = Ractive.extend do
                 @actor.log.debug "Found 'select' listener."
             @set \async, yes
 
-        if @getContext!.has-listener \add, yes
-            if @get \debug
-                @actor.log.debug "Found 'add' listener."
-            @set \allow-addition, yes
-
         #@link \selected-item, \item
 
     onrender: (ctx) ->
@@ -131,7 +126,6 @@ Ractive.components['dropdown'] = Ractive.extend do
                         else
                             # how can't we find the item?
                             debugger
-                    if @get \debug => debugger
                     @set \item, unless empty items => items else [{}]
                     @set \selected-name, selected-names
                     @set \selected-key, selected-keys
@@ -177,10 +171,13 @@ Ractive.components['dropdown'] = Ractive.extend do
                             nesting: no
                             conjunction: "and"
 
-                        if @get \debug
-                            @actor.log.debug "Search fields: ", @get \search-fields
-                            @actor.log.debug "reduced: ", small-part-of(result.items)
                         reduced = [data[..id] for small-part-of(result.items)]
+
+                        if @get \debug
+                            @actor.c-log "Dropdown (#{@_guid}) : searching for #{text}..."
+                            @actor.log.debug "Search fields: ", @get \search-fields
+                            @actor.log.debug "reduced ids: ", small-part-of(result.items)
+                            @actor.c-log "reduced data:", reduced
                         @set \dataReduced, reduced
                         if empty reduced
                             @actor.log.err "No such item found: #{text}"
@@ -244,7 +241,6 @@ Ractive.components['dropdown'] = Ractive.extend do
                     # clear the dropdown search field
                     $('.ui.dropdown').find(".search").val("")
     data: ->
-        'allow-addition': no
         'search-fields': <[ description ]>
         'search-term': ''
         'async': no ## FIXME: we actually don't need this variable.
