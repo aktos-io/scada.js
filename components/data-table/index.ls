@@ -57,34 +57,10 @@ Ractive.components['data-table'] = Ractive.extend do
 
         opening-dimmer = $ @find \.table-section-of-data-table
 
-        # define a default save function (will be removed in the future)
+        # throw error if save function is used without defining beforehand
         unless settings.save
             settings.save =  (ctx, curr, proceed) ~>
-                btn = ctx.component
-                btn.heartbeat 15_000ms
-
-                unless curr._id
-                    return proceed "ID is required!"
-
-                unless curr._rev
-                    # this is a new document, use exact ID or pfx + autoincrement
-                    # if curr._id has numeric portion, this is an exact ID
-                    # else this is a prefix
-                    if settings.autoincrement is on
-                        @actor.c-log "Autoincrement is set to 'yes', autoincrementing."
-                        curr._id = curr._id.to-upper-case!
-                        if curr._id.split /#{4,}/ .length is 1
-                            # no numeric part, this is a prefix
-                            return proceed err='
-                                No autoincrement postfix found, please
-                                append "####" to your doc._id'
-
-                if @get \new_attachments
-                    curr._attachments = (curr._attachments or {}) <<< that
-                err, res <~ @get \db .put curr
-                if err => @logger.clog "err is: ", err
-                @set \curr, curr
-                proceed err
+                proceed "No save function is defined!"
 
         # assign filters
         data-filters = {}
@@ -279,9 +255,10 @@ Ractive.components['data-table'] = Ractive.extend do
                 try btn.state \doing
                 err <~ settings.save ctx, @get('curr')
                 if err
-                    try btn.error pack err
+                    try btn.error err
                 else
                     @set \origCurr, @get('curr')
+                    @update \curr
                     try btn.state \done...
 
             do-search-text: (ctx) !->
@@ -332,7 +309,7 @@ Ractive.components['data-table'] = Ractive.extend do
             @set \tableview, []
             @set \colNames, settings.col-names!
             @refresh!
-            
+
         # run init function
         <~ settings.on-init
         @set \firstRunDone, yes
