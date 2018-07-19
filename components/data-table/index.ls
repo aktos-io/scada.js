@@ -13,8 +13,13 @@ Ractive.components['data-table'] = Ractive.extend do
     onrender: ->
         @set \readonly, if @partials.editForm then no else yes
 
-        # check parameters
         settings = @get \settings
+        @actor = new RactiveActor this, do
+            name: 'data-table'
+            debug: settings.debug
+        @logger = new VLogger this, (settings.name or \data-table)
+
+        # check parameters
         try
             unless typeof! settings is \Object
                 throw "No settings found!"
@@ -33,11 +38,12 @@ Ractive.components['data-table'] = Ractive.extend do
                     throw "data must be a function."
                 settings.data = settings.data.bind this
 
-            @set \colNames, settings.col-names
-
-            unless typeof! (@get \colNames) is \Array
-                throw 'Column names are missing'
-
+            if typeof! settings.col-names isnt \Function
+                colnames = settings.col-names
+                settings.col-names = ~>
+                    return colnames
+            else
+                settings.col-names = settings.col-names.bind this
 
             unless settings.on-init
                 throw "on-init is required"
@@ -48,12 +54,6 @@ Ractive.components['data-table'] = Ractive.extend do
                 title: 'data-table component'
                 message: e
             return
-
-        @logger = new VLogger this, settings.name
-
-        @actor = new RactiveActor this, do
-            name: 'data-table'
-            debug: settings.debug
 
         opening-dimmer = $ @find \.table-section-of-data-table
 
@@ -127,10 +127,6 @@ Ractive.components['data-table'] = Ractive.extend do
 
         @observe \tableview, (_new) ~>
             @logger.clog "DEBUG MODE: tableview changed, refreshing..." if @get \debug
-            @refresh!
-
-        @observe \@global.session.token, ~>
-            @set \tableview, []
             @refresh!
 
         search-rate-limit = null
@@ -324,9 +320,19 @@ Ractive.components['data-table'] = Ractive.extend do
         # register events
         @on (events <<< settings.handlers)
 
+        # register data
         for data, value of settings.data!
-            @set data, value
+            @set data, if typeof! value is \Function
+                value.bind this
+            else
+                value
 
+        # should be after registering data
+        @observe \@global.session.token, ~>
+            @set \tableview, []
+            @set \colNames, settings.col-names!
+            @refresh!
+            
         # run init function
         <~ settings.on-init
         @set \firstRunDone, yes
@@ -354,7 +360,7 @@ Ractive.components['data-table'] = Ractive.extend do
         searchText: ''
         sifter: null
         searching: no
-        
+
         is-editing-row: (index) ->
             state = no
             if @get \editable
