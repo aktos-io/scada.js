@@ -9,15 +9,21 @@ Ractive.defaults.able = (permission) ->
         @get \@global.session.permissions
     catch
         null
-    #console.log "able: known permissions: ", permissions
     permission `topic-match` permissions
+
+Ractive.defaults.hasRoute = (route) ->
+    routes = try
+        @get \@global.session.routes
+    catch
+        null
+    routes `topic-match` route
 
 Ractive.defaults.unable = (...args) ->
     not Ractive.defaults.able.apply this, args
 
 
 curr-url = (_url)->
-    if _url => _url = "#{_url}/" 
+    if _url => _url = "#{_url}/"
     [full-addr, hash] = split '#', (_url or String window.location)
     [protocol, addr-with-path] = split '://', full-addr
     [host, ...path-arr] = split '/', addr-with-path
