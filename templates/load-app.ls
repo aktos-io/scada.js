@@ -20,7 +20,7 @@ $.ajax do
     error: (e) ->
         msg = "something went wrong while loading page: "
         console.log msg, e
-        $ '#loading-error' .show! 
+        $ '#loading-error' .show!
 
     xhr: ->
         $ '#percentProgress' .progress {showActivity: false}
@@ -43,7 +43,7 @@ $.ajax do
                 percentComplete = ev.loaded / ev.total
                 percentInt = parseInt(percentComplete * 100)
                 #console.log "Download complete % #{percentComplete * 100}"
-                $('#percent').text(percentInt);
+                $('#percent').text(percentInt/100);
                 $('#percentProgress').progress("set progress", percentInt);
             ), false
         xhr

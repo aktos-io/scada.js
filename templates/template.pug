@@ -36,25 +36,21 @@ html(lang="en-GB")
                             img.ui.small.centered.image(src="scadajs-logo-long.svg")
 
                 .ui.active.big.text.loader#main-output
-                    p Loading Application... (%#[b#percent])
+                    p Loading Application... #[b#percent]
                     
                     .ui.progress.teal(id="percentProgress")
                         .bar(style="min-width: 0 !important;")
-                            
-                    .ui.message.red#loading-error
-                        | Something went wrong while loading. Try to reload the page.
-                            
-                    block loading 
-                        
 
+                    block loading 
+                                                    
         //- Enable (unindent) below section if you 
         //- want to see the console messages in the 
         //- "Loading" window 
 
-        pre#debugDiv
-        script
-            include:livescript ./debug-div.ls 
-                
+            pre#debugDiv
+            script
+                include:livescript ./debug-div.ls 
+                    
         //- end of debug window
 
         #dynamic-script
