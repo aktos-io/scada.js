@@ -216,17 +216,22 @@ Ractive.components['router'] = Ractive.extend do
 Ractive.components['scene'] = Ractive.extend do
     template: '
         <div data-name="{{name}}"
-            class="{{class}} {{name}} scene"
+            class="{{class}}"
             style="
                 {{#unless visible}} display: none; {{/unless}}
                 {{#if hidden}}visibility: hidden; {{/if}}
-                margin: 0;
-                padding: 0;
-                padding-top: {{offset !== null ? offset : @global.topOffset}}px;
-                border: 0;
-                ">
+                margin: 0; padding: 0; border: 0;"
+            >
             {{#if renderedBefore}}
-                {{>content}}
+                <div class="{{name}} scene"
+                    style="
+                        margin: 0;
+                        padding: 0;
+                        padding-top: {{offset !== null ? offset : @global.topOffset}}px; 
+                        border: 0;"
+                    >
+                    {{>content}}
+                </div>
             {{/if}}
         </div>'
 
@@ -253,7 +258,6 @@ Ractive.components['scene'] = Ractive.extend do
         visible: no
         renderedBefore: no
         loggedin: yes
-        permissions: "**"
+        permissions: ""
         lastScroll: 0
         public: no
-        code: 200
