@@ -38,6 +38,7 @@ require! 'gulp-if-else': if-else
 require! 'gulp-rename': rename
 require! 'gulp-util': gutil
 require! 'gulp-git': git
+require! 'gulp-cssimport': cssimport
 
 get-version = (callback) ->
     err, stdout <- git.exec args: 'describe --tags --dirty --long'
@@ -228,13 +229,14 @@ my-buble = (input) ->
 bundler
     ..transform browserify-livescript     # MUST be before ractive-preparserify
     ..transform (file) ->
-        through (buf, enc, next) ->
+        through (buf, enc, next) !->
             content = buf.to-string \utf8
             try
                 es5 = my-buble content
                 @push es5
                 next!
             catch
+                console.log "This is buble error: ", e
                 @emit 'error', e
 
     ..transform ractive-preparserify
@@ -293,13 +295,14 @@ gulp.task \vendor-js, ->
             file.contents = new Buffer optimized
             cb null, file
 
-        .pipe gulp.dest "#{paths.client-public}/js"
+        .pipe gulp.dest "#{paths.client-public}"
 
 # Concatenate vendor css files into public/css/vendor.css
 gulp.task \vendor-css, ->
     gulp.src for-css
+        .pipe cssimport {includePaths: ['node_modules']}
         .pipe cat "vendor.css"
-        .pipe gulp.dest "#{paths.client-public}/css"
+        .pipe gulp.dest "#{paths.client-public}"
 
 # Copy assets into the public directory as is
 # search for a folder named "assets", copy and paste its contents into

@@ -1,3 +1,5 @@
+@import "rickshaw/rickshaw.css";
+
 /* 21px: y axis width */
 .time-series.chart-container {
     position: relative;

@@ -21,9 +21,9 @@ html(lang="en-GB")
             title ScadaJS #{app}
             
         script if (typeof module === 'object') {window.module = module; module = undefined;}
-        script(src="js/vendor.js")
+        script(src="vendor.js")
         script if (window.module) module = window.module;
-        link(rel="stylesheet", href="css/vendor.css")
+        link(rel="stylesheet", href="vendor.css")
 
         block head-append
 
@@ -36,10 +36,12 @@ html(lang="en-GB")
                             img.ui.small.centered.image(src="scadajs-logo-long.svg")
 
                 .ui.active.big.text.loader#main-output
-                    p Loading Application... #[b#percent]
+                    p Loading Application... 
                     
+                    //-p: b#percent
                     .ui.progress.teal(id="percentProgress")
                         .bar(style="min-width: 0 !important;")
+                            .progress
 
                     block loading 
                                                     
