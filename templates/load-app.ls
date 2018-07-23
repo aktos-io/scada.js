@@ -1,4 +1,4 @@
-add-script = (script-data) ->
+addScript = (script-data) ->
     newdiv = document.createElement \div
     script = document.createElement \script
     script.innerHTML = script-data
