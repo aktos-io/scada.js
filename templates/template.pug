@@ -15,8 +15,11 @@ html(lang="en-GB")
         meta(http-equiv='pragma' content='no-cache')
         meta(name="mobile-web-app-capable" content="yes")
         meta(name="google" value="notranslate")
-        link(rel="icon" href="favicon.ico")
-        link(rel="icon" sizes="192x192" href="favicon.ico")
+
+        block icon 
+            link(rel="icon" href="favicon.ico")
+            link(rel="icon" sizes="192x192" href="favicon.ico")
+
         block title
             title ScadaJS #{app}
             
