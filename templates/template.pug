@@ -73,10 +73,20 @@ html(lang="en-GB")
                         .ui.active.centered.inline.big.text.loader.indeterminate
                             p Loading Application...
                             #timer 
+                            
+                .row#errorSection(style="display: none")
+                    .column 
+                        .ui.red.message 
+                            h3.ui.header ERROR 
+                            pre#errorMessage
+                            
                 block loading                 
 
                 script
                     include ./estimate.js
+        
+        script
+            include ./error.js
 
         block app 
             +app
