@@ -364,12 +364,12 @@ gulp.task \preparserify-workaround ->
 
             unless empty rel
                 for js-file in rel
-                    console.log "INFO: Preparserify workaround: triggering for #{path.basename js-file}"
+                    #console.log "INFO: Preparserify workaround: triggering for #{path.basename js-file}"
                     try
                         clear-timeout debounce[js-file]
-                        console.log "Preventing debounce for #{js-file}"
+                        console.log "INFO: Preventing debounce for #{js-file}"
                     catch
-                        console.log "...no need to prevent debounce for #{js-file}"
+                        console.log "INFO: ...no need to prevent debounce for #{js-file}"
 
                     debounce[js-file] = sleep 100ms, ->
                         touch.sync js-file
