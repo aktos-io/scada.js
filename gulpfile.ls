@@ -235,11 +235,11 @@ get-bundler = (entry) ->
         ..transform ractive-preparserify
         ..transform browserify-optimize-js
 
-first-browserify-done = no
+files = ls-entry-files ++ dep-entry-files
+b-count = files.length
 
 gulp.task \browserify, ->
-    files = ls-entry-files ++ dep-entry-files
-    tasks = for file in files
+    tasks = for let file in files
         filebase = file.split(/[\\/]/).pop! .replace /\.[a-z]+/, '.js'
         console.log "creating bundler task for #{filebase}"
         get-bundler file
@@ -262,15 +262,14 @@ gulp.task \browserify, ->
             #.pipe sourcemaps.write '.'
             .pipe gulp.dest "#{paths.build-folder}/#{webapp}/js"
             .pipe tap (file) ->
-                log-info \browserify, "Browserify finished (#{webapp})"
+                log-info \browserify, "Browserify finished (#{webapp}/js/#{filebase})"
                 #console.log "browserify cache: ", pack keys browserify-cache
+                b-count-- if b-count > 0
                 version <~ get-version
                 console.log "version: #{version}"
                 console.log "------------------------------------------"
-                first-browserify-done := yes
 
     return es.merge.apply null, tasks
-
 
 # Concatenate vendor javascript files into public/js/vendor.js
 gulp.task \vendor-js, ->
@@ -355,7 +354,7 @@ gulp.task \preparserify-workaround ->
         .pipe cache 'preparserify-workaround-cache'
         .pipe tap (file) ->
             #console.log "DEBUG: preparserify-workaround: invalidating: ", file.path
-            unless first-browserify-done
+            if b-count > 0
                 #console.log "DEBUG: Ractive Preparserify: skipping because first browserify is not done yet"
                 return
             rel = preparserify-dep-list[file.path]
