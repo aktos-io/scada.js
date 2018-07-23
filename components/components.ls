@@ -50,6 +50,7 @@ require! './browser-storage'
 require! './formatter'
 require! './vertical-divider'
 require! './radio-buttons'
+require! './p'
 
 # decorators
 require! './decorators/tooltip'
