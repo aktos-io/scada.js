@@ -256,7 +256,7 @@ function bundle
             on-error \browserify, msg
             @emit \end
 
-        .pipe source "#{webapp}/app.js"
+        .pipe source "#{webapp}/js/app.js"
         .pipe buffer!
         #.pipe sourcemaps.init {+load-maps, +large-files}
 
@@ -295,14 +295,17 @@ gulp.task \vendor-js, ->
             file.contents = new Buffer optimized
             cb null, file
 
-        .pipe gulp.dest "#{paths.client-public}"
+        .pipe gulp.dest "#{paths.client-public}/js"
 
 # Concatenate vendor css files into public/css/vendor.css
 gulp.task \vendor-css, ->
     gulp.src for-css
         .pipe cssimport {includePaths: ['node_modules']}
         .pipe cat "vendor.css"
-        .pipe gulp.dest "#{paths.client-public}"
+
+        # themes are searched in ../themes path, so do not save css in root
+        # folder
+        .pipe gulp.dest "#{paths.client-public}/css"
 
 # Copy assets into the public directory as is
 # search for a folder named "assets", copy and paste its contents into
@@ -326,6 +329,9 @@ gulp.task \assets, ->
                 parts.push i
             _tmp = join sep, parts
             path.dirname = _tmp if found-assets
+
+        # do not send to a subfolder, assets should be in the
+        # root folder.
         .pipe gulp.dest paths.client-public
 
 

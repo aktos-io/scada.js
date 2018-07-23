@@ -20,11 +20,15 @@ html(lang="en-GB")
         block title
             title ScadaJS #{app}
             
+        //- vendor.js
         script if (typeof module === 'object') {window.module = module; module = undefined;}
-        script(src="vendor.js")
+        script(src="js/vendor.js")
         script if (window.module) module = window.module;
-        link(rel="stylesheet", href="vendor.css")
-
+        
+        //- global css
+        link(rel="stylesheet", href="css/vendor.css")
+        
+        //- rest of head section
         block head-append
 
     body(ontouchstart)

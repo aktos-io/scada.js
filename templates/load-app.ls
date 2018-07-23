@@ -11,7 +11,7 @@ add-script = (script-data) ->
 
 
 $.ajax do
-    url: \app.js
+    url: 'js/app.js'
     type: \GET
     success: (data) ->
         console.log "page loaded. data length: ", data.length
