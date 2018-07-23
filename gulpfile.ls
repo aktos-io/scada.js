@@ -17,7 +17,7 @@ require! 'vinyl-buffer': buffer
 require! 'gulp-watch': watch
 require! 'gulp-pug': pug
 require! './templates/filters': {pug-filters}
-
+require! 'buble'
 require! 'node-notifier': notifier
 require! 'gulp-concat': cat
 require! 'gulp-uglify-es': {default: uglify}
@@ -25,9 +25,6 @@ require! './lib/aea': {sleep, pack}
 require! './lib/aea/ractive-preparserify': {
     ractive-preparserify
     preparserify-dep-list
-}
-require! './lib/aea/pug-preparserify': {
-    pug-preparserify
 }
 require! './lib/aea/browserify-optimize-js'
 require! 'gulp-flatten': flatten
@@ -41,6 +38,7 @@ require! 'gulp-if-else': if-else
 require! 'gulp-rename': rename
 require! 'gulp-util': gutil
 require! 'gulp-git': git
+require! 'gulp-cssimport': cssimport
 
 get-version = (callback) ->
     err, stdout <- git.exec args: 'describe --tags --dirty --long'
@@ -146,11 +144,6 @@ for-browserify =
 
 # Organize Tasks
 gulp.task \default, ->
-    if argv.clean is true
-        console.log "Clearing build directory..."
-        deleteFolderRecursive paths.build-folder
-        return
-
     do function run-all
         gulp.start do
             \browserify
@@ -220,12 +213,29 @@ bundler = browserify do
         watchify unless optimize-for-production
         ...
 
+
+my-buble = (input) ->
+    es5 = buble.transform input
+    es5.code
+
+
 # WARNING: Plugin sequence is important
 # ------------------------------------------------------------------------------
-bundler.transform pug-preparserify          # MUST be before browserify-livescript
-bundler.transform browserify-livescript     # MUST be before ractive-preparserify
-bundler.transform ractive-preparserify
-bundler.transform browserify-optimize-js
+bundler
+    ..transform browserify-livescript     # MUST be before ractive-preparserify
+    ..transform (file) ->
+        through (buf, enc, next) !->
+            content = buf.to-string \utf8
+            try
+                es5 = my-buble content
+                @push es5
+                next!
+            catch
+                console.log "This is buble error: ", e
+                @emit 'error', e
+
+    ..transform ractive-preparserify
+    ..transform browserify-optimize-js
 # ------------------------------------------------------------------------------
 
 first-browserify-done = no
@@ -240,7 +250,8 @@ function bundle
                 err
             on-error \browserify, msg
             @emit \end
-        .pipe source "#{webapp}/app.js"
+
+        .pipe source "#{webapp}/js/app.js"
         .pipe buffer!
         #.pipe sourcemaps.init {+load-maps, +large-files}
 
@@ -266,18 +277,29 @@ gulp.task \vendor-js, ->
     gulp.src for-js
         .pipe cat "vendor.js"
         .pipe if-else optimize-for-production, my-uglify
+
+        .pipe through.obj (file, enc, cb) ->
+            contents = file.contents.to-string!
+            es5 = my-buble contents
+            file.contents = new Buffer es5
+            cb null, file
+
         .pipe through.obj (file, enc, cb) ->
             contents = file.contents.to-string!
             optimized = optimize-js contents
             file.contents = new Buffer optimized
-
             cb null, file
+
         .pipe gulp.dest "#{paths.client-public}/js"
 
 # Concatenate vendor css files into public/css/vendor.css
 gulp.task \vendor-css, ->
     gulp.src for-css
+        .pipe cssimport {includePaths: ['node_modules']}
         .pipe cat "vendor.css"
+
+        # themes are searched in ../themes path, so do not save css in root
+        # folder
         .pipe gulp.dest "#{paths.client-public}/css"
 
 # Copy assets into the public directory as is
@@ -302,6 +324,9 @@ gulp.task \assets, ->
                 parts.push i
             _tmp = join sep, parts
             path.dirname = _tmp if found-assets
+
+        # do not send to a subfolder, assets should be in the
+        # root folder.
         .pipe gulp.dest paths.client-public
 
 
@@ -337,11 +362,7 @@ gulp.task \preparserify-workaround ->
             rel = [rel] unless typeof! rel is \Array
             rel = unique [.. for rel when ..] # filter out undefined and duplicate files
 
-            if empty rel
-                log-info 'preparserify', """Dependency of an observed file should
-                    not be empty. This is possibly a bug in gulpfile.ls
-                    (restart gulp as a workaround)"""
-            else
+            unless empty rel
                 for js-file in rel
                     console.log "INFO: Preparserify workaround: triggering for #{path.basename js-file}"
                     try

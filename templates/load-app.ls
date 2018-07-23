@@ -1,4 +1,4 @@
-add-script = (script-data) ->
+addScript = (script-data) ->
     newdiv = document.createElement \div
     script = document.createElement \script
     script.innerHTML = script-data
@@ -11,7 +11,7 @@ add-script = (script-data) ->
 
 
 $.ajax do
-    url: \app.js
+    url: 'js/app.js'
     type: \GET
     success: (data) ->
         console.log "page loaded. data length: ", data.length
@@ -20,7 +20,7 @@ $.ajax do
     error: (e) ->
         msg = "something went wrong while loading page: "
         console.log msg, e
-        $ '#loading-error' .show! 
+        $ '#loading-error' .show!
 
     xhr: ->
         $ '#percentProgress' .progress {showActivity: false}

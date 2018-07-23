@@ -4,16 +4,15 @@
 +iff('isOpeningOrViewingRow(.id)')
     td(colspan="{{ colNames.length }}")
         .dimmable 
-            .ui.inverted.dimmer(class-active="openingRow" slide-in="true")
+            .ui.inverted.dimmer(class-active="openingRow" fade-in)
                 .ui.active.large.text.loader
                     p {{ openingRowMsg }}
                     btn.small.inverted.red.icon(on-click="closeRow" tooltip="Kapat") #[i.remove.icon] Cancel
-            .data-table-opened-row(slide-in="true")
+            .data-table-opened-row(fade-in)
                 //- -----------------------------------------------
                 //- view form
                 //- -----------------------------------------------
                 +apply('viewForm')
-
 //- -----------------------------------------------
 //- edit form
 //- -----------------------------------------------
@@ -21,26 +20,9 @@
     td(colspan="{{ colNames.length }}")
         .data-table-opened-row
             +apply('editForm')
-
 //- -----------------------------------------------
 //- normal rows 
 //- -----------------------------------------------
 +else
-    +each(".cols:colindex")
-        +if('colNames[colindex]')
-            td(data-th="{{colNames[colindex]}}")
-                +iff('colindex === 0 && isLastClicked(tableview_visible[i].id)')
-                    +if('! openingRow')
-                        +iff('isOpeningNow(tableview_visible[i].id)')
-                            //- if row is opening, mark first column with teal ribbon label 
-                            .ui.teal.ribbon.label
-                                +apply('renderMarkup')
-                        +else
-                            //- if row is opening, mark first column with orange ribbon label 
-                            .ui.orange.ribbon.label
-                                +apply('renderMarkup')
-                        +endif
-                +else
-                    +apply('renderMarkup')
-                +endif
+    +apply('row')
 +endif

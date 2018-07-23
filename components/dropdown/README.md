@@ -96,7 +96,8 @@ dropdown(
 
 ## Allow Addition
 
-In this mode, a `+ the search term` button is shown when no match is found.
+In this mode, a `+ the search term` button is shown when something is typed in the
+search area.
 
 ```pug
 dropdown(
@@ -110,6 +111,19 @@ someHandler: (ctx, newKey, proceed) ->
     btn = ctx.button  # ack-button instance
     ...
     proceed err=yes/no
+```
+
+### Custom Add Button
+
+Define a `addNew` partial under the `dropdown` which fires `_add` handler to add:
+
+```pug
+dropdown(
+    ...
+    on-add="someHandler"
+    )
+    +partial('addNew')
+        .ui.button(on-click="_add") ADD THIS: {{~/['search-term']}}
 ```
 
 ## Debugging

@@ -1,13 +1,16 @@
+# Example
+
+See https://aktos.io/st/#/showcase/data-table
+
 # Properties
 
-
-Marks last clicked row
-Display a message while opening a row
-Displays error or info messages
-Opens appropriate row if url matches with document id
-Scrolls to clicked row (or opening row by url)
-Disables other rows in order to prevent accidental openings while a row is opened
-Displays a warning if a filter is selected other than `all`
+- Marks last clicked row
+- Display a message while opening a row
+- Displays error or info messages
+- Opens appropriate row if url matches with document id
+- Scrolls to clicked row (or opening row by url)
+- Disables other rows in order to prevent accidental openings while a row is opened
+- Displays a warning if a filter is selected other than `all`
 
 # Names
 

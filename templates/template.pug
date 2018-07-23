@@ -3,6 +3,31 @@ doctype html
 //- IMPORTANT: Above "doctype html" declaration MUST be the very first line.
 //- ------------------------------------------------------------------------
 include mixins.pug
+
+mixin app
+    script(src="js/app.js")
+
+mixin app-loading 
+    //- Load app.js with a progress bar. Usage: 
+    
+        block app 
+            +app-loading 
+            
+        block loading 
+            +app-loading-progress 
+            
+    #dynamic-script
+    script
+        include:livescript ./load-app.ls 
+        
+mixin app-loading-progress 
+    .row
+        .column
+            //-p: b#percent
+            .ui.progress.teal(id="percentProgress")
+                .bar(style="min-width: 0 !important;")
+                    .progress
+
 html(lang="en-GB")
     head
         meta(charset="utf-8")
@@ -15,52 +40,46 @@ html(lang="en-GB")
         meta(http-equiv='pragma' content='no-cache')
         meta(name="mobile-web-app-capable" content="yes")
         meta(name="google" value="notranslate")
-        link(rel="icon" href="favicon.ico")
-        link(rel="icon" sizes="192x192" href="favicon.ico")
+
+        block icon 
+            link(rel="icon" sizes="any" href="images/scadajs.ico")
+
         block title
             title ScadaJS #{app}
-            
-        script if (typeof module === 'object') {window.module = module; module = undefined;}
-        script(src="js/vendor.js")
-        script if (window.module) module = window.module;
-        link(rel="stylesheet", href="css/vendor.css")
 
+        script.
+            window.headStart = Date.now()
+            
+        //- vendor.js
+        script if (typeof module === 'object') {window.module = module; module = undefined;}
+        script#vendor(src="js/vendor.js")
+        script if (window.module) module = window.module;
+        
+        //- global css
+        link(rel="stylesheet", href="css/vendor.css")
+        
+        //- rest of head section
         block head-append
 
     body(ontouchstart)
-        block content
-            #main-output.pusher 
-                .ui.centered.grid
-                    .row
-                        .column(style="padding-top: 10%")
-                            img.ui.small.centered.image(src="scadajs-logo-long.svg")
+        block content                
+            .ui.centered.grid#content
+                .row
+                    .column(style="padding-top: 10%")
+                        img.ui.small.centered.image(src="images/scadajs-logo-long.svg")
 
-                .ui.active.big.text.loader#main-output
-                    p Loading Application... (%#[b#percent])
-                    
-                    .ui.progress.teal(id="percentProgress")
-                        .bar(style="min-width: 0 !important;")
-                            
-                    .ui.message.red#loading-error
-                        | Something went wrong while loading. Try to reload the page.
-                            
-                    block loading 
-                        
+                .row
+                    .column 
+                        .ui.active.centered.inline.big.text.loader.indeterminate
+                            p Loading Application...
+                            #timer 
+                block loading                 
 
-        //- Enable (unindent) below section if you 
-        //- want to see the console messages in the 
-        //- "Loading" window 
+                script
+                    include ./estimate.js
 
-        pre#debugDiv
-        script
-            include:livescript ./debug-div.ls 
+        block app 
+            +app
                 
-        //- end of debug window
-
-        #dynamic-script
-        block app
-            script
-                include:livescript ./load-app.ls 
-            
         block body-append
             
