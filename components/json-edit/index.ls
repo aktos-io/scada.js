@@ -1,6 +1,6 @@
-require! 'really-relaxed-json': rjson
+require! 'relaxed-json': rjson
 
-fixJSON = (x) -> rjson.toJson(x)
+fixJSON = (x) -> rjson.parse(x)
 
 Ractive.components['json-edit'] = Ractive.extend do
     template: '''
@@ -26,7 +26,7 @@ Ractive.components['json-edit'] = Ractive.extend do
 
             set: (objStr) ->
                 try
-                    obj = JSON.parse fixJSON objStr
+                    obj = fixJSON objStr
                     @set \value, obj
                     @set \objTmp, null
                     @set \err, null
