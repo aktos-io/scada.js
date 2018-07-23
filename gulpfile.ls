@@ -144,11 +144,6 @@ for-browserify =
 
 # Organize Tasks
 gulp.task \default, ->
-    if argv.clean is true
-        console.log "Clearing build directory..."
-        deleteFolderRecursive paths.build-folder
-        return
-
     do function run-all
         gulp.start do
             \browserify
