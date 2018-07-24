@@ -13,10 +13,13 @@ window.PNotify = require 'pnotify/dist/umd/PNotify'
 window.PNotifyButtons = require 'pnotify/dist/umd/PNotifyButtons'
 
 # Cached version of $.getScript
-window.getScriptCached = (url, callback) -> 
+window.getScriptCached = (url, callback) ->
     jQuery.ajax do
             type: "GET"
             url: url
             success: callback
             dataType: "script"
             cache: true
+
+require! './formatting': {unix-to-readable}
+window.unix-to-readable = Ractive.defaults.unix-to-readable = unix-to-readable
