@@ -8,6 +8,12 @@ Ractive.components.async = Ractive.extend do
             </div>
         {{/if}}
         '''
+    oninit: ->
+        @observe \@shared.deps, (value) ->
+            if value
+                console.log "All dependencies seem to be fetched."
+                @set \fetched, true
+
     data: ->
         fetched: false
         name: 'the'
