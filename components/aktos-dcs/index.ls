@@ -1,7 +1,7 @@
-require! 'dcs/browser': {DcsSocketIOBrowser}
+require! 'dcs/services/dcs-proxy/socket-io/browser': {DcsSocketIOBrowser}
 require! 'actors/browser-storage': {BrowserStorage}
 require! 'prelude-ls': {initial, drop, join, split}
-require! 'dcs/browser': {topic-match}
+require! 'dcs/src/topic-match': {topic-match}
 
 # Permission calculation mechanism
 Ractive.defaults.able = (permission) ->

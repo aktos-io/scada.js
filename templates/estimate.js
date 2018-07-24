@@ -5,7 +5,7 @@ oneDecimal = function(inp) {
 }
 
 var appStart = Date.now()
-var estimatedVendorToAppSizeRatio = 2;
+var estimatedVendorToAppSizeRatio = 1;
 headDuration = appStart - window.headStart;
 appDuration = estimatedVendorToAppSizeRatio * headDuration;
 interval = 100;

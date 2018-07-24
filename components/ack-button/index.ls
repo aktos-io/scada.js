@@ -1,6 +1,8 @@
-require! 'aea': {merge, sleep, VLogger}
-require! 'dcs/browser': {Signal}
-require! 'actors': {RactiveActor}
+require! 'aea/packing': {merge}
+require! 'aea/sleep': {sleep}
+require! 'aea/vlogger': {VLogger}
+require! 'dcs/src/signal': {Signal}
+require! 'actors/ractive-actor': {RactiveActor}
 
 Ractive.components['ack-button'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')

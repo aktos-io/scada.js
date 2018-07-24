@@ -208,7 +208,7 @@ get-bundler = (entry) ->
         entries: [entry]
         debug: true
         paths:
-            paths.components-src
+            __dirname
             paths.lib-src
             paths.client-webapps
             "#{__dirname}/node_modules"

@@ -20,7 +20,11 @@ function htmlEncode ( html )
 };
 window.loadingError = function(err){
     if(err){
-        document.getElementById("errorSection").style.display = 'block';
-        document.getElementById("errorMessage").innerHTML = htmlEncode(err);
+        try{
+            document.getElementById("errorSection").style.display = 'block';
+            document.getElementById("errorMessage").innerHTML = htmlEncode(err);
+        }catch{
+            console.error(err)
+        }
     }
 }
