@@ -11,3 +11,12 @@ unless (``/comment/.test(function(){/* comment */})``)
 # see doc/available-libraries.md for examples
 window.PNotify = require 'pnotify/dist/umd/PNotify'
 window.PNotifyButtons = require 'pnotify/dist/umd/PNotifyButtons'
+
+# Cached version of $.getScript
+window.getScriptCached = (url, callback) -> 
+    jQuery.ajax do
+            type: "GET"
+            url: url
+            success: callback
+            dataType: "script"
+            cache: true
