@@ -10,6 +10,7 @@ require! './print-button'
 
 # lightweight components by sizes
 # -------------------------------
+require! './async'
 require! './overlap'
 require! './io-label'
 require! './seven-segment'
