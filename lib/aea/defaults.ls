@@ -3,7 +3,7 @@
 unless (``/comment/.test(function(){/* comment */})``)
     # minified, prevent page from accidental reloading
     window.onbeforeunload = ->
-        return "hellooo"
+        return "Note: SCADA is not intended to be reloaded"
 
 
 # Pnotify
