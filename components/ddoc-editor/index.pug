@@ -12,16 +12,14 @@
 
         .ui.form 
             .field
-                async(fetched="{{@shared.deps}}")
-                    ace-editor(code="{{ designDocument.livescript }}" mode="livescript" theme="xcode")
+                ace-editor(code="{{ designDocument.livescript }}" mode="livescript" theme="xcode")
             .field 
                 checkbox(checked="{{autoCompile}}") Autocompile
                 +unless('autoCompile')
                     ack-button.teal(on-click="compileDesignDocument") Compile
             +unless('autoCompile')
                 .field 
-                    async(fetched="{{@shared.deps}}")
-                        ace-editor(code="{{ designDocument.javascript }}" mode="javascript" theme="xcode")
+                    ace-editor(code="{{ designDocument.javascript }}" mode="javascript" theme="xcode")
             .field
                 .ui.action.input 
                     input(value="{{ documentId }}" placeholder="_design/myDesignDocument")

@@ -3,7 +3,7 @@ require! 'prelude-ls': {empty, first, last, is-it-NaN}
 require! 'aea': {unix-to-readable}
 require! 'aea/formatting': {displayFormat, parse-format}
 
-Ractive.components['time-series'] = Ractive.extend do
+Ractive.components['time-seriesASYNC'] = Ractive.extend do
     template: '
         <div class="time-series chart-container {{class}}"
             style="

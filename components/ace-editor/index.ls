@@ -4,7 +4,7 @@ require 'brace/mode/livescript'
 require 'brace/theme/monokai'
 require 'brace/theme/xcode'
 
-Ractive.components['ace-editor'] = Ractive.extend do
+Ractive.components['ace-editorASYNC'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->

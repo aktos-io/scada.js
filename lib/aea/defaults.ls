@@ -23,3 +23,6 @@ window.getScriptCached = (url, callback) ->
 
 require! './formatting': {unix-to-readable}
 window.unix-to-readable = Ractive.defaults.unix-to-readable = unix-to-readable
+
+
+window.get-synchronizer = require './ractive-synchronizer' .get-synchronizer
