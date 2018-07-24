@@ -1,19 +1,15 @@
 Ractive.components.async = Ractive.extend do
     template: '''
-        {{#if fetched}}
+        {{#if (name && @shared.deps[name]) || ready || @shared.deps._all}}
             {{yield}}
+        {{elseif @this.partials.loading}}
+            {{yield loading}}
         {{else}}
             <div class="ui yellow message">
-                We are fetching {{name}} component...
+                We are fetching {{name || 'the'}} component...
             </div>
         {{/if}}
         '''
-    oninit: ->
-        @observe \@shared.deps, (value) ->
-            if value
-                console.log "All dependencies seem to be fetched."
-                @set \fetched, true
-
     data: ->
-        fetched: false
-        name: 'the'
+        ready: no
+        name: null
