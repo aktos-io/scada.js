@@ -1,3 +1,7 @@
+# ASYNC components
+require! './ace-editor/sync'
+require! './time-series/sync'
+
 # relatively heavy components (TODO: CLEANUP THEM)
 # -----------------------
 require! './aktos-dcs'
