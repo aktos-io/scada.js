@@ -1,7 +1,5 @@
-oneDecimal = function(inp) {
-    var appSec = parseInt(inp / 1000);
-    var appMSec = parseInt((inp - appSec * 1000) / 100);
-    return appSec + '.' + appMSec
+oneDecimal = function(x){
+    return parseFloat(Math.round(x * 10) / 10).toFixed(1)
 }
 
 var appStart = Date.now()
@@ -9,14 +7,19 @@ var estimatedVendorToAppSizeRatio = 1;
 headDuration = appStart - window.headStart;
 appDuration = estimatedVendorToAppSizeRatio * headDuration;
 interval = 100;
-timer = document.getElementById("timer");
 update = function(){
-    var left = appStart + appDuration - Date.now()
-    timer.innerHTML = oneDecimal(left) + " s";
-    if (left > 0){
-        setTimeout(update, interval);
-    } else {
-        timer.innerHTML = "Opening..."
+    try {
+        timer = document.getElementById("timer");
+        var left = appStart + appDuration - Date.now();
+        timer.innerHTML = oneDecimal(left/1000) + " s";
+        if (left > 0){
+            setTimeout(update, interval);
+        } else {
+            timer.innerHTML = "Opening..."
+        }
+    }
+    catch(e) {
+        setTimeout(update, interval)
     }
 }
 update()

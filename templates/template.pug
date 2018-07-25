@@ -49,6 +49,10 @@ html(lang="en-GB")
 
         script.
             window.headStart = Date.now()
+
+
+        script
+            include:livescript ./error.ls
             
         //- vendor.js
         script if (typeof module === 'object') {window.module = module; module = undefined;}
@@ -69,25 +73,26 @@ html(lang="en-GB")
                         img.ui.small.centered.image(src="images/scadajs-logo-long.svg")
 
                 .row
-                    .column 
-                        .ui.active.centered.inline.big.text.loader.indeterminate
-                            p Loading Application...
-                            #timer 
+                    //- # loading icon consumes a very high processing power
+                        .column 
+                            .ui.active.centered.inline.big.text.loader.indeterminate
+                                .ui.p Loading Application...
+                                .ui.p#timer 
                             
-                .row#errorSection(style="display: none")
                     .column 
-                        .ui.red.message 
-                            h3.ui.header ERROR 
-                            pre#errorMessage
-                            
+                        .ui.center.aligned.grid 
+                            .row
+                                .column Loading Application...
+                            .row 
+                                .column 
+                                    #timer 
+
+                                                        
                 block loading                 
 
                 script
                     include ./estimate.js
         
-        script
-            include ./error.js
-
         block app 
             +app
                 
