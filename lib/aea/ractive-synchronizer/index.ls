@@ -1,10 +1,8 @@
-require! './get-vars': {get-vars}
+window.get-synchronizer = (placeholder) ->
+    if placeholder and typeof! placeholder isnt \String
+        throw new Error "placeholder MUST be the component's name"
 
-export get-synchronizer = (loadingTpl) ->
-    tpl-vars = get-vars loadingTpl
-    #console.log "extracted loading template vars: ", tpl-vars 
-
-    _macro = (handle, attrs) ->
+    return Ractive.macro (handle, attrs) ~>
         obj =
             observers: []
             update: (attrs) ->
@@ -14,22 +12,25 @@ export get-synchronizer = (loadingTpl) ->
                 obj.observers.forEach (.cancel!)
 
         _orig = handle.template
-        _orig.e += \ASYNC
         delete _orig.p
-
         orig = {v: 4, t: [_orig], e: {}}
 
-        loading-template = loadingTpl or """
-            <div class='ui yellow message'>
-                We are fetching <b>#{handle.name}</b>...
-            </div>
-        """
-        obj.observers.push handle.observe '@shared.deps._all', (val) ->
+        mod-comp = (name) ->
+            _orig.e = name
+            return orig
+
+        obj.observers.push handle.observe '@shared.deps._all', (val) !->
+            console.log "#{handle.name} instance received a signal: #{JSON.stringify val}"
             if val
-                handle.setTemplate(orig)
+                handle.setTemplate mod-comp "#{handle.name}ASYNC"
             else
-                handle.setTemplate loading-template
-
+                ph = placeholder or "#{handle.name}LOADING"
+                if Ractive.components[ph]
+                    handle.setTemplate mod-comp ph
+                else
+                    handle.setTemplate """
+                        <div class='ui yellow message'>
+                            We are fetching <i>#{handle.name}</i>
+                        </div>
+                        """
         return obj
-
-    return Ractive.macro _macro, {attributes: tpl-vars}
