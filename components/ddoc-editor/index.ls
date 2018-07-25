@@ -14,7 +14,7 @@ make-design-doc = (obj) ->
     obj
 
 
-Ractive.components['ddoc-editor'] = Ractive.extend do
+Ractive.components['ddoc-editorASYNC'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->

@@ -1,6 +1,7 @@
 # ASYNC components
 require! './ace-editor/sync'
 require! './time-series/sync'
+require! './ddoc-editor/sync'
 
 # relatively heavy components (TODO: CLEANUP THEM)
 # -----------------------

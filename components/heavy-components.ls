@@ -1,6 +1,8 @@
 # Very large components
 require! './ace-editor'
-require! './json-edit'
-require! './ddoc-editor'
-require! './line-chart'
 require! './time-series'
+require! './ddoc-editor'
+
+# synchronizers not implemented: 
+require! './json-edit'
+require! './line-chart'
