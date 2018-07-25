@@ -1,9 +1,14 @@
-export get-synchronizer = (loadingt) ->
-    return Ractive.macro (handle, attrs) ->
+require! './get-vars': {get-vars}
+
+export get-synchronizer = (loadingTpl) ->
+    tpl-vars = get-vars loadingTpl
+    #console.log "extracted loading template vars: ", tpl-vars 
+
+    _macro = (handle, attrs) ->
         obj =
             observers: []
             update: (attrs) ->
-                debugger
+                # debugger
 
             teardown: ->
                 obj.observers.forEach (.cancel!)
@@ -14,7 +19,7 @@ export get-synchronizer = (loadingt) ->
 
         orig = {v: 4, t: [_orig], e: {}}
 
-        loading-template = loadingt or """
+        loading-template = loadingTpl or """
             <div class='ui yellow message'>
                 We are fetching <b>#{handle.name}</b>...
             </div>
@@ -26,3 +31,5 @@ export get-synchronizer = (loadingt) ->
                 handle.setTemplate loading-template
 
         return obj
+
+    return Ractive.macro _macro, {attributes: tpl-vars}
