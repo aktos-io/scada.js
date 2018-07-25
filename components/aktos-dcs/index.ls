@@ -77,6 +77,10 @@ Ractive.components['aktos-dcs'] = Ractive.extend do
             proxy.log.log "...seems logged in."
             @set \@global.session, session
 
+        proxy.once \logged-in, (session) ~>
+            console.warn "Logged in for the first time."
+            @fire 'live'
+
         proxy.on \logged-out, ~>
             proxy.log.log "seems logged out."
             @set \@global.session, empty-session
