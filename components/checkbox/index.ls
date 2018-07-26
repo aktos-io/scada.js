@@ -14,9 +14,9 @@ checked="{{value}}" : where the value is one of
 
 '''
 
-require! 'aea': {sleep, VLogger}
-require! 'dcs/browser': {Signal}
-require! 'actors': {RactiveIoProxyClient}
+require! 'aea/vlogger': {VLogger}
+require! 'dcs/src/signal': {Signal}
+require! 'actors/ractive-io-proxy-actor': {RactiveIoProxyClient}
 
 Ractive.components['checkbox'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')

@@ -3,7 +3,7 @@ require! 'prelude-ls': {empty, first, last, is-it-NaN}
 require! 'aea': {unix-to-readable}
 require! 'aea/formatting': {displayFormat, parse-format}
 
-Ractive.components['time-series'] = Ractive.extend do
+Ractive.components['time-seriesASYNC'] = Ractive.extend do
     template: '
         <div class="time-series chart-container {{class}}"
             style="
@@ -32,7 +32,6 @@ Ractive.components['time-series'] = Ractive.extend do
                   name: @get \name
                 ...
 
-
         graph.render();
 
         #ticksTreatment = \glow
@@ -55,7 +54,6 @@ Ractive.components['time-series'] = Ractive.extend do
             x-formatter: (x) -> unix-to-readable x
             y-formatter: (x) -> displayFormat y-format, x .full-text
 
-
         slider-element = @find \.slider
         slider-made = no
         make-slider = ->
@@ -64,7 +62,6 @@ Ractive.components['time-series'] = Ractive.extend do
                 slider = new Rickshaw.Graph.RangeSlider.Preview do
                     graph: graph
                     element: slider-element
-
                 slider-made := yes
 
         append-new = (_new) ->
@@ -87,15 +84,17 @@ Ractive.components['time-series'] = Ractive.extend do
                 make-slider!
                 graph.update!
 
-
         @observe \current, (curr) ->
             if @get \live
-                #console.log "appending live data: ", _new
+                #console.log "appending live data: ", curr
                 curr = parse-float curr
                 unless is-it-NaN curr
                     append-new curr
                     make-slider!
                     graph.update!
+
+    data: ->
+        data: []
 
 
 /*

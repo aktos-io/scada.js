@@ -7,3 +7,6 @@
 [submodule "tools/create-gist"]
 	path = tools/create-gist
 	url = https://github.com/ceremcem/create-gist
+[submodule "lib/aea/ractive-synchronizer"]
+	path = lib/aea/ractive-synchronizer
+	url = https://github.com/ceremcem/ractive-synchronizer

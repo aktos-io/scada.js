@@ -39,6 +39,7 @@ require! 'gulp-rename': rename
 require! 'gulp-util': gutil
 require! 'gulp-git': git
 require! 'gulp-cssimport': cssimport
+require! 'event-stream': es
 
 get-version = (callback) ->
     err, stdout <- git.exec args: 'describe --tags --dirty --long'
@@ -94,6 +95,7 @@ log-info = (source, msg) ->
 pug-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/index.pug"
 html-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/index.html"
 ls-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/app.{ls,js}"
+dep-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/dep.{ls,js}"
 
 for-css =
     "#{paths.vendor-folder}/**/*.css"
@@ -191,86 +193,83 @@ gulp.task \html, ->
         .pipe flatten!
         .pipe gulp.dest paths.client-public
 
-
 my-uglify = (x) ->
     uglify {-mangle}, x
     .on \error, gutil.log
-
-browserify-cache = {}
-bundler = browserify do
-    entries: ls-entry-files
-    debug: true
-    paths:
-        paths.components-src
-        paths.lib-src
-        paths.client-webapps
-        "#{__dirname}/node_modules"
-        "#{__dirname}/.."
-    extensions: <[ .ls ]>
-    cache: browserify-cache
-    package-cache: {}
-    plugin:
-        watchify unless optimize-for-production
-        ...
-
 
 my-buble = (input) ->
     es5 = buble.transform input
     es5.code
 
+browserify-cache = {}
 
-# WARNING: Plugin sequence is important
-# ------------------------------------------------------------------------------
-bundler
-    ..transform browserify-livescript     # MUST be before ractive-preparserify
-    ..transform (file) ->
-        through (buf, enc, next) !->
-            content = buf.to-string \utf8
-            try
-                es5 = my-buble content
-                @push es5
-                next!
-            catch
-                console.log "This is buble error: ", e
-                @emit 'error', e
+get-bundler = (entry) ->
+    b = browserify do
+        entries: [entry]
+        debug: true
+        paths:
+            __dirname
+            paths.lib-src
+            paths.client-webapps
+            "#{__dirname}/node_modules"
+            "#{__dirname}/.."
+        extensions: <[ .ls ]>
+        cache: browserify-cache
+        package-cache: {}
+        plugin:
+            watchify unless optimize-for-production
 
-    ..transform ractive-preparserify
-    ..transform browserify-optimize-js
-# ------------------------------------------------------------------------------
+    b
+        ..transform browserify-livescript     # MUST be before ractive-preparserify
+        ..transform (file) ->
+            through (buf, enc, next) !->
+                content = buf.to-string \utf8
+                try
+                    es5 = my-buble content
+                    @push es5
+                    next!
+                catch
+                    console.log "This is buble error: ", e
+                    @emit 'error', e
 
-first-browserify-done = no
+        ..transform ractive-preparserify
+        ..transform browserify-optimize-js
 
-function bundle
-    bundler
-        .bundle!
-        .on \error, (err) ->
-            msg = try
-                err.message
-            catch
-                err
-            on-error \browserify, msg
-            @emit \end
-
-        .pipe source "#{webapp}/js/app.js"
-        .pipe buffer!
-        #.pipe sourcemaps.init {+load-maps, +large-files}
-
-        .pipe if-else optimize-for-production, my-uglify
-
-        #.pipe rename basename: 'app'
-        #.pipe sourcemaps.write '.'
-        .pipe gulp.dest paths.build-folder
-        .pipe tap (file) ->
-            log-info \browserify, "Browserify finished (#{webapp})"
-            #console.log "browserify cache: ", pack keys browserify-cache
-            version <~ get-version
-            console.log "version: #{version}"
-            console.log "------------------------------------------"
-            first-browserify-done := yes
+files = ls-entry-files ++ dep-entry-files
+b-count = files.length
 
 gulp.task \browserify, ->
-    bundle!
+    tasks = for let file in files
+        filebase = file.split(/[\\/]/).pop! .replace /\.[a-z]+/, '.js'
+        console.log "creating bundler task for #{filebase}"
+        get-bundler file
+            .bundle!
+            .on \error, (err) ->
+                msg = try
+                    err.message
+                catch
+                    err
+                on-error \browserify, msg
+                @emit \end
 
+            .pipe source filebase
+            .pipe buffer!
+            #.pipe sourcemaps.init {+load-maps, +large-files}
+
+            .pipe if-else optimize-for-production, my-uglify
+
+            #.pipe rename basename: 'app'
+            #.pipe sourcemaps.write '.'
+            .pipe gulp.dest "#{paths.build-folder}/#{webapp}/js"
+            .pipe tap (file) ->
+                log-info \browserify, "Browserify finished (#{webapp}/js/#{filebase})"
+                #console.log "browserify cache: ", pack keys browserify-cache
+                b-count-- if b-count > 0
+                version <~ get-version
+                console.log "version: #{version}"
+                console.log "------------------------------------------"
+
+    return es.merge.apply null, tasks
 
 # Concatenate vendor javascript files into public/js/vendor.js
 gulp.task \vendor-js, ->
@@ -355,7 +354,7 @@ gulp.task \preparserify-workaround ->
         .pipe cache 'preparserify-workaround-cache'
         .pipe tap (file) ->
             #console.log "DEBUG: preparserify-workaround: invalidating: ", file.path
-            unless first-browserify-done
+            if b-count > 0
                 #console.log "DEBUG: Ractive Preparserify: skipping because first browserify is not done yet"
                 return
             rel = preparserify-dep-list[file.path]
@@ -364,12 +363,12 @@ gulp.task \preparserify-workaround ->
 
             unless empty rel
                 for js-file in rel
-                    console.log "INFO: Preparserify workaround: triggering for #{path.basename js-file}"
+                    #console.log "INFO: Preparserify workaround: triggering for #{path.basename js-file}"
                     try
                         clear-timeout debounce[js-file]
-                        console.log "Preventing debounce for #{js-file}"
+                        console.log "INFO: Preventing debounce for #{js-file}"
                     catch
-                        console.log "...no need to prevent debounce for #{js-file}"
+                        console.log "INFO: ...no need to prevent debounce for #{js-file}"
 
                     debounce[js-file] = sleep 100ms, ->
                         touch.sync js-file

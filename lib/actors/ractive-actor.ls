@@ -1,5 +1,5 @@
-require! 'aea': {pack, sleep}
-require! 'dcs/browser': {Signal, Actor}
+require! 'dcs/src/signal': {Signal}
+require! 'dcs/src/actor': {Actor}
 
 export class RactiveActor extends Actor
     (@ractive, opts={}) ->

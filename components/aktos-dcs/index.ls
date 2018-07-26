@@ -1,7 +1,7 @@
-require! 'dcs/browser': {DcsSocketIOBrowser}
+require! 'dcs/services/dcs-proxy/socket-io/browser': {DcsSocketIOBrowser}
 require! 'actors/browser-storage': {BrowserStorage}
 require! 'prelude-ls': {initial, drop, join, split}
-require! 'dcs/browser': {topic-match}
+require! 'dcs/src/topic-match': {topic-match}
 
 # Permission calculation mechanism
 Ractive.defaults.able = (permission) ->
@@ -76,6 +76,10 @@ Ractive.components['aktos-dcs'] = Ractive.extend do
         proxy.on \logged-in, (session) ~>
             proxy.log.log "...seems logged in."
             @set \@global.session, session
+
+        proxy.once \logged-in, (session) ~>
+            console.warn "Logged in for the first time."
+            @fire 'live'
 
         proxy.on \logged-out, ~>
             proxy.log.log "seems logged out."

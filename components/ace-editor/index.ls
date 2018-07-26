@@ -1,37 +1,40 @@
-ace = require('brace');
-require('brace/mode/javascript')
-require('brace/theme/monokai')
+ace = require 'brace'
+require 'brace/mode/javascript'
 require 'brace/mode/livescript'
+require 'brace/theme/monokai'
+require 'brace/theme/xcode'
 
-Ractive.components['ace-editor'] = Ractive.extend do
+Ractive.components['ace-editorASYNC'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
     onrender: ->
-        e = ace.edit @find \*
+        editor = ace.edit @find \*
 
-        mode = @get \mode
-        theme = switch @get('theme')
-            | \dark => \monokai
-            |_ => \xcode
+        @observe \theme, (_theme) ->
+            if _theme
+                theme = switch _theme
+                    | \dark => \monokai
+                    | \light => \xcode
+                    |_ => that
+                editor.set-theme "ace/theme/#{theme}"
 
-        e.set-theme "ace/theme/#{theme}"
-        e.get-session!set-mode "ace/mode/#{mode}"
-        e.$blockScrolling = Infinity
+        @observe \mode, (mode) ~>
+            editor.get-session!.set-mode "ace/mode/#{mode}"
+
+        editor.$blockScrolling = Infinity
 
         setting = null
         getting = null
         @observe \code, (val) ~>
             return if getting
             setting := yes
-            e.set-value(val or '')
-            e.clear-selection!
+            editor.set-value(val or '')
+            editor.clear-selection!
             setting := no
 
-
-        e.on \change, ~>
-            console.log "editor change..."
+        editor.on \change, ~>
             getting := true
-            @set \code, e.get-value!
+            @set \code, editor.get-value!
             getting := false
 
     data: ->

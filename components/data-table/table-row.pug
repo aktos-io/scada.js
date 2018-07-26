@@ -6,7 +6,7 @@
         .dimmable 
             .ui.inverted.dimmer(class-active="openingRow" fade-in)
                 .ui.active.large.text.loader
-                    p {{ openingRowMsg }}
+                    .ui.p {{ openingRowMsg }}
                     btn.small.inverted.red.icon(on-click="closeRow" tooltip="Kapat") #[i.remove.icon] Cancel
             .data-table-opened-row(fade-in)
                 //- -----------------------------------------------
