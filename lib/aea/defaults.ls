@@ -55,3 +55,5 @@ window.oneDecimal = (x) -> parseFloat(Math.round(x * 10) / 10).toFixed(1)
 require! 'on-idle'
 window.on-idle = on-idle
 require './ractive-synchronizer' .get-synchronizer
+
+require! './error'

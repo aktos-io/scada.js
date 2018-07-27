@@ -3,31 +3,7 @@ doctype html
 //- IMPORTANT: Above "doctype html" declaration MUST be the very first line.
 //- ------------------------------------------------------------------------
 include mixins.pug
-
-mixin app
-    script(src="js/app.js")
-
-mixin app-loading 
-    //- Load app.js with a progress bar. Usage: 
-    
-        block app 
-            +app-loading 
-            
-        block loading 
-            +app-loading-progress 
-            
-    #dynamic-script
-    script
-        include:livescript ./load-app.ls 
         
-mixin app-loading-progress 
-    .row
-        .column
-            //-p: b#percent
-            .ui.progress.teal(id="percentProgress")
-                .bar(style="min-width: 0 !important;")
-                    .progress
-
 html(lang="en-GB")
     head
         meta(charset="utf-8")
@@ -47,12 +23,8 @@ html(lang="en-GB")
         block title
             title ScadaJS #{app}
 
-        script.
-            window.headStart = Date.now()
-
-
-        script
-            include:livescript ./error.ls
+        //- for estimating load time
+        script window.headStart = Date.now()
             
         //- vendor.js
         script if (typeof module === 'object') {window.module = module; module = undefined;}
@@ -71,30 +43,26 @@ html(lang="en-GB")
                 .row
                     .column(style="padding-top: 10%")
                         img.ui.small.centered.image(src="images/scadajs-logo-long.svg")
-
                 .row
                     //- # loading icon consumes a very high processing power
                         .column 
                             .ui.active.centered.inline.big.text.loader.indeterminate
                                 .ui.p Loading Application...
-                                .ui.p#timer 
-                            
+                                .ui.p#timer     
                     .column 
                         .ui.center.aligned.grid 
                             .row
                                 .column Loading Application...
                             .row 
                                 .column 
-                                    #timer 
-
-                                                        
+                                    #timer                         
                 block loading                 
 
                 script
                     include ./estimate.js
         
         block app 
-            +app
+            script(src="js/app.js")
                 
         block body-append
             
