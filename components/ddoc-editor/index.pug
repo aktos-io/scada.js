@@ -43,20 +43,12 @@
                 pre(style="overflow-x: scroll; min-height: 300px; border: 1px solid black") {{getView_result}}
                 
     .ui.segment   
-        h3.ui.top.attached.header 
+        h3.ui.header 
             //- Dump all design documents 
-            checkbox.blue(checked="{{dumpAllSection}}") Show
             | Dump All Design Documents  
+        checkbox.blue(checked="{{dumpAllSection}}") Show
 
         +if('dumpAllSection')  
             .ui.buttons
                 ack-button.green(on-click="downloadBlueprints") Get All Documents
                 file-button.red(on-read="restoreDesignDocs" type="text") Restore 
-            h3 Notes for Creating a New Database From Scratch
-            ol
-                li Use Fauxton to create a new database 
-                li Create a user different from #[code admin]
-                li.
-                    Create appropriate #[code _security] file in the new database
-                    and add the user as #[code admin]
-                li Upload your #[code _design/*] files
