@@ -15,7 +15,7 @@
     min-height: 10px;
     min-width: 100px;
 
-    /* for fixing popup clipping */
+    /* for fixing popup clipping, taken from https://stackoverflow.com/a/39554003/1952991 */
     padding-bottom: 250px;
     margin-bottom: -250px;
 }
