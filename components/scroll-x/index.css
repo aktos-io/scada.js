@@ -6,6 +6,7 @@
 
 .scroll-x-container {
     overflow-x: auto;
+    overflow-y: visible
     white-space: nowrap;
     position: absolute;
     left: 0;
@@ -13,4 +14,24 @@
     top: 0;
     min-height: 10px;
     min-width: 100px;
+
+    /* for fixing popup clipping */
+    padding-bottom: 250px;
+    margin-bottom: -250px;
 }
+
+/* for fixing popup clipping workaround side-effect */
+.scroll-x-container::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* ANOTHER WORKAROUND FOR POPUP CLIPPING, no need at this point */
+/*
+.scroll-x-container .ui.dropdown {
+  position: static;
+}
+.scroll-x-container .ui.dropdown .menu {
+  top: auto !important;
+}
+*/

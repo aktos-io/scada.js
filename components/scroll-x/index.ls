@@ -18,20 +18,6 @@ Ractive.components['scroll-x'] = Ractive.extend do
         container = $ @find \.scroll-x-container
         set-container-height = ~>
             height = container.height!
-
-            if height is 0
-                # component is inside a "display: none" div
-                # calculate its actual height
-                copied = container.clone!
-                    .attr \id, false
-                    .css do
-                        visibility:"hidden"
-                        display:"block",
-                        position:"absolute"
-
-                $ \body .append copied
-                height = copied.height!
-                copied.remove!
             outer.css \height, height
 
         # set initial height
@@ -41,7 +27,7 @@ Ractive.components['scroll-x'] = Ractive.extend do
         container.bind 'DOMSubtreeModified', (e) ~>
             if e.target.innerHTML.length > 0
                 #console.log "changed inner html"
-                # DOM may change too fast, limit re-calculation rate 
+                # DOM may change too fast, limit re-calculation rate
                 fps.exec ~>
                     #console.warn "re-calculating inner html"
                     set-container-height!
