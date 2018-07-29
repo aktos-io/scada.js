@@ -19,6 +19,11 @@ require! 'aea': {sleep}
 require! 'sifter': Sifter
 require! 'dcs/lib/asciifold': asciifold
 
+copy-context = (ctx) ->
+    c = ctx.getParent yes 
+    c.refire = yes
+    return c
+
 Ractive.components['dropdown'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
@@ -45,10 +50,7 @@ Ractive.components['dropdown'] = Ractive.extend do
         #@link \selected-item, \item
 
     onrender: (ctx) ->
-        const c = ctx.getParent yes # very important!
-        #const c = @getContext @target .getParent yes # DO NOT USE THIS # important for making `ctx.set` to work
-        #const c = ctx  # DO NOT USE THIS # important for simple dropdowns
-        c.refire = yes
+        const c = copy-context ctx
         dd = $ @find '.ui.dropdown'
         keyField = @get \keyField
         nameField = @get \nameField
