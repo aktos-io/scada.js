@@ -4,7 +4,7 @@ Parent should ALWAYS pass event listeners to the child conditionally. In parent
 component (`bar`)'s template:
 
 ```pug
-foo("{{#if @context.hasListener('y')}}on-x='y'{{/if}}")
+foo("{{#if @context.hasListener('y',true)}}on-x='y'{{/if}}")
 ```
 
 When you use `bar` as follows, `foo` will detect its `x` listener correctly:
