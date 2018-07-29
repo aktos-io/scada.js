@@ -34,7 +34,7 @@ For example, in `component-dropdown` template (which uses `dropdown` under the h
 ```pug
 span Some-Additions-Here
 dropdown(
-    "{{#if @context.hasListener('select')}}on-select='_select'{{/if}}"
+    "{{#if @context.hasListener('select', true)}}on-select='_select'{{/if}}"
     ...
 )
 span Some-Other-Additions-Here
