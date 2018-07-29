@@ -7,7 +7,16 @@ Here is some quick notes about CouchDB usage.
 * "Show functions" are to transform simple documents.
 * "List functions" are to transform "view"s.
 
-# Dump and Restore
+# Recipes
+
+### Create A New Database
+
+1. Create a random user
+2. Create the `_security` doc and make that user db admin (**see** ./security)
+3. Restore the `_design` docs.
+
+
+### Dump and Restore
 
 https://github.com/raffi-minassian/couchdb-dump
 

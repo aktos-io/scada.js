@@ -1,9 +1,9 @@
+
 oneDecimal = function(x){
     return parseFloat(Math.round(x * 10) / 10).toFixed(1)
 }
-
 var appStart = Date.now()
-var estimatedVendorToAppSizeRatio = 1;
+var estimatedVendorToAppSizeRatio = 0.5;
 headDuration = appStart - window.headStart;
 appDuration = estimatedVendorToAppSizeRatio * headDuration;
 interval = 100;
