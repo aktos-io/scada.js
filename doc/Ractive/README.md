@@ -2,7 +2,7 @@
 
 These are tips and some key examples to serve as a cheatsheet in addition to [Ractive's own documentation](https://ractive.js.org/api/). 
 
-## Conditional Event Declaration
+## Conditional event declaration
 
 To declare an event based on another condition, use `{{#if ...}}on-myevent="..."{{/if}}`:
 
@@ -13,11 +13,11 @@ ack-button("{{#if hello}}on-click='@.global.alert()'{{/if}}") helloooo
 
 ## Properly propagating `.hasListener()` behaviour
 
-(see [extending-components/1](./extending-components.md#1-correctly-propagating-listener-detection]))
+When you use `a-component` inside `another-component` and `a-component` relies on `.hasListener()` method, additional care must be taken: (see [extending-components/1](./extending-components.md#1-correctly-propagating-listener-detection]))
 
 ## Using another component under the hood 
 
-(see [extending-components](./extending-components.md))
+When you create a `super-component` as a drop in replacement for `a-component`, `context` must be properly propagated: (see [extending-components](./extending-components.md))
 
 ## Async Components 
 
