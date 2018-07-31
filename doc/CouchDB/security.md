@@ -15,9 +15,10 @@ following document in the `/_users` db:
 
 ## Security per database:
 
-> **WARNING:** 
-> A CouchDB bug enforces you to declare something in `member.names` or `member.roles`. 
-> Otherwise, db becomes PUBLIC. **You have warned**.
+> **WARNING:** <br />
+> A CouchDB bug enforces you to declare something in `member.names` or `member.roles`. <br />
+> Otherwise, db becomes PUBLIC. <br />
+> **You have warned**.
 
 newdb/_security:
 
