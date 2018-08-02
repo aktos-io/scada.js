@@ -21,11 +21,10 @@ dropdown(
 
 ## Custom Template
 
-Use `custom` attribute and `custom` partial to define a custom template to dropdown.
+Pass `custom` partial to define a custom template to dropdown.
 
 ```pug
 dropdown(
-    custom
     data="{{data}}"
     selected-key="{{mydata}}"
     item="{{item}}")

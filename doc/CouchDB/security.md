@@ -15,26 +15,26 @@ following document in the `/_users` db:
 
 ## Security per database:
 
-{{db}}/_security:
+> WARNING: A CouchDB bug enforces you to declare something in member.names or
+> member.roles. Otherwise, db becomes PUBLIC. You have warned.
 
+newdb/_security:
+
+```json
 {
   "_id": "_security",
   "couchdb_auth_only": true,
   "admins": {
     "names": [
-      "demeter"
+      "foo"
     ],
     "roles": [
       "_admin"
     ]
   },
   "members": {
-    "names": [
-      "batman",
-      "robin"
-    ],
-    "roles": [
-      "foo"
-    ]
+    "names": ["do-not-remove-me"],
+    "roles": []
   }
 }
+```

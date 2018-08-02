@@ -1,4 +1,5 @@
-# ASYNC components
+# ASYNC components' synchronizers
+# Require ./heavy-components in somewhere
 require! './ace-editor/sync'
 require! './time-series/sync'
 require! './ddoc-editor/sync'
