@@ -17,7 +17,7 @@ following document in the `/_users` db:
 
 > **WARNING:** <br />
 > A CouchDB bug enforces you to declare something in `member.names` or `member.roles`. <br />
-> Otherwise, db becomes PUBLIC. <br />
+> Otherwise, db becomes PUBLIC. See [couchdb/1490](https://github.com/apache/couchdb/issues/1490) <br />
 > **You have warned**.
 
 newdb/_security:
