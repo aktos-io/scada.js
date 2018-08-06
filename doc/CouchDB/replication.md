@@ -18,6 +18,7 @@ Create the following document in the `_replicator` db:
 
 ```json
 {
+  "_id": "foo_to_bar", 
   "source": "https://theadmin:theadminpassword@example.cloudant.com/sourcedb",
   "target": "http://theotheradmin:theotheradminpassword@127.0.0.1/targetdb",
   "create_target": true,
