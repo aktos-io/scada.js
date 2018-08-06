@@ -7,17 +7,8 @@
        curl https://foo:yourpassword@example.com/yourdb/_security
        # if you see the security document, then everything is set up correctly.
 
-3. Create a replication task by using GUI (*not recommended*) or by creating a replication
+3. Create a replication task either by using GUI (*not recommended*) or by creating a replication
 document.
-
-## Tips for Common Pitfalls
-
-1. If you reach the Web GUI by port forwarding, adding the replication task
-via GUI simply may fail because target database url might be constructed erroneously.
-
-    FIX: After creating your replication task, edit the replication document and
-    fix the target url port.
-
 
 ## Creating replication document
 
@@ -34,4 +25,12 @@ Create the following document in the `_replicator` db:
 }
 ```
 
-> Duplicate same replication document and swap the `source` with `target` for a two way replication.
+> **Two way replication**: Duplicate the same replication document and swap the `source` and the `target` for a two way replication.
+
+## Tips for Common Pitfalls
+
+1. If you reach the Web GUI by port forwarding, adding the replication task
+via GUI simply may fail because target database url might be constructed erroneously.
+
+    FIX: After creating your replication task, edit the replication document and
+    fix the target url port.
