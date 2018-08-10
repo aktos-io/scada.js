@@ -1,7 +1,5 @@
 doctype html
-//- ------------------------------------------------------------------------
-//- IMPORTANT: Above "doctype html" declaration MUST be the very first line.
-//- ------------------------------------------------------------------------
+//- IMPORTANT: "doctype html" MUST be the very first line in this document
 include mixins.pug
         
 html(lang="en-GB")
@@ -10,7 +8,7 @@ html(lang="en-GB")
         meta(name="viewport"
             content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0")
         meta(name="mobile-web-app-capable" content="yes")
-        meta(name="google" value="notranslate")
+        meta(name="google" content="notranslate")
 
         block icon 
             link(rel="icon" sizes="any" href="images/scadajs.ico")
