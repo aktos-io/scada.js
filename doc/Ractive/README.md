@@ -38,3 +38,7 @@ In short:
 
     3. Remove `fooASYNC` (and its dependencies) from your bundle and load it any time in the future with any method you like (XHR, websockets, etc...)
     4. Send a signal to the synchronizer when your component is ready.
+
+# Internationalization (i18n)
+
+(see https://github.com/ceremcem/ractive-i18n)
