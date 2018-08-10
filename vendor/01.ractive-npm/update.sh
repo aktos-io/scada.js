@@ -4,19 +4,21 @@
 #
 #     ./update.sh [0.10.2]
 #
+set -eu -o pipefail
+set_dir(){ _dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; _sdir=$(dirname "$(readlink -f "$0")"); }; set_dir
+safe_source () { source $1; set_dir; }
+# end of bash boilerplate
 
-DIR=$(dirname "$(readlink -f "$0")")
-
-cd "$DIR/../.."
 RACTIVE_VERSION=${1:-"latest"}
-
 echo "Updating Ractive to: $RACTIVE_VERSION"
 
+cd "$_dir/../.."
 npm i --save ractive@$RACTIVE_VERSION
 
-cd $DIR
-export NODE_MODULES=$(realpath "$DIR/../../node_modules")
-echo "updating ractive from this node modules"
+cd $_dir
+export NODE_MODULES=$(realpath "$_dir/../../node_modules")
 
-# Create bundle
-browserify -t browserify-livescript ractive-npm.ls -o ractive-latest.js
+cp $NODE_MODULES/ractive/ractive.min.js .
+
+# Create "extras" bundle
+browserify -t browserify-livescript z_ractive_extras.ls -o z_ractive_extras.js
