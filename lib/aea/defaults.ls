@@ -11,7 +11,7 @@ unless (``/comment/.test(function(){/* comment */})``)
 # see doc/available-libraries.md for examples
 window.PNotify = require 'pnotify/dist/umd/PNotify'
 window.PNotifyButtons = require 'pnotify/dist/umd/PNotifyButtons'
-require 'nonblockjs'
+require 'nonblockjs/NonBlock.es5.js'
 """
 To be able to use "non blocking" popups, `addClass: "nonblock"`
 """
