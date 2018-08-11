@@ -26,6 +26,7 @@
     "marked": "^0.3.12",
     "mathjs": "^4.2.2",
     "moment": "^2.21.0",
+    "nonblockjs": "^1.0.8",
     "nouislider": "^10.0.0",
     "on-idle": "^3.1.4",
     "pnotify": "^4.0.0-alpha.2",

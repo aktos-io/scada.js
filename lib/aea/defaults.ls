@@ -11,6 +11,10 @@ unless (``/comment/.test(function(){/* comment */})``)
 # see doc/available-libraries.md for examples
 window.PNotify = require 'pnotify/dist/umd/PNotify'
 window.PNotifyButtons = require 'pnotify/dist/umd/PNotifyButtons'
+require 'nonblockjs'
+"""
+To be able to use "non blocking" popups, `addClass: "nonblock"`
+"""
 
 # Cached version of $.getScript
 window.getScriptCached = getScriptCached = (url, callback) ->
