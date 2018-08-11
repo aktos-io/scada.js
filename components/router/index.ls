@@ -141,10 +141,10 @@ Ractive.components['router'] = Ractive.extend do
         prev = {}
         active-scene = null
 
-        handle-hash = (force) ~>
+        handle-hash = (opts={}) ~>
             curr = parse-link get-window-hash!
             if curr
-                if (curr.scene isnt prev.scene) or force
+                if (curr.scene isnt prev.scene) or opts.force
                     # note the current scroll position
                     page = prev?.scene or \default
                     change.scene = curr.scene
@@ -186,14 +186,15 @@ Ractive.components['router'] = Ractive.extend do
                             ..set \hidden, yes
                             ..set \visible, yes
                             ..set \renderedBefore, yes
-                            $ document .scrollTop ..get \lastScroll
+                            unless opts.noscroll
+                                $ document .scrollTop ..get \lastScroll
                             ..set \hidden, no
 
                 if curr.anchor isnt prev.anchor
                     change.anchor = curr.anchor
 
-
-                sleep 50ms, -> scroll-to curr.anchor
+                unless opts.noscroll
+                    sleep 50ms, -> scroll-to curr.anchor
 
                 actor.send 'app.router.changes', {change}
                 @set \@shared.router, change
@@ -202,15 +203,19 @@ Ractive.components['router'] = Ractive.extend do
                 prev <<< curr
 
         @observe \@global.session.permissions, ->
-            handle-hash force=yes
+            console.log "permissions changed, re-handling the hash"
+            handle-hash {force: yes, noscroll: yes}
 
         hash-listener := (hash) ->
-            #console.log "fired hash listener! hash is: #{hash}"
+            console.log "fired hash listener! hash is: #{hash}"
             handle-hash!
 
         $ window .on \hashchange, ->
-            #console.log "this is hashchange run: #{window.location.hash}"
+            console.log "this is hashchange run: #{window.location.hash}"
             handle-hash!
+
+        # on app-load
+        handle-hash!
 
 
 Ractive.components['scene'] = Ractive.extend do
@@ -227,7 +232,7 @@ Ractive.components['scene'] = Ractive.extend do
                     style="
                         margin: 0;
                         padding: 0;
-                        padding-top: {{offset !== null ? offset : @global.topOffset}}px; 
+                        padding-top: {{offset !== null ? offset : @global.topOffset}}px;
                         border: 0;"
                     >
                     {{>content}}
