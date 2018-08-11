@@ -1,4 +1,4 @@
-Ractive.decorators.dropdown = (node, opts) ->
+Ractive.decorators.sidebar = (node, opts) ->
     unless opts
         opts = {}
     unless opts.transition
