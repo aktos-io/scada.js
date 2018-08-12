@@ -15,19 +15,16 @@ html(lang="en-GB")
 
         block title
             title ScadaJS #{app}
-
-        //- for estimating load time
-        script window.headStart = Date.now()
             
-        //- vendor.js
+        script window.appStart = Date.now();
         script if (typeof module === 'object') {window.module = module; module = undefined;}
         script#vendor(src="js/vendor.js")
         script if (window.module) module = window.module;
-        
+
         //- global css
         link(rel="stylesheet", href="css/vendor.css")
-        
-        //- rest of head section
+
+        //- rest of head section, if exists
         block head-append
 
     body
@@ -51,9 +48,6 @@ html(lang="en-GB")
                                     #timer                         
                 block loading                 
 
-                script
-                    include ./estimate.js
-        
         block app 
             script(src="js/app.js")
                 

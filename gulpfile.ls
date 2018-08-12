@@ -95,8 +95,11 @@ log-info = (source, msg) ->
 
 pug-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/index.pug"
 html-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/index.html"
-ls-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/app.{ls,js}"
-dep-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/dep.{ls,js}"
+
+app-entry-files = []
+for <[ app app2 app3 ]>
+    app-entry-files ++= glob.sync "#{paths.client-webapps}/#{webapp}/#{..}.{ls,js}"
+
 
 for-css =
     "#{paths.vendor-folder}/**/*.css"
@@ -258,7 +261,7 @@ get-bundler = (entry) ->
         ..transform ractive-preparserify
         ..transform browserify-optimize-js
 
-files = ls-entry-files ++ dep-entry-files
+files = app-entry-files
 b-count = files.length
 
 gulp.task \browserify, ->

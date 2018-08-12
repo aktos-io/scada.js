@@ -1,6 +1,6 @@
 htmlEncode = (html) ->
     return html
-        |> $.trim
+        |> (.trim!)
         |> (x) -> x.replace /[&"'\<\>]/g, (c) ->
             switch c
             | '&' => "&amp;"

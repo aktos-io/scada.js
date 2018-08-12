@@ -1,0 +1,1 @@
+// this is a dummy file to be able to generate an empty vendor.js
