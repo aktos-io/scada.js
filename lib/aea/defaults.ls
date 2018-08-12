@@ -53,6 +53,7 @@ window.getScript = function(source, callback) {
 # load CSS files, taken from https://stackoverflow.com/a/5537911/1952991
 ``
 function loadStyleSheet( path, fn, scope ) {
+   var timeout = 120000; // long duration for extemely slow connections
    var head = document.getElementsByTagName( 'head' )[0], // reference to document.head for appending/ removing link nodes
        link = document.createElement( 'link' );           // create the link node
    link.setAttribute( 'href', path );
@@ -80,9 +81,9 @@ function loadStyleSheet( path, fn, scope ) {
        timeout_id = setTimeout( function() {       // start counting down till fail
           clearInterval( interval_id );             // clear the counters
           clearTimeout( timeout_id );
-          head.removeChild( link );                // since the style sheet didn't load, remove the link node from the DOM
+          //head.removeChild( link );                // let the system load the style sheet asynchronously
           fn.call( scope || window, false, link ); // fire the callback with success == false
-       }, 15000 );                                 // how long to wait before failing
+       }, timeout );                                 // how long to wait before failing
 
    head.appendChild( link );  // insert the link node into the DOM and start loading the style sheet
 
