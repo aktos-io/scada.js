@@ -77,7 +77,8 @@ Ractive.components['a'] = Ractive.extend do
                 "
             on-click="click"
             bind-data-id
-            {{#if tooltip}}title="{{tooltip}}"{{/if}}
+            title="{{tooltip || title}}"
+            href="{{href}}" onclick="return false;"
             >
             {{yield}}
         </a>
@@ -85,7 +86,8 @@ Ractive.components['a'] = Ractive.extend do
     isolated: no
     components: {a: false}
     data: ->
-        tooltip: null
+        title: ''
+        tooltip: ''
         href: null
     onrender: ->
         @on do
