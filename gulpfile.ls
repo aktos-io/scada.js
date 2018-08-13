@@ -95,10 +95,7 @@ log-info = (source, msg) ->
 
 pug-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/index.pug"
 html-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/index.html"
-
-app-entry-files = []
-for <[ app app2 app3 ]>
-    app-entry-files ++= glob.sync "#{paths.client-webapps}/#{webapp}/#{..}.{ls,js}"
+app-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/app*.{ls,js}"
 
 
 for-css =
