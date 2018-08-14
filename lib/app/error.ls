@@ -1,6 +1,6 @@
 htmlEncode = (html) ->
     return html
-        |> $.trim
+        |> (.trim!)
         |> (x) -> x.replace /[&"'\<\>]/g, (c) ->
             switch c
             | '&' => "&amp;"
@@ -8,6 +8,10 @@ htmlEncode = (html) ->
             | '"' => "&quot;"
             | "<" => "&lt;"
             |_ => "&gt;"
+
+window.loadingMessage = (message) ->
+    if document.getElementById 'timer'
+        that.innerHTML = message
 
 window.loadingError = (err) ->
     container-name = "scadaErrorSection"
@@ -29,7 +33,7 @@ window.loadingError = (err) ->
         message = document.createElement \div
             ..class-name = "ui red message"
             ..innerHTML = "<h1>ERROR</h1>"
-            ..innerHTML = "<pre>#{htmlEncode err}</pre>"
+            ..innerHTML += "<pre>#{htmlEncode err}</pre>"
 
         container.appendChild message
     else

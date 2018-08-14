@@ -49,6 +49,8 @@
         checkbox.blue(checked="{{dumpAllSection}}") Show
 
         +if('dumpAllSection')  
+            ack-button.green(on-click="downloadBlueprints") Get All Documents
+            
             .ui.buttons
-                ack-button.green(on-click="downloadBlueprints") Get All Documents
                 file-button.red(on-read="restoreDesignDocs" type="text") Restore 
+                checkbox(checked="{{restoreFromScratch}}") delete revs 

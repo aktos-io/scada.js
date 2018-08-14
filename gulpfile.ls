@@ -61,6 +61,7 @@ notification-enabled = yes
 # Project Folder Structure
 paths =
     vendor-folder: "#{__dirname}/vendor"
+    vendor2-folder: "#{__dirname}/vendor2"
     build-folder: "#{__dirname}/build"
     lib-src: "#{__dirname}/lib"
     client-webapps: "#{__dirname}/../webapps"
@@ -94,19 +95,28 @@ log-info = (source, msg) ->
 
 pug-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/index.pug"
 html-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/index.html"
-ls-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/app.{ls,js}"
-dep-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/dep.{ls,js}"
+app-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/app*.{ls,js}"
+
 
 for-css =
     "#{paths.vendor-folder}/**/*.css"
     "!#{paths.vendor-folder}/**/__tmp__/**"
-    "#{paths.components-src}/**/*.css"
-    "#{paths.client-webapps}/**/*.css"
 
 for-js =
     "#{paths.vendor-folder}/**/*.js"
     "!#{paths.vendor-folder}/**/__tmp__/**"
     "!#{paths.vendor-folder}/**/assets/**"
+
+for-css2 =
+    "#{paths.vendor2-folder}/**/*.css"
+    "!#{paths.vendor2-folder}/**/__tmp__/**"
+    "#{paths.components-src}/**/*.css"
+    "#{paths.client-webapps}/**/*.css"
+
+for-js2 =
+    "#{paths.vendor2-folder}/**/*.js"
+    "!#{paths.vendor2-folder}/**/__tmp__/**"
+    "!#{paths.vendor2-folder}/**/assets/**"
 
 # changes on these files will invalidate browserify cache
 for-preparserify-workaround =
@@ -125,6 +135,11 @@ for-assets =
     "#{paths.vendor-folder}/**/assets/**"
     "!#{paths.vendor-folder}/**/__tmp__/**"
     "!#{paths.vendor-folder}/**/tmp-*/**"
+
+    # assets folder in vendor2
+    "#{paths.vendor2-folder}/**/assets/**"
+    "!#{paths.vendor2-folder}/**/__tmp__/**"
+    "!#{paths.vendor2-folder}/**/tmp-*/**"
 
 for-browserify =
     # livescript files in webapp folder
@@ -152,6 +167,8 @@ gulp.task \default, ->
             \html
             \vendor-js
             \vendor-css
+            \vendor2-js
+            \vendor2-css
             \assets
             \pug
             \preparserify-workaround
@@ -170,6 +187,12 @@ gulp.task \default, ->
 
     watch for-js, (event) ->
         gulp.start <[ vendor-js ]>
+
+    watch for-css2, (event) ->
+        gulp.start <[ vendor2-css ]>
+
+    watch for-js2, (event) ->
+        gulp.start <[ vendor2-js ]>
 
     watch for-browserify, ->
         gulp.start \browserify
@@ -235,7 +258,7 @@ get-bundler = (entry) ->
         ..transform ractive-preparserify
         ..transform browserify-optimize-js
 
-files = ls-entry-files ++ dep-entry-files
+files = app-entry-files
 b-count = files.length
 
 gulp.task \browserify, ->
@@ -272,9 +295,9 @@ gulp.task \browserify, ->
     return es.merge.apply null, tasks
 
 # Concatenate vendor javascript files into public/js/vendor.js
-gulp.task \vendor-js, ->
-    gulp.src for-js
-        .pipe cat "vendor.js"
+compile-js = (watchlist, output) ->
+    gulp.src watchlist
+        .pipe cat output
         .pipe if-else optimize-for-production, my-uglify
 
         .pipe through.obj (file, enc, cb) ->
@@ -291,15 +314,30 @@ gulp.task \vendor-js, ->
 
         .pipe gulp.dest "#{paths.client-public}/js"
 
-# Concatenate vendor css files into public/css/vendor.css
-gulp.task \vendor-css, ->
-    gulp.src for-css
+
+compile-css = (watchlist, output) ->
+    gulp.src watchlist
         .pipe cssimport {includePaths: ['node_modules']}
-        .pipe cat "vendor.css"
+        .pipe cat output
 
         # themes are searched in ../themes path, so do not save css in root
         # folder
         .pipe gulp.dest "#{paths.client-public}/css"
+
+gulp.task \vendor-js, ->
+    compile-js for-js, "vendor.js"
+
+# Concatenate vendor css files into public/css/vendor.css
+gulp.task \vendor-css, ->
+    compile-css for-css, "vendor.css"
+
+
+gulp.task \vendor2-js, ->
+    compile-js for-js2, "vendor2.js"
+
+# Concatenate vendor css files into public/css/vendor.css
+gulp.task \vendor2-css, ->
+    compile-css for-css2, "vendor2.css"
 
 # Copy assets into the public directory as is
 # search for a folder named "assets", copy and paste its contents into

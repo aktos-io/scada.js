@@ -139,8 +139,10 @@ Ractive.components['ddoc-editorASYNC'] = Ractive.extend do
             restoreDesignDocs: (ctx, file, next) ->
                 docs = JSON.parse file.raw
                 for ddoc in docs
-                    delete ddoc._rev
-                    console.log "Design Doc: #{ddoc._id}"
+                    if @get \restoreFromScratch
+                        delete ddoc._rev
+                    console.log "Design Doc: #{ddoc._id}, rev: #{ddoc._rev}"
+
                 /* -------------------------------------------------------------
                 THIS SEEMS A BUG WITH COUCHDB
                 _bulk_docs api doesn't work with design documents when they are

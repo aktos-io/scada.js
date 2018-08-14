@@ -4,7 +4,7 @@ These are tips and some key examples to serve as a cheatsheet in addition to [Ra
 
 ## Conditional event declaration
 
-To declare an event based on another condition, use `{{#if ...}}on-myevent="..."{{/if}}`:
+To declare an event based on another condition:
 
 ```pug
 input(value="{{hello}}")
@@ -25,19 +25,17 @@ A component might get big in time which may impact page load. To send a componen
 
 In short: 
 
-1. Create a simple component.
-2. Use it anywhere you like in your app.
-3. When you need to remove it from your main bundle and load asynchronously:
-    1. Create a synchronizer proxy with your original component's name
+1. Create a synchronizer proxy with your original component's name
 
-            Ractive.partials.foo = getSynchronizer();
+        Ractive.partials.foo = getSynchronizer();
 
-    2. Add `ASYNC` postfix to your original component name
+2. Add `ASYNC` postfix to your original component name
 
-            Ractive.components.fooASYNC = Ractive.extend(...)
+        Ractive.components.fooASYNC = Ractive.extend(...)
 
-    3. Remove `fooASYNC` (and its dependencies) from your bundle and load it any time in the future with any method you like (XHR, websockets, etc...)
-    4. Send a signal to the synchronizer when your component is ready.
+3. Remove `fooASYNC` (and its dependencies) from your bundle and load it any time in the future with any method you like (XHR, websockets, etc...)
+
+4. Send a signal to the synchronizer via `@shared.deps._all` when your component is ready.
 
 # Internationalization (i18n)
 
