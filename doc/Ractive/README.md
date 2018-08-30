@@ -34,4 +34,9 @@ In short:
         Ractive.components.fooASYNC = Ractive.extend(...)
 
 3. Remove `fooASYNC` (and its dependencies) from your bundle and load it any time in the future with any method you like (XHR, websockets, etc...)
+
 4. Send a signal to the synchronizer via `@shared.deps._all` when your component is ready.
+
+# Internationalization (i18n)
+
+(see https://github.com/ceremcem/ractive-i18n)

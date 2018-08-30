@@ -100,6 +100,8 @@ Ractive.components['print-button'] = Ractive.extend do
                         <head>
                             <link rel="stylesheet" href="css/vendor.css">
                             <script src="js/vendor.js"></script>
+                            <link rel="stylesheet" href="css/vendor2.css">
+                            <script src="js/vendor2.js"></script>
                             <title>#{res.title or res.data.title}</title>
                             <style>
                                 @media all{
