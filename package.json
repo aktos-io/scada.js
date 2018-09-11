@@ -31,7 +31,7 @@
     "on-idle": "^3.1.4",
     "pnotify": "^4.0.0-alpha.2",
     "prelude-ls": "^1.1.2",
-    "ractive": "^0.10.9",
+    "ractive": "^0.10.10-build-3",
     "ractive-modal": "^0.2.1",
     "randomstring": "^1.1.5",
     "relaxed-json": "^1.0.1",
