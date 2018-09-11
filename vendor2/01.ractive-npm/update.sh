@@ -9,6 +9,11 @@ set_dir(){ _dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; _sdir=$(dirname
 safe_source () { source $1; set_dir; }
 # end of bash boilerplate
 
+if [[ ${1:-} = "list" ]]; then
+    npm view ractive
+    exit 0
+fi
+
 RACTIVE_VERSION=${1:-"latest"}
 echo "Updating Ractive to: $RACTIVE_VERSION"
 
