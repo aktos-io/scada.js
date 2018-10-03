@@ -1,3 +1,5 @@
+window.sleep = (ms, f) -> set-timeout f, ms
+
 # Cached version of $.getScript
 window.getScriptCached = getScriptCached = (url, callback) ->
     jQuery.ajax do
