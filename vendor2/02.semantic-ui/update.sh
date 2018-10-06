@@ -39,3 +39,16 @@ rm dist/semantic.min.*
 
 echo "removing dropdown.min.js regarding to the patched version"
 rm dist/components/dropdown.min.js
+
+echo "moving needed parts to vendor/semantic"
+d=$(basename $(dirname `readlink -f $0`))
+first_stage="../../vendor/$d"
+
+this_dir=$PWD
+cd $first_stage
+for file in `find .`; do
+    [[ -f $file ]] || continue
+    [[ -f $this_dir/$file ]] || { echo "seems already moved: $file"; continue; }
+    echo "...moving $file"
+    mv $this_dir/$file $file
+done
