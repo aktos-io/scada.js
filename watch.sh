@@ -5,6 +5,7 @@ safe_source () { [[ ! -z ${1:-} ]] && source $1; _dir="$(cd "$(dirname "${BASH_S
 
 [[ -z ${1:-} ]] && { echo "first parameter must be the webapp name"; exit 1; }
 
+set +e
 while :; do
     gulp --webapp "$1"
     echo "restarting gulp..."
