@@ -285,12 +285,15 @@ gulp.task \browserify, ->
             #.pipe sourcemaps.write '.'
             .pipe gulp.dest "#{paths.build-folder}/#{webapp}/js"
             .pipe tap (file) ->
-                log-info \browserify, "Browserify finished (#{webapp}/js/#{filebase})"
                 #console.log "browserify cache: ", pack keys browserify-cache
+                console.log "Browserify finished (#{webapp}/js/#{filebase})"
                 b-count-- if b-count > 0
-                version <~ get-version
-                console.log "version: #{version}"
-                console.log "------------------------------------------"
+                if b-count is 0
+                    log-info \browserify, "Browserify finished"
+                    b-count := files.length
+                    version <~ get-version
+                    console.log "version: #{version}"
+                    console.log "------------------------------------------"
 
     return es.merge.apply null, tasks
 
