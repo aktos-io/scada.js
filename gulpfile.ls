@@ -260,7 +260,7 @@ get-bundler = (entry) ->
 
 files = app-entry-files
 b-count = files.length
-
+first-browserify-done = no
 gulp.task \browserify, ->
     tasks = for let file in files
         filebase = file.split(/[\\/]/).pop! .replace /\.[a-z]+/, '.js'
@@ -290,6 +290,7 @@ gulp.task \browserify, ->
                 b-count-- if b-count > 0
                 if b-count is 0
                     log-info \browserify, "Browserify finished"
+                    first-browserify-done := yes
                     b-count := files.length
                     version <~ get-version
                     console.log "version: #{version}"
@@ -395,7 +396,7 @@ gulp.task \preparserify-workaround ->
         .pipe cache 'preparserify-workaround-cache'
         .pipe tap (file) ->
             #console.log "DEBUG: preparserify-workaround: invalidating: ", file.path
-            if b-count > 0
+            unless first-browserify-done
                 #console.log "DEBUG: Ractive Preparserify: skipping because first browserify is not done yet"
                 return
             rel = preparserify-dep-list[file.path]
