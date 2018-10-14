@@ -111,7 +111,7 @@ Ractive.components['ack-button'] = Ractive.extend do
 
         if @get \auto
             logger.clog "auto firing ack-button!"
-            @fire \click
+            @fire \_click
 
     onteardown: ->
         @doing-watchdog.go!
