@@ -179,7 +179,7 @@ Ractive.components['router'] = Ractive.extend do
                         # display a 404 scene
                         if find ((p) -> (p.get 'name') is 'NOTFOUND'), @get \@shared.scenes
                             active-scene := that
-                            console.log "Found 404 page, displaying it..."
+                            #console.log "Found 404 page, displaying it..."
                         else
                             console.error "Neither requested page, nor a 404 scene is found."
 
@@ -209,7 +209,7 @@ Ractive.components['router'] = Ractive.extend do
             handle-hash {force: yes, noscroll: yes}
 
         hash-listener := (hash) ->
-            console.log "fired hash listener! hash is: #{hash}"
+            #console.log "fired hash listener! hash is: #{hash}"
             handle-hash!
 
         $ window .on \hashchange, ->

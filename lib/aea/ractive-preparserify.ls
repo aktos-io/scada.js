@@ -95,7 +95,7 @@ export ractive-preparserify = (file) ->
                 $ = cheerio.load template-html, do
                     lowerCaseAttributeNames: false
                     lowerCaseTags: false
-
+                    decodeEntities: false
                 try
                     $ template-id .html!
                 catch
