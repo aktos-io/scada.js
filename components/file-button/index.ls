@@ -1,4 +1,4 @@
-require! 'dcs/browser':{Signal}
+require! 'dcs/browser':{Signal, SignalBranch}
 require! 'aea': {VLogger}
 require! 'aea/csv-utils': {parse-csv}
 
@@ -9,6 +9,10 @@ Ractive.components['file-button'] = Ractive.extend do
     onrender: ->
         data-url-signal = new Signal!
         logger = new VLogger this
+
+        unless @getContext!.has-listener \read, yes
+            @set \disabled, yes
+            return logger.error "file-button has no 'on-read' listener."
 
         reset-input = ~>
             # remove selected file so the same selection could trigger
@@ -54,33 +58,43 @@ Ractive.components['file-button'] = Ractive.extend do
                 | \text, \csv => reader.readAsText file
                 |_ => ...
 
-                reason, file-data <~ data-url-signal.wait
-                csv = null
-                # conversion is done
-                <~ :lo(op) ~>
+                err, file-data <~ data-url-signal.wait
+                value = null
+                branch = new SignalBranch
+                if err
+                    value =
+                        error: err
+                else
+                    csv = null
+                    s2 = branch.add!
+                    b2 = new SignalBranch
                     if file_type is \csv
+                        s1 = b2.add!
                         err, res <~ parse-csv file-data, do
                             columns: @get \columns
                             delimiter: @get \delimiter
-                        if err => return show-err err
+                        if err =>
+                            b2.cancel!
+                            branch.cancel!
+                            return show-err err
                         csv := res
-                        return op!
-                    else
-                        return op!
-                value =
-                    blob: file
-                    base64: file-data.split ',' .1
-                    raw: file-data
-                    name: file.name
-                    type: file.type     # content_type
-                    file_type: file_type
-                    preview-url: window.URL.createObjectURL file
+                        s1.go!
+                    <~ b2.joined
+                    value :=
+                        blob: file
+                        base64: file-data.split ',' .1
+                        raw: file-data
+                        name: file.name
+                        type: file.type     # content_type
+                        file_type: file_type
+                        preview-url: window.URL.createObjectURL file
 
-                if csv
-                    value.csv =
-                        data: csv.rows
-                        columns: csv.columns
-
+                    if csv
+                        value.csv =
+                            data: csv.rows
+                            columns: csv.columns
+                    s2.go!
+                err <~ branch.joined
                 err <~ @fire \read, c, value
                 try clear-timeout timeout
                 unless err
