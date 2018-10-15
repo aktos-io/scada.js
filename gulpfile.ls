@@ -20,7 +20,7 @@ require! './templates/filters': {pug-filters}
 require! 'buble'
 require! 'node-notifier': notifier
 require! 'gulp-concat': cat
-require! 'gulp-uglify-es': {default: uglify}
+require! 'gulp-terser': terser
 require! './lib/aea': {sleep, pack}
 require! './lib/aea/ractive-preparserify': {
     ractive-preparserify
@@ -217,7 +217,7 @@ gulp.task \html, ->
         .pipe gulp.dest paths.client-public
 
 my-uglify = (x) ->
-    uglify {-mangle, +keep_fname}, x
+    terser x, {-mangle, +keep_fnames}
     .on \error, gutil.log
 
 my-buble = (input) ->
