@@ -217,7 +217,7 @@ gulp.task \html, ->
         .pipe gulp.dest paths.client-public
 
 my-uglify = (x) ->
-    uglify {-mangle}, x
+    uglify {-mangle, +keep_fname}, x
     .on \error, gutil.log
 
 my-buble = (input) ->
