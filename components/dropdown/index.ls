@@ -19,11 +19,6 @@ require! 'aea': {sleep}
 require! 'sifter': Sifter
 require! 'dcs/lib/asciifold': asciifold
 
-copy-context = (ctx) ->
-    c = ctx.getParent yes 
-    c.refire = yes
-    return c
-
 Ractive.components['dropdown'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
@@ -50,7 +45,16 @@ Ractive.components['dropdown'] = Ractive.extend do
         #@link \selected-item, \item
 
     onrender: (ctx) ->
+        # TODO: replace below line with END_OF_TODO
+        #c = @clone-context!
+        # ------------------------------------------
+        copy-context = (ctx) ->
+            c = ctx.getParent yes
+            c.refire = yes
+            return c
         const c = copy-context ctx
+        # ------------------------------------------
+        # END_OF_TODO
         dd = $ @find '.ui.dropdown'
         keyField = @get \keyField
         nameField = @get \nameField
