@@ -6,8 +6,32 @@ safe_source () { [[ ! -z ${1:-} ]] && source $1; _dir="$(cd "$(dirname "${BASH_S
 [[ -z ${1:-} ]] && { echo "first parameter must be the webapp name"; exit 1; }
 
 set +e
-while :; do
-    gulp --webapp "$1"
-    echo "restarting gulp..."
-    sleep 1
-done
+
+pidfile=$(mktemp)
+pid=
+compile(){
+    while :; do
+        gulp --webapp "$1" &
+        pid=$!
+        echo $pid > $pidfile
+        wait
+        echo "restarting gulp..."
+        sleep 1
+    done
+}
+
+restart(){
+    while :;do
+        sleep 1h
+        echo "Restarting gulp"
+        pid=$(cat $pidfile)
+        if [[ ! -z $pid ]]; then
+            kill $pid
+            echo > $pidfile
+        fi
+    done
+}
+
+compile $1 &
+restart
+wait
