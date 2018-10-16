@@ -9,6 +9,7 @@ ack-button.aea-checkbox(
     type="{{type}}"
     custom
     disabled="{{disabled}}"
+    tooltip="{{tooltip}}"
     )
     +with('~/["check-state"] as state')
         +iff("state === 'checked'")
