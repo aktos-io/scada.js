@@ -33,7 +33,7 @@ Ractive.prototype['delete'] = function(root, key){
   }
   return this.update(root);
 };
-Ractive.defaults.findWid = function(wid){
+Ractive.prototype.findWid = function(wid){
   var i$, ref$, len$, x;
   for (i$ = 0, len$ = (ref$ = this.findAllComponents()).length; i$ < len$; ++i$) {
     x = ref$[i$];
@@ -41,6 +41,21 @@ Ractive.defaults.findWid = function(wid){
       return x;
     }
   }
+};
+Ractive.prototype.findId = function(id){
+  var i$, ref$, len$, x;
+  for (i$ = 0, len$ = (ref$ = this.findAllComponents()).length; i$ < len$; ++i$) {
+    x = ref$[i$];
+    if (x.get('id') === id) {
+      return x;
+    }
+  }
+};
+Ractive.prototype.cloneContext = function(){
+  var ctx;
+  ctx = this.getContext().getParent(true);
+  ctx.refire = true;
+  return ctx;
 };
 Ractive.events.longpress = function(node, fire){
   var timer, clearTimer, mouseDownHandler, mouseUpHandler;

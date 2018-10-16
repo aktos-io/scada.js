@@ -36,10 +36,20 @@ Ractive.prototype.delete = (root, key) ->
     @update root
 
 
-Ractive.defaults.find-wid = (wid) ->
+Ractive.prototype.find-wid = (wid) ->
     for x in @find-all-components!
         if (x.get \wid) is wid
             return x
+
+Ractive.prototype.find-id = (id) ->
+    for x in @find-all-components!
+        if (x.get \id) is id
+            return x
+
+Ractive.prototype.clone-context = ->
+    ctx = @getContext!.getParent yes
+    ctx.refire = yes
+    return ctx
 
 # Events
 # ---------------------------------------------
