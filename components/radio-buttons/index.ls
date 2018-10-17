@@ -23,13 +23,12 @@ Ractive.components['radio-buttons'] = Ractive.extend do
                 if opts.outside
                     return op!
                 else if @get \async
-                    const c = @getContext @target .getParent yes
-                    c.refire = yes
-                    c.button = opts.ctx.component
-                    c.button.state \doing
+                    c = @clone-context!
+                        ..button = opts.ctx.component
+                        ..button.state \doing
                     err <~! @fire \select, c, new-val
                     unless err
-                        c.button.state \done...
+                        c.button.state \normal
                         return op!
                     else
                         c.button.error err
@@ -73,6 +72,15 @@ Ractive.components['radio-buttons'] = Ractive.extend do
                         return
                     #console.log "setting value to ", new-val
                     @set-selected-color new-val, {ctx: ctx2}
+
+            '_select': (ctx, new-val) ->
+                for @get \buttons
+                    if (..get \value) is new-val
+                        console.warn "Firing button related with ", new-val
+                        ..fire \_click
+                        return
+                console.error "We couldn't fire a button for ", new-val
+                debugger
 
             "teardown": ->
                 #console.log "radio-buttons is torn down"
