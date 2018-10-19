@@ -45,16 +45,7 @@ Ractive.components['dropdown'] = Ractive.extend do
         #@link \selected-item, \item
 
     onrender: (ctx) ->
-        # TODO: replace below line with END_OF_TODO
-        #c = @clone-context!
-        # ------------------------------------------
-        copy-context = (ctx) ->
-            c = ctx.getParent yes
-            c.refire = yes
-            return c
-        const c = copy-context ctx
-        # ------------------------------------------
-        # END_OF_TODO
+        c = @clone-context!
         dd = $ @find '.ui.dropdown'
         keyField = @get \keyField
         nameField = @get \nameField
@@ -112,6 +103,10 @@ Ractive.components['dropdown'] = Ractive.extend do
                     if e.code in <[ nomatch keyempty ]>
                         dd.dropdown 'restore defaults'
                         @set \item, {}
+                        # call the listener with an empty object 
+                        @fire \select, c, {}, (err) ~>
+                            if err
+                                @actor.v-err err
                         return op!
                     else
                         throw e
