@@ -203,8 +203,13 @@ Ractive.components['dropdown'] = Ractive.extend do
                         set-item value
                     @set \dataReduced, small-part-of @get \data
 
+        @observe \object-data, (_data) ~>
+            if _data?
+                @set \data, [{id: k, name: k, content: v} for k, v of _data]
+
         @observe \simple-data, (_data) ~>
-            @set \data, [{id: .., name: ..} for _data when ..?]
+            if _data?
+                @set \data, [{id: .., name: ..} for _data when ..?]
 
         @observe \data, (data) ~>
             if @get \debug => @actor.c-log "Dropdown (#{@_guid}): data is changed: ", data

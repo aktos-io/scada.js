@@ -17,6 +17,19 @@ respectively.
 
 Use `simple-data=` attribute to pass simple array input, like: `['foo', 'bar', ...]`
 
+### Using Object:
+
+Use `object-data=` attribute to pass a simple object input, like:
+
+```
+{
+    foo: 'bar'
+    hello: 'there'
+}
+```
+
+`item.content` will be the selected value.
+
 ## Basic Usage
 
 ```pug
