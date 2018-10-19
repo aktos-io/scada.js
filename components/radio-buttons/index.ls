@@ -85,7 +85,7 @@ Ractive.components['radio-buttons'] = Ractive.extend do
             "teardown": ->
                 #console.log "radio-buttons is torn down"
 
-    complete: ->
+    oncomplete: ->
         @observe \disabled, (val) ~>
             for @get \buttons
                 ..set \disabled val
