@@ -2,13 +2,20 @@
 
 ```ls
 [
-    {id: "foo", name: "The Foo", some: "other", keys:"are", also:"possible"},
+    {id: "foo", name: "The Foo",
+        some: "other", keys:"are", also:"possible"},
     ...
 ]
+
 ```
+
 
 If your format is different from `id` and `name`, pass these names with `key=` and `name=` attributes
 respectively.
+
+### Using simple array:
+
+Use `simple-data=` attribute to pass simple array input, like: `['foo', 'bar', ...]`
 
 ## Basic Usage
 
