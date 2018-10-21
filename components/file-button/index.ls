@@ -85,6 +85,7 @@ Ractive.components['file-button'] = Ractive.extend do
                         base64: file-data.split ',' .1
                         raw: file-data
                         name: file.name
+                        ext: file.name.split('.').pop()
                         type: file.type     # content_type
                         file_type: file_type
                         preview-url: window.URL.createObjectURL file
