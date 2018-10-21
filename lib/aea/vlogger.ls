@@ -1,5 +1,29 @@
 require! './logger': {Logger}
 
+'''
+Usage
+    vlog = new VLogger this
+
+    res, data <~ vlog.yesno
+        title: 'Yes or No'
+        icon: 'map signs'
+        template: 'some ractive content'
+        buttons:
+            myaction:
+                ...
+            myaction2:
+                ...
+    /* res:
+        type: String of action, one of
+            keys opts.buttons
+            or
+            "hidden" (if closed without action)
+
+        data: Ractive.data if `template` is passed within the options
+    */
+
+'''
+
 export class VLogger
     (@context, name)->
         @logger = new Logger (name or \VLogger)
@@ -7,7 +31,10 @@ export class VLogger
         @cerr = @logger.err
         @cwarn = @logger.warn
 
-        @modal = @context.root.find-component \logger
+        try
+            @modal = @context.root.find-component \logger
+        catch
+            debugger
 
         unless @modal
             @logger.err "VLogger class requires 'logger' component. Add it first."

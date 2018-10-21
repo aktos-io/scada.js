@@ -84,11 +84,19 @@ Ractive.components['logger'] = Ractive.extend do
 
                 modal.modal \show
 
+                c = null
+                if msg.template
+                    # display the ractive template
+                    c = new Ractive do
+                        el: @find '#client-template'
+                        template: that
+
+
                 timeout, action <~ selection-signal.wait
                 @logger.log "selection made. action: ", action
                 modal.modal \hide
                 <~ sleep 0
-                callback action
+                callback action, c?.get!
 
             selectionMade: (ctx, action) ->
                 selection-signal.go null, action
