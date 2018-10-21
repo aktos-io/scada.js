@@ -27,7 +27,8 @@ Ractive.components['ack-button'] = Ractive.extend do
 
         set-button = (mode, message) ~>
             @set \state, mode
-            @set \tooltip, "#{orig-tooltip} |!| #{message}"
+            message = if message then " |!| #{message}" else ''
+            @set \tooltip, "#{orig-tooltip}#{message}"
             unless mode is \doing
                 @doing-watchdog.go!
 
