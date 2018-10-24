@@ -22,7 +22,7 @@ compile(){
 
 restart(){
     while :;do
-        sleep 1h
+        sleep 24h # actually it seems no need for restart function at all
         echo "Restarting gulp"
         pid=$(cat $pidfile)
         if [[ ! -z $pid ]]; then
