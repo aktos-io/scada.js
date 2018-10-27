@@ -6,6 +6,15 @@ unless (``/comment/.test(function(){/* comment */})``)
         return "Note: SCADA is not intended to be reloaded"
 
 
+# object.constructor.name should be identified
+
+class Hello
+    ->
+
+cons-name = new Hello!.constructor.name
+if cons-name isnt \Hello
+    throw "Can not get constructor.name! It is: #{cons-name}"
+
 # Pnotify
 # -------------------------------------------
 # see doc/available-libraries.md for examples
