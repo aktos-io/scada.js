@@ -37,7 +37,6 @@ Ractive.components['s-input'] = Ractive.extend do
                 inner?.silence!
                 @set \_value, hex-color
                 inner?.resume!
-                console.log hex-color, val
 
             unless @get \readonly
                 inner = @observe \_value, (val) ->
