@@ -23,9 +23,12 @@ Ractive.components['ack-button'] = Ractive.extend do
         else
             6_000ms
 
+        orig-tooltip = @get \tooltip
+
         set-button = (mode, message) ~>
             @set \state, mode
-            @set \tooltip, message
+            message = if message then " |!| #{message}" else ''
+            @set \tooltip, "#{orig-tooltip}#{message}"
             unless mode is \doing
                 @doing-watchdog.go!
 
@@ -46,7 +49,7 @@ Ractive.components['ack-button'] = Ractive.extend do
 
                 val = @get \value
                 @doing-watchdog.reset!
-                @set \tooltip, ""
+                @set \tooltip, orig-tooltip
 
                 #@actor.c-log "firing on-click, default route:", @actor.default-route
                 @fire \click, c
@@ -111,7 +114,7 @@ Ractive.components['ack-button'] = Ractive.extend do
 
         if @get \auto
             logger.clog "auto firing ack-button!"
-            @fire \click
+            @fire \_click
 
     onteardown: ->
         @doing-watchdog.go!

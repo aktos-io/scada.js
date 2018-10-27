@@ -80,11 +80,16 @@ Ractive.components['file-button'] = Ractive.extend do
                         csv := res
                         s1.go!
                     <~ b2.joined
+                    filename = file.name.split '.'
+                    extension = filename.pop!
+                    basename = filename.join '.'
                     value :=
                         blob: file
                         base64: file-data.split ',' .1
                         raw: file-data
                         name: file.name
+                        basename: basename
+                        ext: extension
                         type: file.type     # content_type
                         file_type: file_type
                         preview-url: window.URL.createObjectURL file

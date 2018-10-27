@@ -9,6 +9,7 @@ require! {
 require! './copy-to-clipboard': {copyToClipboard}
 require! './file-download': {createDownload}
 require! './download'
+require! './html-encode-decode': {htmlEncode, htmlDecode}
 
 is-nodejs = ->
     if typeof! process is \process
@@ -28,4 +29,5 @@ module.exports = {
     is-nodejs
     VLogger
     download
+    htmlEncode, htmlDecode
 }

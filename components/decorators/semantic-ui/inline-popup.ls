@@ -1,8 +1,9 @@
-Ractive.decorators.['inline-popup'] = (node, content) ->
+Ractive.decorators.['inline-popup'] = (node, opts) ->
     popup = $ node .popup do
         inline: yes
         on: \click
         last-resort: on
+        position: opts.position
     return do
         teardown: ->
             $ node .popup \destroy
@@ -27,3 +28,9 @@ Ractive.decorators.['inline-popup'] = (node, content) ->
                             td {{prev.stationName || prev.step.state}}
                             td {{prev.workerName || prev.step.user}}
     */
+
+/* Example 2
+
+    Positioning:
+
+        .ui.label(as-inline-popup="{position: 'right center'}") Export

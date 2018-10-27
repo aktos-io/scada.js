@@ -4,8 +4,15 @@ handler: (ctx, file, next) -> ...
 
 Where:
 ctx.heartbeat(milliseconds): postpone the timeout error
-file: the uploaded file
-    file.csv if file is csv type
+file: The uploaded file. Properties (eg. for foo.svg file)
+
+    name: "foo.svg"
+    ext: "svg"
+    file_type: "text"
+    type: "image/svg+xml"
+    raw: "...content of file..."
+    blob: `File` object
+    previewUrl: "blob:http://localhost:4001/660893d3-2bba-417f-bb99-226d1b8f8559"
 
 # Simple Usage
 

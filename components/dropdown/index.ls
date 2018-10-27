@@ -19,11 +19,6 @@ require! 'aea': {sleep}
 require! 'sifter': Sifter
 require! 'dcs/lib/asciifold': asciifold
 
-copy-context = (ctx) ->
-    c = ctx.getParent yes 
-    c.refire = yes
-    return c
-
 Ractive.components['dropdown'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
     isolated: yes
@@ -50,7 +45,7 @@ Ractive.components['dropdown'] = Ractive.extend do
         #@link \selected-item, \item
 
     onrender: (ctx) ->
-        const c = copy-context ctx
+        c = @clone-context!
         dd = $ @find '.ui.dropdown'
         keyField = @get \keyField
         nameField = @get \nameField
@@ -108,6 +103,10 @@ Ractive.components['dropdown'] = Ractive.extend do
                     if e.code in <[ nomatch keyempty ]>
                         dd.dropdown 'restore defaults'
                         @set \item, {}
+                        # call the listener with an empty object 
+                        @fire \select, c, {}, (err) ~>
+                            if err
+                                @actor.v-err err
                         return op!
                     else
                         throw e
@@ -198,6 +197,14 @@ Ractive.components['dropdown'] = Ractive.extend do
                     else
                         set-item value
                     @set \dataReduced, small-part-of @get \data
+
+        @observe \object-data, (_data) ~>
+            if _data?
+                @set \data, [{id: k, name: k, content: v} for k, v of _data]
+
+        @observe \simple-data, (_data) ~>
+            if _data?
+                @set \data, [{id: .., name: ..} for _data when ..?]
 
         @observe \data, (data) ~>
             if @get \debug => @actor.c-log "Dropdown (#{@_guid}): data is changed: ", data
