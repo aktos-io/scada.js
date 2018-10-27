@@ -59,6 +59,7 @@ require! './slider'
 require! './login'
 require! './icon'
 require! './btn'
+require! './s-input'
 
 
 # decorators
