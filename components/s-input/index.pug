@@ -1,6 +1,9 @@
-div(
-    contenteditable="{{!readonly}}" 
-    value="{{value}}" 
-    style="padding: 0 2px; min-width: 30px; border: 1px dashed gray; {{style}}"
-    class="{{class}}")
-    
++iff('type === "color"')
+    input(type="color" value="{{_value}}" bind-readonly)
++else
+    div(
+        contenteditable="{{!readonly}}" 
+        value="{{value}}" 
+        style="padding: 0 2px; min-width: 30px; border: 1px dashed gray; {{style}}"
+        class="{{class}}")
++endif        
