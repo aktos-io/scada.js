@@ -9,7 +9,7 @@ export class BrowserStorage extends Actor
 
     set: (key, value) ->
         try
-            @log.log "saving key: ", key, "value: ", value, JSON.stringify value
+            #@log.log "saving key: ", key, "value: ", value, JSON.stringify value
             @s.set-item "#{@name}-#{key}", JSON.stringify value
         catch
             err =
