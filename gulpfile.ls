@@ -217,6 +217,8 @@ gulp.task \html, ->
         .pipe gulp.dest paths.client-public
 
 my-uglify = (x) ->
+    # mangle: shutterstock/rickshaw/issues/52#issuecomment-313836636
+    # keep_fnames: aktos-io/scada.js#172
     terser {-mangle, +keep_fnames} x
     .on \error, gutil.log
 
