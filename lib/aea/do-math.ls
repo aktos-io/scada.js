@@ -18,6 +18,9 @@ math.create-unit \adamsaat, do
 math.create-unit \adamdakika, do
     definition: '1 adam * minute'
 
+export mm2px = (/ 25.4 * 96)
+export px2mm = (* 1 / mm2px it)
+
 """
 math.config do
     number: \BigNumber
