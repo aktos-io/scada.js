@@ -15,6 +15,16 @@ cons-name = new Hello!.constructor.name
 if cons-name isnt \Hello
     throw "Can not get constructor.name! It is: #{cons-name}"
 
+# Cleanup objects
+export cleanup = window.cleanup = (o) !->
+    switch typeof! o 
+    | \Array => o.length = 0
+    | \Object =>
+        for key of Object.getOwnPropertyNames o
+            delete obj[key]
+    |_ => throw new Error "Unknown type: #{typeof! o}"
+
+
 # Pnotify
 # -------------------------------------------
 # see doc/available-libraries.md for examples
