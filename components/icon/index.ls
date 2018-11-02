@@ -3,6 +3,7 @@ Ractive.components.icon = Ractive.extend do
     data: ->
         add: null
         size: ''
+        class: ''
 
 Ractive.components.icons = Ractive.extend do
     template: '<b>DEPR!</b>{{yield}}'
