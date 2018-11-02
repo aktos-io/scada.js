@@ -28,7 +28,7 @@ Ractive.components['dropdown'] = Ractive.extend do
             debug: yes
 
         # map attributes to classes
-        for attr, cls of {\multiple, \inline, \disabled, 'fit-width': \fluid}
+        for attr, cls of {\multiple, \disabled, 'fit-width': \fluid}
             if @get attr then @set \class, "#{@get 'class'} #{cls}"
 
         if @get \key => @set \keyField, that
@@ -103,7 +103,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                     if e.code in <[ nomatch keyempty ]>
                         dd.dropdown 'restore defaults'
                         @set \item, {}
-                        # call the listener with an empty object 
+                        # call the listener with an empty object
                         @fire \select, c, {}, (err) ~>
                             if err
                                 @actor.v-err err
@@ -265,6 +265,8 @@ Ractive.components['dropdown'] = Ractive.extend do
         'start-with-loading': no
         sifter: null
         nomatch: false
+        button: null
+        inline: null
 
         # this is very important. if you omit this, "selected"
         # variable will be bound to class prototype (thus shared

@@ -176,3 +176,11 @@ dropdown(
 
 Note: `loadingState` is set to `false` by the `dropdown` when `dropdown`'s data
 is changed and not empty.
+
+# Variants
+
+```pug
+dropdown(... button)
+
+dropdown(... compact)
+```
