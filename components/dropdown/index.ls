@@ -91,6 +91,11 @@ Ractive.components['dropdown'] = Ractive.extend do
                             @set \nomatch, false
 
                         @set \item, item
+                        if external-change and @get \async
+                            @fire \select, c, item, (err) ~>
+                                if err
+                                    @actor.v-err err
+
                         unless (@get \selected-key) is _new
                             # a new selected-key is set by the async handler,
                             # so set selected-key explicitly
@@ -198,14 +203,6 @@ Ractive.components['dropdown'] = Ractive.extend do
                         set-item value
                     @set \dataReduced, small-part-of @get \data
 
-        @observe \object-data, (_data) ~>
-            if _data?
-                @set \data, [{id: k, name: k, content: v} for k, v of _data]
-
-        @observe \simple-data, (_data) ~>
-            if _data?
-                @set \data, [{id: .., name: ..} for _data when ..?]
-
         @observe \data, (data) ~>
             if @get \debug => @actor.c-log "Dropdown (#{@_guid}): data is changed: ", data
             <~ set-immediate
@@ -218,6 +215,17 @@ Ractive.components['dropdown'] = Ractive.extend do
                 @set \emptyReduced, false
             else
                 @set \emptyReduced, true
+
+        @observe \object-data, (_data) ~>
+            if _data?
+                x = [{id: k, name: k, content: v} for k, v of _data]
+                console.log "object-data is: ", x
+                @set \data, x
+
+        @observe \simple-data, (_data) ~>
+            if _data?
+                @set \data, [{id: .., name: ..} for _data when ..?]
+
 
         selected-handler = (_new, old) ~>
             if @get \multiple
