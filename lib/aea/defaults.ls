@@ -17,11 +17,11 @@ if cons-name isnt \Hello
 
 # Cleanup objects
 export cleanup = window.cleanup = (o) !->
-    switch typeof! o 
+    switch typeof! o
     | \Array => o.length = 0
     | \Object =>
         for key of Object.getOwnPropertyNames o
-            delete obj[key]
+            delete o[key]
     |_ => throw new Error "Unknown type: #{typeof! o}"
 
 
