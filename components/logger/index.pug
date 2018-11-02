@@ -2,7 +2,8 @@
     .ui.icon.header 
         i.icon(class="{{ icon }}")
         | {{ dimmedTitle }} 
-    .content#client-template {{ dimmedMessage }}
+    .content {{ dimmedMessage }}
+    .content#client-template 
             
     .actions 
         +each('buttons')

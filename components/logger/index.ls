@@ -97,6 +97,8 @@ Ractive.components['logger'] = Ractive.extend do
                 modal.modal \hide
                 <~ sleep 0
                 callback action, c?.get!
+                <~ sleep 0
+                c?.teardown!
 
             selectionMade: (ctx, action) ->
                 selection-signal.go null, action
