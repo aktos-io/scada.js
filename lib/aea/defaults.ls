@@ -25,6 +25,9 @@ export cleanup = window.cleanup = (o) !->
     |_ => throw new Error "Unknown type: #{typeof! o}"
 
 
+# CSON.parse and CSON.stringify
+window.CSON = require 'cson-parser'
+
 # Pnotify
 # -------------------------------------------
 # see doc/available-libraries.md for examples
