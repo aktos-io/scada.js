@@ -83,17 +83,22 @@ dropdown(
 
 ```
 
+#### Handler
+
 ```ls
 itemSelected: (ctx, item, progress) ->
-    # item format: original data format
-   ...do your async job here
-
-    # if `progress` function is called without error, `item=` and
-    # `selected-key=` attributes are set accordingly. if `progress` is
-    # called with a truthy value, selection is restored to the previous
-    # state.
-    progress!
+    #...do your async job here
+    progress error-status
 ```
+
+* `item` :
+    * Original data (array item) if `selected-key=` is found in `data=`
+    * An empty array (`{}`) if no match is found (useful for cleanup tasks)
+
+* `progress`: Error handler
+    - Success if called with a `falsey` value
+    - Error if called with `truthy` value: Selection is restored to previous state
+        - If `error-status` is string, a modal is displayed containing the message.
 
 ## Blacklisting
 
@@ -115,7 +120,7 @@ dropdown(
 
 ## Allow Addition
 
-In this mode, a `+ the search term` button is shown when something is typed in the
+In this mode, a `[+] the search term` button is shown when something is typed in the
 search area.
 
 ```pug
