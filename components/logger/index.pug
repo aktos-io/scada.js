@@ -2,8 +2,12 @@
     .ui.icon.header 
         i.icon(class="{{ icon }}")
         | {{ dimmedTitle }} 
-    .content {{ dimmedMessage }}
-    .content#client-template 
+        
+    +iff('dimmedMessage')
+        .scrolling.content {{ dimmedMessage }}
+    +else
+        .scrolling.content#client-template 
+    +endif
             
     .actions 
         +each('buttons')
