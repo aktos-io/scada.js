@@ -18,6 +18,9 @@ is-nodejs = ->
                 return yes
     return no
 
+# get file extension
+export ext = (.split('.').pop!?.to-lower-case!)
+
 module.exports = {
     sleep, clear-timer
     create-download
@@ -30,4 +33,5 @@ module.exports = {
     VLogger
     download
     htmlEncode, htmlDecode
+    ext
 }
