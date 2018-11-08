@@ -69,20 +69,7 @@ parse-link = (link) ->
 
 
 Ractive.components['a'] = Ractive.extend do
-    template: '''
-        <a class="{{class}} {{#if '#/' + @shared.router.scene === href}}active{{/if}}"
-            style="
-                {{#href}}cursor: pointer;{{/}}
-                {{style}}
-                "
-            on-click="click"
-            bind-data-id
-            title="{{tooltip || title}}"
-            href="{{href}}" onclick="return false;"
-            >
-            {{yield}}
-        </a>
-        '''
+    template: RACTIVE_PREPARSE('a.html')
     isolated: no
     components: {a: false}
     data: ->
@@ -123,10 +110,10 @@ Ractive.components['a'] = Ractive.extend do
                         debugger
 
 
-
 Ractive.components['anchor'] = Ractive.extend do
-    template: '<span data-id="{{yield}}"></span>'
+    template: RACTIVE_PREPARSE('anchor.html')
     isolated: yes
+
 
 Ractive.components['router'] = Ractive.extend do
     template: ''
@@ -221,29 +208,7 @@ Ractive.components['router'] = Ractive.extend do
 
 
 Ractive.components['scene'] = Ractive.extend do
-    template: '
-        <div data-name="{{name}}"
-            id="{{name}}"
-            class="{{class}}"
-            style="
-                {{#unless visible}} display: none; {{/unless}}
-                {{#if hidden}}visibility: hidden; {{/if}}
-                margin: 0; padding: 0; border: 0;
-                {{style}}"
-            >
-            {{#if renderedBefore}}
-                <div class="{{name}} scene"
-                    style="
-                        margin: 0;
-                        padding: 0;
-                        padding-top: {{offset !== null ? offset : @global.topOffset}}px;
-                        border: 0;"
-                    >
-                    {{>content}}
-                </div>
-            {{/if}}
-        </div>'
-
+    template: RACTIVE_PREPARSE('scene.html')
     isolated: no
     oninit: ->
         if @get \render
