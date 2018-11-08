@@ -47,7 +47,7 @@
     "uuid4": "^1.0.0"
   },
   "devDependencies": {
-    "browserify": "^13.1.1",
+    "browserify": "^16.2.3",
     "browserify-livescript": "git+https://github.com/ceremcem/browserify-livescript.git",
     "buble": "^0.19.3",
     "cheerio": "^0.20.0",
