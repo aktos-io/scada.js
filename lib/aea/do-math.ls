@@ -18,8 +18,20 @@ math.create-unit \adamsaat, do
 math.create-unit \adamdakika, do
     definition: '1 adam * minute'
 
-export mm2px = (/ 25.4 * 96)
-export px2mm = (* 1 / mm2px it)
+
+_mm2px = ( / 25.4 * 96)
+_px2mm = (x) -> 1 / mm2px(x)
+
+export mm2px = (x) ->
+    _x = {}
+    switch typeof x
+    | 'object' =>
+        for i of x
+            _x[i] = x[i] |> _mm2px
+        _x
+    |_ =>
+        x |> _mm2px
+
 
 """
 math.config do
