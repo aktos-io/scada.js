@@ -69,8 +69,13 @@ Ractive.components['logger'] = Ractive.extend do
 
                 # set message content
                 # ------------------------------------
+                _message = if msg.message?stack
+                    msg.message.message
+                else
+                    msg.message
+
                 @set do
-                    dimmedMessage: msg.message
+                    dimmedMessage: _message?.replace /\n\n/g, '<br /><br />'
                     icon: msg.icon
                     dimmedTitle: msg.title
 
