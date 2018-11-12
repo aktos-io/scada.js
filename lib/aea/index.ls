@@ -11,6 +11,18 @@ require! './file-download': {createDownload}
 require! './download'
 require! './html-encode-decode': {htmlEncode, htmlDecode}
 
+shajs = require 'sha.js'
+hash = (str) ->
+    sha = shajs \sha256
+    sha.update str, 'utf-8' .digest \hex
+
+# Hash mini tests:
+_test1 = hash "hello"
+_test2 = hash "hello2"
+_test3 = hash "hello"
+if _test1 isnt _test3
+    throw new Error "hash function doesn't work correctly!"
+
 is-nodejs = ->
     if typeof! process is \process
         if typeof! process.versions is \Object
@@ -19,7 +31,7 @@ is-nodejs = ->
     return no
 
 # get file extension
-export ext = (.split('.').pop!?.to-lower-case!)
+ext = (.split('.').pop!?.to-lower-case!)
 
 module.exports = {
     sleep, clear-timer
@@ -34,4 +46,5 @@ module.exports = {
     download
     htmlEncode, htmlDecode
     ext
+    hash
 }
