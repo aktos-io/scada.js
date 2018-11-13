@@ -20,7 +20,7 @@ math.create-unit \adamdakika, do
 
 
 _mm2px = ( / 25.4 * 96)
-_px2mm = (x) -> 1 / mm2px(x)
+_px2mm = ( * 25.4 / 96)
 
 export mm2px = (x) ->
     _x = {}
@@ -32,6 +32,7 @@ export mm2px = (x) ->
     |_ =>
         x |> _mm2px
 
+export px2mm = _px2mm
 
 """
 math.config do
