@@ -89,6 +89,6 @@ window.getDep = (filename, callback) !->
 
 
 # useful for pretty formatting
-window.oneDecimal = (x) -> parseFloat(Math.round(x * 10) / 10).toFixed(1)
+window.oneDecimal = (x, digits=1) -> parseFloat(Math.round(x * 10**digits) / 10**digits).toFixed(digits)
 
 require! './error'
