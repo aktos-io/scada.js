@@ -28,6 +28,9 @@ export cleanup = window.cleanup = (o) !->
 # CSON.parse and CSON.stringify
 window.CSON = require 'cson-parser'
 
+# Do not use window.find method
+window.find = undefined
+
 # Pnotify
 # -------------------------------------------
 # see doc/available-libraries.md for examples
