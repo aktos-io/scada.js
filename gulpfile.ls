@@ -31,7 +31,7 @@ require! 'gulp-flatten': flatten
 require! 'gulp-tap': tap
 require! 'gulp-cached': cache
 require! 'gulp-sourcemaps': sourcemaps
-require! 'browserify-livescript'
+require! 'livescript': lsc
 require! 'through2':through
 require! 'optimize-js'
 require! 'gulp-if-else': if-else
@@ -245,7 +245,22 @@ get-bundler = (entry) ->
             watchify unless optimize-for-production
 
     b
-        ..transform browserify-livescript     # MUST be before ractive-preparserify
+        ..transform (file) ->
+            # MUST be before ractive-preparserify
+            unless /.*\.ls$/.test(file)
+                return through!
+
+            through (buf, enc, next) !->
+                content = buf.to-string \utf8
+                try
+                    filename = file.replace(/^.*[\\\/]/, '')
+                    js = lsc.compile content, {+bare, -header, map: 'embedded', filename}
+                    @push js.code
+                    next!
+                catch
+                    console.log "Livescript compile error: ", e
+                    @emit 'error', e
+
         ..transform (file) ->
             through (buf, enc, next) !->
                 content = buf.to-string \utf8
@@ -256,7 +271,6 @@ get-bundler = (entry) ->
                 catch
                     console.log "This is buble error: ", e
                     @emit 'error', e
-
         ..transform ractive-preparserify
         ..transform browserify-optimize-js
 

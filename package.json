@@ -48,7 +48,6 @@
   },
   "devDependencies": {
     "browserify": "^16.2.3",
-    "browserify-livescript": "git+https://github.com/ceremcem/browserify-livescript.git",
     "buble": "^0.19.3",
     "cheerio": "^0.20.0",
     "es-check": "^2.0.4",
