@@ -32,6 +32,7 @@ restart(){
     done
 }
 
+rm -r $_sdir/build/$1 2> /dev/null
 compile $1 &
 restart
 wait

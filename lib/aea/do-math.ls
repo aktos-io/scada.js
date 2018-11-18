@@ -18,6 +18,22 @@ math.create-unit \adamsaat, do
 math.create-unit \adamdakika, do
     definition: '1 adam * minute'
 
+
+_mm2px = ( / 25.4 * 96)
+_px2mm = ( * 25.4 / 96)
+
+export mm2px = (x) ->
+    _x = {}
+    switch typeof x
+    | 'object' =>
+        for i of x
+            _x[i] = x[i] |> _mm2px
+        _x
+    |_ =>
+        x |> _mm2px
+
+export px2mm = _px2mm
+
 """
 math.config do
     number: \BigNumber

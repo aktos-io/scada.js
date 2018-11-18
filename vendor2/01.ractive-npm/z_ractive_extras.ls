@@ -23,24 +23,32 @@ Ractive.use(hasAttribute);
 /***************************************************************************
 by @evs-chris, https://gitter.im/ractivejs/ractive?at=59fa35f8d6c36fca31c4e427
 
-Usage:
+Usage in template:
 
     +each('foo') <--- where curr.components is an Object
         btn.icon(on-click="@.delete('curr.components', @key)") #[i.minus.icon]
 
-***************************************************************************/
+Usage in scripting side:
 
+    @delete 'curr.components', 'my_item'
+*/
 Ractive.prototype.delete = (root, key) ->
     console.error 'keypath must be string' if typeof! root isnt \String
     delete @get(root)?[key]
     @update root
 
 
+# Usage in scripting side:
+#
+# @find-wid 'my_wid_id' .fire 'something'
 Ractive.prototype.find-wid = (wid) ->
     for x in @find-all-components!
         if (x.get \wid) is wid
             return x
 
+# Usage in scripting side:
+#
+# @find-id 'the_id' .fire 'something'
 Ractive.prototype.find-id = (id) ->
     for x in @find-all-components!
         if (x.get \id) is id

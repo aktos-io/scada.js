@@ -69,8 +69,13 @@ Ractive.components['logger'] = Ractive.extend do
 
                 # set message content
                 # ------------------------------------
+                _message = if msg.message?stack
+                    msg.message.message
+                else
+                    msg.message
+
                 @set do
-                    dimmedMessage: msg.message
+                    dimmedMessage: _message?.replace /\n\n/g, '<br /><br />'
                     icon: msg.icon
                     dimmedTitle: msg.title
 
@@ -97,6 +102,8 @@ Ractive.components['logger'] = Ractive.extend do
                 modal.modal \hide
                 <~ sleep 0
                 callback action, c?.get!
+                <~ sleep 0
+                c?.teardown!
 
             selectionMade: (ctx, action) ->
                 selection-signal.go null, action

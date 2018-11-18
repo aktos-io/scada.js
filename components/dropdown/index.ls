@@ -28,7 +28,7 @@ Ractive.components['dropdown'] = Ractive.extend do
             debug: yes
 
         # map attributes to classes
-        for attr, cls of {\multiple, \inline, \disabled, 'fit-width': \fluid}
+        for attr, cls of {\multiple, \disabled, 'fit-width': \fluid}
             if @get attr then @set \class, "#{@get 'class'} #{cls}"
 
         if @get \key => @set \keyField, that
@@ -61,6 +61,7 @@ Ractive.components['dropdown'] = Ractive.extend do
             else
                 []
 
+        selected-key-observer = null
         update-dropdown = (_new) ~>
             if @get \debug
                 @actor.log.log "#{@_guid}: selected key is changed to: ", _new
@@ -91,10 +92,13 @@ Ractive.components['dropdown'] = Ractive.extend do
                             @set \nomatch, false
 
                         @set \item, item
+
                         unless (@get \selected-key) is _new
                             # a new selected-key is set by the async handler,
                             # so set selected-key explicitly
+                            selected-key-observer.silence!
                             @set \selected-key, _new
+                            selected-key-observer.resume!
                         <~ set-immediate
                         dd.dropdown 'set selected', _new
                         dd.dropdown 'refresh'
@@ -103,9 +107,12 @@ Ractive.components['dropdown'] = Ractive.extend do
                     if e.code in <[ nomatch keyempty ]>
                         dd.dropdown 'restore defaults'
                         @set \item, {}
-                        # call the listener with an empty object 
+                        # call the listener with an empty object
+                        # useful for handling "clear selection"
+                        # button action. When selected key is cleared, all
+                        # necessary actions are handled in the listener.
                         @fire \select, c, {}, (err) ~>
-                            if err
+                            if err and typeof! err is \String
                                 @actor.v-err err
                         return op!
                     else
@@ -136,7 +143,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                     # set a single value
                     if find (.[keyField].to-string! is value-of-key), data
                         selected = that
-                        if @get('selected-key') isnt that[keyField]
+                        if @get('async') or @get('selected-key') isnt that[keyField]
                             if @get \debug => @actor.c-log "selected key is changed to:", selected[keyField]
                             if @get \debug => @actor.c-log "Found #{value-of-key} in .[#{keyField}]", selected, selected[keyField]
                             if @get \async
@@ -146,9 +153,10 @@ Ractive.components['dropdown'] = Ractive.extend do
                                         update-dropdown selected[keyField]
                                     else
                                         curr = @get \selected-key
-                                        @actor.v-err err
-                                        @actor.c-warn "Error reported for dropdown callback: ", err,
-                                            "falling back to #{curr}"
+                                        if typeof! err is \String
+                                            @actor.v-err err
+                                            @actor.c-warn "Error reported for dropdown callback: ", err,
+                                                "falling back to #{curr}"
                                         @set \emptyReduced, yes
                                         update-dropdown curr
                             else
@@ -157,6 +165,9 @@ Ractive.components['dropdown'] = Ractive.extend do
                         unless @get \async
                             @set \item, selected
                             @set \selected-name, selected[nameField]
+                    else
+                        @actor.c-warn "TODO: item not found: ", value-of-key, "how do we handle this? "
+                        update-dropdown value-of-key
         dd
             .dropdown 'restore defaults'
             .dropdown 'setting', do
@@ -198,14 +209,6 @@ Ractive.components['dropdown'] = Ractive.extend do
                         set-item value
                     @set \dataReduced, small-part-of @get \data
 
-        @observe \object-data, (_data) ~>
-            if _data?
-                @set \data, [{id: k, name: k, content: v} for k, v of _data]
-
-        @observe \simple-data, (_data) ~>
-            if _data?
-                @set \data, [{id: .., name: ..} for _data when ..?]
-
         @observe \data, (data) ~>
             if @get \debug => @actor.c-log "Dropdown (#{@_guid}): data is changed: ", data
             <~ set-immediate
@@ -218,6 +221,15 @@ Ractive.components['dropdown'] = Ractive.extend do
                 @set \emptyReduced, false
             else
                 @set \emptyReduced, true
+
+        @observe \object-data, (_data) ~>
+            if _data?
+                @set \data, [{id: k, name: k, content: v} for k, v of _data]
+
+        @observe \simple-data, (_data) ~>
+            if _data?
+                @set \data, [{id: .., name: ..} for _data when ..?]
+
 
         selected-handler = (_new, old) ~>
             if @get \multiple
@@ -232,7 +244,12 @@ Ractive.components['dropdown'] = Ractive.extend do
                     return
                 update-dropdown _new
 
-        @observe \selected-key, selected-handler
+        selected-key-observer = @observe \selected-key, (val) ~>
+            if @get \async
+                console.log "this is async mode and item is changed: ", val
+                set-item val
+            else
+                selected-handler val
 
         @on do
             teardown: ->
@@ -265,6 +282,8 @@ Ractive.components['dropdown'] = Ractive.extend do
         'start-with-loading': no
         sifter: null
         nomatch: false
+        button: null
+        inline: null
 
         # this is very important. if you omit this, "selected"
         # variable will be bound to class prototype (thus shared

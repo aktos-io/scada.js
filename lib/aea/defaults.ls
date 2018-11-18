@@ -15,6 +15,22 @@ cons-name = new Hello!.constructor.name
 if cons-name isnt \Hello
     throw "Can not get constructor.name! It is: #{cons-name}"
 
+# Cleanup objects
+export cleanup = window.cleanup = (o) !->
+    switch typeof! o
+    | \Array => o.length = 0
+    | \Object =>
+        for key of Object.getOwnPropertyNames o
+            delete o[key]
+    |_ => throw new Error "Unknown type: #{typeof! o}"
+
+
+# CSON.parse and CSON.stringify
+window.CSON = require 'cson-parser'
+
+# Do not use window.find method
+window.find = undefined
+
 # Pnotify
 # -------------------------------------------
 # see doc/available-libraries.md for examples
