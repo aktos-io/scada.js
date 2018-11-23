@@ -261,6 +261,20 @@ get-bundler = (entry) ->
                     console.log "Livescript compile error: ", e
                     @emit 'error', e
 
+        ..transform (file) ->
+            unless optimize-for-production
+                return through!
+
+            through (buf, enc, next) !->
+                content = buf.to-string \utf8
+                try
+                    es5 = my-buble content
+                    @push es5
+                    next!
+                catch
+                    console.log "This is buble error: ", e
+                    @emit 'error', e
+
         ..transform ractive-preparserify
         ..transform browserify-optimize-js
 
