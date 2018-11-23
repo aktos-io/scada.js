@@ -3,8 +3,7 @@
   "version": "0.4.0",
   "description": "![ScadaJS](https://github.com/aktos-io/scada.js/blob/master/src/client/assets/scadajs.png)",
   "scripts": {
-    "test": "es-check es5 './build/**/*.js'",
-    "es5": "babel build -d build; npm test"
+    "test": "es-check es5 './build/**/*.js'"
   },
   "author": "Cerem Cem ASLAN",
   "license": "MIT",
@@ -48,8 +47,6 @@
     "uuid4": "^1.0.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
     "browserify": "^16.2.3",
     "buble": "^0.19.3",
     "cheerio": "^0.20.0",
