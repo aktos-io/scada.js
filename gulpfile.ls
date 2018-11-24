@@ -341,7 +341,7 @@ compile-js = (watchlist, output) ->
 
 compile-css = (watchlist, output) ->
     gulp.src watchlist
-        .pipe cssimport {includePaths: ['node_modules']}
+        .pipe cssimport {includePaths: ['node_modules', '../node_modules']}
         .pipe cat output
 
         # themes are searched in ../themes path, so do not save css in root
