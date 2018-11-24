@@ -95,7 +95,7 @@ Ractive.components['logger'] = Ractive.extend do
                     c = new Ractive do
                         el: @find '#client-template'
                         template: that
-
+                        data: msg.data
 
                 timeout, action <~ selection-signal.wait
                 @logger.log "selection made. action: ", action
