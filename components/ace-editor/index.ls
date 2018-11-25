@@ -34,7 +34,9 @@ Ractive.components['ace-editorASYNC'] = Ractive.extend do
 
         editor.on \change, ~>
             getting := true
-            @set \code, editor.get-value!
+            # remove trailing whitespaces
+            content = editor.get-value!.replace /[^\S\r\n]+$/gm, ''
+            @set \code, content
             getting := false
 
     data: ->
