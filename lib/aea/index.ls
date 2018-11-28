@@ -1,7 +1,7 @@
 require! {
     './sleep': {sleep, clear-timer}
     './packing': {pack, unpack, clone, diff}
-    './merge': {merge}
+    './merge': {merge, based-on}
     './logger': {Logger}
     './formatting': {unix-to-readable, readable-to-unix}
     './vlogger': {VLogger}
@@ -36,7 +36,7 @@ ext = (.split('.').pop!?.to-lower-case!)
 module.exports = {
     sleep, clear-timer
     create-download
-    merge
+    merge, based-on
     Logger,
     pack, unpack, clone, diff
     unix-to-readable, readable-to-unix
