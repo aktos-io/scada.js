@@ -41,10 +41,15 @@ require! 'gulp-git': git
 require! 'gulp-cssimport': cssimport
 require! 'event-stream': es
 
-get-version = (callback) ->
-    err, stdout <- git.exec args: 'describe --tags --dirty --long'
-    throw if err
-    callback stdout
+get-version = (path, callback) ->
+    if typeof! path is \Function
+        callback = path
+        path = undefined
+    err, stdout <- git.exec {args: 'describe --always --dirty', +quiet, cwd: path}
+    [commit, dirty] = stdout.split '-'
+    err, stdout <- git.exec {args: 'rev-list --count HEAD', +quiet, cwd: path}
+    count = +stdout
+    callback {commit, dirty: dirty?, count}
 
 console.log "------------------------------------------"
 #console.log "App\t: #{app}"
@@ -246,6 +251,17 @@ get-bundler = (entry) ->
 
     b
         ..transform (file) ->
+            through (buf, enc, next) ->
+                content = buf.to-string \utf8
+                try
+                    version <~ get-version paths.client-root
+                    @push content.replace /__DEPENDENCIES__/g, JSON.stringify {root: version}
+                    next!
+                catch _ex
+                    @emit 'error', _ex
+                    return
+
+        ..transform (file) ->
             # MUST be before ractive-preparserify
             unless /.*\.ls$/.test(file)
                 return through!
@@ -312,8 +328,6 @@ gulp.task \browserify, ->
                     log-info \browserify, "Browserify finished"
                     first-browserify-done := yes
                     b-count := files.length
-                    version <~ get-version
-                    console.log "version: #{version}"
                     console.log "------------------------------------------"
 
     return es.merge.apply null, tasks
