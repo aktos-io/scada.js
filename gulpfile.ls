@@ -473,6 +473,8 @@ gulp.task \dependencyTrack, ->
             */
 
             # invalidate all dependencies to refresh __DEPENDENCIES__ string
+            console.log "=== Invalidating all Browserify cache due to commit change: "
+            console.log "===", JSON.stringify(__DEPENDENCIES__)
             processed.length = 0
             for f, c of browserify-cache
                 if f.ends-with ".ls" and f not in processed
