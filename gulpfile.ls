@@ -168,7 +168,7 @@ for-browserify =
 gulp.task \default, ->
     do function run-all
         gulp.start do
-            \browserify
+            #\browserify <= started by dependencyTrack
             \html
             \vendor-js
             \vendor-css
@@ -177,6 +177,7 @@ gulp.task \default, ->
             \assets
             \pug
             \preparserify-workaround
+            \dependencyTrack
 
     if optimize-for-production
         return
@@ -214,6 +215,7 @@ gulp.task \default, ->
 #    gulp.src "#{paths.client-src}/**/*.js", {base: paths.client-src}
 #        .pipe gulp.dest paths.client-public
 
+__DEPENDENCIES__ = {root: null}
 
 gulp.task \html, ->
     gulp.src html-entry-files
@@ -254,8 +256,7 @@ get-bundler = (entry) ->
             through (buf, enc, next) ->
                 content = buf.to-string \utf8
                 try
-                    version <~ get-version paths.client-root
-                    @push content.replace /__DEPENDENCIES__/g, JSON.stringify {root: version}
+                    @push content.replace /__DEPENDENCIES__/g, JSON.stringify(__DEPENDENCIES__)
                     next!
                 catch _ex
                     @emit 'error', _ex
@@ -449,3 +450,29 @@ gulp.task \preparserify-workaround ->
                     debounce[js-file] = sleep 100ms, ->
                         touch.sync js-file
                         delete debounce[js-file]
+
+gulp.task \dependencyTrack, ->
+    curr = null
+    processed = []
+    <~ :lo(op) ~>
+        #console.log "checking project version...", version, curr
+        version <~ get-version paths.client-root
+        if JSON.stringify(version) isnt JSON.stringify(curr)
+            curr := JSON.parse JSON.stringify version
+            #console.log "triggering browserify!"
+            __DEPENDENCIES__.root = curr
+            processed.length = 0
+            for f, dep of preparserify-dep-list
+                if f.ends-with ".ls" and f not in processed
+                    processed.push f
+                for dep when ..ends-with ".ls" and .. not in processed
+                    processed.push ..
+
+            for processed
+                touch.sync ..
+                delete debounce[..]
+
+            #console.log preparserify-dep-list
+            gulp.start \browserify
+        <~ sleep 1000ms
+        lo(op)
