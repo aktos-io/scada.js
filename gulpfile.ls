@@ -164,6 +164,8 @@ for-browserify =
     "#{paths.client-root}/lib/**/*.js"
 
 
+__DEPENDENCIES__ = {root: null}
+
 # Organize Tasks
 gulp.task \default, ->
     do function run-all
@@ -201,7 +203,8 @@ gulp.task \default, ->
         gulp.start <[ vendor2-js ]>
 
     watch for-browserify, ->
-        gulp.start \browserify
+        if __DEPENDENCIES__.root.dirty
+            gulp.start \browserify
 
     watch for-preparserify-workaround, ->
         gulp.start \preparserify-workaround
@@ -214,8 +217,6 @@ gulp.task \default, ->
 #gulp.task \copy-js, ->
 #    gulp.src "#{paths.client-src}/**/*.js", {base: paths.client-src}
 #        .pipe gulp.dest paths.client-public
-
-__DEPENDENCIES__ = {root: null}
 
 gulp.task \html, ->
     gulp.src html-entry-files
