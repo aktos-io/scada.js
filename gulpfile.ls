@@ -46,10 +46,10 @@ get-version = (path, callback) ->
         callback = path
         path = undefined
     err, stdout <- git.exec {args: 'describe --always --dirty', +quiet, cwd: path}
-    [commit, dirty] = stdout.split /[-\n]/
+    [commit, dirtiness] = stdout.split /[-\n]/
     err, stdout <- git.exec {args: 'rev-list --count HEAD', +quiet, cwd: path}
     count = +stdout
-    callback {commit, dirty: dirty?, count}
+    callback {commit, dirty: (dirtiness is \dirty), count}
 
 console.log "------------------------------------------"
 #console.log "App\t: #{app}"
