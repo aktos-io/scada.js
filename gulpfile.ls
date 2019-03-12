@@ -257,6 +257,7 @@ get-bundler = (entry) ->
             through (buf, enc, next) ->
                 content = buf.to-string \utf8
                 try
+                    #@push "__DEPENDENCIES__ = #{__DEPENDENCIES__}; \n #{content}"
                     @push content.replace /__DEPENDENCIES__/g, JSON.stringify(__DEPENDENCIES__)
                     next!
                 catch _ex
@@ -462,16 +463,22 @@ gulp.task \dependencyTrack, ->
             curr := JSON.parse JSON.stringify version
             #console.log "triggering browserify!"
             __DEPENDENCIES__.root = curr
+
+            /* DEBUG
+            dump-file = (name, obj) ->
+                require('fs').writeFileSync(name, JSON.stringify(obj, null, 2))
+
+            dump-file "tmp-preparserify-dep-list", preparserify-dep-list
+            dump-file "tmp-browserify-cache", browserify-cache
+            */
+
+            # invalidate all dependencies to refresh __DEPENDENCIES__ string
             processed.length = 0
-            for f, dep of preparserify-dep-list
+            for f, c of browserify-cache
                 if f.ends-with ".ls" and f not in processed
                     processed.push f
-                for dep when ..ends-with ".ls" and .. not in processed
-                    processed.push ..
-
-            for processed
-                touch.sync ..
-                delete debounce[..]
+                    #console.log "invalidating : #{f}"
+                    touch.sync f
 
             #console.log preparserify-dep-list
             gulp.start \browserify
