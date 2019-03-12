@@ -165,6 +165,7 @@ for-browserify =
 
 
 __DEPENDENCIES__ = {root: null}
+_browserify_change_flag = false
 
 # Organize Tasks
 gulp.task \default, ->
@@ -203,8 +204,7 @@ gulp.task \default, ->
         gulp.start <[ vendor2-js ]>
 
     watch for-browserify, ->
-        if __DEPENDENCIES__.root.dirty
-            gulp.start \browserify
+        _browserify_change_flag := true
 
     watch for-preparserify-workaround, ->
         gulp.start \preparserify-workaround
@@ -456,10 +456,12 @@ gulp.task \preparserify-workaround ->
 gulp.task \dependencyTrack, ->
     curr = null
     processed = []
+    processing = no
     <~ :lo(op) ~>
         #console.log "checking project version...", version, curr
         version <~ get-version paths.client-root
-        if JSON.stringify(version) isnt JSON.stringify(curr)
+        if (JSON.stringify(version) isnt JSON.stringify(curr)) or (_browserify_change_flag and not processing)
+            processing := yes
             curr := JSON.parse JSON.stringify version
             #console.log "triggering browserify!"
             __DEPENDENCIES__.root = curr
@@ -484,5 +486,8 @@ gulp.task \dependencyTrack, ->
 
             #console.log preparserify-dep-list
             gulp.start \browserify
+            _browserify_change_flag := false
+            processing := no
+
         <~ sleep 1000ms
         lo(op)
