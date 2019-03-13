@@ -1,3 +1,4 @@
-require! '../dcs/lib': {merge}
+require! '../dcs/lib': {merge, based-on}
 
-export merge 
+export merge
+export based-on

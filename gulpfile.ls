@@ -41,10 +41,15 @@ require! 'gulp-git': git
 require! 'gulp-cssimport': cssimport
 require! 'event-stream': es
 
-get-version = (callback) ->
-    err, stdout <- git.exec args: 'describe --tags --dirty --long'
-    throw if err
-    callback stdout
+get-version = (path, callback) ->
+    if typeof! path is \Function
+        callback = path
+        path = undefined
+    err, stdout <- git.exec {args: 'describe --always --dirty', +quiet, cwd: path}
+    [commit, dirtiness] = stdout.split /[-\n]/
+    err, stdout <- git.exec {args: 'rev-list --count HEAD', +quiet, cwd: path}
+    count = +stdout
+    callback {commit, dirty: (dirtiness is \dirty), count}
 
 console.log "------------------------------------------"
 #console.log "App\t: #{app}"
@@ -159,11 +164,14 @@ for-browserify =
     "#{paths.client-root}/lib/**/*.js"
 
 
+__DEPENDENCIES__ = {root: null}
+_browserify_change_flag = false
+
 # Organize Tasks
 gulp.task \default, ->
     do function run-all
         gulp.start do
-            \browserify
+            #\browserify <= started by dependencyTrack
             \html
             \vendor-js
             \vendor-css
@@ -172,6 +180,7 @@ gulp.task \default, ->
             \assets
             \pug
             \preparserify-workaround
+            \dependencyTrack
 
     if optimize-for-production
         return
@@ -195,7 +204,7 @@ gulp.task \default, ->
         gulp.start <[ vendor2-js ]>
 
     watch for-browserify, ->
-        gulp.start \browserify
+        _browserify_change_flag := true
 
     watch for-preparserify-workaround, ->
         gulp.start \preparserify-workaround
@@ -208,7 +217,6 @@ gulp.task \default, ->
 #gulp.task \copy-js, ->
 #    gulp.src "#{paths.client-src}/**/*.js", {base: paths.client-src}
 #        .pipe gulp.dest paths.client-public
-
 
 gulp.task \html, ->
     gulp.src html-entry-files
@@ -246,6 +254,17 @@ get-bundler = (entry) ->
 
     b
         ..transform (file) ->
+            through (buf, enc, next) ->
+                content = buf.to-string \utf8
+                try
+                    #@push "__DEPENDENCIES__ = #{__DEPENDENCIES__}; \n #{content}"
+                    @push content.replace /__DEPENDENCIES__/g, JSON.stringify(__DEPENDENCIES__)
+                    next!
+                catch _ex
+                    @emit 'error', _ex
+                    return
+
+        ..transform (file) ->
             # MUST be before ractive-preparserify
             unless /.*\.ls$/.test(file)
                 return through!
@@ -262,6 +281,9 @@ get-bundler = (entry) ->
                     @emit 'error', e
 
         ..transform (file) ->
+            unless optimize-for-production
+                return through!
+
             through (buf, enc, next) !->
                 content = buf.to-string \utf8
                 try
@@ -271,6 +293,7 @@ get-bundler = (entry) ->
                 catch
                     console.log "This is buble error: ", e
                     @emit 'error', e
+
         ..transform ractive-preparserify
         ..transform browserify-optimize-js
 
@@ -308,8 +331,6 @@ gulp.task \browserify, ->
                     log-info \browserify, "Browserify finished"
                     first-browserify-done := yes
                     b-count := files.length
-                    version <~ get-version
-                    console.log "version: #{version}"
                     console.log "------------------------------------------"
 
     return es.merge.apply null, tasks
@@ -337,7 +358,7 @@ compile-js = (watchlist, output) ->
 
 compile-css = (watchlist, output) ->
     gulp.src watchlist
-        .pipe cssimport {includePaths: ['node_modules']}
+        .pipe cssimport {includePaths: ['node_modules', '../node_modules']}
         .pipe cat output
 
         # themes are searched in ../themes path, so do not save css in root
@@ -431,3 +452,42 @@ gulp.task \preparserify-workaround ->
                     debounce[js-file] = sleep 100ms, ->
                         touch.sync js-file
                         delete debounce[js-file]
+
+gulp.task \dependencyTrack, ->
+    curr = null
+    processed = []
+    processing = no
+    <~ :lo(op) ~>
+        #console.log "checking project version...", version, curr
+        version <~ get-version paths.client-root
+        if (JSON.stringify(version) isnt JSON.stringify(curr)) or (_browserify_change_flag and not processing)
+            processing := yes
+            curr := JSON.parse JSON.stringify version
+            #console.log "triggering browserify!"
+            __DEPENDENCIES__.root = curr
+
+            /* DEBUG
+            dump-file = (name, obj) ->
+                require('fs').writeFileSync(name, JSON.stringify(obj, null, 2))
+
+            dump-file "tmp-preparserify-dep-list", preparserify-dep-list
+            dump-file "tmp-browserify-cache", browserify-cache
+            */
+
+            # invalidate all dependencies to refresh __DEPENDENCIES__ string
+            console.log "=== Invalidating all Browserify cache due to commit change: "
+            console.log "===", JSON.stringify(__DEPENDENCIES__)
+            processed.length = 0
+            for f, c of browserify-cache
+                if f.ends-with ".ls" and f not in processed
+                    processed.push f
+                    #console.log "invalidating : #{f}"
+                    touch.sync f
+
+            #console.log preparserify-dep-list
+            gulp.start \browserify
+            _browserify_change_flag := false
+            processing := no
+
+        <~ sleep 1000ms
+        lo(op)
