@@ -495,4 +495,4 @@ gulp.task \dependencyTrack, ->
             processing := no
 
         <~ sleep 1000ms
-        lo(op)
+        lo(op) unless argv.production
