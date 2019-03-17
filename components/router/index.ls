@@ -1,7 +1,8 @@
-require! 'aea': {sleep}
+require! 'aea': {sleep, create-download}
 require! 'prelude-ls': {take, drop, split, find}
 require! 'actors':  {RactiveActor}
 
+basename = (.split(/[\\/]/).pop!) # https://stackoverflow.com/questions/3820381#comment29942319_15270931
 
 get-offset = ->
     $ 'body' .scrollTop!
@@ -88,8 +89,10 @@ Ractive.components['a'] = Ractive.extend do
                     return eval that
 
                 if href?
-                    link = parse-link href
-                    if link.external
+                    link = if @get('download') then {+download} else parse-link href
+                    if link.download
+                        create-download basename(href), href
+                    else if link.external
                         if @get \curr-window
                             window.open href, "_self"
                         else
