@@ -91,7 +91,14 @@ Ractive.components['a'] = Ractive.extend do
                 if href?
                     link = if @get('download') then {+download} else parse-link href
                     if link.download
-                        create-download basename(href), href
+                        filename = basename(href)
+                        link = document.createElement("a")
+                        link.setAttribute("target","_blank")
+                        link.setAttribute("href", href)
+                        link.setAttribute("download",filename)
+                        document.body.appendChild(link)
+                        link.click()
+                        document.body.removeChild(link)
                     else if link.external
                         if @get \curr-window
                             window.open href, "_self"
