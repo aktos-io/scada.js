@@ -235,7 +235,7 @@ my-buble = (input) ->
     es5.code
 
 browserify-cache = {}
-
+extra-time = 0
 get-bundler = (entry) ->
     b = browserify do
         entries: [entry]
@@ -256,9 +256,11 @@ get-bundler = (entry) ->
         ..transform (file) ->
             through (buf, enc, next) ->
                 content = buf.to-string \utf8
+                t0 = Date.now!
                 try
                     #@push "__DEPENDENCIES__ = #{__DEPENDENCIES__}; \n #{content}"
                     @push content.replace /__DEPENDENCIES__/g, JSON.stringify(__DEPENDENCIES__)
+                    extra-time += Date.now! - t0
                     next!
                 catch _ex
                     @emit 'error', _ex
@@ -329,6 +331,8 @@ gulp.task \browserify, ->
                 b-count-- if b-count > 0
                 if b-count is 0
                     log-info \browserify, "Browserify finished"
+                    console.log "Extra time: #{extra-time / 1000}s"
+                    extra-time := 0
                     first-browserify-done := yes
                     b-count := files.length
                     console.log "------------------------------------------"
@@ -474,15 +478,16 @@ gulp.task \dependencyTrack, ->
             dump-file "tmp-browserify-cache", browserify-cache
             */
 
-            # invalidate all dependencies to refresh __DEPENDENCIES__ string
-            console.log "=== Invalidating all Browserify cache due to commit change: "
-            console.log "===", JSON.stringify(__DEPENDENCIES__)
-            processed.length = 0
-            for f, c of browserify-cache
-                if f.ends-with ".ls" and f not in processed
-                    processed.push f
-                    #console.log "invalidating : #{f}"
-                    touch.sync f
+            unless _browserify_change_flag
+                # invalidate all dependencies to refresh __DEPENDENCIES__ string
+                console.log "=== Invalidating all Browserify cache due to commit change: "
+                console.log "       ", JSON.stringify(__DEPENDENCIES__)
+                processed.length = 0
+                for f, c of browserify-cache
+                    if f.ends-with ".ls" and f not in processed
+                        processed.push f
+                        #console.log "invalidating : #{f}"
+                        touch.sync f
 
             #console.log preparserify-dep-list
             gulp.start \browserify
@@ -490,4 +495,4 @@ gulp.task \dependencyTrack, ->
             processing := no
 
         <~ sleep 1000ms
-        lo(op)
+        lo(op) unless argv.production

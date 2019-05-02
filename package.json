@@ -24,6 +24,7 @@
     "gulp-util": "^3.0.8",
     "jquery": "^3.2.1",
     "jquery-mousewheel": "^3.1.13",
+    "jstransformer-markdown-it": "^2.1.0",
     "livescript": "~1.6.0",
     "marked": "^0.3.12",
     "mathjs": "^4.2.2",
