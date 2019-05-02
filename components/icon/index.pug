@@ -4,7 +4,10 @@
         i.icon(class="{{add}}")
     +if('@this.partials.content')
         +space
-        | {{yield}}    
+        | {{yield}}
++elif('svg')
+    i.icon(class="{{class}}")
+        img(src="{{svg}}")
 +else
     i.icon(class="{{class}} {{size}}" on-click="click")
     +if('@this.partials.content')
