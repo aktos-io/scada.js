@@ -1,4 +1,4 @@
-require! 'aea': {sleep, create-download}
+require! 'aea': {sleep}
 require! 'prelude-ls': {take, drop, split, find}
 require! 'actors':  {RactiveActor}
 
