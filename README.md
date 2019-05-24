@@ -50,3 +50,4 @@ Explanation by example: See [scadajs-template](https://github.com/aktos-io/scada
 | [Showcase](https://github.com/aktos-io/scadajs-showcase) | Showcase for components and authentication/authorization mechanism.|
 | [Aktos Electronics](https://aktos.io) | Aktos Electronics uses ScadaJS as its company website, MRP tool and the Enterprise Online SCADA Service infrastructure. |
 | [Omron Tester](https://github.com/aktos-io/omron-tester) | Example app to demonstrate how to communicate with an Omron PLC. |
+| [aeCAD](https://github.com/aktos-io/aecad) | Open Source Circuit Board Design Software
