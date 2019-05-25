@@ -307,7 +307,6 @@ gulp.task \browserify, ->
 
             .pipe source filebase
             .pipe buffer!
-            .pipe if-else optimize-for-production, my-uglify
 
             # ES-5 Transpilation MUST BE the last step
             .pipe through.obj (file, enc, cb) ->
@@ -315,6 +314,12 @@ gulp.task \browserify, ->
                 es5 = my-buble contents
                 file.contents = new Buffer es5
                 cb null, file
+
+            # --- DO NOT CHANGE THE ORDER --- 
+            # Although ES-5 Transpilation MUST BE the last step, 
+            # if "my-uglify" is executed before ES-5 transpilation, 
+            # it takes forever to transpile the uglified output.             
+            .pipe if-else optimize-for-production, my-uglify
 
             .pipe gulp.dest "#{paths.build-folder}/#{webapp}/js"
             .pipe tap (file) ->
