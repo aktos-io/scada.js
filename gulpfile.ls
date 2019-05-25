@@ -231,7 +231,11 @@ my-uglify = (x) ->
     .on \error, gutil.log
 
 my-buble = (input) ->
-    es5 = buble.transform input
+    es5 = buble.transform input, {
+          transforms: {
+            classes: true
+          }
+    }
     es5.code
 
 browserify-cache = {}
