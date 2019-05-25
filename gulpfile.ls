@@ -345,7 +345,6 @@ compile-js = (watchlist, output) ->
             optimized = optimize-js contents
             file.contents = new Buffer optimized
             cb null, file
-        .pipe if-else optimize-for-production, my-uglify
 
         # ES-5 Transpilation MUST BE the last step
         .pipe through.obj (file, enc, cb) ->
@@ -353,6 +352,9 @@ compile-js = (watchlist, output) ->
             es5 = my-buble contents
             file.contents = new Buffer es5
             cb null, file
+
+        # compaction must be after ES-5 transpilation
+        .pipe if-else optimize-for-production, my-uglify
         .pipe gulp.dest "#{paths.client-public}/js"
 
 compile-css = (watchlist, output) ->
