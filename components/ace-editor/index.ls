@@ -3,6 +3,7 @@ require 'brace/mode/javascript'
 require 'brace/mode/livescript'
 require 'brace/theme/monokai'
 require 'brace/theme/xcode'
+require 'brace/ext/searchbox'
 
 Ractive.components['ace-editorASYNC'] = Ractive.extend do
     template: RACTIVE_PREPARSE('index.pug')
