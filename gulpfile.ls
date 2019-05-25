@@ -281,7 +281,8 @@ get-bundler = (entry) ->
                 catch
                     console.log "Livescript compile error: ", e
                     @emit 'error', e
-
+        ..transform ractive-preparserify
+        ..transform browserify-optimize-js
         ..transform (file) ->
             unless optimize-for-production
                 return through!
@@ -295,9 +296,6 @@ get-bundler = (entry) ->
                 catch
                     console.log "This is buble error: ", e
                     @emit 'error', e
-
-        ..transform ractive-preparserify
-        ..transform browserify-optimize-js
 
 files = app-entry-files
 b-count = files.length
