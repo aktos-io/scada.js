@@ -283,19 +283,6 @@ get-bundler = (entry) ->
                     @emit 'error', e
         ..transform ractive-preparserify
         ..transform browserify-optimize-js
-        ..transform (file) ->
-            unless optimize-for-production
-                return through!
-
-            through (buf, enc, next) !->
-                content = buf.to-string \utf8
-                try
-                    es5 = my-buble content
-                    @push es5
-                    next!
-                catch
-                    console.log "This is buble error: ", e
-                    @emit 'error', e
 
 files = app-entry-files
 b-count = files.length
@@ -316,12 +303,15 @@ gulp.task \browserify, ->
 
             .pipe source filebase
             .pipe buffer!
-            #.pipe sourcemaps.init {+load-maps, +large-files}
-
             .pipe if-else optimize-for-production, my-uglify
 
-            #.pipe rename basename: 'app'
-            #.pipe sourcemaps.write '.'
+            # ES-5 Transpilation MUST BE the last step
+            .pipe through.obj (file, enc, cb) ->
+                contents = file.contents.to-string!
+                es5 = my-buble contents
+                file.contents = new Buffer es5
+                cb null, file
+
             .pipe gulp.dest "#{paths.build-folder}/#{webapp}/js"
             .pipe tap (file) ->
                 #console.log "browserify cache: ", pack keys browserify-cache
@@ -341,22 +331,20 @@ gulp.task \browserify, ->
 compile-js = (watchlist, output) ->
     gulp.src watchlist
         .pipe cat output
-        .pipe if-else optimize-for-production, my-uglify
-
-        .pipe through.obj (file, enc, cb) ->
-            contents = file.contents.to-string!
-            es5 = my-buble contents
-            file.contents = new Buffer es5
-            cb null, file
-
         .pipe through.obj (file, enc, cb) ->
             contents = file.contents.to-string!
             optimized = optimize-js contents
             file.contents = new Buffer optimized
             cb null, file
+        .pipe if-else optimize-for-production, my-uglify
 
+        # ES-5 Transpilation MUST BE the last step
+        .pipe through.obj (file, enc, cb) ->
+            contents = file.contents.to-string!
+            es5 = my-buble contents
+            file.contents = new Buffer es5
+            cb null, file
         .pipe gulp.dest "#{paths.client-public}/js"
-
 
 compile-css = (watchlist, output) ->
     gulp.src watchlist
