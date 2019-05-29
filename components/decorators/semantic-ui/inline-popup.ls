@@ -1,4 +1,4 @@
-Ractive.decorators.['inline-popup'] = (node, opts) ->
+Ractive.decorators.['inline-popup'] = (node, opts={}) ->
     popup = $ node .popup do
         inline: yes
         on: \click
