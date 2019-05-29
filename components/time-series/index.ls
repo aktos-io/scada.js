@@ -64,7 +64,7 @@ Ractive.components['time-seriesASYNC'] = Ractive.extend do
                     element: slider-element
                 slider-made := yes
 
-        append-new = (_new) ->
+        append-new = (_new) ~>
             if typeof! _new isnt \Array
                 _new = [{key: (Date.now!), value: _new}]
 
@@ -76,7 +76,15 @@ Ractive.components['time-seriesASYNC'] = Ractive.extend do
 
             for point in _new
                 serie.push {x: point.key, y: point.value}
-
+                
+            # limit the number of points in the graph
+            limit = @get('data-limit')
+            if limit > 0
+                diff = serie.length - limit
+                if diff > 0 and @get()
+                    for to diff
+                        serie.shift!
+                    
         @observe \data, (_new) ->
             if typeof! _new is \Array
                 x = graph
@@ -95,6 +103,7 @@ Ractive.components['time-seriesASYNC'] = Ractive.extend do
 
     data: ->
         data: []
+        'data-limit': 100
 
 
 /*
