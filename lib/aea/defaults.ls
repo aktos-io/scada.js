@@ -1,19 +1,24 @@
-# Prevent accidental reloads. ScadaJS is designed as a Single Page Application,
-# so user should never need to reload the page.
-unless (``/comment/.test(function(){/* comment */})``)
-    # minified, prevent page from accidental reloading
-    window.onbeforeunload = ->
-        return "Note: SCADA is not intended to be reloaded"
+# --------------------------------------------------------------------------
+# DEPRECATED: Showing a warning everytime is not a good idea beacause it may cause
+#  the user to ignore some other message mistakenly.
+# --------------------------------------------------------------------------
+#
+## Prevent accidental reloads. ScadaJS is designed as a Single Page Application,
+## so user should never need to reload the page.
+#unless (``/comment/.test(function(){/* comment */})``)
+#    # minified, prevent page from accidental reloading
+#    window.onbeforeunload = ->
+#        return "Note: SCADA is not intended to be reloaded"
 
 
-# object.constructor.name should be identified
-
+# TEST: object.constructor.name should be identified
 class Hello
     ->
 
 cons-name = new Hello!.constructor.name
 if cons-name isnt \Hello
     throw "Can not get constructor.name! It is: #{cons-name}"
+# End of TEST 
 
 # Cleanup objects
 export cleanup = window.cleanup = (o) !->
