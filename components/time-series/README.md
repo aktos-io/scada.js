@@ -12,6 +12,7 @@ time-series(
     data="{{levelGraphData}}"     <--- Required
     y-format="#.## m3"            <--- Required
     name="Tank Level"
+    data-limit="100"              <--- Enabled by default. Use -1 to disable.
 ```
 
 

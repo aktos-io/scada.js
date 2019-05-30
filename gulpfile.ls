@@ -231,11 +231,13 @@ my-uglify = (x) ->
     .on \error, gutil.log
 
 my-buble = (input) ->
+    t0 = Date.now!
     es5 = buble.transform input, {
           transforms: {
             classes: true
           }
     }
+    console.log "*** Transpiled to ES5 in #{((Date.now! - t0)/1000).to-fixed 2}s"
     es5.code
 
 browserify-cache = {}
@@ -307,14 +309,20 @@ gulp.task \browserify, ->
 
             .pipe source filebase
             .pipe buffer!
-            .pipe if-else optimize-for-production, my-uglify
 
             # ES-5 Transpilation MUST BE the last step
             .pipe through.obj (file, enc, cb) ->
-                contents = file.contents.to-string!
-                es5 = my-buble contents
-                file.contents = new Buffer es5
+                if optimize-for-production
+                    contents = file.contents.to-string!
+                    es5 = my-buble contents
+                    file.contents = new Buffer es5
                 cb null, file
+
+            # --- DO NOT CHANGE THE ORDER --- 
+            # Although ES-5 Transpilation MUST BE the last step, 
+            # if "my-uglify" is executed before ES-5 transpilation, 
+            # it takes forever to transpile the uglified output.             
+            .pipe if-else optimize-for-production, my-uglify
 
             .pipe gulp.dest "#{paths.build-folder}/#{webapp}/js"
             .pipe tap (file) ->
@@ -340,14 +348,17 @@ compile-js = (watchlist, output) ->
             optimized = optimize-js contents
             file.contents = new Buffer optimized
             cb null, file
-        .pipe if-else optimize-for-production, my-uglify
 
         # ES-5 Transpilation MUST BE the last step
         .pipe through.obj (file, enc, cb) ->
-            contents = file.contents.to-string!
-            es5 = my-buble contents
-            file.contents = new Buffer es5
+            if optimize-for-production
+                contents = file.contents.to-string!
+                es5 = my-buble contents
+                file.contents = new Buffer es5
             cb null, file
+
+        # compaction must be after ES-5 transpilation
+        .pipe if-else optimize-for-production, my-uglify
         .pipe gulp.dest "#{paths.client-public}/js"
 
 compile-css = (watchlist, output) ->
