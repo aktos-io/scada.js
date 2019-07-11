@@ -39,3 +39,12 @@ editForm: The section that appears when something "Edit" button is pressed
 
 if `auto-refresh` is not set to `yes`, a `Click to update` button will popup when table data is
 modified outside current window.
+
+# Mark last clicked row 
+
+Use `isLastClicked(rowId)`: 
+
+
+    .ui.basic.label(
+        on-click="openRow" 
+        class="{{#if isLastClicked(.id)}}orange{{/if}}") {{.id}}
