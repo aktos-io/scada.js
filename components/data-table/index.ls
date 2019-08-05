@@ -82,6 +82,7 @@ Ractive.components['data-table'] = Ractive.extend do
             @set \tableview_filtered, tableview_filtered
             #console.log "Sifter now has: ", tableview_filtered
             @set \sifter, new Sifter(tableview_filtered)
+            #console.log "Sifter is:", @get \sifter
 
             if @get \clickedIndex
                 index = that
@@ -261,20 +262,26 @@ Ractive.components['data-table'] = Ractive.extend do
                     @update \curr
                     try btn.state \done...
 
-            do-search-text: (ctx) !->
+            doSearchText: (ctx) !->
                 text = search-text-global
                 try clear-timeout search-rate-limit
                 @set \searching, yes
                 search-rate-limit := sleep 500ms, ~>
                     tableview_filtered = if text
-                        search-fields = <[ id ]> ++ (settings.search-fields or <[ value.description ]>)
-                        result = @get \sifter .search asciifold(that), do
+                        search-fields = <[ id ]> ++ (settings.search?fields or settings.search-fields or <[ value.description ]>)
+                        result = @get \sifter .search asciifold(text), do
                             #fields: ['id', 'value.description']
                             fields: search-fields
-                            sort: [{field: 'name', direction: 'asc'}]
+                            sort: [
+                                {
+                                    field: (settings.search?sort?field or search-fields.1), 
+                                    direction: (settings.search?sort?direction or 'asc')
+                                }
+                            ]
                             nesting: yes
                             conjunction: "and"
-
+                         
+                        #console.log "search result is:", result
                         x = []
                         for result.items
                             x.push (@get \tableview_filtered .[..id])
