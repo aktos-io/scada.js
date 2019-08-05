@@ -77,8 +77,8 @@ dropdown(
 ```pug
 dropdown(
     data="{{data}}"
-    selected-key="{{mySelected}}"  # <-- this is read-only in this mode
-    on-select="itemSelected"
+    on-select="itemSelected"       # <-- when "on-select" event used,
+    selected-key="{{mySelected}}"  # "selected-key" becomes read-only
     )
 
 ```
