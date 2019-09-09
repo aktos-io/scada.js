@@ -19,52 +19,83 @@ prompt_yes_no () {
 }
 
 DIR=$(dirname "$(readlink -f "$0")")
-PREFERENCES="$(realpath $DIR/../scada.js.conf)"
+PREFERENCES="dcs-modules.txt"
 
-if [ ! -f "$PREFERENCES" ]; then
+conf_path=${1}
+if [[ -f $conf_path ]]; then
+    conf_file="$conf_path"
+elif [[ -d $conf_path ]]; then
+    conf_file="${conf_path}/$PREFERENCES"
+else
+    echo "Configuration file path is required."
+    exit 5
+fi
+
+if [ ! -f "$conf_file" ]; then
     echo
     echo "Select Modules to Install"
     echo "-----------------------------------"
 
-    modules="./\n./lib/dcs"
+    declare -a modules_enabled
+    declare -a modules_disabled
     while IFS= read -r module; do
         module_dir="$(realpath $(dirname $module))/"
         module_path_name=".${module_dir#$DIR}"
         if [[ "$module_path_name" == "./" ]]; then
             #modules="$modules\n$module_dir"
-            echo "scada.js dependencies: [REQUIRED]"
+            echo " -> scada.js dependencies: [REQUIRED]"
+            modules_enabled+=("$module_path_name")
         elif [[ "$module_path_name" == "./lib/dcs/" ]]; then
             #modules="$modules\n$module_path_name"
-            echo "aktos-dcs dependencies: [REQUIRED]"
+            echo " -> aktos-dcs dependencies: [REQUIRED]"
+            modules_enabled+=("$module_path_name")
         else
             if prompt_yes_no " -> $module_path_name dependencies? "; then
                 #echo "+++ $module_path_name"
-                modules="$modules\n$module_path_name"
+                modules_enabled+=("$module_path_name")
+            else
+                 modules_disabled+=("$module_path_name")
             fi
         fi
     done < <(find . -name "node_modules" -prune -a ! -name "node_modules" -o -name "package.json" | tac )
 
     echo
-    echo "Saving Preferences to $PREFERENCES"
+    echo "Saving Preferences to $conf_file"
     echo "----------------------------------------------"
-    echo -e $modules > "$PREFERENCES"
+    for i in "${modules_enabled[@]}"; do 
+        echo -e "yes\t$i" >> $conf_file
+    done
+    for i in "${modules_disabled[@]}"; do 
+        echo -e "no\t$i" >> $conf_file
+    done
 else
     echo
-    echo "Using $PREFERENCES file..."
+    echo "Using $conf_file file..."
     echo "-----------------------------------"
-    cat "$PREFERENCES"
+    cat "$conf_file"
 fi
+
+
 
 echo
 echo "Installing Modules"
 echo "-----------------------------------"
 
 while IFS='' read -r module || [[ -n "$module" ]]; do
-    echo " *** Installing dependencies for: \"$module\"";
-    echo
-    cd "$DIR/$module"
-    echo "(removing package-lock.json)"
-    rm package-lock.json 2> /dev/null
-    echo "package-lock=false"  > .npmrc
-    npm install
-done < "$PREFERENCES"
+    status=$(echo $module | awk -F' ' '{print $1}')
+    module=$(echo $module | awk -F' ' '{print $2}')
+    if [[ "$status" = "no" ]]; then 
+        echo " --- Skipping disabled module: \"$module\""
+    else
+        echo " *** Installing dependencies for: \"$module\"";
+        echo
+        cd "$DIR/$module"
+
+        # remove package-lock.json
+        echo "(removing package-lock.json)"
+        rm package-lock.json 2> /dev/null
+        echo "package-lock=false"  > .npmrc
+
+        npm install
+    fi
+done < "$conf_file"
