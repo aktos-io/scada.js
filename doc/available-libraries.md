@@ -80,6 +80,10 @@ PNotify.alert do
             closer: yes
 ```
 
+# Modal 
+
+See Ractive Modal: https://kouts.github.io/ractive-modal/demo/
+
 ## Request Library
 
 SuperAgent is bundled with ScadaJS by default: https://github.com/visionmedia/superagent
