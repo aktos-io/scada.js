@@ -10,8 +10,7 @@ Ractive.components['browser-storage'] = Ractive.extend do
         if @get \db
             db = that
         else
-            @log.err "db parameter is required!"
-            return
+            db = "default"
 
         [full-addr, hash] = String window.location .split '#'
         app-id = full-addr
