@@ -44,11 +44,13 @@ Ractive.components['sync'] = Ractive.extend do
                     console.log "Value read by #{@get 'route'} is: ", res
                 handle?.silence!
                 @set \value, res
-                @set \date, msg.timestamp
+                @set 'msg-timestamp', msg.timestamp
+                @set 'value-timestamp', msg.data.ts
                 handle?.resume!
         catch
             """WARNING: DO NOT REMOVE THIS TRY CATCH!!!"""
             console.warn "FIXME: CODING ERROR: ", e
     data: ->
         value: null
-        date: null
+        'msg-timestamp': null
+        'value-timestamp': null
