@@ -1,16 +1,14 @@
-# Initializing Router
+# Router
 
-Add `router` component in your webapp:
+Add the `router` component in your webapp:
 
-        router
-
-### Attributes
-
-`offset="50"`: Offset for top menu (in pixels) (if exists)
+        router(
+                offset="50"  # <- Offset for top menu (in "px") (Optional)
+               )
 
 # Anchors
 
-There are 3 types of anchors:
+There are 4 types of anchors:
 
 1. Scroll to an anchor in current page:
 
@@ -24,11 +22,16 @@ There are 3 types of anchors:
 
         a(href="#/other-page#some-anchor") Go to the "other-page" and scroll to "some-anchor"
 
-3. Open external link:
+3. Open an external link:
 
         a(href="http://example.com") Go to example.com (in new tab, by default)
 
         a(href="http://example.com" curr-window) Go to example.com (in current window)
+        
+4. Download an asset:
+
+        a.icon(href="sgw-example.json" download tooltip="Download the example project")
+            icon.download.pink
 
 # Creating in-app anchor target
 

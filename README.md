@@ -36,7 +36,7 @@ ScadaJS is a library to create [Distributed](https://en.wikipedia.org/wiki/Distr
 
    * Compatible with aktos.io hardwares, such as [Scada Gateway](https://aktos.io/scada/pdf).
    * Supports any number and type (SQL, NoSQL) of databases in a single application at the same time.
-     * Provides realtime layer tools for CouchDB which helps [overcoming CouchDB limitations](https://github.com/aktos-io/aktos-dcs-node/tree/master/connectors/couch-dcs)
+     * Provides realtime layer tools for CouchDB which helps [overcoming CouchDB limitations](https://github.com/aktos-io/aktos-dcs-node/blob/master/services/couch-dcs/doc/addressing-couchdb-limitations.md)
 
 # Usage & Live Demo
 
@@ -50,3 +50,4 @@ Explanation by example: See [scadajs-template](https://github.com/aktos-io/scada
 | [Showcase](https://github.com/aktos-io/scadajs-showcase) | Showcase for components and authentication/authorization mechanism.|
 | [Aktos Electronics](https://aktos.io) | Aktos Electronics uses ScadaJS as its company website, MRP tool and the Enterprise Online SCADA Service infrastructure. |
 | [Omron Tester](https://github.com/aktos-io/omron-tester) | Example app to demonstrate how to communicate with an Omron PLC. |
+| [aeCAD](https://github.com/aktos-io/aecad) | Open Source Circuit Board Design Software
