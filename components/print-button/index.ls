@@ -2,7 +2,7 @@ require! 'aea':{sleep}
 require! 'actors': {RactiveActor}
 
 Ractive.components['print-button'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: yes
     onrender: ->
         @actor = new RactiveActor this, name: 'print button'

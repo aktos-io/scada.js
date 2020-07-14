@@ -25,7 +25,7 @@ function hexToRgb(hex) {
 require! 'prelude-ls': {map}
 
 Ractive.components['s-input'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     onrender: ->
         if @get("type") is \color
             inner = null

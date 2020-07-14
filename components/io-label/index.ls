@@ -7,7 +7,7 @@ Ractive.defaults.data.formatter = (format, value) ->
     displayFormat (parseFormat format), value .fullText
 
 Ractive.components['io-label'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: yes
     onrender: ->
         format = @get \format

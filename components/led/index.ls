@@ -1,7 +1,7 @@
 require! 'dcs/browser': {Actor}
 
 Ractive.components['led'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: yes
     onrender: ->
         @observe \state, (_new) ->

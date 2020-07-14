@@ -3,7 +3,7 @@ require! 'dcs/browser': {Actor}
 actor = new Actor!
 
 Ractive.components["terminal"] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: yes
     onrender: ->
         actor.subscribe @get \rx-topic

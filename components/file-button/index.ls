@@ -5,7 +5,7 @@ require! 'aea/csv-utils': {parse-csv}
 
 Ractive.components['file-button'] = Ractive.extend do
     isolated: yes
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     onrender: ->
         data-url-signal = new Signal!
         logger = new VLogger this

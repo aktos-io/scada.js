@@ -1,5 +1,5 @@
 Ractive.components['btn'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: yes
     on:
         _click: (ctx) ->

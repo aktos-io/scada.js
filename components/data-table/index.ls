@@ -8,7 +8,7 @@ require! 'sifter': Sifter
 require! 'dcs/lib/asciifold': asciifold
 
 Ractive.components['data-table'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('data-table.pug')
+    template: require('./data-table.pug')
     isolated: yes
     onrender: ->
         @set \readonly, if @partials.editForm then no else yes

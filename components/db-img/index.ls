@@ -2,7 +2,7 @@ require! 'aea': {merge}
 
 Ractive.components['db-img'] = Ractive.extend do
     isolated: yes
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     onrender: ->
         __ = @
         img = $ @find \img

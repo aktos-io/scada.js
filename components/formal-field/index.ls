@@ -2,7 +2,7 @@ require! 'aea':{pack, unpack, merge}
 require! 'prelude-ls':{find, difference, keys}
 
 Ractive.components['formal-field'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: no
     oninit: ->
         __ = @

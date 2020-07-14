@@ -1,5 +1,5 @@
 Ractive.components.icon = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     data: ->
         add: null
         size: ''

@@ -62,10 +62,13 @@ Usage of `doMath()` in Ractive:
 # hasUnit()
 export has-unit = (expression, unit) ->
     try
-        math.eval "#{expression} to #{unit}"
+        math.evaluate "#{expression} to #{unit}"
         return yes
     catch
         return no
 
+if not has-unit "3m", "cm" => throw new Error "\"has-unit\" function works erroneously."
+if has-unit "3m", "kg" => throw new Error "\"has-unit\" function works erroneously."
+
 # kind of tests
-math.eval "(0.0288 m^2) * 1"
+math.evaluate "(0.0288 m^2) * 1"

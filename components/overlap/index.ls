@@ -1,7 +1,7 @@
 sleep = (ms, f) -> set-timeout f, ms
 
 Ractive.components['overlap'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     onrender: ->
         <~ sleep 10ms
         root = $ @find '.overlap-container'

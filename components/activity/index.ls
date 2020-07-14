@@ -1,7 +1,7 @@
 require! 'aea': {sleep}
 
 Ractive.components['activity'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: yes
     oninit: ->
         @observe \value, (curr, prev) ->

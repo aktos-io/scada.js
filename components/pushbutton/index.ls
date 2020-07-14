@@ -1,7 +1,7 @@
 require! 'actors': {RactiveActor}
 
 Ractive.components['pushbutton'] = Ractive.extend do
-    template: RACTIVE_PREPARSE("index.pug")
+    template: require('./index.pug')
     isolated: no
     oninit: ->
         @actor = new RactiveActor this, do

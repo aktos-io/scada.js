@@ -1,122 +1,66 @@
-require! 'through2': through
-require! <[ pug path cheerio fs ]>
-require! 'ractive':Ractive
-require! 'prelude-ls': {map, keys}
+require! <[ through pug path ]>  
+require! 'ractive': Ractive
 require! '../../templates/filters': {pug-filters}
-
-#console.log "pug filters: ", pug-filters
-
 /*******************************************************************************
-
 USAGE:
 
-Replace `template: '#my-template'` with
-    * `template: RACTIVE_PREPARSE('my-template.pug')` if file contains only template code
-    * `template: RACTIVE_PREPARSE('my-template.pug', '#some-template-id')` if file contains multiple template codes
-
-Example:
-
-    In the main ractive instance:
-
-        ractive = new Ractive do
-            el: '#main-output'
-            template: RACTIVE_PREPARSE('base.pug')
-
-
-    In a component file:
-
-        Ractive.components.checkbox = Ractive.extend do
-            template: RACTIVE_PREPARSE('index.pug')
-            isolated: yes
-            oninit: ->
+    ractive = new Ractive do
+        el: '#main-output'
+        template: require('./base.pug')
 
 ********************************************************************************/
 
-export preparserify-dep-list = {}
+preparse-pug = (filename, template) ->
+    """
+    Returns {parsed, dependencies}
+    """
+    ext = path.extname filename 
+    dirname = path.dirname filename
+    template-full-path = path.join dirname, filename
+
+    dependencies = [filename]
+    if ext is \.html 
+        template-html = template 
+    else if ext is \.pug
+        # include templates/mixins.pug file
+        mixin-relative = path.relative dirname, process.cwd!
+        template = """
+            include #{mixin-relative}/templates/mixins.pug
+            #{template}
+            """
+        # TODO: We should get dependencies and rendered content in one function call
+        opts = {filename: filename, filters: pug-filters, doctype: 'html'}
+        compile = pug.compile template, opts
+        deps = (pug.compileClientWithDependenciesTracked template, opts).dependencies
+        # End of TODO
+        dependencies ++= deps 
+        template-html = compile!
+    parsed = Ractive.parse template-html
+    
+    return {parsed, dependencies}
+
+function isTemplate file
+    return /.*\.(html|pug)$/.test(file);
 
 export ractive-preparserify = (file) ->
-    through (buf, enc, next) ->
-        __ = this
-        content = buf.to-string \utf8
-        dirname = path.dirname file
-        preparse-jade = (m, params-str) ->
-            [template-file, template-id] = params-str.split ',' |> map (.replace /["'\s]+/g, '')
+        if not isTemplate(file)
+            return through()        
+ 
+        #console.log "Ractive preparserifying file: #file"
+        contents = ''
+        write = (chunk) !->
+            contents += chunk.to-string \utf-8
 
-            ext = path.extname template-file
-            template-full-path = path.join dirname, template-file
+        end = -> 
             try
-                template-contents = fs.read-file-sync template-full-path .to-string!
+                x = preparse-pug file, contents
+                for x.dependencies
+                    # register the dependencies to browserify
+                    @emit \file, ..
+                @queue "module.exports = #{JSON.stringify x.parsed}"
             catch
-                console.log "Preparserify error: ", e
-                __.emit 'error', e.message
-                return
+                console.error "Preparserify error: ", e
+                @emit 'error', e
+            @queue null 
 
-
-            if ext is \.html
-                template-html = template-contents
-
-                if preparserify-dep-list[template-full-path]
-                    preparserify-dep-list[template-full-path].push file
-                else
-                    preparserify-dep-list[template-full-path] = [file]
-
-            else if ext is \.pug
-                try
-                    # include templates/mixins.pug file
-                    mixin-relative = path.relative dirname, process.cwd!
-                    template-contents = """
-                        include #{mixin-relative}/templates/mixins.pug
-                        #{template-contents}
-                        """
-
-                    # FIXME: We should get dependencies and rendered content in one function call
-                    opts = {filename: file, filters: pug-filters, doctype: 'html'}
-                    fn = pug.compile template-contents, opts
-                    deps = pug.compileClientWithDependenciesTracked template-contents, opts .dependencies
-                    # End of FIXME
-
-                    all-deps = deps ++ template-full-path
-                    for dep in all-deps
-                        #console.log "dep is: ", dep, "for the file: ", file
-                        if preparserify-dep-list[dep]
-                            preparserify-dep-list[dep].push file
-                        else
-                            preparserify-dep-list[dep] = [file]
-
-                    #console.log "DEPS : ", JSON.stringify preparserify-dep-list, null, 2
-                    template-html = fn!
-                catch _ex
-                    __.emit 'error', _ex
-                    return
-
-
-
-            template-part = if template-id
-                $ = cheerio.load template-html, do
-                    lowerCaseAttributeNames: false
-                    lowerCaseTags: false
-                    decodeEntities: false
-                try
-                    $ template-id .html!
-                catch
-                    console.error "ERROR: ractive-preparserify: can not get template id: #{template-id} from ", html
-                    ''
-            else
-                template-html
-
-
-            # Debug
-            #console.log "DEBUG: ractive-preparsify: compiling template: #{path.basename path.dirname file}/#{jade-file} #{template-id or \ALL_HTML }"
-            # End of debug
-
-            try
-                parsed-template = Ractive.parse template-part
-            catch
-                console.log "Preparserify Error: ", e
-                __.emit 'error', e.message
-                return
-
-            JSON.stringify parsed-template
-
-        this.push(content.replace /RACTIVE_PREPARSE\(([^\)]+)\)/g, preparse-jade)
-        next!
+        return through write, end

@@ -1,6 +1,6 @@
 Ractive.components['login-button'] = Ractive.extend do
     isolated: yes
-    template: RACTIVE_PREPARSE('login-button.pug')
+    template: require('./login-button.pug')
     onrender: ->
         @on do
             click: (ctx) ->

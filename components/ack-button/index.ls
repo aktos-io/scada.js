@@ -5,7 +5,7 @@ require! 'dcs/src/signal': {Signal}
 require! 'actors/ractive-actor': {RactiveActor}
 
 Ractive.components['ack-button'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: yes
     oninit: ->
         if @get \class

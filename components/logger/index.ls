@@ -3,7 +3,7 @@ require! 'dcs/browser': {Signal, topic-match}
 require! 'actors': {RactiveActor}
 
 Ractive.components['logger'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: yes
     onrender: ->
         modal = $ @find '.ui.basic.modal'

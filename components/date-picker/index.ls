@@ -2,7 +2,7 @@ require! 'aea/formatting': {unix-to-readable}
 
 Ractive.components['date-picker'] = Ractive.extend do
     isolated: yes
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     onrender: ->
         j = $ @find \.date-picker
         conv = if @get \ms => 1 else 1000

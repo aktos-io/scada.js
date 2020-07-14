@@ -20,7 +20,7 @@ require! 'sifter': Sifter
 require! 'dcs/lib/asciifold': asciifold
 
 Ractive.components['dropdown'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: yes
     oninit: (ctx) ->
         @actor = new RactiveActor this, do

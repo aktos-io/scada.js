@@ -70,7 +70,7 @@ parse-link = (link) ->
 
 
 Ractive.components['a'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('a.html')
+    template: require('./a.html')
     isolated: no
     components: {a: false}
     data: ->
@@ -121,7 +121,7 @@ Ractive.components['a'] = Ractive.extend do
 
 
 Ractive.components['anchor'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('anchor.html')
+    template: require('./anchor.html')
     isolated: yes
 
 
@@ -218,7 +218,7 @@ Ractive.components['router'] = Ractive.extend do
 
 
 Ractive.components['scene'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('scene.html')
+    template: require('./scene.html')
     isolated: no
     oninit: ->
         if @get \render

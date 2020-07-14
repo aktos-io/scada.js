@@ -4,7 +4,7 @@ require! 'actors': {RactiveActor}
 require! uuid4
 
 Ractive.components['todo'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: yes
 
     oninit: ->

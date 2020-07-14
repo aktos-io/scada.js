@@ -6,7 +6,7 @@ require 'brace/theme/xcode'
 require 'brace/ext/searchbox'
 
 Ractive.components['ace-editorASYNC'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: yes
     onrender: ->
         editor = ace.edit @find \*

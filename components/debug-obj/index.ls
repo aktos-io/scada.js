@@ -1,5 +1,5 @@
 Ractive.components['debug-obj'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     data: ->
         obj: undefined
         title: null

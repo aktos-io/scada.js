@@ -19,7 +19,7 @@ require! 'dcs/src/signal': {Signal}
 require! 'actors/ractive-io-proxy-actor': {RactiveIoProxyClient}
 
 Ractive.components['checkbox'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: yes
     oninit: ->
         if @get \class

@@ -1,3 +1,3 @@
 Ractive.components['vertical-divider'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     

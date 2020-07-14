@@ -7,7 +7,7 @@
 */
 
 Ractive.components['radio-buttons'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: no
     oninit: ->
         if @getContext!.has-listener \select, yes
@@ -100,6 +100,6 @@ Ractive.components['radio-buttons'] = Ractive.extend do
 
 
 Ractive.components['radio-button'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('radio-button.pug')
+    template: require('./radio-button.pug')
     data: ->
         default: false
