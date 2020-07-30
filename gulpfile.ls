@@ -19,7 +19,9 @@ require! <[
     fs 
     globby 
     touch
-    buble ]>
+    buble 
+    through 
+    ]>
 require! 'prelude-ls': {union, join, keys, map, unique, empty, round}
 require! 'vinyl-source-stream': source
 require! 'vinyl-buffer': buffer
@@ -48,16 +50,6 @@ require! 'event-stream': es
 require! 'gulp-bro': bro
 
 sep = if /^win/.test process.platform => '\\' else '/'
-
-get-version = (path, callback) ->
-    if typeof! path is \Function
-        callback = path
-        path = undefined
-    err, stdout <- git.exec {args: 'describe --always --dirty', +quiet, cwd: path}
-    [commit, dirtiness] = stdout.split /[-\n]/
-    err, stdout <- git.exec {args: 'rev-list --count HEAD', +quiet, cwd: path}
-    count = +stdout
-    callback {commit, dirty: (dirtiness is \dirty), count}
 
 console.log "------------------------------------------"
 #console.log "App\t: #{app}"
@@ -199,6 +191,28 @@ livescript-transform = (file) ->
 
     return through2.obj write, flush 
 
+get-version = (path, callback) ->
+    if typeof! path is \Function
+        callback = path
+        path = undefined
+    err, stdout <- git.exec {args: 'describe --always --dirty', +quiet, cwd: path}
+    [commit, dirtiness] = stdout.split /[-\n]/
+    err, stdout <- git.exec {args: 'rev-list --count HEAD', +quiet, cwd: path}
+    count = +stdout
+    callback {commit, dirty: (dirtiness is \dirty), count}
+
+versionify = (file) -> 
+    unless /app-version\.json$/.test(file)
+        return through!
+
+    write = (chunk) !->
+
+    end = -> 
+        version <~ get-version paths.client-root
+        @queue "module.exports = #{JSON.stringify version}"
+        @queue null 
+    return through write, end
+
 get-bundler = (entry) ->
     b = browserify do
         entries: [entry]
@@ -219,6 +233,7 @@ get-bundler = (entry) ->
     b
         ..transform livescript-transform
         ..transform ractive-preparserify
+        ..transform versionify 
         #..transform browserify-optimize-js
 
     return b 
@@ -272,9 +287,8 @@ debug-cache = (cache) ->
 # Browserify
 # --------------
 gulp.task \browserify, !-> 
-    files = app-entry-files
-    b-count = files.length
-    for let file in files
+    b-count = app-entry-files.length
+    for let file in app-entry-files
         filebase = file.split(/[\\/]/).pop! .replace /\.[a-z]+/, '.js'
         console.log "creating bundler task for #{filebase}"
         b = get-bundler file
@@ -309,28 +323,33 @@ gulp.task \browserify, !->
             .pipe tap (file) ->
                 b-count-- if b-count > -1
                 duration = Date.now! - start-time
+                duration-str = "#{duration / 100 |> round |> (/10)}s"
                 if b-count is 0 
                     # first run completed 
-                    log-info \browserify, "All Browserify jobs finished. (took ~#{duration/100 |> round |> (/10)}s)"
+                    log-info \browserify, "All Browserify jobs finished. (took #{duration-str})"
                 else if b-count is -1
                     # consequent runs 
-                    log-info \browserify, "Browserified #{filebase} (took #{duration}ms)"
+                    log-info \browserify, "Browserified #{filebase} (took #{duration-str})"
         b.on \update, (ids) !-> 
             bundle!
-
 
 gulp.task \versionTrack, ->
     curr = null 
     <~ :lo(op) ~>
-        #console.log "checking project version...", version, curr
+        #console.log "checking project version...", curr
         version <~ get-version paths.client-root
         if (JSON.stringify(version) isnt JSON.stringify(curr)) 
+            pfx = if curr is null 
+                # first run 
+                "App version"
+            else 
+                "Changed app version"
+
             curr := JSON.parse JSON.stringify version
-            console.log "Changed project version: ", curr 
+            console.log "#{pfx}: ", curr
+            touch.sync path.join __dirname, 'app-version.json'
         <~ sleep 1000ms
         lo(op) unless argv.production
-# End of Browserify 
-
 
 gulp.task \html, (done) ->
     # Workaround with if/else:
