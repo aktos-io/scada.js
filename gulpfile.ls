@@ -16,8 +16,7 @@ require! <[
     browserify 
     glob 
     path 
-    fs 
-    globby 
+    fs  
     touch
     buble 
     through 
@@ -36,7 +35,6 @@ require! './lib/aea/ractive-preparserify': {ractive-preparserify}
 require! './lib/aea/browserify-optimize-js'
 require! 'gulp-flatten': flatten
 require! 'gulp-tap': tap
-require! 'gulp-cached': cache
 require! 'gulp-sourcemaps': sourcemaps
 require! 'livescript': lsc
 require! 'through2':through2
@@ -46,10 +44,7 @@ require! 'gulp-rename': rename
 require! 'gulp-util': gutil
 require! 'gulp-git': git
 require! 'gulp-cssimport': cssimport
-require! 'event-stream': es
-require! 'gulp-bro': bro
 
-sep = if /^win/.test process.platform => '\\' else '/'
 
 console.log "------------------------------------------"
 #console.log "App\t: #{app}"
@@ -376,6 +371,7 @@ gulp.task \vendor2-css, ->
     compile-css for-css2, "vendor2.css"
 
 gulp.task \assets, ->
+    sep = if /^win/.test process.platform => '\\' else '/'
     gulp.src for-assets
         .pipe rename (path) ->
             path-parts = path.dirname.split sep
