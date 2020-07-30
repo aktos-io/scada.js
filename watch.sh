@@ -11,11 +11,12 @@ pidfile=$(mktemp)
 pid=
 compile(){
     while :; do
-        gulp --webapp "$1" &
+        gulp --webapp "$@" &
         pid=$!
         echo $pid > $pidfile
-        wait
-        echo "restarting gulp..."
+        wait $pid
+        [[ $? -eq 30 ]] && exit 0
+        echo "restarting gulp..., exit code is: $?"
         sleep 1
     done
 }
@@ -33,6 +34,6 @@ restart(){
 }
 cd $_sdir
 rm -r $_sdir/build/$1 2> /dev/null
-compile $1 &
+compile $@ &
 restart
 wait

@@ -1,12 +1,28 @@
 require! 'yargs':{argv}
 
+usage = '''
+
+HELP: 
+
+--webapp mywebapp           : Expect to find webapp in ../webapps/mywebapp 
+--enable-version-polling    : Automatically trigger versionify transform upon git commit. 
+--production                : Make production environment optimizations. 
+
+--usage                      : Displays this message.
+
+'''
+
 if argv.webapp
     webapp = that
 else
-    console.log "ERROR: You should pass a --webapp=mywebapp parameter. Exiting."
+    console.log "ERROR: Missing \"--webapp mywebapp\" parameter."
+    console.log usage 
     process.exit!
 
-webapp = argv.webapp
+if argv.usage 
+    console.log usage 
+    process.exit(30)
+
 optimize-for-production = yes if argv.production is true
 
 
@@ -329,6 +345,13 @@ gulp.task \browserify, !->
             bundle!
 
 gulp.task \versionTrack, ->
+    unless argv.enable-version-polling
+        log-info "Version Track", 
+            """Polling is disabled.
+            Manually touch app-version.json after a git commit. 
+            """
+        return 
+
     curr = null 
     <~ :lo(op) ~>
         #console.log "checking project version...", curr
