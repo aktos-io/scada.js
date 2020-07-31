@@ -5,7 +5,7 @@ update-dependencies:
 	npm run interactive-update
 
 update-app-version:
-	touch app-version.json
+	touch lib/app-version.json
 
 production:
 	gulp --production --webapp $(APP)
