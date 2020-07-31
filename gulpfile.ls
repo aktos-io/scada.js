@@ -10,6 +10,8 @@ HELP:
 
 --usage                      : Displays this message.
 
+Hint: "export APP=mywebapp" before using Makefile.
+
 '''
 
 '''
@@ -67,7 +69,6 @@ require! 'through2':through2
 require! 'optimize-js'
 require! 'gulp-if-else': if-else
 require! 'gulp-rename': rename
-require! 'gulp-util': gutil
 require! 'gulp-git': git
 require! 'gulp-cssimport': cssimport
 require! 'fancy-log': log 
@@ -104,16 +105,16 @@ on-error = (source, msg) ->
         msg.to-string!
     catch
         "unknown error message: #{msg}" 
-    console-msg = "GULP ERROR: #{source} : #{msg}"
+    console-msg = "#{source} : #{msg}"
     notifier.notify {title: console-msg, message: msg} if notification-enabled
-    console.log console-msg
+    log.error console-msg
 
 log-info = (source, msg) ->
     msg = try
         msg.to-string!
     catch
         "unknown message: #{e}"
-    console-msg = "GULP INFO: #{source} : #{msg}"
+    console-msg = "#{source} : #{msg}"
     notifier.notify {title: "GULP.#{source}", message: msg} if notification-enabled
     log console-msg
 
@@ -166,7 +167,7 @@ my-uglify = (x) ->
     # mangle: shutterstock/rickshaw/issues/52#issuecomment-313836636
     # keep_fnames: aktos-io/scada.js#172
     terser {-mangle, +keep_fnames} x
-    .on \error, gutil.log
+    .on \error, log
 
 round-ms = (ms) -> 
     # rounds milliseconds to seconds with 1 decimal point
@@ -354,9 +355,9 @@ gulp.task \versionTrack, (done) ->
     unless argv.enable-version-polling
         unless argv.production
             log-info "Version Track", 
-                """Polling is disabled.
+                "Polling is disabled.
                 Manually touch app-version.json after a git commit. 
-                """
+                "
         return done!
 
     curr = null 

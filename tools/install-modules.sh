@@ -19,6 +19,7 @@ prompt_yes_no () {
 }
 
 DIR=$(dirname "$(readlink -f "$0")")
+SCADAJS_ROOT=$(dirname $DIR)
 PREFERENCES="dcs-modules.txt"
 
 conf_path=${1}
@@ -40,7 +41,7 @@ if [ ! -f "$conf_file" ]; then
     declare -a modules_disabled
     while IFS= read -r module; do
         module_dir="$(realpath $(dirname $module))/"
-        module_path_name=".${module_dir#$DIR}"
+        module_path_name=".${module_dir#$SCADAJS_ROOT}"
         if [[ "$module_path_name" == "./" ]]; then
             #modules="$modules\n$module_dir"
             echo " -> scada.js dependencies: [REQUIRED]"
@@ -89,7 +90,7 @@ while IFS='' read -r module || [[ -n "$module" ]]; do
     else
         echo " *** Installing dependencies for: \"$module\"";
         echo
-        cd "$DIR/$module"
+        cd "$SCADAJS_ROOT/$module"
 
         # remove package-lock.json
         echo "(removing package-lock.json)"

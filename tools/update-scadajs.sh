@@ -1,8 +1,9 @@
 #!/bin/bash
 
 CURR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd "$CURR_DIR/.."
+SCADAJS_ROOT="$CURR_DIR/.."
 
-#git submodule foreach --recursive git submodule update --init
-git pull origin master 
-git submodule foreach git pull origin master 
+cd "$SCADAJS_ROOT"
+
+git pull
+git submodule update --init --recursive

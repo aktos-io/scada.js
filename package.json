@@ -65,7 +65,6 @@
     "gulp-sourcemaps": "^2.6.5",
     "gulp-tap": "^2.0.0",
     "gulp-terser": "^1.2.1",
-    "gulp-util": "^3.0.8",
     "gulp-watch": "^5.0.1",
     "node-notifier": "^7.0.2",
     "optimize-js": "^1.0.2",
