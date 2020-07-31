@@ -344,13 +344,13 @@ gulp.task \browserify, !->
         b.on \update, (ids) !-> 
             bundle!
 
-gulp.task \versionTrack, ->
+gulp.task \versionTrack, (done) ->
     unless argv.enable-version-polling
         log-info "Version Track", 
             """Polling is disabled.
             Manually touch app-version.json after a git commit. 
             """
-        return 
+        return done!
 
     curr = null 
     <~ :lo(op) ~>
