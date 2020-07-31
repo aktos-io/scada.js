@@ -70,11 +70,12 @@ require! 'gulp-rename': rename
 require! 'gulp-util': gutil
 require! 'gulp-git': git
 require! 'gulp-cssimport': cssimport
+require! 'fancy-log': log 
 
 
 console.log "------------------------------------------"
 #console.log "App\t: #{app}"
-console.log "Webapp\t: #{webapp}"
+log "Webapp\t: #{webapp}"
 
 if optimize-for-production
     console.log "------------------------------------------"
@@ -114,7 +115,7 @@ log-info = (source, msg) ->
         "unknown message: #{e}"
     console-msg = "GULP INFO: #{source} : #{msg}"
     notifier.notify {title: "GULP.#{source}", message: msg} if notification-enabled
-    console.log console-msg
+    log console-msg
 
 pug-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/index.pug"
 html-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/index.html"
@@ -172,12 +173,15 @@ round-ms = (ms) ->
     ms / 100 |> round |> (/10)
 
 my-buble = (input) ->
-    es5 = buble.transform input, {
-          transforms: {
-            classes: true
-          }
-    }
-    es5.code
+    try 
+        es5 = buble.transform input, {
+              transforms: {
+                classes: true
+              }
+        }
+    catch 
+        throw Error e 
+    return es5.code
 
 livescript-transform = (file) ->
     unless /.*\.ls$/.test(file)
@@ -196,7 +200,7 @@ livescript-transform = (file) ->
             @push js.code
             cb!
         catch
-            console.log "Livescript compile error: ", e
+            log "Livescript compile error: ", e
             @emit 'error', e
 
     return through2.obj write, flush 
@@ -296,14 +300,14 @@ debug-cache = (cache) ->
 
 # Browserify
 # --------------
-gulp.task \browserify, !-> 
+gulp.task \browserify, (done) !-> 
     b-count = app-entry-files.length
     for let file in app-entry-files
         filebase = file.split(/[\\/]/).pop! .replace /\.[a-z]+/, '.js'
-        console.log "creating bundler task for #{filebase}"
+        log "* Created bundler task for #{filebase}"
         b = get-bundler file
         do bundle = -> 
-            start-time = Date.now!
+            t0 = Date.now!
             b
             .bundle!
             .on \error, (err) ->
@@ -322,7 +326,7 @@ gulp.task \browserify, !->
                     t0 = Date.now!
                     es5 = my-buble contents
                     file.contents = new Buffer.from es5
-                    console.log "*** #{filebase} is transpiled to ES5 in #{round-ms (Date.now! - t0)}s"
+                    log "#{filebase} is transpiled to ES5 in #{round-ms (Date.now! - t0)}s"
                 cb null, file
 
             # --- DO NOT CHANGE THE ORDER --- 
@@ -334,16 +338,17 @@ gulp.task \browserify, !->
             .pipe gulp.dest "#{paths.build-folder}/#{webapp}/js"
             .pipe tap (file) ->
                 b-count-- if b-count > -1
-                duration = Date.now! - start-time
-                duration-str = "#{round-ms duration}s"
+                duration-str = "#{round-ms (Date.now! - t0)}s"
                 if b-count is 0 
                     # first run completed 
                     log-info \browserify, "All Browserify jobs finished. (took #{duration-str})"
+                    done!
                 else if b-count is -1
                     # consequent runs 
                     log-info \browserify, "Browserified #{filebase} (took #{duration-str})"
-        b.on \update, (ids) !-> 
-            bundle!
+        unless argv.production
+            b.on \update, (ids) !-> 
+                bundle!
 
 gulp.task \versionTrack, (done) ->
     unless argv.enable-version-polling
@@ -366,7 +371,7 @@ gulp.task \versionTrack, (done) ->
                 "Changed app version"
 
             curr := JSON.parse JSON.stringify version
-            console.log "#{pfx}: ", curr
+            log "#{pfx}: ", curr
             touch.sync path.join __dirname, 'app-version.json'
         <~ sleep 1000ms
         lo(op) unless argv.production

@@ -1,4 +1,4 @@
-require! 'csv-parse': parse
+require! 'csv-parse/lib/es5': parse
 require! 'prelude-ls': {unique, map, split, empty}
 
 get-csv = (string, delimiter, callback) ->
