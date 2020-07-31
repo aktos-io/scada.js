@@ -356,7 +356,7 @@ gulp.task \versionTrack, (done) ->
         unless argv.production
             log-info "Version Track", 
                 "Polling is disabled.
-                Manually touch app-version.json after a git commit. 
+                Manually touch scada.js/lib/app-version.json after a git commit. 
                 "
         return done!
 
