@@ -12,8 +12,18 @@ HELP:
 
 '''
 
-if argv.webapp
-    webapp = that
+'''
+Helpful documents for writing Gulpfile:
+-----------------------------------------
+
+* Writing Gulp transforms: https://gist.github.com/CITguy/079c631ac5f181939e08
+* Browserify related: 
+    * https://stackoverflow.com/q/63151235/1952991
+
+'''
+
+if typeof! argv.webapp is \String
+    webapp = argv.webapp
 else
     console.log "ERROR: Missing \"--webapp mywebapp\" parameter."
     console.log usage 
@@ -151,34 +161,23 @@ for-browserify =
     "#{paths.client-webapps}/#{webapp}/**/*.ls"
     "#{paths.client-webapps}/#{webapp}/**/*.js"
 
-    # files in components
-    "#{paths.components-src}/**/*.ls"
-    "#{paths.components-src}/**/*.js"
-
-    # files in lib
-    "#{paths.lib-src}/**/*.ls"
-    "#{paths.lib-src}/**/*.js"
-
-    # files in project_root/lib
-    "#{paths.client-root}/lib/**/*.ls"
-    "#{paths.client-root}/lib/**/*.js"
-
 my-uglify = (x) ->
     # mangle: shutterstock/rickshaw/issues/52#issuecomment-313836636
     # keep_fnames: aktos-io/scada.js#172
     terser {-mangle, +keep_fnames} x
     .on \error, gutil.log
 
+round-ms = (ms) -> 
+    # rounds milliseconds to seconds with 1 decimal point
+    ms / 100 |> round |> (/10)
+
 my-buble = (input) ->
-    t0 = Date.now!
     es5 = buble.transform input, {
           transforms: {
             classes: true
           }
     }
-    console.log "*** Transpiled to ES5 in #{((Date.now! - t0)/1000).to-fixed 2}s"
     es5.code
-
 
 livescript-transform = (file) ->
     unless /.*\.ls$/.test(file)
@@ -320,8 +319,10 @@ gulp.task \browserify, !->
             .pipe through2.obj (file, enc, cb) ->
                 if optimize-for-production
                     contents = file.contents.to-string!
+                    t0 = Date.now!
                     es5 = my-buble contents
                     file.contents = new Buffer.from es5
+                    console.log "*** #{filebase} is transpiled to ES5 in #{round-ms (Date.now! - t0)}s"
                 cb null, file
 
             # --- DO NOT CHANGE THE ORDER --- 
@@ -334,7 +335,7 @@ gulp.task \browserify, !->
             .pipe tap (file) ->
                 b-count-- if b-count > -1
                 duration = Date.now! - start-time
-                duration-str = "#{duration / 100 |> round |> (/10)}s"
+                duration-str = "#{round-ms duration}s"
                 if b-count is 0 
                     # first run completed 
                     log-info \browserify, "All Browserify jobs finished. (took #{duration-str})"
@@ -346,10 +347,11 @@ gulp.task \browserify, !->
 
 gulp.task \versionTrack, (done) ->
     unless argv.enable-version-polling
-        log-info "Version Track", 
-            """Polling is disabled.
-            Manually touch app-version.json after a git commit. 
-            """
+        unless argv.production
+            log-info "Version Track", 
+                """Polling is disabled.
+                Manually touch app-version.json after a git commit. 
+                """
         return done!
 
     curr = null 

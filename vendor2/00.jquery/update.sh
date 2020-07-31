@@ -9,4 +9,4 @@ jq=$NODE_MODULES/jquery/dist/jquery.min.js
 
 #echo "updating jquery from this node modules"
 #browserify -t browserify-livescript jquery-npm.ls -o jquery-latest.js
-cp $jq .  
+cp -v "$jq" "$_sdir/"
