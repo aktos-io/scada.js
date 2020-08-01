@@ -1,5 +1,5 @@
 require! 'nouislider'
-require! 'aea': {merge}
+require! 'aea': {merge, sleep}
 
 Ractive.components['slider'] = Ractive.extend do
     template: require('./index.pug')
@@ -7,7 +7,7 @@ Ractive.components['slider'] = Ractive.extend do
     onrender: ->
         slider = @find \.slider
 
-        type = if @get \range
+        type = if (@get \value2)?
             \range
         else
             \simple
@@ -33,21 +33,19 @@ Ractive.components['slider'] = Ractive.extend do
                     min: [min]
                     max: [max]
 
-        /*
+        
         if @get \vertical
-            slider.css do
-                height: @get(\height) or '200px'
-
-            slider-outer.css do
-                'margin-bottom': '80px'
-
+            # see https://refreshless.com/nouislider/slider-options/#section-orientation
+            slider.style.height = @get(\height) or '200px'
             opts `merge` do
                 orientation: \vertical
-                direction: \rtl
-        */
+                direction: @get(\direction) or \rtl
+
+        if @get \direction 
+            opts.direction = that 
 
         if @get \opts
-            opts `merge` @get(\opts)
+            opts `merge` that
 
         nouislider.create slider, opts
         
@@ -66,12 +64,12 @@ Ractive.components['slider'] = Ractive.extend do
                 @set \value, val
 
         else if type is \range
-            @observe \lower-value, (_new) ->
-                slider.noUiSlider.set [_new, @get(\upper-value)]
+            @observe \value, (_new) ->
+                slider.noUiSlider.set [_new, @get(\value2)]
 
-            @observe \upper-value, (_new) ->
-                slider.noUiSlider.set [@get(\lower-value), _new]
+            @observe \value2, (_new) ->
+                slider.noUiSlider.set [@get(\value), _new]
 
             slider.noUiSlider.on \slide, (values, handle) ~>
-                @set \lower-value, values.0
-                @set \upper-value, values.1
+                @set \value, values.0
+                @set \value2, values.1
