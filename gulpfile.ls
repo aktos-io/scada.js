@@ -109,14 +109,15 @@ on-error = (source, msg) ->
     notifier.notify {title: console-msg, message: msg} if notification-enabled
     log.error console-msg
 
-log-info = (source, msg) ->
+log-info = (source, msg, opts={}) ->
     msg = try
         msg.to-string!
     catch
         "unknown message: #{e}"
     console-msg = "#{source} : #{msg}"
     notifier.notify {title: "GULP.#{source}", message: msg} if notification-enabled
-    log console-msg
+    unless opts.noConsole
+        log console-msg
 
 pug-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/index.pug"
 html-entry-files = glob.sync "#{paths.client-webapps}/#{webapp}/index.html"
@@ -315,6 +316,7 @@ gulp.task \browserify, (done) !->
                 #console.log "browserify error is:", err 
                 msg = err?annotated or err?message or err 
                 on-error \browserify, msg
+                b.__last_error = true 
                 @emit \end
 
             .pipe source filebase
@@ -346,7 +348,12 @@ gulp.task \browserify, (done) !->
                     done!
                 else if b-count is -1
                     # consequent runs 
-                    log-info \browserify, "Browserified #{filebase} (took #{duration-str})"
+                    log-info \browserify, "Browserified #{filebase} (took #{duration-str})", 
+                        {noConsole: not b.__last_error}
+
+                    # display "successfully compiled" message first time after an error
+                    b.__last_error = false 
+
         unless argv.production
             b.on \update, (ids) !-> 
                 bundle!
