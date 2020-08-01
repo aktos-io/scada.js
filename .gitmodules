@@ -10,3 +10,6 @@
 [submodule "lib/aea/ractive-synchronizer"]
 	path = lib/aea/ractive-synchronizer
 	url = https://github.com/ceremcem/ractive-synchronizer
+[submodule "tools/download.sh"]
+	path = tools/download.sh
+	url = https://github.com/ceremcem/download.sh
