@@ -1,4 +1,4 @@
-sleep = (ms, f) -> set-timeout f, ms
+require! 'aea': {sleep}
 
 Ractive.components['overlap'] = Ractive.extend do
     template: require('./index.pug')
