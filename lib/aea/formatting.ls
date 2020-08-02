@@ -115,11 +115,12 @@ export display-format = (format, value) -->
     else
         "#{number-text}"
 
-    output =
-        full-text: full-text
-        rounded-value: rounded-value
-        number-text: number-text
+    output = {
+        full-text
+        rounded-value
+        number-text
         format: f
+    }
 
 
 # -----------------------------------------------------------------------
