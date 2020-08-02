@@ -20,6 +20,7 @@ Ractive.components['progress'] = Ractive.extend do
             type: \stroke 
             'stroke-width': @get \thickness
             'stroke': @get \color
+            duration: 0.3 
 
         if @get("fill")?
             opts.type = \fill 
@@ -58,7 +59,6 @@ Ractive.components['progress'] = Ractive.extend do
             else =>
                 preset: that
 
-        console.log "progress opts: ", opts 
         bar = new ldBar elem, opts
 
         padding-bottom = @get \padding-bottom
