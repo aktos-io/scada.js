@@ -19,6 +19,10 @@ Ractive.components['progress'] = Ractive.extend do
             'stroke-width': @get \thickness
             'stroke': @get \color
             duration: 0.3 
+            min: min 
+            max: max 
+            'limit-top': @get \limit-top 
+            'limit-bottom': @get \limit-bottom 
 
         if @get("fill")?
             opts.type = \fill 
@@ -63,17 +67,13 @@ Ractive.components['progress'] = Ractive.extend do
 
         bar = new ldBar elem, opts
 
-        padding-bottom = @get \padding-bottom
-        padding-top = @get \padding-top
+        limit-bottom = @get \limit-bottom
+        limit-top = @get \limit-top
         @observe \value, (_new) ->
             if _new?
-                percent = 100 * _new / (max - min)
-                bar-percent = (_new * (100 - padding-bottom - padding-top) / (max - min)) + (padding-bottom)
-                @set \percent, percent
-                bar.set bar-percent, animate=no
+                bar.set _new, animate=no
             else
                 console.warn "TODO: this should indicate an error: ", _new
-                @set \percent, undefined
                 bar.set undefined, animate=no
 
         # Label manipulation and tweaks            
@@ -98,20 +98,17 @@ Ractive.components['progress'] = Ractive.extend do
             label.pseudoStyle(label-pos,"font-size","0.8em");
 
             if @get('label-background')?
-                console.log @get \label-background
                 opacity = @get(\label-background) % 1 or 0.8
                 label.style
                     ..background-color = "rgba(255,255,255,#{opacity})"
                     ..padding = "0.1em"
                     ..border-radius = "3px"
-
-
     data: ->
         max: 100
         min: 0
         value: null
-        'padding-top': 0
-        'padding-bottom': 0
+        'limit-top': 1.0
+        'limit-bottom': 0.0
         'pattern-size': 100
         thickness: 10
         speed: 5
