@@ -1,68 +1,104 @@
-require! 'aea': {merge, sleep, VLogger}
-require! 'dcs/browser': {Signal}
-
-# for debugging reasons
-require! 'aea':{pack}
+require! 'aea/packing': {merge}
+require! 'aea/sleep': {sleep}
+require! 'aea/vlogger': {VLogger}
+require! 'dcs/src/signal': {Signal}
+require! 'actors/ractive-actor': {RactiveActor}
 
 Ractive.components['ack-button'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: yes
     oninit: ->
         if @get \class
             if that.index-of(\transparent)  > -1
                 @set \transparent, yes
 
-    onrender: ->
+        @actor = new RactiveActor this, 'ack-button'
         @doing-watchdog = new Signal!
+
+    onrender: ->
         logger = new VLogger this, \ack-button
 
         @button-timeout = if @get \timeout
             that
         else
-            3_200ms
+            6_000ms
+
+        orig-tooltip = @get \tooltip
 
         set-button = (mode, message) ~>
             @set \state, mode
-            @set \tooltip, message
+            message = if message then " |!| #{message}" else ''
+            @set \tooltip, "#{orig-tooltip}#{message}"
             unless mode is \doing
                 @doing-watchdog.go!
 
+        if @actor.default-topic
+            @actor.c-log "here is default route: ", @actor.default-route
+
         @on do
-            click: ->
+            _click: (ctx) ->
+                if @get(\state) is \doing
+                    logger.cwarn "ack-button prevents multiple click.
+                        We shouldn't see this message as 'disabled' state
+                        should have taken care of this problem."
+                    return
+
+                const c = ctx.getParent yes
+                c.refire = yes
+                c.actor = @actor
+
                 val = @get \value
                 @doing-watchdog.reset!
-                @set \tooltip, ""
-                @fire \buttonclick, {}, val
+                @set \tooltip, orig-tooltip
 
-            state: (_event, s, msg, callback) ->
-                switch s
-                    when \done =>
-                        set-button \done
+                #@actor.c-log "firing on-click, default route:", @actor.default-route
+                @fire \click, c
+                # stop the event propogation
+                return false
 
-                    when \done... =>
-                        set-button \done
-                        <~ sleep 3000ms
-                        set-button \normal
+            state: (ctx, state) ->
+                @state state
 
-                    when \normal =>
-                        set-button \normal
+        @state = (state) ~>
+            switch state
+                when \done =>
+                    set-button \done
 
-                    when \doing =>
-                        set-button \doing
-                        @set \selfDisabled, yes
-                        timeout <~ @doing-watchdog.wait @button-timeout
-                        @set \selfDisabled, no
-                        if timeout
-                            msg = "Button is timed out."
-                            logger.error msg
-                            set-button \error, msg
+                when \done... =>
+                    set-button \done
+                    <~ sleep 3000ms
+                    set-button \normal
+
+                when \normal =>
+                    set-button \normal
+
+                when \doing =>
+                    set-button \doing
+                    @set \selfDisabled, yes
+                    timeout <~ @doing-watchdog.wait @button-timeout
+                    @set \selfDisabled, no
+                    if timeout
+                        msg = "Button is timed out."
+                        #logger.error msg
+                        set-button \error, msg
 
         @error = (msg, callback) ~>
             logger.error msg, callback
             set-button \error, (msg.message or msg)
 
+        @warn = (msg, callback) ~>
+            try
+                console.warn msg.message
+                set-button \error, msg.message
+            catch
+                console.error e
+
         @info = (msg, callback) ~>
-            logger.info msg, callback
+            #logger.info msg, callback
+            PNotify.info do
+                title: msg.title or "Info"
+                text: (msg.message or msg)
+
             set-button \normal
 
         @yesno = (msg, callback) ~>
@@ -70,7 +106,7 @@ Ractive.components['ack-button'] = Ractive.extend do
             set-button \normal
 
         @heartbeat = (duration) ~>
-            logger.clog "ack-button received a heartbeat: #{duration}"
+            logger.clog "ack-button received a heartbeat" + if duration => ": #{that}" else "."
             @doing-watchdog.heartbeat duration
             @set \heartbeat, yes
             <~ sleep 200ms
@@ -78,7 +114,7 @@ Ractive.components['ack-button'] = Ractive.extend do
 
         if @get \auto
             logger.clog "auto firing ack-button!"
-            @fire \click
+            @fire \_click
 
     onteardown: ->
         @doing-watchdog.go!

@@ -3,3 +3,13 @@
     height: 300px;
     border: 1px solid #aaa;
 }
+
+.editor-loading textarea {
+    width:100% !important;
+    height:100% !important;
+    max-height: 100% !important; 
+    box-sizing: border-box;         /* For IE and modern versions of Chrome */
+    -moz-box-sizing: border-box;    /* For Firefox                          */
+    -webkit-box-sizing: border-box; /* For Safari                           */
+    outline: none;
+}

@@ -1,19 +1,18 @@
-require! 'aea':{pack, unpack}
-
 Ractive.components['assign'] = Ractive.extend do
-    isolated: yes
-    template: RACTIVE_PREPARSE('index.pug')
+    template: ''
     onrender: ->
-        try
-            if @get \if-null
-                # only update if output is null at the beginning
-                #console.log "...update if null at the beginning..."
-                output = @get \output
-                if output not in [void, null, '']
-                    #console.log "...but the output isnt null (#{@get 'output'})"
-                    return
-            @observe \input, (new-val, old-val) ->
-                #console.log "ASSIGN: assigning new value: ", new-val
-                @set \output, unpack pack new-val
-        catch
-            debugger
+        @observe \right, (value) ~>
+            @set \left, value
+    data: ->
+        left: null
+        right: null
+
+Ractive.components['assign-if-null'] = Ractive.extend do
+    template: ''
+    onrender: ->
+        @observe \right, (value) ~>
+            unless @get \left
+                @set \left, value
+    data: ->
+        left: null
+        right: null

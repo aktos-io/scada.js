@@ -1,3 +1,3 @@
 Ractive.components['key-value-grid'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: no

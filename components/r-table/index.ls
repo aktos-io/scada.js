@@ -1,29 +1,29 @@
 require! aea: {sleep}
 
 Ractive.components['r-head'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug', '#r-head')
+    template: require('./r-head.pug')
 
 Ractive.components['r-body'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug', '#r-body')
+    template: require('./r-body.pug')
 
 Ractive.components['r-foot'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug', '#r-foot')
+    template: require('./r-foot.pug')
 
 Ractive.components['r-row'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug', '#r-row')
+    template: require('./r-row.pug')
     oncomplete: ->
         r-table = @find-container \r-table
         r-table.fire \updateColNames
 
 
 Ractive.components['r-col'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug', '#r-col')
+    template: require('./r-col.pug')
 
 Ractive.components['r-head-col'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug', '#r-head-col')
+    template: require('./r-head-col.pug')
 
 Ractive.components['r-table'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug', '#r-table')
+    template: require('./r-table.pug')
     isolated: yes
     oninit: ->
         @on do

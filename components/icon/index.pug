@@ -1,0 +1,16 @@
++iff('add')
+    i.icons(on-click="click" class="{{size}}")
+        i.icon(class="{{class}}")
+        i.icon(class="{{add}}")
+    +if('@this.partials.content')
+        +space
+        | {{yield}}
++elif('svg')
+    i.icon(class="{{class}}")
+        img(src="{{svg}}")
++else
+    i.icon(class="{{class}} {{size}}" on-click="click")
+    +if('@this.partials.content')
+        +space
+        | {{yield}}
++endif

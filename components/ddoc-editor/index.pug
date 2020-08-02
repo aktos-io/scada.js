@@ -1,27 +1,56 @@
-.ui.segments 
+.ui.segments
     .ui.segment 
-        ack-button.green(on-buttonclick="listDesignDocuments") Get List
-        .ui.buttons 
-            +each('designDocuments')
-                ack-button(on-buttonclick="getDesignDocument" value="{{ . }}")
-                    code {{ . }}
+        ack-button.green(on-click="listDesignDocuments") Get List
+        radio-buttons(
+            on-select="getDesignDocument"
+            true-color="orange")
+            +each('designDocuments as ddoc')
+                radio-button(value="{{ddoc}}") {{ddoc.split('/')[1]}}
+                //-
+                    ack-button(on-click="getDesignDocument")
+                        code {{ ddoc.split('/')[1] }}
 
-        ace-editor(code="{{ designDocument.livescript }}" mode="livescript" theme="xcode")
         .ui.form 
+            .field
+                ace-editor(code="{{ designDocument.livescript }}" mode="livescript" theme="xcode")
             .field 
-                ack-button.teal(on-buttonclick="compileDesignDocument") Compile
-            .field 
-                ace-editor(code="{{ designDocument.javascript }}" mode="javascript" theme="xcode")
+                checkbox(checked="{{autoCompile}}") Autocompile
+                +unless('autoCompile')
+                    ack-button.teal(on-click="compileDesignDocument") Compile
+            +unless('autoCompile')
+                .field 
+                    ace-editor(code="{{ designDocument.javascript }}" mode="javascript" theme="xcode")
             .field
                 .ui.action.input 
                     input(value="{{ documentId }}" placeholder="_design/myDesignDocument")
-                    ack-button.red(on-buttonclick="putDesignDocument") Put Auth Document!
+                    ack-button.red(on-click="putDesignDocument") Save
+    .ui.segment
+        h2.ui.header Get View
+        .ui.form
+            .fields
+                .field 
+                    label View 
+                    input(value="{{getView_view}}" placeholder="mydesigndoc/myview")
+                .field 
+                    label Params 
+                    json-edit(value="{{getView_params}}" style="height: 100px")
+                .field 
+                    label Get
+                    ack-button(on-click="getView") Get View
+            
+            .field
+                label Result (also in the console)
+                pre(style="overflow-x: scroll; min-height: 300px; border: 1px solid black") {{getView_result}}
+                
+    .ui.segment   
+        h3.ui.header 
+            //- Dump all design documents 
+            | Dump All Design Documents  
+        checkbox.blue(checked="{{dumpAllSection}}") Show
 
-
-    h3.ui.attached.header Dump All Design Documents
-    .ui.segment 
-        .ui.form 
-            .field 
-                ack-button.green(on-buttonclick="getAllDesignDocuments") Get All Documents
-            .field 
-                ace-editor(code="{{ allDesignDocs }}")
+        +if('dumpAllSection')  
+            ack-button.green(on-click="downloadBlueprints") Get All Documents
+            
+            .ui.buttons
+                file-button.red(on-read="restoreDesignDocs" type="text") Restore 
+                checkbox(checked="{{restoreFromScratch}}") delete revs 

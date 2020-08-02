@@ -3,7 +3,7 @@ require! 'prelude-ls': {empty, first, last, is-it-NaN}
 require! 'aea': {unix-to-readable}
 require! 'aea/formatting': {displayFormat, parse-format}
 
-Ractive.components['time-series'] = Ractive.extend do
+Ractive.components['time-seriesASYNC'] = Ractive.extend do
     template: '
         <div class="time-series chart-container {{class}}"
             style="
@@ -25,12 +25,12 @@ Ractive.components['time-series'] = Ractive.extend do
 
         graph = new Rickshaw.Graph do
             element: @find ".chart"
+            interpolation: \step-after
             series:
                 * color: 'steelblue',
                   data: []
                   name: @get \name
                 ...
-
 
         graph.render();
 
@@ -51,9 +51,8 @@ Ractive.components['time-series'] = Ractive.extend do
 
         hover-detail = new Rickshaw.Graph.HoverDetail do
             graph: graph
-            x-formatter: (x) -> unix-to-readable (1000 * x)
+            x-formatter: (x) -> unix-to-readable x
             y-formatter: (x) -> displayFormat y-format, x .full-text
-
 
         slider-element = @find \.slider
         slider-made = no
@@ -63,12 +62,11 @@ Ractive.components['time-series'] = Ractive.extend do
                 slider = new Rickshaw.Graph.RangeSlider.Preview do
                     graph: graph
                     element: slider-element
-
                 slider-made := yes
 
-        append-new = (_new) ->
+        append-new = (_new) ~>
             if typeof! _new isnt \Array
-                _new = [{key: (Date.now! / 1000), value: _new}]
+                _new = [{key: (Date.now!), value: _new}]
 
             serie = graph.series.0.data
             if last serie
@@ -78,7 +76,15 @@ Ractive.components['time-series'] = Ractive.extend do
 
             for point in _new
                 serie.push {x: point.key, y: point.value}
-
+                
+            # limit the number of points in the graph
+            limit = @get('data-limit')
+            if limit > 0
+                diff = serie.length - limit
+                if diff > 0 and @get()
+                    for to diff
+                        serie.shift!
+                    
         @observe \data, (_new) ->
             if typeof! _new is \Array
                 x = graph
@@ -86,15 +92,18 @@ Ractive.components['time-series'] = Ractive.extend do
                 make-slider!
                 graph.update!
 
-
         @observe \current, (curr) ->
             if @get \live
-                #console.log "appending live data: ", _new
+                #console.log "appending live data: ", curr
                 curr = parse-float curr
                 unless is-it-NaN curr
                     append-new curr
                     make-slider!
                     graph.update!
+
+    data: ->
+        data: []
+        'data-limit': 100
 
 
 /*

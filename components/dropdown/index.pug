@@ -1,32 +1,92 @@
-+iff('~/["text-mode"]')
-    +apply('text-mode')
+//- text mode 
++if('readonly')
+    .ui(
+        class="{{#emptyReduced}}red{{/}} {{#if button}}button disabled{{else}}basic label{{/if}}"
+        ) 
+        +iff('~/["selected-key"]')
+            +iff('item[nameField]')
+                | {{item[nameField]}}
+            +else 
+                span.text.red(style="font-style: italic") {{~/['selected-key']}}
+            +endif
+        +else 
+            | {{nothingSelected}}
+        +endif
 
-+elif('~/["readonly-mode"]')
-    .ui.input.disabled
-        input(twoway="false" value="{{ item ? item[nameField] : nothingSelected }}")
+//- r/w dropdown 
++iff('inline || button || compact')
+    .ui.dropdown(class="{{class}} \
+        \
+        {{#inline}}inline{{/}} \
+        {{#button}}floating icon button{{/}} \
+        {{#compact}}compact floating{{/}}  \
+        \
+        {{#loading}}loading{{/}} \
+        {{#emptyReduced}}error{{/}} {{#nomatch}}warn{{/}}"
+        style="{{#readonly}}display: none{{/}}"
+        )
+        i.dropdown.icon
+        +space
+        //-.default.text {{ placeholder | '----' }}
+        +iff('nomatch')
+            icon.exclamation.triangle 
+                span.text.red(style="font-style: italic") {{~/['selected-key']}}
+        +else
+            span.text -------
+        +endif
+        .menu
+            .ui.icon.search.input
+                i.search.icon
+                input(type="text" placeholder="Search...")
+
+            +each('dataReduced as item')
+                .item(
+                    data-value!="{{item[keyField]}}" 
+                    class-disabled="blacklist == item[keyField]"
+                    ) {{item[nameField]}}
+
+            +if('emptyReduced && ~/["allow-addition"]')
+                ack-button.green.fluid.bottom.attached(on-click="_add")
+                    icon.plus {{~/['search-term']}}
+
+//- custom 
++elif('@this.partials.custom')
+    +apply('custom')
+
+//- default 
 +else
-    +iff('inline')
-        .ui.inline.dropdown(class="{{class}} {{#loading}}loading{{/}}")
-            input(type="hidden" name="{{_guid}}")
-            i.dropdown.icon 
-            .default.text {{ placeholder }}
-            .menu
-                +each('data')
-                    .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
+    //-div(style="display: inline-block")
+    .ui.search.selection.dropdown(class="{{class}} \
+        {{#loading}}loading{{/}} \
+        {{#emptyReduced}}error{{/}}"
+        style="{{#readonly}}display: none{{/}}"
+        )
+        input(type="hidden" name="{{_guid}}")
+        i.dropdown.icon
+        +iff('nomatch')
+            icon.exclamation.triangle 
+                span.text.red(style="font-style: italic") {{~/['selected-key']}}
+        +endif
+        .default.text {{ placeholder }}
+        .menu
+            +each('dataReduced')
+                .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
 
-    +elif('custom')
-        | {{>custom}}
-    +else
-        .ui.search.selection.dropdown(class="{{class}} {{#loading}}loading{{/}}")
-            input(type="hidden" name="{{_guid}}")
-            i.dropdown.icon 
-            .default.text {{ placeholder }}
-            .menu
-                +each('data')
-                    .item(data-value!="{{.[keyField]}}") {{.[nameField]}}
-    +endif
+            +if('@this.getContext().hasListener("add", true) && ~/["search-term"]')
+                +iff("@this.partials.addNew ")
+                    +apply('addNew')
+                +else 
+                    ack-button.green.fluid.bottom.attached(on-click="_add")
+                        icon.plus {{~/['search-term']}}
+                +endif
 +endif
 
+
+//- ----------------------------------------------------------------------------
+//- Debug output
+//- ----------------------------------------------------------------------------
 +if('debug')
-    debug-obj(obj="{{item}}" title="Selected item")
+    p guid: {{_guid}}
+    debug-obj(obj="{{~/['selected-key']}}" title="'selected-key'")
+    debug-obj(obj="{{item}}" title="Selected 'item'")
     debug-obj(obj="{{data}}" title="data")

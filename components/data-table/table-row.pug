@@ -1,0 +1,28 @@
+//- -----------------------------------------------
+//- opening dialog
+//- -----------------------------------------------
++iff('isOpeningOrViewingRow(.id)')
+    td(colspan="{{ colNames.length }}")
+        .dimmable 
+            .ui.inverted.dimmer(class-active="openingRow" fade-in)
+                .ui.active.large.text.loader
+                    .ui.p {{ openingRowMsg }}
+                    btn.small.inverted.red.icon(on-click="closeRow" tooltip="Kapat") #[i.remove.icon] Cancel
+            .data-table-opened-row(fade-in)
+                //- -----------------------------------------------
+                //- view form
+                //- -----------------------------------------------
+                +apply('viewForm')
+//- -----------------------------------------------
+//- edit form
+//- -----------------------------------------------
++elif('isEditingRow(.id)')
+    td(colspan="{{ colNames.length }}")
+        .data-table-opened-row
+            +apply('editForm')
+//- -----------------------------------------------
+//- normal rows 
+//- -----------------------------------------------
++else
+    +apply('row')
++endif

@@ -1,7 +1,7 @@
 require! 'aea': {sleep}
 
 Ractive.components["aea-menu2"] = Ractive.extend do
-    template: RACTIVE_PREPARSE('aea-menu2.pug')
+    template: require('aea-menu2.pug')
     isolated: yes
     data: ->
         debug: no

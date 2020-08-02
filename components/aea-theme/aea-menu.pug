@@ -22,7 +22,7 @@
                             ul.dropdown-menu
                                 +each('subMenu')
                                     +if('isAllowed(.url).visible')
-                                        assign(input="{{ true }}" output="{{ showSubmenu }}")
+                                        assign(right="{{ true }}" left="{{ showSubmenu }}")
                                         li
                                             a(href="{{.url}}") {{.title}}
 

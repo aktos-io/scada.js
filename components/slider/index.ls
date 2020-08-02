@@ -1,20 +1,17 @@
 require! 'nouislider'
-require! 'aea': {merge}
+require! 'aea': {merge, sleep}
 
 Ractive.components['slider'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: yes
     onrender: ->
-        __ = this
-        slider = $ @find \.slider-inner
-        slider-outer = $ @find \.slider
+        slider = @find \.slider
 
-        type = if @get \range
+        type = if (@get \value2)?
             \range
         else
             \simple
-
-
+            
         min = @get(\min) or 0
         max = @get(\max) or 100
 
@@ -36,39 +33,43 @@ Ractive.components['slider'] = Ractive.extend do
                     min: [min]
                     max: [max]
 
+        
         if @get \vertical
-            slider.css do
-                height: @get(\height) or '200px'
-
-            slider-outer.css do
-                'margin-bottom': '80px'
-
+            # see https://refreshless.com/nouislider/slider-options/#section-orientation
+            slider.style.height = @get(\height) or '200px'
             opts `merge` do
                 orientation: \vertical
-                direction: \rtl
+                direction: @get(\direction) or \rtl
+
+        if @get \direction 
+            opts.direction = that 
 
         if @get \opts
-            opts `merge` @get(\opts)
+            opts `merge` that
 
-        nouislider.create slider.0, opts
-        slider-widget = slider.0.no-ui-slider
-
-
+        nouislider.create slider, opts
+        
+        @observe \disabled, (disabled) ~> 
+            if disabled
+                slider.setAttribute('disabled', true)
+            else
+                slider.removeAttribute('disabled')
+        
         if type is \simple
-            @observe \value, (_new) ->
-                slider-widget.set _new
+            @observe \value, (_new) ~>
+                slider.noUiSlider.set _new 
 
-            slider-widget.on \slide, (values, handle) ->
+            slider.noUiSlider.on \slide, (values, handle) ~>
                 val = values[handle]
-                __.set \value, val
+                @set \value, val
 
         else if type is \range
-            @observe \lower-value, (_new) ->
-                slider-widget.set [_new, @get(\upper-value)]
+            @observe \value, (_new) ->
+                slider.noUiSlider.set [_new, @get(\value2)]
 
-            @observe \upper-value, (_new) ->
-                slider-widget.set [@get(\lower-value), _new]
+            @observe \value2, (_new) ->
+                slider.noUiSlider.set [@get(\value), _new]
 
-            slider-widget.on \slide, (values, handle) ->
-                __.set \lower-value, values.0
-                __.set \upper-value, values.1
+            slider.noUiSlider.on \slide, (values, handle) ~>
+                @set \value, values.0
+                @set \value2, values.1

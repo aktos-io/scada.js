@@ -1,0 +1,12 @@
+#!/bin/bash
+
+download(){
+    local URL=$1
+    local FILE=$(basename $URL)
+    local tmp="${FILE}.part"
+    echo "updating $FILE"
+    wget ${URL} -O ${tmp} || { rm ${tmp}; exit 5; }
+    mv ${tmp} ${FILE} 
+}
+
+download $1

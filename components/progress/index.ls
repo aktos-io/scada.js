@@ -1,46 +1,50 @@
+require! 'aea': {merge}
+require! 'aea/formatting': {displayFormat, parse-format}
+
 Ractive.components['progress'] = Ractive.extend do
-    template: '
-        <div class="ldBar {{class}}"
-            style="{{style}};
-                {{#if height}}height: {{height}};{{/if}}
-                {{#if width}}width: {{width}};{{/if}}
-                "
-            >
-        </div>'
-
+    template: require('./index.html')
     isolated: yes
-    oninit: ->
-        type = switch @get \type
-            | \circle   => that
-            | \buble    => that
-            | \vertical => that
-            | \fan      => that
-            |_          => \line
-
-        if @partials.path or @get(\img)
-            type = \custom
-            @set \type,
-
-        @set \_type, type
-
     onrender: ->
         max = @get \max
         min = @get \min
         elem = @find \div
 
-        scada-defaults =
-            type: if @get \fill then \fill else \stroke
+        type = @get \type
 
-        if @get \fill
-            unless that is \fill
-                console.log "fill is: ", @get('fill')
-                scada-defaults <<< fill: that
+        if @partials.path or @get(\img)
+            type = \custom 
+
+        opts =
+            type: \stroke 
+            'stroke-width': @get \thickness
+            'stroke': @get \color
+            duration: 0.3 
+            min: min 
+            max: max 
+            'limit-top': @get \limit-top 
+            'limit-bottom': @get \limit-bottom 
+
+        if @get("fill")?
+            opts.type = \fill 
+            if @get("fill") isnt \fill 
+                opts.fill = @get('fill')
+
+        label-format = parse-format @get \format 
+        opts.precision = "#{10^-label-format.length-of.decimal-part}"
 
 
-        data-attr = $ elem .data!
+        # default configuration regarding to "type"
+        bubble-preset = (speed=5) ~> 
+            speed = 10 if speed is 0 
+            return do 
+                preset: \bubble
+                type: \fill
+                path: @get("path") or "M10 10L90 10L90 90L10 90Z"
 
-        opts = scada-defaults <<< data-attr
-        opts <<< switch @get \_type
+                # data:ldbar/res,bubble(colorBk, colorBubble, count, duration)
+                fill: "data:ldbar/res,bubble(#{@get 'color'},\#fff,50,#{10 - speed})"
+
+        opts `merge` switch type
             when \custom =>
                 if @get \img
                     cfg =
@@ -48,32 +52,78 @@ Ractive.components['progress'] = Ractive.extend do
                         type: \fill
 
                     if @get \background
-                        cfg <<< img2: that
+                        cfg.img2 = that
                     cfg
                 else
                     path: @partials.path .0
 
-            when \vertical => do
-                preset: \buble
-                type: \fill
-                path: "M20 20L90 20L90 90L20 90Z"
-                fill: 'data:ldbar/res,bubble(#248,#fff,50,1)'
+            when \bubble => do
+                bubble-preset(@get \speed)
+
+            when \vertical => do 
+                bubble-preset(0)
             else =>
                 preset: that
 
         bar = new ldBar elem, opts
 
-        padding-bottom = @get \padding-bottom
-        padding-top = @get \padding-top
+        limit-bottom = @get \limit-bottom
+        limit-top = @get \limit-top
         @observe \value, (_new) ->
-            bar-percent = (_new * (100 - padding-bottom - padding-top) / (max - min)) + (padding-bottom)
-            @set \percent, (_new * 100 / (max - min))
-            bar.set bar-percent, animate=no
+            if _new?
+                bar.set _new, animate=no
+            else
+                console.warn "TODO: this should indicate an error: ", _new
+                bar.set undefined, animate=no
 
+        # Label manipulation and tweaks            
+        label = [.. for elem.childNodes when ..className is \ldBar-label][0]
+
+        if @get('label')?
+            label.style.display = "none"
+        else 
+            label.style
+                ..color = @get \label-color
+
+            switch type 
+            | \fan =>  
+                label.style
+                    ..top = 'auto'
+                    ..bottom = '0'
+
+            label.pseudoStyle("after","content","''");
+
+            label-pos = if label-format?.unit?.is-on-left then 'before' else 'after'
+            label.pseudoStyle(label-pos,"content","'#{label-format?.unit?.text or ''}'");
+            label.pseudoStyle(label-pos,"font-size","0.8em");
+
+            if @get('label-background')?
+                opacity = @get(\label-background) % 1 or 0.8
+                label.style
+                    ..background-color = "rgba(255,255,255,#{opacity})"
+                    ..padding = "0.1em"
+                    ..border-radius = "3px"
     data: ->
         max: 100
         min: 0
         value: null
-        _type: \line
-        'padding-top': 0
-        'padding-bottom': 0
+        'limit-top': 1.0
+        'limit-bottom': 0.0
+        'pattern-size': 100
+        thickness: 10
+        speed: 5
+        color: \blue
+        path: null # See https://www.w3schools.com/graphics/svg_path.asp
+
+        # Possible types: 
+        # * line 
+        # * vertical 
+        # * bubble 
+        # * fan 
+        # * circle
+        # * custom -> needs a partial named "path"
+        # => add more (gradient, stripe): https://loading.io/progress/, Pattern Generator
+        type: \line
+        'label-color': \black
+
+        format: '#.#%'

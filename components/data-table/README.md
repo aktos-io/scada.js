@@ -1,13 +1,16 @@
+# Example
+
+See https://aktos.io/st/#/showcase/data-table
+
 # Properties
 
-
-Marks last clicked row
-Display a message while opening a row
-Displays error or info messages
-Opens appropriate row if url matches with document id
-Scrolls to clicked row (or opening row by url)
-Disables other rows in order to prevent accidental openings while a row is opened
-Displays a warning if a filter is selected other than `all`
+- Marks last clicked row
+- Display a message while opening a row
+- Displays error or info messages
+- Opens appropriate row if url matches with document id
+- Scrolls to clicked row (or opening row by url)
+- Disables other rows in order to prevent accidental openings while a row is opened
+- Displays a warning if a filter is selected other than `all`
 
 # Names
 
@@ -36,3 +39,12 @@ editForm: The section that appears when something "Edit" button is pressed
 
 if `auto-refresh` is not set to `yes`, a `Click to update` button will popup when table data is
 modified outside current window.
+
+# Mark last clicked row 
+
+Use `isLastClicked(rowId)`: 
+
+
+    .ui.basic.label(
+        on-click="openRow" 
+        class="{{#if isLastClicked(.id)}}orange{{/if}}") {{.id}}

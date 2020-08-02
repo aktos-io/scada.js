@@ -1,5 +1,5 @@
 Ractive.components['coll-panel'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: yes
     onrender: ->
         __ = @

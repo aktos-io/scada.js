@@ -1,7 +1,17 @@
 +if('settings.pageSize > 0')
-    +if('(tableview_filtered.length / settings.pageSize) > 1')
-        .ui.pagination.menu
-            +each('range(1, Math.ceil(tableview_filtered.length / settings.pageSize)):i')
-                a(
-                    on-click="@.fire('selectPage', i)" 
-                    class!="item {{#if currPage === i}}active{{/if}}") {{ . }}
+    +if('(tableview_visible.length / settings.pageSize) > 1')
+        tr
+            th(colspan="{{ colNames.length }}")
+                scroll-x
+                    .ui.label.circular.teal(
+                        on-click="@.toggle('showPageSize')"
+                        style="margin-right: 2em"
+                        ): b {{currPage + 1}}
+                    +if('showPageSize')
+                        | 
+                        .ui.input.small: input(value="{{settings.pageSize}}" type="number")
+                    .ui.pagination.menu
+                        +each('range(1, Math.ceil(tableview_visible.length / settings.pageSize)):i')
+                            a(
+                                on-click="@.fire('selectPage', i)" 
+                                class!="item {{#if currPage === i}}active{{/if}}") {{ . }}

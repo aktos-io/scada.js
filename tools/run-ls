@@ -36,7 +36,7 @@ SCADA_DIR=$(find_scada_root $base_dir)
 
 if [[ -d $SCADA_DIR ]]; then
     #echo "DEBUG: found scada root: $SCADA_DIR"
-    SCADA_MODULES="${SCADA_DIR}/src/lib"
+    SCADA_MODULES="${SCADA_DIR}/lib"
     PROJECT_PATH=$(realpath "${SCADA_DIR}/..")
 
     echo "ScadaJS project path: ${PROJECT_PATH}"
@@ -46,8 +46,17 @@ if [[ -d $SCADA_DIR ]]; then
     while IFS= read -r module; do
         #echo "++++++++++ adding path: $module"
         FOUND_MODULES="${FOUND_MODULES}:$module"
-    done < <(find $PROJECT_PATH -type d -name "node_modules" | grep -v "node_modules\/" )
+    done < <(find $PROJECT_PATH -type d -name "node_modules" 2> /dev/null | grep -v "node_modules\/" )
 fi
 
 export NODE_PATH="${SCADA_MODULES}:${FOUND_MODULES}:${NODE_PATH}"
-lsc $@
+
+lsFile="$1"
+set-pane-title () {
+    if [ "$TERM" = "screen" ] && [ -n "$TMUX" ]; then
+        printf "\033k$1\033\\"
+    fi
+
+}
+set-pane-title ${lsFile%.ls}
+lsc $lsFile

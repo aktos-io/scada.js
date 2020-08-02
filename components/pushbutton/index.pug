@@ -1,0 +1,17 @@
+.ui.button(
+    class!="                            \
+        {{#disabled}}disabled{{/}}      \
+        {{#active}}active{{/}}          \
+        {{ class }}                     \
+        {{#if state === 'pressed'}}     \
+            {{ ~/['pressed-color'] }}   \
+        {{elseif state == 'released'}}  \
+            {{ ~/['released-color'] }}  \
+        {{elseif state === 'doing'}}    \
+            shadowed-button             \
+        {{/if}}                         \
+    "
+    style="{{style}}"
+    as-popup="tooltip"
+    ) 
+    | {{yield}}

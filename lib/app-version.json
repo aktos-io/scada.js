@@ -1,0 +1,6 @@
+A dummy file exists for versionify transform. 
+
+Usage: 
+
+    v = require('app-version.json')
+    #=> { commit: '557bf33', dirty: true, count: 158 }

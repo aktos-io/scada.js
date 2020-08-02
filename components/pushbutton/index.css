@@ -1,0 +1,4 @@
+.shadowed-button {
+    text-shadow: -2px 0px 6px rgba(150, 0, 255, 1) !important;
+    color: white !important;
+}

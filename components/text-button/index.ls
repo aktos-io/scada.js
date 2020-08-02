@@ -1,7 +1,7 @@
 require! 'aea': {sleep}
 
 Ractive.components['text-button'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: yes
     onrender: ->
         button = @find-component \ack-button

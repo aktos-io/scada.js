@@ -1,71 +1,52 @@
 require! 'prelude-ls': {filter, each, find}
 require! 'aea': {merge, unix-to-readable}
+require! 'actors': {RactiveActor}
+require! uuid4
 
 Ractive.components['todo'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: yes
 
+    oninit: ->
+        @actor = new RactiveActor this, 'todo'
+
     onrender: ->
-        # logger utility is defined here
-        logger = @root.find-component \logger
-        console.error "No logger component is found!" unless logger
-        # end of logger utility
-
         @on do
-            startEditing: (event, id)->
-                orig = find (.id is id), @get \checklist
-                @set \editingItem, id
-                @set \editingContent, orig.content
-                @set \newDueTimestamp, orig.due-timestamp
+            startEditing: (ctx)->
+                @set \tmp, ctx.get!
+                @set \editingItem, ctx.get \.id
 
-            addNewItem: (ev, value) ->
-                unless value.content
-                    @fire \error, do
-                        title: "Append Error"
-                        message: "Content can not be empty."
+            addNewItem: (ctx) ->
+                newItem = @get \newItem
+                newItem <<< {id: uuid4!}
+                unless newItem.content
+                    @actor.send 'app.log.err', do
+                        title: 'Todo Error'
+                        icon: 'warning sign'
+                        message: "Content of a list item can not be empty."
                     return
 
                 # TODO: fire external handler for async handling of saving data
-                checklist = @get \checklist
+                @push \checklist, newItem
 
-                # add new todo to the list
-                new-entry-id = checklist.length + 1
-
-                checklist.push do
-                    id: new-entry-id
-                    content: value.content
-                    dueTimestamp: value.dueTimestamp
-
-                @set \checklist, checklist
+                # add new action to the log
+                @unshift \log, do
+                    action: \new
+                    target-id: newItem.id
+                    timestamp: Date.now!
 
                 # reset input via new-entry
                 @set \newItem, {}
 
-                # add new action to the log
-                log = @get \log
-                log.unshift do
-                    action: \new
-                    target-id: new-entry-id
-                    timestamp: Date.now()
-                @set \log, log
-
-            saveChanges: (ev, orig) ->
-                _new =
-                    content: @get \editingContent
-                    due-timestamp: @get \newDueTimestamp
-
-                log = @get \log
-                log.unshift do
+            saveChanges: (ctx) ->
+                @unshift \log, do
                     action: \edit
-                    summary:
-                        what: \due-timestamp
-                        old-value: orig.due-timestamp
-                        new-value: _new.due-timestamp
-                    target-id: orig.id
+                    from: ctx.get!
+                    to: @get \tmp
+                    target-id: ctx.get \.id
                     timestamp: Date.now!
 
-                orig `merge` _new
-                @update \checklist
+                ctx.set '.', @get \tmp
 
                 # close edit window
                 @set \editingItem, -1
@@ -73,30 +54,13 @@ Ractive.components['todo'] = Ractive.extend do
             cancelEdit: (ev) ->
                 @set \editingItem, -1
 
-            statechanged: (ev, curr-state, intended-state, item-id) ->
+            statechanged: (ctx, checked, next) ->
                 # add new action to the log
-                item = find (.id is item-id), @get \checklist
-                item.is-done = intended-state is \checked
-                log = @get \log
-                log.unshift do
-                    action: intended-state
-                    target-id: item-id
+                ctx.set \.isDone, checked
+                @unshift \log, do
+                    action: if checked => 'completed' else 'undone'
+                    target-id: ctx.get \.id
                     timestamp: Date.now!
-                @set \log, log
-                @update \checklist
-
-            error: (ev, msg, callback) ->
-                msg = {message: msg} unless msg.message
-                msg = msg `merge` {
-                    title: msg.title or 'This is my error'
-                    icon: "warning sign"
-                }
-                @set \state, \error
-                @set \reason, msg.message
-                @set \selfDisabled, no
-                action <- logger.fire \showDimmed, msg, {-closable}
-                #console.log "error has been processed by ack-button, action is: #{action}"
-                callback action if typeof! callback is \Function
 
     data: ->
         unix-to-readable: unix-to-readable

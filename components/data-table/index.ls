@@ -1,71 +1,66 @@
 require! 'prelude-ls': {
     split, take, join, lists-to-obj, sum, filter
-    camelize, find, reject, find-index
+    camelize, find, reject, find-index, compact
 }
 require! 'aea': {sleep, merge, clone, unix-to-readable, pack, VLogger}
-require! 'dcs/browser': {RactiveActor}
+require! 'actors': {RactiveActor}
+require! 'sifter': Sifter
+require! 'dcs/lib/asciifold': asciifold
 
 Ractive.components['data-table'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('data-table.pug')
+    template: require('./data-table.pug')
     isolated: yes
     onrender: ->
-        readonly = if @partials.editForm then no else yes
-        title-provided = if @partials.addnewTitle then yes else no
-        @set \readonly, readonly
+        @set \readonly, if @partials.editForm then no else yes
 
-        @logger = new VLogger this
         settings = @get \settings
-
         @actor = new RactiveActor this, do
             name: 'data-table'
             debug: settings.debug
+        @logger = new VLogger this, (settings.name or \data-table)
 
         # check parameters
         try
             unless typeof! settings is \Object
                 throw "No settings found!"
+
             unless settings.name
                 throw 'data-table name is required'
-            unless typeof! settings.col-names is \Array
-                throw 'Column names are missing'
-            unless settings.default
-                throw 'Default document is required'
-            unless settings.after-filter
-                throw "after-filter is required"
+
+            if typeof! settings.save is \Function
+                settings.save = settings.save.bind this
+
+            if typeof! settings.on-create-view is \Function
+                    settings.on-create-view = settings.on-create-view.bind this
+
+            if settings.data?
+                unless typeof! settings.data is \Function
+                    throw "data must be a function."
+                settings.data = settings.data.bind this
+
+            if typeof! settings.col-names isnt \Function
+                colnames = settings.col-names
+                settings.col-names = ~>
+                    return colnames
             else
-                settings.after-filter = settings.after-filter.bind this
-            if not readonly
-                unless typeof! settings.on-save is \Function
-                    throw "data-table is not readonly, on-save function is required"
-                else
-                    settings.on-save = settings.on-save.bind this
+                settings.col-names = settings.col-names.bind this
 
             unless settings.on-init
                 throw "on-init is required"
             else
                 settings.on-init = settings.on-init.bind this
         catch
-            @logger.cerr e
+            @actor.send 'app.log.err', do
+                title: 'data-table component'
+                message: e
             return
 
-        # function to use adding on new document
-        unless typeof! settings.on-new-document is \Function
-            settings.on-new-document = (template, next) ->
-                @set \curr, template
-                next!
-        settings.on-new-document = settings.on-new-document.bind this
-
-        @get-default-document = ~>
-            try
-                if typeof settings.default is \function
-                    return settings.default.call this
-                else
-                    clone settings.default
-            catch
-                @logger.cerr e
-
-        @set \colNames, settings.col-names
         opening-dimmer = $ @find \.table-section-of-data-table
+
+        # throw error if save function is used without defining beforehand
+        unless settings.save
+            settings.save =  (ctx, curr, proceed) ~>
+                proceed "No save function is defined!"
 
         # assign filters
         data-filters = {}
@@ -85,64 +80,99 @@ Ractive.components['data-table'] = Ractive.extend do
             # filter documents
             tableview_filtered = filter-func tableview
             @set \tableview_filtered, tableview_filtered
+            #console.log "Sifter now has: ", tableview_filtered
+            @set \sifter, new Sifter(tableview_filtered)
+            #console.log "Sifter is:", @get \sifter
 
-            # calculate which items to show in tableview
-            items = do ~>
-                if settings.page-size > 0
-                    curr-page = @get \currPage
-                    min = (x, y) -> if x < y then x else y
-                    return do
-                        from: curr-page * settings.page-size
-                        to: min (((curr-page + 1) * settings.page-size) - 1), (tableview_filtered.length - 1)
-                else
-                    return do
-                        from: 0
-                        to: tableview_filtered.length - 1
+            if @get \clickedIndex
+                index = that
+                unless find (.id is index), @get \tableview
+                    console.warn "I think that row '#{index}' is deleted, closing."
+                    @fire \closeRow
+                else if not @get \openedRow
+                    # open if we have a clicked index
+                    @logger.clog "Open previously clicked index"
+                    @fire \openRow, {}, index
+            else
+                @fire \doSearchText
 
-            # calculate visible items
-            visible-items = for index, entry of tableview_filtered
-                if items.from <= index <= items.to
-                    entry
+        open-item-page = (id) ~>
+            index = find-index (.id is id), @get('tableview_filtered')
+            if index?
+                @set \currPage, index / settings.page-size
+                @refresh!
 
-            settings.after-filter visible-items, (items) ~>
-                if items.length > 0
-                    if items.0.cols.length isnt settings.col-names.length
-                        @logger.error "Column count does not match with after-filter output!"
-                        return
-                    for i in items when i.id in [undefined, null]
-                        return @logger.cerr "id can not be null or undefined: #{pack i}."
-                @set \tableview_visible, items
-
-
-        @observe \tableview, ~>
-            @logger.clog "tableview changed, refreshing..."
+        @observe \tableview, (_new) ~>
+            @logger.clog "DEBUG MODE: tableview changed, refreshing..." if @get \debug
             @refresh!
 
+        search-rate-limit = null
+        search-text-global = null
+        @observe \searchText, (text) ~>
+            search-text-global := text
+            @fire \doSearchText
+
+        sleep 100ms, ~>
+            @observe \opened-row, (index) ~>
+                if index
+                    @fire \openRow, {}, that
+                else
+                    @fire \closeRow
+
         events =
-            clicked: (ctx, row) ->
-                index = row.id
-                return if @get(\clickedIndex) is index # do not allow multiple clicks
+            openRow: (ctx) ->
+                if (@get \openingRow) or (@get \openedRow)
+                    @logger.cwarn "do not allow multiple clicks"
+                    return
+                <~ sleep 0
+                index = ctx.get \.id
+                @logger.clog "Setting index to ", index
+                @set \clickedIndex, index
+
+                if find (.id is index), @get \tableview
+                    row = that
+                else
+                    @logger.clog "No such index can be found: #{index}"
+                    return
+
                 if @get \addingNew
                     return @logger.cwarn "adding new, not opening any rows"
 
-                @set \clickedIndex, index
+                @logger.clog "Clicked to open #{index}"
                 @set \openingRow, yes
                 @set \openedRow, no
                 @set \openingRowMsg, "Opening #{index}..."
                 opening-dimmer.dimmer \show
                 row-clone = clone row
                 @set \_tmp, {}
-                curr <~ settings.on-create-view.call this, row-clone
-                @set \curr, that if curr
-                @set \origCurr, clone (@get \curr)
+                @set \curr, {}
+
+                # scroll to the newly opened row
+                <~ sleep 100
+                offset = $ "tr[data-anchor='#{index}']" .offset!
+                $ 'html, body' .animate do
+                    scroll-top: (offset?.top or 0) - (window.top-offset or 0)
+                    , 200ms
+
+                err, curr <~ settings.on-create-view row-clone
+                if err
+                    console.error "error while creating view: ", err
+                    <~ @logger.error "Error while opening row: " + pack(err)
+                    @fire \closeRow
+                    return
+                if curr
+                    @set \curr, that
+                sleep 100ms, ~>
+                    @set \origCurr, clone (@get \curr)
                 @set \row, row-clone
                 opening-dimmer.dimmer \hide
                 @set \openingRow, no
                 @set \openedRow, yes
                 @set \openingRowMsg, ""
                 @set \lastIndex, index
-                # scroll to the row
-                # TODO
+
+            delete: ->
+                @set 'curr._deleted', yes
 
             toggle-editing: ->
                 editable = @get \editable
@@ -156,11 +186,15 @@ Ractive.components['data-table'] = Ractive.extend do
 
             select-page: (event, page-num) ->
                 @set \currPage, page-num
-                @refresh!
+                #@refresh!
+
+            go-to-opened: (ctx) ->
+                item-id = @get \lastIndex
+                open-item-page item-id
 
             close-row: ->
                 <~ :lo(op) ~>
-                    if pack(@get \origCurr) isnt pack(@get \curr)
+                    if (@get \curr) and pack(@get \origCurr) isnt pack(@get \curr)
                         @logger.cwarn "Not closing row because there are unsaved changes."
                         @logger.clog "orig: ", @get \origCurr
                         @logger.clog "curr: ", @get \curr
@@ -188,6 +222,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \addingNew, false
                 @fire \endEditing
                 @set \openedRow, no
+                @set \openingRow, no
                 opening-dimmer.dimmer \hide
 
             end-editing: ->
@@ -195,48 +230,96 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \editable, no
                 @set \editingDoc, null
 
-            add-new-document: (ev) ->
-                if (@get \openedRow) and (@get('mode') isnt 'add-new')
-                    return @logger.cwarn "a row is opened, not adding new."
+            addNew: (ctx) ->
+                if @get \openedRow
+                    return @logger.info do
+                        closable: yes
+                        message: "a row is opened, not adding new."
 
-                ev.component?.fire \state, \doing
-                template = @get-default-document!
                 @set \prepareAddingNew, yes
                 @set \row, {}
                 @set \editable, yes
-                @set \origCurr, clone template
-                <~ settings.on-create-view.call this, null
-                <~ settings.on-new-document template
-                @set \prepareAddingNew, no
-                @set \addingNew, yes
-                ev.component?.fire \state, \normal
-
-
-            save: (ev, val) ->
-                ev.component.fire \state, \doing
-                ...args <~ settings.on-save ev, @get(\curr)
-                if args.length isnt 1
-                    ev.component.error """
-                        Coding error: Save function requires error argument upon
-                        calling the callback."""
-                    return
-                err = args.0
-                if err
-                    ev.component.error pack err
+                err, template <~ settings.on-create-view null
+                unless err
+                    @set \curr, template
+                    sleep 100ms, ~>
+                        @set \origCurr, clone (@get \curr)
+                    @set \prepareAddingNew, no
+                    @set \addingNew, yes
                 else
-                    @set \origCurr, (@get \curr)
-                    ev.component.fire \state \done...
-                    @refresh!
+                    return @logger.error do
+                        closable: yes
+                        message: err
+
+            save: (ctx) ->
+                btn = ctx.component
+                try btn.state \doing
+                err <~ settings.save ctx, @get('curr')
+                if err
+                    try btn.error err
+                else
+                    @set \origCurr, @get('curr')
+                    @update \curr
+                    try btn.state \done...
+
+            doSearchText: (ctx) !->
+                text = search-text-global
+                try clear-timeout search-rate-limit
+                @set \searching, yes
+                search-rate-limit := sleep 500ms, ~>
+                    tableview_filtered = if text
+                        search-fields = <[ id ]> ++ (settings.search?fields or settings.search-fields or <[ value.description ]>)
+                        result = @get \sifter .search asciifold(text), do
+                            #fields: ['id', 'value.description']
+                            fields: search-fields
+                            sort: [
+                                {
+                                    field: (settings.search?sort?field or search-fields.1), 
+                                    direction: (settings.search?sort?direction or 'asc')
+                                }
+                            ]
+                            nesting: yes
+                            conjunction: "and"
+                         
+                        #console.log "search result is:", result
+                        x = []
+                        for result.items
+                            x.push (@get \tableview_filtered .[..id])
+                        if @get \clickedIndex
+                            x.push (find (.id is that), @get \tableview)
+
+                        #console.log "result of search '#{text}': ", result.items
+                        #console.log "tableview_filtered: ", @get \tableview_filtered
+                        x
+                    else
+                        # restore the last filtered content
+                        _filter = @get(\selectedFilter)
+                        @get(\dataFilters)[_filter] @get \tableview
+                    <~ set-immediate
+                    @set \currPage, 0
+                    @set \tableview_visible, tableview_filtered
+                    #console.log "search for '#{text}' returned #{tableview_filtered.length} results"
+                    @set \searching, no
 
         # register events
-        @on events <<< settings.handlers
+        @on (events <<< settings.handlers)
+
+        # register data
+        for data, value of settings.data!
+            @set data, if typeof! value is \Function
+                value.bind this
+            else
+                value
+
+        # should be after registering data
+        @observe \@global.session.token, ~>
+            @set \tableview, []
+            @set \colNames, settings.col-names!
+            @refresh!
 
         # run init function
         <~ settings.on-init
         @set \firstRunDone, yes
-
-        switch @get \mode
-        | 'add-new' => @fire \addNewDocument
 
     data: ->
         firstRunDone: no
@@ -257,15 +340,32 @@ Ractive.components['data-table'] = Ractive.extend do
         opening-row: no
         opening-row-msg: ''
         _tmp: {}
+        new_attachments: {}
+        searchText: ''
+        sifter: null
+        searching: no
+
         is-editing-row: (index) ->
-            return no unless @get \editable
-            clicked-index = @get \clickedIndex
-            index is clicked-index
+            state = no
+            if @get \editable
+                clicked-index = @get \clickedIndex
+                state = index is clicked-index
+            #if state => @logger.clog "Now editing #{index}"
+            return state
 
         is-viewing-row: (index) ->
-            return no if not @get \openedRow
+            state = no
+            if @get \openedRow
+                clicked-index = @get \clickedIndex
+                state = index is clicked-index
+            #if state => @logger.clog "Now viewing #{index}"
+            return state
+
+        isOpeningOrViewingRow: (index) ->
             clicked-index = @get \clickedIndex
-            index is clicked-index
+            state = index is clicked-index and not @get \editable
+            #if state => @logger.clog "Now viewing #{index}"
+            return state
 
         is-opening-now: (row-index) ->
             opening = @get \openingRow
@@ -287,34 +387,13 @@ Ractive.components['data-table'] = Ractive.extend do
             else
                 no
 
-        run-handler: (params) ~>
+        run-handler: (...params) ~>
             handlers = @get \settings.handlers
-            param = null
-
-            if params.args
-                # this is from ack-button
-
-                if typeof! params.args is \Array
-                    args = clone params.args
-                    handler = args.shift!
-                    params.args = args
-                else
-                    handler = params.args
-                    params.args = null
-
-                param = [params]
-
-            else
-                # this is from normal button
-                if typeof! params is \Array
-                    # from normal button, as array
-                    [handler, ...param] = params
-                else
-                    handler = params
+            handler = params.shift!
 
             if typeof handlers[handler] is \function
                 #@logger.clog "RUNNING HANDLER: #{handler}(#{param})"
-                return handlers[handler].apply this, param
+                return handlers[handler].apply this, params
             else
                 @logger.clog "no handler found with the name: ", handler
 

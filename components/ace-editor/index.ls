@@ -1,37 +1,45 @@
-modes = ace.require \ace/ext/modelist
+ace = require 'brace'
+require 'brace/mode/javascript'
+require 'brace/mode/livescript'
+require 'brace/theme/monokai'
+require 'brace/theme/xcode'
+require 'brace/ext/searchbox'
 
-Ractive.components['ace-editor'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+Ractive.components['ace-editorASYNC'] = Ractive.extend do
+    template: require('./index.pug')
     isolated: yes
     onrender: ->
-        __ = @
-        e = ace.edit @find \*
+        editor = ace.edit @find \*
 
-        mode = (__.get \mode) or \javascript
-        theme = (__.get \theme) or \light
+        @observe \theme, (_theme) ->
+            if _theme
+                theme = switch _theme
+                    | \dark => \monokai
+                    | \light => \xcode
+                    |_ => that
+                editor.set-theme "ace/theme/#{theme}"
 
-        theme = \xcode if theme is \light
-        theme = \monokai if theme is \dark
+        @observe \mode, (mode) ~>
+            editor.get-session!.set-mode "ace/mode/#{mode}"
 
-        e.set-theme "ace/theme/#{theme}"
-        e.get-session!set-mode "ace/mode/#{mode}"
-        e.$blockScrolling = Infinity
-        ace.require "ace/edit_session" .EditSession.prototype.$useWorker = no
-
-        #console.log "ace editor running..."
+        editor.$blockScrolling = Infinity
 
         setting = null
         getting = null
-        __.observe \code, (val) ->
+        @observe \code, (val) ~>
             return if getting
             setting := yes
-            e.set-value(val or '')
-            e.clear-selection!
+            editor.set-value(val or '')
+            editor.clear-selection!
             setting := no
 
-
-        e.on \change, ->
-            console.log "editor change..."
+        editor.on \change, ~>
             getting := true
-            __.set \code, e.get-value!
+            # remove trailing whitespaces
+            content = editor.get-value!.replace /[^\S\r\n]+$/gm, ''
+            @set \code, content
             getting := false
+
+    data: ->
+        theme: \light
+        mode: \javascript

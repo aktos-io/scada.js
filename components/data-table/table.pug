@@ -1,0 +1,89 @@
+r-table(class!="        \
+    data-table          \
+    {{#if openedRow}}   \
+                        \
+    {{else}}            \
+        selectable      \
+    {{/if}}             \
+    {{class}}           \
+    ")
+    r-head                                
+        r-row 
+            th(colspan="{{ colNames.length }}")
+                .ui.stackable.two.column.grid
+                    .column 
+                        +apply('header')
+                    .right.floated.right.aligned.column 
+                        +if('searchText')
+                            .ui.large.label.orange.circular {{tableview_visible.length}}
+                        .ui.left.icon.input.large.action(class="{{#searching}}loading{{/}}")
+                            icon.search
+                            input(on-escape="@.set('searchText', '')" value="{{searchText}}") 
+                            .ui.button.icon(on-click="@.set('searchText', '')"): icon.remove
+                            .ui.button.icon(on-click="doSearchText"): icon.search
+                
+        +if('selectedFilter !== "all"')
+            r-row
+                th(colspan="{{ colNames.length }}")
+                    .ui.warning.message
+                        .header 
+                            i.warning.icon 
+                            | Filtered Content 
+                        .ui.p.
+                            You are seeing a filtered content. 
+                            #[btn.blue.mini(on-click="['setFilter', 'all']") #[i.remove.icon] Clear Filter]
+                                        
+        +if('addingNew')
+            r-row(class="active")
+                th(colspan="{{ colNames.length }}")
+                    .data-table-opened-row(slide-in="true" slide-out="true")
+                        +apply('editForm')
+
+        r-row                    
+            +each('colNames')
+                +if('.')
+                    r-head-col 
+                        +apply('renderMarkup')
+
+    //- -----------------------------------------------
+    //- body of table 
+    //- -----------------------------------------------
+    r-body
+        +each('tableview_visible:i')
+            +unless('                                                      \
+                        settings.pageSize > 0 && (                             \
+                            @index >= (currPage + 1) * settings.pageSize ||    \
+                            @index <  (currPage) * settings.pageSize           \
+                        ) &&                                                   \
+                        (clickedIndex !== .id)')
+
+                tr(
+                    data-anchor="{{.id}}"
+                    "{{#unless @this.partials.row}}on-click='clicked' {{/unless}}"
+                    class!="                            \
+                        {{#if isDisabled(.id)}}         \
+                            disabled                    \
+                        {{else}}                        \
+                            {{#if ! isEditingRow(.id) && ! isViewingRow(.id) && ! @this.partials.row}} \
+                                data-table-clickable-row    \
+                            {{/if}}                     \
+                        {{/if}}                         \
+                        "
+                    style!="                                                       \
+                        {{#if                                                      \
+                            settings.pageSize > 0 && (                             \
+                                @index >= (currPage + 1) * settings.pageSize ||    \
+                                @index <  (currPage) * settings.pageSize           \
+                            ) &&                                                   \
+                            (clickedIndex !== .id) }}                           \
+                            display: none;                                          \
+                        {{/if}}                                                     \
+                        {{#if .bgcolor}}background-color: {{.bgcolor}};{{/if}}"
+                    )   
+                    include ./table-row.pug
+    r-foot
+        include ./pagination.pug
+        +if('@.partials.footer')
+            r-row
+                th(colspan="{{ colNames.length }}")
+                    +apply('footer')

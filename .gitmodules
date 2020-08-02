@@ -2,5 +2,14 @@
 	path = tools/service-runner
 	url = https://github.com/aktos-io/service-runner
 [submodule "src/lib/aktos-dcs"]
-	path = src/lib/dcs
+	path = lib/dcs
 	url = https://github.com/aktos-io/aktos-dcs-node
+[submodule "tools/create-gist"]
+	path = tools/create-gist
+	url = https://github.com/ceremcem/create-gist
+[submodule "lib/aea/ractive-synchronizer"]
+	path = lib/aea/ractive-synchronizer
+	url = https://github.com/ceremcem/ractive-synchronizer
+[submodule "tools/download.sh"]
+	path = tools/download.sh
+	url = https://github.com/ceremcem/download.sh

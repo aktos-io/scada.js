@@ -1,7 +1,7 @@
 require! 'aea': {sleep}
 
 Ractive.components['drawing-area'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('drawing-area.pug')
+    template: require('./drawing-area.pug')
     isolated: no
     onrender: ->
         <~ sleep 10ms

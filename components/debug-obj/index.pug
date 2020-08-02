@@ -1,3 +1,7 @@
-.ui.message.red
-    h3.ui.header Debugging Object {{#title}}({{title}}){{/}}
-    pre {{ JSON.stringify(obj, null, 2) }}
++if('able("scene.admin.debug") || public')
+    button.ui.button.circular.icon.pink.mini(on-click="@.toggle('mymodal1')" title="{{title}}") 
+        icon.bug
+
+    modal(title="{{title}}" basedon="{{mymodal1}}")
+        .ui.segment(style="width: 800px")
+            json-edit(value="{{obj}}" style="width: 100%; height: 100em;")

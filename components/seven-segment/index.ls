@@ -28,7 +28,7 @@ get-char-bits = (text) ->
     sstext
 
 Ractive.components['seven-segment'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     onrender: ->
         @observe \value, (text) ->
             if text?

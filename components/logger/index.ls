@@ -1,12 +1,20 @@
-require! 'aea': {merge, logger: Logger, pack, sleep}
-require! 'dcs/browser': {Signal}
+require! 'aea': {merge, Logger, pack, sleep}
+require! 'dcs/browser': {Signal, topic-match}
+require! 'actors': {RactiveActor}
 
 Ractive.components['logger'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: yes
     onrender: ->
         modal = $ @find '.ui.basic.modal'
         @logger = new Logger "Global Modal"
+        @actor = new RactiveActor this, {name: "Global Modal"}
+            ..subscribe 'app.log.**'
+
+        @actor.on \data, (msg) ~>
+            if msg.to `topic-match` 'app.log.**'
+                action <~ @fire \showDimmed, {}, msg.data
+                @actor.send-response msg, {action}
 
         if @get \debug
             @logger.mgr.on \err, (...args) ~>
@@ -48,7 +56,7 @@ Ractive.components['logger'] = Ractive.extend do
                 switch typeof! msg
                     when \String => msg = {message: msg}
                     when \Object =>
-                        unless msg.message
+                        if typeof! msg.message in <[ Object Array ]>
                             msg.message = JSON.stringify msg.message, null, 2
 
                 msg = default-opts <<< msg
@@ -61,29 +69,44 @@ Ractive.components['logger'] = Ractive.extend do
 
                 # set message content
                 # ------------------------------------
+                _message = if msg.message?stack
+                    msg.message.message
+                else
+                    msg.message
+
                 @set do
-                    dimmedMessage: msg.message
+                    dimmedMessage: _message?.replace /\n\n/g, '<br /><br />'
                     icon: msg.icon
                     dimmedTitle: msg.title
 
                 modal.modal do
                     closable: msg.closable
                     on-hide: ~>
-                        selection-signal.go \hidden
+                        selection-signal.go null, \hidden
                         # this function must return `true`
                         # in order to let the modal to disappear
                         yes
 
                 modal.modal \show
 
+                c = null
+                if msg.template
+                    # display the ractive template
+                    c = new Ractive do
+                        el: @find '#client-template'
+                        template: that
+                        data: msg.data
+
                 timeout, action <~ selection-signal.wait
                 @logger.log "selection made. action: ", action
                 modal.modal \hide
                 <~ sleep 0
-                callback action
+                callback action, c?.get!
+                <~ sleep 0
+                c?.teardown!
 
             selectionMade: (ctx, action) ->
-                selection-signal.go action
+                selection-signal.go null, action
 
     data: ->
         debugErrorMessages: []

@@ -5,7 +5,7 @@
             |{{#if changelog.length > 0}}
             | &nbsp;
             ack-button(
-                on-buttonclick="showPopup" 
+                on-click="showPopup" 
                 type="{{#if JSON.stringify(changelog[0].curr) == JSON.stringify(changelog[changelog.length-1].curr)}}primary xs{{else}}danger xs{{/if}}" 
                 style="position: relative;bottom: 10px;padding: 3px 6px;" 
                 value="{{changelog}}") {{changelog.length-1}}
@@ -22,6 +22,6 @@
                     textarea(value="{{ message }}" )
                 .field 
                     .ui.buttons
-                        ack-button.green(on-buttonclick="accept") Accept
+                        ack-button.green(on-click="accept") Accept
                         .or
-                        ack-button.red(on-buttonclick="cancel") Cancel
+                        ack-button.red(on-click="cancel") Cancel

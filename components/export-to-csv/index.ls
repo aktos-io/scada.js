@@ -5,7 +5,7 @@ require! 'aea': {copyToClipboard}
 base64 = (s) -> window.btoa unescape encodeURIComponent s
 
 Ractive.components["export-to-csv"] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+    template: require('./index.pug')
     isolated: yes
     onrender: ->
         _link = $ @find \.download-link

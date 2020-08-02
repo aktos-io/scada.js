@@ -1,6 +1,6 @@
 require! 'livescript': lsc
-require! 'prelude-ls': {camelize}
-require! 'aea': {merge, pack, logger}
+require! 'prelude-ls': {camelize, empty}
+require! 'aea': {merge, pack, Logger, create-download}
 
 make-design-doc = (obj) ->
     # convert functions to strings in design docs
@@ -14,11 +14,11 @@ make-design-doc = (obj) ->
     obj
 
 
-Ractive.components['ddoc-editor'] = Ractive.extend do
-    template: RACTIVE_PREPARSE('index.pug')
+Ractive.components['ddoc-editorASYNC'] = Ractive.extend do
+    template: require('./index.pug')
     isolated: yes
     onrender: ->
-        @log = new logger \ddoc-editor
+        @log = new Logger \ddoc-editor
         if @get \db
             db = that
         else
@@ -27,67 +27,67 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
 
         @on do
             listDesignDocuments: (ev) ->
-                /*
-                @log.log "getting doc"
-                err, res <~ db.get \01ec95a0cc893779c1098aa6cf17144b
-                @log.log "got doc: ", err, res
-                */
                 ev.component.fire \state, \doing
-                err, res <~ db.all {startkey: "_design/", endkey: "_design0", +include_docs}
+                err, res <~ db.all-docs {startkey: "_design/", endkey: "_design0", +include_docs}
                 if err
                     ev.component.error pack err
                     console.log "this is error on list design documents: ", err
                     return
-                @set \designDocuments, [..key for res]
+                docs = [..key for res]
+                @set \designDocuments, docs
+                console.log "got design docs: ", docs
                 ev.component.fire \state, \done...
 
-            get-design-document: (ev, doc-id) ->
-                ev.component.fire \state, \doing
-                self = this
+            get-design-document: (ctx, value, proceed) ->
+                doc-id = value
                 # get the _auth design document
-                err, res <- db.get doc-id
-                return ev.component.error err.message if err
+                err, res <~ db.get doc-id
+                if err
+                    return proceed err
 
                 console.log "Current _auth document: ", res
                 ddoc = res
                 ddoc.livescript = res.src
-                self.set \documentId, ddoc._id
-                self.set (camelize \design-document), ddoc
-                ev.component.fire \state, \done...
+                @set \documentId, ddoc._id
+                @set \designDocument, ddoc
+                @set \getView_view, "#{ddoc._id.split '/' .1}/"
+                proceed!
 
-            get-all-design-documents: (ev) ->
+            dump-all-design-documents: (ev) ->
                 # dump all design documents, useful for backup
-                __ = @
                 ev.component.fire \state, \doing
-                err, res <- db.all {startkey: "_design/", endkey: "_design0", +include_docs}
+                err, res <~ db.all-docs {startkey: "_design/", endkey: "_design0", +include_docs}
                 return ev.component.error err.message if err
 
-                __.set \allDesignDocs, ["\n\n\# ID: #{..doc._id} \n\n #{JSON.stringify(..doc, null, 2)}" for res].join('')
+                @set \allDesignDocs, JSON.stringify([..doc for res], null, 2)
 
                 ev.component.fire \state, \done
 
 
             compileDesignDocument: (ev)->
                 console.log "Compiling auth document..."
-                ev.component.fire \state, \doing
+                ev.component?.fire \state, \doing
                 try
                     js = lsc.compile (@get \designDocument.livescript), {+bare, -header}
                     console.log "Compiled output: ", js
-                    ev.component.fire \state, \done...
+                    ev.component?.fire \state, \done...
                 catch err
                     js = err.to-string!
-                    ev.component.error "See Output Textarea"
+                    ev.component?.error "See Output Textarea"
+                    @set \autoCompile, off
                 @set \designDocument.javascript, js
 
             putDesignDocument: (ev, e) ->
-                self = @
                 ev.component.fire \state, \doing
+                if @get \autoCompile
+                    @fire \compileDesignDocument
 
-                ddoc = self.get \designDocument
-                new-id = self.get \documentId
+                ddoc = @get \designDocument
+                new-id = @get \documentId
+                creating-new = false
                 if new-id isnt ddoc._id
-                    ev.component.info "Created new design document!"
                     ddoc._id = new-id
+                    creating-new = true
                     delete ddoc._rev
                 id = ddoc._id
                 if id.split('/').1 is ''
@@ -105,18 +105,72 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
                 ddoc.src = ddoc.livescript
                 ddoc = make-design-doc ddoc
                 console.log "Full document to upload: ", ddoc
-                err, res <- db.put ddoc
+                err, res <~ db.put ddoc
                 if err
                     ev.component.error err.message
                     console.error "Error uploading ddoc-src document: ", err
                     return
 
-                console.log "ddoc-src document uploaded successfully", res
+                if creating-new
+                    ev.component.info "Created new design document!"
 
+                console.log "ddoc-src document uploaded successfully", res
                 # update _rev field for the following updates
                 ddoc._rev = res.rev
-                self.set \designDocument, ddoc
+                @set \designDocument, ddoc
                 ev.component.fire \state, \done...
+
+            getView: (ctx) ->
+                ctx.component.fire \state, \doing
+                view = @get \getView_view
+                params = @get \getView_params
+                unless view => return ctx.component.error message: "View name is required."
+                err, res <~ db.view view, params
+                if err => return ctx.component.error err
+                ctx.component.fire \state, \done...
+                console.info "#{view} (#{JSON.stringify(params)}) results:", res
+
+                @set \getView_result, """
+                    {
+                    #{["\t" + JSON.stringify(..) for res].join(',\n')}
+                    }
+                    """
+
+            restoreDesignDocs: (ctx, file, next) ->
+                docs = JSON.parse file.raw
+                for ddoc in docs
+                    if @get \restoreFromScratch
+                        delete ddoc._rev
+                    console.log "Design Doc: #{ddoc._id}, rev: #{ddoc._rev}"
+
+                /* -------------------------------------------------------------
+                THIS SEEMS A BUG WITH COUCHDB
+                _bulk_docs api doesn't work with design documents when they are
+                first uploaded to the db.
+
+                Workaround: Put one design document for the first time, and then
+                put the rest with _bulk_docs api.
+                ------------------------------------------------------------- */
+                # START OF WORKAROUND
+                err, res <~ db.put docs.shift!
+                if err => return next err
+                # END OF WORKAROUND
+
+                err, res <~ db.put docs
+                if err => err = message: [..reason for res].join('\n')
+                next err
+
+            downloadBlueprints: (ctx) ->
+                # dump all design documents, useful for backup
+                ctx.component.fire \state, \doing
+                err, res <~ db.all-docs {startkey: "_design/", endkey: "_design0", +include_docs}
+                if err => return ctx.component.error err
+                blueprints = [..doc for res]
+                if empty blueprints
+                    return ctx.component.error message: "No design documents found."
+                create-download "design-docs.json", JSON.stringify(blueprints, null, 2)
+                ctx.component.fire \state, \done...
+
 
     data: ->
         design-document:
@@ -127,3 +181,5 @@ Ractive.components['ddoc-editor'] = Ractive.extend do
         allDesignDocs: ''
         designDocuments: []
         documentId: ''
+        autoCompile: yes
+        getView_params: {}
