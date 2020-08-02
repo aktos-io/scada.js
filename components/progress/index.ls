@@ -1,20 +1,18 @@
 require! 'aea': {merge}
+require! 'aea/formatting': {displayFormat, parse-format}
 
 Ractive.components['progress'] = Ractive.extend do
     template: require('./index.html')
     isolated: yes
-    oninit: ->
-        _type = @get \type
-
-        if @partials.path or @get(\img)
-            _type = \custom 
-
-        @set \_type, _type
-
     onrender: ->
         max = @get \max
         min = @get \min
         elem = @find \div
+
+        type = @get \type
+
+        if @partials.path or @get(\img)
+            type = \custom 
 
         opts =
             type: \stroke 
@@ -27,6 +25,10 @@ Ractive.components['progress'] = Ractive.extend do
             if @get("fill") isnt \fill 
                 opts.fill = @get('fill')
 
+        label-format = parse-format @get \format 
+        opts.precision = "#{10^-label-format.length-of.decimal-part}"
+
+
         # default configuration regarding to "type"
         bubble-preset = (speed=5) ~> 
             speed = 10 if speed is 0 
@@ -38,7 +40,7 @@ Ractive.components['progress'] = Ractive.extend do
                 # data:ldbar/res,bubble(colorBk, colorBubble, count, duration)
                 fill: "data:ldbar/res,bubble(#{@get 'color'},\#fff,50,#{10 - speed})"
 
-        opts `merge` switch @get \_type
+        opts `merge` switch type
             when \custom =>
                 if @get \img
                     cfg =
@@ -74,6 +76,36 @@ Ractive.components['progress'] = Ractive.extend do
                 @set \percent, undefined
                 bar.set undefined, animate=no
 
+        # Label manipulation and tweaks            
+        label = [.. for elem.childNodes when ..className is \ldBar-label][0]
+
+        if @get('label')?
+            label.style.display = "none"
+        else 
+            label.style
+                ..color = @get \label-color
+
+            switch type 
+            | \fan =>  
+                label.style
+                    ..top = 'auto'
+                    ..bottom = '0'
+
+            label.pseudoStyle("after","content","''");
+
+            label-pos = if label-format?.unit?.is-on-left then 'before' else 'after'
+            label.pseudoStyle(label-pos,"content","'#{label-format?.unit?.text or ''}'");
+            label.pseudoStyle(label-pos,"font-size","0.8em");
+
+            if @get('label-background')?
+                console.log @get \label-background
+                opacity = @get(\label-background) % 1 or 0.8
+                label.style
+                    ..background-color = "rgba(255,255,255,#{opacity})"
+                    ..padding = "0.1em"
+                    ..border-radius = "3px"
+
+
     data: ->
         max: 100
         min: 0
@@ -95,3 +127,6 @@ Ractive.components['progress'] = Ractive.extend do
         # * custom -> needs a partial named "path"
         # => add more (gradient, stripe): https://loading.io/progress/, Pattern Generator
         type: \line
+        'label-color': \black
+
+        format: '#.#%'
