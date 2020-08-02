@@ -7,17 +7,22 @@ update-dependencies:
 update-app-version:
 	touch lib/app-version.json
 
-production:
+production: __production test
+
+__production:
+	@echo "Production build for APP: $${APP:?}"
 	gulp --production --webapp $(APP)
 
 development:
+	@echo "Development build for APP: $${APP:?}"
 	gulp --webapp $(APP)
 
 update-scadajs:
 	./tools/update-scadajs.sh
 
 install-dependencies:
-	./tools/install-modules.sh $(conf)
+	@echo "Using configuration file: $${CONF:?}"
+	./tools/install-modules.sh $(CONF)
 
 get-dependency-size:
 	find . -name "node_modules" -type d -prune | xargs du -chs
