@@ -1,4 +1,5 @@
 VENV_NAME := scadajs1
+.PHONY: release test update-deps update-app-version
 
 test:
 	npm run test
@@ -9,7 +10,7 @@ update-deps:
 update-app-version:
 	touch lib/app-version.json
 
-production: __production test
+production: __production test release
 
 __production:
 	@echo "Production build for APP: $${APP:?}"
@@ -45,3 +46,13 @@ create-venv:
 	nodeenv --requirement=./$(VENV_NAME).env --node=$(NODE_VERSION) --jobs=4 $(VENV_NAME)
 	mv $(VENV_NAME) nodeenv
 
+release:
+	@echo "Creating release for APP: $${APP:?}"
+	( if [ ! -d release/$(APP) ]; then \
+		 	mkdir -p release; \
+			cd release; \
+			git init $(APP); \
+		fi \
+	)
+	rsync -a build/$(APP)/ release/$(APP)/
+	( cd release/$(APP) && git add . && git commit )
