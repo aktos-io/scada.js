@@ -46,16 +46,30 @@ get_var(){
     echo $(eval echo "\$${1}")
 }
 
-ts_venv=$(get_var "ns_$(get_ts_name)_VIRTUAL_ENV")
-if [ -n "$ts_venv" ]; then
-    source $ts_venv/bin/activate;
-fi
+tmux_get_myenvvar(){
+    echo $(get_var "ns_$(get_ts_name)_${1}")
+}
+
+tmux_set_envvar(){
+    # tmux_set_envvar your-session-name variable-name value
+    local session_name=$(echo $1 | tr '-' '_')
+    local variable_name=$2
+    local value=$3
+    tmux setenv -g "ns_${session_name}_${variable_name}" "$value"
+}
 
 tmux_set_venv(){
-    local session_name=$(echo $1 | tr '-' '_')
-    local venv_path=$2
-    tmux setenv -g "ns_${session_name}_VIRTUAL_ENV" "$venv_path"
+    tmux_set_envvar $1 "VIRTUAL_ENV" $2
 }
+
+tmux_get_myvenv(){
+    tmux_get_myenvvar "VIRTUAL_ENV"
+}
+
+# activate the virtual environment if it is declared
+if [ -n "$(tmux_get_myvenv)" ]; then
+    source $(tmux_get_myvenv)/bin/activate;
+fi
 ```
 
 2. Add the following line before launching Tmux:
