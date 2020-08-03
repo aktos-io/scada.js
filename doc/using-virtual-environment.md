@@ -62,6 +62,10 @@ tmux_set_venv(){
     tmux_set_envvar $1 "VIRTUAL_ENV" $2
 }
 
+export -f tmux_set_venv
+export -f tmux_set_envvar
+export -f tmux_get_myenvvar
+
 tmux_get_myvenv(){
     tmux_get_myenvvar "VIRTUAL_ENV"
 }
