@@ -52,6 +52,7 @@ fi
 export NODE_PATH="${SCADA_MODULES}:${FOUND_MODULES}:${NODE_PATH}"
 
 lsFile="$1"
+shift
 set-pane-title () {
     if [ "$TERM" = "screen" ] && [ -n "$TMUX" ]; then
         printf "\033k$1\033\\"
@@ -59,4 +60,4 @@ set-pane-title () {
 
 }
 set-pane-title ${lsFile%.ls}
-lsc $lsFile
+lsc $lsFile "$@"
