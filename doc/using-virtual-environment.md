@@ -31,3 +31,35 @@
         echo "export SCADAJS_1_ENV="~/nodeenv/scadajs-1" >> ~/.bashrc
 
    > Next time you can use: `./scada.js/env`
+
+# Preparing Tmux
+
+1. Add the following in your `~/.bashrc`:
+
+```bash
+# For Tmux VirtualEnv support
+get_ts_name(){
+    [[ -n $TMUX ]] && tmux list-panes -F '#{session_name}' | tr '-' '_'
+}
+
+get_var(){
+    echo $(eval echo "\$${1}")
+}
+
+ts_venv=$(get_var "ns_$(get_ts_name)_VIRTUAL_ENV")
+if [ -n "$ts_venv" ]; then
+    source $ts_venv/bin/activate;
+fi
+
+tmux_set_venv(){
+    local session_name=$(echo $1 | tr '-' '_')
+    local venv_path=$2
+    tmux setenv -g "ns_${session_name}_VIRTUAL_ENV" "$venv_path"
+}
+```
+
+2. Add the following line before launching Tmux:
+
+```bash
+tmux_set_venv your-tmux-session-name /path/to/your/venv
+```
