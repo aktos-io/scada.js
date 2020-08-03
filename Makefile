@@ -1,4 +1,4 @@
-VENV_NAME := nodeenv
+VENV_NAME := scadajs1
 
 test:
 	npm run test
@@ -35,10 +35,13 @@ clean-node-modules:
 clean:
 	rm -rf ./build
 
+clean-all: clean clean-node-modules
+
 freeze-venv:
-	freeze ./nodeenv.txt
+	freeze ./requirements.txt
 
 create-venv:
-	$(eval NODE_VERSION := $(shell echo `grep "^#node@" nodeenv.txt | cut -d@ -f2` | sed 's/^$$/system/'))
-	nodeenv --requirement=./nodeenv.txt --node=$(NODE_VERSION) --jobs=4 $(VENV_NAME)
+	$(eval NODE_VERSION := $(shell echo `grep "^#node@" $(VENV_NAME).env | cut -d@ -f2` | sed 's/^$$/system/'))
+	nodeenv --requirement=./$(VENV_NAME).env --node=$(NODE_VERSION) --jobs=4 $(VENV_NAME)
+	mv $(VENV_NAME) nodeenv
 
