@@ -26,3 +26,6 @@ db
 
 # editor specific files
 *.sublime-*
+
+# ignore the default nodeenv
+nodeenv

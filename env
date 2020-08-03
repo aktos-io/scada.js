@@ -1,0 +1,21 @@
+#!/bin/bash
+ENV_VERSION="SCADAJS_1_ENV"
+
+SCADAJS_VENV=${1:-$(eval echo "\$$ENV_VERSION")}
+
+if [[ ! -d $SCADAJS_VENV ]]; then
+    cat <<EOL
+
+    Please set $ENV_VERSION variable (in your .bashrc file)
+
+    or
+
+    Pass the virtual environment path as the first argument
+
+EOL
+    exit 1
+fi
+
+echo "Using nodeenv at ${SCADAJS_VENV}"
+bash --rcfile <(echo ". ~/.bashrc; . ${SCADAJS_VENV}/bin/activate")
+
