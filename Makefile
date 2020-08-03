@@ -32,3 +32,13 @@ clean-node-dependencies:
 
 clean:
 	rm -rf ./build
+
+ENV_NAME := env
+
+venv-freeze:
+	freeze ./nodeenv.txt
+
+venv-create:
+	$(eval NODE_VERSION := $(shell echo `grep "^#node@" nodeenv.txt | cut -d@ -f2` | sed 's/^$$/system/'))
+	nodeenv --requirement=./nodeenv.txt --node=$(NODE_VERSION) --jobs=4 $(ENV_NAME)
+
