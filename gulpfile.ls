@@ -264,6 +264,15 @@ compile-js = (watchlist, output) ->
             file.contents = new Buffer.from optimized
             cb null, file
 
+        # Remove the sourceMappingUrl part 
+        .pipe through2.obj (file, enc, cb) ->
+            contents = file.contents.to-string!
+            removed = contents.replace /\/\/#\s?sourceMappingURL=.*\b/g, (x) -> 
+                log "Source Mapping URL is removed: #x"
+                return ''
+            file.contents = new Buffer.from removed
+            cb null, file
+
         # ES-5 Transpilation MUST BE the last step
         .pipe through2.obj (file, enc, cb) ->
             if optimize-for-production
