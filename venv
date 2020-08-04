@@ -1,4 +1,9 @@
 #!/bin/bash
+#
+# Description
+# -----------
+# Switch to appropriate (or given) Virtual Environment.
+#
 ENV_VERSION="SCADAJS_1_ENV"
 
 SCADAJS_VENV=${1:-$(eval echo "\$$ENV_VERSION")}

@@ -17,7 +17,7 @@
     
         $ cd ./scada.js
         $ make create-venv
-        $ ./env ./nodeenv
+        $ ./venv ./nodeenv
         (scadajs1) $ 
 
 
@@ -30,7 +30,7 @@
         mv nodeenv/ ~/nodeenv/scadajs-1  # or anywhere you like
         echo "export SCADAJS_1_ENV="~/nodeenv/scadajs-1" >> ~/.bashrc
 
-   > Next time you can use: `./scada.js/env`
+   > Next time you can use: `./scada.js/venv`
 
 # Preparing Tmux
 
