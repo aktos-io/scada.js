@@ -82,12 +82,12 @@ echo
 echo "Installing Modules"
 echo "-----------------------------------"
 
-while IFS='' read -r module || [[ -n "$module" ]]; do
-    status=$(echo $module | awk -F' ' '{print $1}')
-    module=$(echo $module | awk -F' ' '{print $2}')
+while IFS='' read -r line || [[ -n "${line// }" ]]; do
+    status=$(echo $line | awk -F' ' '{print $1}')
+    module=$(echo $line | awk -F' ' '{print $2}')
     if [[ "$status" = "no" ]]; then 
         echo " --- Skipping disabled module: \"$module\""
-    else
+    elif [[  "$status" = "yes" ]]; then
         echo " *** Installing dependencies for: \"$module\"";
         echo
         cd "$SCADAJS_ROOT/$module"
