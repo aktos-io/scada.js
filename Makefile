@@ -2,7 +2,7 @@ VENV_NAME := scadajs1
 .PHONY: release test update-deps update-app-version
 
 test:
-	npm run test
+	es-check es5 './release/**/*.js'
 
 update-deps:
 	npm run interactive-update

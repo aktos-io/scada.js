@@ -3,7 +3,6 @@
   "version": "0.4.0",
   "description": "![ScadaJS](https://github.com/aktos-io/scada.js/blob/master/src/client/assets/scadajs.png)",
   "scripts": {
-    "test": "es-check es5 './build/**/*.js'",
     "interactive-update": "npm-check -u"
   },
   "author": "Cerem Cem ASLAN",
