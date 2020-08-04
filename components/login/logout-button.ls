@@ -9,7 +9,8 @@ Ractive.components['logout-button'] = Ractive.extend do
             doLogout: (ctx) ->
                 ctx.component.fire \state, \doing
                 timeout = 3000ms
-                err, msg <~ ctx.actor.send-request {route: \app.dcs.do-logout, timeout}
+                req = {route: \app.dcs.do-logout, timeout, debug: @get('debug')}
+                err, msg <~ ctx.actor.send-request req
                 if err
                     console.warn "Something went wrong on logout: ", err
                     return
