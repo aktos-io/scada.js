@@ -1,29 +1,33 @@
 VENV_NAME := scadajs1
 .PHONY: release test update-deps update-app-version
 
-test:
+# Check if we are in a VIRTUAL_ENV:
+__c:
+	$(if $(NODE_VIRTUAL_ENV),,$($(warning ************  WARNING: NOT INSIDE A VIRTUAL ENV  ************)))
+
+test: __c
 	es-check es5 './release/**/*.js'
 
-update-deps:
+update-deps: __c
 	npm run interactive-update
 
 update-app-version:
 	touch lib/app-version.json
 
-production: __production release test __release_commit
+production: __c __production __release_copy test __release_commit
 
 __production:
 	@echo "Production build for APP: $${APP:?}"
 	gulp --production --webapp $(APP)
 
-development:
+development: __c
 	@echo "Development build for APP: $${APP:?}"
 	gulp --webapp $(APP)
 
 update-scadajs:
 	./tools/update-scadajs.sh
 
-install-deps:
+install-deps: __c
 	@echo "Using configuration file: $${CONF:?}"
 	./tools/install-modules.sh $(CONF)
 
@@ -33,12 +37,12 @@ get-deps-size:
 clean-node-modules:
 	find . -name "node_modules" -type d -prune -exec rm -rf '{}' +
 
-clean:
+clean-build:
 	rm -rf ./build
 
-clean-all: clean clean-node-modules
+clean-all: clean-build clean-node-modules
 
-freeze-venv:
+freeze-venv: __c
 	freeze ./requirements.txt
 
 create-venv:
@@ -47,7 +51,7 @@ create-venv:
 	nodeenv --requirement=./$(VENV_NAME).env --node=$(NODE_VERSION) --jobs=4 $(VENV_NAME)
 	mv $(VENV_NAME) nodeenv
 
-release:
+__release_copy:
 	@echo "Creating release for APP: $${APP:?}"
 	( if [ ! -d release/$(APP) ]; then \
 		 	mkdir -p release; \
