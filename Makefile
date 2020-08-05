@@ -5,6 +5,9 @@ VENV_NAME := scadajs1
 __c:
 	$(if $(NODE_VIRTUAL_ENV),,$($(warning ************  WARNING: NOT INSIDE A VIRTUAL ENV  ************)))
 
+__app: # Check if APP name is set
+	$(if $(APP),,$($(error *** APP variable is not set. ***)))
+
 test: __c
 	es-check es5 './release/**/*.js'
 
@@ -16,12 +19,10 @@ update-app-version:
 
 production: __c __production __release_copy test __release_commit
 
-__production:
-	@echo "Production build for APP: $${APP:?}"
-	gulp --production --webapp $(APP)
+__production: __app
+	gulp --webapp $(APP) --production
 
-development: __c
-	@echo "Development build for APP: $${APP:?}"
+development: __c __app
 	gulp --webapp $(APP)
 
 update-scadajs:
