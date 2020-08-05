@@ -5,19 +5,23 @@
 # Switch to appropriate (or given) Virtual Environment.
 #
 ENV_VERSION="SCADAJS_1_ENV"
-
 SCADAJS_VENV=${1:-$(eval echo "\$$ENV_VERSION")}
 
-if [[ ! -d $SCADAJS_VENV ]]; then
-    cat <<EOL
+if [[ ! -d "$SCADAJS_VENV" ]]; then
+    if [[ -n $SCADAJS_VENV ]]; then
+        echo "$ENV_VERSION variable is set but it's not a valid directory."
+        echo "Please check $SCADAJS_VENV is a valid virtual environment"
+    else
+        cat <<EOL
 
-    Please set $ENV_VERSION variable (in your .bashrc file)
+        Please set $ENV_VERSION variable (in your .bashrc file)
 
-    or
+        or
 
-    Pass the virtual environment path as the first argument
+        Pass the virtual environment path as the first argument
 
 EOL
+    fi
     exit 1
 fi
 
