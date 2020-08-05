@@ -5,7 +5,16 @@
 # Switch to appropriate (or given) Virtual Environment.
 #
 ENV_VERSION="SCADAJS_1_ENV"
-SCADAJS_VENV=${1:-$(eval echo "\$$ENV_VERSION")}
+VENV_PATH=$1
+
+_sourced=
+if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
+    #echo "script ${BASH_SOURCE[0]} is being sourced ..."
+    _sourced="yes"
+    VENV_PATH=
+fi
+
+SCADAJS_VENV=${VENV_PATH:-$(eval echo "\$$ENV_VERSION")}
 
 if [[ ! -d "$SCADAJS_VENV" ]]; then
     if [[ -n $SCADAJS_VENV ]]; then
@@ -26,5 +35,9 @@ EOL
 fi
 
 echo "Using nodeenv at ${SCADAJS_VENV}"
-bash --rcfile <(echo ". ~/.bashrc; . ${SCADAJS_VENV}/bin/activate")
+if [[ -z $_sourced ]]; then
+    bash --rcfile <(echo ". ~/.bashrc; . ${SCADAJS_VENV}/bin/activate")
+else
+    . ${SCADAJS_VENV}/bin/activate
+fi
 
