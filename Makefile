@@ -10,7 +10,7 @@ update-deps:
 update-app-version:
 	touch lib/app-version.json
 
-production: __production test release
+production: __production release test __release_commit
 
 __production:
 	@echo "Production build for APP: $${APP:?}"
@@ -56,5 +56,6 @@ release:
 		fi \
 	)
 	rsync -a build/$(APP)/ release/$(APP)/
-	( cd release/$(APP) && git add . && git commit )
 
+__release_commit:
+	( cd release/$(APP) && git add . && git commit )
