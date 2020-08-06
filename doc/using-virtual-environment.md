@@ -18,12 +18,12 @@
         $ cd ./scada.js
         $ make create-venv
         $ ./venv ./nodeenv
-        (scadajs1) $ 
+        (nodeenv) $ 
 
 
 4. Install the Scada.js dependencies:
 
-        (scadajs1) $ make install-deps CONF=../dcs-modules.txt
+        (nodeenv) $ make install-deps CONF=../dcs-modules.txt
         
 5. Optional: Move your nodeenv to a central location and use it between projects:
         
