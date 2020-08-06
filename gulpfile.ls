@@ -1,5 +1,3 @@
-require! 'yargs':{argv}
-
 usage = '''
 
 HELP: 
@@ -14,7 +12,9 @@ Hint: "export APP=mywebapp" before using Makefile.
 
 '''
 
-'''
+
+/*******************************************************
+
 Helpful documents for writing Gulpfile:
 -----------------------------------------
 
@@ -22,7 +22,8 @@ Helpful documents for writing Gulpfile:
 * Browserify related: 
     * https://stackoverflow.com/q/63151235/1952991
 
-'''
+*******************************************************/
+require! 'yargs':{argv}
 
 if typeof! argv.webapp is \String
     webapp = argv.webapp
@@ -36,7 +37,6 @@ if argv.usage
     process.exit(30)
 
 optimize-for-production = yes if argv.production is true
-
 
 require! <[ 
     watchify 
@@ -363,17 +363,16 @@ gulp.task \browserify, (done) !->
                     # display "successfully compiled" message first time after an error
                     b.__last_error = false 
 
-        unless argv.production
+        unless optimize-for-production
             b.on \update, (ids) !-> 
                 bundle!
 
 gulp.task \versionTrack, (done) ->
     unless argv.enable-version-polling
-        unless argv.production
+        unless optimize-for-production
             log-info "Version Track", 
                 "TIP: \"make update-app-version\" manually."
         return done!
-
     curr = null 
     <~ :lo(op) ~>
         #console.log "checking project version...", curr
@@ -384,12 +383,11 @@ gulp.task \versionTrack, (done) ->
                 "App version"
             else 
                 "Changed app version"
-
             curr := JSON.parse JSON.stringify version
             log "#{pfx}: ", curr
             touch.sync path.join __dirname, 'app-version.json'
         <~ sleep 1000ms
-        lo(op) unless argv.production
+        lo(op)
 
 gulp.task \html, (done) ->
     # Workaround with if/else:
