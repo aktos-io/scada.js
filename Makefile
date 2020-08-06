@@ -47,7 +47,7 @@ freeze-venv: __c
 	freeze ./requirements.txt
 
 create-venv:
-	$(if $(value $(SCADAJS_1_ENV)),,$(error SCADAJS_1_ENV variable is set, use it instead: $(SCADAJS_1_ENV)))
+	$(if $(SCADAJS_1_ENV),$(error SCADAJS_1_ENV variable is set, use it instead: $(SCADAJS_1_ENV)))
 	$(eval NODE_VERSION := $(shell echo `grep "^#node@" $(VENV_NAME).env | cut -d@ -f2` | sed 's/^$$/system/'))
 	nodeenv --requirement=./$(VENV_NAME).env --node=$(NODE_VERSION) --jobs=4 $(VENV_NAME)
 	mv $(VENV_NAME) nodeenv
