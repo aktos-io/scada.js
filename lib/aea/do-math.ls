@@ -42,7 +42,7 @@ math.config do
 
 export do-math = (expression) ->
     try
-        exact = math.eval expression
+        exact = math.evaluate expression
         display = math.format exact, 6_digits
         float = parse-float display
         error = no
