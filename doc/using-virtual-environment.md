@@ -1,6 +1,8 @@
 # Creating Virtual Environment 
 
-1. Prerequisite: Install `nodeenv`
+> For Windows platform, follow [these instructions](./on-windows) first.
+
+1. Install `nodeenv`:
 
         pip install nodeenv
 
