@@ -18,12 +18,12 @@
         $ cd ./scada.js
         $ make create-venv
         $ ./venv ./nodeenv
-        (nodeenv) $ 
+        (scadajs1) $ 
 
 
 4. Install the Scada.js dependencies:
 
-        (nodeenv) $ make install-deps CONF=../dcs-modules.txt
+        (scadajs1) $ make install-deps CONF=../dcs-modules.txt
         
 5. Optional: Move your nodeenv to a central location and use it between projects:
         
@@ -40,7 +40,7 @@
 # For Tmux VirtualEnv support
 tmux_get_var(){
     local key=$1
-    tmux showenv | awk -F= -v key="$key" '$1==key {print $2}'
+    [[ -n "$TMUX" ]] && tmux showenv | awk -F= -v key="$key" '$1==key {print $2}'
 }
 
 # activate the virtual environment if it is declared

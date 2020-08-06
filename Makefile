@@ -49,7 +49,7 @@ freeze-venv: __c
 create-venv:
 	$(if $(SCADAJS_1_ENV),$(error SCADAJS_1_ENV variable is set, use it instead: $(SCADAJS_1_ENV)))
 	$(eval NODE_VERSION := $(shell echo `grep "^#node@" nodeenv.txt | cut -d@ -f2` | sed 's/^$$/system/'))
-	nodeenv --requirement=./nodeenv.txt --node=$(NODE_VERSION) --jobs=4 nodeenv
+	nodeenv --requirement=./nodeenv.txt --node=$(NODE_VERSION) --prompt="($(VENV_NAME))" --jobs=4 nodeenv
 
 __release_copy:
 	@echo "Creating release for APP: $${APP:?}"
