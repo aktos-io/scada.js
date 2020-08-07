@@ -19,7 +19,7 @@
     
         $ cd ./scada.js
         $ make create-venv
-        $ ./venv ./nodeenv
+        $ ./venv
         (scadajs1) $ 
 
 

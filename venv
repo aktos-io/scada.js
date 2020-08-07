@@ -4,15 +4,23 @@
 # -----------
 # Switch to appropriate (or given) Virtual Environment.
 #
+set -eu -o pipefail
+safe_source () { [[ ! -z ${1:-} ]] && source $1; _dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; _sdir=$(dirname "$(readlink -f "$0")"); }; safe_source
+
 ENV_VERSION="SCADAJS_1_ENV"
-VENV_PATH=$1
+VENV_PATH=
+LOCAL_VENV="$_sdir/nodeenv"
+
+[[ -d "$LOCAL_VENV" ]] && VENV_PATH=$LOCAL_VENV
 
 _sourced=
 if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
     #echo "script ${BASH_SOURCE[0]} is being sourced ..."
     _sourced="yes"
-    VENV_PATH=
+else
+    [[ -n ${1:-} ]] && VENV_PATH=$1
 fi
+
 
 SCADAJS_VENV=${VENV_PATH:-$(eval echo "\$$ENV_VERSION")}
 
