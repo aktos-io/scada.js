@@ -4,6 +4,7 @@ node_modules
 build
 release
 __public__
+debug*.json
 
 # general purpose tarballs
 *.zip
@@ -30,3 +31,5 @@ db
 
 # ignore the default nodeenv
 nodeenv
+
+

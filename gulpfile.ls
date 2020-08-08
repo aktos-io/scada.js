@@ -5,14 +5,13 @@ HELP:
 --webapp mywebapp           : Expect to find webapp in ../webapps/mywebapp 
 --enable-version-polling    : Automatically trigger versionify transform upon git commit. 
 --production                : Make production environment optimizations. 
+--debug                     : Turns on the debugging messages and facilities.
 
 --usage                      : Displays this message.
 
 Hint: "export APP=mywebapp" before using Makefile.
 
 '''
-
-DEBUG = off 
 
 /*******************************************************
 
@@ -25,6 +24,13 @@ Helpful documents for writing Gulpfile:
 
 *******************************************************/
 require! 'yargs':{argv}
+
+DEBUG = argv.debug
+if DEBUG
+    console.log " ***************************** "
+    console.log " ***** DEBUG MODE IS ON. ***** "
+    console.log " ***************************** "
+
 
 if typeof! argv.webapp is \String
     webapp = argv.webapp
@@ -310,7 +316,7 @@ debug-cache = (cache) ->
                 obj[k] = simplify-object v
         return obj 
 
-    console.log JSON.stringify simplify-object(o), null, 2
+    return JSON.stringify simplify-object(o), null, 2
 
 # Gulp Tasks 
 # ---------------------
@@ -368,6 +374,19 @@ gulp.task \browserify, (done) !->
 
                     # display "successfully compiled" message first time after an error
                     b.__last_error = false 
+
+                if DEBUG 
+                    log "Dumping Cache and Package cache."
+
+                    # Cache data
+                    cache = b._options.cache
+                    fs.writeFile "debug-cache.json", debug-cache(cache), -> 
+                        log "Cache is written to disk."
+
+                    # Package data 
+                    pkgcache = b._options.packageCache
+                    fs.writeFile "debug-package-cache.json", debug-cache(pkgcache), -> 
+                        log "Package Cache is written to disk."
 
         unless optimize-for-production
             b.on \update, (ids) !-> 
