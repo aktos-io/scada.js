@@ -36,7 +36,7 @@
 
 # Preparing Tmux
 
-1. Add the following in your `~/.bashrc`:
+1. Add the following in your `~/.profile` (or `~/.bashrc`):
 
 ```bash
 # For Tmux VirtualEnv support
@@ -52,15 +52,9 @@ if [ -n "$venv" ]; then
 fi
 ```
 
-2. Send the following line into a Tmux pane:
+2. Set the `VIRTUAL_ENV` variable for the target session:
 
 ```bash
-tmux setenv 'VIRTUAL_ENV' /path/to/virtualenv/
+tmux setenv -t ${SESSION_NAME} 'VIRTUAL_ENV' /path/to/virtualenv/
 ```
 
-With `service-runner` library, `run-in-tmux` function can be used: 
-
-```bash
-venv="${SCADAJS_1_ENV:-"$DIR/scada.js/nodeenv"}"
-run-in-tmux "tmux setenv 'VIRTUAL_ENV' $venv && exit"
-```
