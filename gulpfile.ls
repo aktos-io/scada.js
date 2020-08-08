@@ -12,6 +12,7 @@ Hint: "export APP=mywebapp" before using Makefile.
 
 '''
 
+DEBUG = off 
 
 /*******************************************************
 
@@ -91,11 +92,15 @@ paths =
     vendor-folder: "#{__dirname}/vendor"
     vendor2-folder: "#{__dirname}/vendor2"
     build-folder: "#{__dirname}/build"
+    release-folder: "#{__dirname}/release"
     lib-src: "#{__dirname}/lib"
     client-webapps: "#{__dirname}/../webapps"
     client-root: "#{__dirname}/.."
 
-paths.client-public = "#{paths.build-folder}/#{webapp}"
+paths.client-public = if optimize-for-production
+    "#{paths.release-folder}/#{webapp}"
+else
+    "#{paths.build-folder}/#{webapp}"
 paths.components-src = "#{__dirname}/components"
 
 notifier.notify {title: "ScadaJS" message: "Webapp \"#{webapp}\" started!"}
@@ -268,7 +273,8 @@ compile-js = (watchlist, output) ->
         .pipe through2.obj (file, enc, cb) ->
             contents = file.contents.to-string!
             removed = contents.replace /\/\/#\s?sourceMappingURL=.*\b/g, (x) -> 
-                log "Source Mapping URL is removed: #x"
+                if DEBUG
+                    log "Source Mapping URL is removed: #x"
                 return ''
             file.contents = new Buffer.from removed
             cb null, file
@@ -347,7 +353,7 @@ gulp.task \browserify, (done) !->
             # it takes forever to transpile the uglified output.             
             .pipe if-else optimize-for-production, my-uglify
             .pipe rename (.extname = '.js')
-            .pipe gulp.dest "#{paths.build-folder}/#{webapp}/js"
+            .pipe gulp.dest "#{paths.client-public}/js"
             .pipe tap (file) ->
                 b-count-- if b-count > -1
                 duration-str = "#{round-ms (Date.now! - t0)}s"

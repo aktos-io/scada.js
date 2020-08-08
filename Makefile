@@ -1,5 +1,8 @@
 VENV_NAME := scadajs1
-.PHONY: release test update-deps update-app-version
+APP := main
+CONFIG := ../dcs-modules.txt
+
+.PHONY: test update-deps update-app-version
 
 # Check if we are in a VIRTUAL_ENV:
 __c:
@@ -9,7 +12,7 @@ __app: # Check if APP name is set
 	$(if $(APP),,$($(error *** APP variable is not set. ***)))
 
 test: __c
-	es-check es5 './release/**/*.js'
+	es-check es5 './release/$(APP)/**/*.js'
 
 update-deps: __c
 	npm run interactive-update
@@ -17,7 +20,7 @@ update-deps: __c
 update-app-version:
 	touch lib/app-version.json
 
-production: __c __production __release_copy test __release_commit
+production: __c __prepare_release_dir __production __release_commit
 
 __production: __app
 	gulp --webapp $(APP) --production
@@ -51,15 +54,13 @@ create-venv:
 	$(eval NODE_VERSION := $(shell echo `grep "^#node@" nodeenv.txt | cut -d@ -f2` | sed 's/^$$/system/'))
 	nodeenv --requirement=./nodeenv.txt --node=$(NODE_VERSION) --prompt="($(VENV_NAME))" --jobs=4 nodeenv
 
-__release_copy:
-	@echo "Creating release for APP: $${APP:?}"
-	( if [ ! -d release/$(APP) ]; then \
+__prepare_release_dir:
+	@( if [ ! -d release/$(APP) ]; then \
 		 	mkdir -p release; \
 			cd release; \
 			git init $(APP); \
 		fi \
 	)
-	rsync -a build/$(APP)/ release/$(APP)/
 
 __release_commit:
 	( cd release/$(APP) && git add . && git commit )
