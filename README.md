@@ -6,15 +6,20 @@ ScadaJS is a library to create [Distributed](https://en.wikipedia.org/wiki/Distr
 
 # Key features
 
-* Uses HTML for building user interfaces and supports [Pug](https://pugjs.org) for advanced usage (and sanity)
-* Uses Javascript and provides first-class support for [LiveScript](http://livescript.net) (with sourcemaps)
+* Supports HTML and [Pug](https://pugjs.org). 
+* Supports Javascript and [LiveScript](http://livescript.net).
 * Uses [RactiveJS](http://www.ractivejs.org/) in the heart for templating system.
   * Supports component based UI development.
+  * Easy customization of existing or new components before using multiple copies.
 * Supports desktop apps via [ElectronJS](http://electron.atom.io/).
-* Supports tools and documentation for [DRY](https://en.wikipedia.org/wiki/Don't_repeat_yourself) and [TDD](https://en.wikipedia.org/wiki/Test-driven_development).
+* Provides tools and default libraries for [DRY](https://en.wikipedia.org/wiki/Don't_repeat_yourself) and [TDD](https://en.wikipedia.org/wiki/Test-driven_development).
 * Provides build system via [Gulp](http://gulpjs.com).
   * Supports a mechanism for integrating 3rd party libraries easily.
 * Supports cross platform development (see: [supported development platforms](./doc/supported-development-platforms.md))
+  * Linux 
+  * Windows 
+* Supports future proof development environment: Uses Virtual Environment. 
+  * You don't need to worry if global dependencies in your machine are not compatible now or in the future with your ScadaJS project.
 * Integrated with [aktos-dcs-node](https://github.com/aktos-io/aktos-dcs-node), the NodeJS port of aktos-dcs.
    * [Microservices](https://en.wikipedia.org/wiki/Microservices) architecture is supported out of the box.
    * Supports variety of drivers and services including:
