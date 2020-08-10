@@ -64,3 +64,6 @@ __prepare_release_dir:
 
 __release_commit:
 	( cd release/$(APP) && git add . && git commit )
+
+release-push:
+	@( cd release/$(APP) && git push )
