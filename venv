@@ -3,8 +3,13 @@
 # Description
 # -----------
 # Switch to appropriate (or given) Virtual Environment.
+# 1. Use the virtual environment given by the argument 
+# 2. If above is not possible, use the VENV "here" named "nodeenv"
+# 3. If above is not possible, use the VENV pointed by $SCADAJS_X_VENV variable
 #
+set -e -o pipefail
 safe_source () { [[ ! -z ${1:-} ]] && source $1; _dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; _sdir=$(dirname "$(readlink -f "$0")"); }; safe_source
+_sdir=$(dirname $(realpath ${BASH_SOURCE[0]}))
 
 ENV_VERSION="SCADAJS_1_ENV"
 VENV_PATH=
@@ -19,7 +24,6 @@ if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
 else
     [[ -n ${1:-} ]] && VENV_PATH=$1
 fi
-
 
 SCADAJS_VENV=${VENV_PATH:-$(eval echo "\$$ENV_VERSION")}
 
