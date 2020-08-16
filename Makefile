@@ -26,6 +26,7 @@ __production: __app
 	gulp --webapp $(APP) --production
 
 development: __c __app
+	tmux rename-window "gulp" 2> /dev/null || true
 	gulp --webapp $(APP)
 
 update-scadajs:

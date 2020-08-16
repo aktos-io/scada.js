@@ -55,7 +55,9 @@ lsFile="$1"
 shift
 set-pane-title () {
     if [ "$TERM" = "screen" ] && [ -n "$TMUX" ]; then
-        printf "\033k$1\033\\"
+        #tmux select-pane -T $1                 # right corner
+        #tmux set pane-border-status bottom     # extra line 
+        tmux rename-window $1
     fi
 
 }
