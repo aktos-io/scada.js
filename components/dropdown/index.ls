@@ -46,6 +46,7 @@ Ractive.components['dropdown'] = Ractive.extend do
 
     onrender: (ctx) ->
         c = @clone-context!
+        c.actor = @actor
         dd = $ @find '.ui.dropdown'
         keyField = @get \keyField
         nameField = @get \nameField
@@ -165,9 +166,9 @@ Ractive.components['dropdown'] = Ractive.extend do
                         unless @get \async
                             @set \item, selected
                             @set \selected-name, selected[nameField]
-                    else
-                        @actor.c-warn "TODO: item not found: ", value-of-key, "how do we handle this? "
-                        update-dropdown value-of-key
+                    #else
+                    #    @actor.c-warn "TODO: item not found: ", value-of-key, "how do we handle this? "
+                    #    update-dropdown value-of-key
         dd
             .dropdown 'restore defaults'
             .dropdown 'setting', do
@@ -237,6 +238,9 @@ Ractive.components['dropdown'] = Ractive.extend do
                     if JSON.stringify(_new or []) isnt JSON.stringify(old or [])
                         update-dropdown _new
             else
+                if not (_new? or old?)
+                    if @get \debug => @actor.c-log "Observe: Skipping no-change."
+                    return 
                 if @get \debug => @actor.c-log "Observe: selected key set to:", _new
                 #@actor.c-log "DROPDOWN: selected key set to:", _new
                 unless @get \data
