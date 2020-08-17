@@ -1,5 +1,8 @@
 ![ScadaJS](https://cdn.rawgit.com/aktos-io/scada.js/master/assets/images/scadajs-logo-long.svg)
 
+[![Join the chat at https://gitter.im/scada-js](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/scada-js?utm_source=badge&utm_medium=badge&utm_content=badge)
+
+
 # Description
 
 ScadaJS is a library to create [Distributed](https://en.wikipedia.org/wiki/Distributed_Computing) Realtime [Webapps](https://en.wikipedia.org/wiki/Single-page_application), targeted to industrial distributed SCADA and MRP/ERP systems.
