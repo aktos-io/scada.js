@@ -248,12 +248,18 @@ Ractive.components['dropdown'] = Ractive.extend do
                     return
                 update-dropdown _new
 
-        selected-key-observer = @observe \selected-key, (val) ~>
+        selected-key-observer = @observe \selected-key, ((val) ~>
             if @get \async
                 console.log "this is async mode and item is changed: ", val
                 set-item val
             else
                 selected-handler val
+            ), {-init}
+
+        # first update should be silent
+        set-immediate ~> 
+            dd.dropdown 'set selected', @get('selected-key')
+            dd.dropdown 'refresh'
 
         @on do
             teardown: ->
