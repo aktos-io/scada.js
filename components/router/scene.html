@@ -6,9 +6,6 @@
         {{#if hidden}}visibility: hidden; {{/if}}
         margin: 0; padding: 0; border: 0;
 
-        /* in order to hide scroll bar */
-        height: 100%; overflow: hidden; width: 100%; margin-right: -15px;
-
         /* additional styling */
         {{style}}
         "
@@ -20,13 +17,6 @@
                 padding: 0;
                 padding-top: {{offset !== null ? offset : @global.topOffset}}px; /* for top menu */
                 border: 0;
-
-                /* in order to hide scroll bar */
-                overflow: scroll;
-                height: 95%;
-                width: 100%;
-                padding-right: 15px; /* same value of above container */
-                box-sizing: content-box;
                 "
             >
             {{>content}}
