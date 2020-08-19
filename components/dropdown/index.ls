@@ -148,6 +148,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                             if @get \debug => @actor.c-log "selected key is changed to:", selected[keyField]
                             if @get \debug => @actor.c-log "Found #{value-of-key} in .[#{keyField}]", selected, selected[keyField]
                             if @get \async
+                                selected-key-observer.silence!
                                 @fire \select, c, selected, (err) ~>
                                     unless err
                                         @set \emptyReduced, no
@@ -160,6 +161,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                                                 "falling back to #{curr}"
                                         @set \emptyReduced, yes
                                         update-dropdown curr
+                                    selected-key-observer.resume!
                             else
                                 @set \selected-key, selected[keyField]
 
