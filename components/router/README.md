@@ -8,13 +8,17 @@ Add the `router` component in your webapp:
 
 # Anchors
 
+Creating anchor:
+
+        anchor my-anchor
+
 There are 4 types of anchors:
 
-1. Scroll to an anchor in current page:
+1. Scroll in current page:
 
         a(href="#my-anchor") Scroll to my-anchor
 
-2. Switch page in current webapp:
+2. Switch page:
 
         a(href="#/other-page") Go to the "other-page"
 
@@ -26,19 +30,15 @@ There are 4 types of anchors:
 
         a(href="http://example.com") Go to example.com (in new tab, by default)
 
-        a(href="http://example.com" curr-window) Go to example.com (in current window)
+        a(curr-window href="http://example.com") Go to example.com (in current window)
         
-4. Download an asset:
+4. Download a static file:
 
-        a.icon(href="sgw-example.json" download tooltip="Download the example project")
+        a.icon(download href="sgw-example.json" tooltip="Download the example project")
             icon.download.pink
 
-# Creating in-app anchor target
+# Navigating Programmatically
 
-1. Use `anchor` component to create in-app anchor target:
+`window.location.hash` is listened by the `router` component. 
 
-        anchor my-anchor
-
-2. Then create link to scroll to the anchor:
-
-        a(href="#my-anchor") Scroll to my-anchor
+If the hash is set by any method, `router` will handle the navigation. 

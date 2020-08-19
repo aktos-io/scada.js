@@ -10,9 +10,9 @@ get-offset = ->
 scroll-to = (anchor) ->
     offset = $ "span[data-id='#{anchor}']" .offset!
     if offset
-        $ 'html, body' .animate do
-            scroll-top: (offset?.top or 0) - (window.top-offset or 0)
-            , 200ms
+        dist = (offset?.top or 0) - (window.top-offset or 0)
+        x= $ 'html, body' .animate {scrollTop: dist}, 200ms, -> 
+            #console.log "Animation is completed?"
 
 make-link = (scene, anchor) ->
     curr = parse-link get-window-hash!
@@ -108,7 +108,8 @@ Ractive.components['a'] = Ractive.extend do
                         return
                     else if link
                         generated-link = make-link link.scene, link.anchor
-                        #console.log "setting window hash by '<a>' to ", generated-link
+                        if @get \debug 
+                            console.log "setting window hash by '<a>' to ", generated-link
 
                         # WORKAROUND: jquery.scrollTop! is somehow
                         # set to 0 when `set-window-hash` is called.
@@ -122,7 +123,7 @@ Ractive.components['a'] = Ractive.extend do
 
 Ractive.components['anchor'] = Ractive.extend do
     template: require('./anchor.html')
-    isolated: yes
+    isolated: no
 
 
 Ractive.components['router'] = Ractive.extend do
@@ -194,6 +195,7 @@ Ractive.components['router'] = Ractive.extend do
 
                 unless opts.noscroll
                     sleep 50ms, -> scroll-to curr.anchor
+                    null
 
                 actor.send 'app.router.changes', {change}
                 @set \@shared.router, change
@@ -209,9 +211,10 @@ Ractive.components['router'] = Ractive.extend do
             #console.log "fired hash listener! hash is: #{hash}"
             handle-hash!
 
-        $ window .on \hashchange, ->
+        window.addEventListener 'hashchange', (->
             console.log "this is hashchange run: #{window.location.hash}"
             handle-hash!
+        ), false
 
         # on app-load
         handle-hash!
