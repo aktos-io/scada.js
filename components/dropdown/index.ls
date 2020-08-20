@@ -251,6 +251,8 @@ Ractive.components['dropdown'] = Ractive.extend do
                 update-dropdown _new
 
         selected-key-observer = @observe \selected-key, ((val) ~>
+            unless val?
+                dd.dropdown 'clear'
             if @get \async
                 console.log "this is async mode and item is changed: ", val
                 set-item val
