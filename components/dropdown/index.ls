@@ -28,7 +28,7 @@ Ractive.components['dropdown'] = Ractive.extend do
             debug: yes
 
         # map attributes to classes
-        for attr, cls of {\multiple, \disabled, 'fit-width': \fluid}
+        for attr, cls of {\multiple, 'fit-width': \fluid}
             if @get attr then @set \class, "#{@get 'class'} #{cls}"
 
         if @get \key => @set \keyField, that

@@ -17,6 +17,7 @@
 +iff('inline || button || compact')
     .ui.dropdown(class="{{class}} \
         \
+        {{#disabled}}disabled{{/}} \
         {{#inline}}inline{{/}} \
         {{#button}}floating icon button{{/}} \
         {{#compact}}compact floating{{/}}  \
@@ -57,6 +58,7 @@
 +else
     //-div(style="display: inline-block")
     .ui.search.selection.dropdown(class="{{class}} \
+        {{#disabled}}disabled{{/}} \
         {{#loading}}loading{{/}} \
         {{#emptyReduced}}error{{/}}"
         style="{{#readonly}}display: none{{/}}"
