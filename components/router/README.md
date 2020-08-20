@@ -39,6 +39,17 @@ There are 4 types of anchors:
 
 # Navigating Programmatically
 
-`window.location.hash` is listened by the `router` component. 
+Option 1. `window.location.hash` is listened by the `router` component. If the hash is set by any method, `router` will handle the navigation. 
 
-If the hash is set by any method, `router` will handle the navigation. 
+Option 2. 
+
+    ```pug 
+    anchor hello-world
+    ```
+
+    ```ls 
+    require! 'components/router/tools': {scroll-to}
+
+    ...
+    scroll-to 'hello-world'
+    ```

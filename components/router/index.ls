@@ -1,73 +1,10 @@
 require! 'aea': {sleep}
-require! 'prelude-ls': {take, drop, split, find}
 require! 'actors':  {RactiveActor}
-
-basename = (.split(/[\\/]/).pop!) # https://stackoverflow.com/questions/3820381#comment29942319_15270931
-
-get-offset = ->
-    $ 'body' .scrollTop!
-
-scroll-to = (anchor) ->
-    offset = $ "span[data-id='#{anchor}']" .offset!
-    if offset
-        dist = (offset?.top or 0) - (window.top-offset or 0)
-        x= $ 'html, body' .animate {scrollTop: dist}, 200ms, -> 
-            #console.log "Animation is completed?"
-
-make-link = (scene, anchor) ->
-    curr = parse-link get-window-hash!
-    scene-part = if scene? => that else curr.scene
-
-    scene-part = if scene-part
-        '#/' + that
-    else
-        '#'
-
-    anchor-part = if anchor?
-        '#' + that
-    else
-        ''
-
-    link = scene-part + anchor-part
-    #console.log "Making link from scene: #{scene}, anchor: #{anchor} => #{link} (curr.scene: #{curr.scene})"
-    return link
-
-get-window-hash = ->
-    hash = window.location.hash
-    _hash = hash.replace '%23', '#'
-    if hash isnt _hash
-        hash = _hash
-        set-window-hash hash, silent=yes
-    hash or '#/'
-
-hash-listener = ->
-
-_scroll-top = null
-set-window-hash = (hash, silent) ->
-    #console.log "setting window hash to: #{hash}, curr is: #{window.location.hash}"
-    if history.pushState
-        history.pushState(null, null, hash)
-    else
-        window.location.hash = hash
-
-    unless silent
-        hash-listener hash
-
-parse-link = (link) ->
-    if link.match /http[s]?:\/\//
-        return {external: yes}
-
-    [scene, anchor] = ['/', '']
-    switch take 2, link
-    | '#/' => [scene, anchor] = drop 2, link .split '#'
-    | '##' => [scene, anchor] = ['', (drop 2, link)]
-    |_     => [scene, anchor] = [undefined, (drop 1, link)]
-
-    #console.log "parsing link: #{link} -> scene: #{scene}, anchor: #{anchor}"
-    return do
-        scene: scene
-        anchor: anchor
-
+require! './tools': {
+    change-hash-listener, set-window-hash, make-link, scroll-to, 
+    set-scroll-top, get-scroll-top, parse-link, get-window-hash, get-offset
+    set-window-hash
+}
 
 Ractive.components['a'] = Ractive.extend do
     template: require('./a.html')
@@ -113,7 +50,7 @@ Ractive.components['a'] = Ractive.extend do
 
                         # WORKAROUND: jquery.scrollTop! is somehow
                         # set to 0 when `set-window-hash` is called.
-                        _scroll-top := $ document .scrollTop!
+                        set-scroll-top $ document .scrollTop!
                         #console.log "...scroll top: ", _scroll-top
                         set-window-hash generated-link
                     else
@@ -148,8 +85,8 @@ Ractive.components['router'] = Ractive.extend do
                     # note the current scroll position
                     page = prev?.scene or \default
                     change.scene = curr.scene
-                    screen-top = _scroll-top or get-offset!
-                    _scroll-top := null
+                    screen-top = get-scroll-top! or get-offset!
+                    set-scroll-top null
 
                     #console.log "Saving current position as #{screen-top} for page #{page}"
                     if active-scene
@@ -207,7 +144,7 @@ Ractive.components['router'] = Ractive.extend do
             console.log "permissions changed, re-handling the hash"
             handle-hash {force: yes, noscroll: yes}
 
-        hash-listener := (hash) ->
+        change-hash-listener (hash) ->
             #console.log "fired hash listener! hash is: #{hash}"
             handle-hash!
 
