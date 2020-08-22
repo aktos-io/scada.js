@@ -1,6 +1,8 @@
 .ui.form(style="height: 100%; width: 100%;")
     .field(style="height: 100%; width: 100%")
-        label Click outside or wait {{timeout}}ms to update the output
+        +if('title')
+            label {{title}}
+
         //- lazy="xxx" : Update the content only when the mouse out of editing area
             or timeout of xxx milliseconds is over.
         textarea(

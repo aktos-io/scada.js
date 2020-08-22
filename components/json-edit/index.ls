@@ -9,6 +9,7 @@ Ractive.components['json-edit'] = Ractive.extend do
         err: null
         timeout: 500ms 
         readonly: no 
+        title: null 
 
     computed:
         objFormatted:
