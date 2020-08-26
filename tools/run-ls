@@ -37,7 +37,8 @@ if [[ ! -f $filename ]]; then
 fi
 
 base_dir=$(dirname $filename)
-#echo "DEBUG: Base Dir: $base_dir"
+errcho(){ >&2 echo $@; }
+#errcho "DEBUG: Base Dir: $base_dir"
 
 SCADA_DIR=$(find_scada_root $base_dir)
 
@@ -46,7 +47,7 @@ if [[ -d $SCADA_DIR ]]; then
     SCADA_MODULES="${SCADA_DIR}/lib"
     PROJECT_PATH=$(realpath "${SCADA_DIR}/..")
 
-    echo "ScadaJS project path: ${PROJECT_PATH}"
+    #errcho "ScadaJS project path: ${PROJECT_PATH}"
 
     FOUND_MODULES=
     # add every `node_modules` into the path
