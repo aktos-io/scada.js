@@ -30,7 +30,7 @@
 5. Optional: Move your nodeenv to a central location and use it between projects:
         
         mv nodeenv/ ~/nodeenv/scadajs-1  # or anywhere you like
-        echo 'export SCADAJS_1_ENV="~/nodeenv/scadajs-1"' >> ~/.bashrc
+        echo 'export SCADAJS_1_ENV="$HOME/nodeenv/scadajs-1"' >> ~/.bashrc
 
    > Next time you can use: `./scada.js/venv`
 
