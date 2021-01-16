@@ -6,12 +6,12 @@
 
         pip install nodeenv
 
-2. Download or create the project:
+2. Download (or create) your project:
 
-        # download 
+        # download an existing project:
         git clone --recursive https://github.com/aktos-io/scadajs-template myproject && cd myproject
 
-        # create 
+        # or create a project from scratch:
         git init myproject && cd myproject 
         git submodule add git submodule add https://github.com/aktos-io/scada.js
 
@@ -29,8 +29,9 @@
         
 5. Optional: Move your nodeenv to a central location and use it between projects:
         
-        mv nodeenv/ ~/nodeenv/scadajs-1  # or anywhere you like
-        echo 'export SCADAJS_1_ENV="$HOME/nodeenv/scadajs-1"' >> ~/.bashrc
+        dest=$HOME/nodeenv/scadajs-1  # or anywhere you like
+        mv nodeenv/ $dest  
+        echo "export SCADAJS_1_ENV='$dest'" >> ~/.bashrc
 
    > Next time you can use: `./scada.js/venv`
 
