@@ -1,8 +1,8 @@
 #!/bin/bash
-DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+safe_source () { [[ ! -z ${1:-} ]] && source $1; _dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; _sdir=$(dirname "$(readlink -f "$0")"); }; safe_source
+DIR="$_dir"
 
-[[ -f $DIR/node-path.sh ]] && source $DIR/node-path.sh
-#echo "NODE_PATH: $NODE_PATH"
+[[ -f "$_sdir/node-path.sh" ]] && source "$_sdir/node-path.sh"
 
 watch=
 if [[ "$1" = "-w" ]]; then
