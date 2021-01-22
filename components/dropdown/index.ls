@@ -267,7 +267,9 @@ Ractive.components['dropdown'] = Ractive.extend do
             ), {-init}
 
         # first update should be silent
-        set-immediate ~> 
+        sleep 100ms, ~> 
+            if @get \debug 
+                @actor.c-log "Setting initial dropdown value: ", @get 'selected-key'
             dd.dropdown 'set selected', @get('selected-key')
             dd.dropdown 'refresh'
 
