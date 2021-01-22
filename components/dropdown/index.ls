@@ -113,6 +113,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                         # button action. When selected key is cleared, all
                         # necessary actions are handled in the listener.
                         @fire \select, c, {}, (err) ~>
+                            debugger if @get \debug
                             if err and typeof! err is \String
                                 @actor.v-err err
                         return op!
@@ -150,13 +151,16 @@ Ractive.components['dropdown'] = Ractive.extend do
                             if @get \async
                                 selected-key-observer.silence!
                                 @fire \select, c, selected, (err) ~>
+                                    debugger if @get \debug 
                                     unless err
                                         @set \emptyReduced, no
                                         update-dropdown selected[keyField]
                                     else
                                         curr = @get \selected-key
                                         if typeof! err is \String
-                                            @actor.v-err err
+                                            @actor.v-err """#{err}
+                                                Dropdown, called #{@get 'selected'}
+                                                """
                                             @actor.c-warn "Error reported for dropdown callback: ", err,
                                                 "falling back to #{curr}"
                                         @set \emptyReduced, yes
@@ -307,3 +311,5 @@ Ractive.components['dropdown'] = Ractive.extend do
         'selected-key': null
         'selected-name': null
         'load-first': 100
+
+        'listen-external': yes # listen external key changes by default
