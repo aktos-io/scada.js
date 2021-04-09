@@ -280,7 +280,8 @@ Ractive.components['dropdown'] = Ractive.extend do
             '_add': (ctx) ->
                 c.button = ctx.component
                 sleep 10, -> dd.dropdown 'show'
-                err <~ @fire \add, c, @get \search-term
+                newKey = @get \search-term
+                err <~ @fire \add, c, newKey
                 # dropdown should only be closed if there is
                 # no error returned
                 unless err
@@ -289,6 +290,10 @@ Ractive.components['dropdown'] = Ractive.extend do
                     @set \search-term, ''
                     # clear the dropdown search field
                     $('.ui.dropdown').find(".search").val("")
+                    <~ set-immediate 
+                    dd.dropdown 'set selected', newKey
+                    dd.dropdown 'refresh'
+
     data: ->
         'search-fields': <[ description ]>
         'search-term': ''
@@ -313,5 +318,4 @@ Ractive.components['dropdown'] = Ractive.extend do
         'selected-key': null
         'selected-name': null
         'load-first': 100
-
         'listen-external': yes # listen external key changes by default
