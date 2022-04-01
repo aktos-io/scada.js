@@ -71,3 +71,10 @@ __release_commit:
 
 release-push:
 	@( cd release/$(APP) && git push )
+
+list-modules:
+	@find . -name package.json -and -not -path "*/node_modules/*" | xargs dirname | sort
+
+npm-audit-all:
+	@$(MAKE) list-modules --no-print-directory | xargs -I '{}' bash -c \
+	'cd {}; echo -e "-----------\nAudit for {}:\n-----------\n\n"; npm i --package-lock-only; npm audit'
