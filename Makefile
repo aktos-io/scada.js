@@ -20,7 +20,7 @@ update-deps: __c
 update-app-version:
 	touch lib/app-version.json
 
-production: __c __prepare_release_dir __production __release_commit
+release: __c __prepare_release_dir __production __release_commit
 
 __production: __app
 	gulp --webapp $(APP) --production
@@ -55,6 +55,9 @@ create-venv:
 	$(eval NODE_VERSION := $(shell echo `grep "^#node@" nodeenv.txt | cut -d@ -f2` | sed 's/^$$/system/'))
 	nodeenv --requirement=./nodeenv.txt --node=$(NODE_VERSION) --prompt="($(VENV_NAME))" --jobs=4 nodeenv
 
+use-venv:
+	./venv
+
 __prepare_release_dir:
 	@( if [ ! -d release/$(APP) ]; then \
 		 	mkdir -p release; \
@@ -64,7 +67,14 @@ __prepare_release_dir:
 	)
 
 __release_commit:
-	( cd release/$(APP) && git add . && git commit )
+	( cd release/$(APP) && git add . && git commit -m "unattended commit")
 
 release-push:
 	@( cd release/$(APP) && git push )
+
+list-modules:
+	@find . -name package.json -and -not -path "*/node_modules/*" | xargs dirname | sort
+
+npm-audit-all:
+	@$(MAKE) list-modules --no-print-directory | xargs -I '{}' bash -c \
+	'cd {}; echo -e "-----------\nAudit for {}:\n-----------\n\n"; npm i --package-lock-only; npm audit'

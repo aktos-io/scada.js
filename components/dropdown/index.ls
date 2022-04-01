@@ -65,7 +65,7 @@ Ractive.components['dropdown'] = Ractive.extend do
         selected-key-observer = null
         update-dropdown = (_new) ~>
             if @get \debug
-                @actor.log.log "#{@_guid}: selected key is changed to: ", _new
+                @actor.log.log "#{@_guid}: selected key is _being_ changed to: ", _new
             <~ set-immediate
             external-change := yes
             <~ :lo(op) ~>
@@ -113,6 +113,7 @@ Ractive.components['dropdown'] = Ractive.extend do
                         # button action. When selected key is cleared, all
                         # necessary actions are handled in the listener.
                         @fire \select, c, {}, (err) ~>
+                            debugger if @get \debug
                             if err and typeof! err is \String
                                 @actor.v-err err
                         return op!
@@ -150,13 +151,16 @@ Ractive.components['dropdown'] = Ractive.extend do
                             if @get \async
                                 selected-key-observer.silence!
                                 @fire \select, c, selected, (err) ~>
+                                    debugger if @get \debug 
                                     unless err
                                         @set \emptyReduced, no
                                         update-dropdown selected[keyField]
                                     else
                                         curr = @get \selected-key
                                         if typeof! err is \String
-                                            @actor.v-err err
+                                            @actor.v-err """#{err}
+                                                Dropdown, called #{@get 'selected'}
+                                                """
                                             @actor.c-warn "Error reported for dropdown callback: ", err,
                                                 "falling back to #{curr}"
                                         @set \emptyReduced, yes
@@ -204,7 +208,9 @@ Ractive.components['dropdown'] = Ractive.extend do
                         #@actor.c-log "Dropdown (#{@_guid}) : searchTerm is empty"
                         @set \dataReduced, small-part-of data
                 on-change: (value, text, selected) ~>
-                    return if external-change
+                    if external-change and not @get('listen-external')
+                        if @get \debug => @actor.c-log "Dropdown: Exiting from on-change handler as this is an external change."
+                        return 
                     if @get \debug => @actor.c-log "Dropdown: #{@_guid}: dropdown is changed: ", value
                     if @get \multiple
                         set-item unless value? => [] else value.split ','
@@ -251,6 +257,8 @@ Ractive.components['dropdown'] = Ractive.extend do
                 update-dropdown _new
 
         selected-key-observer = @observe \selected-key, ((val) ~>
+            unless val?
+                dd.dropdown 'clear'
             if @get \async
                 console.log "this is async mode and item is changed: ", val
                 set-item val
@@ -259,7 +267,9 @@ Ractive.components['dropdown'] = Ractive.extend do
             ), {-init}
 
         # first update should be silent
-        set-immediate ~> 
+        sleep 100ms, ~> 
+            if @get \debug 
+                @actor.c-log "Setting initial dropdown value: ", @get 'selected-key'
             dd.dropdown 'set selected', @get('selected-key')
             dd.dropdown 'refresh'
 
@@ -270,7 +280,8 @@ Ractive.components['dropdown'] = Ractive.extend do
             '_add': (ctx) ->
                 c.button = ctx.component
                 sleep 10, -> dd.dropdown 'show'
-                err <~ @fire \add, c, @get \search-term
+                newKey = @get \search-term
+                err <~ @fire \add, c, newKey
                 # dropdown should only be closed if there is
                 # no error returned
                 unless err
@@ -279,6 +290,10 @@ Ractive.components['dropdown'] = Ractive.extend do
                     @set \search-term, ''
                     # clear the dropdown search field
                     $('.ui.dropdown').find(".search").val("")
+                    <~ set-immediate 
+                    dd.dropdown 'set selected', newKey
+                    dd.dropdown 'refresh'
+
     data: ->
         'search-fields': <[ description ]>
         'search-term': ''
@@ -303,3 +318,4 @@ Ractive.components['dropdown'] = Ractive.extend do
         'selected-key': null
         'selected-name': null
         'load-first': 100
+        'listen-external': yes # listen external key changes by default
