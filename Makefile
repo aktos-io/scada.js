@@ -55,6 +55,9 @@ create-venv:
 	$(eval NODE_VERSION := $(shell echo `grep "^#node@" nodeenv.txt | cut -d@ -f2` | sed 's/^$$/system/'))
 	nodeenv --requirement=./nodeenv.txt --node=$(NODE_VERSION) --prompt="($(VENV_NAME))" --jobs=4 nodeenv
 
+use-venv:
+	./venv
+
 __prepare_release_dir:
 	@( if [ ! -d release/$(APP) ]; then \
 		 	mkdir -p release; \
