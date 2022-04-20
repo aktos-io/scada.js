@@ -2,7 +2,7 @@
 
 Here you can find useful links and cheatsheets:
 
-* [CouchDB](./CouchDB)
+* [CouchDB](../lib/dcs/services/couch-dcs/doc/)
 * [Ractive](./Ractive)
 * [Pug](./Pug)
 * [Available Libraries](./available-libraries.md)
