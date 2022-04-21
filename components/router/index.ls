@@ -5,6 +5,7 @@ require! './tools': {
     set-scroll-top, get-scroll-top, parse-link, get-window-hash, get-offset
     set-window-hash, basename 
 }
+require! 'prelude-ls': {find}
 
 Ractive.components['a'] = Ractive.extend do
     template: require('./a.html')
