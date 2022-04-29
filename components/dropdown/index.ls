@@ -235,8 +235,8 @@ Ractive.components['dropdown'] = Ractive.extend do
             if _data?
                 @set \data, [{id: k, name: k, content: v} for k, v of _data]
 
-        @observe \simple-data, (_data) ~>
-            if _data?
+        @observe \simple-data, (_data, _old) ~>
+            if _data? and JSON.stringify(_old) isnt JSON.stringify(_data)
                 @set \data, [{id: .., name: ..} for _data when ..?]
 
 
