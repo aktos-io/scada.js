@@ -72,8 +72,10 @@ Ractive.components['dropdown'] = Ractive.extend do
                 try
                     throw {code: 'keyempty'} unless _new
                     if @get \multiple
+                        selected-key-observer.silence!
                         dd.dropdown 'set exactly', _new
                         dd.dropdown 'refresh'
+                        selected-key-observer.resume!
                         return op!
                     else
                         if @get \debug => @actor.log.debug "Setting new visual to #{_new}"
