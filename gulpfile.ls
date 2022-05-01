@@ -190,6 +190,8 @@ my-buble = (input) ->
         es5 = buble.transform input, {
               transforms: {
                 classes: true
+                asyncAwait: false
+                forOf: false
               }
         }
     catch 
@@ -350,7 +352,7 @@ gulp.task \browserify, (done) !->
                     t0 = Date.now!
                     es5 = my-buble contents
                     file.contents = new Buffer.from es5
-                    log "#{filebase} is transpiled to ES5 in #{round-ms (Date.now! - t0)}s"
+                    log "#{filebase} is transpiled to ES6 in #{round-ms (Date.now! - t0)}s"
                 cb null, file
 
             # --- DO NOT CHANGE THE ORDER --- 

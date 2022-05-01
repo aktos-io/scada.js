@@ -2,7 +2,7 @@ VENV_NAME := scadajs1
 APP := main
 CONFIG := ../dcs-modules.txt
 
-.PHONY: test update-deps update-app-version
+.PHONY: test-es6-compat update-deps update-app-version
 
 # Check if we are in a VIRTUAL_ENV:
 __c:
@@ -11,8 +11,8 @@ __c:
 __app: # Check if APP name is set
 	$(if $(APP),,$($(error *** APP variable is not set. ***)))
 
-test: __c
-	es-check es5 './release/$(APP)/**/*.js'
+test-es6-compat: __c
+	es-check es6 './release/$(APP)/**/*.js'
 
 update-deps: __c
 	npm run interactive-update
@@ -20,7 +20,7 @@ update-deps: __c
 update-app-version:
 	touch lib/app-version.json
 
-release: __c __prepare_release_dir __production __release_commit
+release: __c __prepare_release_dir __production test-es6-compat __release_commit
 
 __production: __app
 	gulp --webapp $(APP) --production
