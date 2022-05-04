@@ -2,7 +2,7 @@ require! 'prelude-ls': {
     split, take, join, lists-to-obj, sum, filter
     camelize, find, reject, find-index, compact
 }
-require! 'aea': {sleep, merge, clone, unix-to-readable, pack, VLogger}
+require! 'aea': {sleep, merge, clone, unix-to-readable, pack, VLogger, promisify}
 require! 'actors': {RactiveActor}
 require! 'sifter': Sifter
 require! 'dcs/lib/asciifold': asciifold
@@ -10,7 +10,7 @@ require! 'dcs/lib/asciifold': asciifold
 Ractive.components['data-table'] = Ractive.extend do
     template: require('./data-table.pug')
     isolated: yes
-    onrender: ->
+    onrender: ->>
         @set \readonly, if @partials.editForm then no else yes
 
         settings = @get \settings
@@ -27,12 +27,12 @@ Ractive.components['data-table'] = Ractive.extend do
             unless settings.name
                 throw 'data-table name is required'
 
-            if typeof! settings.save is \Function
-                settings.save = settings.save.bind this
-
-            if typeof! settings.on-create-view is \Function
-                    settings.on-create-view = settings.on-create-view.bind this
-
+            if typeof! settings.save in <[ Function AsyncFunction ]>
+                settings.save = promisify settings.save.bind this
+ 
+            if typeof! settings.on-create-view in <[ Function AsyncFunction ]>
+                settings.on-create-view = promisify settings.on-create-view.bind this
+                
             if settings.data?
                 unless typeof! settings.data is \Function
                     throw "data must be a function."
@@ -48,7 +48,7 @@ Ractive.components['data-table'] = Ractive.extend do
             unless settings.on-init
                 throw "on-init is required"
             else
-                settings.on-init = settings.on-init.bind this
+                settings.on-init = promisify settings.on-init.bind this
         catch
             @actor.send 'app.log.err', do
                 title: 'data-table component'
@@ -59,7 +59,7 @@ Ractive.components['data-table'] = Ractive.extend do
 
         # throw error if save function is used without defining beforehand
         unless settings.save
-            settings.save =  (ctx, curr, proceed) ~>
+            settings.save =  promisify (ctx, curr, proceed) ~>
                 proceed "No save function is defined!"
 
         # assign filters
@@ -120,11 +120,11 @@ Ractive.components['data-table'] = Ractive.extend do
                     @fire \closeRow
 
         events =
-            openRow: (ctx) ->
+            openRow: (ctx) ->>
                 if (@get \openingRow) or (@get \openedRow)
                     @logger.cwarn "do not allow multiple clicks"
                     return
-                <~ sleep 0
+                await sleep 0
                 index = ctx.get \.id
                 @logger.clog "Setting index to ", index
                 @set \clickedIndex, index
@@ -148,28 +148,26 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \curr, {}
 
                 # scroll to the newly opened row
-                <~ sleep 100
+                await sleep 100
                 offset = $ "tr[data-anchor='#{index}']" .offset!
                 $ 'html, body' .animate do
                     scroll-top: (offset?.top or 0) - (window.top-offset or 0)
                     , 200ms
 
-                err, curr <~ settings.on-create-view row-clone
-                if err
+                try 
+                    curr = await settings.on-create-view row-clone
+                    await @set \curr, curr
+                    await @set \origCurr, clone (@get \curr)
+                    @set \row, row-clone
+                    opening-dimmer.dimmer \hide
+                    @set \openingRow, no
+                    @set \openedRow, yes
+                    @set \openingRowMsg, ""
+                    @set \lastIndex, index
+                catch err 
                     console.error "error while creating view: ", err
-                    <~ @logger.error "Error while opening row: " + pack(err)
-                    @fire \closeRow
-                    return
-                if curr
-                    @set \curr, that
-                sleep 100ms, ~>
-                    @set \origCurr, clone (@get \curr)
-                @set \row, row-clone
-                opening-dimmer.dimmer \hide
-                @set \openingRow, no
-                @set \openedRow, yes
-                @set \openingRowMsg, ""
-                @set \lastIndex, index
+                    @logger.error "Error while opening row: " + pack(err), ~> 
+                        @fire \closeRow
 
             delete: ->
                 @set 'curr._deleted', yes
@@ -230,7 +228,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \editable, no
                 @set \editingDoc, null
 
-            addNew: (ctx) ->
+            addNew: (ctx) ->>
                 if @get \openedRow
                     return @logger.info do
                         closable: yes
@@ -239,28 +237,27 @@ Ractive.components['data-table'] = Ractive.extend do
                 @set \prepareAddingNew, yes
                 @set \row, {}
                 @set \editable, yes
-                err, template <~ settings.on-create-view null
-                unless err
-                    @set \curr, template
-                    sleep 100ms, ~>
-                        @set \origCurr, clone (@get \curr)
+                try 
+                    template = await settings.on-create-view null
+                    await @set \curr, template
+                    await @set \origCurr, clone (@get \curr)
                     @set \prepareAddingNew, no
                     @set \addingNew, yes
-                else
+                catch
                     return @logger.error do
                         closable: yes
                         message: err
 
-            save: (ctx) ->
+            save: (ctx) ->>
                 btn = ctx.component
                 try btn.state \doing
-                err <~ settings.save ctx, @get('curr')
-                if err
-                    try btn.error err
-                else
-                    @set \origCurr, @get('curr')
+                try 
+                    await settings.save ctx, @get('curr')
+                    await @set \origCurr, @get('curr')
                     @update \curr
                     try btn.state \done...
+                catch
+                    try btn.error err
 
             doSearchText: (ctx) !->
                 text = search-text-global
@@ -318,8 +315,8 @@ Ractive.components['data-table'] = Ractive.extend do
             @refresh!
 
         # run init function
-        <~ settings.on-init
-        @set \firstRunDone, yes
+        await settings.on-init!
+        await @set \firstRunDone, yes
 
     data: ->
         firstRunDone: no
