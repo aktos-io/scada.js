@@ -10,6 +10,7 @@ require! './copy-to-clipboard': {copyToClipboard}
 require! './file-download': {createDownload}
 require! './download'
 require! './html-encode-decode': {htmlEncode, htmlDecode}
+require! '../dcs/lib/promisify': {promisify, upgrade-promisify, callbackify}
 
 shajs = require 'sha.js'
 hash = (str) ->
@@ -34,7 +35,7 @@ is-nodejs = ->
 ext = (.split('.').pop!?.to-lower-case!)
 
 module.exports = {
-    sleep, clear-timer
+    sleep, clear-timer 
     create-download
     merge, based-on
     Logger,
@@ -47,4 +48,5 @@ module.exports = {
     htmlEncode, htmlDecode
     ext
     hash
+    promisify, upgrade-promisify, callbackify
 }

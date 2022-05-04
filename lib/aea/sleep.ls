@@ -1,3 +1,5 @@
-export sleep = (ms, f) -> set-timeout f, ms
-export after = sleep
-export clear-timer = (x) -> clear-interval x
+require! '../dcs/lib/sleep': {sleep, after, clear-timer}
+
+export sleep
+export after 
+export clear-timer
