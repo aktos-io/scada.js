@@ -11,6 +11,8 @@ Ractive.defaults.able = (permission) ->
         null
     permission `topic-match` permissions
 
+Ractive.defaults.isAble = Ractive.defaults.able
+
 Ractive.defaults.hasRoute = (route) ->
     routes = try
         @get \@global.session.routes
@@ -20,6 +22,8 @@ Ractive.defaults.hasRoute = (route) ->
 
 Ractive.defaults.unable = (...args) ->
     not Ractive.defaults.able.apply this, args
+
+Ractive.defaults.isUnable = Ractive.defaults.unable
 
 Ractive.defaults.loggedIn = ->
     if not @get('@global.session.token') or @get('@global.session.user') is \public

@@ -14,13 +14,15 @@ Types:
 
 * `permission`: Topic type.
 
-Usage:
+On GUI side:
 
-    {{#if able('some.permission')}}
+    {{#if isAble('some.permission')}}
         has this permission
     {{else}}
         don't have this permission
     {{/if}}
+
+
 
 # `parseCsv()`
 
