@@ -4,25 +4,6 @@ This is the documentation of available methods and classes by default in ScadaJS
 
 # Methods/functions
 
-### `able()`
-
-Available in: template, code.
-
-Description: Checks if current user has this permission.
-
-Types:
-
-* `permission`: Topic type.
-
-On GUI side:
-
-    {{#if isAble('some.permission')}}
-        has this permission
-    {{else}}
-        don't have this permission
-    {{/if}}
-
-
 
 # `parseCsv()`
 
