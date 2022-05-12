@@ -20,7 +20,12 @@ update-deps: __c
 update-app-version:
 	touch lib/app-version.json
 
+# Skip es-check with "make release ES_CHECK=skip
+ifeq ($(ES_CHECK),skip)
+release: __c __prepare_release_dir __production  __release_commit
+else
 release: __c __prepare_release_dir __production test-es6-compat __release_commit
+endif
 
 __production: __app
 	gulp --webapp $(APP) --production
