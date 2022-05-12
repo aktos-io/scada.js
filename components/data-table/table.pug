@@ -16,9 +16,11 @@ r-table(class!="        \
                     .right.floated.right.aligned.column 
                         +if('searchText')
                             .ui.large.label.orange.circular {{tableview_visible.length}}
-                        .ui.left.icon.input.large.action(class="{{#searching}}loading{{/}}")
+
+                        //- search bar 
+                        .ui.left.icon.input.large.action(class="{{#searching}}loading{{/}}" )
                             icon.search
-                            input(on-escape="@.set('searchText', '')" value="{{searchText}}") 
+                            input(on-escape="@.set('searchText', '')" value="{{searchText}}" style="display:table-cell; width:50%") 
                             .ui.button.icon(on-click="@.set('searchText', '')"): icon.remove
                             .ui.button.icon(on-click="doSearchText"): icon.search
                 
