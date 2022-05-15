@@ -6,6 +6,8 @@ radio-buttons(value="{{myvariable}}")
     radio-button World
 ```
 
+Note: In order to unite the buttons, encapsulate them by a `.ui.buttons` div.
+
 # Typical Usage
 
 ```pug
