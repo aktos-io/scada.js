@@ -220,6 +220,28 @@ livescript-transform = (file) ->
 
     return through2.obj write, flush 
 
+lson-transform = (file) ->
+    unless /.*\.lson$/.test(file)
+        return through2!
+        
+    contents = ''
+    write = (chunk, enc, next) !->
+        contents += chunk.to-string \utf-8
+        next!
+
+    flush = (cb) -> 
+        #console.log "lson file contents:", contents
+        try
+            filename = file.replace(/^.*[\\\/]/, '')
+            js = lsc.compile contents, {+json}
+            @push 'module.exports = ' + js
+            cb!
+        catch
+            log "Livescript compile error: ", e
+            @emit 'error', e
+
+    return through2.obj write, flush 
+
 get-version = (path, callback) ->
     if typeof! path is \Function
         callback = path
@@ -252,7 +274,7 @@ get-bundler = (entry) ->
             paths.client-webapps
             "#{__dirname}/node_modules"
             "#{__dirname}/.."
-        extensions: <[ .ls ]>
+        extensions: <[ .ls .lson ]>
         cache: {} # required for watchify 
         package-cache: {} # required for watchify 
         fullPaths: yes 
@@ -261,6 +283,7 @@ get-bundler = (entry) ->
 
     b
         ..transform livescript-transform
+        ..transform lson-transform
         ..transform ractive-preparserify
         ..transform versionify 
         #..transform browserify-optimize-js
