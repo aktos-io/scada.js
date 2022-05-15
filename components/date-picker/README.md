@@ -1,32 +1,26 @@
-Examples: https://jsbin.com/ruqakehefa/1/edit?html,js,output
+# API 
 
+Example usage of `date-picker` component:
 
+    date-picker(unix="{{ myUnixTime }}" display="{{ myDisplayTime }}" mode="date")
 
-example usage:
-
-    date-picker(unix="{{ myUnixTime }}" display="{{ myDisplayTime }}" mode="{{ timePickerMode }}")
-
-key `unix`: Time in UNIX format in milliseconds,
+`unix`: Observed value. Time in UNIX format in seconds. If `ms` attribute is declared, it's in milliseconds
 
     eg: "1468575910000" for "Fri, 15 Jul 2016 09:45:10 GMT"
 
-key `display`: In local time for the user
+`display`: Value in user's local time.
 
-    eg: "27.10.2016 13:15 (Istanbul)"
+    eg: "27.10.2016 13:15"
+	
+`button`: Sets the date-picker's appearance as a `button` instead of an `input`. 
 
-IMPLEMENT LATER:
+`min-date`: Set minimum date to be picked. "now" or a valid `new Date()` value.
 
-key `default-time-of-day`: Default time of day
+`mode`: "date", "time", "datetime", "year"
 
-key `inline`: Display as `inline`
+`inline`: Display selection popup as `inline` (always open)
 
-key `mode` : One of the following:
-
-    * "month and year"
-    * "month only"
-    * "range"
-    ...
-
+JS Examples: https://jsbin.com/ruqakehefa/1/edit?html,js,output
 
 Options:
 --------------------------------------------
