@@ -30,7 +30,7 @@ Ractive.components['r-table'] = Ractive.extend do
             updateColNames: ->
                 cols = $ @find 'thead > tr:last-of-type' .children!
                 if cols.length is 0
-                    console.error "Column names are not found, missing thead > tr > th?"
+                    return 
                 col-names = [..inner-text for cols]
                 $ @find 'tbody' .children \tr .each (i, row) ->
                     $ row .children \td .each (i, col) ->
