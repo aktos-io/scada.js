@@ -24,7 +24,7 @@ on:
         my-param = btn.get 'my-param'
         err, res <~ btn.actor.send-request "@foo.bar", {my: my-param}
         if err 
-            btn.state \error 
+            btn.error err 
         else 
             btn.state \done
 ```

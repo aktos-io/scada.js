@@ -27,7 +27,7 @@ Ractive.components['ack-button'] = Ractive.extend do
 
         set-button = (mode, message) ~>
             @set \state, mode
-            message = if message then " |!| #{message}" else ''
+            message = if message then " (!) #{message}" else ''
             @set \tooltip, "#{orig-tooltip}#{message}"
             unless mode is \doing
                 @doing-watchdog.go!
@@ -61,18 +61,18 @@ Ractive.components['ack-button'] = Ractive.extend do
 
         @state = (state) ~>
             switch state
-                when \done =>
+                | \done =>
                     set-button \done
 
-                when \done... =>
+                | \done... =>
                     set-button \done
                     <~ sleep 3000ms
                     set-button \normal
 
-                when \normal =>
+                | \normal =>
                     set-button \normal
 
-                when \doing =>
+                | \doing =>
                     set-button \doing
                     @set \selfDisabled, yes
                     timeout <~ @doing-watchdog.wait @button-timeout
@@ -81,6 +81,8 @@ Ractive.components['ack-button'] = Ractive.extend do
                         msg = "Button is timed out."
                         #logger.error msg
                         set-button \error, msg
+
+                |_ => logger.error "Undefined ack-button state: #{state}"
 
         @error = (msg, callback) ~>
             logger.error msg, callback
