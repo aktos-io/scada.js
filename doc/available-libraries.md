@@ -2,6 +2,14 @@
 
 This is the documentation of available methods and classes by default in ScadaJS.
 
+
+
+# lib/aea/defaults.ls
+
+See lib/aea/defaults.ls
+
+
+
 # Methods/functions
 
 
