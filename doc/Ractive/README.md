@@ -2,14 +2,6 @@
 
 These are tips and some key examples to serve as a cheatsheet in addition to [Ractive's own documentation](https://ractive.js.org/api/). 
 
-## Conditional event declaration
-
-To declare an event based on another condition:
-
-```pug
-input(value="{{hello}}")
-ack-button("{{#if hello}}on-click='@.global.alert()'{{/if}}") helloooo
-```
 
 ## Properly propagating `.hasListener()` behaviour
 
