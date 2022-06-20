@@ -49,3 +49,11 @@ Use `isLastClicked(rowId)`:
     .ui.basic.label(
         on-click="openRow" 
         class="{{#if isLastClicked(.id)}}orange{{/if}}") {{.id}}
+
+# Full screen 
+
+Any opened row may be displayed as full screen for printing purposes. To make a row go full screen, 
+
+1. Design your edit/view form with `{{print_mode}}` (`true`/`false`) variable to hide elements in print mode. 
+2. Use `fire('make_row_full_screen')` and `fire('make_row_normal')` events to go to and return from full page.
+3. `@global.fullScreen` variable is set to true while in full page. Use this variable to hide the main menu.

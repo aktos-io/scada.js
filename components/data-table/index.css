@@ -11,3 +11,28 @@
 .data-table-clickable-row {
     cursor: pointer;
 }
+
+.data-table-opened-row-full-screen {
+    /*border:  4px dashed red; */ /* for debugging purposes */
+    position:absolute;
+    top:0px;
+    left:0px;
+    overflow-x: hidden;
+    z-index: 999;
+    background-color: white;
+}
+
+.data-table-opened-row-full-screen  .data-table-opened-row {
+    width: 100vw;
+
+    -webkit-box-shadow: none;
+    -moz-box-shadow:    none;
+    box-shadow:         none;
+    border-radius: 0;
+}
+
+@media print {
+  .data-table-opened-row {
+     break-inside: avoid;
+  }
+}

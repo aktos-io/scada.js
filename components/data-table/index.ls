@@ -120,14 +120,14 @@ Ractive.components['data-table'] = Ractive.extend do
                     @fire \closeRow
 
         events =
-            openRow: (ctx) ->>
+            openRow: (ctx, id) ->>
                 if (@get \openingRow) or (@get \openedRow)
                     @logger.cwarn "do not allow multiple clicks"
                     return
                 await sleep 0
-                index = ctx.get \.id
+                index = id or ctx.get \.id
                 @logger.clog "Setting index to ", index
-                @set \clickedIndex, index
+                await @set \clickedIndex, index
 
                 if find (.id is index), @get \tableview
                     row = that
@@ -139,35 +139,57 @@ Ractive.components['data-table'] = Ractive.extend do
                     return @logger.cwarn "adding new, not opening any rows"
 
                 @logger.clog "Clicked to open #{index}"
-                @set \openingRow, yes
-                @set \openedRow, no
-                @set \openingRowMsg, "Opening #{index}..."
+                await @set \openingRow, yes
+                await @set \openedRow, no
+                await @set \openingRowMsg, "Opening #{index}..."
                 opening-dimmer.dimmer \show
                 row-clone = clone row
-                @set \_tmp, {}
-                @set \curr, {}
+                await @set \_tmp, {}
+                await @set \curr, {}
 
                 # scroll to the newly opened row
-                await sleep 100
+                await sleep 100ms
+                animation-duration = 200ms
                 offset = $ "tr[data-anchor='#{index}']" .offset!
                 $ 'html, body' .animate do
                     scroll-top: (offset?.top or 0) - (window.top-offset or 0)
-                    , 200ms
+                    , animation-duration
+                await sleep animation-duration
 
                 try 
                     curr = await settings.on-create-view row-clone
                     await @set \curr, curr
                     await @set \origCurr, clone (@get \curr)
-                    @set \row, row-clone
+                    await @set \row, row-clone
                     opening-dimmer.dimmer \hide
-                    @set \openingRow, no
-                    @set \openedRow, yes
-                    @set \openingRowMsg, ""
-                    @set \lastIndex, index
+                    await @set \openingRow, no
+                    await @set \openedRow, yes
+                    await @set \openingRowMsg, ""
+                    await @set \lastIndex, index
+                    ctx.resolve?!
                 catch err 
                     console.error "error while creating view: ", err
                     @logger.error "Error while opening row: " + pack(err), ~> 
                         @fire \closeRow
+                        ctx.reject?!
+
+            make_row_full_screen: (ctx) -> 
+                @set "data_table_class_row_full_screen", "__data-table-opened-row-full-screen__"
+                x = $ @find '.__data-table-opened-row-full-screen__' .0.clientHeight
+                @set "@global.fullScreenHeightStyle", "height: #{x}px" 
+                $('body').css('height', "#{x}px")
+                @set "print_mode", true
+                @set "@global.fullScreen", "data-table"
+                @set "data_table_class_row_full_screen", "data-table-opened-row-full-screen"
+                ctx.resolve?!
+
+            make_row_normal: (ctx) -> 
+                @set "print_mode", false
+                @set "@global.fullScreen", null
+                @set "@global.fullScreenHeightStyle", "" 
+                @set "data_table_class_row_full_screen", ""    
+                $('body').css('height', "")
+                ctx.resolve?!
 
             delete: ->
                 @set 'curr._deleted', yes
@@ -341,6 +363,8 @@ Ractive.components['data-table'] = Ractive.extend do
         searchText: ''
         sifter: null
         searching: no
+        data_table_class_row_full_screen: ""
+        print_mode: false
 
         is-editing-row: (index) ->
             state = no

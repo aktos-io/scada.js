@@ -66,10 +66,13 @@ r-table(class!="        \
                         {{#if isDisabled(.id)}}         \
                             disabled                    \
                         {{else}}                        \
-                            {{#if ! isEditingRow(.id) && ! isViewingRow(.id) && ! @this.partials.row}} \
+                            {{#if !(isEditingRow(.id) || isViewingRow(.id) || @this.partials.row)}} \
                                 data-table-clickable-row    \
                             {{/if}}                     \
                         {{/if}}                         \
+                        {{#if (isEditingRow(.id) || isViewingRow(.id))}} \
+                            {{data_table_class_row_full_screen}} \
+                        {{/if}} \
                         "
                     style!="                                                       \
                         {{#if                                                      \
@@ -80,7 +83,9 @@ r-table(class!="        \
                             (clickedIndex !== .id) }}                           \
                             display: none;                                          \
                         {{/if}}                                                     \
-                        {{#if .bgcolor}}background-color: {{.bgcolor}};{{/if}}"
+                        {{#if .bgcolor}}background-color: {{.bgcolor}};{{/if}}     \
+                        {{#if (isEditingRow(.id) || isViewingRow(.id))}} {{@global.fullScreenHeightStyle}} {{/if}} \
+                        "
                     )   
                     include ./table-row.pug
     r-foot
