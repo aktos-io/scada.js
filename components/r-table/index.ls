@@ -1,5 +1,3 @@
-require! aea: {sleep}
-
 Ractive.components['r-head'] = Ractive.extend do
     template: require('./r-head.pug')
 
