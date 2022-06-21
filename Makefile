@@ -1,6 +1,13 @@
-VENV_NAME := scadajs1
+DIR:=$(strip $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
+
+include $(DIR)/venv-version.txt
+VENV_NAME := $(VENV_NAME)
+$(eval VENV_PATH := $(shell echo "$$$(VENV_VERSION)"))
 APP := main
 CONFIG := ../dcs-modules.txt
+
+__test_variables:
+	@echo $(VENV_VERSION) path is set to $(VENV_PATH)
 
 .PHONY: test-es6-compat update-deps update-app-version
 
@@ -56,7 +63,7 @@ freeze-venv: __c
 	freeze ./requirements.txt
 
 create-venv:
-	$(if $(SCADAJS_1_ENV),$(error SCADAJS_1_ENV variable is set, use it instead: $(SCADAJS_1_ENV)))
+	$(if $(VENV_PATH),$(error $(VENV_VERSION) variable is set, use it instead: $(VENV_PATH)))
 	$(eval NODE_VERSION := $(shell echo `grep "^#node@" nodeenv.txt | cut -d@ -f2` | sed 's/^$$/system/'))
 	nodeenv --requirement=./nodeenv.txt --node=$(NODE_VERSION) --prompt="($(VENV_NAME))" --jobs=4 nodeenv
 
