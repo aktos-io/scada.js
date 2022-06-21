@@ -1,13 +1,7 @@
 DIR:=$(strip $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
 
-include $(DIR)/venv-version.txt
-VENV_NAME := $(VENV_NAME)
-$(eval VENV_PATH := $(shell echo "$$$(VENV_VERSION)"))
 APP := main
-CONFIG := ../dcs-modules.txt
-
-__test_variables:
-	@echo $(VENV_VERSION) path is set to $(VENV_PATH)
+CONFIG := $(DIR)../dcs-modules.txt
 
 .PHONY: test-es6-compat update-deps update-app-version
 
@@ -63,12 +57,24 @@ freeze-venv: __c
 	freeze ./requirements.txt
 
 create-venv:
-	$(if $(VENV_PATH),$(error $(VENV_VERSION) variable is set, use it instead: $(VENV_PATH)))
+ifndef SCADAJS_VENV_PATH
+	$(error SCADAJS_VENV_PATH can not be empty. Please provide an installation path to create a venv.)
+endif
+ifneq ($(wildcard $(SCADAJS_VENV_PATH)/.*),)
+	$(error SCADAJS_VENV_PATH is already created, use that instead: $(SCADAJS_VENV_PATH)))
+endif
+	$(eval VENV_NAME := $(shell basename $(SCADAJS_VENV_PATH)))
 	$(eval NODE_VERSION := $(shell echo `grep "^#node@" nodeenv.txt | cut -d@ -f2` | sed 's/^$$/system/'))
-	nodeenv --requirement=./nodeenv.txt --node=$(NODE_VERSION) --prompt="($(VENV_NAME))" --jobs=4 nodeenv
+	nodeenv --requirement=./nodeenv.txt --node=$(NODE_VERSION) --prompt="($(VENV_NAME))" --jobs=4 $(SCADAJS_VENV_PATH)
 
 use-venv:
 	./venv
+
+update-venv:
+	@echo "Virtual environment should not be updated. Create a new virtual environment"
+	@echo "with the new dependency versions and use that venv instead. If there is no "
+	@echo "breaking changes, simply backup the old venv and replace the new venv with "
+	@echo "the old one. This is the safest path to follow."
 
 __prepare_release_dir:
 	@( if [ ! -d release/$(APP) ]; then \

@@ -18,7 +18,7 @@
 3. Create the virtual environment and activate it:
     
         $ cd ./scada.js
-        $ make create-venv
+        $ make create-venv SCADAJS_VENV_PATH=/path/to/somewhere/scadajs1
         $ ./venv
         (scadajs1) $ 
 
