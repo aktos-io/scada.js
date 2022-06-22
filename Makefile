@@ -6,6 +6,7 @@ CONFIG := $(DIR)../dcs-modules.txt
 .PHONY: test-es6-compat update-deps update-app-version
 
 # Check if we are in a VIRTUAL_ENV:
+# the `NODE_VIRTUAL_ENV` variable is set by nodeenv after activating the environment.
 __c:
 	$(if $(NODE_VIRTUAL_ENV),,$($(warning ************  WARNING: NOT INSIDE A VIRTUAL ENV  ************)))
 
