@@ -144,7 +144,7 @@ Ractive.components['data-table'] = Ractive.extend do
                 await @set \openingRowMsg, "Opening #{index}..."
                 opening-dimmer.dimmer \show
                 row-clone = clone row
-                await @set \_tmp, {}
+                await @set \tmp, {}
                 await @set \curr, {}
 
                 # scroll to the newly opened row
@@ -358,7 +358,7 @@ Ractive.components['data-table'] = Ractive.extend do
         curr-page: 0
         opening-row: no
         opening-row-msg: ''
-        _tmp: {}
+        tmp: {}
         new_attachments: {}
         searchText: ''
         sifter: null

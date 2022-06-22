@@ -23,6 +23,12 @@ See https://aktos.io/st/#/showcase/data-table
 
 `readonly`: if data-table has no `editForm` partial or set `readonly` explicitly, then it is readonly
 
+`print_mode`: (Bool) Indicates that current view form is in print mode.
+
+`tmp`: (Object) A temporary variable that resets on every view-form creation.
+
+`this.actor`: Data-table's actor.
+
 # Partials (sections)
 
 header: Head section of data table
