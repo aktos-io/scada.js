@@ -1,26 +1,31 @@
 #!/bin/bash
-#
-# Description
-# -----------
-# Switch to appropriate (or given) Virtual Environment.
-# 1. Use the virtual environment given by the argument 
-# 2. If above is not possible, use the VENV "here" named "nodeenv"
-# 3. If above is not possible, use the VENV pointed by $SCADAJS_X_VENV variable
-#
 set -e -o pipefail
 safe_source () { [[ ! -z ${1:-} ]] && source $1; _dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; _sdir=$(dirname "$(readlink -f "$0")"); }; safe_source
 _sdir=$(dirname $(realpath ${BASH_SOURCE[0]}))
 
+# Use ./nodeenv if exists
 LOCAL_VENV="$_sdir/nodeenv"
-
 [[ -d "$LOCAL_VENV" ]] && SCADAJS_VENV_PATH=$LOCAL_VENV
 
+# Check if this script is sourced
 _sourced=
 if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
     #echo "script ${BASH_SOURCE[0]} is being sourced ..."
     _sourced="yes"
 else
     [[ -n ${1:-} ]] && SCADAJS_VENV_PATH="$1"
+fi
+
+# For Tmux VirtualEnv support
+tmux_get_var(){
+    local key=$1
+    [[ -n "$TMUX" ]] && tmux showenv | awk -F= -v key="$key" '$1==key {print $2}'
+}
+
+# Get environment variable from within the TMUX session
+venv=$(tmux_get_var "SCADAJS_VENV_PATH") || venv=""
+if [ -n "$venv" ]; then
+    SCADAJS_VENV_PATH="$venv"
 fi
 
 if [[ ! -d "$SCADAJS_VENV_PATH" ]]; then
@@ -34,9 +39,10 @@ if [[ ! -d "$SCADAJS_VENV_PATH" ]]; then
 
     Please do one of the followings:
 
-    1. Create a virtual environment in THIS directory and name it "nodeenv".
-    2. Set \$SCADAJS_VENV_PATH variable in your startup script.
-    3. Pass the virtual environment path as the first argument to this script.
+    1. Create a virtual environment in THIS directory and name it as "nodeenv".
+    2. Set \$SCADAJS_VENV_PATH environment variable beforehand.
+    3. Set \$SCADAJS_VENV_PATH environment variable in TMUX.
+    4. Pass the virtual environment path as the first argument to this script.
 
 EOL
     fi
