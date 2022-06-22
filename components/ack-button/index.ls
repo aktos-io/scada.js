@@ -114,6 +114,9 @@ Ractive.components['ack-button'] = Ractive.extend do
             <~ sleep 200ms
             @set \heartbeat, no
 
+        @send-request = (opts={}, msg, callback) ~> 
+            @actor.send-request (opts <<< {timeout: @button-timeout}), msg, callback
+
         if @get \auto
             logger.clog "auto firing ack-button!"
             @fire \_click

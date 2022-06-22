@@ -62,3 +62,7 @@ if err => btn?error "Some error message"
 btn?state \done...
 @logger.clog "changes done..."
 ```
+
+### Timeout
+
+Use `timeout=` attribute to set timeout. Unit is `ms`.
