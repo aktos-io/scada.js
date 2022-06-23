@@ -1,28 +1,57 @@
 require! './logger': {Logger}
 
-'''
+/*
 Usage
     vlog = new VLogger this
 
-    answer, data <~ vlog.yesno
+    answer, data <~ vlog.yesno do
         title: 'Yes or No'
         icon: 'map signs'
-        template: 'some ractive content'
         buttons:
             myaction:
-                ...
+                text: 'My Action 2'
+                color: \red
+                icon: \remove
             myaction2:
-                ...
-    /* answer:
+                text: 'My Action 2'
+                color: \red
+                icon: \remove
+
+    # Optionaly you can use a Ractive template 
+    # ------------------------------------------
+    action, data <~ vlog.yesno do
+        title: 'New Script'
+        icon: ''
+        closable: yes
+        template: '''
+            <span>Foo is : {{foo}}</span>
+            <div class="ui input">
+                <input value="{{filename}}" />
+            </div>
+            '''
+        data: 
+            foo: "hello"
+        buttons:
+            create:
+                text: 'Create'
+                color: \green
+            cancel:
+                text: \Cancel
+                color: \gray
+                icon: \remove
+
+    # Here you will receive `data.filename` from the input.
+
+
+
+    answer:
         type: String of action, 
             One of: keys of opts.buttons
             - or - 
             "hidden" (if closed without action)
 
-        data: Ractive.data if `template` is passed within the options
-    */
-
-'''
+    data: Ractive.data if `template` is passed within the options
+*/
 
 export class VLogger
     (@context, name)->
