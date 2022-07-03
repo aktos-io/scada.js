@@ -1,0 +1,7 @@
+@import "quill/dist/quill.core.css";
+@import "quill/dist/quill.snow.css";
+
+.ql-container {
+  overflow-x: scroll;
+  height: 500px; /* whatever you what */
+}

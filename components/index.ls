@@ -60,6 +60,7 @@ require! './icon'
 require! './btn'
 require! './s-input'
 require! './accordion'
+require! './rich-text'
 
 
 # decorators
