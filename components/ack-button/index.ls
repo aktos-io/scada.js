@@ -85,8 +85,9 @@ Ractive.components['ack-button'] = Ractive.extend do
                 |_ => logger.error "Undefined ack-button state: #{state}"
 
         @error = (msg, callback) ~>
-            logger.error msg, callback
-            set-button \error, (msg.message or msg)
+            err = msg?.message or msg 
+            logger.error err, callback
+            set-button \error, err
 
         @warn = (msg, callback) ~>
             try
