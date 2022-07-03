@@ -59,6 +59,7 @@ require! './login'
 require! './icon'
 require! './btn'
 require! './s-input'
+require! './accordion'
 
 
 # decorators
