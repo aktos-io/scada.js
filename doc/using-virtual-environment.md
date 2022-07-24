@@ -18,44 +18,37 @@
 3. Create the virtual environment and activate it:
     
         $ cd ./scada.js
-        $ make create-venv
+        $ make create-venv SCADAJS_VENV_PATH=/path/to/somewhere/scadajs1
         $ ./venv
         (scadajs1) $ 
 
 
 4. Install the Scada.js dependencies:
 
+        $ ./venv
         (scadajs1) $ make install-deps CONF=../dcs-modules.txt
         
-5. Optional: Move your nodeenv to a central location and use it between projects:
-        
-        dest=$HOME/nodeenv/scadajs-1  # or anywhere you like
-        mv nodeenv/ $dest  
-        echo "export SCADAJS_1_ENV='$dest'" >> ~/.bashrc
+# Using virtual environment from within Tmux
 
-   > Next time you can use: `./scada.js/venv`
-
-# Preparing Tmux
-
-1. Add the following in your `~/.profile` (or `~/.bashrc`):
+1. (Optional) Set the `SCADAJS_VENV_PATH` variable for the `TARGET_TMUX_SESSION`:
 
 ```bash
-# For Tmux VirtualEnv support
-tmux_get_var(){
-    local key=$1
-    [[ -n "$TMUX" ]] && tmux showenv | awk -F= -v key="$key" '$1==key {print $2}'
-}
-
-# activate the virtual environment if it is declared
-venv=$(tmux_get_var "VIRTUAL_ENV")
-if [ -n "$venv" ]; then
-    source $venv/bin/activate;
-fi
+tmux setenv -t ${TARGET_TMUX_SESSION} 'SCADAJS_VENV_PATH' /path/to/somewhere/scadajs1
 ```
 
-2. Set the `VIRTUAL_ENV` variable for the target session:
+2. On every new pane, manually activate your virtual environment by:
 
 ```bash
-tmux setenv -t ${SESSION_NAME} 'VIRTUAL_ENV' /path/to/virtualenv/
+$ ./scada.js/venv
+(scadajs1) $ 
+```
+
+By setting the Tmux's `SCADAJS_VENV_PATH` variable, `./scada.js/venv` script uses this 
+virtual environment by default. If you want to start a different virtual environment in your 
+new pane: 
+
+```bash
+$ ./scada.js/venv /path/to/your/other/virtual-environment
+(something) $ 
 ```
 

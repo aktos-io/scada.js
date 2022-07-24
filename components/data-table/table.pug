@@ -16,9 +16,11 @@ r-table(class!="        \
                     .right.floated.right.aligned.column 
                         +if('searchText')
                             .ui.large.label.orange.circular {{tableview_visible.length}}
-                        .ui.left.icon.input.large.action(class="{{#searching}}loading{{/}}")
+
+                        //- search bar 
+                        .ui.left.icon.input.large.action(class="{{#searching}}loading{{/}}" )
                             icon.search
-                            input(on-escape="@.set('searchText', '')" value="{{searchText}}") 
+                            input(on-escape="@.set('searchText', '')" value="{{searchText}}" style="display:table-cell; width:50%") 
                             .ui.button.icon(on-click="@.set('searchText', '')"): icon.remove
                             .ui.button.icon(on-click="doSearchText"): icon.search
                 
@@ -35,7 +37,7 @@ r-table(class!="        \
                                         
         +if('addingNew')
             r-row(class="active")
-                th(colspan="{{ colNames.length }}")
+                td(colspan="{{ colNames.length }}")
                     .data-table-opened-row(slide-in="true" slide-out="true")
                         +apply('editForm')
 
@@ -64,10 +66,13 @@ r-table(class!="        \
                         {{#if isDisabled(.id)}}         \
                             disabled                    \
                         {{else}}                        \
-                            {{#if ! isEditingRow(.id) && ! isViewingRow(.id) && ! @this.partials.row}} \
+                            {{#if !(isEditingRow(.id) || isViewingRow(.id) || @this.partials.row)}} \
                                 data-table-clickable-row    \
                             {{/if}}                     \
                         {{/if}}                         \
+                        {{#if (isEditingRow(.id) || isViewingRow(.id))}} \
+                            {{data_table_class_row_full_screen}} \
+                        {{/if}} \
                         "
                     style!="                                                       \
                         {{#if                                                      \
@@ -78,7 +83,9 @@ r-table(class!="        \
                             (clickedIndex !== .id) }}                           \
                             display: none;                                          \
                         {{/if}}                                                     \
-                        {{#if .bgcolor}}background-color: {{.bgcolor}};{{/if}}"
+                        {{#if .bgcolor}}background-color: {{.bgcolor}};{{/if}}     \
+                        {{#if (isEditingRow(.id) || isViewingRow(.id))}} {{@global.fullScreenHeightStyle}} {{/if}} \
+                        "
                     )   
                     include ./table-row.pug
     r-foot

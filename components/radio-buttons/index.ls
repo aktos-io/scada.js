@@ -103,3 +103,4 @@ Ractive.components['radio-button'] = Ractive.extend do
     template: require('./radio-button.pug')
     data: ->
         default: false
+        value: null

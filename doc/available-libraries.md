@@ -2,25 +2,16 @@
 
 This is the documentation of available methods and classes by default in ScadaJS.
 
+
+
+# lib/aea/defaults.ls
+
+See lib/aea/defaults.ls
+
+
+
 # Methods/functions
 
-### `able()`
-
-Available in: template, code.
-
-Description: Checks if current user has this permission.
-
-Types:
-
-* `permission`: Topic type.
-
-Usage:
-
-    {{#if able('some.permission')}}
-        has this permission
-    {{else}}
-        don't have this permission
-    {{/if}}
 
 # `parseCsv()`
 

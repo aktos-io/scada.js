@@ -5,8 +5,13 @@ require! 'prelude-ls': {
 }
 require! './packing': {clone}
 
-export unix-to-readable = (unix) ->
-    display = moment (new Date unix) .format "DD.MM.YYYY HH:mm"
+export unix-to-readable = (unix, format) ->
+    display = moment (new Date unix) .format switch format
+        | \date => "DD.MM.YYYY"
+        | \time => "HH:mm"
+        | \year => "YYYY"
+        |_ => "DD.MM.YYYY HH:mm"
+
     if display.match /date/ig
         '??'
     else

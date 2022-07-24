@@ -25,4 +25,5 @@ export NODE_MODULES=$(realpath "$_dir/../../node_modules")
 #cp $NODE_MODULES/ractive/ractive.min.js .
 
 # Create "extras" bundle
-browserify -t browserify-livescript z_ractive_extras.ls -o z_ractive_extras.js
+browserify="$_sdir/../../node_modules/browserify/bin/cmd.js"
+$browserify -t browserify-livescript z_ractive_extras.ls -o z_ractive_extras.js

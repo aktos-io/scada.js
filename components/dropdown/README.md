@@ -1,5 +1,7 @@
 # Data format
 
+Use `data=` attribute to pass the data source to the dropdown. Data format is as follows:
+
 ```ls
 [
     {id: "foo", name: "The Foo",
@@ -28,9 +30,13 @@ Use `object-data=` attribute to pass a simple object input, like:
 }
 ```
 
-`item.content` will be the selected value.
+`data=` is generated internally by `[{id: k, name: k, content: v} for k, v of object-data]`.
 
 ## Basic Usage
+
+`data`: Explained above
+`selected-key`: Selected item's key (`id` by default).
+`item`: Selected item as a whole object.
 
 ```pug
 dropdown(

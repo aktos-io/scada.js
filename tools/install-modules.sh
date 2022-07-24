@@ -92,11 +92,6 @@ while IFS='' read -r line || [[ -n "${line// }" ]]; do
         echo
         cd "$SCADAJS_ROOT/$module"
 
-        # remove package-lock.json
-        echo "(removing package-lock.json)"
-        rm package-lock.json 2> /dev/null
-        echo "package-lock=false"  > .npmrc
-
         npm install
     fi
 done < "$conf_file"

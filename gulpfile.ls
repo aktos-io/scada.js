@@ -190,6 +190,8 @@ my-buble = (input) ->
         es5 = buble.transform input, {
               transforms: {
                 classes: true
+                asyncAwait: false
+                forOf: false
               }
         }
     catch 
@@ -211,6 +213,28 @@ livescript-transform = (file) ->
             filename = file.replace(/^.*[\\\/]/, '')
             js = lsc.compile contents, {+bare, -header, map: 'embedded', filename}
             @push js.code
+            cb!
+        catch
+            log "Livescript compile error: ", e
+            @emit 'error', e
+
+    return through2.obj write, flush 
+
+lson-transform = (file) ->
+    unless /.*\.lson$/.test(file)
+        return through2!
+        
+    contents = ''
+    write = (chunk, enc, next) !->
+        contents += chunk.to-string \utf-8
+        next!
+
+    flush = (cb) -> 
+        #console.log "lson file contents:", contents
+        try
+            filename = file.replace(/^.*[\\\/]/, '')
+            js = lsc.compile contents, {+json}
+            @push 'module.exports = ' + js
             cb!
         catch
             log "Livescript compile error: ", e
@@ -250,7 +274,7 @@ get-bundler = (entry) ->
             paths.client-webapps
             "#{__dirname}/node_modules"
             "#{__dirname}/.."
-        extensions: <[ .ls ]>
+        extensions: <[ .ls .lson ]>
         cache: {} # required for watchify 
         package-cache: {} # required for watchify 
         fullPaths: yes 
@@ -259,6 +283,7 @@ get-bundler = (entry) ->
 
     b
         ..transform livescript-transform
+        ..transform lson-transform
         ..transform ractive-preparserify
         ..transform versionify 
         #..transform browserify-optimize-js
@@ -350,7 +375,7 @@ gulp.task \browserify, (done) !->
                     t0 = Date.now!
                     es5 = my-buble contents
                     file.contents = new Buffer.from es5
-                    log "#{filebase} is transpiled to ES5 in #{round-ms (Date.now! - t0)}s"
+                    log "#{filebase} is transpiled to ES6 in #{round-ms (Date.now! - t0)}s"
                 cb null, file
 
             # --- DO NOT CHANGE THE ORDER --- 

@@ -24,7 +24,7 @@ on:
         my-param = btn.get 'my-param'
         err, res <~ btn.actor.send-request "@foo.bar", {my: my-param}
         if err 
-            btn.state \error 
+            btn.error err 
         else 
             btn.state \done
 ```
@@ -62,3 +62,7 @@ if err => btn?error "Some error message"
 btn?state \done...
 @logger.clog "changes done..."
 ```
+
+### Timeout
+
+Use `timeout=` attribute to set timeout. Unit is `ms`.

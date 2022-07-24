@@ -1,4 +1,4 @@
-@import 'c3/*.min.css'
+@import 'c3/c3.min.css';
 
 .inverted .c3 .c3-axis-x path,
 .inverted .c3 .c3-axis-x line,

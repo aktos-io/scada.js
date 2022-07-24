@@ -26,7 +26,7 @@ Ractive.components['logger'] = Ractive.extend do
             #   title
             #   message
             # callback: is fired when modal is closed. parameter: action.
-            show-dimmed: (ev, msg, callback) ->
+            showDimmed: (ev, msg, callback) ->
                 # print same message to the console for debugging purposes
                 @logger.log msg
 

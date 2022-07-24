@@ -5,9 +5,6 @@ window.Ractive = require \ractive
 # Considered as a footgun, but enabling anyways:
 Ractive.defaults.resolveInstanceMembers = true
 
-# add sleep method globally
-window.sleep = sleep = (ms, f) -> set-timeout f, ms
-
 # Helper methods
 # ---------------------------------------------
 # hasAttribute by @evs-chris
@@ -48,6 +45,18 @@ Ractive.prototype.find-wid = (wid) ->
     for x in @find-all-components!
         if (x.get \wid) is wid
             return x
+
+
+# Usage in scripting side:
+#
+# @find-width-attr({wid: "my-widget"}).fire('click')
+Ractive.prototype.find-with-attr = (attr) ->
+    key = Object.keys attr .0
+    value = attr[key]
+    for x in @find-all-components!
+        if (x.get key) is value
+            return x
+
 
 # Usage in scripting side:
 #
