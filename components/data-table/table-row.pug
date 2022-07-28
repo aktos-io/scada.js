@@ -2,7 +2,7 @@
 //- opening dialog
 //- -----------------------------------------------
 +iff('isOpeningOrViewingRow(.id)')
-    td(colspan="{{ colNames.length }}")
+    td(colspan="{{ colNames.length }}" style="padding: 0;")
         .dimmable 
             .ui.inverted.dimmer(class-active="openingRow" fade-in)
                 .ui.active.large.text.loader
