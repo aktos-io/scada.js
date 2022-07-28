@@ -65,3 +65,14 @@ radio-buttons(
         enabled="{{value === 'foo'}}"
         ) Hello
     radio-button World
+```
+
+# Grouping buttons 
+
+```pug
+radio-buttons(value="{{tmp.report_type}}")
+    .ui.buttons
+        radio-button A
+        radio-button B
+        radio-button C
+```
