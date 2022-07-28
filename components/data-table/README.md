@@ -68,3 +68,17 @@ Any opened row may be displayed as full screen for printing purposes. To make a 
     .pusher(style="{{#if @global.fullScreen}}display: inline;{{/if}}")
         ...
     ```
+
+4. For your specific instance, remove last elements' bottom `margin`s and `padding`s. For example:
+
+    ```pug
+    @media print {
+      .ql-editor:last-of-type {
+         padding-bottom: 0;
+      }
+      .ui.segment:last-of-type {
+        padding-bottom: none;
+        margin-bottom: 0;
+      }
+    }
+    ```
