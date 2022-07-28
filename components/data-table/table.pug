@@ -6,7 +6,7 @@ r-table(class!="        \
         selectable      \
     {{/if}}             \
     {{class}}           \
-    " style="{{#print_mode}}border: none{{/}}")
+    " style="{{#print_mode}}border: none; width: 1px{{/}}")
     r-head                                
         r-row 
             th(colspan="{{ colNames.length }}")
@@ -84,7 +84,6 @@ r-table(class!="        \
                             display: none;                                          \
                         {{/if}}                                                     \
                         {{#if .bgcolor}}background-color: {{.bgcolor}};{{/if}}     \
-                        {{#if (isEditingRow(.id) || isViewingRow(.id))}} {{@global.fullScreenHeightStyle}} {{/if}} \
                         "
                     )   
                     include ./table-row.pug

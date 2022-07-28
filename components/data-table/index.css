@@ -4,8 +4,6 @@
     -moz-box-shadow:    0px 0px 5px 1px teal;
     box-shadow:         0px 0px 5px 1px teal;
     border-radius: 3px;
-    margin: -10px;
-
 }
 
 .data-table-clickable-row {
@@ -13,7 +11,7 @@
 }
 
 .data-table-opened-row-full-screen {
-    /*border:  4px dashed red; */ /* for debugging purposes */
+    /* border:  1px dashed red; /* for debugging purposes */
     position:absolute;
     top:0px;
     left:0px;

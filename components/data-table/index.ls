@@ -176,8 +176,7 @@ Ractive.components['data-table'] = Ractive.extend do
             make_row_full_screen: (ctx) -> 
                 @set "data_table_class_row_full_screen", "__data-table-opened-row-full-screen__"
                 x = $ @find '.__data-table-opened-row-full-screen__' .0.clientHeight
-                @set "@global.fullScreenHeightStyle", "height: #{x}px" 
-                $('body').css('height', "#{x}px")
+                $('body').css('height', "1px")
                 @set "print_mode", true
                 @set "@global.fullScreen", "data-table"
                 @set "data_table_class_row_full_screen", "data-table-opened-row-full-screen"
