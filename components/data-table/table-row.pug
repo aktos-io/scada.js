@@ -17,7 +17,7 @@
 //- edit form
 //- -----------------------------------------------
 +elif('isEditingRow(.id)')
-    td(colspan="{{ colNames.length }}")
+    td(colspan="{{ colNames.length }}" class="data-table-opened-td")
         .data-table-opened-row
             +apply('editForm')
 //- -----------------------------------------------

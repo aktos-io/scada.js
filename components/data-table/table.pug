@@ -36,7 +36,7 @@ r-table(class!="        \
                             #[btn.blue.mini(on-click="['setFilter', 'all']") #[i.remove.icon] Clear Filter]
                                         
         +if('addingNew')
-            r-row(class="active")
+            r-row(class="active data-table-opened-tr")
                 td(colspan="{{ colNames.length }}")
                     .data-table-opened-row(slide-in="true" slide-out="true")
                         +apply('editForm')
@@ -71,7 +71,7 @@ r-table(class!="        \
                             {{/if}}                     \
                         {{/if}}                         \
                         {{#if (isEditingRow(.id) || isViewingRow(.id))}} \
-                            {{data_table_class_row_full_screen}} \
+                            {{data_table_class_row_full_screen}} data-table-opened-tr \
                         {{/if}} \
                         "
                     style!="                                                       \

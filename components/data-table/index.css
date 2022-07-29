@@ -34,3 +34,10 @@
      break-inside: avoid;
   }
 }
+
+@media only screen and (max-width: 767px){
+    .ui.table:not(.unstackable) tr.data-table-opened-tr,
+    .ui.table:not(.unstackable) tr.data-table-opened-tr>td {
+        padding: 0 !important;
+    }
+}
