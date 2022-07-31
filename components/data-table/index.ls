@@ -119,6 +119,10 @@ Ractive.components['data-table'] = Ractive.extend do
                 else
                     @fire \closeRow
 
+        $(document).keyup (e) ~> 
+            if e.key is "Escape" # escape key maps to keycode `27`
+                @fire 'make_row_normal'
+
         events =
             openRow: (ctx, id) ->>
                 if (@get \openingRow) or (@get \openedRow)

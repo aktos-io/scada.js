@@ -29,11 +29,6 @@
     border-radius: 0;
 }
 
-@media print {
-  .data-table-opened-row {
-     break-inside: avoid;
-  }
-}
 
 @media only screen and (max-width: 767px){
     .ui.table:not(.unstackable) tr.data-table-opened-tr,
