@@ -3,7 +3,7 @@
      break-inside: avoid;
   }
 
-  tr:not(tr.data-table-opened-tr) {
+  table.data-table > tr:not(tr.data-table-opened-tr) {
     display: none;
   }
 
