@@ -4,6 +4,9 @@ require! './logger': {Logger}
 Usage
     vlog = new VLogger this
 
+    # Yes/No dialog
+    # ------------------------------------
+
     answer, data <~ vlog.yesno do
         title: 'Yes or No'
         icon: 'map signs'
@@ -19,7 +22,7 @@ Usage
 
     # Optionaly you can use a Ractive template 
     # ------------------------------------------
-    action, data <~ vlog.yesno do
+    answer, data <~ vlog.yesno do
         title: 'New Script'
         icon: ''
         closable: yes
@@ -43,14 +46,20 @@ Usage
     # Here you will receive `data.filename` from the input.
 
 
+    # ------------------------------------------------------
 
     answer:
         type: String of action, 
-            One of: keys of opts.buttons
+            One of: `key` of opts.buttons
             - or - 
             "hidden" (if closed without action)
 
     data: Ractive.data if `template` is passed within the options
+
+    closable: Allow "Escape" key to close the dialgo. Answer is set to "hidden".
+
+    # ------------------------------------------------------
+
 */
 
 export class VLogger

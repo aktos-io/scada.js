@@ -27,39 +27,16 @@ unless err
 
 # Visual Logger
 
-## Initialization
+## Yes/No and full screen info
 
-logger = new VLogger this, "My Source"
-
-## Yes/No Question
-
-```ls
-answer <~ logger.yesno do
-    title: "Discard changes?"
-    message: "If you select 'Drop Changes' all changes will be lost."
-    buttons:
-        drop:
-            color: \red
-            text: 'Drop Changes'
-            icon: \trash
-
-        cancel:
-            color: \green
-            text: 'Cancel'
-            icon: \undo
-
-if answer is \drop
-    # do something
-else
-    logger.cwarn "Cancelled discarding changes."
-```
+See comment sections of `vlogger.ls` file.
 
 ## Pnotify
 
 Example:
 
 ```ls
-PNotify.alert do
+mypopup = PNotify.alert do
     type: \error
     title: "Foo is Updated"
     text: """
@@ -69,6 +46,10 @@ PNotify.alert do
     modules:
         Buttons:
             closer: yes
+
+
+# If you want to close the popup programmatically:
+mypopup.close!
 ```
 
 # Modal 
