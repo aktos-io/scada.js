@@ -28,7 +28,9 @@ if [[ -f $conf_path ]]; then
 elif [[ -d $conf_path ]]; then
     conf_file="${conf_path}/$PREFERENCES"
 else
-    echo "Configuration file path is required."
+    echo "Configuration folder is required. $PREFERENCES file will be created under that folder."
+    echo "Example: "
+    echo "$(basename $0) ../"
     exit 5
 fi
 
