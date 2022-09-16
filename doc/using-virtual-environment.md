@@ -1,32 +1,15 @@
-# Creating Virtual Environment 
+# Using the virtual environment 
 
-> For Windows platform, follow [these instructions](./on-windows) first.
-
-1. Install `nodeenv`:
-
-        pip install nodeenv
-
-2. Download (or create) your project:
-
-        # download an existing project:
-        git clone --recursive https://github.com/aktos-io/scadajs-template myproject && cd myproject
-
-        # or create a project from scratch:
-        git init myproject && cd myproject 
-        git submodule add git submodule add https://github.com/aktos-io/scada.js
-
-3. Create the virtual environment and activate it:
+1. Create the virtual environment:
     
-        $ cd ./scada.js
         $ make create-venv SCADAJS_VENV_PATH=/path/to/somewhere/scadajs1
+		
+2. Activate and use it:
+
+		$ export SCADAJS_VENV_PATH=/path/to/somewhere/scadajs1
         $ ./venv
         (scadajs1) $ 
 
-
-4. Install the Scada.js dependencies:
-
-        $ ./venv
-        (scadajs1) $ make install-deps CONF=../dcs-modules.txt
         
 # Using virtual environment from within Tmux
 
