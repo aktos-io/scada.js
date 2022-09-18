@@ -9,6 +9,10 @@
 		$ export SCADAJS_VENV_PATH=/path/to/somewhere/scadajs1
         $ ./venv
         (scadajs1) $ 
+		
+### Using a virtual environment for all or some ScadaJS projects
+
+Set the `SCADAJS_VENV_PATH` to `/path/to/existing/virtual-environment` and use the `./scada.js/venv` script to activate the virtual environment as usual. 
 
         
 # Using virtual environment from within Tmux
