@@ -40,6 +40,13 @@ Ractive.components['ace-editorASYNC'] = Ractive.extend do
             @set \code, content
             getting := false
 
+        editor.on \focus, ~> 
+            @fire 'focus'
+
+        editor.on \blur, ~> 
+            @fire 'blur'
+
     data: ->
         theme: \light
         mode: \javascript
+        code: ''
