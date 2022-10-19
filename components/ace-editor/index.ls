@@ -33,12 +33,16 @@ Ractive.components['ace-editorASYNC'] = Ractive.extend do
             editor.clear-selection!
             setting := no
 
+        rate-limiter = null 
         editor.on \change, ~>
             getting := true
-            # remove trailing whitespaces
-            content = editor.get-value!.replace /[^\S\r\n]+$/gm, ''
-            @set \code, content
-            getting := false
+            if rate-limiter? => clear-timeout rate-limiter
+            rate-limiter := sleep 500ms, ~>
+                # remove trailing whitespaces
+                content = editor.get-value!.replace /[^\S\r\n]+$/gm, ''
+                @set \code, content
+                getting := false
+                rate-limiter := null
 
         editor.on \focus, ~> 
             @fire 'focus'
