@@ -32,10 +32,10 @@ Ractive.components['rich-text'] = Ractive.extend do
         observer = @observe 'value', (_new) -> 
             editor.clipboard.dangerouslyPasteHTML 0, _new
 
-        editor.on 'text-change', (delta, oldDelta, source) ~> 
+        editor.on 'text-change', (delta, oldDelta, source) ~>>
             if source is \user
                 observer.silence!
-                @set 'value', editor.root.innerHTML
+                await @set 'value', editor.root.innerHTML
                 observer.resume!
 
     data: -> 
