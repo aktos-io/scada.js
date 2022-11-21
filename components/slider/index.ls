@@ -4,6 +4,14 @@ require! 'aea': {merge, sleep}
 Ractive.components['slider'] = Ractive.extend do
     template: require('./index.pug')
     isolated: yes
+    data: -> 
+        min: 0 
+        max: 100
+        step: 0.1
+        direction: 'ltr'
+        value: 0
+        value2: null
+        disabled: no 
     onrender: ->
         slider = @find \.slider
 
@@ -12,8 +20,8 @@ Ractive.components['slider'] = Ractive.extend do
         else
             \simple
             
-        min = @get(\min) or 0
-        max = @get(\max) or 100
+        min = @get(\min) 
+        max = @get(\max) 
 
         opts =
             start: min
@@ -23,7 +31,7 @@ Ractive.components['slider'] = Ractive.extend do
                 max: max
             behaviour: \drag
             animate: no
-            step: 0.1
+            step: @get('step')
 
         if type is \range
             opts `merge` do
