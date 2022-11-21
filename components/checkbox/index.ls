@@ -15,8 +15,6 @@ checked="{{value}}" : where the value is one of
 '''
 
 require! 'aea/vlogger': {VLogger}
-require! 'dcs/src/signal': {Signal}
-require! 'actors/ractive-io-proxy-actor': {RactiveIoProxyClient}
 
 Ractive.components['checkbox'] = Ractive.extend do
     template: require('./index.pug')
@@ -47,13 +45,6 @@ Ractive.components['checkbox'] = Ractive.extend do
             set-visual state
             ack-button.fire \state, \done
 
-        if @get \topic
-            ack-button.actor.subscribe that
-            ack-button.actor.on \data, (msg) ~>
-                if that is msg.to
-                    set-state msg.data.curr
-            ack-button.actor.request-update that
-
         # set the default value on init
         unless @get \tristate
             # IMPORTANT: initial value CANNOT be applied to tristate elements.
@@ -67,48 +58,29 @@ Ractive.components['checkbox'] = Ractive.extend do
                 if typeof! (@get \initial) isnt \Null
                     set-state @get \initial
 
-        unless @get \route
-            # observe `checked`
-            @observe \checked, ((val) ~>
-                set-state val
-                ), {init: false}
+        # observe `checked`
+        @observe \checked, ((val) ~>
+            set-state val
+            ), {init: false}
 
-            # visually update on init
-            set-visual @get \checked
-        else
-            # if it has a "route", then it should watch this topic
-            # set initial state
-            @set 'check-state', \doing
-            io-client = new RactiveIoProxyClient this, {
-                timeout: 1000ms
-                route: @get \route
-                fps: @get \fps
-                }
-                ..on \error, (err) ~>
-                    ack-button.warn err
-                    console.error "Checkbox says: ", err
-                    @set \check-state, \error
-                    @set \checked, null
+        # visually update on init
+        set-visual @get \checked
 
-                ..on \read, (res) ~>
-                    #console.log "we read something: ", res
-                    set-state res.curr
+
+        @observe 'busy', (value) ~> 
+            @set \check-state, if value 
+                \doing            
+            else
+                @get \check-state
+
+        @observe 'error', (value) ~> 
+            @set \check-state, if value 
+                \error
+            else 
+                @get \check-state            
 
         @on do
             _statechange: (ctx) ->
-                if @get \route
-                    next-state = not @get \checked
-                    acceptable-delay = 200ms
-                    # do not show "doing" state for if all request-response
-                    # finishes within the acceptable delay
-                    done-writing = no
-                    x = sleep acceptable-delay, ~>
-                        unless done-writing
-                            @set 'check-state', \doing
-                    err <~ io-client.write next-state
-                    done-writing := yes
-                    unless err => try clear-timeout x
-
                 if (ctx.hasListener 'statechange') or @get \async
                     curr-check-state = @get \check-state
                     curr-checked = @get \checked
@@ -142,7 +114,7 @@ Ractive.components['checkbox'] = Ractive.extend do
                         #logger.clog "no error returned, setting checkbox to ", checked
                         set-state checked
 
-                unless (@get \route or ctx.has-listener \statechange or @get \async)
+                unless (ctx.has-listener \statechange or @get \async)
                     # if not realtime or not async, then consider this as a simple checkbox
                     curr-state = @get \checked
                     set-state not curr-state
@@ -152,4 +124,4 @@ Ractive.components['checkbox'] = Ractive.extend do
         'check-state': 'unchecked'
         transparent: no
         initial: null
-        fps: 20Hz  # maximum refresh rate on realtime connections
+        busy: no 
