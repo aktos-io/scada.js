@@ -59,25 +59,26 @@ Ractive.components['checkbox'] = Ractive.extend do
                     set-state @get \initial
 
         # observe `checked`
-        @observe \checked, ((val) ~>
+        @observe \checked, (val) ~>
             set-state val
-            ), {init: false}
 
         # visually update on init
         set-visual @get \checked
 
 
         @observe 'busy', (value) ~> 
+            if typeof! value in <[ Null Undefined ]> 
+                return 
             @set \check-state, if value 
                 \doing            
             else
                 @get \check-state
 
         @observe 'error', (value) ~> 
-            @set \check-state, if value 
-                \error
+            if value 
+                @set \check-state, \error
             else 
-                @get \check-state            
+                @set \check-state, if @get('checked') then \checked else \unchecked      
 
         @on do
             _statechange: (ctx) ->
@@ -124,4 +125,5 @@ Ractive.components['checkbox'] = Ractive.extend do
         'check-state': 'unchecked'
         transparent: no
         initial: null
-        busy: no 
+        busy: undefined
+        tooltip: ''

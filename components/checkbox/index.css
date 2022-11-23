@@ -2,3 +2,6 @@
     white-space:normal !important;
     word-wrap:break-word;
 }
+.aea-checkbox .icon {
+    padding-right:  8px;
+}
