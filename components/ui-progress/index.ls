@@ -13,14 +13,12 @@ Ractive.components['ui-progress'] = Ractive.extend do
             min: min
             showActivity: no
             autoSuccess: false
+            precision: 3
 
         indicator.progress "set duration", 1ms # setting to 0ms is not working
 
         @observe \value, (_new) ->>
             indicator.progress "update progress", +_new
-            if _new <= 0
-                # workaround for ignoring zero value
-                indicator.progress 'reset'
 
         @observe \max, (_new) ->
             indicator.progress "set total", +_new
