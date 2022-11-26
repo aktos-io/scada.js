@@ -67,12 +67,10 @@ Ractive.components['checkbox'] = Ractive.extend do
 
 
         @observe 'busy', (value) ~> 
-            if typeof! value in <[ Null Undefined ]> 
-                return 
             @set \check-state, if value 
                 \doing            
             else
-                @get \check-state
+                if @get('checked') then \checked else \unchecked
 
         @observe 'error', (value) ~> 
             if value 
@@ -125,5 +123,5 @@ Ractive.components['checkbox'] = Ractive.extend do
         'check-state': 'unchecked'
         transparent: no
         initial: null
-        busy: undefined
+        busy: false
         tooltip: ''
