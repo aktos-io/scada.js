@@ -10,6 +10,7 @@ export unix-to-readable = (unix, format) ->
         | \date => "DD.MM.YYYY"
         | \time => "HH:mm"
         | \year => "YYYY"
+        | \second => "DD.MM.YYYY HH:mm:ss"
         |_ => "DD.MM.YYYY HH:mm"
 
     if display.match /date/ig
