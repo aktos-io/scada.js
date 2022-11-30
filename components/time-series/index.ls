@@ -9,10 +9,11 @@ Ractive.components['time-seriesASYNC'] = Ractive.extend do
             style="
                 {{#if height}}height: {{height}};{{/if}}
                 {{#if width}}width: {{width}};{{/if}}
+                padding-left: {{@.get("y-width")}}px;
                 ">
             <div class="chart"></div>
-            <div class="y-axis"></div>
             <div class="slider"></div>
+            <div class="y-axis" style="width: {{@.get("y-width") + 30}}px; position: absolute; left: -9px; top: 0; bottom: 0"></div>
         </div>
         '
 
@@ -31,6 +32,8 @@ Ractive.components['time-seriesASYNC'] = Ractive.extend do
                   data: []
                   name: @get \name
                 ...
+            max: @get \y-max
+            min: @get \y-min
 
         graph.render();
 
@@ -46,6 +49,7 @@ Ractive.components['time-seriesASYNC'] = Ractive.extend do
             orientation: 'left',
             tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
             element: @find '.y-axis'
+            pixelsPerTick: 75
 
         y-axis.render!
 
@@ -63,47 +67,20 @@ Ractive.components['time-seriesASYNC'] = Ractive.extend do
                     graph: graph
                     element: slider-element
                 slider-made := yes
-
-        append-new = (_new) ~>
-            if typeof! _new isnt \Array
-                _new = [{key: (Date.now!), value: _new}]
-
-            serie = graph.series.0.data
-            if last serie
-                if (first _new .key) < that.x
-                    console.error "time-series error: can not add points in the middle."
-                    return
-
-            for point in _new
-                serie.push {x: point.key, y: point.value}
-                
-            # limit the number of points in the graph
-            limit = @get('data-limit')
-            if limit > 0
-                diff = serie.length - limit
-                if diff > 0 and @get()
-                    for to diff
-                        serie.shift!
-                    
+   
         @observe \data, (_new) ->
             if typeof! _new is \Array
-                x = graph
-                graph.series.0.data = [{x: ..key, y: ..value} for _new]
+                graph.series.0.data = _new
                 make-slider!
                 graph.update!
 
-        @observe \current, (curr) ->
-            if @get \live
-                #console.log "appending live data: ", curr
-                curr = parse-float curr
-                unless is-it-NaN curr
-                    append-new curr
-                    make-slider!
-                    graph.update!
-
     data: ->
+        name: 'Value'
         data: []
-        'data-limit': 100
+        'y-format': ''
+        'y-max': undefined
+        'y-min': 0
+        'y-width': 20
 
 
 /*
