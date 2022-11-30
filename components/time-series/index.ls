@@ -29,7 +29,7 @@ Ractive.components['time-seriesASYNC'] = Ractive.extend do
             interpolation: \step-after
             series:
                 * color: 'steelblue',
-                  data: []
+                  data: [{x: 0, y: 0}]
                   name: @get \name
                 ...
             max: @get \y-max
@@ -68,6 +68,9 @@ Ractive.components['time-seriesASYNC'] = Ractive.extend do
                     element: slider-element
                 slider-made := yes
    
+        make-slider!
+        graph.update! 
+        
         @observe \data, (_new) ->
             if typeof! _new is \Array
                 graph.series.0.data = _new
