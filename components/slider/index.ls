@@ -12,6 +12,7 @@ Ractive.components['slider'] = Ractive.extend do
         value: 0
         value2: null
         disabled: no 
+        error: no 
     onrender: ->
         slider = @find \.slider
 
@@ -56,6 +57,9 @@ Ractive.components['slider'] = Ractive.extend do
             opts `merge` that
 
         nouislider.create slider, opts
+
+        @observe \error, (error) -> 
+            $('.slider>.noUi-base').css("border", if error then "2px dashed red" else "")
         
         @observe \disabled, (disabled) ~> 
             if disabled
