@@ -59,7 +59,7 @@ Ractive.components['slider'] = Ractive.extend do
         nouislider.create slider, opts
 
         @observe \error, (error) -> 
-            $('.slider>.noUi-base').css("border", if error then "2px dashed red" else "")
+            $('.slider>.noUi-base').css("outline", if error then "3px dashed red" else "")
         
         @observe \disabled, (disabled) ~> 
             if disabled
