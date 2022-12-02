@@ -24,7 +24,12 @@ Ractive.components['ui-progress'] = Ractive.extend do
             indicator.progress "set total", +_new
             indicator.progress "update progress", +(@get \value)
 
+        @observe \error, (error) -> 
+            indicator.css("outline", if error then "3px dashed red" else "")
+        
+
     data: ->
         max: 100
         min: 0
         value: 0
+        error: null
