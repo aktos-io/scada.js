@@ -1,0 +1,21 @@
+.ui.button(class="{{class}}") 
+    | {{yield}}
+.ui.custom.popup.top.left.transition.hidden(class="{{_guid}}")
+    .ui.equal.width.centered.grid
+        .row
+            .column 
+                .ui.input
+                    input(type="{{~/['input-type']}}" value="{{new_value}}")
+        .row 
+            .column 
+                .ui.icon.button(on-click="cancel" class="{{#_unchanged}}disabled{{/}}") 
+                    i.close.icon 
+                    | 
+                    | Cancel
+            .column
+                .ui.icon.button.green(on-click="accept" class="{{#_unchanged}}disabled{{/}}") 
+                    i.check.icon
+                    |
+                    | Accept
+
+.ui.modal

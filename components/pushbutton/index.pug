@@ -11,7 +11,12 @@
             shadowed-button             \
         {{/if}}                         \
     "
-    style="{{style}}"
+    style="{{style}} {{#error}}; outline: 3px dashed red{{/}}"
     as-popup="tooltip"
     ) 
-    | {{yield}}
+    | 
+    +iff('pressed === null || pressed === undefined')
+        | ---
+    +else
+        | {{yield}}
+    +endif

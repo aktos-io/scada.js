@@ -1,34 +1,20 @@
-require! 'actors': {RactiveActor}
-
 Ractive.components['pushbutton'] = Ractive.extend do
     template: require('./index.pug')
     isolated: no
-    oninit: ->
-        @actor = new RactiveActor this, do
-            name: \pushbutton
-
     onrender: ->
         button = $ @find \.ui.button
-        name-state = (state) ~>
-            @set \state, if state
-                \pressed
-            else
-                \released
-
         turn = (state) ~>
-            @set \state, \doing
-            err <~ @fire \toggle, {@actor}, state
-            unless err
-                name-state state
-            else
-                @actor.send 'app.log.error', do
-                    title: 'Pushbutton Error'
-                    message: err
-                @actor.log.err err
+            switch Boolean(state)
+            | true => 
+                @set \state, \pressed 
+                @set \pressed, true 
+            | false => 
+                @set \state, \release 
+                @set \pressed, false 
 
-        @observe \pressed, (_new) ~>
-            if typeof! _new isnt \Undefined
-                name-state _new
+        @observe \pressed, (value) ~>
+            if value?
+                turn value
 
         # for desktop
         button.on \mousedown, ->
@@ -48,19 +34,9 @@ Ractive.components['pushbutton'] = Ractive.extend do
         button.on 'touchend', (e) ->
             turn off
 
-        @actor.on \data, (msg) ~>
-            curr = msg.data?.curr
-            if curr?
-                name-state curr
-                @set \pressed, curr
-
-        if @get \topic
-            @actor.subscribe that
-            #@actor.request-update that
-
 
     data: ->
         pressed: undefined
         state: \doing
-        'pressed-color': \red
-        'released-color': \green
+        'pressed-color': \green
+        'released-color': \gray

@@ -1,3 +1,6 @@
+Table headers are rotated 45 degree, so very small cells can be
+displayed in a very compact form.
+
 Usage:
 
 ```pug
