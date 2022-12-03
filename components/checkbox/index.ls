@@ -14,8 +14,6 @@ checked="{{value}}" : where the value is one of
 
 '''
 
-require! 'aea/vlogger': {VLogger}
-
 Ractive.components['checkbox'] = Ractive.extend do
     template: require('./index.pug')
     isolated: yes
@@ -29,62 +27,25 @@ Ractive.components['checkbox'] = Ractive.extend do
             @set \async, yes
 
     onrender: ->
-        logger = new VLogger this, \checkbox
-
         ack-button = @find-component \ack-button
-
-        set-visual = (state) ~>
-            # update initial state visually
-            if @get('tristate') and typeof! state in <[ Null Undefined ]>
-                @set \check-state, 'indetermined'
-            else
-                @set \check-state, if state then \checked else \unchecked
 
         set-state = (state) ~>
             @set \checked, state
-            set-visual state
+            @set \check_state, if state then \checked else \unchecked
             ack-button.fire \state, \done
-
-        # set the default value on init
-        unless @get \tristate
-            # IMPORTANT: initial value CANNOT be applied to tristate elements.
-            # ----------------------------------------------------------------
-            # because "undefined" value is considered as "indeterminate", thus
-            # specifying an initial value WILL cause an instable behaviour
-            # because when user WANTS to set the state as "indeterminate" explicitly,
-            # checkbox WOULD automatically CHANGE it to the initial value on next
-            # render.
-            if typeof! @get(\checked) in <[ Null Undefined ]>
-                if typeof! (@get \initial) isnt \Null
-                    set-state @get \initial
 
         # observe `checked`
         @observe \checked, (val) ~>
-            set-state val
-
-        # visually update on init
-        set-visual @get \checked
-
-
-        @observe 'busy', (value) ~> 
-            @set \check-state, if value 
-                \doing            
-            else
-                if @get('checked') then \checked else \unchecked
-
-        @observe 'error', (value) ~> 
-            if value 
-                @set \check-state, \error
-            else 
-                @set \check-state, if @get('checked') then \checked else \unchecked      
+            if val?
+                set-state val
 
         @on do
             _statechange: (ctx) ->
                 if (ctx.hasListener 'statechange') or @get \async
-                    curr-check-state = @get \check-state
+                    curr-check-state = @get \check_state
                     curr-checked = @get \checked
 
-                    @set \check-state, \doing
+                    @set \check_state, \doing
                     checked = @get \checked
 
                     #logger.clog "sending handler the next check state: from", checked, "to", (not checked)
@@ -101,14 +62,10 @@ Ractive.components['checkbox'] = Ractive.extend do
 
                     if err
                         # restore previous state
-                        @set \check-state, curr-check-state
+                        @set \check_state, curr-check-state
                         @set \checked, curr-checked
-                        if err is \TIMEOUT
-                            ctx.component.warn message: "Async checkbox is timed out."
-                            @set \check-state, \error
-                            return
-                        else
-                            logger.error err
+                        if err 
+                            @set \error, err 
                     else
                         #logger.clog "no error returned, setting checkbox to ", checked
                         set-state checked
@@ -119,9 +76,9 @@ Ractive.components['checkbox'] = Ractive.extend do
                     set-state not curr-state
 
     data: ->
-        checked: undefined
-        'check-state': 'unchecked'
+        checked: undefined  # Boolean, input value 
+        check_state: 'unchecked'
         transparent: no
-        initial: null
-        busy: false
+        busy: true
         tooltip: ''
+        error: null
