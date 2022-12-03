@@ -26,8 +26,9 @@ Ractive.components['input-button'] = Ractive.extend do
                     ..focus (.target.select!)
                     ..focus!
                     ..on 'keypress', (e) ~> 
-                        if e.which is ENTER_KEY=13
-                            @fire 'accept'
+                        keycode = e.keyCode or e.which
+                        if keycode is ENTER_KEY=13 then @fire 'accept'
+
                 orig-value := @get 'value'
                 @set 'new_value', orig-value
 
@@ -55,3 +56,5 @@ Ractive.components['input-button'] = Ractive.extend do
         new_value: null 
         _unchanged: no 
         'use-modal': no 
+        class: ''
+        style: ''
