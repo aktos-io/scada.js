@@ -18,9 +18,9 @@ Ractive.components['input-button'] = Ractive.extend do
         button.popup do 
             popup: popup
             on: 'click'
-            onShow: -> 
+            onShow: ~> 
                 if @get 'use-modal' then modal.modal 'show'
-                return true 
+                return not @get('readonly') 
 
             onVisible: (x) ~>>
                 input.on 'keypress', (e) ~> 
@@ -38,6 +38,9 @@ Ractive.components['input-button'] = Ractive.extend do
 
         @observe 'new_value', (new_value) -> 
             @set '_unchanged', (new_value is orig-value)
+
+        @observe 'value', (value) -> 
+            @set '_unchanged', (value is @get 'new_value')
 
         @on do
             accept: (ctx) -> 
@@ -59,3 +62,4 @@ Ractive.components['input-button'] = Ractive.extend do
         'use-modal': no 
         class: ''
         style: ''
+        readonly: false
