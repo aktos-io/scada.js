@@ -15,7 +15,7 @@ ack-button.aea-checkbox(
         i.icon.warning.sign
     +else
         +iff('busy')
-            .ui.active.mini.inverted.inline.loader
+            i.icon: .ui.active.mini.inverted.inline.loader
         +else
             +iff("check_state === 'checked'")
                 i.icon.checkmark.box
