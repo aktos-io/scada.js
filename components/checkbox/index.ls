@@ -79,6 +79,6 @@ Ractive.components['checkbox'] = Ractive.extend do
         checked: undefined  # Boolean, input value 
         check_state: 'unchecked'
         transparent: no
-        busy: true
+        busy: null
         tooltip: ''
         error: null
