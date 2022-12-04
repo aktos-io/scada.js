@@ -13,6 +13,7 @@ Ractive.components['input-button'] = Ractive.extend do
 
         orig-value = null 
         modal = button.parent().find '.ui.modal'
+        input = popup.find('input')
 
         button.popup do 
             popup: popup
@@ -21,15 +22,14 @@ Ractive.components['input-button'] = Ractive.extend do
                 if @get 'use-modal' then modal.modal 'show'
                 return true 
 
-            onVisible: (x) ~> 
-                input = popup.find('input')
-                    ..focus!.select!
-                    ..on 'keypress', (e) ~> 
+            onVisible: (x) ~>>
+                input.on 'keypress', (e) ~> 
                         keycode = e.keyCode or e.which
                         if keycode is ENTER_KEY=13 then @fire 'accept'
 
                 orig-value := @get 'value'
-                @set 'new_value', orig-value
+                await @set 'new_value', orig-value
+                input.focus!.select!
 
 
             onHide: (x) ~> 
@@ -45,9 +45,11 @@ Ractive.components['input-button'] = Ractive.extend do
                 @set 'value', new_value
                 orig-value := new_value
                 @set '_unchanged', (new_value is orig-value)
+                input.focus!.select!
 
             revert: (ctx) -> 
                 @set 'new_value', orig-value
+                input.focus!.select!
             
     data: -> 
         value: null
