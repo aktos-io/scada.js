@@ -1,5 +1,13 @@
-.ui.button(class="{{class}}" style="{{style}}") 
-    | {{yield}}
+//- Display element
++iff('inline')
+    .ui.label(class="{{class}} {{_guid}}_button" style="{{style}}; cursor: pointer;") {{yield}}
++else
+    .ui.button(class="{{class}} {{_guid}}_button" style="{{style}}") 
+        | {{yield}}
++endif
+
+//- Popup
+//- -----
 .ui.custom.popup.top.left.transition.hidden(class="{{_guid}}")
     .ui.equal.width.centered.grid
         .row

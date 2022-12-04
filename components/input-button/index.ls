@@ -8,7 +8,7 @@ Ractive.components['input-button'] = Ractive.extend do
     template: require './index.pug'
     isolated: no
     onrender: ->
-        button = $ @find \.button
+        button = $ @find ".#{@_guid}_button"
         popup = button.parent().find('.popup')
 
         orig-value = null 
@@ -23,18 +23,20 @@ Ractive.components['input-button'] = Ractive.extend do
                 return not @get('readonly') 
 
             onVisible: (x) ~>>
-                input.on 'keypress', (e) ~> 
-                        keycode = e.keyCode or e.which
-                        if keycode is ENTER_KEY=13 then @fire 'accept'
+                input.on 'keyup', (e) ~> 
+                    switch e.key
+                    | \Enter => @fire 'accept'
+                    | \Escape => button.popup 'hide'
 
                 orig-value := @get 'value'
                 await @set 'new_value', orig-value
                 input.focus!.select!
 
-
             onHide: (x) ~> 
                 if @get 'use-modal' then modal.modal 'hide'
                 return true
+
+        popup.show!
 
         @observe 'new_value', (new_value) -> 
             @set '_unchanged', (new_value is orig-value)
@@ -63,3 +65,4 @@ Ractive.components['input-button'] = Ractive.extend do
         class: ''
         style: ''
         readonly: false
+        inline: false
