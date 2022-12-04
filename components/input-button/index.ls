@@ -23,8 +23,7 @@ Ractive.components['input-button'] = Ractive.extend do
 
             onVisible: (x) ~> 
                 input = popup.find('input')
-                    ..focus (.target.select!)
-                    ..focus!
+                    ..focus!.select!
                     ..on 'keypress', (e) ~> 
                         keycode = e.keyCode or e.which
                         if keycode is ENTER_KEY=13 then @fire 'accept'
@@ -47,7 +46,7 @@ Ractive.components['input-button'] = Ractive.extend do
                 orig-value := new_value
                 @set '_unchanged', (new_value is orig-value)
 
-            cancel: (ctx) -> 
+            revert: (ctx) -> 
                 @set 'new_value', orig-value
             
     data: -> 

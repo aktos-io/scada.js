@@ -8,10 +8,10 @@
                     input(type="{{~/['input-type']}}" value="{{new_value}}")
         .row 
             .column 
-                .ui.icon.button(on-click="cancel" class="{{#_unchanged}}disabled{{/}}") 
-                    i.close.icon 
+                .ui.icon.button(on-click="revert" class="{{#_unchanged}}disabled{{/}}") 
+                    i.undo.icon 
                     | 
-                    | Cancel
+                    | Revert
             .column
                 .ui.icon.button.green(on-click="accept" class="{{#_unchanged}}disabled{{/}}") 
                     i.check.icon
