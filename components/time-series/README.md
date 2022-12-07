@@ -15,9 +15,9 @@ time-series(
     y-max="{{max}}"               <--- Optional: Hardcoded max value for Y-axis, default: dynamic (max in data)
     y-min="{{min}}"               <--- Optional: Hardcoded min value for Y-axis, default: 0
     y-width="10"                  <--- Optional: Y-axis width
+
+    live                          <--- Live data display, 
+                                       inserts a copy of last point with current timestamp at the end of the data 
+    size="200"                    <--- Limit the size of input data, omit for no limit
 )
 ```
-
-# Known Problems 
-
-This component is not fully responsive. It's width is calculated only on the first load.
