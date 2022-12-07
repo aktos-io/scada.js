@@ -101,7 +101,6 @@ Ractive.components['time-seriesASYNC'] = Ractive.extend do
             _last_point = graph.series.0.data[*-1]
             if _last_point?.tmp?
                 graph.series.0.data.pop!
-            console.log "pushing data"
             graph.series.0.data.push {y: (_last_point?.y or 0), x: Date.now!, +tmp}
             graph.update!
             await sleep 1000ms 
