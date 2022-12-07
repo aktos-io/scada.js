@@ -4,6 +4,7 @@
 checkbox(checked="{{mybool}}") My Checkbox
 ```
 
+
 # Async usage
 
 ```pug
@@ -19,3 +20,8 @@ myhandler = (ctx, new-state, proceed) ->
     # if error isnt null, then checkbox state will be restored
     # to the previous value.
 ```
+
+# Other attributes
+
+`mark-value="123"`: Set this value when the checkbox is in `checked` state.
+`clear-value="0"`: Set this value when the checkbox is in `unchecked` state.

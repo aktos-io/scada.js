@@ -30,14 +30,13 @@ Ractive.components['checkbox'] = Ractive.extend do
         ack-button = @find-component \ack-button
 
         set-state = (state) ~>
-            @set \checked, state
-            @set \check_state, if state then \checked else \unchecked
+            @set \checked, x=if state then @get "mark-value" else @get "clear-value"
+            @set \check_state, if Boolean(state) then \checked else \unchecked
             ack-button.fire \state, \done
 
         # observe `checked`
         @observe \checked, (val) ~>
-            if val?
-                set-state val
+            @set \check_state, if Boolean(val) then \checked else \unchecked
 
         @on do
             _statechange: (ctx) ->
@@ -70,9 +69,9 @@ Ractive.components['checkbox'] = Ractive.extend do
                         #logger.clog "no error returned, setting checkbox to ", checked
                         set-state checked
 
-                unless (ctx.has-listener \statechange or @get \async)
+                else
                     # if not realtime or not async, then consider this as a simple checkbox
-                    curr-state = @get \checked
+                    curr-state = Boolean @get \checked
                     set-state not curr-state
 
     data: ->
@@ -82,3 +81,5 @@ Ractive.components['checkbox'] = Ractive.extend do
         busy: null
         tooltip: ''
         error: null
+        'mark-value': 1
+        'clear-value': 0
