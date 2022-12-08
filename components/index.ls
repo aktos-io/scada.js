@@ -19,7 +19,6 @@ require! './rich-text'
 # -------------------------------
 require! './async'
 require! './overlap'
-require! './seven-segment'
 require! './drawing-area'
 require! './cache-asset'
 require! './pushbutton'
