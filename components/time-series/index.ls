@@ -80,13 +80,14 @@ Ractive.components['time-seriesASYNC'] = Ractive.extend do
                 graph.configure {dimensions?.width, dimensions?.height}
                 graph.render!
         
-        @observe \data, (_new) ->
+        h = @observe \data, (_new) ->
             if typeof! _new is \Array
                 # remove the temporary points (inserted below for the live data display)
                 i = _new.length
                 while i--
                     if _new[i].tmp?
                         _new.splice(i, 1);
+                        break
 
                 size = @get('size')
                 if +size > 0 
@@ -94,15 +95,19 @@ Ractive.components['time-seriesASYNC'] = Ractive.extend do
                         _new.shift!
 
                 graph.series.0.data = _new
+                if @get 'live'
+                    graph.series.0.data.push {y: _new[*-1].y, x: _new[*-1].x, +tmp}
                 graph.update!
 
-        # insert a temporary point at the end of array for live data simulation
+        # update the timestamp of the temporary point at the end of data for live data animation
         while @get('live')
-            _last_point = graph.series.0.data[*-1]
-            if _last_point?.tmp?
-                graph.series.0.data.pop!
-            graph.series.0.data.push {y: (_last_point?.y or 0), x: Date.now!, +tmp}
-            graph.update!
+            h.silence!
+            data = graph.series.0.data
+            if data[*-1]?.tmp
+                if Date.now! > data[*-1].x
+                    data[*-1].x = Date.now!
+                    graph.update!
+            h.resume!
             await sleep 1000ms 
 
     data: ->
