@@ -12,16 +12,16 @@
     .ui.equal.width.centered.grid
         .row
             .column 
-                .ui.input
-                    input(type="{{~/['input-type']}}" value="{{new_value}}")
+                .ui.input(class="{{#error}}error{{/}}")
+                    input(type="{{~/['input-type']}}" value="{{new_value}}" "{{#error}}disabled=''{{/}}")
         .row 
             .column 
-                .ui.icon.button(on-click="revert" class="{{#_unchanged}}disabled{{/}}") 
+                .ui.icon.button(on-click="revert" class="{{#_unchanged || error}}disabled{{/}}") 
                     i.undo.icon 
                     | 
                     | Revert
             .column
-                .ui.icon.button.green(on-click="accept" class="{{#_unchanged}}disabled{{/}}") 
+                .ui.icon.button.green(on-click="accept" class="{{#_unchanged || error}}disabled{{/}}") 
                     i.check.icon
                     |
                     | Accept

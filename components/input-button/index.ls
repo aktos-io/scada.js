@@ -36,8 +36,6 @@ Ractive.components['input-button'] = Ractive.extend do
                 if @get 'use-modal' then modal.modal 'hide'
                 return true
 
-        popup.show!
-
         @observe 'new_value', (new_value) -> 
             @set '_unchanged', (new_value is orig-value)
 
@@ -46,11 +44,12 @@ Ractive.components['input-button'] = Ractive.extend do
 
         @on do
             accept: (ctx) -> 
-                new_value = @get('new_value')
-                @set 'value', new_value
-                orig-value := new_value
-                @set '_unchanged', (new_value is orig-value)
-                input.focus!.select!
+                unless @get \error 
+                    new_value = @get('new_value')
+                    @set 'value', new_value
+                    orig-value := new_value
+                    @set '_unchanged', (new_value is orig-value)
+                    input.focus!.select!
 
             revert: (ctx) -> 
                 @set 'new_value', orig-value
@@ -66,3 +65,4 @@ Ractive.components['input-button'] = Ractive.extend do
         style: ''
         readonly: false
         inline: false
+        error: false
