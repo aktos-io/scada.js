@@ -12,7 +12,7 @@
     .ui.equal.width.centered.grid
         .row
             .column 
-                .ui.input(class="{{#error}}error{{/}}")
+                .ui.input(class="{{#error || _write_error}}error{{/}}")
                     input(type="{{~/['input-type']}}" value="{{new_value}}" "{{#error}}disabled=''{{/}}")
         .row 
             .column 
@@ -21,7 +21,7 @@
                     | 
                     | Revert
             .column
-                .ui.icon.button.green(on-click="accept" class="{{#_unchanged || error}}disabled{{/}}") 
+                .ui.icon.button(on-click="accept" class="{{#_unchanged || error}}disabled{{/}} {{#_write_error}}red{{else}}green{{/}}") 
                     i.check.icon
                     |
                     | Accept
