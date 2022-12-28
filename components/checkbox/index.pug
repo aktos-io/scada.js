@@ -2,8 +2,8 @@ ack-button.aea-checkbox(
     on-click="_statechange"
     class="{{ class }}                                  \
         {{#if transparent}}basic{{/if}}                 \
-        {{#if check_state === 'doing'}}labeled{{/if}}    \
-        icon                                            \
+            \
+        labeled icon                                            \
         "
     style="{{ style }} {{#if transparent}}background-color: transparent;{{/if}} text-align: left; "
     type="{{type}}"
@@ -15,7 +15,7 @@ ack-button.aea-checkbox(
         i.icon.warning.sign
     +else
         +iff('busy')
-            i.icon: .ui.active.mini.inverted.inline.loader
+            i.icon: .ui.active.mini.inverted.loader
         +else
             +iff("check_state === 'checked'")
                 i.icon.checkmark.box
