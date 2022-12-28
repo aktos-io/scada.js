@@ -1,18 +1,26 @@
 .ui.button(
     on-click="_click"
     title="{{tooltip}}"
-    class="                                                         \
-        {{ class }}                                                 \
-        ack-button                                                  \
-        {{#icon}}icon{{/}}                                          \
+    class="                                                          \
+        {{ class }}                                                  \
+        ack-button                                                   \
         {{#if state === 'doing' || state === 'done' || state === 'error' }}    \
-            {{#custom}}                                             \
-                labeled icon                                        \
-            {{/}}                                                   \
-        {{/if}}                                                     \
-        {{#if disabled || selfDisabled || !enabled}}disabled{{/if}} \
-        {{#if state === 'doing'}}disabled loading{{/if}}                    \
-        {{#active}}active{{/}}                                      \
+            {{^custom}}                                              \
+                {{^icon}}labeled{{/}} icon                           \
+            {{/}}                                                    \
+        {{else}}                                                     \
+            {{#icon}}icon{{/}}                                       \
+        {{/if}}                                                      \
+        {{#if disabled || selfDisabled || !enabled}}disabled{{/if}}  \
+        {{#if state === 'doing'}}                                    \
+            disabled                                                 \
+            {{#if !class.includes('labeled')}}                       \
+                {{#if icon || class.includes('icon')}}               \
+                    loading                                          \
+                {{/if}}                                              \
+            {{/if}}                                                  \
+        {{/if}}                                                      \
+        {{#active}}active{{/}}                                       \
         "
     type="{{ type }}"
     style="{{ style }} {{#transparent}}background-color: transparent;{{/}}"
