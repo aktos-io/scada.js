@@ -29,6 +29,7 @@ Ractive.components['time-seriesASYNC'] = Ractive.extend do
         graph = new Rickshaw.Graph do
             element: get-holder!
             interpolation: \step-after
+            stack: false
             series:
                 * color: 'steelblue',
                   data: [{x: 0, y: 0, +tmp}]
@@ -43,6 +44,7 @@ Ractive.components['time-seriesASYNC'] = Ractive.extend do
 
         x-axis = new Rickshaw.Graph.Axis.Time do
             graph: graph
+            # x-tick labels are removed by the CSS file
 
         x-axis.render!
 
@@ -61,14 +63,13 @@ Ractive.components['time-seriesASYNC'] = Ractive.extend do
             y-formatter: (x) -> displayFormat y-format, x .full-text
 
         slider-element = @find \.slider
-        slider-made = no
+        slider = null 
         make-slider = ->
-            return if slider-made
+            return if slider?
             if graph.series.0.data.length > 0
-                slider = new Rickshaw.Graph.RangeSlider.Preview do
+                slider := new Rickshaw.Graph.RangeSlider.Preview do
                     graph: graph
                     element: slider-element
-                slider-made := yes
    
         make-slider!
         graph.update! 
@@ -81,7 +82,7 @@ Ractive.components['time-seriesASYNC'] = Ractive.extend do
                 graph.render!
         
         h = @observe \data, (_new) ->
-            if typeof! _new is \Array
+            if (typeof! _new is \Array) and _new.length > 0
                 # remove the temporary points (inserted below for the live data display)
                 i = _new.length
                 while i--
@@ -95,7 +96,7 @@ Ractive.components['time-seriesASYNC'] = Ractive.extend do
                         _new.shift!
 
                 graph.series.0.data = _new
-                if @get 'live'
+                if @get('live')
                     graph.series.0.data.push {y: _new[*-1].y, x: _new[*-1].x, +tmp}
                 graph.update!
 
@@ -107,6 +108,7 @@ Ractive.components['time-seriesASYNC'] = Ractive.extend do
                 if Date.now! > data[*-1].x
                     data[*-1].x = Date.now!
                     graph.update!
+
             h.resume!
             await sleep 1000ms 
 
