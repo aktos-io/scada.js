@@ -1,0 +1,5 @@
+.input-button-enabled {
+}
+.input-button-enabled:hover {
+    filter: brightness(105%);
+}

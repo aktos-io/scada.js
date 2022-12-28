@@ -1,10 +1,10 @@
 //- Display element
-+iff('inline')
-    .ui.label(class="{{class}} {{_guid}}_button" style="{{style}}; cursor: {{#readonly}}not-allowed{{else}}pointer{{/}};") {{yield}}
-+else
-    .ui.button(class="{{class}} {{_guid}}_button" style="{{style}}") 
-        | {{yield}}
-+endif
+.ui.label(
+    class="{{class}} {{_guid}}_button {{#!readonly}}input-button-enabled{{/}}" 
+    style="{{style}}; cursor: {{#readonly}}not-allowed{{else}}pointer{{/}};"
+    
+    ) {{yield}}
+
 
 //- Popup
 //- -----
