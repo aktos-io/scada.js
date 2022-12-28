@@ -1,6 +1,6 @@
 //- Display element
 +iff('inline')
-    .ui.label(class="{{class}} {{_guid}}_button" style="{{style}}; cursor: pointer;") {{yield}}
+    .ui.label(class="{{class}} {{_guid}}_button" style="{{style}}; cursor: {{#readonly}}not-allowed{{else}}pointer{{/}};") {{yield}}
 +else
     .ui.button(class="{{class}} {{_guid}}_button" style="{{style}}") 
         | {{yield}}
