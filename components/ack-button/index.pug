@@ -4,28 +4,33 @@
     class="                                                         \
         {{ class }}                                                 \
         ack-button                                                  \
+        {{#icon}}icon{{/}}                                          \
         {{#if state === 'doing' || state === 'done' || state === 'error' }}    \
-            {{^custom}}                                             \
+            {{#custom}}                                             \
                 labeled icon                                        \
             {{/}}                                                   \
         {{/if}}                                                     \
         {{#if disabled || selfDisabled || !enabled}}disabled{{/if}} \
-        {{#if state === 'doing'}}disabled{{/if}}                    \
+        {{#if state === 'doing'}}disabled loading{{/if}}                    \
         {{#active}}active{{/}}                                      \
         "
     type="{{ type }}"
-    style="{{ style }} {{#if transparen}}background-color: transparent;{{/if}}"
+    style="{{ style }} {{#transparent}}background-color: transparent;{{/}}"
     )
     +unless('custom')
         +iff('state === "doing"')
             +iff('heartbeat')
                 i.icon.heart
             +else
-                i.icon(style="z-index: 99999") #[.ui.active.mini.inverted.loader]
+                i.icon(style="z-index: 99999")
+                    .ui.active.mini.inverted.loader
             +endif
         +elif('state === "done"')
             i.icon.checkmark
         +elif('state === "error"')
             i.warning.sign.icon
+        +else
+            +if('icon')
+                i.icon(class="{{icon}}")
         +endif
     | {{yield}}

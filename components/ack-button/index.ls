@@ -137,3 +137,4 @@ Ractive.components['ack-button'] = Ractive.extend do
         state: ''
         transparent: no
         heartbeat: no
+        icon: ""

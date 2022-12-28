@@ -66,3 +66,14 @@ btn?state \done...
 ### Timeout
 
 Use `timeout=` attribute to set timeout. Unit is `ms`.
+
+
+# Icon
+
+```pug
+ack-button(icon="download")
+//- or 
+ack-button.labeled(icon="download") Download
+//- or 
+ack-button.right.labeled(icon="right download") Download
+```
