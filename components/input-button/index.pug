@@ -9,6 +9,8 @@
 //- Popup
 //- -----
 .ui.custom.popup.top.left.transition.hidden(class="{{_guid}}")
+    +if('title')
+        .ui.small.dividing.header {{title}}
     .ui.equal.width.centered.grid
         .row
             .column 
