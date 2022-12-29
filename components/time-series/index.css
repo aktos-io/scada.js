@@ -44,15 +44,9 @@
 }
 
 /* fix for x label on hover */
-
-/*
 .rickshaw_graph .detail .x_label {
-    position: relative;
-    bottom: 40px;
-    display: inline-block;
+    display: none;
 }
-*/
-
 
 .x_tick .title {
         display: none;

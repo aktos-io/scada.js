@@ -59,8 +59,12 @@ Ractive.components['time-seriesASYNC'] = Ractive.extend do
 
         hover-detail = new Rickshaw.Graph.HoverDetail do
             graph: graph
-            x-formatter: (x) -> unix-to-readable x
-            y-formatter: (x) -> displayFormat y-format, x .full-text
+            formatter: (series, x, y) -> 
+                """
+                <span>#{series.name}: <b>#{displayFormat y-format, y .full-text}</b></span>
+                <br>
+                <span>#{unix-to-readable x}</span>
+                """
 
         slider-element = @find \.slider
         slider = null 
