@@ -1,5 +1,5 @@
 .ui.button(
-    on-click="_click"
+    "{{#if !readonly}}on-click='_click'{{/if}}"
     title="{{tooltip}}"
     class="                                                          \
         {{ class }}                                                  \
@@ -20,7 +20,7 @@
                 {{/if}}                                              \
             {{/if}}                                                  \
         {{/if}}                                                      \
-        {{#active}}active{{/}}                                       \
+        {{#if active || readonly}}active{{/if}}                                       \
         "
     type="{{ type }}"
     style="{{ style }} {{#transparent}}background-color: transparent;{{/}}"

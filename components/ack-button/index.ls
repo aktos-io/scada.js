@@ -140,3 +140,4 @@ Ractive.components['ack-button'] = Ractive.extend do
         icon: ""
         custom: null
         active: false
+        readonly: false

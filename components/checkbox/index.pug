@@ -5,11 +5,13 @@ ack-button.aea-checkbox(
             \
         labeled icon                                            \
         "
-    style="{{ style }} {{#if transparent}}background-color: transparent;{{/if}} text-align: left; "
+    style="{{ style }} {{#if transparent}}background-color: transparent;{{/if}} text-align: left; \
+            {{#readonly}}cursor: not-allowed;{{/}} "
     type="{{type}}"
     custom
     disabled="{{disabled}}"
     tooltip="{{tooltip}}"
+    readonly="{{readonly}}"
     )
     +iff('error')
         i.icon.warning.sign

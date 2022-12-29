@@ -83,3 +83,4 @@ Ractive.components['checkbox'] = Ractive.extend do
         error: null
         'mark-value': 1
         'clear-value': 0
+        readonly: false 
