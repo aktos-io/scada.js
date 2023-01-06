@@ -78,6 +78,5 @@ Ractive.components['input-button'] = Ractive.extend do
         class: ''
         style: ''
         readonly: false
-        inline: false
         error: false
         title: null

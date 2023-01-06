@@ -1,6 +1,8 @@
 # input-button
 
-This component displays a button and yields the content inside it. 
+This component displays content inside it, after applying the `class`.
+
+Recommended: Use `class="ui label"` for most of the cases. 
 
 When the button is clicked, a popup is opened in order to change the 
 value that is assigned by the `value=` attribute. 
@@ -9,11 +11,12 @@ value that is assigned by the `value=` attribute.
 
 ```pug
     input-button.teal(
-        value="{{value}}" 
-        style="{{#error}}outline: 1px dashed red;{{/}}"     <-- style of display element
-        class=                                              <-- class of display element
-        inline=                                             <-- optional, boolean
-        error=                                              <-- block changing the input
+        value="{{value}}"   <-- Value to be manipulated
+        style=""            <-- Style of display element, use {{#error}}outline: 1px dashed red;{{/}} for error indication. 
+        class="ui label"    <-- Class of display element
+        error=              <-- Sets the input element as "disabled" inside the popup
+        title=              <-- Title of the popup
+        readonly=           <-- Only display the "{{.text}}", do not open the popup on click
         
         ) {{.text}}
 ```
