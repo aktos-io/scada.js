@@ -17,6 +17,7 @@ value that is assigned by the `value=` attribute.
         error=              <-- Sets the input element as "disabled" inside the popup
         title=              <-- Title of the popup
         readonly=           <-- Only display the "{{.text}}", do not open the popup on click
+        step=               <-- Optional: Step for numeric input up/down buttons
         
         ) {{.text}}
 ```

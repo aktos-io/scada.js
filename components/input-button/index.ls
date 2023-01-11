@@ -13,18 +13,31 @@ Ractive.components['input-button'] = Ractive.extend do
 
         orig-value = null 
         modal = button.parent().find '.ui.modal'
-        input = popup.find('input')
+        input = popup.find('input.string_input')
 
-        h1 = @observe 'new_value', (new_value) -> 
-            @set '_unchanged', (new_value is orig-value)
+        o = [] # observers 
 
-        h2 = @observe 'value', (value) -> 
+        o.push @observe 'new_value', (value) ->> 
+            @set '_unchanged', (value is orig-value)
+
+        o.push @observe 'value', (value) ->>
+            o.for-each (.silence!)
             @set '_unchanged', (value is @get 'new_value')
             @set '_write_error', (value isnt @get 'new_value')
+            await @set '_live_value', value
+            o.for-each (.resume!)
 
+        o.push @observe '_live_value', (value) ->>  
+            o.for-each (.silence!)
+            await @set 'value', value 
+            await @set 'new_value', value
+            o.for-each (.resume!)
+
+        @observe 'error', (value) -> 
+            input.prop "disabled", value
+    
         # do not start observation on init
-        h1.silence!
-        h2.silence!
+        o.for-each (.silence!)
 
         button.popup do 
             popup: popup
@@ -42,15 +55,14 @@ Ractive.components['input-button'] = Ractive.extend do
 
                 orig-value := @get 'value'
                 await @set 'new_value', orig-value
+                await @set '_live_value', orig-value
                 input.focus!.select!
 
-                h1.resume!
-                h2.resume!
+                o.for-each (.resume!)
 
             onHide: (x) ~> 
                 if @get 'use-modal' then modal.modal 'hide'
-                h1.silence!
-                h2.silence!
+                o.for-each (.silence!)
 
                 return true
 
@@ -67,6 +79,9 @@ Ractive.components['input-button'] = Ractive.extend do
             revert: (ctx) -> 
                 @set 'new_value', orig-value
                 input.focus!.select!
+
+            close: (ctx) -> 
+                button.popup 'hide'
             
     data: -> 
         value: null
@@ -80,3 +95,7 @@ Ractive.components['input-button'] = Ractive.extend do
         readonly: false
         error: false
         title: null
+        step: 1
+        min: 0 
+        max: null 
+        _live_value: null
