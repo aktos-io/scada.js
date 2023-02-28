@@ -16,6 +16,7 @@ value that is assigned by the `value=` attribute.
         class="ui label"    <-- Class of display element
         error=              <-- Sets the input element as "disabled" inside the popup
         title=              <-- Title of the popup
+        tooltip=            <-- Tooltip of the popup (shown on mouse hover)
         readonly=           <-- Only display the "{{.text}}", do not open the popup on click
         
         ) {{.text}}

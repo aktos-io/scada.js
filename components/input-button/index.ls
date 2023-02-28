@@ -80,3 +80,4 @@ Ractive.components['input-button'] = Ractive.extend do
         readonly: false
         error: false
         title: null
+        tooltip: null
