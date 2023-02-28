@@ -82,3 +82,41 @@ Any opened row may be displayed as full screen for printing purposes. To make a 
       }
     }
     ```
+
+# `await`ing other events 
+
+Ensure that a `fire2` method defined globally, as follows: 
+
+```ls
+# Like Ractive.fire() but returns a Promise instead
+window.fire2 = (instance, event_name, ...args) ->
+    ctx = instance.getContext!
+    promise = new Promise (resolve, reject) ->
+        ctx.reject := reject
+        ctx.resolve := resolve
+
+    args.unshift event_name, ctx 
+    instance.fire.apply instance, args 
+    return promise
+```
+
+Define your `foo` event handler like this:
+
+        on: 
+            foo: (ctx) ->>
+
+              try
+                ...
+                // do your work here  
+
+                ctx.resolve?!
+
+              catch 
+                ctx.reject?!
+                  
+
+
+Use your event handler in any other event handler:
+
+        await fire2(this, 'openRow', 'report-11')
+
