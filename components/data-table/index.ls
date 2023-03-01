@@ -78,7 +78,7 @@ Ractive.components['data-table'] = Ractive.extend do
             tableview = @get \tableview
 
             # filter documents
-            tableview_filtered = filter-func tableview
+            tableview_filtered = filter-func tableview, ...(@get('selectedFilterArgs') or [])
             @set \tableview_filtered, tableview_filtered
             #console.log "Sifter now has: ", tableview_filtered
             @set \sifter, new Sifter(tableview_filtered)
@@ -201,9 +201,10 @@ Ractive.components['data-table'] = Ractive.extend do
                 editable = @get \editable
                 @set \editable, not editable
 
-            set-filter: (event, filter-name) ->
+            setFilter: (event, filter-name, ...args) ->
                 @logger.clog "DATA_TABLE: filter is set to #{filter-name}"
                 @set \selectedFilter, filter-name if filter-name
+                @set \selectedFilterArgs, args
                 @set \currPage, 0
                 @refresh!
 
@@ -316,7 +317,7 @@ Ractive.components['data-table'] = Ractive.extend do
                     else
                         # restore the last filtered content
                         _filter = @get(\selectedFilter)
-                        @get(\dataFilters)[_filter] @get \tableview
+                        @get(\dataFilters)[_filter] @get(\tableview), ...(@get('selectedFilterArgs') or [])
                     <~ set-immediate
                     @set \currPage, 0
                     @set \tableview_visible, tableview_filtered
@@ -357,7 +358,8 @@ Ractive.components['data-table'] = Ractive.extend do
         col-names: null
         addingNew: no
         view-func: null
-        selected-filter: \all
+        selectedFilter: \all
+        selectedFilterArgs: null
         curr-page: 0
         opening-row: no
         opening-row-msg: ''
