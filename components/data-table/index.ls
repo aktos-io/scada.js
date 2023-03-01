@@ -268,7 +268,7 @@ Ractive.components['data-table'] = Ractive.extend do
                     await @set \origCurr, clone (@get \curr)
                     @set \prepareAddingNew, no
                     @set \addingNew, yes
-                catch
+                catch err
                     return @logger.error do
                         closable: yes
                         message: err
