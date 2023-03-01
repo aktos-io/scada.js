@@ -19,7 +19,7 @@
         \
         {{#disabled}}disabled{{/}} \
         {{#inline}}inline{{/}} \
-        {{#button}}floating icon button{{/}} \
+        {{#button}}floating labeled icon button{{/}} \
         {{#compact}}compact floating{{/}}  \
         \
         {{#loading}}loading{{/}} \
@@ -27,7 +27,6 @@
         style="{{#readonly}}display: none{{/}}"
         )
         i.dropdown.icon
-        +space
         //-.default.text {{ placeholder | '----' }}
         +iff('nomatch')
             icon.exclamation.triangle 
@@ -36,20 +35,20 @@
             span.text -------
         +endif
         .menu
-            //turn off autocomplete
-            input(type="hidden" value="something")
             .ui.icon.search.input
                 i.search.icon
-                input(type="search" autocomplete="off" placeholder="Search...")
+                input(type="text" autocomplete="off" placeholder="Search...")
 
-            +each('dataReduced as item')
-                .item(
-                    data-value!="{{item[keyField]}}" 
-                    class-disabled="blacklist == item[keyField]"
-                    title="{{._tooltip}}"
-                    ) {{item[nameField]}}
+            .scrolling.menu
+                +each('dataReduced as item')
+                    .item(
+                        data-value!="{{item[keyField]}}" 
+                        class-disabled="blacklist == item[keyField]"
+                        title="{{._tooltip}}"
+                        ) {{item[nameField]}}
 
             +if('emptyReduced && ~/["allow-addition"]')
+                .divider
                 ack-button.green.fluid.bottom.attached(on-click="_add")
                     icon.plus {{~/['search-term']}}
 

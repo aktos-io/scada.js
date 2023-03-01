@@ -1,0 +1,16 @@
+.ui.floating.dropdown .menu{
+    max-width: 90vw;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+.ui.floating.dropdown .menu .item{
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ui.floating.dropdown .menu .ui.search.input{
+    max-width: 95%;
+  }
+  
