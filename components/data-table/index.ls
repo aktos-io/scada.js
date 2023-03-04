@@ -243,6 +243,9 @@ Ractive.components['data-table'] = Ractive.extend do
                     else
                         return op!
 
+                @fire \close_row_unattended
+
+            close_row_unattended: -> 
                 @set \addingNew, false
                 @fire \endEditing
                 @set \openedRow, no
