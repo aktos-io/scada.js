@@ -10,19 +10,46 @@ div(
 //- -----
 .ui.custom.popup.top.left.transition.hidden(class="{{_guid}}")
     +if('title')
-        .ui.small.dividing.header {{title}}
-    .ui.equal.width.centered.grid
-        .row
-            .column 
-                .ui.input(class="{{#error || _write_error}}error{{/}}")
-                    input(type="{{~/['input-type']}}" value="{{new_value}}" "{{#error}}disabled=''{{/}}")
-        .row 
-            .column 
+        .ui.small.header 
+            | {{title}}
+            .ui.right.floated.icon.button(on-click="close"): i.close.icon 
+
+        .ui.divider
+
+    .ui.form 
+        .field
+            label 
+            //- FLUID IS IMPORTANT: If the popup does not fit the viewport, it doesn't 
+                open. 
+
+                Do not make the input "large", because it rejects to open if it doesn't fit the width.
+            .ui.input(class="{{#error || _write_error}}error{{/}} fluid")
+                input.string_input(
+                    type="{{~/['input-type']}}" 
+                    value="{{new_value}}" 
+                    step="{{step || 1}}"
+                    )
+        +if('~/["input-type"] === "number" && max !== null')
+            .field 
+                label Live change:
+                input(
+                    type="range"
+                    value="{{_live_value}}" 
+                    min="{{min || 0}}"
+                    max="{{max}}"
+                    step="{{step}}"
+                    style="width: 100%"
+                    )
+
+        .fields
+            .field 
+                label 
                 .ui.icon.button(on-click="revert" class="{{#_unchanged || error}}disabled{{/}}") 
                     i.undo.icon 
                     | 
                     | Revert
-            .column
+            .field
+                label
                 .ui.icon.button(on-click="accept" class="{{#_unchanged || error}}disabled{{/}} {{#_write_error}}red{{else}}green{{/}}") 
                     i.check.icon
                     |

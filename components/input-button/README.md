@@ -18,6 +18,10 @@ value that is assigned by the `value=` attribute.
         title=              <-- Title of the popup
         tooltip=            <-- Tooltip of the popup (shown on mouse hover)
         readonly=           <-- Only display the "{{.text}}", do not open the popup on click
+        step=               <-- Optional: Step for numeric input up/down buttons
+
+        max=                <-- if present, a live data manipulation slider will be displayed.
+        min=                <-- optional
         
         ) {{.text}}
 ```
