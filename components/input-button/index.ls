@@ -3,6 +3,9 @@
  input-button(value="{{value}}") {{{{.format(.value).fullText}}}}
 
 */
+round = (x, digits=1) -> 
+    parseFloat(Math.round(x * 10**digits) / 10**digits).toFixed(digits)
+
 
 Ractive.components['input-button'] = Ractive.extend do
     template: require './index.pug'
@@ -15,12 +18,16 @@ Ractive.components['input-button'] = Ractive.extend do
         modal = button.parent().find '.ui.modal'
         input = popup.find('input.string_input')
 
+        _round = (x) ~> round x, @get('decimal')
+        @set '_round', _round
+
         o = [] # observers 
 
         o.push @observe 'new_value', (value) ->> 
-            @set '_unchanged', (value is orig-value)
+            @set '_unchanged', ((value |> _round) is (orig-value |> _round))
 
         o.push @observe 'value', (value) ->>
+            value |>= _round  
             o.for-each (.silence!)
             @set '_unchanged', (value is @get 'new_value')
             @set '_write_error', (value isnt @get 'new_value')
@@ -28,6 +35,7 @@ Ractive.components['input-button'] = Ractive.extend do
             o.for-each (.resume!)
 
         o.push @observe '_live_value', (value) ->>  
+            value |>= _round  
             o.for-each (.silence!)
             await @set 'value', value 
             await @set 'new_value', value
@@ -53,7 +61,7 @@ Ractive.components['input-button'] = Ractive.extend do
                     | \Enter => @fire 'accept'
                     | \Escape => button.popup 'hide'
 
-                orig-value := @get 'value'
+                orig-value := @get 'value' |> _round 
                 await @set 'new_value', orig-value
                 await @set '_live_value', orig-value
                 input.focus!.select!
@@ -69,10 +77,10 @@ Ractive.components['input-button'] = Ractive.extend do
         @on do
             accept: (ctx) -> 
                 unless @get \error 
-                    new_value = @get('new_value')
+                    new_value = @get('new_value') |> _round 
                     @set 'value', new_value
                     orig-value := new_value
-                    @set '_unchanged', (new_value is orig-value)
+                    @set '_unchanged', true
                     @set '_write_error', false
                     input.focus!.select!
 
@@ -96,7 +104,10 @@ Ractive.components['input-button'] = Ractive.extend do
         error: false
         title: null
         tooltip: null
-        step: 1
+        step: null
         min: 0 
         max: null 
         _live_value: null
+        unit: null
+        decimal: 3
+        _round: null 

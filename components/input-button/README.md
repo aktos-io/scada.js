@@ -22,6 +22,13 @@ value that is assigned by the `value=` attribute.
 
         max=                <-- if present, a live data manipulation slider will be displayed.
         min=                <-- optional
+        unit=               <-- optional, right labeled unit. 
+
+        decimal="3"         <-- optional. Type: Number. Decimal points, default: 3
         
         ) {{.text}}
 ```
+
+# Default text 
+
+If the content (`{{.text}}` in the example) is omitted, "`{{value}} {{unit}}`" is used by default.

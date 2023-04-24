@@ -3,7 +3,12 @@ div(
     class="{{class}} {{_guid}}_button {{#!readonly}}input-button-enabled{{/}}" 
     style="{{style}}; cursor: {{#readonly}}not-allowed{{else}}pointer{{/}};"
     title="{{tooltip}}"
-    ) {{yield}}
+    ) 
+    +iff('partials.content')
+        | {{yield}}
+    +else
+        | {{_round(value)}} {{unit}}
+    +endif
 
 
 //- Popup
@@ -19,25 +24,30 @@ div(
     .ui.form 
         .field
             label 
+            // Keyboard Input 
+            // -----------------------------------------------------------------------------
             //- FLUID IS IMPORTANT: If the popup does not fit the viewport, it doesn't 
                 open. 
 
                 Do not make the input "large", because it rejects to open if it doesn't fit the width.
-            .ui.input(class="{{#error || _write_error}}error{{/}} fluid")
+            .ui.input(class="{{#error || _write_error}}error{{/}} fluid {{#unit}}right labeled{{/}}")
                 input.string_input(
                     type="{{~/['input-type']}}" 
                     value="{{new_value}}" 
-                    step="{{step || 1}}"
+                    step="{{step || 1 / Math.pow(10,decimal)}}"
                     )
+                +if('unit')
+                    .ui.basic.label {{unit}}
+
         +if('~/["input-type"] === "number" && max !== null')
             .field 
                 label Live change:
                 input(
                     type="range"
-                    value="{{_live_value}}" 
+                    value="{{_round(_live_value)}}" 
                     min="{{min || 0}}"
                     max="{{max}}"
-                    step="{{step}}"
+                    step="{{step || 1 / Math.pow(10,decimal)}}"
                     style="width: 100%"
                     )
 
