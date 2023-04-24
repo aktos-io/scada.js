@@ -52,3 +52,5 @@ window.unix-to-readable = Ractive.defaults.unix-to-readable = unix-to-readable
 require! 'on-idle'
 window.on-idle = on-idle
 require './ractive-synchronizer' .get-synchronizer
+
+Ractive.defaults.oneDecimal = window.oneDecimal
