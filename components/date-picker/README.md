@@ -20,6 +20,12 @@ Example usage of `date-picker` component:
 
 `inline`: Display selection popup as `inline` (always open)
 
+`on-change`: `function(ctx, date::momentjs_Obj)`: The event that is fired on date change. 
+
+  Handler usage example: 
+  
+      (date) -> @set 'something', date.clone!.add(1, 'Y').value-of! 
+
 JS Examples: https://jsbin.com/ruqakehefa/1/edit?html,js,output
 
 Options:

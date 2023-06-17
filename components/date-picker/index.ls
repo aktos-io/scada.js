@@ -1,4 +1,5 @@
 require! 'aea/formatting': {unix-to-readable}
+require! moment
 
 Ractive.components['date-picker'] = Ractive.extend do
     isolated: yes
@@ -36,6 +37,7 @@ Ractive.components['date-picker'] = Ractive.extend do
                 unix = unix-ms / conv
                 @set \unix, unix
                 @set \buttonText, unix-to-readable unix-ms
+                @fire 'change', {}, moment(unix)
 
         @observe \unix, (unix) ->
             try
