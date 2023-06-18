@@ -18,7 +18,12 @@ Ractive.components['input-button'] = Ractive.extend do
         modal = button.parent().find '.ui.modal'
         input = popup.find('input.string_input')
 
-        _round = (x) ~> round x, @get('decimal')
+        _round = (x) ~> 
+            if @get('input-type') is 'number'
+                round x, @get('decimal')
+            else 
+                x 
+                
         @set '_round', _round
 
         o = [] # observers 
