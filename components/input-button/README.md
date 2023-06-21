@@ -25,6 +25,7 @@ value that is assigned by the `value=` attribute.
         unit=               <-- optional, right labeled unit. 
 
         decimal="3"         <-- optional. Type: Number. Decimal points, default: 3
+        close-on-accept     <-- closes the dialog on value accept
         
         ) {{.text}}
 ```

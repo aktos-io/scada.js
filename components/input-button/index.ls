@@ -88,6 +88,8 @@ Ractive.components['input-button'] = Ractive.extend do
                     @set '_unchanged', true
                     @set '_write_error', false
                     input.focus!.select!
+                    if @get 'close-on-accept'
+                        button.popup 'hide'
 
             revert: (ctx) -> 
                 @set 'new_value', orig-value
@@ -116,3 +118,4 @@ Ractive.components['input-button'] = Ractive.extend do
         unit: null
         decimal: 3
         _round: null 
+        'close-on-accept': false
