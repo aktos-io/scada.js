@@ -18,6 +18,17 @@ Ractive.components['input-button'] = Ractive.extend do
         modal = button.parent().find '.ui.modal'
         input = popup.find('input.string_input')
 
+        if not @get('decimal')?  and @get('step')?
+            decimal = ((@get('step').to-string!.split '.').1 or '') .length
+            @set('decimal', decimal)
+                
+        if not @get('step')? and @get('decimal')?
+            @set('step', 1/@get('decimal'))
+
+        if not @get('step')? and not @get('decimal')?
+            @set('decimal', 0)
+            @set('step', 1)
+
         _round = (x) ~> 
             if @get('input-type') is 'number'
                 round x, @get('decimal')
@@ -44,6 +55,7 @@ Ractive.components['input-button'] = Ractive.extend do
             o.for-each (.silence!)
             await @set 'value', value 
             await @set 'new_value', value
+            await @set '_live_value', value # re-assign the rounded value
             o.for-each (.resume!)
 
         @observe 'error', (value) -> 
@@ -116,6 +128,6 @@ Ractive.components['input-button'] = Ractive.extend do
         max: null 
         _live_value: null
         unit: null
-        decimal: 3
+        decimal: null
         _round: null 
         'close-on-accept': false
