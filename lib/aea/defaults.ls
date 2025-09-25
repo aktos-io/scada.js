@@ -21,7 +21,7 @@ if cons-name isnt \Hello
 # End of TEST 
 
 # Cleanup objects
-export cleanup = window.cleanup = (o) !->
+export cleanup_object = (o) !->
     switch typeof! o
     | \Array => o.length = 0
     | \Object =>

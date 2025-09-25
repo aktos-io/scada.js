@@ -38,7 +38,8 @@ Ractive.components['radio-buttons'] = Ractive.extend do
             for btn in buttons
                 true-color = (btn.get \true-color) or gtrue-color
                 false-color = (btn.get \false-color) or gfalse-color
-                btn-val = if btn.get \value => that else btn.partials.content.0
+                btn-val = if btn.get(\value)? => btn.get('value') else btn.partials.content.0
+                #console.log "btn-val is: ", btn-val, "new-val is: ", new-val
                 if btn-val is new-val
                     @set \value, new-val
                     btn.set \colorclass, true-color
@@ -55,10 +56,12 @@ Ractive.components['radio-buttons'] = Ractive.extend do
 
         @on do
             "*.init": (ctx, instance) ~>
+                unless instance.component.name is 'radio-button'
+                    return 
                 @push \buttons, instance
                 instance.on \click, (ctx2) !~>
-                    new-val = if ctx2.get \value
-                        that
+                    button-value = if ctx2.get(\value)?
+                        ctx2.get(\value)
                     else
                         x = instance.partials.content
                         #console.log "content is: ", x
@@ -67,11 +70,8 @@ Ractive.components['radio-buttons'] = Ractive.extend do
                             y
                         else
                             null
-                    unless new-val
-                        # FIXME: why do we get a null value?
-                        return
-                    #console.log "setting value to ", new-val
-                    @set-selected-color new-val, {ctx: ctx2}
+                    #console.log "Button value is: ", button-value
+                    @set-selected-color button-value, {ctx: ctx2}
 
             '_select': (ctx, new-val) ->
                 for @get \buttons

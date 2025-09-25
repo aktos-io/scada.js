@@ -2,19 +2,19 @@
 
 ```pug
 radio-buttons(value="{{myvariable}}")
-    radio-button(default) Hello
-    radio-button World
+    .ui.buttons
+        radio-button(default) Hello
+        radio-button World
 ```
 
-> Note: In order to unite the buttons, encapsulate them by a `.ui.buttons` div.
-
-If the `radio-button`s are generated with an `{{#each}}` loop, its data has to be provided by `value=` attribute: 
+NOTE: If the `radio-button`s are generated with an `{{#each}}` loop, its data has to be provided by `value=` attribute: 
 
 
 ```pug
 radio-buttons(value="{{myvariable}}")
-    +each('myArray as option')
-        radio-button(value="{{option}}") {{option}}
+    .ui.buttons
+        +each('myArray as option')
+            radio-button(value="{{option}}") {{option}}
 ```
 
 # Typical Usage
@@ -59,20 +59,8 @@ myHandler: (ctx, new-val, proceed) ->
 Use `value` variable to decide the `radio-buttons`' state.
 
 ```pug
-radio-buttons(
-    value="{{myvariable}}")
-    radio-button(
-        enabled="{{value === 'foo'}}"
-        ) Hello
-    radio-button World
-```
-
-# Grouping buttons 
-
-```pug
-radio-buttons(value="{{tmp.report_type}}")
+radio-buttons(value="{{myvariable}}")
     .ui.buttons
-        radio-button A
-        radio-button B
-        radio-button C
+        radio-button(enabled="{{value === 'foo'}}") Hello
+        radio-button World
 ```
